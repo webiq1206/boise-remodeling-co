@@ -28,19 +28,23 @@ export function Footer() {
               {/* Dark-background brand seal; circular clip drops the square
                   corners so its dark ground reads as a seamless medallion on
                   the dark footer band */}
+              {/* `on-charcoal` rather than the plain bone seal: that variant
+                  carries its own disc, which is what the kit says to use over a
+                  ground rather than relying on a CSS clip. */}
               <img
-                src="/brand/icons/boise-remodeling-co-seal-dark.svg"
+                src="/brand/svg/seal/any/boise-remodeling-co-seal-on-charcoal-accent.svg"
                 alt=""
                 aria-hidden="true"
                 width={56}
                 height={56}
                 className="h-14 w-14 shrink-0 rounded-full"
               />
-              {/* Reverse (white) primary logo with tagline */}
+              {/* The full lockup, which is the wordmark plus the descriptor
+                  line. 1617.52 x 319.77 viewBox, so 45px tall is 228 wide. */}
               <img
-                src="/brand/logos/boise-remodeling-co-logo-primary-reverse.svg"
+                src="/brand/svg/wordmark-full/dark/boise-remodeling-co-wordmark-full-bone-accent.svg"
                 alt="Boise Remodeling Co"
-                width={168}
+                width={228}
                 height={45}
                 className="h-[45px] w-auto"
               />

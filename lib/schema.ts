@@ -24,7 +24,20 @@ const baseUrl = getBaseUrl();
 export const ORG_ID = `${baseUrl}/#organization`;
 export const LOCALBUSINESS_ID = `${baseUrl}/#localbusiness`;
 export const WEBSITE_ID = `${baseUrl}/#website`;
-const LOGO_URL = `${baseUrl}/images/brc-logo.png`;
+/**
+ * THE SEAL ON ITS OWN CHARCOAL DISC, NOT THE TRANSPARENT BONE ONE.
+ *
+ * This URL goes into `Organization.logo` and every `ImageObject` below, which
+ * means Google renders it on surfaces we do not control and which are usually
+ * white. The dark/ seal is bone ink (#F7F5F3) on transparency, so on a white
+ * knowledge panel it would be an invisible square. The `any/` variant carries
+ * its own charcoal disc and reads correctly on any background, which is exactly
+ * what the brand kit says the `any/` set is for.
+ *
+ * 512px square: comfortably above Google's 112px floor, and square suits the
+ * panel and rich-result crops better than a wide wordmark would.
+ */
+const LOGO_URL = `${baseUrl}/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png`;
 
 /**
  * Generate LocalBusiness schema for homepage and location pages

@@ -355,7 +355,9 @@ export function generateSEOMetadata(params: ServiceSEOParams): SEOMetaData {
     canonical,
     ogTitle: title,
     ogDescription: description,
-    ogImage: `${baseUrl}/images/brc-logo.png`,
+    // A 1200x630 card, not the square seal: this feeds summary_large_image,
+    // where a square logo gets letterboxed or cropped to a sliver.
+    ogImage: `${baseUrl}/images/og-default.png`,
     twitterCard: 'summary_large_image',
   };
 }
