@@ -45,6 +45,10 @@ export interface PlanDeliveryInput {
   statedTotalSqFt: number;
   blockers: string[];
   notMeasured: string[];
+  /** Work read off the drawings that is ours to price. */
+  scopeItems: { category: string; description: string; sheet?: string | null }[];
+  /** Work the drawings hand to someone else. Named on every surface. */
+  excludedScope: { category: string; description: string; sheet?: string | null }[];
   warnings: string[];
   sheetsUsed: string[];
   documents: { filename: string; url: string }[];
@@ -127,6 +131,20 @@ function buildPlanNotes(input: PlanDeliveryInput): string {
     lines.push(``, `ROOMS WITH NO PRINTED AREA - NOT IN THE MEASURED FIGURE (${input.notMeasured.length})`);
     for (const n of input.notMeasured) lines.push(`  ${n}`);
   }
+  if (input.scopeItems.length > 0) {
+    lines.push(``, `SCOPE READ OFF THE DRAWINGS (${input.scopeItems.length})`);
+    for (const s of input.scopeItems) {
+      lines.push(`  [${s.category}] ${s.description}${s.sheet ? ` (${s.sheet})` : ""}`);
+    }
+  }
+  // Above the warnings, because an estimator who prices the greenhouse has made
+  // a more expensive mistake than one who missed a note.
+  if (input.excludedScope.length > 0) {
+    lines.push(``, `NOT OURS - THE DRAWINGS GIVE IT TO SOMEONE ELSE (${input.excludedScope.length})`);
+    for (const s of input.excludedScope) {
+      lines.push(`  [${s.category}] ${s.description}${s.sheet ? ` (${s.sheet})` : ""}`);
+    }
+  }
   if (input.warnings.length > 0) {
     lines.push(``, `WHAT THE EXTRACTOR NOTICED`);
     for (const w of input.warnings) lines.push(`  ${w}`);
@@ -180,6 +198,9 @@ function buildPlanCrmRecord(input: PlanDeliveryInput) {
       internalCost: Math.round(t.internalCost),
       customerAmount: Math.round(t.customerAmount),
     })),
+    scopeItems: input.scopeItems,
+    excludedScope: input.excludedScope,
+    scopeRatings: m ? { layoutChanges: m.layoutChanges, plumbingElectrical: m.plumbingElectrical } : null,
     blockers: input.blockers,
     notMeasured: input.notMeasured,
     extractorWarnings: input.warnings,

@@ -58,8 +58,12 @@ interface EstimateResponse {
     interiorPerimeterFt: number;
     ceilingHeight: number | null;
     bathroomCount: number | null;
+    layoutChanges: string | null;
+    plumbingElectrical: string | null;
     notes: string[];
   } | null;
+  scopeItems: { category: string; description: string; sheet?: string | null }[];
+  excludedScope: { category: string; description: string; sheet?: string | null }[];
   blockers: string[];
   notMeasured: string[];
   propertyAddress: string;
@@ -314,8 +318,17 @@ export function PlansWizard() {
             dimensionText: r.dimensionText,
             ceilingHeightFt: r.ceilingHeightFt,
             sheet: r.sheet,
+            // Phase and level decide scope server-side, so they have to travel.
+            // Without them every room defaults to "new" and an existing plan
+            // would be priced alongside the new one it duplicates.
+            phase: r.phase,
+            level: r.level,
             inScope: r.inScope,
           })),
+          // The whole job, not just the floor area. Excluded items travel too:
+          // they are what the customer would otherwise assume is in the price.
+          scopeItems: extraction?.scopeItems ?? [],
+          scopeFacts: extraction?.scopeFacts,
           projectType,
           finishLevel,
           statedTotalSqFt: Number(totalSqFt.replace(/[^0-9.]/g, "")),
@@ -383,6 +396,8 @@ export function PlansWizard() {
   const measuredRooms = inScope.filter((r) => r.areaSqFt && r.areaSqFt > 0);
   const measuredArea = measuredRooms.reduce((s, r) => s + (r.areaSqFt ?? 0), 0);
   const unmeasured = inScope.filter((r) => !(r.areaSqFt && r.areaSqFt > 0));
+  const scopeItems = (extraction?.scopeItems ?? []).filter((s) => s.inContract);
+  const excludedScope = (extraction?.scopeItems ?? []).filter((s) => !s.inContract);
 
   const fieldClass =
     "w-full rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] px-3 py-2.5 " +
@@ -693,6 +708,52 @@ export function PlansWizard() {
               ))}
             </ul>
 
+            {/* ------------------------------------------------ the scope of work
+                FLOOR AREA IS NOT THE JOB. Everything the drawings ask for that
+                is not a room area used to be read and then thrown away, so a
+                gas fireplace, a structural beam and a driveway widening all
+                priced as nothing. Shown here so the customer can see we read it
+                and say if we missed something. */}
+            {scopeItems.length > 0 && (
+              <div className="mt-8">
+                <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-3">
+                  Work we read off your drawings ({scopeItems.length})
+                </p>
+                <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-2" data-testid="list-plan-scope">
+                  {scopeItems.map((s, i) => (
+                    <li key={i} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                      <span className="text-inverse-muted">{s.category}</span> · {s.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* LOUDER THAN THE REST, because this is what someone assumes is in
+                the price. The Squier patio deck is marked "separate permit" on
+                the sheet; the Gambardella greenhouse and swim spa are "by
+                others". Quoting them would be as wrong as omitting real work. */}
+            {excludedScope.length > 0 && (
+              <div
+                className="mt-6 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] p-4"
+                data-testid="notice-plans-excluded-scope"
+              >
+                <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
+                  Your drawings give this work to someone else, so it will not be in your price:
+                </p>
+                <ul className="space-y-1">
+                  {excludedScope.map((s, i) => (
+                    <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
+                      {s.description}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2.5 text-[12.5px] text-inverse-muted leading-relaxed">
+                  If you want us to price any of it, say so in the notes on the next step.
+                </p>
+              </div>
+            )}
+
             {/* Named rather than dropped. A room that vanished without
                 explanation is exactly the failure the RE-10 flow shipped once. */}
             {unmeasured.length > 0 && (
@@ -840,6 +901,42 @@ export function PlansWizard() {
                   Not in the measured area: {result.notMeasured.join(", ")}. These carry no printed
                   size on your drawings. Send us their dimensions and we will fold them in.
                 </p>
+              </div>
+            )}
+
+            {result.scopeItems.length > 0 && (
+              <div className="mb-6">
+                <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">
+                  What this covers ({result.scopeItems.length} items read from your drawings)
+                </p>
+                <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-1.5">
+                  {result.scopeItems.map((s, i) => (
+                    <li key={i} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                      <span className="text-inverse-muted">{s.category}</span> · {s.description}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Repeated on the result screen on purpose. Someone who skimmed
+                the confirmation step still has to leave knowing what is not in
+                the number they are about to plan around. */}
+            {result.excludedScope.length > 0 && (
+              <div
+                className="mb-6 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] p-4"
+                data-testid="notice-plans-result-excluded"
+              >
+                <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
+                  Not included, because your drawings give it to someone else:
+                </p>
+                <ul className="space-y-1">
+                  {result.excludedScope.map((s, i) => (
+                    <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
+                      {s.description}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 

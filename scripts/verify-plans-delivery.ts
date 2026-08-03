@@ -78,9 +78,25 @@ const READ: PlanExtractionResult = {
     dimensionText: null,
     ceilingHeightFt: null,
     sheet: "A105",
+    phase: "new" as const,
+    level: "Main",
     inScope: true,
   })),
   counts: [],
+  scopeItems: [
+    { category: "millwork", description: "Gas fireplace with tile surround", sheet: "A105", inContract: true },
+    { category: "plumbing", description: "Double shower with linear drain", sheet: "A105", inContract: true },
+    { category: "site", description: "Patio deck, SEPARATE PERMIT APPLICATION", sheet: "A105", inContract: false },
+  ],
+  scopeFacts: {
+    wallsRemovedOrAdded: true,
+    plumbingFixturesRelocated: true,
+    electricalServiceOrPanelWork: null,
+    structuralWork: true,
+    hvacWork: null,
+    exteriorEnvelopeWork: false,
+    kitchenInScope: true,
+  },
   sheetsUsed: ["A103", "A105", "A106"],
   scopeNotes: [],
   warnings: ["The W.C. 1 area tag was not legible at the resolution provided."],
@@ -92,6 +108,8 @@ READ.rooms.push({
   dimensionText: null,
   ceilingHeightFt: null,
   sheet: "A105",
+  phase: "new",
+  level: "Main",
   inScope: true,
 });
 
@@ -110,7 +128,21 @@ const VIEW = {
   statedTotalSqFt: 1800,
   blockers: [] as string[],
   notMeasured: ["W.C. 1"],
+  scopeItems: READ.scopeItems.filter((i) => i.inContract),
+  excludedScope: READ.scopeItems.filter((i) => !i.inContract),
 };
+
+/* THE FIXTURE HAS TO ACTUALLY EARN A PRICE, or every disclosure check below is
+   run against the fallback copy and proves nothing about the measured path.
+   This caught a stale fixture once already: a schema change left the rooms
+   without a phase, measurements came back null, and two checks failed for a
+   reason that had nothing to do with disclosure. `scripts/` is excluded from
+   tsconfig, so nothing else would have noticed. */
+check(MEASUREMENTS !== null, "the fixture read no longer earns measurements, so the wall is untested");
+check(
+  (MEASUREMENTS?.scopeItems.length ?? 0) === 2 && (MEASUREMENTS?.excludedScope.length ?? 0) === 1,
+  "the fixture no longer carries both priced and excluded scope",
+);
 
 /* ------------------------------------------------ 1. the disclosure wall */
 
@@ -149,6 +181,21 @@ check(customerText.includes("w.c. 1"), "the customer email drops the room we cou
 check(
   customerText.includes("2609 n mountain view"),
   "the customer email does not name the property",
+);
+
+/* THE SCOPE HAS TO REACH THE CUSTOMER, BOTH HALVES OF IT. Work we are pricing
+   so they can check we read it, and work their drawings hand to someone else so
+   they do not assume it is included. The second is the one that turns into an
+   argument on site. */
+check(customerText.includes("gas fireplace"), "priced scope is missing from the customer email");
+check(
+  customerText.includes("separate permit"),
+  "work the drawings give to someone else is not named in the customer email",
+);
+check(
+  strip(customerHtml).toLowerCase().indexOf("separate permit") <
+    strip(customerHtml).toLowerCase().indexOf("planning range, not a quote"),
+  "the exclusions appear below the boilerplate, where they will not be read",
 );
 
 /* THE ADMIN EMAIL IS THE OPPOSITE TEST. It has to carry the economics, because

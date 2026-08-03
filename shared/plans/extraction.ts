@@ -41,6 +41,31 @@ export type MeasurementSource =
  */
 export const TRUSTWORTHY_SOURCES: readonly MeasurementSource[] = ["printed", "derived"];
 
+/**
+ * WHICH DRAWING A ROOM CAME OFF, WHICH IS A FACT RATHER THAN A JUDGEMENT.
+ *
+ * FOUND ON PRODUCTION, ON THE FIRST LIVE RUN. The same eighteen-sheet remodel
+ * was read twice and `inScope` came back differently each time: once with ten
+ * rooms (the new first floor), once with nineteen (the new first floor AND the
+ * existing first floor, which is the same physical floor drawn twice). The
+ * second read summed 3,056 SF for a 1,714 SF project. A coin flip was deciding
+ * a price.
+ *
+ * The cause is that `inScope` asks the model to make a judgement. `phase` asks
+ * it a question of fact instead: what does the sheet this room is drawn on
+ * represent? Models answer that reliably, because it is written in the sheet
+ * title. Scope is then decided in code, deterministically, from the phase.
+ */
+export type RoomPhase =
+  /** Drawn on an existing-conditions plan. The house as it stands today. */
+  | "existing"
+  /** Drawn on a demolition plan. Same footprint, marked for removal. */
+  | "demolition"
+  /** Drawn on a new / proposed / construction plan. This is what gets built. */
+  | "new"
+  /** Shown for context only: an adjacent unit, a site plan callout, a detail. */
+  | "reference";
+
 export interface PlanRoom {
   /** Room name exactly as labelled on the plan. */
   name: string;
@@ -54,7 +79,11 @@ export interface PlanRoom {
   ceilingHeightFt: number | null;
   /** Sheet this came from, e.g. "A2.1". */
   sheet: string | null;
-  /** True when this room is inside the remodel scope rather than existing to remain. */
+  /** Which drawing this room was read off. Drives scope; see RoomPhase. */
+  phase: RoomPhase;
+  /** Which storey, so a two-storey house is not read as one floor. */
+  level: string | null;
+  /** True when this room is inside the work rather than shown for reference. */
   inScope: boolean;
 }
 
@@ -64,6 +93,72 @@ export interface PlanCounts {
   count: number;
   source: MeasurementSource;
   sheet: string | null;
+}
+
+/**
+ * A piece of work the drawings call for that is not a room area.
+ *
+ * WHY THIS EXISTS. Everything the extractor learned about the actual scope used
+ * to die in a free-text `scopeNotes` array that nothing read. On the Gambardella
+ * permit set that discarded the demolition schedule, a 1-hour rated garage wall,
+ * new structural steel, a driveway widening and 50 cubic yards of cut. On the
+ * Squier remodel it discarded a gas fireplace, a TV lift, a built-in bed, a
+ * double shower with a linear drain and a washer/dryer rough-in. A price built
+ * from floor area alone silently omits all of it.
+ *
+ * `inContract: false` is the other half and matters just as much. Drawings
+ * routinely mark work "by others", "separate permit" or "NIC" - the Squier patio
+ * deck and the Gambardella greenhouse and swim spa are all somebody else's job.
+ * Pricing those would be as wrong as omitting the fireplace.
+ */
+export type ScopeCategory =
+  | "demolition"
+  | "structural"
+  | "envelope"
+  | "plumbing"
+  | "electrical"
+  | "hvac"
+  | "finishes"
+  | "millwork"
+  | "appliance"
+  | "site";
+
+export interface PlanScopeItem {
+  category: ScopeCategory;
+  /** Quoted from the sheet, or closely paraphrased. Never invented. */
+  description: string;
+  sheet: string | null;
+  /** False when the drawings hand this to someone else. */
+  inContract: boolean;
+}
+
+/**
+ * Facts about the work, asked as facts rather than as ratings.
+ *
+ * The estimator wants "layoutChanges: moderate" and "plumbingElectrical: full",
+ * which are judgements with a house style behind them. Asking a model to make
+ * that call directly produces drift between runs. Asking whether a wall is
+ * coming out is a question the drawing answers in one hatch pattern, so these
+ * are booleans and the ratings are derived from them in code.
+ *
+ * null means the drawings do not say, which is different from "no" and must not
+ * be collapsed into it.
+ */
+export interface PlanScopeFacts {
+  /** Walls removed, added or relocated. The single biggest cost driver. */
+  wallsRemovedOrAdded: boolean | null;
+  /** Sinks, toilets, tubs or showers moving to a new location. */
+  plumbingFixturesRelocated: boolean | null;
+  /** New panel, service upgrade, or circuits substantially rerun. */
+  electricalServiceOrPanelWork: boolean | null;
+  /** New beams, headers, footings, posts or engineered members. */
+  structuralWork: boolean | null;
+  /** Ducting, equipment or a new system. */
+  hvacWork: boolean | null;
+  /** Windows, exterior doors, siding, roof: anything on the envelope. */
+  exteriorEnvelopeWork: boolean | null;
+  /** A kitchen is inside the work. */
+  kitchenInScope: boolean | null;
 }
 
 export interface PlanExtractionResult {
@@ -78,6 +173,10 @@ export interface PlanExtractionResult {
   rooms: PlanRoom[];
   /** Doors, windows, plumbing fixtures, and anything else countable. */
   counts: PlanCounts[];
+  /** Every piece of work the drawings call for that is not a room area. */
+  scopeItems: PlanScopeItem[];
+  /** The cost-driving facts, asked as facts. See PlanScopeFacts. */
+  scopeFacts: PlanScopeFacts;
   /** Sheets that carried the pricing-relevant content. */
   sheetsUsed: string[];
   /** Scope statements found in the general notes or demolition plan. */
@@ -106,10 +205,72 @@ export const PLAN_EXTRACTION_SCHEMA = {
           dimensionText: { type: ["string", "null"] },
           ceilingHeightFt: { type: ["number", "null"] },
           sheet: { type: ["string", "null"] },
+          phase: { type: "string", enum: ["existing", "demolition", "new", "reference"] },
+          level: { type: ["string", "null"] },
           inScope: { type: "boolean" },
         },
-        required: ["name", "areaSqFt", "areaSource", "dimensionText", "ceilingHeightFt", "sheet", "inScope"],
+        required: [
+          "name",
+          "areaSqFt",
+          "areaSource",
+          "dimensionText",
+          "ceilingHeightFt",
+          "sheet",
+          "phase",
+          "level",
+          "inScope",
+        ],
       },
+    },
+    scopeItems: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          category: {
+            type: "string",
+            enum: [
+              "demolition",
+              "structural",
+              "envelope",
+              "plumbing",
+              "electrical",
+              "hvac",
+              "finishes",
+              "millwork",
+              "appliance",
+              "site",
+            ],
+          },
+          description: { type: "string" },
+          sheet: { type: ["string", "null"] },
+          inContract: { type: "boolean" },
+        },
+        required: ["category", "description", "sheet", "inContract"],
+      },
+    },
+    scopeFacts: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        wallsRemovedOrAdded: { type: ["boolean", "null"] },
+        plumbingFixturesRelocated: { type: ["boolean", "null"] },
+        electricalServiceOrPanelWork: { type: ["boolean", "null"] },
+        structuralWork: { type: ["boolean", "null"] },
+        hvacWork: { type: ["boolean", "null"] },
+        exteriorEnvelopeWork: { type: ["boolean", "null"] },
+        kitchenInScope: { type: ["boolean", "null"] },
+      },
+      required: [
+        "wallsRemovedOrAdded",
+        "plumbingFixturesRelocated",
+        "electricalServiceOrPanelWork",
+        "structuralWork",
+        "hvacWork",
+        "exteriorEnvelopeWork",
+        "kitchenInScope",
+      ],
     },
     counts: {
       type: "array",
@@ -136,6 +297,8 @@ export const PLAN_EXTRACTION_SCHEMA = {
     "roomAreaTotalSqFt",
     "rooms",
     "counts",
+    "scopeItems",
+    "scopeFacts",
     "sheetsUsed",
     "scopeNotes",
     "warnings",
@@ -156,11 +319,45 @@ NEVER upgrade a source. If a room has no printed dimension, its area is "scaled"
 
 WHICH SHEETS TO USE. Floor plans, demolition plans, and schedules (door, window, finish, plumbing fixture, electrical) carry what matters. Structural details, foundation sections, elevations and general notes usually do not. Record the sheet number each measurement came from, and list the sheets you actually used.
 
-SCOPE. On a remodel, distinguish rooms being worked on from rooms shown for reference or marked "existing to remain". Set inScope accordingly. If the drawings do not make the boundary clear, say so in warnings rather than guessing.
+PHASE, WHICH IS THE MOST IMPORTANT FIELD ON A REMODEL. For every room, report which drawing you read it off:
+- "existing": an existing-conditions or as-built plan. The house as it stands today.
+- "demolition": a demolition plan.
+- "new": a new, proposed, construction or permit floor plan. What actually gets built.
+- "reference": shown for context only - a neighbouring unit, a site-plan callout, a detail.
+
+A REMODEL SET USUALLY DRAWS THE SAME FLOOR TWICE, once existing and once new, and the two sheets show THE SAME PHYSICAL ROOMS before and after. Report both, each tagged with its own phase and its own sheet. Never merge them and never leave the phase off. A set that shows "EXISTING FIRST FLOOR" on A103 and "NEW FIRST FLOOR" on A105 has two floor plans of one floor, not two floors.
+
+Also report "level" for every room - "Basement", "Main", "Second", "Upper" - exactly as the sheet labels it, so a two-storey house is not read as one floor.
+
+SCOPE. Set inScope true for rooms inside the work. On a remodel that is the "new" phase rooms. Rooms shown only as existing, or marked "existing to remain", "not altered", "not in contract", are inScope false. If the drawings do not make the boundary clear, say so in warnings rather than guessing.
 
 CONSISTENCY. Report statedTotalSqFt if the drawings state a total conditioned area, and roomAreaTotalSqFt as the sum of the room areas you extracted. Do not adjust either to make them agree - a disagreement is information.
 
 COUNTS. Count doors, windows, and plumbing fixtures from the schedule when there is one, and from the plan when there is not. Say which in source.
+
+SCOPE ITEMS - CAPTURE THE WHOLE JOB, NOT JUST THE FLOOR AREA. A price built from square footage alone silently omits most of what a drawing set actually asks for. Go through the sheets and list every piece of work you can see, in scopeItems, each with the category it belongs to and the sheet it came from. Include at minimum:
+- demolition: walls, floors, roofs, decks, cabinetry, fixtures being removed
+- structural: new beams, headers, posts, footings, engineered members, shear walls
+- envelope: windows, exterior doors, siding, roofing, insulation, waterproofing
+- plumbing, electrical, hvac: new or relocated fixtures, panels, equipment, ducting
+- finishes: flooring, tile, paint, trim called out on the sheets
+- millwork: built-ins, custom cabinetry, benches, shelving, specialty items
+- appliance: anything with a connection called out
+- site: driveways, patios, retaining walls, grading, drainage
+
+Quote or closely paraphrase what the sheet says. Do not invent work that is not drawn or noted.
+
+WORK THE DRAWINGS HAND TO SOMEONE ELSE. Set inContract false on any item marked "by others", "NIC", "not in contract", "separate permit", "by owner", or similar. These are real and must be listed - they are what the customer will otherwise assume is included - but they are not ours to price. Pricing them would be as wrong as omitting the work that is ours.
+
+SCOPE FACTS. Answer each of the scopeFacts questions from what is drawn. These decide how the work is priced, so answer them as facts, not impressions:
+- wallsRemovedOrAdded: does any wall move, come out, or get added?
+- plumbingFixturesRelocated: does a sink, toilet, tub or shower end up somewhere new?
+- electricalServiceOrPanelWork: a new panel, a service upgrade, or circuits substantially rerun?
+- structuralWork: new beams, headers, posts, footings or engineered members?
+- hvacWork: new equipment, ducting or a new system?
+- exteriorEnvelopeWork: anything touching windows, exterior doors, siding or roof?
+- kitchenInScope: is a kitchen inside the work?
+Use null for any of these the drawings genuinely do not settle. null means "the drawings do not say", which is different from "no", and guessing "no" would quietly remove real cost from the price.
 
 If this is not a construction drawing set, set looksLikePlans to false, explain in warnings, and do not invent measurements from whatever you can see.`;
 
@@ -175,10 +372,67 @@ If this is not a construction drawing set, set looksLikePlans to false, explain 
  */
 export const AREA_AGREEMENT_TOLERANCE = 0.12;
 
+/**
+ * The floor area of the home AS IT WILL BE, deduped by phase.
+ *
+ * THIS IS THE NUMBER THE CROSS-CHECK NEEDS, AND IT IS NOT THE IN-SCOPE SUM.
+ * Found by running the flow live: we ask the customer for the finished square
+ * footage of their home, then compared it against the sum of the rooms being
+ * remodelled. On a whole-house job those match. On the Squier set - a first
+ * floor reconfiguration of a two-storey house - the in-scope work is 1,714 SF
+ * of a home more than twice that size, so an honest answer to our own question
+ * would have failed the gate and blocked a near-perfect read.
+ *
+ * The two jobs were tangled together. Validating the READ needs a figure for
+ * the whole home; PRICING needs the in-scope subset. So this computes the
+ * former: take each level, prefer the new plan where one was drawn and fall
+ * back to the existing plan where one was not, and sum. On Squier that is the
+ * new first floor plus the existing second floor, which is exactly what the
+ * homeowner would describe. Demolition and reference sheets never contribute.
+ *
+ * It also kills the double count structurally. Existing and new plans of the
+ * same level can no longer both land in the total, whatever the model decided
+ * about scope, because only one phase per level is ever counted.
+ */
+export function asDrawnFloorArea(result: PlanExtractionResult): number {
+  const usable = result.rooms.filter(
+    (r) => r.areaSqFt && r.areaSqFt > 0 && (r.phase === "new" || r.phase === "existing"),
+  );
+  if (usable.length === 0) return 0;
+
+  const byLevel = new Map<string, PlanRoom[]>();
+  for (const r of usable) {
+    // An unlabelled level is its own bucket rather than everyone's, so a set
+    // that omits level labels degrades to "one floor" instead of merging a
+    // basement into a second storey.
+    const key = (r.level ?? "").trim().toLowerCase() || "unspecified";
+    if (!byLevel.has(key)) byLevel.set(key, []);
+    byLevel.get(key)!.push(r);
+  }
+
+  let total = 0;
+  for (const rooms of byLevel.values()) {
+    const fresh = rooms.filter((r) => r.phase === "new");
+    const chosen = fresh.length > 0 ? fresh : rooms.filter((r) => r.phase === "existing");
+    total += chosen.reduce((s, r) => s + (r.areaSqFt ?? 0), 0);
+  }
+  return total;
+}
+
+/**
+ * Do two independent statements of the home's floor area agree?
+ *
+ * The check that catches a misread is not "is this number sensible" but "do two
+ * independent statements of the same fact agree". Both sides here describe the
+ * whole home: one from the drawings' own room tags, one from a total stated on
+ * the sheets or supplied by the person who lives there.
+ */
 export function areasAgree(result: PlanExtractionResult): boolean | null {
-  const { statedTotalSqFt: stated, roomAreaTotalSqFt: summed } = result;
-  if (!stated || !summed || stated <= 0) return null; // Nothing to cross-check.
-  return Math.abs(summed - stated) / stated <= AREA_AGREEMENT_TOLERANCE;
+  const stated = result.statedTotalSqFt;
+  if (!stated || stated <= 0) return null; // Nothing to cross-check against.
+  const drawn = asDrawnFloorArea(result);
+  if (drawn <= 0) return null; // Nothing read to check.
+  return Math.abs(drawn - stated) / stated <= AREA_AGREEMENT_TOLERANCE;
 }
 
 /**
@@ -221,6 +475,33 @@ export function areasAgree(result: PlanExtractionResult): boolean | null {
  */
 
 /**
+ * The rooms a price is actually built from.
+ *
+ * ONE DEFINITION, USED BY EVERY GATE AND BY THE ESTIMATOR, so coverage, trusted
+ * share and floor area can never disagree about which rooms they are talking
+ * about. Three filters, each earning its place:
+ *
+ * - reference and demolition phases are never priced as floor area. A room on a
+ *   demolition plan is the same room as on the new plan; counting both charges
+ *   twice for one floor.
+ * - when the model tagged BOTH new and existing rooms as in scope, only the new
+ *   ones count. This is the production double count, and it is fixed here in
+ *   code rather than by asking the model more nicely: on the same PDF read
+ *   twice, one run returned ten in-scope rooms and the other nineteen, summing
+ *   3,056 SF for a 1,714 SF project.
+ * - a set with no "new" sheets at all (existing plans only, or a set whose
+ *   phases are all "existing") still prices, because refusing those would throw
+ *   away every read where the architect supplied as-builts and nothing else.
+ */
+export function scopedRooms(result: PlanExtractionResult): PlanRoom[] {
+  const candidates = result.rooms.filter(
+    (r) => r.inScope && r.phase !== "reference" && r.phase !== "demolition",
+  );
+  const fresh = candidates.filter((r) => r.phase === "new");
+  return fresh.length > 0 ? fresh : candidates;
+}
+
+/**
  * How much of the scope rests on numbers we can actually stand behind.
  *
  * Returned as a share so the estimator can narrow proportionally rather than
@@ -228,7 +509,7 @@ export function areasAgree(result: PlanExtractionResult): boolean | null {
  * where half were paced off.
  */
 export function trustedAreaShare(result: PlanExtractionResult): number {
-  const scoped = result.rooms.filter((r) => r.inScope && r.areaSqFt && r.areaSqFt > 0);
+  const scoped = scopedRooms(result).filter((r) => r.areaSqFt && r.areaSqFt > 0);
   if (scoped.length === 0) return 0;
   const total = scoped.reduce((s, r) => s + (r.areaSqFt ?? 0), 0);
   if (total <= 0) return 0;
@@ -250,7 +531,7 @@ export function trustedAreaShare(result: PlanExtractionResult): number {
  * A share is not a coverage measure. This is.
  */
 export function measuredRoomCoverage(result: PlanExtractionResult): number {
-  const scoped = result.rooms.filter((r) => r.inScope);
+  const scoped = scopedRooms(result);
   if (scoped.length === 0) return 0;
   const measured = scoped.filter(
     (r) => r.areaSqFt && r.areaSqFt > 0 && TRUSTWORTHY_SOURCES.includes(r.areaSource),

@@ -19,12 +19,16 @@
  */
 import {
   assessPlanQuality,
+  asDrawnFloorArea,
+  scopedRooms,
   MIN_ROOM_COVERAGE,
   MIN_TRUSTED_AREA_SHARE,
   AREA_AGREEMENT_TOLERANCE,
   type MeasurementSource,
   type PlanExtractionResult,
   type PlanRoom,
+  type PlanScopeFacts,
+  type RoomPhase,
 } from "../shared/plans/extraction";
 import { planMeasurements, planScopePatch } from "../shared/plans/estimateInput";
 import { estimateProject, buildInternalEstimate, perimeterOf, RULES_BY_PROJECT } from "../shared/costs";
@@ -35,23 +39,56 @@ const fail = (m: string) => {
   console.log("  PROBLEM: " + m);
 };
 
-function room(name: string, areaSqFt: number | null, areaSource: MeasurementSource, inScope = true): PlanRoom {
-  return { name, areaSqFt, areaSource, dimensionText: null, ceilingHeightFt: null, sheet: null, inScope };
+function room(
+  name: string,
+  areaSqFt: number | null,
+  areaSource: MeasurementSource,
+  inScope = true,
+  phase: RoomPhase = "new",
+  level: string | null = "Main",
+): PlanRoom {
+  return {
+    name,
+    areaSqFt,
+    areaSource,
+    dimensionText: null,
+    ceilingHeightFt: null,
+    sheet: null,
+    phase,
+    level,
+    inScope,
+  };
 }
 
+const NO_FACTS: PlanScopeFacts = {
+  wallsRemovedOrAdded: null,
+  plumbingFixturesRelocated: null,
+  electricalServiceOrPanelWork: null,
+  structuralWork: null,
+  hvacWork: null,
+  exteriorEnvelopeWork: null,
+  kitchenInScope: null,
+};
+
 function plans(over: Partial<PlanExtractionResult>): PlanExtractionResult {
-  return {
+  const base: PlanExtractionResult = {
     looksLikePlans: true,
     projectType: "remodel",
     statedTotalSqFt: null,
     roomAreaTotalSqFt: null,
     rooms: [],
     counts: [],
+    scopeItems: [],
+    scopeFacts: NO_FACTS,
     sheetsUsed: [],
     scopeNotes: [],
     warnings: [],
     ...over,
   };
+  // The cross-check reads the as-drawn area, so fixtures do not have to restate
+  // it and cannot drift from their own room lists.
+  if (base.roomAreaTotalSqFt === null) base.roomAreaTotalSqFt = asDrawnFloorArea(base) || null;
+  return base;
 }
 
 /** Repeat a blank room n times, which is what an unmeasured floor plan looks like. */
@@ -147,6 +184,43 @@ const CASES: Case[] = [
     }),
     canTighten: false,
     because: "do not state a total floor area",
+  },
+
+  /* ------------------------------------------------- THE PRODUCTION DOUBLE COUNT
+     CAUGHT LIVE, ON THE FIRST REAL RUN. The Squier PDF was read twice and came
+     back with different scope both times: once ten in-scope rooms (the new
+     first floor), once nineteen (the new first floor AND the existing first
+     floor, which is the same physical floor drawn twice). The second summed
+     3,056 SF for a 1,714 SF project.
+
+     This fixture is that second read. It must price the same as the first,
+     because `scopedRooms` keeps only the "new" phase when both appear, and
+     `asDrawnFloorArea` takes one phase per level. If either regresses, a
+     customer gets billed for their house twice. */
+  {
+    name: "existing AND new plans of one floor, both tagged in scope",
+    input: plans({
+      statedTotalSqFt: 1800,
+      rooms: [
+        room("Kitchen (new)", 303, "printed", true, "new", "Main"),
+        room("Living Room (new)", 277, "printed", true, "new", "Main"),
+        room("Entry (new)", 230, "printed", true, "new", "Main"),
+        room("Bedroom 1 (new)", 306, "printed", true, "new", "Main"),
+        room("Bath 1 (new)", 117, "printed", true, "new", "Main"),
+        room("Closet 1 (new)", 122, "printed", true, "new", "Main"),
+        room("Breakfast Room (new)", 207, "printed", true, "new", "Main"),
+        room("Mudroom (new)", 107, "printed", true, "new", "Main"),
+        room("Guest Bath (new)", 45, "printed", true, "new", "Main"),
+        // The same floor, drawn as it stands today, wrongly marked in scope.
+        room("Kitchen & Seating (existing)", 482, "printed", true, "existing", "Main"),
+        room("Living Room (existing)", 474, "printed", true, "existing", "Main"),
+        room("Hallway (existing)", 95, "printed", true, "existing", "Main"),
+        room("Entry (existing)", 79, "printed", true, "existing", "Main"),
+        room("Bath 1 (existing)", 78, "printed", true, "existing", "Main"),
+        room("Mud (existing)", 65, "printed", true, "existing", "Main"),
+      ],
+    }),
+    canTighten: true,
   },
 
   /* ------------------------------------- the same remodel, once someone says the total
@@ -371,6 +445,55 @@ if (!earned) {
   console.log(`  interior perimeter ${earned.interiorPerimeterFt.toFixed(0)} ft vs ${perimeterOf(earned.sqft).toFixed(0)} ft as one open space`);
 }
 
+/* ------------------------------------------- the double count, in numbers
+   The fixture above proves it still prices. This proves it prices the RIGHT
+   amount: the same floor area as the clean read, not the sum of both sheets. */
+{
+  const doubled = CASES.find((c) => c.name.startsWith("existing AND new"))!;
+  const m = planMeasurements(doubled.input);
+  if (!m) {
+    fail("the double-counted read produced no measurements at all");
+  } else {
+    const both = doubled.input.rooms.reduce((s, r) => s + (r.areaSqFt ?? 0), 0);
+    if (Math.abs(m.sqft - 1714) > 1e-9) {
+      fail(`double-counted read should price the 1,714 SF new floor, got ${m.sqft}`);
+    }
+    if (m.measuredRooms !== 9) fail(`should price 9 new rooms, got ${m.measuredRooms}`);
+    console.log(
+      `  ok   double count collapsed: ${both} SF across both sheets -> ${m.sqft} SF priced, ${m.measuredRooms} rooms`,
+    );
+    // And the as-drawn figure, which is what the customer's total is checked
+    // against, must describe the floor once.
+    const drawn = asDrawnFloorArea(doubled.input);
+    if (Math.abs(drawn - 1714) > 1e-9) fail(`as-drawn area should be 1,714, got ${drawn}`);
+  }
+}
+
+/* A TWO-STOREY HOUSE IS NOT ONE FLOOR. The as-drawn figure has to add the
+   levels, or the cross-check compares one floor against a whole house and
+   blocks every good read on a multi-storey home. */
+{
+  const twoStorey = plans({
+    statedTotalSqFt: 2400,
+    rooms: [
+      room("Kitchen (new)", 400, "printed", true, "new", "Main"),
+      room("Living (new)", 600, "printed", true, "new", "Main"),
+      room("Kitchen (existing)", 380, "printed", false, "existing", "Main"),
+      room("Bed 1", 700, "printed", false, "existing", "Second"),
+      room("Bed 2", 700, "printed", false, "existing", "Second"),
+    ],
+  });
+  const drawn = asDrawnFloorArea(twoStorey);
+  // Main takes the NEW plan (1,000), Second has only an existing plan (1,400).
+  if (Math.abs(drawn - 2400) > 1e-9) {
+    fail(`two-storey as-drawn should be 1,000 main + 1,400 second = 2,400, got ${drawn}`);
+  }
+  if (assessPlanQuality(twoStorey).areasAgree !== true) {
+    fail("a correct two-storey read should agree with the stated whole-home total");
+  }
+  console.log(`  ok   two storeys sum to ${drawn} SF and agree with the stated total`);
+}
+
 /* NOTHING CROSSES FROM A READ THAT DID NOT EARN IT. Each of these passes some
    gates and fails at least one, and every one of them must produce null - not a
    smaller number, not a lower confidence, nothing at all. */
@@ -467,6 +590,90 @@ if (nb && nb.suggestedProject !== null) {
   fail(`a new build must not suggest a remodel project type, got ${nb.suggestedProject}`);
 }
 console.log("  ok   a new build suggests no project type rather than pricing as a remodel");
+
+/* ------------------------------------------------------ the scope of work
+   FLOOR AREA SETS THE SIZE OF THE JOB; THESE SET WHAT IS BEING DONE TO IT, and
+   they used to be thrown away entirely. The ratings are derived in code from
+   facts the drawings answer, so they cannot drift between two reads of the same
+   sheets the way a judgement does. */
+{
+  const withScope = (facts: Partial<PlanScopeFacts>, items: PlanExtractionResult["scopeItems"] = []) =>
+    planMeasurements(
+      plans({
+        statedTotalSqFt: 1000,
+        rooms: [
+          room("Kitchen", 400, "printed"),
+          room("Living", 400, "printed"),
+          room("Bath 1", 200, "printed"),
+        ],
+        scopeFacts: { ...NO_FACTS, ...facts },
+        scopeItems: items,
+      }),
+    );
+
+  const ladder: Array<[Partial<PlanScopeFacts>, string | null, string | null, string]> = [
+    [{}, null, null, "drawings say nothing -> both null, estimator uses its own default"],
+    [{ wallsRemovedOrAdded: false }, "none", null, "no wall moves -> layout none"],
+    [{ wallsRemovedOrAdded: true }, "moderate", null, "a wall moves -> moderate"],
+    [{ wallsRemovedOrAdded: true, structuralWork: true }, "major", null, "load bearing -> major"],
+    [{ plumbingFixturesRelocated: true }, null, "partial", "a fixture moves -> partial"],
+    [{ electricalServiceOrPanelWork: true }, null, "full", "a new panel -> full"],
+    [{ hvacWork: true }, null, "full", "a new system -> full"],
+    [{ plumbingFixturesRelocated: false }, null, "cosmetic", "nothing moves -> cosmetic"],
+  ];
+  for (const [facts, layout, systems, label] of ladder) {
+    const m = withScope(facts);
+    const okLayout = (m?.layoutChanges ?? null) === layout;
+    const okSystems = (m?.plumbingElectrical ?? null) === systems;
+    console.log(`  ${okLayout && okSystems ? "ok  " : "FAIL"} ${label}`);
+    if (!okLayout) fail(`${label}: layoutChanges was ${m?.layoutChanges}, expected ${layout}`);
+    if (!okSystems) fail(`${label}: plumbingElectrical was ${m?.plumbingElectrical}, expected ${systems}`);
+  }
+
+  /* WORK THE DRAWINGS HAND TO SOMEONE ELSE MUST BE SEPARATED, NEVER DROPPED.
+     The Squier patio deck says "SEPARATE PERMIT APPLICATION" on the sheet and
+     the Gambardella greenhouse and swim spa are both "by others". Pricing those
+     is as wrong as omitting the fireplace, and hiding them is worse than both:
+     the customer assumes they are in the number. */
+  const mixed = withScope({ wallsRemovedOrAdded: true }, [
+    { category: "millwork", description: "Gas fireplace with tile surround", sheet: "A105", inContract: true },
+    { category: "demolition", description: "Remove existing deck and framing", sheet: "A2.0", inContract: true },
+    { category: "site", description: "Patio deck, SEPARATE PERMIT APPLICATION", sheet: "A105", inContract: false },
+    { category: "structural", description: "Pre-engineered greenhouse by others", sheet: "G1.0", inContract: false },
+  ]);
+  if (!mixed) {
+    fail("the scoped read produced no measurements");
+  } else {
+    if (mixed.scopeItems.length !== 2) fail(`2 items are ours to price, got ${mixed.scopeItems.length}`);
+    if (mixed.excludedScope.length !== 2) fail(`2 items belong to others, got ${mixed.excludedScope.length}`);
+    if (mixed.scopeItems.some((i) => !i.inContract)) fail("an out-of-contract item reached the priced list");
+    const notes = mixed.notes.join(" ");
+    if (!notes.includes("SEPARATE PERMIT")) fail("an excluded item is not named in the notes");
+    if (!notes.includes("greenhouse")) fail("an excluded item was dropped from the notes");
+    console.log(`  ok   ${mixed.scopeItems.length} items priced, ${mixed.excludedScope.length} named as someone else's`);
+  }
+
+  /* The ratings have to survive the trip into the estimator's selections. */
+  const patched = planScopePatch(mixed!, "whole-home");
+  if (patched.layoutChanges !== "moderate") fail("layoutChanges did not reach the scope patch");
+  // A null must be ABSENT from the patch, not present as null, so the estimator
+  // falls back to its own default rather than a plans-shaped hole.
+  const blank = planScopePatch(withScope({})!, "whole-home");
+  if ("layoutChanges" in blank) fail("an unknown layout change was sent to the estimator anyway");
+  if ("plumbingElectrical" in blank) fail("an unknown systems rating was sent to the estimator anyway");
+  console.log("  ok   ratings reach the estimator, and unknowns are left off rather than sent as null");
+
+  /* And they must actually move the price, or none of this is doing anything. */
+  const base = { quality: "mid-range" as const, sqft: 1000, interiorPerimeterFt: 200 };
+  const cosmetic = estimateProject("whole-home", { ...base, layoutChanges: "none", plumbingElectrical: "cosmetic" }, []);
+  const gutted = estimateProject("whole-home", { ...base, layoutChanges: "major", plumbingElectrical: "full" }, []);
+  if (gutted.range.centre <= cosmetic.range.centre) {
+    fail("a major layout change with full systems prices no higher than a cosmetic refresh");
+  }
+  console.log(
+    `  ok   scope moves the price: cosmetic $${Math.round(cosmetic.range.centre).toLocaleString("en-US")} -> gutted $${Math.round(gutted.range.centre).toLocaleString("en-US")}`,
+  );
+}
 
 /* ------------------------------------------------------------- end to end
    The point of all of it: the same job, priced with and without the drawings.

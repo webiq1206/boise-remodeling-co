@@ -25,9 +25,11 @@
  */
 import {
   assessPlanQuality,
+  scopedRooms,
   TRUSTWORTHY_SOURCES,
   type PlanExtractionResult,
   type PlanRoom,
+  type PlanScopeItem,
 } from "./extraction";
 import { perimeterOf } from "../costs/engine";
 
@@ -67,8 +69,55 @@ export interface PlanMeasurements {
   measuredRooms: number;
   /** Which estimator project type the drawings suggest, when they suggest one. */
   suggestedProject: "kitchen" | "bathroom" | "whole-home" | "addition" | null;
+  /**
+   * How much the layout moves, derived from whether walls actually move.
+   *
+   * null when the drawings do not settle it, which the estimator reads as
+   * "the homeowner has not told us" rather than as "none".
+   */
+  layoutChanges: "none" | "moderate" | "major" | null;
+  /** How deep the systems work goes, derived the same way. */
+  plumbingElectrical: "cosmetic" | "partial" | "full" | null;
+  kitchenIncluded: boolean | null;
+  /** Work the drawings call for, ours to price. */
+  scopeItems: PlanScopeItem[];
+  /** Work the drawings hand to someone else. Named, never priced. */
+  excludedScope: PlanScopeItem[];
   /** Plain-language provenance, for the confirmation step and the admin view. */
   notes: string[];
+}
+
+/**
+ * Turning facts about the drawings into the ratings the estimator prices on.
+ *
+ * DERIVED IN CODE, NOT ASKED OF THE MODEL. "Is this a moderate or a major
+ * layout change" is a house judgement with money attached, and asking for it
+ * directly produced exactly the drift that the phase field was added to kill.
+ * Asking whether a wall moves is a question the drawing answers in one hatch
+ * pattern. The ladder below is the house rule, in one place, auditable.
+ *
+ * A null in means a null out. The estimator already treats null as "not told",
+ * and collapsing an unknown into "none" would quietly delete real cost.
+ */
+function deriveLayoutChanges(f: PlanExtractionResult["scopeFacts"]): PlanMeasurements["layoutChanges"] {
+  if (f.wallsRemovedOrAdded === null && f.structuralWork === null) return null;
+  // Structural work means a wall was load bearing, which is the expensive case.
+  if (f.structuralWork === true) return "major";
+  if (f.wallsRemovedOrAdded === true) return "moderate";
+  if (f.wallsRemovedOrAdded === false) return "none";
+  return null;
+}
+
+function derivePlumbingElectrical(
+  f: PlanExtractionResult["scopeFacts"],
+): PlanMeasurements["plumbingElectrical"] {
+  const signals = [f.plumbingFixturesRelocated, f.electricalServiceOrPanelWork, f.hvacWork];
+  if (signals.every((s) => s === null)) return null;
+  // A panel or a new system is the full job; a fixture moving is partial.
+  if (f.electricalServiceOrPanelWork === true || f.hvacWork === true) return "full";
+  if (f.plumbingFixturesRelocated === true) return "partial";
+  if (signals.some((s) => s === false)) return "cosmetic";
+  return null;
 }
 
 /**
@@ -132,7 +181,9 @@ function suggestProject(result: PlanExtractionResult, scoped: PlanRoom[]): PlanM
 export function planMeasurements(result: PlanExtractionResult): PlanMeasurements | null {
   if (!assessPlanQuality(result).canTightenPrice) return null;
 
-  const scoped = result.rooms.filter((r) => r.inScope);
+  // scopedRooms, not a local filter: the same definition the gates used, so
+  // coverage and floor area can never disagree about which rooms they mean.
+  const scoped = scopedRooms(result);
   const measured = scoped.filter(isMeasured);
   const sqft = measured.reduce((s, r) => s + (r.areaSqFt ?? 0), 0);
   // A gate passing with no measured area at all should be impossible, but the
@@ -175,6 +226,33 @@ export function planMeasurements(result: PlanExtractionResult): PlanMeasurements
     notes.push(`Not included, no printed area on the sheets: ${dropped.join(", ")}.`);
   }
 
+  const items = result.scopeItems ?? [];
+  const scopeItems = items.filter((i) => i.inContract);
+  const excludedScope = items.filter((i) => !i.inContract);
+  const facts = result.scopeFacts;
+  const layoutChanges = facts ? deriveLayoutChanges(facts) : null;
+  const plumbingElectrical = facts ? derivePlumbingElectrical(facts) : null;
+
+  if (scopeItems.length > 0) {
+    const byCategory = new Map<string, number>();
+    for (const i of scopeItems) byCategory.set(i.category, (byCategory.get(i.category) ?? 0) + 1);
+    notes.push(
+      `${scopeItems.length} items of work read off the drawings: ` +
+        [...byCategory.entries()].map(([c, n]) => `${n} ${c}`).join(", ") + ".",
+    );
+  }
+  if (excludedScope.length > 0) {
+    // Loud, because this is what the customer will otherwise assume is in the
+    // price. The Squier patio deck says "SEPARATE PERMIT APPLICATION" on the
+    // sheet; the Gambardella greenhouse and swim spa are both "by others".
+    notes.push(
+      `Not in the price, the drawings give ${excludedScope.length === 1 ? "it" : "them"} to someone else: ` +
+        excludedScope.map((i) => i.description).join("; ") + ".",
+    );
+  }
+  if (layoutChanges !== null) notes.push(`Layout change read as ${layoutChanges}.`);
+  if (plumbingElectrical !== null) notes.push(`Systems work read as ${plumbingElectrical}.`);
+
   return {
     sqft,
     interiorPerimeterFt,
@@ -182,6 +260,11 @@ export function planMeasurements(result: PlanExtractionResult): PlanMeasurements
     bathroomCount: baths.length > 0 ? baths.length : null,
     measuredRooms: measured.length,
     suggestedProject,
+    layoutChanges,
+    plumbingElectrical,
+    kitchenIncluded: facts?.kitchenInScope ?? null,
+    scopeItems,
+    excludedScope,
     notes,
   };
 }
@@ -192,6 +275,9 @@ export interface PlanScopePatch {
   interiorPerimeterFt: number;
   ceilingHeight?: number;
   bathroomCount?: number;
+  layoutChanges?: "none" | "moderate" | "major";
+  plumbingElectrical?: "cosmetic" | "partial" | "full";
+  kitchenIncluded?: boolean;
 }
 
 /**
@@ -219,5 +305,13 @@ export function planScopePatch(
   };
   if (m.ceilingHeight !== null) patch.ceilingHeight = m.ceilingHeight;
   if (project === "bathroom" && m.bathroomCount !== null) patch.bathroomCount = m.bathroomCount;
+
+  /* THE SCOPE RATINGS, WHICH ARE WHERE MOST OF THE MONEY IS. Floor area sets
+     the size of the job; these set what is being done to it. A null is left off
+     the patch entirely rather than sent as null, so the estimator's own default
+     applies instead of a plans-shaped hole. */
+  if (m.layoutChanges !== null) patch.layoutChanges = m.layoutChanges;
+  if (m.plumbingElectrical !== null) patch.plumbingElectrical = m.plumbingElectrical;
+  if (m.kitchenIncluded !== null) patch.kitchenIncluded = m.kitchenIncluded;
   return patch;
 }

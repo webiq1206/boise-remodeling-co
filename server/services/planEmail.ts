@@ -87,6 +87,8 @@ export function buildPlanCustomerEmail(
     /** Empty when the drawings earned a plans-informed price. */
     blockers: string[];
     notMeasured: string[];
+    scopeItems?: { category: string; description: string }[];
+    excludedScope?: { category: string; description: string }[];
   },
 ): string {
   const firstName = contact.name.trim().split(/\s+/)[0] || contact.name;
@@ -144,6 +146,26 @@ export function buildPlanCustomerEmail(
       </table>
     </div>
 
+    ${
+      (view.scopeItems ?? []).length > 0
+        ? `<div style="margin:0 0 24px;">
+             <p style="${SECTION_TITLE}">What this covers</p>
+             <ul style="margin:0;padding-left:18px;">${list(
+               (view.scopeItems ?? []).map((i) => `${i.category}: ${i.description}`),
+             )}</ul>
+           </div>`
+        : ""
+    }
+    ${
+      (view.excludedScope ?? []).length > 0
+        ? `<div style="margin:0 0 24px;">
+             <p style="${SECTION_TITLE}">Not included, your drawings give it to someone else</p>
+             <ul style="margin:0;padding-left:18px;">${list(
+               (view.excludedScope ?? []).map((i) => i.description),
+             )}</ul>
+           </div>`
+        : ""
+    }
     ${notMeasured}
     ${blockers}
 

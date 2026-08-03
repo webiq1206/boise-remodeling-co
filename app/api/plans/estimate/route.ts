@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { estimateProject, type QualityLevel } from "@/shared/costs";
-import { assessPlanQuality, type PlanExtractionResult } from "@/shared/plans/extraction";
+import {
+  assessPlanQuality,
+  asDrawnFloorArea,
+  scopedRooms,
+  type PlanExtractionResult,
+} from "@/shared/plans/extraction";
 import { planMeasurements, planScopePatch } from "@/shared/plans/estimateInput";
 import { isStoredDocumentUrl } from "@/shared/re10/uploads";
 import { deliverPlanLead } from "@/server/services/planLead";
@@ -41,7 +46,43 @@ const roomSchema = z.object({
   dimensionText: z.string().max(300).nullable().optional(),
   ceilingHeightFt: z.number().positive().max(60).nullable().optional(),
   sheet: z.string().max(60).nullable().optional(),
+  /**
+   * Defaults to "new" when a client omits it, because that is the only phase a
+   * room could be in on a set with no existing drawings, and it is also the
+   * conservative choice: it keeps the room in the priced set rather than
+   * silently dropping floor area someone is expecting to be quoted.
+   */
+  phase: z.enum(["existing", "demolition", "new", "reference"]).default("new"),
+  level: z.string().max(60).nullable().optional(),
   inScope: z.boolean(),
+});
+
+const scopeItemSchema = z.object({
+  category: z.enum([
+    "demolition",
+    "structural",
+    "envelope",
+    "plumbing",
+    "electrical",
+    "hvac",
+    "finishes",
+    "millwork",
+    "appliance",
+    "site",
+  ]),
+  description: z.string().min(1).max(600),
+  sheet: z.string().max(60).nullable().optional(),
+  inContract: z.boolean(),
+});
+
+const scopeFactsSchema = z.object({
+  wallsRemovedOrAdded: z.boolean().nullable(),
+  plumbingFixturesRelocated: z.boolean().nullable(),
+  electricalServiceOrPanelWork: z.boolean().nullable(),
+  structuralWork: z.boolean().nullable(),
+  hvacWork: z.boolean().nullable(),
+  exteriorEnvelopeWork: z.boolean().nullable(),
+  kitchenInScope: z.boolean().nullable(),
 });
 
 const bodySchema = z
@@ -65,6 +106,9 @@ const bodySchema = z
     extractionProjectType: z.enum(["new-build", "remodel", "addition", "unclear"]).optional(),
     warnings: z.array(z.string().max(2000)).max(40).optional(),
     sheetsUsed: z.array(z.string().max(60)).max(120).optional(),
+    /** The whole job, not just the floor area. See PlanScopeItem. */
+    scopeItems: z.array(scopeItemSchema).max(300).optional(),
+    scopeFacts: scopeFactsSchema.optional(),
 
     name: z.string().min(2).max(120),
     email: z.string().email().max(200).optional().or(z.literal("")),
@@ -125,36 +169,61 @@ export async function POST(request: NextRequest) {
 
   /* Rebuild the extraction shape the gates read, with the customer's total in
      place of the one the drawings did not state. Everything else is as read. */
+  const rooms = body.rooms.map((r) => ({
+    name: r.name,
+    areaSqFt: r.areaSqFt,
+    areaSource: r.areaSource,
+    dimensionText: r.dimensionText ?? null,
+    ceilingHeightFt: r.ceilingHeightFt ?? null,
+    sheet: r.sheet ?? null,
+    phase: r.phase,
+    level: r.level ?? null,
+    inScope: r.inScope,
+  }));
+
   const result: PlanExtractionResult = {
     looksLikePlans: body.looksLikePlans ?? true,
     projectType: body.extractionProjectType ?? "unclear",
     statedTotalSqFt: body.statedTotalSqFt,
-    roomAreaTotalSqFt: body.rooms
-      .filter((r) => r.inScope && r.areaSqFt)
-      .reduce((s, r) => s + (r.areaSqFt ?? 0), 0),
-    rooms: body.rooms.map((r) => ({
-      name: r.name,
-      areaSqFt: r.areaSqFt,
-      areaSource: r.areaSource,
-      dimensionText: r.dimensionText ?? null,
-      ceilingHeightFt: r.ceilingHeightFt ?? null,
-      sheet: r.sheet ?? null,
-      inScope: r.inScope,
-    })),
+    /**
+     * THE AS-DRAWN AREA OF THE WHOLE HOME, NOT THE IN-SCOPE SUM.
+     *
+     * This used to sum the in-scope rooms, which made the cross-check compare
+     * the part being remodelled against the customer's figure for their whole
+     * house. On a first-floor reconfiguration of a two-storey home those are
+     * different quantities and the gate blocked a near-perfect read. It is now
+     * computed by `asDrawnFloorArea`, which takes one phase per level, so both
+     * sides of the comparison describe the same building.
+     */
+    roomAreaTotalSqFt: null,
+    rooms,
     counts: [],
+    scopeItems: body.scopeItems?.map((i) => ({ ...i, sheet: i.sheet ?? null })) ?? [],
+    scopeFacts: body.scopeFacts ?? {
+      wallsRemovedOrAdded: null,
+      plumbingFixturesRelocated: null,
+      electricalServiceOrPanelWork: null,
+      structuralWork: null,
+      hvacWork: null,
+      exteriorEnvelopeWork: null,
+      kitchenInScope: null,
+    },
     sheetsUsed: body.sheetsUsed ?? [],
     scopeNotes: [],
     warnings: body.warnings ?? [],
   };
+  result.roomAreaTotalSqFt = asDrawnFloorArea(result) || null;
 
   const quality = assessPlanQuality(result);
   const measurements = planMeasurements(result);
 
-  /* Rooms the drawings named but did not measure. NOTHING THE CUSTOMER SENT US
+  /* Rooms in the priced set that carry no area. NOTHING THE CUSTOMER SENT US
      MAY SILENTLY VANISH - this was a real bug on the RE-10, where 7 of 20
-     requested repairs disappeared between the review screen and the quote. */
-  const notMeasured = result.rooms
-    .filter((r) => r.inScope && !(r.areaSqFt && r.areaSqFt > 0))
+     requested repairs disappeared between the review screen and the quote.
+     Uses `scopedRooms` so it names exactly the rooms the price was built from,
+     rather than existing-plan duplicates the customer never expected to see. */
+  const notMeasured = scopedRooms(result)
+    .filter((r) => !(r.areaSqFt && r.areaSqFt > 0))
     .map((r) => r.name);
 
   /* The measured patch when the drawings earned it, the customer's own total
@@ -197,6 +266,8 @@ export async function POST(request: NextRequest) {
     statedTotalSqFt: body.statedTotalSqFt,
     blockers: quality.blockers,
     notMeasured,
+    scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract),
+    excludedScope: (body.scopeItems ?? []).filter((i) => !i.inContract),
     warnings: body.warnings ?? [],
     sheetsUsed: body.sheetsUsed ?? [],
     documents: body.documents ?? [],
@@ -218,9 +289,22 @@ export async function POST(request: NextRequest) {
           interiorPerimeterFt: Math.round(measurements.interiorPerimeterFt),
           ceilingHeight: measurements.ceilingHeight,
           bathroomCount: measurements.bathroomCount,
+          layoutChanges: measurements.layoutChanges,
+          plumbingElectrical: measurements.plumbingElectrical,
           notes: measurements.notes,
         }
       : null,
+    /**
+     * THE WHOLE SCOPE, SHOWN WHETHER OR NOT IT WAS PRICED.
+     *
+     * `scopeItems` is read off the drawings and is what the range covers.
+     * `excludedScope` is work the sheets hand to somebody else, and it is the
+     * more important of the two to show: it is precisely what a customer would
+     * otherwise assume was included. Both travel even when the gates blocked the
+     * measurements, because the scope is still real.
+     */
+    scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract),
+    excludedScope: (body.scopeItems ?? []).filter((i) => !i.inContract),
     blockers: quality.blockers,
     notMeasured,
     propertyAddress: body.propertyAddress,
