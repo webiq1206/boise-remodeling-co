@@ -18,6 +18,7 @@
  *   npm run verify:plans
  */
 import {
+  PLAN_EXTRACTION_SCHEMA,
   assessPlanQuality,
   asDrawnFloorArea,
   scopedRooms,
@@ -366,6 +367,30 @@ for (const c of CASES) {
 
 /* The thresholds themselves. A coverage floor of 0 would silently disable the
    gate that caught the garage read, and nothing else here would notice. */
+/* ------------------------------------------------- the schema's field order
+   LOAD-BEARING, AND INVISIBLE UNLESS YOU KNOW. The 42-sheet Gambardella permit
+   set returned 46 rooms and then EMPTY counts, warnings, sheetsUsed, scopeNotes
+   and scopeItems - every field declared after `rooms`. Not truncation: 4,424
+   output tokens against a 32,000 ceiling. The model spent its effort on the one
+   list that scales with the drawing set and treated the rest as done.
+
+   So `rooms` goes last and everything that decides the price goes first. This
+   check exists because the natural instinct on seeing a schema is to tidy it
+   into a sensible reading order, which would silently reintroduce the bug. */
+{
+  const props = Object.keys(PLAN_EXTRACTION_SCHEMA.properties);
+  const last = props[props.length - 1];
+  if (last !== "rooms") {
+    fail(`"rooms" must be the LAST field in the extraction schema, not "${last}". See the note above it.`);
+  }
+  for (const field of ["scopeItems", "scopeFacts", "counts"]) {
+    if (props.indexOf(field) > props.indexOf("rooms")) {
+      fail(`"${field}" is declared after "rooms" and will be starved on a large set`);
+    }
+  }
+  console.log(`\nSCHEMA ORDER\n  ok   rooms is last, behind ${props.length - 1} smaller fields`);
+}
+
 console.log("\nTHRESHOLDS");
 console.log(
   `  coverage>=${MIN_ROOM_COVERAGE}  trusted>=${MIN_TRUSTED_AREA_SHARE}  area tolerance ${AREA_AGREEMENT_TOLERANCE}`,
