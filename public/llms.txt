@@ -15,6 +15,7 @@ Design-build means one accountable team handles design, estimating, Ada and Cany
 - [Outdoor Living & Decks](https://boiseremodeling.co/services/outdoor-living): decks, covered patios, and outdoor kitchens.
 - [Aging-in-Place Remodeling](https://boiseremodeling.co/services/aging-in-place): accessible, universal-design remodels.
 - [RE-10 / Inspection Repairs](https://boiseremodeling.co/re-10-repairs-boise): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.
+- [Estimate From Your Plans](https://boiseremodeling.co/remodel-plans-boise): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules printed on the sheets, rather than from a stated square footage. Free, no obligation, and the homeowner confirms every measurement before anything is priced.
 - [All Services](https://boiseremodeling.co/services): plus city pages at /services/{service}/{city} and [Service Areas](https://boiseremodeling.co/areas).
 
 ## Authoritative guides

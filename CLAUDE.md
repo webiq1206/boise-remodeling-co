@@ -21,6 +21,7 @@ each one caught something real:
 | `verify:re10` | 44 repair kinds, incl. market price bands |
 | `verify:re10-delivery` | disclosure wall, funnel events, upload contract |
 | `verify:plans` | the gates that let a plan set tighten a price |
+| `verify:plans-delivery` | plans disclosure wall, funnel events, request contract |
 | `verify:no-em-dash` | house style, blocks the build |
 | `check:re10-extraction` | live API call, NOT in prebuild (costs money) |
 
@@ -57,12 +58,29 @@ Uploads live in Postgres (`stored_files`), because the container filesystem is
 ephemeral and documents were 404ing after each deploy. The RE-10 is also
 attached to the internal email so a lead survives regardless.
 
-## Plans feature - WIRED TO PRICING, no UI yet
+## Plans feature - BUILT END TO END, needs a redeploy
 
 Goal: upload remodel/new-build drawings, price more accurately, tighter number.
 
-Built: `shared/plans/extraction.ts`, `server/services/planExtract.ts`,
-`shared/plans/estimateInput.ts`, `POST /api/plans/analyze`. **No UI yet.**
+`/remodel-plans-boise`. Upload plans -> Claude reads them -> customer confirms
+the measurements AND supplies the total square footage -> planning range ->
+email + CRM. Same four-step shape as the RE-10 wizard, same lead destinations
+(`consultationRequests` + lead dashboard, never the `leads` marketplace table).
+
+Files: `shared/plans/{extraction,estimateInput,analyticsEvents}.ts`,
+`shared/content/plansContent.ts`, `server/services/{planExtract,planEmail,planLead}.ts`,
+`app/api/plans/{analyze,estimate}/route.ts`, `components/plans/PlansWizard.tsx`.
+
+**The estimate route re-runs the gates server-side** on whatever the client
+posts back, so a browser cannot talk its way past one, and there is nowhere in
+the request body to put a price. The client IS allowed to send corrected rooms:
+corrections are the feature, exactly as on the RE-10.
+
+**Failing the gates is not an error.** Three of the four real sets do not clear
+them. Those customers still get a range, built from the total they gave us, and
+the result screen says plainly that the drawings were not used and why. Verified
+against both real reads: Squier prices from drawings at $120,000 to $165,000,
+Gambardella falls back and names its two blockers.
 
 ### What a plan set actually buys: a truer centre, NOT a narrower band
 
@@ -192,14 +210,19 @@ surface as the generic "We could not read those drawings"; it now maps to
 
 ### Still to do
 
-1. **Redeploy.** Production is running pre-`65400e3` and has no coverage gate,
-   so it answers `canTightenPrice: true` on Gambardella today. Nothing is wired
-   to pricing yet, so no customer is affected, but the endpoint is live.
-2. Build the uploader (the RE-10 wizard is the working template). It MUST ask
-   for the total conditioned square footage, because that is the cross-check and
-   it is the one thing standing between the best read in the corpus and a
-   tightened price. `/api/plans/analyze` already returns a `measurements` block
-   for it to show and have the customer confirm.
+1. **Redeploy, and this one now matters to customers.** Production is running
+   pre-`65400e3`: no coverage gate, no `/remodel-plans-boise`, no estimate
+   route. The page is live-ready in the repo and absent from the deployment.
+2. **Verify the wizard live on real drawings.** The analyze step cannot run
+   locally (the API key is production-only), so the four sets have only gone
+   through the endpoint directly, never through the UI. The measure, contact and
+   result steps were driven end to end against the real estimate route with the
+   analyze response stubbed in the browser, which is not the same as a real read
+   reaching the screen. Do that once after the redeploy.
+3. Optional: add `ANTHROPIC_API_KEY` to `.env.local` so the analyze step can be
+   exercised from a dev machine. Without it `/api/plans/analyze` answers 503 and
+   the wizard shows the send-them-to-us-by-hand path, which is correct behaviour
+   but untestable ground.
 
 **Rendering a sheet to look at it yourself** needs `pdf-to-img` (pdfjs plus a
 prebuilt canvas, no system dependencies); there is no `pdftoppm`, Ghostscript or
