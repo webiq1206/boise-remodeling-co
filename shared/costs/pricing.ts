@@ -193,16 +193,32 @@ function roundTo(value: number, step: number): number {
  * question that affects price has been answered. More detail tightens the band;
  * it never widens it, and it never moves the centre.
  */
+/**
+ * The most a thin brief may widen the band.
+ *
+ * ONE-DIRECTIONAL, AND THAT ASYMMETRY IS THE POINT. Detail cannot buy a range
+ * narrower than MIN_BAND, because the back-tested spread that sets that floor
+ * came from jobs whose floor area was already known - it is estimator variance,
+ * not input error, and no amount of documentation reduces it. Missing
+ * information is the opposite: it is a real, additional uncertainty on top, and
+ * quoting it at the same width as a measured project is the false precision the
+ * range exists to avoid.
+ */
+const MAX_BAND_WIDENING = 0.2;
+
 export function buildPlanningRange(
   estimate: InternalEstimate,
   project: ProjectType,
   quality: QualityLevel,
   sqft: number,
   detailRatio = 0,
+  /** Extra half-width for weak information. Widens only; see above. */
+  bandPenalty = 0,
 ): PlanningRange {
   const decision = decideMargin(estimate.totalInternalCost, project, quality, sqft);
   const clamped = Math.min(1, Math.max(0, detailRatio));
-  const band = Math.max(MIN_BAND, BASE_BAND * (1 - BAND_TIGHTENING * clamped));
+  const penalty = Math.min(MAX_BAND_WIDENING, Math.max(0, bandPenalty));
+  const band = Math.max(MIN_BAND, BASE_BAND * (1 - BAND_TIGHTENING * clamped)) + penalty;
 
   const centre = decision.price;
   const step = stepFor(centre);
