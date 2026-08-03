@@ -347,6 +347,8 @@ SCOPE ITEMS - CAPTURE THE WHOLE JOB, NOT JUST THE FLOOR AREA. A price built from
 
 Quote or closely paraphrase what the sheet says. Do not invent work that is not drawn or noted.
 
+SCOPE ITEMS AND SCOPE NOTES ARE NOT THE SAME FIELD, AND THIS IS THE ONE MISTAKE THAT KEEPS HAPPENING. Every piece of WORK goes in scopeItems, one entry each, structured. scopeNotes is only for context about the drawing set itself: the project name, the architect, which sheets are present, drafting conventions, what a legend means. A sentence in scopeNotes such as "the legend indicates new floor joists, new headers and beams, new partition walls and existing construction to be demolished" is FIVE scope items that have been written in the wrong place, and downstream nothing can price them. If you can point at work on a sheet, it belongs in scopeItems. If scopeItems comes back empty on a set that clearly shows construction, that is an error, not an empty project.
+
 WORK THE DRAWINGS HAND TO SOMEONE ELSE. Set inContract false on any item marked "by others", "NIC", "not in contract", "separate permit", "by owner", or similar. These are real and must be listed - they are what the customer will otherwise assume is included - but they are not ours to price. Pricing them would be as wrong as omitting the work that is ours.
 
 SCOPE FACTS. Answer each of the scopeFacts questions from what is drawn. These decide how the work is priced, so answer them as facts, not impressions:
@@ -394,9 +396,32 @@ export const AREA_AGREEMENT_TOLERANCE = 0.12;
  * same level can no longer both land in the total, whatever the model decided
  * about scope, because only one phase per level is ever counted.
  */
+/**
+ * Space a homeowner would not count in "finished square footage".
+ *
+ * FOUND ON THE FIRST CLEAN LIVE READ. Squier's second floor carries two roof
+ * decks tagged 665 and 161 SF, and counting them pushed the as-drawn figure to
+ * 3,459 SF against a house whose conditioned area is nearer 2,600. The
+ * cross-check would then have called a perfect read a disagreement, purely
+ * because a deck has a square footage printed on it.
+ *
+ * This filter applies ONLY to the cross-check, never to pricing. A garage
+ * conversion is real work and gets priced; it is just not what someone means
+ * when they tell you how big their house is.
+ */
+const UNCONDITIONED = /\b(deck|patio|porch|balcony|terrace|garage|carport|shed|crawl\s*space|attic)\b/i;
+
+export function isConditionedSpace(room: PlanRoom): boolean {
+  return !UNCONDITIONED.test(room.name);
+}
+
 export function asDrawnFloorArea(result: PlanExtractionResult): number {
   const usable = result.rooms.filter(
-    (r) => r.areaSqFt && r.areaSqFt > 0 && (r.phase === "new" || r.phase === "existing"),
+    (r) =>
+      r.areaSqFt &&
+      r.areaSqFt > 0 &&
+      (r.phase === "new" || r.phase === "existing") &&
+      isConditionedSpace(r),
   );
   if (usable.length === 0) return 0;
 

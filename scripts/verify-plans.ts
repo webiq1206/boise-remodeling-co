@@ -469,6 +469,32 @@ if (!earned) {
   }
 }
 
+/* A DECK IS NOT FINISHED SQUARE FOOTAGE. Caught on the first clean live read:
+   Squier's second floor carries two roof decks tagged 665 and 161 SF, and
+   counting them pushed the as-drawn figure to 3,459 against a house nearer
+   2,600 conditioned. The cross-check would have called a perfect read a
+   disagreement purely because a deck has an area printed on it. */
+{
+  const withDecks = plans({
+    statedTotalSqFt: 1000,
+    rooms: [
+      room("Living", 600, "printed", true, "new", "Main"),
+      room("Kitchen", 400, "printed", true, "new", "Main"),
+      room("Roof Deck - A", 665, "printed", false, "new", "Main"),
+      room("Patio Deck", 196, "printed", false, "new", "Main"),
+      room("Garage", 440, "printed", false, "existing", "Main"),
+    ],
+  });
+  const drawn = asDrawnFloorArea(withDecks);
+  if (Math.abs(drawn - 1000) > 1e-9) {
+    fail(`decks, patios and the garage must not count as finished area; got ${drawn} instead of 1,000`);
+  }
+  if (assessPlanQuality(withDecks).areasAgree !== true) {
+    fail("a correct read was called a disagreement because outdoor space was counted as floor area");
+  }
+  console.log(`  ok   decks, patio and garage excluded from the cross-check: ${drawn} SF conditioned`);
+}
+
 /* A TWO-STOREY HOUSE IS NOT ONE FLOOR. The as-drawn figure has to add the
    levels, or the cross-check compares one floor against a whole house and
    blocks every good read on a multi-storey home. */
