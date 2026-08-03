@@ -185,6 +185,21 @@ export interface PlanExtractionResult {
   warnings: string[];
 }
 
+/**
+ * FIELD ORDER IS LOad-BEARING HERE, WHICH IS NOT OBVIOUS.
+ *
+ * Found on the 42-sheet Gambardella permit set. The read came back with 46
+ * rooms and then EMPTY counts, warnings, sheetsUsed, scopeNotes and scopeItems
+ * - every single field declared after `rooms`. It was not truncation: output
+ * was 4,424 tokens against a 32,000 ceiling, so the model chose to stop. It had
+ * simply spent its effort enumerating rooms and treated the rest as done.
+ *
+ * `rooms` is the one field whose size scales with the drawing set, and `phase`
+ * roughly doubled it, because a remodel draws each floor existing AND new. So
+ * it now goes LAST, after the small high-value fields. Everything that decides
+ * how the job is priced gets written while the model is still paying attention,
+ * and the list that can balloon can no longer starve them.
+ */
 export const PLAN_EXTRACTION_SCHEMA = {
   type: "object",
   additionalProperties: false,
@@ -193,35 +208,6 @@ export const PLAN_EXTRACTION_SCHEMA = {
     projectType: { type: "string", enum: ["new-build", "remodel", "addition", "unclear"] },
     statedTotalSqFt: { type: ["number", "null"] },
     roomAreaTotalSqFt: { type: ["number", "null"] },
-    rooms: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          name: { type: "string" },
-          areaSqFt: { type: ["number", "null"] },
-          areaSource: { type: "string", enum: ["printed", "derived", "scaled", "inferred"] },
-          dimensionText: { type: ["string", "null"] },
-          ceilingHeightFt: { type: ["number", "null"] },
-          sheet: { type: ["string", "null"] },
-          phase: { type: "string", enum: ["existing", "demolition", "new", "reference"] },
-          level: { type: ["string", "null"] },
-          inScope: { type: "boolean" },
-        },
-        required: [
-          "name",
-          "areaSqFt",
-          "areaSource",
-          "dimensionText",
-          "ceilingHeightFt",
-          "sheet",
-          "phase",
-          "level",
-          "inScope",
-        ],
-      },
-    },
     scopeItems: {
       type: "array",
       items: {
@@ -289,6 +275,35 @@ export const PLAN_EXTRACTION_SCHEMA = {
     sheetsUsed: { type: "array", items: { type: "string" } },
     scopeNotes: { type: "array", items: { type: "string" } },
     warnings: { type: "array", items: { type: "string" } },
+    rooms: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          name: { type: "string" },
+          areaSqFt: { type: ["number", "null"] },
+          areaSource: { type: "string", enum: ["printed", "derived", "scaled", "inferred"] },
+          dimensionText: { type: ["string", "null"] },
+          ceilingHeightFt: { type: ["number", "null"] },
+          sheet: { type: ["string", "null"] },
+          phase: { type: "string", enum: ["existing", "demolition", "new", "reference"] },
+          level: { type: ["string", "null"] },
+          inScope: { type: "boolean" },
+        },
+        required: [
+          "name",
+          "areaSqFt",
+          "areaSource",
+          "dimensionText",
+          "ceilingHeightFt",
+          "sheet",
+          "phase",
+          "level",
+          "inScope",
+        ],
+      },
+    },
   },
   required: [
     "looksLikePlans",

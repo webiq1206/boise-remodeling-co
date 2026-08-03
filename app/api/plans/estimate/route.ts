@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { estimateProject, type QualityLevel } from "@/shared/costs";
+import {
+  estimateProject,
+  buildInternalEstimate,
+  RULES_BY_PROJECT,
+  type QualityLevel,
+} from "@/shared/costs";
+import { buildRemodelDisclosure } from "@/shared/estimate/remodelDisclosure";
 import {
   assessPlanQuality,
   asDrawnFloorArea,
@@ -233,6 +239,27 @@ export async function POST(request: NextRequest) {
     ? { quality: body.finishLevel as QualityLevel, ...planScopePatch(measurements, body.projectType) }
     : { quality: body.finishLevel as QualityLevel, sqft: body.statedTotalSqFt };
 
+  /**
+   * WHAT THIS ESTIMATE SAYS ABOUT ITSELF, BUILT BEFORE THE PRICE.
+   *
+   * Order matters. The disclosure decides the band: a project measured off
+   * drawings sits on the 15 percent floor, one whose drawings were unreadable
+   * or whose scope questions are unanswered widens from there. Pricing first
+   * and describing afterwards would mean the caveats could not affect the
+   * number they are caveating.
+   */
+  const internal = buildInternalEstimate(RULES_BY_PROJECT[project], selections, project);
+  const disclosure = buildRemodelDisclosure({
+    project,
+    selections,
+    estimate: internal,
+    measurements,
+    planQuality: quality,
+    notMeasured,
+    excludedScope: (body.scopeItems ?? []).filter((i) => !i.inContract),
+    documentsProvided: body.rooms.length > 0,
+  });
+
   const estimate = estimateProject(project, selections, [
     { label: "Project", value: PROJECT_LABELS[body.projectType] },
     { label: "Finish level", value: FINISH_LABELS[body.finishLevel] },
@@ -242,7 +269,7 @@ export async function POST(request: NextRequest) {
         ? `${Math.round(measurements.sqft).toLocaleString("en-US")} sq ft measured from your drawings`
         : `${body.statedTotalSqFt.toLocaleString("en-US")} sq ft`,
     },
-  ]);
+  ], 0, disclosure.bandPenalty);
 
   const contact: PlanContact = {
     name: body.name,
@@ -309,5 +336,22 @@ export async function POST(request: NextRequest) {
     notMeasured,
     propertyAddress: body.propertyAddress,
     emailed: delivery.customerEmailed,
+    /** Generated for this project; see remodelDisclosure.ts. */
+    disclosure: {
+      assumptions: disclosure.assumptions.map((a) => a.text),
+      included: disclosure.items.filter((i) => i.status === "included").map((i) => ({ label: i.label, detail: i.detail })),
+      excluded: disclosure.items.filter((i) => i.status === "excluded").map((i) => ({ label: i.label, detail: i.detail })),
+      optional: disclosure.items.filter((i) => i.status === "optional").map((i) => ({ label: i.label, detail: i.detail })),
+      allowances: disclosure.items.filter((i) => i.status === "allowance").map((i) => ({ label: i.label, detail: i.detail })),
+      needsAttention: disclosure.items
+        .filter((i) => i.status === "needs-onsite" || i.status === "needs-specialist" || i.status === "needs-review")
+        .map((i) => ({ label: i.label, detail: i.detail, status: i.status })),
+      warnings: disclosure.warnings.map((w) => w.text),
+      missing: disclosure.missing,
+      factors: disclosure.factors,
+      acknowledgments: disclosure.acknowledgments,
+      nextSteps: disclosure.nextSteps,
+      confidence: disclosure.confidence,
+    },
   });
 }
