@@ -68,7 +68,27 @@ interface EstimateResponse {
   notMeasured: string[];
   propertyAddress: string;
   emailed: boolean;
+  disclosure: {
+    assumptions: string[];
+    included: { label: string; detail: string }[];
+    excluded: { label: string; detail: string }[];
+    optional: { label: string; detail: string }[];
+    allowances: { label: string; detail: string }[];
+    needsAttention: { label: string; detail: string; status: string }[];
+    warnings: string[];
+    missing: { what: string; where: string; effect: string; remedy: string }[];
+    factors: string[];
+    acknowledgments: string[];
+    nextSteps: string[];
+    confidence: "high" | "medium" | "low";
+  };
 }
+
+const CONFIDENCE_COPY: Record<"high" | "medium" | "low", string> = {
+  high: "We measured this from your drawings and you answered the questions that move the price, so this is as tight as a planning range gets before someone walks the property.",
+  medium: "Some of what drives this price is still assumed. The range reflects that rather than pretending otherwise.",
+  low: "There is a lot we could not read or were not told, so this range is deliberately wide. Everything below says what would narrow it.",
+};
 
 const PROJECTS = [
   { value: "whole-home", label: "Whole home remodel" },
@@ -93,6 +113,37 @@ const STEP_LABELS: Record<Step, string> = {
   result: "Your range",
 };
 const STEP_ORDER: Step[] = ["upload", "measure", "contact", "result"];
+
+/** A titled block that renders nothing when its list is empty. */
+function Labelled({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-6">
+      <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">{title}</p>
+      <ul className="space-y-1.5">{children}</ul>
+    </div>
+  );
+}
+
+/**
+ * The empty case is the point.
+ *
+ * A section with nothing in it does not render at all, because the whole design
+ * is that a heading only appears when this estimate produced something to put
+ * under it. A "Warnings" heading followed by nothing would be exactly the
+ * boilerplate this replaced.
+ */
+function DisclosureList({ title, items }: { title: string; items: string[] }) {
+  if (items.length === 0) return null;
+  return (
+    <Labelled title={title}>
+      {items.map((t, i) => (
+        <li key={i} className="text-[13px] text-inverse-muted leading-relaxed">
+          {t}
+        </li>
+      ))}
+    </Labelled>
+  );
+}
 
 export function PlansWizard() {
   const [step, setStep] = useState<Step>("upload");
@@ -951,16 +1002,100 @@ export function PlansWizard() {
               </ul>
             </div>
 
-            <div className="mb-7">
-              <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">What this is</p>
-              <ul className="space-y-2">
-                {result.disclaimers.map((d, i) => (
-                  <li key={i} className="text-[13px] text-inverse-muted leading-relaxed">
-                    {d}
+            {/* ------------------------------------------------ the disclosure
+                EVERY SECTION BELOW IS GENERATED FROM THIS ESTIMATE. Nothing
+                renders unless the calculation produced it, so an empty list
+                means the thing genuinely does not apply rather than that we
+                forgot to write it. See shared/estimate/remodelDisclosure.ts. */}
+            <div className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">
+              <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
+                {CONFIDENCE_COPY[result.disclosure.confidence]}
+              </p>
+            </div>
+
+            <DisclosureList
+              title="What we assumed to price this"
+              items={result.disclosure.assumptions}
+            />
+
+            {result.disclosure.included.length > 0 && (
+              <Labelled title={`In this range (${result.disclosure.included.length})`}>
+                {result.disclosure.included.map((i, k) => (
+                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                    <span className="text-inverse-muted">{i.detail}</span>
                   </li>
                 ))}
-              </ul>
-            </div>
+              </Labelled>
+            )}
+
+            {result.disclosure.allowances.length > 0 && (
+              <Labelled title="Carried at an allowance">
+                {result.disclosure.allowances.map((i, k) => (
+                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                    <span className="text-inverse-muted">{i.detail}</span>
+                  </li>
+                ))}
+              </Labelled>
+            )}
+
+            {/* Not in the range, and the section a customer most needs to read. */}
+            {(result.disclosure.excluded.length > 0 || result.disclosure.optional.length > 0) && (
+              <Labelled title="Not in this range">
+                {[...result.disclosure.excluded, ...result.disclosure.optional].map((i, k) => (
+                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                    <span className="text-inverse-muted">{i.detail}</span>
+                  </li>
+                ))}
+              </Labelled>
+            )}
+
+            {result.disclosure.needsAttention.length > 0 && (
+              <Labelled title="Priced after someone has seen it">
+                {result.disclosure.needsAttention.map((i, k) => (
+                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                    <span className="text-inverse-muted">{i.detail}</span>
+                  </li>
+                ))}
+              </Labelled>
+            )}
+
+            {result.disclosure.missing.length > 0 && (
+              <Labelled title="What we could not confirm">
+                {result.disclosure.missing.map((m, k) => (
+                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                    <span className="text-inverse-foreground">{m.what}</span>{" "}
+                    <span className="text-inverse-muted">
+                      ({m.where}). {m.effect} {m.remedy}
+                    </span>
+                  </li>
+                ))}
+              </Labelled>
+            )}
+
+            <DisclosureList title="Worth knowing before you start" items={result.disclosure.warnings} />
+            <DisclosureList title="What will move the final number" items={result.disclosure.factors} />
+            <DisclosureList title="What happens next" items={result.disclosure.nextSteps} />
+
+            {/* THE ACKNOWLEDGMENT. Only the lines that apply to this estimate,
+                so it is short enough to actually be read. */}
+            {result.disclosure.acknowledgments.length > 0 && (
+              <div className="mb-7 rounded-sm border border-inverse-foreground/20 p-4">
+                <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">
+                  Before you use this number
+                </p>
+                <ul className="space-y-1.5">
+                  {result.disclosure.acknowledgments.map((a, k) => (
+                    <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
               {result.emailed
