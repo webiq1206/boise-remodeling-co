@@ -25,11 +25,13 @@ const NAV_LINKS = [
 function Logo() {
   return (
     <Link href="/" className="flex items-center" aria-label="Boise Remodeling Co - home">
-      {/* Reverse (white) wordmark for the dark ground */}
+      {/* Bone wordmark with the sage Co., which is the dark-ground lockup the
+          brand kit specifies. width/height match the 1617.52 x 159.96 viewBox
+          so the browser reserves the right box and the header does not shift. */}
       <img
-        src="/brand/logos/boise-remodeling-co-wordmark-reverse.svg"
+        src="/brand/svg/wordmark/dark/boise-remodeling-co-wordmark-bone-accent.svg"
         alt="Boise Remodeling Co"
-        width={216}
+        width={263}
         height={26}
         className="h-[26px] w-auto"
       />

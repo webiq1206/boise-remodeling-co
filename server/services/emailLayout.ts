@@ -57,7 +57,7 @@ export function htmlToPlainText(html: string): string {
  */
 export function buildLogoImage(width = 210): string {
   return `
-    <img src="${SITE_BASE_URL}/brand/logos/boise-remodeling-co-wordmark-reverse-1660w.png"
+    <img src="${SITE_BASE_URL}/brand/png/wordmark/dark/boise-remodeling-co-wordmark-bone-accent-1200w.png"
       alt="${escapeHtml(SITE_CONFIG.name)}" width="${width}"
       style="display:block;margin:0 auto;width:${width}px;max-width:72%;height:auto;border:0;outline:none;text-decoration:none;" />
   `;

@@ -264,7 +264,7 @@ export default function AboutPage() {
           <div className="container px-4 max-w-5xl">
             {/* Stacked emblem - bright badge on the dark band */}
             <img
-              src="/brand/icons/boise-remodeling-co-emblem-light.svg"
+              src="/brand/svg/icon/boise-remodeling-co-icon-bone.svg"
               alt="Boise Remodeling Co emblem"
               width={72}
               height={72}

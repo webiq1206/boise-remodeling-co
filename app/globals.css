@@ -105,18 +105,24 @@ html, body {
   --muted-foreground: 105 4% 61%;     /* mist #9AA098 */
   --faint: 129 3% 45%;                /* #6E756F */
 
-  /* Small accents use the brand-system slate-sage #5D6561 (dots, marks, pills,
-     tints, icons). Text on a sage fill uses bone. Accent WORDS render bone via
-     .brc-accent; links + focus rings keep the lifted sage --accent-legible. */
-  --accent: 150 4% 38%;               /* #5D6561 */
-  --accent-foreground: 30 20% 96%;    /* bone text on a sage fill */
+  /* THE BRAND ACCENT, AND IT IS THE ONLY ONE. The kit is explicit: never
+     recolor outside charcoal, bone and #9AA098. Two near-sages used to do this
+     job - #5D6561 for fills and a lifted #899F95 for anything that had to stay
+     legible - and both are now the single brand value.
 
-  --brass: 150 4% 38%;
-  --brass-foreground: 30 20% 96%;
+     THE FOREGROUND HAD TO FLIP FROM BONE TO CHARCOAL. The old fill was dark
+     enough to carry bone text; #9AA098 is not. Bone on sage measures 2.46:1,
+     which fails, and the kit says so itself. Charcoal on sage is 6.21:1. */
+  --accent: 105 4% 61%;               /* #9AA098 sage */
+  --accent-foreground: 150 6% 11%;    /* charcoal text on a sage fill, 6.21:1 */
 
-  /* Lifted sage for anything that must stay legible on the dark ground:
-     text links (hover) and focus rings. AA on #1C1F1E (5.9:1). */
-  --accent-legible: 152 10% 58%;      /* #899F95 */
+  --brass: 105 4% 61%;
+  --brass-foreground: 150 6% 11%;
+
+  /* Same value. Kept as a separate token because a great deal of markup asks
+     for "the accent that stays legible on the dark ground" by name, and
+     #9AA098 on #1C1F1E is 6.21:1, comfortably AA. */
+  --accent-legible: 105 4% 61%;       /* #9AA098 */
 
   /* Danger - muted terracotta #C77B6B */
   --destructive: 10 45% 60%;

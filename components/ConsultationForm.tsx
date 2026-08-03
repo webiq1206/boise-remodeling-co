@@ -286,7 +286,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
       <div className="flex flex-col items-start py-2 space-y-4" data-testid="consultation-success">
         {/* Stacked emblem confirms the brand on the request-received state */}
         <img
-          src="/brand/icons/boise-remodeling-co-emblem-light.svg"
+          src="/brand/svg/icon/boise-remodeling-co-icon-bone.svg"
           alt="Boise Remodeling Co emblem"
           width={48}
           height={48}
