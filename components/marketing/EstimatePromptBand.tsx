@@ -8,7 +8,7 @@ interface EstimatePromptBandProps {
   eyebrow?: string;
   title: React.ReactNode;
   description: string;
-  variant?: "greige" | "tint" | "canvas";
+  variant?: "greige" | "canvas";
   /** Optional bullet trust points shown beside the CTA on md+. */
   bullets?: string[];
 }
