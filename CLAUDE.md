@@ -57,14 +57,39 @@ Uploads live in Postgres (`stored_files`), because the container filesystem is
 ephemeral and documents were 404ing after each deploy. The RE-10 is also
 attached to the internal email so a lead survives regardless.
 
-## Plans feature - HALF BUILT, this is the open work
+## Plans feature - WIRED TO PRICING, no UI yet
 
 Goal: upload remodel/new-build drawings, price more accurately, tighter number.
 
-Built and deployed (`8d5a8a1`, `65400e3`): `shared/plans/extraction.ts`,
-`server/services/planExtract.ts`, `POST /api/plans/analyze`.
-**No UI, not wired to pricing** - deliberate, so extraction could be measured
-before any price depended on it.
+Built: `shared/plans/extraction.ts`, `server/services/planExtract.ts`,
+`shared/plans/estimateInput.ts`, `POST /api/plans/analyze`. **No UI yet.**
+
+### What a plan set actually buys: a truer centre, NOT a narrower band
+
+`planMeasurements()` returns null unless `assessPlanQuality().canTightenPrice`,
+and null means the estimator runs exactly as it does with no plans. What crosses
+when it does pass is floor area, ceiling height and bathroom count - all
+existing `ScopeSelections` fields, so **the cost engine was not modified at
+all.** Verified against the real reads: Squier plus a customer-supplied total
+gives 1,714 SF over 9 rooms and prices $120,000 to $165,000.
+
+**Do not narrow the band because a plan set arrived.** The 15% half-band comes
+from five back-tested jobs at 0.96, 1.25, 1.00, 1.01 and 0.99 of the engine, and
+every one of those had a KNOWN floor area. That spread is estimator variance,
+not input error, so better drawings do nothing to reduce it. `verify:plans`
+fails if the band moves.
+
+**`Dimensions.perimeter` means two incompatible things and plans must not touch
+it.** Trim and backsplash want interior finished length (sum room by room);
+footings and gutters want the building envelope (do not). On Squier those read
+169 ft and 490 ft, so substituting the measured figure would price 2.9x the
+footings an addition needs. Splitting them into separate fields is the next real
+win, and the plans data is already good enough to feed it.
+
+Two traps the verifier locks down: a water closet is not a bathroom (Squier tags
+Bath 1, Guest Bath and W.C. 1 on one floor - that is two bathrooms), and on a
+`bathroom` project the takeoff MULTIPLIES by `bathroomCount`, so the area must be
+divided per bathroom or two baths price as four.
 
 **Test it by POSTing plan sets straight at the endpoint** (four real ones are in
 `C:\Users\brost\Downloads`, "Plan Set - *" and "Permit Plans - *"). The API key
@@ -151,10 +176,13 @@ surface as the generic "We could not read those drawings"; it now maps to
 1. **Redeploy.** Production is running pre-`65400e3` and has no coverage gate,
    so it answers `canTightenPrice: true` on Gambardella today. Nothing is wired
    to pricing yet, so no customer is affected, but the endpoint is live.
-2. Wire to the estimator, then build the uploader (the RE-10 wizard is the
-   working template). The uploader MUST ask for the total conditioned square
-   footage, because that is the cross-check and it is the one thing standing
-   between the best read in the corpus and a tightened price.
+2. Build the uploader (the RE-10 wizard is the working template). It MUST ask
+   for the total conditioned square footage, because that is the cross-check and
+   it is the one thing standing between the best read in the corpus and a
+   tightened price. `/api/plans/analyze` already returns a `measurements` block
+   for it to show and have the customer confirm.
+3. Split `Dimensions.perimeter` into interior and envelope, then let plans feed
+   the interior one (see above).
 
 **Rendering a sheet to look at it yourself** needs `pdf-to-img` (pdfjs plus a
 prebuilt canvas, no system dependencies); there is no `pdftoppm`, Ghostscript or

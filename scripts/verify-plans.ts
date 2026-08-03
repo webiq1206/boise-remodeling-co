@@ -26,6 +26,8 @@ import {
   type PlanExtractionResult,
   type PlanRoom,
 } from "../shared/plans/extraction";
+import { planMeasurements, planScopePatch } from "../shared/plans/estimateInput";
+import { estimateProject } from "../shared/costs";
 
 let problems = 0;
 const fail = (m: string) => {
@@ -299,6 +301,145 @@ if (MIN_TRUSTED_AREA_SHARE <= 0 || MIN_TRUSTED_AREA_SHARE > 1) fail("MIN_TRUSTED
 if (AREA_AGREEMENT_TOLERANCE <= 0 || AREA_AGREEMENT_TOLERANCE >= 0.25) {
   fail("AREA_AGREEMENT_TOLERANCE must stay a tight cross-check, not a formality");
 }
+
+/* ================================================================ estimator
+   What actually crosses from the drawings into a price, and what must not. */
+
+console.log("\nESTIMATOR WIRING\n");
+
+/** The Squier read, once the customer has supplied the total. Gates pass. */
+const EARNED = plans({
+  statedTotalSqFt: 1800,
+  roomAreaTotalSqFt: 1714,
+  rooms: [
+    { ...room("Entry", 230, "printed"), ceilingHeightFt: 12 },
+    { ...room("Kitchen", 303, "printed"), ceilingHeightFt: 12 },
+    room("Breakfast Room", 207, "printed"),
+    room("Living Room", 277, "printed"),
+    room("Mudroom", 107, "printed"),
+    room("Bedroom 1", 306, "printed"),
+    room("Closet 1", 122, "printed"),
+    room("Bath 1", 117, "printed"),
+    room("Guest Bath", 45, "printed"),
+    room("W.C. 1", null, "printed"),
+  ],
+});
+
+const earned = planMeasurements(EARNED);
+if (!earned) {
+  fail("the earned Squier read produced no measurements at all");
+} else {
+  console.log(`  sqft=${earned.sqft} ceiling=${earned.ceilingHeight?.toFixed(2)} baths=${earned.bathroomCount} project=${earned.suggestedProject}`);
+
+  if (earned.sqft !== 1714) fail(`measured area should be the 1714 SF of printed rooms, got ${earned.sqft}`);
+  if (earned.measuredRooms !== 9) fail(`nine rooms carry a printed area, got ${earned.measuredRooms}`);
+
+  /* THE W.C. TRAP. Squier tags Bath 1, Guest Bath and W.C. 1 on one floor. That
+     is two bathrooms and a water closet inside the primary suite. Counting the
+     W.C. would add 50 percent to a bathroom takeoff. */
+  if (earned.bathroomCount !== 2) {
+    fail(`Bath 1 and Guest Bath are two bathrooms; the W.C. is not a third. Got ${earned.bathroomCount}`);
+  }
+
+  /* Area-weighted, not a plain mean: 12 ft over 533 SF of entry and kitchen,
+     nothing stated elsewhere, so the weighted answer is exactly 12. */
+  if (earned.ceilingHeight === null || Math.abs(earned.ceilingHeight - 12) > 1e-9) {
+    fail(`ceiling height should weight to 12.0 from the rooms that state one, got ${earned.ceilingHeight}`);
+  }
+
+  /* The unmeasured room has to be named rather than quietly dropped. */
+  if (!earned.notes.some((n) => n.includes("W.C. 1"))) {
+    fail("the room with no printed area was dropped without being named in the notes");
+  }
+
+  /* A whole first floor of kitchen, bedrooms and baths is not a bathroom job. */
+  if (earned.suggestedProject !== "whole-home") {
+    fail(`a mixed floor of rooms should suggest whole-home, got ${earned.suggestedProject}`);
+  }
+}
+
+/* NOTHING CROSSES FROM A READ THAT DID NOT EARN IT. Each of these passes some
+   gates and fails at least one, and every one of them must produce null - not a
+   smaller number, not a lower confidence, nothing at all. */
+for (const c of CASES.filter((c) => !c.canTighten)) {
+  if (planMeasurements(c.input) !== null) {
+    fail(`"${c.name}" is blocked, but still handed measurements to the estimator`);
+  }
+}
+console.log(`  ok   ${CASES.filter((c) => !c.canTighten).length} blocked reads all yield null, so the estimator is untouched`);
+
+/* THE BATHROOM MULTIPLICATION. buildInternalEstimate multiplies the whole
+   takeoff by bathroomCount, and the size question describes ONE bathroom. Handing
+   it the summed area of two baths AND a count of two prices four. */
+const bathOnly = plans({
+  statedTotalSqFt: 170,
+  roomAreaTotalSqFt: 162,
+  rooms: [room("Bath 1", 117, "printed"), room("Guest Bath", 45, "printed")],
+});
+const bm = planMeasurements(bathOnly);
+if (!bm) {
+  fail("the bathroom-only read should have earned measurements");
+} else {
+  if (bm.suggestedProject !== "bathroom") fail(`two baths alone should suggest bathroom, got ${bm.suggestedProject}`);
+  const patch = planScopePatch(bm, "bathroom");
+  if (Math.abs(patch.sqft - 81) > 1e-9) {
+    fail(`bathroom sqft must be per-bathroom (162/2 = 81), got ${patch.sqft}. The takeoff multiplies by the count.`);
+  }
+  if (patch.bathroomCount !== 2) fail(`bathroom count should reach the estimator, got ${patch.bathroomCount}`);
+  // The same measurements on a whole-home job must NOT be divided.
+  const whole = planScopePatch(bm, "whole-home");
+  if (Math.abs(whole.sqft - 162) > 1e-9) fail(`whole-home sqft must be the full area, got ${whole.sqft}`);
+  console.log(`  ok   bathroom patch is ${patch.sqft} SF x ${patch.bathroomCount}, whole-home patch is ${whole.sqft} SF`);
+}
+
+/* A NEW BUILD HAS NO ESTIMATOR PROJECT TYPE, so it must not be quietly priced
+   as a whole-home remodel - that would omit the entire shell. */
+const newBuild = plans({
+  projectType: "new-build",
+  statedTotalSqFt: 2000,
+  roomAreaTotalSqFt: 1950,
+  rooms: [
+    room("Great Room", 600, "printed"),
+    room("Kitchen", 350, "printed"),
+    room("Primary Bed", 400, "printed"),
+    room("Bed 2", 300, "printed"),
+    room("Bath 1", 300, "printed"),
+  ],
+});
+const nb = planMeasurements(newBuild);
+if (nb && nb.suggestedProject !== null) {
+  fail(`a new build must not suggest a remodel project type, got ${nb.suggestedProject}`);
+}
+console.log("  ok   a new build suggests no project type rather than pricing as a remodel");
+
+/* ------------------------------------------------------------- end to end
+   The point of all of it: the same job, priced with and without the drawings.
+   If this stops moving, the wiring has come loose and every case above would
+   still pass. */
+const rows = [{ label: "Project", value: "Whole home" }];
+const guessed = estimateProject("whole-home", { quality: "mid-range", sqft: 1200 }, rows);
+const measured = estimateProject(
+  "whole-home",
+  { quality: "mid-range", ...planScopePatch(earned!, "whole-home") },
+  rows,
+);
+
+const usd = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
+console.log(`\n  homeowner guessed 1,200 SF : ${guessed.lead.range}`);
+console.log(`  measured from the drawings : ${measured.lead.range}  (${earned!.sqft} SF, ${earned!.ceilingHeight} ft ceilings)`);
+
+if (measured.range.centre <= guessed.range.centre) {
+  fail("a larger measured area produced no larger price; the measurements are not reaching the takeoff");
+}
+/* The band must NOT have narrowed. See the note in estimateInput.ts: the
+   back-tested spread is estimator variance, not input error, so a good drawing
+   buys a truer centre and nothing else. */
+if (Math.abs(measured.range.band - guessed.range.band) > 1e-9) {
+  fail(
+    `the quoted band moved from ${guessed.range.band} to ${measured.range.band}. A plan set earns a truer centre, not a narrower range.`,
+  );
+}
+console.log(`  ok   band unchanged at ${measured.range.band}, centre moved ${usd(guessed.range.centre)} -> ${usd(measured.range.centre)}`);
 
 console.log(
   problems === 0

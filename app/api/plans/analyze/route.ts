@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractPlans, isPlanExtractionConfigured, type PlanInput } from "@/server/services/planExtract";
 import { assessPlanQuality } from "@/shared/plans/extraction";
+import { planMeasurements } from "@/shared/plans/estimateInput";
 import {
   classifyUpload,
   resolveMimeType,
@@ -138,6 +139,17 @@ export async function POST(request: NextRequest) {
     ...result,
     /** Diagnostics, shown to the customer as plainly as they are computed. */
     quality: assessPlanQuality(result),
+    /**
+     * What the estimator may use, or null when the read did not earn it.
+     *
+     * STILL NO PRICE HERE. These are the measurements only, so the customer can
+     * confirm or correct them before anything is priced on them - the same read
+     * first, price after split the RE-10 flow uses, and it matters more here
+     * because these numbers ARE the estimate. Nothing customer-facing in this
+     * block can carry a cost or a margin; it is floor area, ceiling height and
+     * room counts.
+     */
+    measurements: planMeasurements(result),
     usage: outcome.usage,
   });
 }
