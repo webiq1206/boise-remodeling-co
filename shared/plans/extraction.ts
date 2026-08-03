@@ -209,6 +209,19 @@ export const PLAN_EXTRACTION_SCHEMA = {
     statedTotalSqFt: { type: ["number", "null"] },
     roomAreaTotalSqFt: { type: ["number", "null"] },
     scopeItems: {
+      /**
+       * THE DESCRIPTION LIVES HERE, NOT ONLY IN THE SYSTEM PROMPT.
+       *
+       * On the 42-sheet permit set this came back empty twice, while the seven
+       * bounded booleans beside it were answered every time - and it was not
+       * starvation, because by then it was the fifth field generated with three
+       * times the output budget. An unbounded "list every piece of work across
+       * forty-two sheets" is a task a model will decline rather than half-do.
+       * A target and a priority order turn it into something finishable, and
+       * the schema is where that instruction is actually read.
+       */
+      description:
+        "Every piece of work the drawings call for that is not a room area. Aim for 15 to 40 entries on a full permit set and at least 5 on any set showing construction; list the highest-cost work first (structural, envelope, demolition, mechanical) and stop when the remaining items are trivial. An empty array means the drawings show no work at all, which is almost never true.",
       type: "array",
       items: {
         type: "object",
@@ -361,6 +374,8 @@ SCOPE ITEMS - CAPTURE THE WHOLE JOB, NOT JUST THE FLOOR AREA. A price built from
 - site: driveways, patios, retaining walls, grading, drainage
 
 Quote or closely paraphrase what the sheet says. Do not invent work that is not drawn or noted.
+
+HOW MANY. Aim for 15 to 40 items on a full permit set, and at least 5 on any set that shows construction at all. Work the highest-cost trades first - structural, envelope, demolition, mechanical - and stop once what is left is trivial. You are not required to be exhaustive across every sheet; you ARE required not to return an empty list on a set that plainly shows work, because downstream that reads as a project with nothing in it.
 
 SCOPE ITEMS AND SCOPE NOTES ARE NOT THE SAME FIELD, AND THIS IS THE ONE MISTAKE THAT KEEPS HAPPENING. Every piece of WORK goes in scopeItems, one entry each, structured. scopeNotes is only for context about the drawing set itself: the project name, the architect, which sheets are present, drafting conventions, what a legend means. A sentence in scopeNotes such as "the legend indicates new floor joists, new headers and beams, new partition walls and existing construction to be demolished" is FIVE scope items that have been written in the wrong place, and downstream nothing can price them. If you can point at work on a sheet, it belongs in scopeItems. If scopeItems comes back empty on a set that clearly shows construction, that is an error, not an empty project.
 
