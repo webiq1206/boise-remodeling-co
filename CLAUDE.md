@@ -20,10 +20,11 @@ each one caught something real:
 | `verify:estimate` | the main estimator engine |
 | `verify:re10` | 44 repair kinds, incl. market price bands |
 | `verify:re10-delivery` | disclosure wall, funnel events, upload contract |
+| `verify:plans` | the gates that let a plan set tighten a price |
 | `verify:no-em-dash` | house style, blocks the build |
 | `check:re10-extraction` | live API call, NOT in prebuild (costs money) |
 
-**tsc baseline is 23 pre-existing errors.** Not zero. Compare against 23; do
+**tsc baseline is 22 pre-existing errors.** Not zero. Compare against 22; do
 not "fix" the others as a side quest.
 
 **Never run `db:push` against the live database.** Add the schema, then tell
@@ -66,25 +67,59 @@ Built and deployed (`8d5a8a1`, `65400e3`): `shared/plans/extraction.ts`,
 before any price depended on it.
 
 **Test it by POSTing plan sets straight at the endpoint** (four real ones are in
-`C:\Users\brost\Downloads`, "Plan Set - *" and "Permit Plans - *").
+`C:\Users\brost\Downloads`, "Plan Set - *" and "Permit Plans - *"). The API key
+is production-only, so this means POSTing at
+`https://boiseremodeling.co/api/plans/analyze`, which runs the DEPLOYED build,
+not your working tree. Re-gate saved responses locally with
+`assessPlanQuality()` before trusting the `quality` block that comes back.
 
-### What the first two runs showed
+### What all four runs showed
 
-Both new-build sets: the ONLY printed area on the drawings was the garage.
-Sixteen rooms came back null/inferred - the model correctly refused to invent
-them. Both correctly refused to tighten.
+| Set | Result |
+|---|---|
+| 2 new builds | Only printed area on the sheets was the garage. 16 rooms null. |
+| Gambardella, 42-sheet permit | 33 rooms, 11 "printed", coverage 0.33. Blocked. |
+| Squier, 18-sheet schematic remodel | 28 rooms, nearly all printed, coverage 0.90. Blocked only for want of a stated total. |
 
-**The likely reshape:** residential plans dimension walls and state a total;
-they rarely tag every room with a square footage. Room-by-room area extraction
-may be asking for data that is not on the page. What IS reliably there: total
-conditioned SF, garage SF, room names and counts, and door/window/fixture
-counts from schedules. Settle this before building the uploader.
+**The reshape hypothesis was WRONG. Do not act on it.** Residential plans do
+not uniformly skip room areas: the Squier remodel tags EVERY room on every
+floor plan ("Grand Living Room 538 SF", "Kitchen 303 SF"), and where a tag was
+illegible the model returned null instead of guessing. Whether rooms carry
+areas is a property of the drafting office, not of residential plans. Ripping
+out room-level extraction would have thrown away the best data in the corpus.
+
+**What actually blocks good reads is the cross-check, not the measurements.**
+Squier scored coverage 0.90 and trusted share 1.00 and was still blocked,
+because no sheet in eighteen states a total conditioned area, and `agree ===
+null` is a blocker by design. That gate is correct as written (no total means no
+way to catch a misread) but it is now the binding constraint on the best read we
+have. **The open question is whether a second independent cross-check can be
+earned from something else printed on the sheet** - the model spontaneously
+reported overall footprint dimensions ("74'-7\" overall, 51'-6\", 27'-8\"...").
+Settle that before the uploader, and validate it on Squier.
+
+**The trusted-share-of-nothing failure has now appeared three times**, each in a
+new disguise. On Gambardella the eleven "printed rooms" were not rooms at all,
+they were the cover sheet's area tabulation ("MAIN LEVEL: 1,370 SF"), and
+`roomAreaTotalSqFt` was summed from a subset of those same lines - so
+`areasAgree: true` compared the stated total against itself. Coverage was the
+only gate that held. Expect this shape again.
+
+**The size ceiling is not measured in bytes and cannot be.** 13.2MB / 27 sheets
+of scanned Gambardella went through; 4.7MB / 5 sheets of vector Squier was
+rejected outright, though each of those five read fine alone. What the API
+carries is the RASTERISED sheet, and a 36x24 drawing with text outlined to
+curves is far heavier than a scan of the same size. `MAX_TOTAL_UPLOAD_BYTES`
+(24MB) never fires for the sets that actually fail. That rejection used to
+surface as the generic "We could not read those drawings"; it now maps to
+`too-large` and the "send the floor plans and schedules" advice.
 
 ### Still to do
 
-1. Run the two remaining sets (Squier 19.5MB remodel, Gambardella 42-sheet
-   permit set - tests in-scope detection and the size ceiling)
-2. Reshape extraction around numbers that are actually printed
+1. **Redeploy.** Production is running pre-`65400e3` and has no coverage gate,
+   so it answers `canTightenPrice: true` on Gambardella today. Nothing is wired
+   to pricing yet, so no customer is affected, but the endpoint is live.
+2. Settle the second cross-check (above), then reshape extraction around it
 3. Wire to the estimator, then build the uploader (the RE-10 wizard is the
    working template)
 

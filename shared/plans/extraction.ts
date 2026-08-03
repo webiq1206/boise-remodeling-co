@@ -221,3 +221,77 @@ export function measuredRoomCoverage(result: PlanExtractionResult): number {
 
 /** Below this, too much of the floor plan is guesswork to tighten anything. */
 export const MIN_ROOM_COVERAGE = 0.6;
+
+/** Below this, most of what we have is estimate rather than measurement. */
+export const MIN_TRUSTED_AREA_SHARE = 0.6;
+
+export interface PlanQuality {
+  areasAgree: boolean | null;
+  trustedAreaShare: number;
+  measuredRoomCoverage: number;
+  /** Only ever true when nothing below objected. */
+  canTightenPrice: boolean;
+  blockers: string[];
+}
+
+/**
+ * May this read tighten the price, and if not, why not?
+ *
+ * LIVES HERE RATHER THAN IN THE ROUTE SO IT CAN BE TESTED. These five gates are
+ * the entire safety argument for the feature, and while they sat inline in the
+ * request handler the only way to exercise them was to upload a file and spend
+ * two minutes and real money finding out. `verify:plans` now runs them against
+ * the shapes four real plan sets actually produced.
+ *
+ * All must hold. Any one failing drops back to pricing as though no plans
+ * arrived, because a tightened range is a promise about accuracy and each of
+ * these is a way that promise breaks silently rather than loudly.
+ */
+export function assessPlanQuality(result: PlanExtractionResult): PlanQuality {
+  const agree = areasAgree(result);
+  const trusted = trustedAreaShare(result);
+  const coverage = measuredRoomCoverage(result);
+  const blockers: string[] = [];
+
+  if (!result.looksLikePlans) blockers.push("These do not read as construction drawings.");
+
+  if (agree === false) {
+    blockers.push(
+      "The room areas do not add up to the total floor area stated on the drawings, so something was misread.",
+    );
+  }
+
+  if (trusted < MIN_TRUSTED_AREA_SHARE) {
+    blockers.push(
+      "Too few of the rooms carry a printed dimension, so most of the areas are estimates rather than measurements.",
+    );
+  }
+
+  // COVERAGE, WHICH IS NOT THE SAME AS SHARE. A read that measured one printed
+  // garage and left sixteen rooms blank scores a perfect trusted SHARE, because
+  // a share only divides among the rooms it managed to measure. Seen on a real
+  // plan set, where every other gate passed - and then seen again on a permit
+  // set, where the eleven "measured rooms" turned out to be the cover sheet's
+  // area tabulation and all thirty-three actual rooms were blank.
+  if (coverage < MIN_ROOM_COVERAGE) {
+    blockers.push(
+      `We could only measure ${Math.round(coverage * 100)}% of the rooms from these drawings, so most of the floor plan would still be an estimate.`,
+    );
+  }
+
+  // No total on the sheets means no way to catch a misread, and "we could not
+  // check" must not read the same as "we checked and it was fine".
+  if (agree === null) {
+    blockers.push(
+      "The drawings do not state a total floor area, so there is nothing to check the room measurements against.",
+    );
+  }
+
+  return {
+    areasAgree: agree,
+    trustedAreaShare: Number(trusted.toFixed(3)),
+    measuredRoomCoverage: Number(coverage.toFixed(3)),
+    canTightenPrice: blockers.length === 0,
+    blockers,
+  };
+}

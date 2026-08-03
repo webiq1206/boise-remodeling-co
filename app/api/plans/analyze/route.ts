@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractPlans, isPlanExtractionConfigured, type PlanInput } from "@/server/services/planExtract";
-import {
-  areasAgree,
-  trustedAreaShare,
-  measuredRoomCoverage,
-  MIN_ROOM_COVERAGE,
-} from "@/shared/plans/extraction";
+import { assessPlanQuality } from "@/shared/plans/extraction";
 import {
   classifyUpload,
   resolveMimeType,
@@ -135,46 +130,6 @@ export async function POST(request: NextRequest) {
   }
 
   const result = outcome.result;
-  const agree = areasAgree(result);
-  const trusted = trustedAreaShare(result);
-  const coverage = measuredRoomCoverage(result);
-
-  /**
-   * How far this read is allowed to tighten the price.
-   *
-   * Three gates, all of which must hold. Any one failing drops us back to
-   * treating the project as if no plans arrived, because a tightened range is
-   * a promise about accuracy and each of these is a way that promise breaks
-   * silently rather than loudly.
-   */
-  const blockers: string[] = [];
-  if (!result.looksLikePlans) blockers.push("These do not read as construction drawings.");
-  if (agree === false) {
-    blockers.push(
-      "The room areas do not add up to the total floor area stated on the drawings, so something was misread.",
-    );
-  }
-  if (trusted < 0.6) {
-    blockers.push(
-      "Too few of the rooms carry a printed dimension, so most of the areas are estimates rather than measurements.",
-    );
-  }
-  // COVERAGE, WHICH IS NOT THE SAME AS SHARE. A read that measured one printed
-  // garage and left sixteen rooms blank scores a perfect trusted SHARE, because
-  // a share only divides among the rooms it managed to measure. Seen on a real
-  // plan set, where every other gate passed.
-  if (coverage < MIN_ROOM_COVERAGE) {
-    blockers.push(
-      `We could only measure ${Math.round(coverage * 100)}% of the rooms from these drawings, so most of the floor plan would still be an estimate.`,
-    );
-  }
-  // No total on the sheets means no way to catch a misread, and "we could not
-  // check" must not read the same as "we checked and it was fine".
-  if (agree === null) {
-    blockers.push(
-      "The drawings do not state a total floor area, so there is nothing to check the room measurements against.",
-    );
-  }
 
   return NextResponse.json({
     batch,
@@ -182,14 +137,7 @@ export async function POST(request: NextRequest) {
     attachedOnly,
     ...result,
     /** Diagnostics, shown to the customer as plainly as they are computed. */
-    quality: {
-      areasAgree: agree,
-      trustedAreaShare: Number(trusted.toFixed(3)),
-      measuredRoomCoverage: Number(coverage.toFixed(3)),
-      // Only ever true when nothing above objected.
-      canTightenPrice: blockers.length === 0,
-      blockers,
-    },
+    quality: assessPlanQuality(result),
     usage: outcome.usage,
   });
 }

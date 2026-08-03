@@ -23,7 +23,7 @@
     "images:placeholders": "node scripts/generate-placeholder-images.mjs",
     "images:marketing": "node scripts/generate-marketing-images.mjs",
     "images:optimize": "node scripts/optimize-marketing-images-sharp.mjs",
-    "prebuild": "npm run verify:no-em-dash && npm run verify:estimate && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run resources:generate && npm run verify:content && npm run verify:images",
+    "prebuild": "npm run verify:no-em-dash && npm run verify:estimate && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run resources:generate && npm run verify:content && npm run verify:images",
     "backlink:score": "node backlink-engine/src/score.mjs",
     "backlink:run": "node backlink-engine/src/run.mjs",
     "backlink:preflight": "node backlink-engine/src/preflight.mjs",
@@ -34,6 +34,7 @@
     "verify:no-appliance-costs": "tsx scripts/verify-no-appliance-costs.ts",
     "verify:re10": "tsx scripts/verify-re10-estimator.ts",
     "verify:re10-delivery": "tsx scripts/verify-re10-delivery.ts",
+    "verify:plans": "tsx scripts/verify-plans.ts",
     "check:re10-extraction": "tsx --env-file-if-exists=.env.local scripts/check-re10-extraction.ts"
   },
   "dependencies": {

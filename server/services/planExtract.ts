@@ -144,7 +144,41 @@ export async function extractPlans(files: PlanInput[]): Promise<PlanExtractionOu
     if (err instanceof Anthropic.APIConnectionError) {
       return { ok: false, reason: "busy", message: "We could not reach the analysis service. Try again shortly." };
     }
-    console.error("[planExtract] failed:", err);
+
+    /**
+     * THE CEILING THAT ACTUALLY BINDS IS NOT THE ONE WE MEASURE.
+     *
+     * Found by running four real sets: a 13.2MB, 27-sheet scanned permit set
+     * went through, while a 4.7MB, 5-sheet stretch of a vector CAD remodel set
+     * was rejected outright - and every one of those five sheets was read fine
+     * on its own. Bytes on disk are a bad proxy, because what the API has to
+     * carry is the RASTERISED sheet: a 36x24 inch drawing whose text has been
+     * outlined to curves is enormously heavier than a scan of the same size.
+     * So MAX_TOTAL_UPLOAD_BYTES cannot be retuned into correctness - a limit
+     * in the wrong unit is wrong at every value.
+     *
+     * What can be fixed is the report. This landed in the generic catch below
+     * and came back as "We could not read those drawings", which reads as "your
+     * plans are bad" and leaves someone with nothing to do. It is the case the
+     * "send the floor plans and schedules" advice was written for, so send them
+     * there - and log enough to recognise the next one.
+     */
+    if (err instanceof Anthropic.APIError && (err.status === 413 || err.status === 400)) {
+      console.error(
+        `[planExtract] API rejected ${usable.length} file(s), ${(total / 1048576).toFixed(1)}MB: ${err.status} ${err.message}`,
+      );
+      return {
+        ok: false,
+        reason: "too-large",
+        message:
+          "There was more in those drawings than we could read at once. Send the floor plans, the demolition plan and any schedules - those are the sheets we price from - rather than the full set.",
+      };
+    }
+
+    console.error(
+      `[planExtract] failed on ${usable.length} file(s), ${(total / 1048576).toFixed(1)}MB:`,
+      err,
+    );
     return { ok: false, reason: "failed", message: "We could not read those drawings." };
   }
 }
