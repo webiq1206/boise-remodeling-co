@@ -11,6 +11,7 @@ import {
 import { EXTRACTABLE_KINDS, EXTRACTION_REVIEW_REASONS } from "@/shared/re10/extraction";
 import { isStoredDocumentUrl } from "@/shared/re10/uploads";
 import { deliverRe10Lead } from "@/server/services/re10Lead";
+import { buildRe10Disclosure } from "@/shared/estimate/re10Disclosure";
 import type { Re10Contact } from "@/server/services/re10Email";
 
 /**
@@ -193,6 +194,28 @@ export async function POST(request: NextRequest) {
     assumptions: estimate.assumptions,
   };
 
+  /**
+   * What this specific read is allowed to say about itself.
+   *
+   * REFINED IN PLACE RATHER THAN REPLACING THE ENGINE. `estimateRe10` already
+   * writes assumptions derived from the priced result, and they were written
+   * carefully - one of them carries a note explaining why it does NOT say "one
+   * mobilization per trade". Those are folded in as evidenced assumptions
+   * rather than regenerated, so there is one source of truth per claim. What
+   * the disclosure adds is everything the engine had no way to know: which
+   * requests could not be mapped, which pages could not be read, and the
+   * repair-specific protections, each gated on this document rather than
+   * printed for everyone.
+   */
+  const disclosure = buildRe10Disclosure({
+    estimate,
+    unmapped: body.unmapped,
+    documentNotes: body.documentNotes,
+    documentCount: (body.documents ?? []).length || 1,
+    repairDeadline: body.repairDeadline ?? null,
+    occupancy: body.occupancy,
+  });
+
   const contact: Re10Contact = {
     name: body.name,
     email: body.email || undefined,
@@ -234,5 +257,29 @@ export async function POST(request: NextRequest) {
     priced: estimate.priced.length,
     unpriced: customerView.needsOnsite.length,
     emailed: delivery.customerEmailed,
+    /**
+     * Generated for THIS document. Assumptions carry what we took it to mean,
+     * items say what is in and what is out and why, gaps name what we could not
+     * read, and the acknowledgments are only the ones that apply.
+     */
+    disclosure: {
+      assumptions: disclosure.assumptions.map((a) => a.text),
+      included: disclosure.items.filter((i) => i.status === "included").length,
+      excluded: disclosure.items
+        .filter((i) => i.status === "excluded")
+        .map((i) => ({ label: i.label, detail: i.detail })),
+      needsAttention: disclosure.items
+        .filter((i) => i.status === "needs-onsite" || i.status === "needs-specialist" || i.status === "needs-review")
+        .map((i) => ({ label: i.label, detail: i.detail, status: i.status })),
+      allowances: disclosure.items
+        .filter((i) => i.status === "allowance")
+        .map((i) => ({ label: i.label, detail: i.detail })),
+      warnings: disclosure.warnings.map((w) => w.text),
+      missing: disclosure.missing.map((m) => ({ what: m.what, where: m.where, effect: m.effect, remedy: m.remedy })),
+      factors: disclosure.factors,
+      acknowledgments: disclosure.acknowledgments,
+      nextSteps: disclosure.nextSteps,
+      confidence: disclosure.confidence,
+    },
   });
 }

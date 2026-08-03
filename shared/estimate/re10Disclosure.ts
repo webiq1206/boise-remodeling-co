@@ -35,6 +35,24 @@ export interface Re10DisclosureInput {
 }
 
 /**
+ * The estimator already writes some of this, and it is already dynamic.
+ *
+ * `estimateRe10` derives its own assumptions from the priced result - how many
+ * repairs carry an allowance, how many trades are being scheduled together,
+ * whether the property is occupied - and those sentences were written carefully
+ * enough that one of them carries a note about why it does NOT say "one
+ * mobilization per trade". Regenerating that here would mean two sources of
+ * truth for the same claim and an inevitable drift between them. So they are
+ * folded in as first-class assumptions, evidenced as coming from the takeoff,
+ * and this module adds only what the estimator does not already say.
+ */
+function foldEngineAssumptions(b: DisclosureBuilder, estimate: Re10Estimate): void {
+  for (const [i, text] of estimate.assumptions.entries()) {
+    b.assume(`engine-${i}`, text, "derived by the repair estimator from the priced result");
+  }
+}
+
+/**
  * Why an item needs a person rather than a price, in the customer's words.
  *
  * Keyed off the estimator's own reason codes, so a new reason cannot be added
@@ -105,7 +123,19 @@ const REVIEW_LANGUAGE: Record<ReviewReason, { label: string; text: string }> = {
     label: "Not enough detail",
     text: "The document does not say enough about this one to price it properly.",
   },
+  "out-of-scope": {
+    label: "Not work we take on",
+    text: "This one is outside what we do. We will point you at the right trade rather than quote it and subcontract it blind.",
+  },
 };
+
+/** How a flagged reason lands in the customer's list of what is and is not priced. */
+function statusFor(reason: ReviewReason): "allowance" | "needs-specialist" | "excluded" | "needs-onsite" {
+  if (reason === "allowance") return "allowance";
+  if (reason === "out-of-scope") return "excluded";
+  if (reason === "engineering" || reason === "mold-hazmat" || reason === "asbestos-lead") return "needs-specialist";
+  return "needs-onsite";
+}
 
 export function buildRe10Disclosure(input: Re10DisclosureInput): Disclosure {
   const b = new DisclosureBuilder();
@@ -122,6 +152,20 @@ export function buildRe10Disclosure(input: Re10DisclosureInput): Disclosure {
     `We priced the repairs we could read in ${docLabel}, and nothing beyond them.`,
     `${estimate.priced.length} repairs read and priced`,
   );
+
+  foldEngineAssumptions(b, estimate);
+
+  /* UNCERTAINTY IS NOT MISSING INFORMATION, and conflating them was a real bug
+     here. The estimator's notes are things that widen the range - "fewer than
+     half the items have a photo, and photos are the fastest way to narrow this"
+     - which is specific, actionable, and true of a document we read perfectly.
+     Filing it under what-we-could-not-read meant a clean read reported a gap it
+     did not have, which is the boilerplate failure this whole module exists to
+     prevent. They are factors, and the actionable ones are next steps. */
+  for (const text of estimate.uncertainty) {
+    b.factor(text);
+    if (/photo/i.test(text)) b.next(text);
+  }
 
   const assumedQty = estimate.priced.filter((p) => p.quantityAssumed);
   if (assumedQty.length > 0) {
@@ -189,7 +233,7 @@ export function buildRe10Disclosure(input: Re10DisclosureInput): Disclosure {
     b.item(
       `review-${r.input.id}`,
       r.input.description,
-      r.reason === "allowance" ? "allowance" : r.reason === "engineering" ? "needs-specialist" : "needs-onsite",
+      statusFor(r.reason),
       `${lang.label}. ${lang.text}`,
       `flagged ${r.reason} by the estimator`,
     );

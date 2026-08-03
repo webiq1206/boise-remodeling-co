@@ -254,5 +254,12 @@ nothing downstream can detect it.
 `ANTHROPIC_API_KEY` is set in Replit Secrets (production only - not local, so
 extraction cannot be tested from a dev machine without adding it to
 `.env.local`). No `BLOB_READ_WRITE_TOKEN` and none wanted; storage uses
-Postgres. `git pull` updates the Replit workspace but NOT the deployment -
-that needs an explicit Redeploy.
+Postgres.
+
+**DEPLOYING TAKES BOTH STEPS, AND EITHER ONE ALONE LOOKS LIKE IT WORKED.**
+`git pull` updates the Replit workspace but not the deployment. Redeploy ships
+the WORKSPACE, not origin/main - so a Redeploy without a pull first quietly
+republishes the previous commit. This has now cost one full validation round:
+`e6797fd` was pushed and a redeploy was run, and production came back still
+serving `b6abaa0`. Pull, then Redeploy, then confirm against a behaviour only
+the new build has rather than against the fact that a deploy ran.
