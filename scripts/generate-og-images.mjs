@@ -29,7 +29,7 @@ const H = 630;
 const BONE = '#F7F5F3';
 const BODY = '#E6E3DE';
 const MIST = '#9AA098';
-const SAGE = '#899F95';
+const SAGE = '#9AA098';  // the single brand accent
 const CHARCOAL = '#1C1F1E';
 
 const fontLight = fs.readFileSync(path.join(assets, 'Montserrat-Light.ttf'));
