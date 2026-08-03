@@ -182,6 +182,45 @@ export function areasAgree(result: PlanExtractionResult): boolean | null {
 }
 
 /**
+ * THE PRINTED FOOTPRINT DIMENSIONS WERE INVESTIGATED AS A SECOND CROSS-CHECK,
+ * AND THEY DO NOT WORK. Settled by reading the sheets, not by argument, so that
+ * the next person does not spend the same day on it.
+ *
+ * The idea was tempting because the best read in the corpus (Squier, 0.90 room
+ * coverage, every area a printed tag) is blocked solely by `areasAgree` being
+ * null, and the model volunteers overall dimensions unprompted. Three things
+ * kill it, all visible on sheet A105:
+ *
+ * 1. WHAT IS PRINTED IS A DIMENSION CHAIN, NOT AN OUTLINE. The top edge reads
+ *    74'-7" overall, decomposing into 22'-7" and 51'-6"; the bottom reads 64'-2"
+ *    and 21'-4"; the sides carry their own chains. Recovering an AREA needs the
+ *    polygon - which run lies on which edge, and where the steps are - and that
+ *    is not recoverable from an unordered list of lengths. Only a bounding
+ *    rectangle is derivable, and this plan is visibly nowhere near rectangular.
+ * 2. THE REFERENCE VALUE IS LESS CERTAIN THAN THE THING IT WOULD POLICE. Reading
+ *    the same sheet at full resolution, the overall depth is somewhere between
+ *    27'-5" and about 48' depending on which chain is the outer one, so the
+ *    bounding box lands anywhere from ~2,000 to ~3,600 SF. A reference with 75%
+ *    uncertainty cannot enforce a 12% tolerance.
+ * 3. ROOM TAGS DO NOT TILE THE FLOOR. Hallways, stairs, the storage below the
+ *    stairs and the closet "by others" carry no SF tag at all, so tagged area is
+ *    an unknown fraction of gross area even before the remodel question - and on
+ *    a remodel the in-scope rooms are a subset of the building anyway, which is
+ *    exactly the case that lacks a stated total.
+ *
+ * Any band wide enough to admit Squier (tagged area ~47% of its bounding box)
+ * would also admit a read that had doubled every room in the house. That is not
+ * a cross-check, it is a formality, and `verify:plans` asserts the tolerance
+ * stays tight precisely so formalities cannot creep in here.
+ *
+ * SO THE SECOND CROSS-CHECK IS NOT ON THE DRAWING. It is the customer. This
+ * flow already reads first and prices only after they confirm what we read, and
+ * the owner of the house knows its square footage. A total they supply is
+ * genuinely independent of our read of the sheets, which is the whole property
+ * the gate needs. Do not weaken `areasAgree`; ask for the number.
+ */
+
+/**
  * How much of the scope rests on numbers we can actually stand behind.
  *
  * Returned as a share so the estimator can narrow proportionally rather than
@@ -281,9 +320,15 @@ export function assessPlanQuality(result: PlanExtractionResult): PlanQuality {
 
   // No total on the sheets means no way to catch a misread, and "we could not
   // check" must not read the same as "we checked and it was fine".
+  //
+  // NAMES THE FIX, BECAUSE THIS ONE IS FIXABLE AND THE OTHERS ARE NOT. Every
+  // other blocker here means the drawings cannot carry a tighter price. This one
+  // means a single number is missing, and the person who uploaded the plans
+  // knows it. Nothing printed on the sheets can substitute (see the note above
+  // areasAgree), so the message must ask rather than apologise.
   if (agree === null) {
     blockers.push(
-      "The drawings do not state a total floor area, so there is nothing to check the room measurements against.",
+      "The drawings do not state a total floor area, so there is nothing to check the room measurements against. Tell us the total square footage and we can tighten this.",
     );
   }
 

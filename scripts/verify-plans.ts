@@ -147,6 +147,36 @@ const CASES: Case[] = [
     because: "do not state a total floor area",
   },
 
+  /* ------------------------------------- the same remodel, once someone says the total
+     THE WHOLE POINT OF SETTLING THE SECOND CROSS-CHECK. Nothing printed on
+     those eighteen sheets can stand in for a stated total: the footprint
+     dimensions are a chain rather than an outline, and any band loose enough to
+     admit this read would admit one that had doubled every room. The
+     independent statement has to come from the customer, who knows their own
+     square footage - and this is what it buys. Same rooms, same read, one
+     number added, and the gate opens. If this case ever starts failing, the
+     feature has quietly become unreachable on remodels. */
+  {
+    name: "the same remodel, once the customer supplies the total",
+    input: plans({
+      statedTotalSqFt: 1800,
+      roomAreaTotalSqFt: 1714,
+      rooms: [
+        room("Entry", 230, "printed"),
+        room("Kitchen", 303, "printed"),
+        room("Breakfast Room", 207, "printed"),
+        room("Living Room", 277, "printed"),
+        room("Mudroom", 107, "printed"),
+        room("Bedroom 1", 306, "printed"),
+        room("Closet 1", 122, "printed"),
+        room("Bath 1", 117, "printed"),
+        room("Guest Bath", 45, "printed"),
+        room("W.C. 1", null, "printed"),
+      ],
+    }),
+    canTighten: true,
+  },
+
   /* ------------------------------------------------------------- the positive case
      WITHOUT THIS, THE SUITE IS SATISFIED BY ALWAYS SAYING NO. Every real set so
      far has been blocked, so a gate that returned false unconditionally would

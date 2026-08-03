@@ -91,12 +91,44 @@ out room-level extraction would have thrown away the best data in the corpus.
 **What actually blocks good reads is the cross-check, not the measurements.**
 Squier scored coverage 0.90 and trusted share 1.00 and was still blocked,
 because no sheet in eighteen states a total conditioned area, and `agree ===
-null` is a blocker by design. That gate is correct as written (no total means no
-way to catch a misread) but it is now the binding constraint on the best read we
-have. **The open question is whether a second independent cross-check can be
-earned from something else printed on the sheet** - the model spontaneously
-reported overall footprint dimensions ("74'-7\" overall, 51'-6\", 27'-8\"...").
-Settle that before the uploader, and validate it on Squier.
+null` is a blocker by design.
+
+### The second cross-check: SETTLED, and it is not on the drawing
+
+The footprint dimensions were the candidate and they do NOT work. Settled by
+rendering sheet A105 and reading it, not by argument. The full reasoning is in
+the comment above `areasAgree()`; the short version:
+
+- what is printed is a dimension CHAIN, not an outline (74'-7" splits into
+  22'-7" and 51'-6"; the bottom reads 64'-2" and 21'-4"), and area needs the
+  polygon. Only a bounding rectangle is derivable and the plan is nowhere near
+  rectangular
+- reading the same sheet at full resolution, overall depth is anywhere between
+  27'-5" and about 48' depending on which chain is the outer one, so the box
+  lands between ~2,000 and ~3,600 SF. A reference with 75% uncertainty cannot
+  police a 12% tolerance
+- room tags do not tile the floor anyway (hallways, stairs, storage under the
+  stairs and "closet by others" carry no tag), and on a remodel the in-scope
+  rooms are a subset of the building - which is exactly the case that lacks a
+  stated total
+
+Any band loose enough to admit Squier (tagged area ~47% of its bounding box)
+would also admit a read that had doubled every room.
+
+**Per-room corroboration was the other candidate and is also dead**: A105 tags
+rooms as name plus SF ("KITCHEN 303 SF") with no L x W dimension string, so
+there is no second number per room to check the tag against.
+
+**So the second statement comes from the customer.** They know their square
+footage, it is genuinely independent of our read of the sheets, and this flow
+already reads first and prices only after they confirm what we read. Do not
+weaken `areasAgree`; ask for the number. `verify:plans` carries the Squier read
+twice, blocked and then allowed by that one number, so the path cannot silently
+close.
+
+What the sheets DO carry reliably, and what the uploader should lean on: door
+and window schedules, inline rough-opening callouts on every window, and room
+area tags where the drafting office prints them.
 
 **The trusted-share-of-nothing failure has now appeared three times**, each in a
 new disguise. On Gambardella the eleven "printed rooms" were not rooms at all,
@@ -119,9 +151,16 @@ surface as the generic "We could not read those drawings"; it now maps to
 1. **Redeploy.** Production is running pre-`65400e3` and has no coverage gate,
    so it answers `canTightenPrice: true` on Gambardella today. Nothing is wired
    to pricing yet, so no customer is affected, but the endpoint is live.
-2. Settle the second cross-check (above), then reshape extraction around it
-3. Wire to the estimator, then build the uploader (the RE-10 wizard is the
-   working template)
+2. Wire to the estimator, then build the uploader (the RE-10 wizard is the
+   working template). The uploader MUST ask for the total conditioned square
+   footage, because that is the cross-check and it is the one thing standing
+   between the best read in the corpus and a tightened price.
+
+**Rendering a sheet to look at it yourself** needs `pdf-to-img` (pdfjs plus a
+prebuilt canvas, no system dependencies); there is no `pdftoppm`, Ghostscript or
+working Python on this machine. Render at scale 4 and crop with `sharp` to read
+room tags on a 36x24 sheet. Doing this settled in one afternoon what two rounds
+of API calls could not.
 
 ### The gates that decide if a price may tighten
 
