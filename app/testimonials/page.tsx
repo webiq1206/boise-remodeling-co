@@ -86,7 +86,6 @@ export default function TestimonialsPage() {
           </>
         }
         description="After seeing what's possible, get an instant planning range tailored to Treasure Valley project costs - then book a free in-home visit for a written scope."
-        variant="tint"
       />
 
       <Section divider spacing="sm">

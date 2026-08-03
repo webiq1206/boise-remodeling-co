@@ -3,8 +3,11 @@ import { CITIES, SERVICES } from "@/shared/contentData";
 import { SITE_TAGLINE } from "@/shared/siteContent";
 import { areaPath, servicePath } from "@/lib/seo-routes";
 import { SITE_CONFIG } from "@/shared/siteConfig";
+import { Facebook } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { EmailLink } from "@/components/EmailLink";
-import { BusinessPhoneContact } from "@/components/BusinessPhoneContact";
+import { BusinessPhoneLink } from "@/components/BusinessPhoneContact";
+import { SaveContactLink } from "@/components/SaveContactLink";
 import { FooterCTAs } from "@/components/modals/FooterCTAs";
 import { CONTENT_HUBS, categoryHubPath, guidePath } from "@/shared/contentHubs";
 import { BLOG_POSTS } from "@/shared/blogContent";
@@ -46,12 +49,17 @@ export function Footer() {
               {SITE_TAGLINE}.
             </p>
             <div className="space-y-2">
-              <BusinessPhoneContact
-                layout="stack"
-                phoneClassName="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                saveClassName="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                phoneTestId="link-footer-phone"
+              <BusinessPhoneLink
+                className="block text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
+                data-testid="link-footer-phone"
               />
+              {/* A BUTTON, NOT A TEXT LINK. Saving the vCard is the one action
+                  in this column that does something rather than navigating, and
+                  buried in a stack of identical grey links nobody found it.
+                  Still an anchor underneath, because it downloads a file. */}
+              <Button variant="brandInverseOutline" size="sm" className="mt-1" asChild>
+                <SaveContactLink showIcon />
+              </Button>
               <a
                 href={SITE_CONFIG.phoneSmsHref}
                 className="block text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
@@ -63,22 +71,19 @@ export function Footer() {
               <p className="text-sm text-inverse-muted">
                 {SITE_CONFIG.address.cityState} · {SITE_CONFIG.address.serviceArea}
               </p>
+              {/* Facebook only. The Instagram account was removed rather than
+                  left pointing at a profile with nothing on it - a dead social
+                  link costs more trust than a missing one. */}
               <div className="flex gap-4 pt-2">
                 <a
                   href="https://www.facebook.com/boiseremodeling"
-                  className="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
+                  className="text-accent-legible hover:text-inverse-foreground transition-colors"
                   rel="noopener noreferrer"
                   target="_blank"
+                  aria-label="Boise Remodeling Co on Facebook"
+                  data-testid="link-footer-facebook"
                 >
-                  Facebook
-                </a>
-                <a
-                  href="https://www.instagram.com/boiseremodeling"
-                  className="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  Instagram
+                  <Facebook className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
                 </a>
               </div>
             </div>
@@ -243,12 +248,15 @@ export function Footer() {
             <ul className="space-y-2.5">
               <FooterCTAs />
               <li>
-                <BusinessPhoneContact
-                  layout="stack"
-                  phoneClassName="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                  saveClassName="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                  phoneTestId="link-footer-column-phone"
+                <BusinessPhoneLink
+                  className="block text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
+                  data-testid="link-footer-column-phone"
                 />
+              </li>
+              <li>
+                <Button variant="brandInverseOutline" size="sm" asChild>
+                  <SaveContactLink showIcon />
+                </Button>
               </li>
               <li>
                 <a

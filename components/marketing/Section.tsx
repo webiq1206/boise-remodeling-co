@@ -1,13 +1,18 @@
 import { cn } from "@/lib/utils";
 
-type SectionVariant = "canvas" | "surface" | "greige" | "inverse" | "tint";
+/**
+ * NO `tint`. It was a warm-hued dark panel used on three bands and it read as a
+ * muddy off-colour against the greige the rest of the page uses - close enough
+ * to look like a mistake rather than a choice. Removed from the union rather
+ * than just unused, so it cannot be reached for again.
+ */
+type SectionVariant = "canvas" | "surface" | "greige" | "inverse";
 
 const variantClasses: Record<SectionVariant, string> = {
   canvas: "bg-background text-foreground",
   surface: "bg-card text-card-foreground",
   greige: "bg-surface-greige text-foreground",
   inverse: "bg-inverse text-inverse-foreground",
-  tint: "bg-tint-warm text-foreground",
 };
 
 export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
