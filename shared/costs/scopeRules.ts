@@ -381,7 +381,7 @@ function interiorShellRules(project: string): ScopeRule[] {
     },
     {
       code: "03-18-02", // Trim, LF
-      qty: (d) => d.perimeter,
+      qty: (d) => d.interiorPerimeter,
     },
     {
       code: "03-09-08-L", // Electrical labor, SF
@@ -435,7 +435,7 @@ export const KITCHEN_RULES: ScopeRule[] = [
   },
   {
     code: "03-16-01", // Backsplash tile, SF
-    qty: (d, s) => d.perimeter * 0.5 * 1.5,
+    qty: (d, s) => d.interiorPerimeter * 0.5 * 1.5,
     when: (s) => redoing(s, "counters") || redoing(s, "cabinets"),
     assumption: "Backsplash covers 18 inches above the counter across half the perimeter.",
   },
@@ -473,7 +473,7 @@ export const BATHROOM_RULES: ScopeRule[] = [
      supervisor. */
   {
     code: "03-16-01", // Tile, SF - floor plus a wet wall
-    qty: (d, s) => (d.floorArea + d.perimeter * 0.45 * 7),
+    qty: (d, s) => (d.floorArea + d.interiorPerimeter * 0.45 * 7),
     assumption:
       "Tile covers the floor plus a shower surround roughly 7 feet high across 45% of the perimeter, per bathroom in scope.",
   },
@@ -584,7 +584,10 @@ export const WHOLE_HOME_RULES: ScopeRule[] = [
   },
   {
     code: "03-12-01", // Insulation, SF
-    qty: (d, s) => (movesSystems(s) ? d.wallArea : 0),
+    // ENVELOPE, not interior. Insulation goes in the exterior wall; partitions
+    // between two conditioned rooms carry none. Measuring this off the interior
+    // figure would insulate every partition in a plan-fed remodel.
+    qty: (d, s) => (movesSystems(s) ? d.envelopeWallArea : 0),
     when: movesSystems,
     assumption: "Insulation replaced only where walls are opened.",
   },
@@ -606,7 +609,7 @@ function buildShellRules(project: string): ScopeRule[] {
   },
   {
     code: "03-04-02", // Footings, LF
-    qty: (d) => d.perimeter,
+    qty: (d) => d.envelopePerimeter,
   },
   {
     code: "03-04-03", // Slab / flatwork, SF
@@ -639,11 +642,12 @@ function buildShellRules(project: string): ScopeRule[] {
   },
   {
     code: "03-11-03", // Gutters, LF
-    qty: (d) => d.perimeter,
+    qty: (d) => d.envelopePerimeter,
   },
   {
     code: "03-07-03", // Windows, SF
-    qty: (d) => d.wallArea * 0.15,
+    // Windows sit in the envelope. An interior partition has no glazing.
+    qty: (d) => d.envelopeWallArea * 0.15,
     assumption: "Glazing at 15% of wall area, a normal residential window-to-wall ratio.",
   },
   {
@@ -664,7 +668,7 @@ function buildShellRules(project: string): ScopeRule[] {
   },
   {
     code: "03-18-02", // Trim, LF
-    qty: (d) => d.perimeter,
+    qty: (d) => d.interiorPerimeter,
   },
   {
     code: "03-18-01", // Interior doors, EA
@@ -820,7 +824,7 @@ export const BASEMENT_RULES: ScopeRule[] = [
   },
   {
     code: "03-18-02", // Trim, LF
-    qty: (d) => d.perimeter,
+    qty: (d) => d.interiorPerimeter,
   },
   {
     code: "03-18-01", // Interior doors, EA

@@ -79,12 +79,31 @@ every one of those had a KNOWN floor area. That spread is estimator variance,
 not input error, so better drawings do nothing to reduce it. `verify:plans`
 fails if the band moves.
 
-**`Dimensions.perimeter` means two incompatible things and plans must not touch
-it.** Trim and backsplash want interior finished length (sum room by room);
-footings and gutters want the building envelope (do not). On Squier those read
-169 ft and 490 ft, so substituting the measured figure would price 2.9x the
-footings an addition needs. Splitting them into separate fields is the next real
-win, and the plans data is already good enough to feed it.
+### Two perimeters, because they are two different lengths
+
+`Dimensions.perimeter` and `wallArea` are GONE. They meant whichever length the
+reading rule happened to want, which was survivable only while every quantity
+came from one floor-area number. Now:
+
+| Field | Read by | Fed by plans? |
+|---|---|---|
+| `interiorPerimeter` / `interiorWallArea` | trim, backsplash, bathroom tile | yes, summed room by room |
+| `envelopePerimeter` / `envelopeWallArea` | footings, gutters, windows, insulation | never |
+
+On Squier those read 490 ft and 169 ft. Feeding the measured figure to all of
+them would have priced 2.9x the footings an addition needs. The envelope stays
+derived because a drawing prints a dimension CHAIN, not an outline - the same
+finding that killed the footprint cross-check.
+
+**The split is behaviour-preserving with no plan input**: both perimeters fall
+back to the same derived value, verified by hashing 17,280 priced combinations
+across every project, finish, size and scope before and after. The back-test
+calibration is untouched. Summing rooms does correct a real understatement -
+Squier's trim goes 338 to 980 LF - but that is about 1% of a whole-home total,
+so do not expect the split alone to move a headline number.
+
+Do not add a rule that reads a perimeter without deciding which one it means;
+the ambiguous names were removed so that choice cannot be skipped.
 
 Two traps the verifier locks down: a water closet is not a bathroom (Squier tags
 Bath 1, Guest Bath and W.C. 1 on one floor - that is two bathrooms), and on a
@@ -181,8 +200,6 @@ surface as the generic "We could not read those drawings"; it now maps to
    it is the one thing standing between the best read in the corpus and a
    tightened price. `/api/plans/analyze` already returns a `measurements` block
    for it to show and have the customer confirm.
-3. Split `Dimensions.perimeter` into interior and envelope, then let plans feed
-   the interior one (see above).
 
 **Rendering a sheet to look at it yourself** needs `pdf-to-img` (pdfjs plus a
 prebuilt canvas, no system dependencies); there is no `pdftoppm`, Ghostscript or

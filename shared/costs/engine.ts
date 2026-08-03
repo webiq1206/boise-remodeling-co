@@ -44,6 +44,14 @@ export interface ScopeSelections {
   kitchenIncluded?: boolean | null;
   /** Which components the homeowner is actually redoing. Empty/null = everything. */
   upgradeScope?: string[] | null;
+  /**
+   * Measured interior wall length, summed room by room from a plan set.
+   *
+   * Only ever set from drawings that passed every quality gate. Absent, the
+   * engine derives it from floor area exactly as it always has, so this cannot
+   * change the price of an estimate built from a web form.
+   */
+  interiorPerimeterFt?: number | null;
 }
 
 /* ------------------------------------------------------- derived dimensions */
@@ -54,16 +62,45 @@ export interface ScopeSelections {
  * Every figure here is derived from floor area and stated in the unit the
  * catalog prices in, so a scope rule never has to do geometry inline.
  */
+/**
+ * TWO PERIMETERS, BECAUSE THEY ARE TWO DIFFERENT LENGTHS.
+ *
+ * There used to be one field called `perimeter` and it meant whichever of these
+ * the reading rule happened to want. That was survivable only while every
+ * quantity came from a single floor-area number, because then the two are equal
+ * by construction. The moment a measured plan set arrives they diverge hard: the
+ * Squier first floor reads 169 ft as an envelope and 490 ft of interior wall, so
+ * a rule that wanted footings and got the interior figure would price 2.9 times
+ * the concrete the job needs.
+ *
+ * The ambiguous names are GONE rather than kept alongside these, so a new rule
+ * cannot accidentally reach for the one that happens to compile.
+ */
 export interface Dimensions {
   /** SF of floor. */
   floorArea: number;
   /** SF of ceiling. Equal to floor area for a single-storey space. */
   ceilingArea: number;
-  /** LF around the room. */
-  perimeter: number;
-  /** SF of wall surface, perimeter x ceiling height. */
-  wallArea: number;
-  /** SF of wall + ceiling, which is what drywall and paint actually cover. */
+  /**
+   * LF of finished wall INSIDE the space: baseboard, trim, backsplash, tile.
+   *
+   * Counts both faces of a partition, because both get finished. On a
+   * multi-room scope this is far longer than the envelope, and summing the
+   * rooms is the only way to get it right.
+   */
+  interiorPerimeter: number;
+  /**
+   * LF around the OUTSIDE of the building: footings, gutters, siding.
+   *
+   * Never derived from room measurements. A dimension chain on a drawing does
+   * not give the outline, so this stays a function of floor area.
+   */
+  envelopePerimeter: number;
+  /** SF of interior wall surface, interiorPerimeter x ceiling height. */
+  interiorWallArea: number;
+  /** SF of exterior wall surface, envelopePerimeter x ceiling height. */
+  envelopeWallArea: number;
+  /** SF of interior wall + ceiling, which is what drywall and paint cover. */
   wallAndCeilingArea: number;
   ceilingHeight: number;
 }
@@ -79,17 +116,41 @@ export interface Dimensions {
 const ASPECT_RATIO = 1.5;
 const DEFAULT_CEILING_HEIGHT = 8;
 
-export function deriveDimensions(sqft: number, ceilingHeight = DEFAULT_CEILING_HEIGHT): Dimensions {
-  const long = Math.sqrt(sqft * ASPECT_RATIO);
-  const short = Math.sqrt(sqft / ASPECT_RATIO);
-  const perimeter = 2 * (long + short);
-  const wallArea = perimeter * ceilingHeight;
+/**
+ * The perimeter of one rectangular space of this area.
+ *
+ * Exported so the plans module sums measured rooms on exactly the same
+ * assumption the estimator uses for a single space. Two copies of this would
+ * drift, and the drift would show up as a price that changed depending on
+ * whether the drawings were read.
+ */
+export function perimeterOf(sqft: number): number {
+  return 2 * (Math.sqrt(sqft * ASPECT_RATIO) + Math.sqrt(sqft / ASPECT_RATIO));
+}
+
+/**
+ * `measuredInteriorPerimeter` comes from a plan set that earned the right to
+ * supply it. Absent, the interior figure falls back to the envelope, which is
+ * exactly what the single `perimeter` field used to give every rule - so an
+ * estimate built from a web form prices identically to before this split.
+ */
+export function deriveDimensions(
+  sqft: number,
+  ceilingHeight = DEFAULT_CEILING_HEIGHT,
+  measuredInteriorPerimeter?: number | null,
+): Dimensions {
+  const envelopePerimeter = perimeterOf(sqft);
+  const interiorPerimeter =
+    measuredInteriorPerimeter && measuredInteriorPerimeter > 0 ? measuredInteriorPerimeter : envelopePerimeter;
+  const interiorWallArea = interiorPerimeter * ceilingHeight;
   return {
     floorArea: sqft,
     ceilingArea: sqft,
-    perimeter,
-    wallArea,
-    wallAndCeilingArea: wallArea + sqft,
+    interiorPerimeter,
+    envelopePerimeter,
+    interiorWallArea,
+    envelopeWallArea: envelopePerimeter * ceilingHeight,
+    wallAndCeilingArea: interiorWallArea + sqft,
     ceilingHeight,
   };
 }
@@ -393,7 +454,7 @@ export function buildInternalEstimate(
   // the quoted range never moved when the visitor changed the count.
   const instances =
     project === "bathroom" ? Math.max(1, selections.bathroomCount ?? 1) : 1;
-  const dims = deriveDimensions(selections.sqft, selections.ceilingHeight);
+  const dims = deriveDimensions(selections.sqft, selections.ceilingHeight, selections.interiorPerimeterFt);
   const warnings: EstimateWarning[] = [];
   const assumptions: string[] = [];
   if (instances > 1) {

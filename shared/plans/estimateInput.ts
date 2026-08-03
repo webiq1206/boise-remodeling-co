@@ -29,27 +29,36 @@ import {
   type PlanExtractionResult,
   type PlanRoom,
 } from "./extraction";
+import { perimeterOf } from "../costs/engine";
 
 /**
- * WHAT THIS DELIBERATELY DOES NOT SUPPLY: PERIMETER.
+ * THE INTERIOR PERIMETER IS SUPPLIED. THE ENVELOPE IS NOT, AND CANNOT BE.
  *
- * A plan set knows every room's perimeter and the estimator would love it, but
- * `Dimensions.perimeter` currently means two incompatible things depending on
- * which rule reads it. Trim (03-18-02) and backsplash want INTERIOR finished
- * length, where summing room by room is both correct and far more accurate.
- * Footings (03-04-02) and gutters (03-11-03) want the BUILDING ENVELOPE, where
- * summing rooms is nonsense.
+ * These were one field on `Dimensions` until the split, and the difference is
+ * not small: the Squier first floor is 169 ft of building envelope and 490 ft of
+ * interior wall. Trim, backsplash and tile want the second; footings, gutters,
+ * siding and glazing want the first. Feeding the measured figure to all of them
+ * would have priced 2.9 times the footings an addition needs.
  *
- * On the Squier scope those two readings are 169 ft and 490 ft: substituting the
- * measured figure would price 2.9 times the footings and gutters an addition
- * actually needs. That is precisely the confident-wrong-number this feature
- * exists to prevent, so perimeter keeps its current derivation until the two
- * meanings are separate fields on Dimensions. Splitting them is the next real
- * win here and the plans data is already good enough to feed it.
+ * So only the interior side is measured here. Summing room perimeters is the
+ * RIGHT way to get it, because both faces of a partition get finished and both
+ * get baseboard - a nine-room floor really does carry three times the trim of
+ * one open space of the same area, and the estimator has been understating it.
+ *
+ * The envelope stays derived from floor area. A drawing prints a dimension
+ * CHAIN, not an outline, so the building's true perimeter is not recoverable
+ * from it - the same finding that killed the footprint cross-check.
  */
 export interface PlanMeasurements {
   /** In-scope floor area, summed from rooms we actually measured. */
   sqft: number;
+  /**
+   * LF of finished interior wall, summed room by room.
+   *
+   * Uses the estimator's own `perimeterOf` so the one-room case reduces exactly
+   * to what the engine would have derived on its own.
+   */
+  interiorPerimeterFt: number;
   /** Area-weighted mean of the plate heights the drawings state, or null. */
   ceilingHeight: number | null;
   /** Full bathrooms in scope. Water closets are not counted; see BATHROOM. */
@@ -140,11 +149,16 @@ export function planMeasurements(result: PlanExtractionResult): PlanMeasurements
       ? withHeight.reduce((s, r) => s + (r.ceilingHeightFt ?? 0) * (r.areaSqFt ?? 0), 0) / heightWeight
       : null;
 
+  /* Summed room by room rather than taken off the whole floor, because that is
+     what the length actually is once there are partitions in the way. */
+  const interiorPerimeterFt = measured.reduce((s, r) => s + perimeterOf(r.areaSqFt ?? 0), 0);
+
   const baths = measured.filter(isBathroom);
   const suggestedProject = suggestProject(result, scoped);
 
   const notes: string[] = [
     `${Math.round(sqft).toLocaleString("en-US")} square feet measured from ${measured.length} room${measured.length === 1 ? "" : "s"} on the drawings.`,
+    `${Math.round(interiorPerimeterFt).toLocaleString("en-US")} linear feet of interior wall, which is what trim and tile are priced against.`,
   ];
   if (ceilingHeight !== null) {
     notes.push(
@@ -163,6 +177,7 @@ export function planMeasurements(result: PlanExtractionResult): PlanMeasurements
 
   return {
     sqft,
+    interiorPerimeterFt,
     ceilingHeight,
     bathroomCount: baths.length > 0 ? baths.length : null,
     measuredRooms: measured.length,
@@ -174,6 +189,7 @@ export function planMeasurements(result: PlanExtractionResult): PlanMeasurements
 /** The subset of ScopeSelections a plan set can speak to. */
 export interface PlanScopePatch {
   sqft: number;
+  interiorPerimeterFt: number;
   ceilingHeight?: number;
   bathroomCount?: number;
 }
@@ -192,10 +208,15 @@ export function planScopePatch(
   m: PlanMeasurements,
   project: "kitchen" | "bathroom" | "whole-home" | "addition" | "adu" | "basement",
 ): PlanScopePatch {
-  const count = m.bathroomCount ?? 1;
-  const perInstance = project === "bathroom" ? m.sqft / Math.max(1, count) : m.sqft;
+  const count = project === "bathroom" ? Math.max(1, m.bathroomCount ?? 1) : 1;
 
-  const patch: PlanScopePatch = { sqft: perInstance };
+  const patch: PlanScopePatch = {
+    sqft: m.sqft / count,
+    // Divided by the same count as the area, and for the same reason: the
+    // takeoff multiplies both back up. Leaving this undivided would tile every
+    // bathroom with the wall length of all of them.
+    interiorPerimeterFt: m.interiorPerimeterFt / count,
+  };
   if (m.ceilingHeight !== null) patch.ceilingHeight = m.ceilingHeight;
   if (project === "bathroom" && m.bathroomCount !== null) patch.bathroomCount = m.bathroomCount;
   return patch;

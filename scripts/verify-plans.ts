@@ -27,7 +27,7 @@ import {
   type PlanRoom,
 } from "../shared/plans/extraction";
 import { planMeasurements, planScopePatch } from "../shared/plans/estimateInput";
-import { estimateProject } from "../shared/costs";
+import { estimateProject, buildInternalEstimate, perimeterOf, RULES_BY_PROJECT } from "../shared/costs";
 
 let problems = 0;
 const fail = (m: string) => {
@@ -356,6 +356,19 @@ if (!earned) {
   if (earned.suggestedProject !== "whole-home") {
     fail(`a mixed floor of rooms should suggest whole-home, got ${earned.suggestedProject}`);
   }
+
+  /* THE INTERIOR PERIMETER IS SUMMED, NOT TAKEN OFF THE WHOLE FLOOR. Nine rooms
+     totalling 1,714 SF carry far more finished wall than one open space of the
+     same area, and the estimator understated it for as long as there was only
+     one perimeter field. */
+  const expected = [230, 303, 207, 277, 107, 306, 122, 117, 45].reduce((s, a) => s + perimeterOf(a), 0);
+  if (Math.abs(earned.interiorPerimeterFt - expected) > 1e-9) {
+    fail(`interior perimeter should be the sum over rooms (${expected.toFixed(1)}), got ${earned.interiorPerimeterFt.toFixed(1)}`);
+  }
+  if (earned.interiorPerimeterFt <= perimeterOf(earned.sqft)) {
+    fail("summed room perimeter should exceed the single-blob figure; the sum is not being taken");
+  }
+  console.log(`  interior perimeter ${earned.interiorPerimeterFt.toFixed(0)} ft vs ${perimeterOf(earned.sqft).toFixed(0)} ft as one open space`);
 }
 
 /* NOTHING CROSSES FROM A READ THAT DID NOT EARN IT. Each of these passes some
@@ -386,10 +399,53 @@ if (!bm) {
     fail(`bathroom sqft must be per-bathroom (162/2 = 81), got ${patch.sqft}. The takeoff multiplies by the count.`);
   }
   if (patch.bathroomCount !== 2) fail(`bathroom count should reach the estimator, got ${patch.bathroomCount}`);
+  // The wall length is divided by the same count, or every bathroom is tiled
+  // with the perimeter of all of them.
+  if (Math.abs(patch.interiorPerimeterFt - bm.interiorPerimeterFt / 2) > 1e-9) {
+    fail(`bathroom interior perimeter must be per-bathroom, got ${patch.interiorPerimeterFt.toFixed(1)}`);
+  }
   // The same measurements on a whole-home job must NOT be divided.
   const whole = planScopePatch(bm, "whole-home");
   if (Math.abs(whole.sqft - 162) > 1e-9) fail(`whole-home sqft must be the full area, got ${whole.sqft}`);
+  if (Math.abs(whole.interiorPerimeterFt - bm.interiorPerimeterFt) > 1e-9) {
+    fail(`whole-home interior perimeter must be the full length, got ${whole.interiorPerimeterFt.toFixed(1)}`);
+  }
   console.log(`  ok   bathroom patch is ${patch.sqft} SF x ${patch.bathroomCount}, whole-home patch is ${whole.sqft} SF`);
+}
+
+/* ------------------------------------------------- interior moves, envelope does not
+   THE WHOLE POINT OF THE SPLIT. Same measured job priced as an ADDITION, which
+   is the rule set that carries both kinds: trim reads the interior figure,
+   footings and gutters read the envelope. Feed a measured interior length and
+   the envelope-driven quantities must not move by a single foot. */
+{
+  const base = { quality: "mid-range" as const, sqft: 1714 };
+  const withPlans = { ...base, interiorPerimeterFt: earned!.interiorPerimeterFt };
+
+  const qtyOf = (sel: typeof base, code: string) =>
+    buildInternalEstimate(RULES_BY_PROJECT.addition, sel, "addition").lines.find((l) => l.code.startsWith(code))
+      ?.quantity ?? 0;
+
+  const checks: Array<[string, string, "moves" | "fixed"]> = [
+    ["03-18-02", "trim", "moves"],
+    ["03-04-02", "footings", "fixed"],
+    ["03-11-03", "gutters", "fixed"],
+    ["03-07-03", "windows", "fixed"],
+  ];
+  for (const [code, label, expect] of checks) {
+    const before = qtyOf(base, code);
+    const after = qtyOf(withPlans, code);
+    const moved = Math.abs(after - before) > 1e-6;
+    const ok = expect === "moves" ? moved : !moved;
+    console.log(`  ${ok ? "ok  " : "FAIL"} ${label.padEnd(9)} ${before.toFixed(0).padStart(6)} -> ${after.toFixed(0).padStart(6)}  (${expect})`);
+    if (!ok) {
+      fail(
+        expect === "moves"
+          ? `${label} reads the interior perimeter and should have moved with the measurements`
+          : `${label} is an envelope quantity and must not move when interior wall length is measured`,
+      );
+    }
+  }
 }
 
 /* A NEW BUILD HAS NO ESTIMATOR PROJECT TYPE, so it must not be quietly priced

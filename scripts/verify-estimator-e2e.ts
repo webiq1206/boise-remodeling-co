@@ -85,15 +85,31 @@ const PROJECTS: ProjectType[] = ["kitchen", "bathroom", "whole-home", "addition"
  * For A=250: 2*(sqrt(375)+sqrt(166.667)) = 2*(19.36492+12.90994) = 64.54972
  */
 {
+  const P = 64.5497224367903;
   const d = deriveDimensions(250);
-  t("geometry/perimeter-250sf", Math.abs(d.perimeter - 64.5497224367903) < 1e-9, d.perimeter.toFixed(6));
-  t("geometry/wall-area", Math.abs(d.wallArea - 64.5497224367903 * 8) < 1e-9);
-  t("geometry/wall-plus-ceiling", Math.abs(d.wallAndCeilingArea - (64.5497224367903 * 8 + 250)) < 1e-9);
+  t("geometry/envelope-perimeter-250sf", Math.abs(d.envelopePerimeter - P) < 1e-9, d.envelopePerimeter.toFixed(6));
+  t("geometry/envelope-wall-area", Math.abs(d.envelopeWallArea - P * 8) < 1e-9);
+  t("geometry/wall-plus-ceiling", Math.abs(d.wallAndCeilingArea - (P * 8 + 250)) < 1e-9);
   t("geometry/floor-equals-ceiling", d.floorArea === d.ceilingArea);
   // A square room (ratio 1) would be 4*sqrt(A)=63.2456; ours must exceed it.
-  t("geometry/not-square", d.perimeter > 4 * Math.sqrt(250));
+  t("geometry/not-square", d.envelopePerimeter > 4 * Math.sqrt(250));
   // Custom ceiling height must propagate.
-  t("geometry/ceiling-height", Math.abs(deriveDimensions(250, 10).wallArea - 64.5497224367903 * 10) < 1e-9);
+  t("geometry/ceiling-height", Math.abs(deriveDimensions(250, 10).envelopeWallArea - P * 10) < 1e-9);
+
+  /* THE SPLIT MUST BE INVISIBLE WITHOUT MEASUREMENTS. With no plan set the two
+     perimeters are the same number, which is what keeps every back-tested price
+     and every calibration in this suite valid across the change. */
+  t("geometry/perimeters-agree-when-underived", d.interiorPerimeter === d.envelopePerimeter);
+  t("geometry/wall-areas-agree-when-underived", d.interiorWallArea === d.envelopeWallArea);
+
+  /* And a measured interior length must move ONLY the interior side. */
+  const m = deriveDimensions(250, 8, 190);
+  t("geometry/measured-interior-applies", m.interiorPerimeter === 190);
+  t("geometry/measured-interior-wall-area", Math.abs(m.interiorWallArea - 190 * 8) < 1e-9);
+  t("geometry/measured-leaves-envelope-alone", Math.abs(m.envelopePerimeter - P) < 1e-9);
+  t("geometry/measured-leaves-envelope-wall-alone", Math.abs(m.envelopeWallArea - P * 8) < 1e-9);
+  // A zero or absent measurement falls back rather than pricing nothing.
+  t("geometry/zero-measurement-falls-back", deriveDimensions(250, 8, 0).interiorPerimeter === d.envelopePerimeter);
 }
 
 /* ============================================== 3. INDEPENDENT LINE ORACLE
