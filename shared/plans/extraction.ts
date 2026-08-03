@@ -198,3 +198,26 @@ export function trustedAreaShare(result: PlanExtractionResult): number {
     .reduce((s, r) => s + (r.areaSqFt ?? 0), 0);
   return trusted / total;
 }
+
+/**
+ * What fraction of the rooms we were asked about did we actually measure?
+ *
+ * FOUND ON A REAL PLAN SET, AND IT WOULD HAVE SHIPPED. trustedAreaShare only
+ * divides among rooms that HAVE an area, so a read that captured one printed
+ * garage and left sixteen rooms empty scored a perfect 1.0. Combined with a
+ * drawing set that states no total to cross-check against, every gate passed
+ * and the price would have tightened on a read that found almost nothing.
+ *
+ * A share is not a coverage measure. This is.
+ */
+export function measuredRoomCoverage(result: PlanExtractionResult): number {
+  const scoped = result.rooms.filter((r) => r.inScope);
+  if (scoped.length === 0) return 0;
+  const measured = scoped.filter(
+    (r) => r.areaSqFt && r.areaSqFt > 0 && TRUSTWORTHY_SOURCES.includes(r.areaSource),
+  );
+  return measured.length / scoped.length;
+}
+
+/** Below this, too much of the floor plan is guesswork to tighten anything. */
+export const MIN_ROOM_COVERAGE = 0.6;

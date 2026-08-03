@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractPlans, isPlanExtractionConfigured, type PlanInput } from "@/server/services/planExtract";
-import { areasAgree, trustedAreaShare } from "@/shared/plans/extraction";
+import {
+  areasAgree,
+  trustedAreaShare,
+  measuredRoomCoverage,
+  MIN_ROOM_COVERAGE,
+} from "@/shared/plans/extraction";
 import {
   classifyUpload,
   resolveMimeType,
@@ -132,6 +137,7 @@ export async function POST(request: NextRequest) {
   const result = outcome.result;
   const agree = areasAgree(result);
   const trusted = trustedAreaShare(result);
+  const coverage = measuredRoomCoverage(result);
 
   /**
    * How far this read is allowed to tighten the price.
@@ -153,6 +159,22 @@ export async function POST(request: NextRequest) {
       "Too few of the rooms carry a printed dimension, so most of the areas are estimates rather than measurements.",
     );
   }
+  // COVERAGE, WHICH IS NOT THE SAME AS SHARE. A read that measured one printed
+  // garage and left sixteen rooms blank scores a perfect trusted SHARE, because
+  // a share only divides among the rooms it managed to measure. Seen on a real
+  // plan set, where every other gate passed.
+  if (coverage < MIN_ROOM_COVERAGE) {
+    blockers.push(
+      `We could only measure ${Math.round(coverage * 100)}% of the rooms from these drawings, so most of the floor plan would still be an estimate.`,
+    );
+  }
+  // No total on the sheets means no way to catch a misread, and "we could not
+  // check" must not read the same as "we checked and it was fine".
+  if (agree === null) {
+    blockers.push(
+      "The drawings do not state a total floor area, so there is nothing to check the room measurements against.",
+    );
+  }
 
   return NextResponse.json({
     batch,
@@ -163,6 +185,7 @@ export async function POST(request: NextRequest) {
     quality: {
       areasAgree: agree,
       trustedAreaShare: Number(trusted.toFixed(3)),
+      measuredRoomCoverage: Number(coverage.toFixed(3)),
       // Only ever true when nothing above objected.
       canTightenPrice: blockers.length === 0,
       blockers,
