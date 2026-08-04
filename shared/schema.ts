@@ -426,10 +426,20 @@ export const consultationRequests = pgTable("consultation_requests", {
   actualContractValue: decimal("actual_contract_value", { precision: 12, scale: 2 }),
   actualRecordedAt: timestamp("actual_recorded_at"),
   actualNotes: text("actual_notes"),
+  /*
+   * Meta (Facebook) Lead Ads. The Graph leadgen id of the lead this row was
+   * created from, unique so a webhook redelivery can never store the same
+   * Meta lead twice. Null for every lead that arrived through the site.
+   */
+  fbLeadId: text("fb_lead_id"),
   // Status
   status: text("status").notNull().default("new"), // new, contacted, converted, closed
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => [
+  uniqueIndex("consultation_requests_fb_lead_id_idx")
+    .on(table.fbLeadId)
+    .where(sql`fb_lead_id IS NOT NULL`),
+]);
 
 export const insertConsultationRequestSchema = createInsertSchema(consultationRequests).omit({
   id: true,
