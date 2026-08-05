@@ -26,6 +26,7 @@ import {
 } from "@/shared/re10/uploads";
 import { RE10_EVENTS } from "@/shared/re10/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
+import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import {
   ChoiceGrid,
   DetailList,
@@ -127,7 +128,15 @@ const fileKey = (f: File) => `${f.name}:${f.size}`;
 
 export function Re10Wizard() {
   const [step, setStep] = useState<Step>("upload");
-  const topRef = useRef<HTMLDivElement>(null);
+  const topRef = useRef<HTMLDivElement | null>(null);
+  /* The wizard body, watched so the site-wide Call / Text bar steps aside while
+     the estimator (and its own sticky Back / Continue) owns the bottom of the
+     screen, then returns once the visitor scrolls away. */
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const setWizardRefs = (el: HTMLDivElement | null) => {
+    topRef.current = el;
+    sectionRef.current = el;
+  };
 
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
@@ -387,12 +396,34 @@ export function Re10Wizard() {
     if (step === "contact") trackEvent(RE10_EVENTS.contactViewed);
   }, [step]);
 
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let release: (() => void) | null = null;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !release) {
+          release = requestHideMobileNavBar();
+        } else if (!entry.isIntersecting && release) {
+          release();
+          release = null;
+        }
+      },
+      { rootMargin: "0px 0px -35% 0px" },
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      release?.();
+    };
+  }, []);
+
   const stepIndex = STEP_ORDER.indexOf(step);
   const includedCount = repairs.filter((r) => r.included).length;
 
   return (
     <Section id="re10-estimator" variant="inverse" divider>
-      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={topRef}>
+      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />
         ) : null}

@@ -155,7 +155,7 @@ export function StickyStepNav({
             className="min-h-12 flex-shrink-0 px-4"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span className="hidden xs:inline sm:inline">{backLabel}</span>
+            <span>{backLabel}</span>
           </Button>
         ) : null}
 

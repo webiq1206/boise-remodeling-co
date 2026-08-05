@@ -20,6 +20,7 @@ import {
   type WizardStepMeta,
   type ReviewItem,
 } from "@/components/estimate/wizard";
+import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import type { PropertyProfile } from "@/shared/propertyProfile";
 import {
@@ -1050,6 +1051,38 @@ export function EstimateCalculator({
     setPhase("review");
     scrollWizardTop();
   }
+
+  /* While the wizard owns the bottom of the viewport its own sticky Back /
+     Continue (and, on the result, the next-step actions) must not sit under the
+     site-wide Call / Text / Get-an-estimate bar. In the modal the wizard fills
+     the screen, so the global bar is hidden for as long as it is mounted. Inline
+     on a long page it is hidden only while the estimator section is on screen,
+     so the global bar returns for the rest of the homepage. */
+  useEffect(() => {
+    if (inModal) {
+      const release = requestHideMobileNavBar();
+      return release;
+    }
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let release: (() => void) | null = null;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !release) {
+          release = requestHideMobileNavBar();
+        } else if (!entry.isIntersecting && release) {
+          release();
+          release = null;
+        }
+      },
+      { rootMargin: "0px 0px -35% 0px" },
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      release?.();
+    };
+  }, [inModal]);
 
   /* Identity of the current estimate. Used to tell whether the visitor has
      actually changed something since we last told the team about it. */
