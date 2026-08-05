@@ -1,10 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Upload, Check, X, AlertTriangle, ArrowRight, Loader2, Plus, Camera, FileText } from "lucide-react";
+import {
+  AlertTriangle,
+  ClipboardList,
+  FileText,
+  Mail,
+  Plus,
+  Printer,
+  RefreshCw,
+  ShieldCheck,
+  Wrench,
+  X,
+} from "lucide-react";
 import { Section } from "@/components/marketing/Section";
-import { Button } from "@/components/ui/button";
-import { RECIPES, TRADE_LABELS, type RepairKind } from "@/shared/costs/re10Repairs";
+import { RECIPES } from "@/shared/costs/re10Repairs";
 import { RE10_PRICING_DISCLAIMER } from "@/shared/content/re10Content";
 import type { ExtractedRepair, ExtractionResult } from "@/shared/re10/extraction";
 import {
@@ -16,27 +26,58 @@ import {
 } from "@/shared/re10/uploads";
 import { RE10_EVENTS } from "@/shared/re10/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
+import {
+  ChoiceGrid,
+  DetailList,
+  OptionCard,
+  PriceHeadline,
+  ResultCard,
+  ResultDisclosure,
+  ReviewSection,
+  SegmentedControl,
+  StepHeading,
+  StickyResultActions,
+  StickyStepNav,
+  TextField,
+  UploadField,
+  WizardError,
+  WizardProgress,
+  type WizardStepMeta,
+} from "@/components/estimate/wizard";
 
 /**
- * The RE-10 estimator wizard.
+ * The RE-10 estimator, rebuilt as a guided mobile-first wizard.
  *
- * FOUR STEPS, AND THE GATE SITS THIRD ON PURPOSE. Upload, review what we read,
- * contact details, range. The homeowner sees and corrects the extracted repair
- * list BEFORE giving us anything - so the contact form is the last step of
- * getting their estimate rather than the price of finding out we misread their
- * document. The brief asks for exactly this and it is also the only version
- * that is honest.
+ * The order is deliberate and unchanged: upload, confirm what we read, contact
+ * details, property and timing, then the firm price. The homeowner sees and
+ * corrects the extracted repair list BEFORE giving us anything, so the contact
+ * steps are the last part of getting an estimate rather than the price of
+ * finding out we misread a document.
  *
- * Each step scrolls to the top of the wizard on entry. On a phone the steps are
- * taller than the viewport, and without it a homeowner lands halfway down the
- * next step with no idea the screen changed.
+ * Every step advances through a sticky Back / Continue bar; nothing is entered
+ * twice, and editing the scope from the result returns to the review step with
+ * every answer preserved.
  */
 
-type Step = "upload" | "review" | "contact" | "result";
+type Step = "upload" | "review" | "contact" | "property" | "result";
 
 interface EditableRepair extends ExtractedRepair {
   id: string;
   included: boolean;
+}
+
+interface ResultDisclosureShape {
+  assumptions: string[];
+  included: number;
+  excluded: { label: string; detail?: string }[];
+  needsAttention: { label: string; detail?: string; status: string }[];
+  allowances: { label: string; detail?: string }[];
+  warnings: string[];
+  missing: { what: string; where?: string; effect?: string; remedy?: string }[];
+  factors: string[];
+  acknowledgments: string[];
+  nextSteps: string[];
+  confidence: string;
 }
 
 interface EstimateResponse {
@@ -57,8 +98,8 @@ interface EstimateResponse {
   assumptions: string[];
   priced: number;
   unpriced: number;
-  /** True only when the server confirms the customer copy actually sent. */
   emailed: boolean;
+  disclosure?: ResultDisclosureShape;
 }
 
 const usd = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
@@ -72,29 +113,26 @@ const ROLES = [
   { value: "other", label: "Other" },
 ] as const;
 
-const STEP_LABELS: Record<Step, string> = {
-  upload: "Upload",
-  review: "Confirm repairs",
-  contact: "Your details",
-  result: "Your price",
-};
-const STEP_ORDER: Step[] = ["upload", "review", "contact", "result"];
+const FORM_STEPS: { id: Step; meta: WizardStepMeta }[] = [
+  { id: "upload", meta: { id: "upload", section: "Documents", label: "Upload your RE-10 and inspection pages" } },
+  { id: "review", meta: { id: "review", section: "Confirm", label: "Check the repairs we read" } },
+  { id: "contact", meta: { id: "contact", section: "Your details", label: "How we should reach you" } },
+  { id: "property", meta: { id: "property", section: "Your details", label: "Property and timing" } },
+  { id: "result", meta: { id: "result", section: "Estimate", label: "Your repair price" } },
+];
+const STEP_METAS = FORM_STEPS.map((s) => s.meta);
+const STEP_ORDER: Step[] = FORM_STEPS.map((s) => s.id);
+
+const fileKey = (f: File) => `${f.name}:${f.size}`;
 
 export function Re10Wizard() {
   const [step, setStep] = useState<Step>("upload");
   const topRef = useRef<HTMLDivElement>(null);
 
   const [files, setFiles] = useState<File[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
-  // Nested children fire dragleave as the pointer crosses them, so a boolean
-  // set on the events alone flickers the whole box. Count enter/leave instead.
-  const dragDepth = useRef(0);
-  const pickerRef = useRef<HTMLInputElement>(null);
-  const cameraRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [extraction, setExtraction] = useState<ExtractionResult | null>(null);
-  /** Files we hold and forward, but cannot read - a Word addendum, a HEIC. */
   const [attachedOnly, setAttachedOnly] = useState<string[]>([]);
   const [documents, setDocuments] = useState<{ filename: string; url: string }[]>([]);
   const [repairs, setRepairs] = useState<EditableRepair[]>([]);
@@ -113,19 +151,11 @@ export function Re10Wizard() {
 
   const [result, setResult] = useState<EstimateResponse | null>(null);
 
-  // Fires once on mount. The denominator for every other stage, so it must
-  // not re-fire when React re-renders or when a step changes.
   useEffect(() => {
     trackEvent(RE10_EVENTS.started);
   }, []);
 
-  /**
-   * A file dropped anywhere except the box must not navigate away.
-   *
-   * The browser's default for a dropped PDF is to open it, which replaces the
-   * page - losing the wizard, the uploads and the step. Someone who misses the
-   * target by an inch should get nothing, not a lost session.
-   */
+  // A file dropped anywhere except the box must not navigate the page away.
   useEffect(() => {
     const swallow = (e: DragEvent) => e.preventDefault();
     window.addEventListener("dragover", swallow);
@@ -136,21 +166,8 @@ export function Re10Wizard() {
     };
   }, []);
 
-  const fileKey = (f: File) => `${f.name}:${f.size}`;
-
-  /**
-   * Add to the list rather than replace it.
-   *
-   * Someone drops the RE-10, then picks the inspection pages, then adds two
-   * photos from their phone. Replacing on each interaction would silently throw
-   * away the previous ones, and the only sign would be a short repair list.
-   *
-   * Everything turned away is named. A file that vanished without explanation
-   * is worse than one refused out loud.
-   */
   function addFiles(incoming: File[], method: "picker" | "camera" | "drop") {
     if (incoming.length === 0) return;
-
     const problems: string[] = [];
     const seen = new Set(files.map(fileKey));
     const next = [...files];
@@ -192,17 +209,9 @@ export function Re10Wizard() {
     setError(null);
   }
 
-  function onDrop(e: React.DragEvent) {
-    e.preventDefault();
-    dragDepth.current = 0;
-    setIsDragging(false);
-    addFiles(Array.from(e.dataTransfer?.files ?? []), "drop");
-  }
-
   function goTo(next: Step) {
     setStep(next);
     setError(null);
-    // Land at the top of the wizard, not wherever the previous step ended.
     requestAnimationFrame(() => topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
 
@@ -220,8 +229,6 @@ export function Re10Wizard() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.message ?? "We could not read those documents.");
-        // Tracked so a drop-off here reads as a failure rather than as the
-        // homeowner losing interest.
         trackEvent(RE10_EVENTS.analysisFailed, { reason: String(data.error ?? res.status) });
         return;
       }
@@ -229,9 +236,6 @@ export function Re10Wizard() {
       setExtraction(extracted);
       setDocuments(Array.isArray(data.stored) ? data.stored : []);
       setAttachedOnly(Array.isArray(data.attachedOnly) ? data.attachedOnly : []);
-      // The RE-10 states the property and often the dates. Making someone
-      // retype what they just uploaded is the kind of friction that reads as
-      // the form not working. Prefill, and leave every field editable.
       if (extracted.propertyAddress) setAddress((a) => a || extracted.propertyAddress!);
       if (extracted.closingDate) setClosingDate((d) => d || extracted.closingDate!);
       if (extracted.repairDeadline) setRepairDeadline((d) => d || extracted.repairDeadline!);
@@ -239,19 +243,8 @@ export function Re10Wizard() {
         repairs_found: extracted.repairs.length,
         unmapped: extracted.unmapped.length,
       });
-      setRepairs(
-        extracted.repairs.map((r, i) => ({ ...r, id: `r${i}`, included: true })),
-      );
+      setRepairs(extracted.repairs.map((r, i) => ({ ...r, id: `r${i}`, included: true })));
 
-      // NOTHING TO REVIEW IS A DEAD END, NOT A STEP. Sending someone to the
-      // review screen with an empty list puts them in front of one button that
-      // refuses to work ("keep at least one repair"), with no way forward and
-      // no idea what went wrong. Uploading an inspection AGREEMENT instead of
-      // the RE-10 does exactly this, and it is an easy mistake - the two files
-      // sit next to each other in the same transaction folder.
-      // The estimate needs at least one priceable repair, so zero of them is a
-      // dead end whatever the reason - including the case where we read plenty
-      // of requests but none of them fit a category we price.
       if (extracted.repairs.length === 0) {
         const reason = !extracted.looksLikeRe10
           ? "not-a-re10"
@@ -278,25 +271,46 @@ export function Re10Wizard() {
     }
   }
 
-  async function submit() {
-    const included = repairs.filter((r) => r.included);
-    if (included.length === 0) {
+  function validateReview(): boolean {
+    if (repairs.filter((r) => r.included).length === 0) {
       setError("Keep at least one repair in the list to get a price.");
-      return;
+      return false;
     }
-    if (!name.trim() || !address.trim()) {
-      setError("We need your name and the property address.");
-      return;
+    return true;
+  }
+
+  function validateContact(): boolean {
+    if (!name.trim() || name.trim().length < 2) {
+      setError("Please enter your full name so we know who to send this to.");
+      return false;
     }
     if (preferredContact === "email" && !email.trim()) {
-      setError("Add an email address, or change your preferred contact method.");
-      return;
+      setError("Add an email address, or change your preferred contact method below.");
+      return false;
     }
     if (preferredContact !== "email" && !phone.trim()) {
-      setError("Add a phone number, or change your preferred contact method.");
+      setError("Add a phone number, or change your preferred contact method below.");
+      return false;
+    }
+    return true;
+  }
+
+  async function submit() {
+    if (!validateReview()) {
+      goTo("review");
+      return;
+    }
+    if (!name.trim()) {
+      setError("We need your name.");
+      goTo("contact");
+      return;
+    }
+    if (!address.trim()) {
+      setError("We need the property address.");
       return;
     }
 
+    const included = repairs.filter((r) => r.included);
     setBusy(true);
     setError(null);
     trackEvent(RE10_EVENTS.contactSubmitted, { preferred_contact: preferredContact, role });
@@ -326,10 +340,6 @@ export function Re10Wizard() {
           occupancy,
           hasInspectionReport: files.length > 1,
           documents,
-          // The items we could not categorise. They are excluded from the
-          // range, which is exactly why they have to travel: without them the
-          // customer sees a number that looks like the whole job, and nobody
-          // on our side ever learns the rest of the list exists.
           unmapped: extraction?.unmapped ?? [],
           documentNotes: extraction?.documentNotes ?? [],
           notes: notes.trim() || undefined,
@@ -337,21 +347,11 @@ export function Re10Wizard() {
       });
       const data = await res.json();
       if (!res.ok) {
-        // A bare "Invalid request" is what the server says and it is useless to
-        // the person reading it - it names nothing they can change. When the
-        // response carries field errors, show those instead; they are written
-        // for a human because the schema's messages are.
         const fieldErrors: Record<string, string[] | undefined> = data.errors?.fieldErrors ?? {};
         const detail = Object.values(fieldErrors)
           .flatMap((messages) => messages ?? [])
           .filter(Boolean);
-        setError(
-          detail.length > 0
-            ? detail.join(" ")
-            : (data.message ?? "We could not build your price."),
-        );
-        // Tracked, because a validation failure at the gate looks exactly like
-        // someone changing their mind unless it is recorded as a failure.
+        setError(detail.length > 0 ? detail.join(" ") : (data.message ?? "We could not build your price."));
         trackEvent(RE10_EVENTS.analysisFailed, {
           reason: "estimate-rejected",
           fields: Object.keys(fieldErrors).join(",") || String(res.status),
@@ -368,19 +368,11 @@ export function Re10Wizard() {
         priced_items: estimate.priced,
         onsite_items: estimate.unpriced,
       });
-      // The conversion Meta optimizes against. Email and phone go server-side
-      // only, hashed there, and are never handed to the browser Pixel.
       trackMetaEvent(
         "Lead",
-        {
-          content_name: "RE-10 repair estimate",
-          value: estimate.price,
-          currency: "USD",
-        },
+        { content_name: "RE-10 repair estimate", value: estimate.price, currency: "USD" },
         { email: email.trim() || undefined, phone: phone.trim() || undefined },
       );
-      // Only when the server confirms it actually sent, so this stage is not
-      // inflated by leads who chose phone contact and got no email at all.
       if (estimate.emailed) trackEvent(RE10_EVENTS.estimateEmailed);
 
       goTo("result");
@@ -391,264 +383,108 @@ export function Re10Wizard() {
     }
   }
 
-  // The gate's own impression. Without it, abandonment at the contact step is
-  // indistinguishable from abandonment at the review step before it.
   useEffect(() => {
     if (step === "contact") trackEvent(RE10_EVENTS.contactViewed);
   }, [step]);
 
   const stepIndex = STEP_ORDER.indexOf(step);
+  const includedCount = repairs.filter((r) => r.included).length;
 
   return (
     <Section id="re10-estimator" variant="inverse" divider>
-      {/* scroll-mt clears the sticky header. Without it every step change
-          scrolls this element to y=0, which is UNDER the 61px header - so the
-          step's own heading, and the range on the final step, land behind the
-          navigation. Found on the live site: the words "estimated repair
-          range" were half hidden at the moment they mattered most. */}
-      <div className="container px-4 max-w-3xl mx-auto scroll-mt-24" ref={topRef}>
-        {/* Progress. Named steps, not just dots: on a phone a bare dot row does
-            not tell you what is left to do. */}
-        <ol className="flex flex-wrap gap-x-2 gap-y-1 mb-8" aria-label="Progress">
-          {STEP_ORDER.map((s, i) => (
-            <li
-              key={s}
-              className={
-                "text-[12px] tracking-[0.08em] uppercase " +
-                (i === stepIndex
-                  ? "text-inverse-foreground"
-                  : i < stepIndex
-                    ? "text-accent-legible"
-                    : "text-inverse-muted/60")
-              }
-            >
-              {i > 0 && <span className="mr-2 text-inverse-muted/40">/</span>}
-              {i < stepIndex && <Check className="inline h-3 w-3 mr-1" aria-hidden="true" />}
-              {STEP_LABELS[s]}
-            </li>
-          ))}
-        </ol>
+      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={topRef}>
+        {step !== "result" ? (
+          <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />
+        ) : null}
 
-        {error && (
-          <div
-            role="alert"
-            className="mb-6 rounded-sm border border-red-400/40 bg-red-500/10 p-4 text-[13.5px] text-inverse-foreground leading-relaxed"
-          >
-            {error}
-          </div>
-        )}
+        <WizardError message={error} />
 
         {/* ------------------------------------------------------- 1. upload */}
-        {step === "upload" && (
+        {step === "upload" ? (
           <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-3">
-              Upload your RE-10 and get an instant estimate
-            </h2>
-            <p className="text-sm md:text-base text-inverse-foreground/80 leading-relaxed mb-7">
-              Send the RE-10, the relevant inspection report pages, and any photos. We read the
-              repair list, show you what we found, and you correct it before anything is priced.
-            </p>
-
-            {/* The drop target. Buttons rather than a wrapping label, because a
-                label around the whole box makes every click inside it - including
-                a file's remove button - reopen the file dialog. */}
-            <div
-              onDragEnter={(e) => {
-                e.preventDefault();
-                dragDepth.current += 1;
-                setIsDragging(true);
-              }}
-              onDragOver={(e) => e.preventDefault()}
-              onDragLeave={(e) => {
-                e.preventDefault();
-                dragDepth.current = Math.max(0, dragDepth.current - 1);
-                if (dragDepth.current === 0) setIsDragging(false);
-              }}
-              onDrop={onDrop}
-              data-testid="dropzone-re10-files"
-              className={
-                "rounded-sm border border-dashed p-7 sm:p-8 text-center transition-colors " +
-                (isDragging
-                  ? "border-accent-legible bg-accent-legible/10"
-                  : "border-inverse-foreground/30 bg-inverse-foreground/[0.04]")
+            <StepHeading
+              eyebrow="RE-10 repair estimator"
+              title="Upload your RE-10 and get a firm price"
+              description="Send the RE-10, the inspection report pages, and any photos. We read the repair list, show you what we found, and you correct it before anything is priced. No contact details needed yet."
+              help={
+                <>
+                  A phone photo of a printed form works. If your repair list is on separate
+                  inspection pages, add those too. We confirm each file below once it is attached,
+                  and you can remove anything before continuing.
+                </>
               }
-            >
-              <Upload className="h-6 w-6 mx-auto mb-3 text-inverse-muted" aria-hidden="true" />
-
-              {/* Shown only where dragging is possible. A phone has no drag and
-                  drop, and telling someone to drag with their thumb is noise. */}
-              <span className="hidden [@media(pointer:fine)]:block text-[15px] text-inverse-foreground mb-1">
-                {isDragging ? "Drop them here" : "Drag your files here"}
-              </span>
-              <span className="[@media(pointer:fine)]:hidden block text-[15px] text-inverse-foreground mb-1">
-                Add your RE-10
-              </span>
-
-              <span className="block text-[12.5px] text-inverse-muted mb-5">
-                PDFs, photos or scans. A phone photo of a printed form works.
-              </span>
-
-              <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
-                <Button
-                  type="button"
-                  variant="heroGhost"
-                  className="w-full sm:w-auto"
-                  onClick={() => pickerRef.current?.click()}
-                  data-testid="button-re10-choose-files"
-                >
-                  <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
-                  <span className="hidden [@media(pointer:fine)]:inline">Browse files</span>
-                  <span className="[@media(pointer:fine)]:hidden">Choose files or photos</span>
-                </Button>
-                {/* Coarse pointers only. On a laptop this opens the same dialog
-                    as the button beside it, which is just a duplicate. */}
-                <Button
-                  type="button"
-                  variant="heroGhost"
-                  className="w-full sm:w-auto [@media(pointer:fine)]:hidden"
-                  onClick={() => cameraRef.current?.click()}
-                  data-testid="button-re10-take-photo"
-                >
-                  <Camera className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Take a photo
-                </Button>
-              </div>
-
-              {/* THE PLAIN PICKER CARRIES NO `capture`. That attribute makes a
-                  phone open the camera and nothing else - no photo library, no
-                  Files, no iCloud, no Drive - which is the wrong default when
-                  the document being uploaded is usually a PDF someone was
-                  emailed. The camera is the second button, where it belongs. */}
-              <input
-                ref={pickerRef}
-                id="re10-files"
-                type="file"
-                multiple
-                accept={UPLOAD_ACCEPT}
-                className="sr-only"
-                data-testid="input-re10-files"
-                onChange={(e) => {
-                  addFiles(Array.from(e.target.files ?? []), "picker");
-                  // Cleared so re-picking the same file fires change again.
-                  e.target.value = "";
-                }}
-              />
-              <input
-                ref={cameraRef}
-                id="re10-camera"
-                type="file"
-                multiple
-                accept="image/*"
-                capture="environment"
-                className="sr-only"
-                data-testid="input-re10-camera"
-                onChange={(e) => {
-                  addFiles(Array.from(e.target.files ?? []), "camera");
-                  e.target.value = "";
-                }}
-              />
-            </div>
-
-            {files.length > 0 && (
-              <ul className="mt-4 space-y-1.5" data-testid="list-re10-files">
-                {files.map((f) => (
-                  <li
-                    key={fileKey(f)}
-                    className="flex items-center gap-2 text-[13px] text-inverse-muted"
-                  >
-                    <Check className="h-3.5 w-3.5 text-accent-legible flex-shrink-0" aria-hidden="true" />
-                    <span className="truncate">{f.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(f)}
-                      className="ml-auto flex-shrink-0 p-1 -m-1 text-inverse-muted hover:text-inverse-foreground transition-colors"
-                      aria-label={`Remove ${f.name}`}
-                      data-testid="button-re10-remove-file"
-                    >
-                      <X className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <Button
-              variant="brand"
-              className="mt-7 w-full sm:w-auto"
+            />
+            <UploadField
+              files={files}
+              onAdd={addFiles}
+              onRemove={removeFile}
+              accept={UPLOAD_ACCEPT}
+              acceptLabel={`PDFs, photos or scans. ${READABLE_FORMATS_LABEL} read automatically.`}
+              limitLabel={`Up to ${MAX_UPLOAD_FILES} files, ${Math.round(MAX_TOTAL_UPLOAD_BYTES / (1024 * 1024))} MB total.`}
+              headline="Add your RE-10"
               disabled={busy}
-              onClick={analyze}
-              data-testid="button-re10-analyze"
-            >
-              {busy ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Reading your documents...
-                </>
-              ) : (
-                <>
-                  Review my repair list <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-            <p className="mt-4 text-[12px] text-inverse-muted leading-relaxed">
-              No contact details needed yet. You will see the repairs we found first.
-            </p>
+            />
+            <StickyStepNav
+              onNext={analyze}
+              nextLabel="Review my repair list"
+              nextDisabled={files.length === 0}
+              busy={busy}
+              busyLabel="Reading your documents..."
+              nextTestId="button-re10-analyze"
+              hint="No contact details needed yet. You will see the repairs we found first."
+            />
           </div>
-        )}
+        ) : null}
 
         {/* ------------------------------------------------------- 2. review */}
-        {step === "review" && extraction && (
+        {step === "review" && extraction ? (
           <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-3">
-              Here is what we read. Is it right?
-            </h2>
-            <p className="text-sm text-inverse-foreground/80 leading-relaxed mb-7">
-              Remove anything that should not be included, and add a measurement where we did not
-              find one. The more you correct here, the more exact your price.
-            </p>
+            <StepHeading
+              title="Here is what we read. Is it right?"
+              description="Remove anything that should not be included, and add a measurement where we did not find one. The more you correct here, the more exact your price."
+            />
 
-            {!extraction.looksLikeRe10 && (
-              <div className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
+            {!extraction.looksLikeRe10 ? (
+              <div className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">
+                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
                   This did not read like an RE-10 or inspection response. Check you sent the right
                   pages, or carry on and we will review it by hand.
                 </p>
               </div>
-            )}
+            ) : null}
 
-            {/* Said out loud, because a file that was filed but not read would
-                otherwise look identical to one that was read and found empty. */}
-            {attachedOnly.length > 0 && (
+            {attachedOnly.length > 0 ? (
               <div
-                className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
+                className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
                 data-testid="notice-re10-attached-only"
               >
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
+                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
                   {attachedOnly.join(", ")} {attachedOnly.length === 1 ? "is" : "are"} attached for
                   our team but {attachedOnly.length === 1 ? "was" : "were"} not read automatically.
-                  Anything in {attachedOnly.length === 1 ? "it" : "them"} is not in the list below.
-                  Mention it in the notes on the next step, or we will catch it when we review.
+                  Mention anything in {attachedOnly.length === 1 ? "it" : "them"} in the notes, or we
+                  will catch it when we review.
                 </p>
               </div>
-            )}
+            ) : null}
 
             <ul className="space-y-3" data-testid="list-re10-repairs">
               {repairs.map((r) => (
                 <li
                   key={r.id}
                   className={
-                    "rounded-sm border p-4 transition-colors " +
+                    "rounded-md border p-4 transition-colors " +
                     (r.included
                       ? "border-inverse-foreground/15 bg-inverse-foreground/[0.05]"
-                      : "border-inverse-foreground/10 bg-transparent opacity-50")
+                      : "border-inverse-foreground/10 bg-transparent opacity-60")
                   }
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-[14.5px] text-inverse-foreground leading-relaxed">{r.verbatim}</p>
+                      <p className="text-[14.5px] leading-relaxed text-inverse-foreground">{r.verbatim}</p>
                       <p className="mt-1 text-[12.5px] text-inverse-muted">
                         {RECIPES[r.kind]?.label ?? r.kind}
-                        {r.location ? ` · ${r.location}` : ""}
-                        {r.confidence !== "high" ? ` · ${r.confidence} confidence` : ""}
+                        {r.location ? ` / ${r.location}` : ""}
+                        {r.confidence !== "high" ? ` / ${r.confidence} confidence` : ""}
                       </p>
                     </div>
                     <button
@@ -658,26 +494,23 @@ export function Re10Wizard() {
                           prev.map((p) => (p.id === r.id ? { ...p, included: !p.included } : p)),
                         )
                       }
-                      className="flex-shrink-0 rounded-sm border border-inverse-foreground/25 p-2 text-inverse-muted hover:text-inverse-foreground transition-colors"
+                      className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-md border border-inverse-foreground/25 text-inverse-muted transition-colors hover:text-inverse-foreground"
                       aria-label={r.included ? `Remove ${r.verbatim}` : `Add back ${r.verbatim}`}
                     >
                       {r.included ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                     </button>
                   </div>
 
-                  {r.needsReview && (
-                    <p className="mt-2.5 flex items-start gap-2 text-[12.5px] text-inverse-foreground/75 leading-relaxed">
-                      <AlertTriangle className="h-3.5 w-3.5 text-accent-legible flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  {r.needsReview ? (
+                    <p className="mt-2.5 flex items-start gap-2 text-[12.5px] leading-relaxed text-inverse-foreground/75">
+                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-accent-legible" aria-hidden="true" />
                       Needs an onsite look. We will list it separately rather than guess at a price.
                     </p>
-                  )}
+                  ) : null}
 
-                  {r.included && (
+                  {r.included ? (
                     <div className="mt-3 flex items-center gap-2">
-                      <label
-                        htmlFor={`qty-${r.id}`}
-                        className="text-[12.5px] text-inverse-muted whitespace-nowrap"
-                      >
+                      <label htmlFor={`qty-${r.id}`} className="whitespace-nowrap text-[12.5px] text-inverse-muted">
                         {r.quantity == null ? "Add a measurement" : "Measurement"}
                       </label>
                       <input
@@ -695,348 +528,370 @@ export function Re10Wizard() {
                             ),
                           );
                         }}
-                        /* 16px so iOS does not zoom the page on focus. */
-                        className="w-24 min-h-11 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground placeholder:text-inverse-muted/60 focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                        className="min-h-11 w-24 rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground placeholder:text-inverse-muted/60 focus:outline-none focus:ring-2 focus:ring-accent-legible"
                       />
                       <span className="text-[12.5px] text-inverse-muted">
-                        {RECIPES[r.kind]?.unit === "SF"
-                          ? "sq ft"
-                          : RECIPES[r.kind]?.unit === "LF"
-                            ? "linear ft"
-                            : "count"}
+                        {RECIPES[r.kind]?.unit === "SF" ? "sq ft" : RECIPES[r.kind]?.unit === "LF" ? "linear ft" : "count"}
                       </span>
                     </div>
-                  )}
+                  ) : null}
                 </li>
               ))}
             </ul>
 
-            {extraction.unmapped.length > 0 && (
-              <div className="mt-6 rounded-sm border border-inverse-foreground/15 p-4">
-                <p className="text-[13px] text-inverse-foreground mb-2">
+            {extraction.unmapped.length > 0 ? (
+              <div className="mt-5 rounded-md border border-inverse-foreground/15 p-4">
+                <p className="mb-2 text-[13px] text-inverse-foreground">
                   We could not categorise these, so a person will look at them:
                 </p>
                 <ul className="space-y-1.5">
                   {extraction.unmapped.map((u) => (
-                    <li key={u.verbatim} className="text-[12.5px] text-inverse-muted leading-relaxed">
+                    <li key={u.verbatim} className="text-[12.5px] leading-relaxed text-inverse-muted">
                       {u.verbatim} <span className="text-inverse-muted/70">({u.reason})</span>
                     </li>
                   ))}
                 </ul>
               </div>
-            )}
+            ) : null}
 
-            <div className="mt-7 flex flex-col sm:flex-row gap-3">
-              <Button
-                variant="brand"
-                onClick={() => {
-                  trackEvent(RE10_EVENTS.repairsConfirmed, {
-                    kept: repairs.filter((r) => r.included).length,
-                    removed: repairs.filter((r) => !r.included).length,
-                  });
-                  goTo("contact");
-                }}
-                data-testid="button-re10-confirm"
-              >
-                These look right <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button
-                variant="brandInverseOutline"
-                onClick={() => {
-                  trackEvent(RE10_EVENTS.additionalDocuments, { from: "review" });
-                  goTo("upload");
-                }}
-              >
-                Add more documents
-              </Button>
-            </div>
+            <StickyStepNav
+              onBack={() => goTo("upload")}
+              backLabel="Add documents"
+              onNext={() => {
+                if (!validateReview()) return;
+                trackEvent(RE10_EVENTS.repairsConfirmed, {
+                  kept: repairs.filter((r) => r.included).length,
+                  removed: repairs.filter((r) => !r.included).length,
+                });
+                goTo("contact");
+              }}
+              nextLabel="These look right"
+              nextTestId="button-re10-confirm"
+              hint={`${includedCount} repair${includedCount === 1 ? "" : "s"} will be priced.`}
+            />
           </div>
-        )}
+        ) : null}
 
         {/* ------------------------------------------------------ 3. contact */}
-        {step === "contact" && (
+        {step === "contact" ? (
           <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-3">
-              Where should we send it?
-            </h2>
-            <p className="text-sm text-inverse-foreground/80 leading-relaxed mb-7">
-              Enter your contact information to view your RE-10 repair estimate and receive a copy
-              by email.
-            </p>
+            <StepHeading
+              title="Where should we send it?"
+              description="Enter your contact information to view your RE-10 repair estimate and receive a copy by your preferred method."
+            />
+            <div className="space-y-4">
+              <TextField label="Full name" required value={name} onChange={setName} autoComplete="name" testId="input-re10-name" />
 
-            <div className="grid sm:grid-cols-2 gap-4">
-              <Field label="Full name" required value={name} onChange={setName} testId="input-re10-name" />
               <div>
-                <label htmlFor="re10-role" className="block text-[12.5px] text-inverse-muted mb-1.5">
-                  Your role
-                </label>
-                <select
-                  id="re10-role"
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as typeof role)}
-                  className="w-full min-h-11 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
-                >
+                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Your role</p>
+                <ChoiceGrid label="Your role" columns={2} multi>
                   {ROLES.map((r) => (
-                    <option key={r.value} value={r.value} className="bg-neutral-900">
-                      {r.label}
-                    </option>
+                    <OptionCard
+                      key={r.value}
+                      selected={role === r.value}
+                      onSelect={() => setRole(r.value)}
+                      title={r.label}
+                      testId={`re10-role-${r.value}`}
+                    />
                   ))}
-                </select>
+                </ChoiceGrid>
               </div>
 
-              <div className="sm:col-span-2">
-                <label className="block text-[12.5px] text-inverse-muted mb-1.5">
-                  Preferred contact method
-                </label>
-                <div className="flex gap-2">
-                  {(["email", "phone", "text"] as const).map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() => setPreferredContact(m)}
-                      aria-pressed={preferredContact === m}
-                      className={
-                        "min-h-11 flex-1 rounded-sm border px-3 text-[14px] capitalize transition-colors " +
-                        (preferredContact === m
-                          ? "border-accent-legible bg-inverse-foreground/10 text-inverse-foreground"
-                          : "border-inverse-foreground/25 text-inverse-muted hover:text-inverse-foreground")
-                      }
-                    >
-                      {m}
-                    </button>
-                  ))}
-                </div>
+              <div>
+                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Preferred contact method</p>
+                <SegmentedControl
+                  label="Preferred contact method"
+                  options={[
+                    { value: "email", label: "Email" },
+                    { value: "phone", label: "Phone" },
+                    { value: "text", label: "Text" },
+                  ]}
+                  value={preferredContact}
+                  onChange={setPreferredContact}
+                  columns={3}
+                  testIdPrefix="re10-contact-method"
+                />
               </div>
 
-              {/* Conditional requirement, matching the brief: we ask for what the
-                  chosen contact method actually needs and nothing else. */}
-              <Field
+              <TextField
                 label="Email"
                 required={preferredContact === "email"}
+                optionalHint={preferredContact !== "email"}
                 type="email"
                 value={email}
                 onChange={setEmail}
+                autoComplete="email"
                 testId="input-re10-email"
               />
-              <Field
+              <TextField
                 label="Phone"
                 required={preferredContact !== "email"}
+                optionalHint={preferredContact === "email"}
                 type="tel"
                 value={phone}
                 onChange={setPhone}
+                autoComplete="tel"
                 testId="input-re10-phone"
               />
+            </div>
 
-              <Field label="Brokerage or company" value={brokerage} onChange={setBrokerage} />
-              <Field label="Property address" required value={address} onChange={setAddress} testId="input-re10-address" />
-              <Field label="Repair deadline" type="date" value={repairDeadline} onChange={setRepairDeadline} />
-              <Field label="Closing date" type="date" value={closingDate} onChange={setClosingDate} />
+            <StickyStepNav
+              onBack={() => goTo("review")}
+              onNext={() => {
+                if (!validateContact()) return;
+                goTo("property");
+              }}
+              nextLabel="Continue"
+              nextTestId="button-re10-contact-next"
+            />
+          </div>
+        ) : null}
 
-              <div className="sm:col-span-2">
-                <label className="block text-[12.5px] text-inverse-muted mb-1.5">Property is</label>
-                <div className="flex gap-2">
-                  {(["vacant", "occupied", "unknown"] as const).map((o) => (
-                    <button
-                      key={o}
-                      type="button"
-                      onClick={() => setOccupancy(o)}
-                      aria-pressed={occupancy === o}
-                      className={
-                        "min-h-11 flex-1 rounded-sm border px-3 text-[14px] capitalize transition-colors " +
-                        (occupancy === o
-                          ? "border-accent-legible bg-inverse-foreground/10 text-inverse-foreground"
-                          : "border-inverse-foreground/25 text-inverse-muted hover:text-inverse-foreground")
-                      }
-                    >
-                      {o === "unknown" ? "Not sure" : o}
-                    </button>
-                  ))}
-                </div>
+        {/* ----------------------------------------------------- 4. property */}
+        {step === "property" ? (
+          <div>
+            <StepHeading
+              title="The property and your timeline"
+              description="We prefill what the RE-10 already told us. Confirm the address and add the repair deadline so we can hold the right price."
+            />
+            <div className="space-y-4">
+              <TextField label="Property address" required value={address} onChange={setAddress} autoComplete="street-address" testId="input-re10-address" />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <TextField label="Repair deadline" optionalHint type="date" value={repairDeadline} onChange={setRepairDeadline} />
+                <TextField label="Closing date" optionalHint type="date" value={closingDate} onChange={setClosingDate} />
+              </div>
+              <TextField label="Brokerage or company" optionalHint value={brokerage} onChange={setBrokerage} />
+
+              <div>
+                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Property is</p>
+                <SegmentedControl
+                  label="Property is"
+                  options={[
+                    { value: "vacant", label: "Vacant" },
+                    { value: "occupied", label: "Occupied" },
+                    { value: "unknown", label: "Not sure" },
+                  ]}
+                  value={occupancy}
+                  onChange={setOccupancy}
+                  columns={3}
+                  testIdPrefix="re10-occupancy"
+                />
               </div>
 
-              <div className="sm:col-span-2">
-                <label htmlFor="re10-notes" className="block text-[12.5px] text-inverse-muted mb-1.5">
-                  Anything else we should know
+              <div>
+                <label htmlFor="re10-notes" className="mb-1.5 flex items-baseline justify-between text-[12.5px] text-inverse-muted">
+                  <span>Anything else we should know</span>
+                  <span className="text-inverse-muted/70">Optional</span>
                 </label>
                 <textarea
                   id="re10-notes"
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                  className="w-full rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
                 />
               </div>
             </div>
 
-            <Button
-              variant="brand"
-              className="mt-7 w-full sm:w-auto"
-              disabled={busy}
-              onClick={submit}
-              data-testid="button-re10-submit"
-            >
-              {busy ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Building your price...
-                </>
-              ) : (
-                <>
-                  See my repair price <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
+            <StickyStepNav
+              onBack={() => goTo("contact")}
+              onNext={submit}
+              nextLabel="See my repair price"
+              busy={busy}
+              busyLabel="Building your price..."
+              nextTestId="button-re10-submit"
+            />
           </div>
-        )}
+        ) : null}
 
-        {/* ------------------------------------------------------- 4. result */}
-        {step === "result" && result && (
-          <div data-testid="re10-result">
-            <p className="text-[12px] tracking-[0.14em] uppercase text-inverse-muted mb-2">
-              Price for the repairs below
-            </p>
-            <div className="brc-display-num tabular-nums leading-none text-inverse-foreground text-[clamp(30px,7vw,48px)]">
-              {usd(result.price)}
-            </div>
-            <p className="mt-2 text-[13px] text-accent-legible">
-              Held for {result.validDays} days
-            </p>
-            <p className="mt-3 text-[13px] text-inverse-muted">
-              {result.propertyAddress}
-              {result.repairDeadline ? ` · repairs due ${result.repairDeadline}` : ""}
-              {result.closingDate ? ` · closing ${result.closingDate}` : ""}
-            </p>
-
-            {/* Claimed only when the server confirms it sent. Telling an agent
-                we emailed a copy that never arrived is worse than saying nothing. */}
-            {result.emailed && (
-              <p className="mt-4 text-[13px] text-inverse-foreground/85">
-                A copy is on its way to your inbox.
-              </p>
-            )}
-
-            <p className="mt-5 text-[12.5px] text-inverse-foreground/90 leading-relaxed">
-              {RE10_PRICING_DISCLAIMER}
-            </p>
-
-            <div className="mt-8">
-              <p className="text-[13px] tracking-[0.06em] uppercase text-inverse-foreground mb-3">
-                What this covers
-              </p>
-              <ul className="space-y-3">
-                {result.categories.map((c) => (
-                  <li key={c.trade} className="rounded-sm bg-inverse-foreground/[0.05] p-4">
-                    <p className="text-[14px] text-inverse-foreground mb-1.5">
-                      {c.label}{" "}
-                      <span className="text-inverse-muted">
-                        ({c.itemCount} {c.itemCount === 1 ? "item" : "items"})
-                      </span>
-                    </p>
-                    <ul className="space-y-1">
-                      {c.items.map((i, n) => (
-                        <li key={n} className="text-[12.5px] text-inverse-muted leading-relaxed">
-                          {i.description}
-                          {/* The extent the firm price assumes. "Typical size assumed" told them
-                              a number existed without saying what it was; a firm price
-                              they cannot check against their own document is one they
-                              have to take on faith. */}
-                          {i.quantityAssumed && i.quantity ? ` (priced for ${i.quantity} ${i.unit ?? ""})` : ""}
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {result.needsOnsite.length > 0 && (
-              <div className="mt-6 rounded-sm border border-inverse-foreground/20 p-4">
-                <p className="text-[13px] tracking-[0.06em] uppercase text-inverse-foreground mb-3">
-                  Needs an onsite evaluation
-                </p>
-                <ul className="space-y-2.5">
-                  {result.needsOnsite.map((n, i) => (
-                    <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
-                      <span className="text-inverse-foreground/90">{n.description}</span> - {n.why}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {result.uncertainty.length > 0 && (
-              <div className="mt-6">
-                <p className="text-[13px] tracking-[0.06em] uppercase text-inverse-foreground mb-2">
-                  What would narrow this range
-                </p>
-                <ul className="space-y-1.5">
-                  {result.uncertainty.map((u, i) => (
-                    <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
-                      {u}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <Button variant="brand" asChild>
-                <a
-                  href="/contact#consult"
-                  onClick={() => trackEvent(RE10_EVENTS.onsiteRequested)}
-                  data-testid="link-re10-onsite"
-                >
-                  Request an onsite evaluation <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-              <Button
-                variant="brandInverseOutline"
-                onClick={() => {
-                  trackEvent(RE10_EVENTS.additionalDocuments, { from: "result" });
-                  goTo("upload");
-                }}
-              >
-                Upload more documents
-              </Button>
-            </div>
-          </div>
-        )}
+        {/* ------------------------------------------------------- 5. result */}
+        {step === "result" && result ? (
+          <Re10Result
+            result={result}
+            documents={documents}
+            onEditScope={() => goTo("review")}
+            onUploadMore={() => {
+              trackEvent(RE10_EVENTS.additionalDocuments, { from: "result" });
+              goTo("upload");
+            }}
+            onRequestOnsite={() => trackEvent(RE10_EVENTS.onsiteRequested)}
+          />
+        ) : null}
       </div>
     </Section>
   );
 }
 
-function Field({
-  label,
-  value,
-  onChange,
-  type = "text",
-  required = false,
-  testId,
+/* ══════════════════════════════════════════════════════════════════════
+   RESULT
+══════════════════════════════════════════════════════════════════════ */
+
+function Re10Result({
+  result,
+  documents,
+  onEditScope,
+  onUploadMore,
+  onRequestOnsite,
 }: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  type?: string;
-  required?: boolean;
-  testId?: string;
+  result: EstimateResponse;
+  documents: { filename: string; url: string }[];
+  onEditScope: () => void;
+  onUploadMore: () => void;
+  onRequestOnsite: () => void;
 }) {
-  const id = `re10-${label.toLowerCase().replace(/[^a-z]+/g, "-")}`;
+  const disclosure = result.disclosure;
+  const assumptions = disclosure?.assumptions?.length ? disclosure.assumptions : result.assumptions;
+  const contextLine = [
+    result.propertyAddress,
+    result.repairDeadline ? `repairs due ${result.repairDeadline}` : null,
+    result.closingDate ? `closing ${result.closingDate}` : null,
+  ]
+    .filter(Boolean)
+    .join(" / ");
+
+  const confidenceLabel =
+    result.confidence === "high" ? "High confidence" : result.confidence === "medium" ? "Medium confidence" : "Preliminary";
+
   return (
-    <div>
-      <label htmlFor={id} className="block text-[12.5px] text-inverse-muted mb-1.5">
-        {label}
-        {required && <span className="text-accent-legible"> *</span>}
-      </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        required={required}
-        onChange={(e) => onChange(e.target.value)}
-        data-testid={testId}
-        /* 16px throughout: iOS Safari zooms the page on focus below that and
-           does not zoom back out. */
-        className="w-full min-h-11 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
+    <div data-testid="re10-result" className="space-y-4">
+      {/* Overview */}
+      <ResultCard testId="re10-overview">
+        <PriceHeadline
+          label="Price for the repairs below"
+          price={usd(result.price)}
+          category="RE-10 repair estimate"
+          statusChips={[
+            { label: confidenceLabel, tone: "muted" },
+            { label: `Held ${result.validDays} days`, tone: "accent" },
+          ]}
+        />
+        {contextLine ? <p className="mt-3 text-[13px] text-inverse-muted">{contextLine}</p> : null}
+        {result.emailed ? (
+          <p className="mt-3 flex items-center gap-2 text-[13px] text-inverse-foreground/85">
+            <Mail className="h-4 w-4 text-accent-legible" aria-hidden="true" />
+            A copy is on its way to your inbox.
+          </p>
+        ) : null}
+      </ResultCard>
+
+      {/* Pricing notes */}
+      <ResultCard title="How to read this price" icon={ShieldCheck}>
+        <p className="text-[13px] leading-relaxed text-inverse-muted">{RE10_PRICING_DISCLAIMER}</p>
+        {result.uncertainty.length > 0 ? (
+          <div className="mt-3">
+            <p className="mb-2 text-[12.5px] text-inverse-foreground/90">What would firm this up</p>
+            <DetailList items={result.uncertainty} />
+          </div>
+        ) : null}
+      </ResultCard>
+
+      {/* What this covers, ordered as the document reads */}
+      <ResultCard title="What this price covers" icon={Wrench} testId="re10-covers">
+        <ul className="space-y-3">
+          {result.categories.map((c) => (
+            <li key={c.trade} className="rounded-md bg-inverse-foreground/[0.05] p-3.5">
+              <p className="mb-1.5 text-[14px] text-inverse-foreground">
+                {c.label} <span className="text-inverse-muted">({c.itemCount} {c.itemCount === 1 ? "item" : "items"})</span>
+              </p>
+              <ul className="space-y-1">
+                {c.items.map((i, n) => (
+                  <li key={n} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                    {i.description}
+                    {i.location ? ` (${i.location})` : ""}
+                    {i.quantityAssumed && i.quantity ? ` - priced for ${i.quantity} ${i.unit ?? ""}` : ""}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </ResultCard>
+
+      {/* Needs onsite */}
+      {result.needsOnsite.length > 0 ? (
+        <ResultCard title="Priced after an onsite look" icon={AlertTriangle} testId="re10-onsite">
+          <p className="mb-3 text-[12.5px] leading-relaxed text-inverse-muted">
+            These are in your document but not in the number above. We price them after seeing them.
+          </p>
+          <ul className="space-y-2.5">
+            {result.needsOnsite.map((n, i) => (
+              <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                <span className="text-inverse-foreground/90">{n.description}</span> - {n.why}
+              </li>
+            ))}
+          </ul>
+        </ResultCard>
+      ) : null}
+
+      {/* Assumptions */}
+      {assumptions.length > 0 ? (
+        <ResultDisclosure title="Assumptions we made" count={assumptions.length} testId="re10-assumptions">
+          <DetailList items={assumptions} />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* Exclusions */}
+      {disclosure && disclosure.excluded.length > 0 ? (
+        <ResultDisclosure title="Not included" count={disclosure.excluded.length} testId="re10-exclusions">
+          <DetailList
+            marker="cross"
+            items={disclosure.excluded.map((e) => (
+              <span key={e.label}>
+                <span className="text-inverse-foreground/90">{e.label}</span>
+                {e.detail ? ` - ${e.detail}` : ""}
+              </span>
+            ))}
+          />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* Allowances */}
+      {disclosure && disclosure.allowances.length > 0 ? (
+        <ResultDisclosure title="Standard allowances" count={disclosure.allowances.length} testId="re10-allowances">
+          <DetailList
+            items={disclosure.allowances.map((a) => (
+              <span key={a.label}>
+                <span className="text-inverse-foreground/90">{a.label}</span>
+                {a.detail ? ` - ${a.detail}` : ""}
+              </span>
+            ))}
+          />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* What could change the price */}
+      {disclosure && disclosure.factors.length > 0 ? (
+        <ResultDisclosure title="What could change the price" count={disclosure.factors.length} testId="re10-factors">
+          <DetailList items={disclosure.factors} />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* Uploaded documents */}
+      {documents.length > 0 ? (
+        <ResultCard title="Documents you sent" icon={FileText} testId="re10-documents">
+          <ul className="space-y-1.5">
+            {documents.map((d) => (
+              <li key={d.url} className="flex items-center gap-2 text-[12.5px] text-inverse-muted">
+                <ClipboardList className="h-3.5 w-3.5 flex-shrink-0 text-accent-legible" aria-hidden="true" />
+                <span className="truncate">{d.filename}</span>
+              </li>
+            ))}
+          </ul>
+        </ResultCard>
+      ) : null}
+
+      <StickyResultActions
+        primaryLabel="Request an onsite evaluation"
+        onPrimary={() => {
+          onRequestOnsite();
+          window.location.href = "/contact#consult";
+        }}
+        onEditScope={onEditScope}
+        primaryTestId="link-re10-onsite"
+        secondary={[
+          { label: "Print", icon: Printer, onClick: () => window.print(), testId: "re10-print" },
+          { label: "Upload more documents", icon: RefreshCw, onClick: onUploadMore, testId: "re10-upload-more" },
+        ]}
       />
     </div>
   );
