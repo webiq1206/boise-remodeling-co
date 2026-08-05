@@ -292,21 +292,29 @@ check(
  * wrong door when the document is usually a PDF someone was emailed. It belongs
  * on the camera button and nowhere else, and it is a one-word regression to
  * reintroduce, so it is checked rather than remembered.
+ *
+ * The upload markup now lives in the shared wizard UploadField, reused by the
+ * RE-10 and Plans flows, so the contract is checked there. The wizard is still
+ * checked for the two things it owns: passing the shared accept list, and
+ * swallowing a stray drop so the page is never navigated away.
  */
-const pickerBlock = wizard.slice(wizard.indexOf("ref={pickerRef}"));
+const uploadField = fs.readFileSync("components/estimate/wizard/UploadField.tsx", "utf8");
+
+const pickerBlock = uploadField.slice(uploadField.indexOf("ref={pickerRef}"));
 const pickerInput = pickerBlock.slice(0, pickerBlock.indexOf("/>"));
 check(pickerInput.length > 0 && pickerInput.length < 1200, "could not isolate the file picker input");
 check(!/capture/.test(pickerInput), "the plain file picker has a `capture` attribute - phones will open the camera and hide the file and photo pickers");
 check(/multiple/.test(pickerInput), "the file picker is not `multiple` - an RE-10 plus inspection pages is several files");
-check(/UPLOAD_ACCEPT/.test(pickerInput), "the file picker does not use the shared accept list");
+check(/accept=\{accept\}/.test(pickerInput), "the file picker does not apply its accept prop - the shared accept list is dropped");
+check(/UPLOAD_ACCEPT/.test(wizard), "the RE-10 wizard does not pass the shared accept list to the upload field");
 
-const cameraBlock = wizard.slice(wizard.indexOf("ref={cameraRef}"));
+const cameraBlock = uploadField.slice(uploadField.indexOf("ref={cameraRef}"));
 const cameraInput = cameraBlock.slice(0, cameraBlock.indexOf("/>"));
 check(/capture=/.test(cameraInput), "the camera button's input has no `capture` - it will not open the camera");
 
 // Drag and drop is easy to delete by accident when the box is restyled.
 for (const handler of ["onDragEnter", "onDragOver", "onDragLeave", "onDrop"]) {
-  check(wizard.includes(handler + "="), `the upload box has no ${handler} - drag and drop is broken`);
+  check(uploadField.includes(handler + "="), `the upload box has no ${handler} - drag and drop is broken`);
 }
 check(
   /window.addEventListener\("drop"/.test(wizard),
