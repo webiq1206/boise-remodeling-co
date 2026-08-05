@@ -57,9 +57,13 @@ const EXCLUDED_DIRS = new Set([
 ]);
 
 // These scripts intentionally contain the patterns they search for, so skip them.
+// public/brand/brand-kit.html is the vendor brand-kit reference reproduced
+// verbatim (the HTML twin of public/brand/BRAND.md, which .md-only scanning
+// already skips); house style does not govern a delivered brand artifact.
 const EXCLUDED_FILES = new Set([
   join('scripts', 'verify-no-em-dash.ts'),
   join('scripts', 'fix-em-dash.ts'),
+  join('public', 'brand', 'brand-kit.html'),
 ]);
 
 interface Violation {
