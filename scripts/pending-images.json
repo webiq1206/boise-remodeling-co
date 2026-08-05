@@ -1,6 +1,7 @@
 {
-  "_note": "Posts shipped with on-brand placeholder images pending image-generation credits. When credits are topped up, generate each below via the MCP image tool, then: download raw PNG -> sharp resize 1792x1024 cover webp q72 -> public/images/blog/{slug}.webp, and run scripts/generate-og-images.mjs {slug} \"{ogTitle}\". This overwrites the placeholders at the same paths; no re-wiring needed. All prompts follow the locked spec: authentic real completed-project look, tier/type varied, natural light, no people/text/logos.",
-  "pending": [
+  "_note": "ALL CLEAR. Every post below has had its placeholder replaced with a generated featured photo (1792x1024 cover webp q72) and a matching -og.jpg card. Prompts are retained here as the reproducible record of what each image depicts. To regenerate one: generate the prompt via the MCP image tool, then sharp resize 1792x1024 cover webp q72 -> public/images/blog/{slug}.webp, and run scripts/generate-og-images.mjs {slug} \"{ogTitle}\". All prompts follow the locked spec: authentic real completed-project look, tier/type varied, natural light, no people/text/logos.",
+  "pending": [],
+  "completed": [
     {
       "slug": "whole-home-remodel-planning-checklist",
       "ogTitle": "Whole-Home Remodel Planning Checklist",
