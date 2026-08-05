@@ -500,6 +500,10 @@ export function EstimateCalculator({
   const [phase, setPhase] = useState<"form" | "review" | "gate" | "result">("form");
   const [formIdx, setFormIdx] = useState(0);
   const [editReturn, setEditReturn] = useState(false);
+  /* Set to a step id when a single tap on that step has settled its answer, so
+     the flow can carry the visitor forward on its own. Read by the auto-advance
+     effect below (never acted on inline, to avoid a stale click-time answer). */
+  const [pendingAdvance, setPendingAdvance] = useState<string | null>(null);
 
   /* Bring the current step heading into view, just below the sticky header. */
   function scrollWizardTop() {
@@ -1052,6 +1056,38 @@ export function EstimateCalculator({
     scrollWizardTop();
   }
 
+  /* ── Auto-advance ─────────────────────────────────────────────────────
+     On a single-choice step (project, layout, finish, bathrooms, kitchen) a
+     valid selection carries the visitor to the next screen on its own, so the
+     tool feels like an app rather than a form. Three things make it reliable:
+
+       1. It runs in an effect, not in the click handler, so it reads the answer
+          React has just committed rather than the stale click-time value.
+       2. It only fires for the step actually on screen, so a background write
+          (the address lookup filling in a bathroom count, say) never jumps the
+          flow, and a slider or multi-select step is never dragged forward.
+       3. A short, reduced-motion-aware delay lets the selected state register
+          and lets rapid re-taps settle on the final choice before moving.
+
+     The sticky Continue stays present the whole time, so keyboard users and
+     anyone who prefers to press it are never dependent on the auto-advance. */
+  useEffect(() => {
+    if (pendingAdvance == null) return;
+    if (pendingAdvance !== currentFormId || phase !== "form" || !stepComplete(currentFormId)) {
+      setPendingAdvance(null);
+      return;
+    }
+    const prefersReducedMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const timer = setTimeout(() => {
+      setPendingAdvance(null);
+      nextFromForm();
+    }, prefersReducedMotion ? 0 : 200);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingAdvance, phase, currentFormId, chosen, bathCount, kitchenIn, finish, editReturn, allChosen]);
+
   /* While the wizard owns the bottom of the viewport its own sticky Back /
      Continue (and, on the result, the next-step actions) must not sit under the
      site-wide Call / Text / Get-an-estimate bar. In the modal the wizard fills
@@ -1321,7 +1357,10 @@ export function EstimateCalculator({
               type="button"
               role="tab"
               aria-selected={active}
-              onClick={() => handleSelectProject(type)}
+              onClick={() => {
+                handleSelectProject(type);
+                setPendingAdvance("project");
+              }}
               data-testid={`calc-tab-${type}`}
               className={cn(darkCard(active), "flex items-center gap-3 px-4 py-3.5 min-h-[58px]")}
             >
@@ -1408,7 +1447,10 @@ export function EstimateCalculator({
             <button
               key={opt.id}
               type="button"
-              onClick={() => handleSelectSubtype(opt.id)}
+              onClick={() => {
+                handleSelectSubtype(opt.id);
+                setPendingAdvance("layout");
+              }}
               data-testid={`calc-subtype-${opt.id}`}
               aria-pressed={active}
               className={cn(darkCard(active), "flex items-start gap-3 p-4 min-h-[76px]")}
@@ -1624,13 +1666,7 @@ export function EstimateCalculator({
                 setBathCount(n);
                 setBathCountConfirmed(true);
                 fireEstimatorEngagement();
-                /* Advance to the next step in sequence: kitchen if that
-                   question is shown and unanswered, otherwise finish level. */
-                if (showKitchenIncluded && kitchenIn === null) {
-                  scheduleScroll(() => kitchenRef.current);
-                } else if (!chosen.finish) {
-                  scheduleScroll(() => finishRef.current);
-                }
+                setPendingAdvance("bathcount");
               }}
               data-testid={`calc-baths-${n}`}
               aria-pressed={active}
@@ -1681,10 +1717,7 @@ export function EstimateCalculator({
                 onClick={() => {
                   setKitchenIn(opt.value);
                   fireEstimatorEngagement();
-                  /* Advance to the finish-level step if not yet chosen. */
-                  if (!chosen.finish) {
-                    scheduleScroll(() => finishRef.current);
-                  }
+                  setPendingAdvance("kitchen");
                 }}
                 data-testid={`calc-kitchen-${opt.value ? "yes" : "no"}`}
                 aria-pressed={active}
@@ -1708,7 +1741,9 @@ export function EstimateCalculator({
      competence rather than as a form: the estimator already understands the
      project. Editing is one tap away for the minority who want it. */
   const typicalPanel = (
-    <div className="mt-6 scroll-mt-20 rounded-md border border-accent-legible/30 bg-inverse-foreground/[0.05] p-4 shadow-[inset_0_0_0_1px_hsl(var(--accent-legible)/0.08)]" ref={typicalRef}>
+    <div className="mt-6 scroll-mt-20" ref={typicalRef}>
+      {renderStepLabel("details", "Confirm the details")}
+      <div className="rounded-md border border-accent-legible/30 bg-inverse-foreground/[0.05] p-4 shadow-[inset_0_0_0_1px_hsl(var(--accent-legible)/0.08)]">
       <p className="text-[13px] tracking-[0.06em] uppercase text-inverse-foreground">
         Typical for a {FINISH_LABELS[finish]} {config.tabLabel.toLowerCase()}
       </p>
@@ -1739,6 +1774,7 @@ export function EstimateCalculator({
           {showCabinetry && cabinetRow}
         </div>
       )}
+      </div>
     </div>
   );
 
@@ -1753,7 +1789,10 @@ export function EstimateCalculator({
             <button
               key={level}
               type="button"
-              onClick={() => handleSelectFinish(level)}
+              onClick={() => {
+                handleSelectFinish(level);
+                setPendingAdvance("finish");
+              }}
               data-testid={`calc-finish-${level}`}
               aria-pressed={active}
               className={cn(

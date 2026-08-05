@@ -1,10 +1,13 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/* The standard estimator is a guided, one-step-at-a-time wizard. These tests
-   drive the real flow through its shipped test ids:
+/* The standard estimator is a guided, one-step-at-a-time wizard. Single-choice
+   steps (project, layout, finish, and the conditional bathroom / kitchen steps)
+   advance on their own the moment a valid option is tapped; steps that take a
+   slider or several answers (address, size, upgrades, confirm-the-details) wait
+   for the sticky Continue. The flow for a kitchen project is:
 
-   project -> address -> layout -> size -> upgrades -> [bathrooms] -> [kitchen]
-   -> finish -> details -> review -> your details (gate) -> result
+   project -(auto)-> address -> layout -(auto)-> size -> upgrades
+   -> finish -(auto)-> details -> review -> your details (gate) -> result
 
    The lead API is stubbed so the result reveal is deterministic and does not
    depend on a database being reachable from the test runner. */
@@ -25,33 +28,32 @@ async function next(page: Page) {
 
 /** Walk from the first step to the review screen for a kitchen project. */
 async function walkToReview(page: Page) {
-  // Step: project (required selection unlocks Continue).
-  await expect(page.getByTestId("wizard-next")).toBeDisabled();
+  // project: a tap auto-advances to the address step.
   await page.getByTestId("calc-tab-kitchen").click();
-  await expect(page.getByTestId("wizard-next")).toBeEnabled();
-  await next(page);
+  await expect(page.getByTestId("early-input-address")).toBeVisible();
 
-  // Step: address (optional) - skip it.
+  // address (optional): continue to layout.
   await next(page);
+  await page.locator('[data-testid^="calc-subtype-"]').first().waitFor();
 
-  // Step: layout (required).
+  // layout: a tap auto-advances to the size step.
   await page.locator('[data-testid^="calc-subtype-"]').first().click();
-  await next(page);
-
-  // Step: size (slider carries a default).
   await expect(page.getByTestId("calc-sqft-slider")).toBeVisible();
-  await next(page);
 
-  // Step: upgrades (optional).
+  // size: continue to upgrades.
   await next(page);
+  await page.locator('[data-testid^="calc-chip-"]').first().waitFor();
 
-  // Step: finish (required).
+  // upgrades (optional): continue to finish.
+  await next(page);
+  await page.locator('[data-testid^="calc-finish-"]').first().waitFor();
+
+  // finish: a tap auto-advances to the confirm-the-details step.
   await page.locator('[data-testid^="calc-finish-"]').first().click();
-  await next(page);
+  await expect(page.getByTestId("button-edit-assumptions")).toBeVisible();
 
-  // Step: details (assumptions confirm) -> review.
+  // details: continue to review.
   await next(page);
-
   await expect(page.getByTestId("step-heading")).toHaveText("Review your project");
 }
 
@@ -74,6 +76,14 @@ test.describe("Standard estimator - guided wizard (desktop)", () => {
     await expect(page.getByTestId("wizard-sticky-nav")).toBeVisible();
     await expect(page.getByTestId("wizard-next")).toBeDisabled();
     await expect(page.locator('[data-testid="estimate-range"]')).toHaveCount(0);
+  });
+
+  test("a single-choice tap advances the step automatically", async ({ page }) => {
+    await openCalculator(page);
+
+    await page.getByTestId("calc-tab-kitchen").click();
+    // No Continue tap: the project step carries the visitor forward on its own.
+    await expect(page.getByTestId("step-heading")).toHaveText("Your property address");
   });
 
   test("walks the full flow to a structured result", async ({ page }) => {
@@ -104,11 +114,10 @@ test.describe("Standard estimator - guided wizard (desktop)", () => {
     expect(parsed.priceLow).toBeGreaterThan(0);
   });
 
-  test("Back preserves earlier answers", async ({ page }) => {
+  test("Back preserves earlier answers after an auto-advance", async ({ page }) => {
     await openCalculator(page);
 
     await page.getByTestId("calc-tab-kitchen").click();
-    await next(page);
     await expect(page.getByTestId("step-heading")).toHaveText("Your property address");
 
     await page.getByTestId("wizard-back").click();
@@ -125,9 +134,9 @@ test.describe("Standard estimator - guided wizard (desktop)", () => {
     await page.getByTestId("review-finish-edit").click();
     await expect(page.getByTestId("step-heading")).toHaveText("Finish level");
 
-    // Choosing a finish and continuing lands back on review, not the next step.
+    // Choosing a finish auto-advances - and because the edit came from review,
+    // it lands back on review rather than marching through later steps.
     await page.locator('[data-testid^="calc-finish-"]').first().click();
-    await next(page);
     await expect(page.getByTestId("step-heading")).toHaveText("Review your project");
   });
 
