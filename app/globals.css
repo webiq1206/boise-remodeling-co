@@ -48,8 +48,8 @@ html, body {
    is present. This is the identity, not a toggle. Palette:
      --bg #1C1F1E · --bg-2 #222624 · --surface #262B29 · hairline #39403D
      bone #F7F5F3 · body #E6E3DE · mist #9AA098 · faint #6E756F
-     deep sage #5D6561 = graphic fills/chips/tints · lifted sage #899F95 =
-     ALL sage text (accent WORDS, eyebrow ticks, links/hover, focus, numerals)
+     sage #9AA098 = the single brand accent (accent WORDS, eyebrow ticks,
+     links/hover, focus, numerals, chips, tints); 6.21:1 on the charcoal ground
    ═══════════════════════════════════════════════════════════════════ */
 :root, .dark {
   --button-outline: rgba(255,255,255, .08);
@@ -366,11 +366,10 @@ html, body {
   font-family: var(--font-fraunces, Georgia, serif);
   font-style: italic;
   font-optical-sizing: auto;
-  /* Accent WORDS are the serif grace note AND the brand's sage moment. We use
-     the lifted sage (#899F95), not the deep #5D6561, because deep sage fails
-     legibility as text on the charcoal ground - the lifted tone stays AA
-     (5.9:1) at any size while reading unmistakably as the same sage family.
-     Overrides any text-accent on the same element. */
+  /* Accent WORDS are the serif grace note AND the brand's sage moment. The kit
+     uses a single sage (#9AA098), which on the charcoal ground reads at 6.21:1,
+     comfortably AA as text at any size. Overrides any text-accent on the same
+     element. */
   color: hsl(var(--accent-legible));
 }
 

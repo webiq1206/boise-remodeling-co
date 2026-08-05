@@ -45,7 +45,9 @@ export const metadata: Metadata = {
   authors: [{ name: 'Boise Remodeling Co' }],
   creator: 'Boise Remodeling Co',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://boiseremodeling.co'),
-  // Favicon set built from the Maker's Seal (boise-remodeling-co-seal-dark).
+  // Favicon set built from the brand kit's small-size icon mark (the sage disc
+  // with the script initial), which is drawn for favicon sizes where the seal
+  // stops reading. Assets live in /public/brand/png/icon.
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },

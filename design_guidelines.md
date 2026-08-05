@@ -10,12 +10,13 @@
 - Mobile-first conversion (estimator, consult CTA)
 - Shared tokens in `app/globals.css` — no one-off page styles
 
-**Sage usage (two tones, used where each reads best):**
-- **Lifted sage `#899F95` (`--accent-legible`) = all sage TEXT:** heading accent
-  words (`.brc-accent`), eyebrow ticks, text-link hover, focus rings, step
-  numerals. AA-legible (5.9:1) on the charcoal ground at any size.
-- **Deep sage `#5D6561` (`--accent`) = graphic fills only:** chips, tints,
-  slider track, icon grounds (always with bone text on top). Too dark for text.
+**Sage usage (one brand value, `#9AA098`):**
+- **Sage `#9AA098` (`--accent` and `--accent-legible`) is the single brand
+  accent.** It carries heading accent words (`.brc-accent`), eyebrow ticks,
+  text-link hover, focus rings, step numerals, and graphic fills (chips, tints,
+  slider track). On the charcoal ground it reads at 6.21:1, comfortably AA at
+  any size; on a sage fill, use charcoal text (never bone). The retired two-tone
+  sages (`#899F95` / `#5D6561`) are gone.
 
 ---
 

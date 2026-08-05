@@ -46,7 +46,7 @@ Structured-data inventory, defects, and recommended `@graph` model.
       "@type": "Organization",
       "@id": "https://boiseremodeling.co/#organization",
       "name": "Boise Remodeling Co",
-      "logo": { "@type": "ImageObject", "url": ".../images/brc-logo.png" },
+      "logo": { "@type": "ImageObject", "url": ".../brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png" },
       "sameAs": ["facebook", "instagram", "GBP", "houzz"],
       "founder": { "@type": "Person", "name": "<data-gated>" }
     },
