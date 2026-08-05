@@ -636,10 +636,8 @@ export const BLOG_ASSET_COPY_MAP: Record<string, string> = {
   'choose-remodeling-contractor-boise': '/images/process-design-review.webp',
   'boise-remodeling-process-guide': '/images/gallery/gallery-whole-home-before.webp',
   'best-remodeling-roi-boise': '/images/gallery/gallery-kitchen-after.webp',
-  'north-end-remodeling-guide': '/images/areas/boise.webp',
-  'boise-bench-remodeling-guide': '/images/city-service/whole-home-remodel__boise.webp',
-  'harris-ranch-remodeling-guide': '/images/city-service/kitchen-remodel__boise.webp',
-  'east-boise-remodeling-guide': '/images/city-service/bathroom-remodel__boise.webp',
-  'hidden-springs-remodeling-guide': '/images/city-service/whole-home-remodel__boise.webp',
+  // Neighborhood guides now ship bespoke, neighborhood-appropriate hero photos
+  // (each reflects that area's housing stock) instead of reusing a shared area
+  // or city-service photo, so they are intentionally not derived copies here.
   'eagle-foothills-remodeling-guide': '/images/areas/eagle.webp',
 };
