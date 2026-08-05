@@ -18,8 +18,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, '..');
 
 const CHARCOAL = '#1C1F1E';
-const SAGE = '#5D6561';
-const SAGE_LIGHT = '#899F95';
+// Single brand sage (#9AA098). It formerly split into a deep fill (#5D6561) and
+// a lifted text tone (#899F95); the kit now uses one value on the dark ground.
+const SAGE = '#9AA098';
+const SAGE_LIGHT = '#9AA098';
 const LINE = '#3A3F3D';
 
 /** Build a placeholder SVG at the given dimensions (pure shapes, no fonts). */

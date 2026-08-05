@@ -2,10 +2,14 @@ import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /**
  * Dark-brand email tokens - the site's actual palette (app/globals.css). Every
- * outbound email renders on the charcoal ground with bone text and sage accents
- * so it matches boiseremodeling.co. Key names are semantic (bg/surface/text/...)
- * so both the shared CSS here and the inline styles in emailNotifications.ts
- * pull the same colors.
+ * outbound email renders on the charcoal ground with bone text and the sage
+ * accent so it matches boiseremodeling.co. Key names are semantic
+ * (bg/surface/text/...) so both the shared CSS here and the inline styles in
+ * emailNotifications.ts pull the same colors.
+ *
+ * The brand kit collapses to a single sage (#9AA098); on the charcoal email
+ * ground that reads at 6.21:1, comfortably AA for links, bars and ticks. The
+ * retired two-tone sages (#899F95 / #5D6561) are gone.
  */
 export const EMAIL_BRAND = {
   bg: "#1C1F1E",         // page background (charcoal)
@@ -13,9 +17,8 @@ export const EMAIL_BRAND = {
   raised: "#2E3331",     // highlighted boxes, footer, badges
   hairline: "#39403D",   // borders + dividers
   text: "#F7F5F3",       // primary text (bone)
-  textMuted: "#9AA098",  // secondary text (mist)
-  accent: "#899F95",     // legible sage - links, bars, ticks
-  accentDeep: "#5D6561", // deep sage fill
+  textMuted: "#9AA098",  // secondary text (sage)
+  accent: "#9AA098",     // sage accent - links, bars, ticks
 } as const;
 
 export const SITE_BASE_URL = SITE_CONFIG.siteUrl;

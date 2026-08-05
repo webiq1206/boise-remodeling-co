@@ -294,7 +294,7 @@ export function StripePaymentForm({
               // Dark-only brand: Stripe's night base tuned to the BRC palette
               theme: "night",
               variables: {
-                colorPrimary: "#899F95",      /* sage accent */
+                colorPrimary: "#9AA098",      /* sage accent */
                 colorBackground: "#1F2321",   /* input field */
                 colorText: "#E6E3DE",
                 colorTextSecondary: "#9AA098",
