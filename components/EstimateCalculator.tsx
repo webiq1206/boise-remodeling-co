@@ -3,15 +3,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import {
-  Check, ChevronDown, ArrowRight, Lock, Calculator,
+  Check, ChevronDown, ArrowRight, ArrowLeft, Lock, Calculator, Printer, RefreshCw,
   UtensilsCrossed, Droplets, Home, Building2, Layers, AlignLeft,
   LayoutGrid, Star, Sun, Monitor, Dumbbell, Bed, Car,
   Lightbulb, Wind, DoorOpen, GlassWater, Sofa, Frame, Triangle, Grid3x3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { StickyEstimateBar } from "@/components/estimate/StickyEstimateBar";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/marketing";
+import {
+  WizardProgress,
+  StickyStepNav,
+  ReviewSection,
+  EditScopeCta,
+  StickyResultActions,
+  type WizardStepMeta,
+  type ReviewItem,
+} from "@/components/estimate/wizard";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import type { PropertyProfile } from "@/shared/propertyProfile";
 import {
@@ -472,66 +480,43 @@ export function EstimateCalculator({
   const typicalRef     = useRef<HTMLDivElement>(null);
   const ctaAreaRef     = useRef<HTMLDivElement>(null);
   const gateFormRef    = useRef<HTMLDivElement>(null);
+  /* The gate <form> itself, so the sticky Continue control at the bottom of the
+     step can submit it (the fields scroll above; the action stays pinned). */
+  const gateSubmitRef  = useRef<HTMLFormElement>(null);
   const resultRef      = useRef<HTMLDivElement>(null);
   const sectionRef     = useRef<HTMLDivElement>(null);
   const allChosenScrolled  = useRef(false);
-  const pendingScrollTarget = useRef<(() => HTMLElement | null) | null>(null);
+  /* Top of the wizard card. Every step change brings this just below the
+     sticky site header so the new step heading is the first thing in view. */
+  const topRef = useRef<HTMLDivElement>(null);
 
-  /* Auto-scroll runs on every viewport. As each step completes the page
-     advances to the next section so the visitor is not left hunting for what
-     appeared below the fold. The position is computed manually (not
-     scrollIntoView) so the step heading always lands just below the sticky
-     site header: we measure the real header height at scroll time, which holds
-     on iOS Safari where fixed offsets are unreliable.
+  /* ── Guided step machine ──────────────────────────────────────────────
+     The estimator is presented one screen at a time. `phase` is the coarse
+     stage; within the form phase, `formIdx` points at a step in the dynamic
+     `formStepIds` list (which grows or shrinks with the visitor's answers).
+     `editReturn` remembers that the visitor jumped in from the review screen,
+     so a single edit sends them straight back rather than through every step. */
+  const [phase, setPhase] = useState<"form" | "review" | "gate" | "result">("form");
+  const [formIdx, setFormIdx] = useState(0);
+  const [editReturn, setEditReturn] = useState(false);
 
-     Behaviour differs only in feel: instant on mobile, where iOS smooth-scroll
-     is janky and a moving page under a thumb is disorienting, and smooth on
-     desktop, where a gentle glide reads as guidance rather than a jump. A user
-     who prefers no motion (prefers-reduced-motion) gets instant everywhere. */
-  function scrollToStep(el: HTMLElement | null) {
-    if (!el || typeof window === "undefined") return;
-    const header = document.querySelector("header");
-    const headerH = header ? header.getBoundingClientRect().height : 64;
-    const top = el.getBoundingClientRect().top + window.scrollY - headerH - 16;
-    const isDesktop = window.innerWidth >= 768;
-    const prefersReducedMotion = window.matchMedia?.(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const behavior: ScrollBehavior =
-      isDesktop && !prefersReducedMotion ? "smooth" : "instant";
-    window.scrollTo({ top: Math.max(0, top), behavior });
+  /* Bring the current step heading into view, just below the sticky header. */
+  function scrollWizardTop() {
+    if (typeof window === "undefined") return;
+    requestAnimationFrame(() => {
+      const el = topRef.current;
+      if (!el) return;
+      const header = document.querySelector("header");
+      const headerH = header ? header.getBoundingClientRect().height : 64;
+      const top = el.getBoundingClientRect().top + window.scrollY - headerH - 12;
+      const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+      window.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion ? "instant" : "smooth" });
+    });
   }
-  /* Coalesces all scrolls requested in the same frame into exactly ONE scroll.
-     The FIRST requested target wins: effects for earlier steps schedule first,
-     so a race can only ever resolve to the earliest (next) step in sequence --
-     it can never skip ahead past a step the visitor still needs to complete. */
-  function scheduleScroll(getEl: () => HTMLElement | null): boolean {
-    if (pendingScrollTarget.current !== null) return false;
-    pendingScrollTarget.current = getEl;
 
-    // Fire exactly once, whichever timer wins. The double-rAF path waits for
-    // the new section to paint before measuring, which is what keeps the step
-    // heading landing in the right place. But rAF is throttled or suspended in
-    // background tabs and under load on some mobile browsers, and if it never
-    // fired the scroll would silently fail AND leave pendingScrollTarget stuck,
-    // disabling every later scroll. The setTimeout is the floor: it guarantees
-    // the scroll runs and the sentinel clears even when rAF does not.
-    let done = false;
-    const run = () => {
-      if (done) return;
-      done = true;
-      const getTarget = pendingScrollTarget.current;
-      pendingScrollTarget.current = null;
-      if (getTarget) scrollToStep(getTarget());
-    };
-
-    if (typeof requestAnimationFrame === "function") {
-      requestAnimationFrame(() => requestAnimationFrame(run));
-    }
-    // 80ms comfortably clears a normal two-frame paint (~32ms), so on a healthy
-    // browser rAF still wins and this never runs; it only takes over when rAF
-    // is being throttled.
-    setTimeout(run, 80);
+  /* Retained as a no-op so the historical selection handlers below stay intact
+     while advancement is now driven by the sticky Back / Continue controls. */
+  function scheduleScroll(_getEl: () => HTMLElement | null): boolean {
     return true;
   }
 
@@ -807,6 +792,19 @@ export function EstimateCalculator({
     }
   }
 
+  /* "Start another estimate" from the result screen. Returns to the first step
+     with a fresh project selection while keeping the contact details we already
+     hold, so a second project never re-asks who they are. */
+  function handleStartOver() {
+    setPhase("form");
+    setFormIdx(0);
+    setEditReturn(false);
+    setGateOpen(false);
+    setChosen({ project: false, subtype: false, finish: false });
+    setAddOns([]);
+    scrollWizardTop();
+  }
+
   /* ── Which questions are worth asking ──────────────────────────────────
      A question only earns a place if its answer can change the estimate for
      the work the visitor actually described. Asking about cabinetry when they
@@ -915,10 +913,13 @@ export function EstimateCalculator({
     }
   }, [gateOpen]);
 
-  /* Numbers are derived, never hardcoded, so a hidden step cannot leave a gap
-     in the sequence the visitor reads. "address" is step 2 -- it appears early
-     so the property lookup can pre-fill the size slider. */
-  const visibleSteps: string[] = [
+  /* The guided form steps, derived so a step that does not apply never leaves a
+     gap in the sequence. "address" appears early so the property lookup can
+     pre-fill the size slider; "details" is a short confirm-the-assumptions step
+     that the visitor can accept in one tap. The dynamic steps (bathrooms,
+     kitchen) always sit AFTER the answers that reveal them, so a plain index is
+     safe: nothing before the current step can be added or removed. */
+  const formStepIds: string[] = [
     "project",
     "address",
     "layout",
@@ -927,8 +928,21 @@ export function EstimateCalculator({
     ...(showBathCount ? ["bathcount"] : []),
     ...(showKitchenIncluded ? ["kitchen"] : []),
     "finish",
+    "details",
   ];
-  const stepNo = (id: string) => visibleSteps.indexOf(id) + 1;
+  const STEP_LABELS: Record<string, string> = {
+    project: "Project",
+    address: "Address",
+    layout: "Layout",
+    size: "Size",
+    upgrades: "Upgrades",
+    bathcount: "Bathrooms",
+    kitchen: "Kitchen",
+    finish: "Finish",
+    details: "Details",
+  };
+  const safeFormIdx = Math.min(formIdx, formStepIds.length - 1);
+  const currentFormId = formStepIds[safeFormIdx];
 
   /* Only the things a homeowner actually knows are required: their project,
      layout, size, finish, bathroom count and whether the kitchen is in scope.
@@ -941,70 +955,101 @@ export function EstimateCalculator({
     (!showBathCount || bathCount !== null) &&
     (!showKitchenIncluded || kitchenIn !== null);
 
-  /* Scroll to the gate CTA (or result panel for returning visitors) the first
-     time all required choices are made. Must live after allChosen is defined.
-     Auto-scroll must only ever follow an explicit user tap: a bath count
-     pre-filled from property data counts toward allChosen (the estimate can
-     price it) but does NOT count for scrolling until the visitor confirms it
-     with a tap (bathCountConfirmed). Without this, assessor data arriving in
-     the background could yank the page to the CTA past unvisited steps. */
-  const bathConfirmedForScroll = !showBathCount || bathCountConfirmed;
-  useEffect(() => {
-    if (allChosen && bathConfirmedForScroll && !allChosenScrolled.current) {
-      /* Only burn the one-shot sentinel if this scroll was actually queued.
-         If an earlier step's scroll already claimed this frame (first wins),
-         that earlier step is the correct target and the CTA stays reachable. */
-      if (scheduleScroll(() => ctaAreaRef.current ?? resultRef.current)) {
-        allChosenScrolled.current = true;
-      }
+  /* Whether the step currently on screen has the answer it requires before the
+     visitor may continue. Address, size, upgrades and details are optional or
+     always hold a working value, so they never block the Continue button. */
+  function stepComplete(id: string): boolean {
+    switch (id) {
+      case "project":
+        return chosen.project;
+      case "layout":
+        return chosen.subtype;
+      case "finish":
+        return chosen.finish;
+      case "bathcount":
+        return bathCount !== null;
+      case "kitchen":
+        return kitchenIn !== null;
+      default:
+        return true;
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allChosen, bathConfirmedForScroll]);
+  }
 
-  /* Mobile sticky bar: visible while the inline estimator section is on screen. */
-  const [sectionVisible, setSectionVisible] = useState(true);
-  useEffect(() => {
-    if (inModal) return;
-    const el = sectionRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setSectionVisible(entry.isIntersecting),
-      { root: null, rootMargin: "0px", threshold: 0.08 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [inModal]);
+  /* The progress rail: every applicable form step, then Review, then the
+     contact step (dropped for a returning visitor we already know). */
+  const progressSteps: WizardStepMeta[] = [
+    ...formStepIds.map((id) => ({ id, label: STEP_LABELS[id] })),
+    { id: "review", label: "Review" },
+    ...(gateSubmitted ? [] : [{ id: "gate", label: "Your details" }]),
+  ];
+  const progressIndex =
+    phase === "form"
+      ? safeFormIdx
+      : phase === "review"
+        ? formStepIds.length
+        : phase === "gate"
+          ? formStepIds.length + 1
+          : progressSteps.length - 1;
 
-  const stickySummary = useMemo(() => {
-    if (!chosen.project) return "Choose your project type";
-    const parts = [config.tabLabel];
-    if (chosen.subtype) {
-      const title = config.subtypes.find((s) => s.id === subtype)?.title;
-      if (title) parts.push(title);
+  /* ── Navigation ── */
+  function goToForm(id: string, fromReview = false) {
+    const idx = formStepIds.indexOf(id);
+    if (idx < 0) return;
+    setEditReturn(fromReview);
+    setFormIdx(idx);
+    setPhase("form");
+    scrollWizardTop();
+  }
+
+  function nextFromForm() {
+    if (!stepComplete(currentFormId)) return;
+    // An edit that arrived from the review screen returns there as soon as the
+    // flow is complete again, so one change never marches the visitor back
+    // through every later step they had already answered.
+    if (editReturn && allChosen) {
+      setEditReturn(false);
+      setPhase("review");
+      scrollWizardTop();
+      return;
     }
-    if (chosen.finish) parts.push(FINISH_LABELS[finish]);
-    return parts.join(" · ");
-  }, [chosen.project, chosen.subtype, chosen.finish, config, subtype, finish]);
+    setEditReturn(false);
+    if (safeFormIdx < formStepIds.length - 1) {
+      setFormIdx(safeFormIdx + 1);
+      scrollWizardTop();
+    } else {
+      setPhase("review");
+      scrollWizardTop();
+    }
+  }
 
-  const handleStickyCta = () => {
+  function backFromForm() {
+    if (editReturn) {
+      setEditReturn(false);
+      setPhase("review");
+      scrollWizardTop();
+      return;
+    }
+    if (safeFormIdx > 0) {
+      setFormIdx(safeFormIdx - 1);
+      scrollWizardTop();
+    }
+  }
+
+  function reviewToNext() {
+    if (!allChosen) return;
     if (gateSubmitted) {
-      document.getElementById("consult")?.scrollIntoView({ behavior: "smooth" });
-      onBookVisitProp?.();
-      return;
-    }
-    if (allChosen) {
+      setPhase("result");
+    } else {
       setGateOpen(true);
-      scheduleScroll(() => gateFormRef.current ?? ctaAreaRef.current);
-      return;
+      setPhase("gate");
     }
-    if (!chosen.project) {
-      scheduleScroll(() => layoutRef.current);
-    } else if (!chosen.subtype) {
-      scheduleScroll(() => layoutRef.current);
-    } else if (!chosen.finish) {
-      scheduleScroll(() => finishRef.current);
-    }
-  };
+    scrollWizardTop();
+  }
+
+  function goEditScope() {
+    setPhase("review");
+    scrollWizardTop();
+  }
 
   /* Identity of the current estimate. Used to tell whether the visitor has
      actually changed something since we last told the team about it. */
@@ -1093,7 +1138,7 @@ export function EstimateCalculator({
       return;
     }
     if (!gateAddress.trim() || !HOUSE_NUMBER_REGEX.test(gateAddress.trim())) {
-      setGateError("Please scroll up and enter your property address (must include a house number).");
+      setGateError("Please enter your property address, including a house number.");
       return;
     }
     /* Budget is optional: an extra required field before the number is friction
@@ -1159,16 +1204,19 @@ export function EstimateCalculator({
         writeLastSentKey(estimateKey);
         setResendState("idle");
         setGateSubmitted(true);
-        scheduleScroll(() => resultRef.current);
+        setPhase("result");
+        scrollWizardTop();
       } else if (res.status >= 500) {
         /* Server/infra error: not the user's fault; reveal so they aren't hard-blocked */
         console.warn("[gate] Server error", res.status, "- revealing estimate anyway");
         markGatePassed();
         setGateSubmitted(true);
+        setPhase("result");
+        scrollWizardTop();
       } else {
         /* 4xx: our client validation should have caught this; show error, keep gate */
         console.warn("[gate] API returned", res.status);
-        setGateError("Something went wrong. Please check your info and try again.");
+        setGateError("We could not save your details just now. Please check your name, email, phone and address, then try again.");
         setGateLoading(false);
         return;
       }
@@ -1177,6 +1225,8 @@ export function EstimateCalculator({
       console.warn("[gate] Network error:", err);
       markGatePassed();
       setGateSubmitted(true);
+      setPhase("result");
+      scrollWizardTop();
     }
 
     setGateLoading(false);
@@ -1192,14 +1242,18 @@ export function EstimateCalculator({
     );
   }
 
-  const renderStepLabel = (stepKey: Parameters<typeof stepNo>[0], label: string, className?: string) => (
-    <p className={cn("block text-[13px] tracking-[0.12em] uppercase mb-3", className)}>
-      <span className="text-accent-legible">{stepNo(stepKey)}</span>
-      <span className="text-inverse-muted/50 mx-2" aria-hidden>
-        ·
-      </span>
-      <span className="text-inverse-foreground/90">{label}</span>
-    </p>
+  /* Each step leads with a real heading. The progress rail above carries the
+     count and section, so the number is not repeated here. */
+  const renderStepLabel = (_stepKey: string, label: string, className?: string) => (
+    <h2
+      className={cn(
+        "font-sans font-light text-[clamp(1.4rem,5.5vw,2rem)] leading-[1.12] tracking-tight text-inverse-foreground mb-4",
+        className,
+      )}
+      data-testid="step-heading"
+    >
+      {label}
+    </h2>
   );
 
   function darkChoice(active: boolean) {
@@ -1254,48 +1308,20 @@ export function EstimateCalculator({
     </div>
   );
 
-  /* Intro - eyebrow + dynamic per-project headline */
-  const intro = (
-    <div className="mb-7">
-      <div className="flex items-start gap-4 mb-5">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-sm bg-accent-legible/15 border border-accent-legible/30 text-accent-legible">
-          <Calculator className="h-5 w-5" strokeWidth={1.5} aria-hidden />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-3 text-[10px] md:text-[11px] tracking-[0.14em] uppercase text-inverse-muted">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-accent-legible" aria-hidden />
-              Free
-            </span>
-            <span className="opacity-40" aria-hidden>·</span>
-            <span>About 60 seconds</span>
-            <span className="opacity-40" aria-hidden>·</span>
-            <span>No obligation</span>
-          </div>
-          <p className="text-[12px] tracking-[0.16em] uppercase text-accent-legible/90 mb-2">
-            Cost estimator
-          </p>
-        </div>
-      </div>
-      <h2 className="font-sans font-light text-[clamp(1.875rem,4.5vw,3.25rem)] leading-[1.06] tracking-tight text-inverse-foreground pb-6 border-b border-accent-legible/25">
-        {!chosen.project ? (
-          /* Before a project is picked the headline must not name one. */
-          <>
-            Calculate your <em className="brc-accent">remodel</em> cost
-          </>
-        ) : config.twoLineHeadline ? (
-          <>
-            {config.headlinePrefix}
-            <br />
-            <em className="brc-accent">{config.headlineAccent}</em> {config.headlineSuffix}
-          </>
-        ) : (
-          <>
-            {config.headlinePrefix} <em className="brc-accent">{config.headlineAccent}</em>{" "}
-            {config.headlineSuffix}
-          </>
-        )}
-      </h2>
+  /* Compact intro shown only on the first step, so step one still reads as the
+     start of a tool without the tall headline pushing the choices off screen. */
+  const introEyebrow = (
+    <div className="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[10px] md:text-[11px] tracking-[0.14em] uppercase text-inverse-muted">
+      <span className="inline-flex items-center gap-1.5 text-accent-legible/90">
+        <Calculator className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+        Cost estimator
+      </span>
+      <span className="opacity-40" aria-hidden="true">·</span>
+      <span>Free</span>
+      <span className="opacity-40" aria-hidden="true">·</span>
+      <span>About 60 seconds</span>
+      <span className="opacity-40" aria-hidden="true">·</span>
+      <span>No obligation</span>
     </div>
   );
 
@@ -1719,8 +1745,8 @@ export function EstimateCalculator({
 
   /* Live planning range - always visible, updates as selections change */
   const resultPanel = (
-    <div className="mt-8 scroll-mt-20" ref={resultRef} aria-live="polite" aria-atomic="true">
-      <div className="space-y-5 border-t border-inverse-foreground/15 pt-6">
+    <div className="scroll-mt-20" ref={resultRef} aria-live="polite" aria-atomic="true">
+      <div className="space-y-5">
           {/* Price range */}
           <div>
             <p className="text-[12px] tracking-[0.14em] uppercase text-inverse-muted mb-2">
@@ -1745,6 +1771,10 @@ export function EstimateCalculator({
             <p className="mt-1.5 text-[12.5px] text-inverse-muted/90 leading-relaxed">
               {ONSITE_REQUIRED_NOTICE}
             </p>
+            {/* Reassuring scope-editing action sits right under the number, so a
+                homeowner who is surprised by the range can adjust it without
+                hunting. The same action is mirrored in the sticky bar below. */}
+            <EditScopeCta onClick={goEditScope} className="mt-4" testId="edit-scope-cta-inline" />
           </div>
 
           {/* THE ANSWER TO THE BUDGET ASKED IN THE GATE. There is no second
@@ -2083,34 +2113,7 @@ export function EstimateCalculator({
             </div>
           )}
 
-          {/* Single primary CTA - book the free visit (recommended next step) */}
-          <Button
-            onClick={handleBookVisit}
-            data-testid="button-book-visit"
-            className="w-full h-14 bg-inverse-foreground text-inverse hover:bg-inverse-foreground/90 text-[14px] tracking-[0.12em] uppercase"
-          >
-            Book Free Visit
-            <ArrowRight className="h-4 w-4" />
-          </Button>
       </div>
-    </div>
-  );
-
-  /* CTA shown after user configures their estimate -- clicking opens the gate form */
-  const calculateCta = (
-    <div className="mt-8 scroll-mt-20 border-t border-inverse-foreground/15 pt-6" ref={ctaAreaRef}>
-      <Button
-        type="button"
-        onClick={() => setGateOpen(true)}
-        data-testid="button-get-estimate"
-        className="w-full h-14 bg-inverse-foreground text-inverse text-[14px] tracking-[0.12em] uppercase"
-      >
-        Get My Estimate Range
-        <ArrowRight className="h-4 w-4" />
-      </Button>
-      <p className="text-[12px] text-inverse-muted/90 text-center mt-3 leading-relaxed">
-        Takes 30 seconds. We will email you a copy too.
-      </p>
     </div>
   );
 
@@ -2119,7 +2122,7 @@ export function EstimateCalculator({
     config.subtypes.find((s) => s.id === subtype)?.title ?? config.tabLabel;
 
   const leadsGatePanel = (
-    <div className="mt-8 scroll-mt-20 border-t border-inverse-foreground/15 pt-6" ref={gateFormRef} aria-label="Unlock your estimate">
+    <div className="scroll-mt-20" ref={gateFormRef} aria-label="Unlock your estimate">
       <div className="space-y-5">
         {/* Header */}
         <div className="flex items-start gap-3">
@@ -2167,8 +2170,10 @@ export function EstimateCalculator({
           </div>
         </div>
 
-        {/* Contact form */}
-        <form onSubmit={handleGateSubmit} className="space-y-3">
+        {/* Contact form. The submit control lives in the sticky step nav below,
+            so on a phone the primary action is always pinned within thumb reach
+            even while the visitor scrolls through the fields. */}
+        <form ref={gateSubmitRef} onSubmit={handleGateSubmit} className="space-y-3">
           <input
             type="text"
             placeholder="First name"
@@ -2212,7 +2217,7 @@ export function EstimateCalculator({
             <div className="rounded-md border border-inverse-foreground/15 bg-inverse-foreground/[0.04] px-4 py-3">
               <p className="text-[11px] text-inverse-muted/90 mb-0.5 uppercase tracking-wide">Property address</p>
               <p className="text-[13.5px] text-inverse-foreground leading-snug">{gateAddress}</p>
-              <p className="mt-1 text-[11px] text-inverse-muted/90">Scroll to step 2 to update.</p>
+              <p className="mt-1 text-[11px] text-inverse-muted/90">Go back to the Address step to change this.</p>
             </div>
           ) : (
             <div>
@@ -2275,15 +2280,11 @@ export function EstimateCalculator({
             // by the browser, but these format checks are ours to surface.
             <p role="alert" className="text-[12px] text-red-400">{gateError}</p>
           )}
-          <Button
-            type="submit"
-            disabled={gateLoading}
-            data-testid="button-gate-submit"
-            className="w-full h-14 bg-inverse-foreground text-inverse text-[14px] tracking-[0.12em] uppercase"
-          >
-            {gateLoading ? "Sending..." : "Reveal My Estimate"}
-            {!gateLoading && <ArrowRight className="h-4 w-4" />}
-          </Button>
+          {/* A hidden native submit keeps Enter-to-submit working for keyboard
+              users; the visible primary action is the sticky Continue below. */}
+          <button type="submit" className="sr-only" tabIndex={-1} aria-hidden="true" data-testid="button-gate-submit">
+            Reveal My Estimate
+          </button>
           <p className="text-[12px] text-inverse-muted/90 text-center leading-relaxed">
             We will email you a copy too. No spam, ever.
           </p>
@@ -2293,85 +2294,187 @@ export function EstimateCalculator({
   );
 
   /* ══════════════════════════════
-     LAYOUTS
+     GUIDED STEP MACHINE
   ══════════════════════════════ */
 
-  /* Ordered input flow. Size / upgrades / finish reveal once a layout is chosen
-     so the form grows naturally (no dead space, minimal scrolling). */
-  const flow = (
-    <>
-      {intro}
-      {projectGrid}
-      {/* Each step appears only once the one before it has been answered, so a
-          visitor is never presented with a pre-filled choice they did not make
-          and cannot reach an estimate without selecting every input. */}
-      {chosen.project && addressStep}
-      {chosen.project && subtypeGrid}
-      {chosen.subtype && sizeGrid}
-      {chosen.subtype && chipsRow}
-      {chosen.subtype && showBathCount && bathCountRow}
-      {chosen.subtype && showKitchenIncluded && kitchenRow}
-      {chosen.subtype && finishRow}
-      {chosen.finish && typicalPanel}
-      {allChosen &&
-        (gateSubmitted ? resultPanel : gateOpen ? leadsGatePanel : calculateCta)}
-    </>
+  /* Each form step id maps to the single screen shown for it. Only one screen is
+     ever mounted, so the visitor never scrolls past questions they have already
+     answered, and never sees a choice for a step they have not reached. */
+  const formStepBodies: Record<string, React.ReactNode> = {
+    project: projectGrid,
+    address: addressStep,
+    layout: subtypeGrid,
+    size: sizeGrid,
+    upgrades: chipsRow,
+    bathcount: bathCountRow,
+    kitchen: kitchenRow,
+    finish: finishRow,
+    details: typicalPanel,
+  };
+
+  /* Selected upgrade chips rendered as plain labels on the review screen. */
+  const reviewChipLabels = config.chips
+    .filter((c) => addOns.includes(c.id))
+    .map((c) => c.label);
+
+  /* One review card per step. Each Edit action jumps straight back to that one
+     step and returns here the moment the flow is complete again, so changing a
+     single answer never loses anything else or marches through later steps. */
+  const reviewSections: { title: string; step: string; items: ReviewItem[] }[] = [
+    { title: "Project", step: "project", items: [{ label: "Type", value: config.tabLabel }] },
+    { title: "Layout", step: "layout", items: [{ label: "Layout", value: subtypeTitle }] },
+    { title: "Size", step: "size", items: [{ label: "Approx. size", value: `${sqft.toLocaleString()} sq ft` }] },
+    {
+      title: "Upgrades",
+      step: "upgrades",
+      items: [
+        {
+          label: "Selected",
+          value: reviewChipLabels.length ? reviewChipLabels.join(", ") : "Full remodel (nothing left out)",
+        },
+      ],
+    },
+    ...(showBathCount
+      ? [{ title: "Bathrooms", step: "bathcount", items: [{ label: "Count", value: bathCount === null ? "Not set" : String(bathCount) }] }]
+      : []),
+    ...(showKitchenIncluded
+      ? [{ title: "Kitchen", step: "kitchen", items: [{ label: "In scope", value: kitchenIn ? "Yes, included" : "No" }] }]
+      : []),
+    { title: "Finish level", step: "finish", items: [{ label: "Finish", value: FINISH_LABELS[finish] }] },
+    { title: "Property", step: "address", items: [{ label: "Address", value: gateAddress.trim() || "You can add this later" }] },
+  ];
+
+  const isLastFormStep = safeFormIdx === formStepIds.length - 1;
+  const formNextLabel =
+    editReturn && allChosen ? "Back to review" : isLastFormStep ? "Review my project" : "Continue";
+
+  /* Single guided body: `phase` chooses which screen is mounted, and only one is
+     ever on screen, so the step in view owns the whole viewport. `topRef` is the
+     scroll anchor every transition brings just under the sticky site header. */
+  const wizardBody = (
+    <div ref={topRef} className="scroll-mt-24">
+      {phase !== "result" && (
+        <WizardProgress steps={progressSteps} currentIndex={progressIndex} />
+      )}
+
+      {phase === "form" && (
+        <div>
+          {safeFormIdx === 0 && introEyebrow}
+          {formStepBodies[currentFormId]}
+          <StickyStepNav
+            onBack={safeFormIdx > 0 || editReturn ? backFromForm : undefined}
+            onNext={nextFromForm}
+            nextDisabled={!stepComplete(currentFormId)}
+            nextLabel={formNextLabel}
+            hint={!stepComplete(currentFormId) ? "Choose an option to continue." : undefined}
+          />
+        </div>
+      )}
+
+      {phase === "review" && (
+        <div>
+          <h2
+            className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground"
+            data-testid="step-heading"
+          >
+            Review your project
+          </h2>
+          <p className="mt-2.5 mb-5 text-[14px] text-inverse-foreground/80 leading-relaxed">
+            Make sure everything looks right. Tap Edit on any line to change it. Nothing else is lost.
+          </p>
+          <div className="space-y-3">
+            {reviewSections.map((s) => (
+              <ReviewSection
+                key={s.step}
+                title={s.title}
+                items={s.items}
+                onEdit={() => goToForm(s.step, true)}
+                testId={`review-${s.step}`}
+              />
+            ))}
+          </div>
+          <StickyStepNav
+            onBack={() => {
+              setEditReturn(false);
+              setFormIdx(formStepIds.length - 1);
+              setPhase("form");
+              scrollWizardTop();
+            }}
+            onNext={reviewToNext}
+            nextDisabled={!allChosen}
+            nextLabel={gateSubmitted ? "See my estimate" : "Get my estimate"}
+            nextTestId="review-continue"
+          />
+        </div>
+      )}
+
+      {phase === "gate" && (
+        <div>
+          {leadsGatePanel}
+          <StickyStepNav
+            onBack={() => {
+              setGateOpen(false);
+              setPhase("review");
+              scrollWizardTop();
+            }}
+            onNext={() => gateSubmitRef.current?.requestSubmit()}
+            busy={gateLoading}
+            busyLabel="Sending..."
+            nextLabel="Reveal my estimate"
+            nextTestId="gate-continue"
+          />
+        </div>
+      )}
+
+      {phase === "result" && (
+        <div>
+          {resultPanel}
+          <StickyResultActions
+            primaryLabel="Book a Free Site Visit"
+            onPrimary={handleBookVisit}
+            onEditScope={goEditScope}
+            secondary={[
+              { label: "Print", icon: Printer, onClick: () => window.print(), testId: "result-print" },
+              { label: "Start another", icon: RefreshCw, onClick: handleStartOver, testId: "result-start-over" },
+            ]}
+          />
+        </div>
+      )}
+    </div>
   );
 
-  /* inModal: compact card without full-viewport constraint */
+  /* inModal: compact card without the full-viewport section chrome. */
   if (inModal) {
     return (
-      <div className="relative bg-inverse text-inverse-foreground rounded-lg p-5 sm:p-6">
-        {flow}
-        <StickyEstimateBar
-          mode="modal"
-          result={allChosen ? result : null}
-          summary={stickySummary}
-          ctaLabel={gateSubmitted ? "Book Free Visit" : allChosen ? "Get My Range" : "Continue"}
-          onCta={handleStickyCta}
-        />
+      <div className="relative bg-inverse text-inverse-foreground rounded-lg p-4 sm:p-6">
+        {wizardBody}
       </div>
     );
   }
 
-  /* Full page: dark section that sizes to its content (no forced viewport height,
-     no footer banner, no dead space below the form). */
+  /* Full page: dark section that sizes to its content. overflow is left visible
+     so the sticky step nav pins to the viewport rather than to this section. */
   return (
-    <>
-      <Section
-        id="calculator"
-        variant="inverse"
-        divider
-        className="scroll-mt-16 relative overflow-hidden border-y-2 border-accent-legible/40"
-      >
-        <div className="absolute inset-x-0 top-0 h-1 bg-accent-legible z-10" aria-hidden />
-        <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-accent-legible/15" aria-hidden />
-        <div
-          className="absolute inset-0 pointer-events-none opacity-[0.028]"
-          style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat" }}
-          aria-hidden
-        />
-        <div ref={sectionRef} className="container px-4 sm:px-6 py-2 md:py-4 relative z-[1]">
-          <div className="mx-auto w-full max-w-5xl">
-            <div className="relative rounded-sm border border-accent-legible/45 bg-inverse-foreground/[0.04] shadow-[0_0_0_1px_hsl(var(--accent-legible)/0.1),0_24px_60px_-20px_rgba(0,0,0,0.55)]">
-              <div className="absolute inset-y-0 left-0 w-1 bg-accent-legible/80 rounded-l-sm" aria-hidden />
-              <div
-                className="absolute inset-x-6 sm:inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-accent-legible/50 to-transparent"
-                aria-hidden
-              />
-              <div className="relative px-5 sm:px-7 md:px-9 py-8 md:py-10 lg:py-12">{flow}</div>
-            </div>
+    <Section
+      id="calculator"
+      variant="inverse"
+      divider
+      className="scroll-mt-16 relative border-y-2 border-accent-legible/40"
+    >
+      <div className="absolute inset-x-0 top-0 h-1 bg-accent-legible z-10" aria-hidden />
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.028]"
+        style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat" }}
+        aria-hidden
+      />
+      <div ref={sectionRef} className="container px-4 sm:px-6 py-2 md:py-4 relative z-[1]">
+        <div className="mx-auto w-full max-w-3xl">
+          <div className="relative rounded-sm border border-accent-legible/45 bg-inverse-foreground/[0.04] shadow-[0_0_0_1px_hsl(var(--accent-legible)/0.1),0_24px_60px_-20px_rgba(0,0,0,0.55)]">
+            <div className="absolute inset-y-0 left-0 w-1 bg-accent-legible/80 rounded-l-sm" aria-hidden />
+            <div className="relative px-4 sm:px-6 py-8 md:py-10">{wizardBody}</div>
           </div>
         </div>
-      </Section>
-      <StickyEstimateBar
-        mode="inline"
-        visible={sectionVisible}
-        result={allChosen ? result : null}
-        summary={stickySummary}
-        ctaLabel={gateSubmitted ? "Book Free Visit" : allChosen ? "Get My Range" : "Continue"}
-        onCta={handleStickyCta}
-      />
-    </>
+      </div>
+    </Section>
   );
 }
