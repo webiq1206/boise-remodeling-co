@@ -9,6 +9,13 @@ export const SITE_IMAGES = {
   hero: "/images/hero-great-room.webp",
   /** Design-build / plan review split panels. */
   process: "/images/process-design-review.webp",
+  /**
+   * "Where your money goes" value band. Craftsmanship and quality materials
+   * mid-install (custom cabinetry, quartz, staged white-oak flooring) - shows
+   * the budget landing in the home, not overhead. Distinct from `process` so
+   * the band no longer reuses the About page's plan-review photo.
+   */
+  value: "/images/value-craftsmanship-materials.webp",
   /** Kitchen remodel in progress - process sections. */
   processInProgress: "/images/kitchen-in-progress.webp",
   /** Full-bleed brand statement band. */
