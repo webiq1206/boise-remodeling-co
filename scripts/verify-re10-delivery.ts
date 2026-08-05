@@ -276,11 +276,21 @@ check(
   /errors\?\.fieldErrors/.test(wizard),
   "the wizard does not surface field-level validation errors - a rejected submission reads as a dead form",
 );
-// Every step change scrolls this element to the top of the viewport, which is
-// underneath a sticky header unless it carries a scroll margin. Seen live: the
-// range on the final step was half hidden behind the navigation.
+// Every step change scrolls topRef to the top of the viewport, which is
+// underneath a sticky header unless the target carries a scroll margin. Seen
+// live: the range on the final step was half hidden behind the navigation. The
+// target may be wired directly (ref={topRef}) or through a combined callback ref
+// that assigns topRef.current - the mobile rebuild added the latter so the
+// site-wide Call / Text bar steps aside for the wizard. Either way, the element
+// it lands on must carry scroll-mt, so this reads the ref off the scroll-mt
+// element and confirms it feeds topRef.
+const scrollMtRef = wizard.match(/scroll-mt-\d+[^"]*"\s+ref=\{(\w+)\}/)?.[1];
+const scrollTargetWired =
+  scrollMtRef === "topRef" ||
+  (scrollMtRef != null &&
+    new RegExp(`const ${scrollMtRef} = \\([^)]*\\) => \\{[\\s\\S]*?topRef\\.current =`).test(wizard));
 check(
-  /scroll-mt-\d+[\s"]/.test(wizard) && /scroll-mt-\d+[^"]*"\s+ref=\{topRef\}/.test(wizard),
+  /scroll-mt-\d+[\s"]/.test(wizard) && scrollTargetWired,
   "the wizard's scroll target has no scroll-mt - step headings will land behind the sticky header",
 );
 
