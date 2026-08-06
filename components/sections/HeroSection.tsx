@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
-import { Button } from "@/components/ui/button";
+import { EstimateCTA } from "@/components/modals/EstimateCTA";
+import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { HERO_EYEBROW, HERO_SUBHEAD, HERO_STATS, TRUST_ITEMS } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
 import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
@@ -84,12 +85,8 @@ export function HeroSection() {
                 {HERO_SUBHEAD}
               </p>
               <div className="flex flex-wrap gap-3 mb-6 md:mb-0">
-                <Button variant="brand" asChild>
-                  <a href="#calculator">{CTA_PRIMARY}</a>
-                </Button>
-                <Button variant="heroGhost" asChild>
-                  <a href="#consult">{CTA_SECONDARY}</a>
-                </Button>
+                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+                <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
               </div>
 
               <div className="grid grid-cols-3 gap-3 md:hidden">

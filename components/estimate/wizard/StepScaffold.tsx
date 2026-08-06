@@ -30,6 +30,15 @@ export function StepHeading({
   className,
 }: StepHeadingProps) {
   const [open, setOpen] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  /* Every step body that renders a StepHeading is conditionally mounted (only
+     one step is in the tree at a time), so this fires fresh on every step
+     change. Moves focus to the new step's heading so a screen reader or
+     keyboard user who is not visually tracking the scroll still gets told
+     the step changed, not just a sighted user watching it scroll. */
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true });
+  }, []);
   return (
     <div className={cn("mb-5", className)}>
       {eyebrow ? (
@@ -38,7 +47,9 @@ export function StepHeading({
         </p>
       ) : null}
       <h2
-        className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground"
+        ref={headingRef}
+        tabIndex={-1}
+        className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm"
         data-testid="step-heading"
       >
         {title}

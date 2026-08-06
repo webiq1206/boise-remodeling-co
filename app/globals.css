@@ -325,11 +325,6 @@ html, body {
     @apply border-t border-border/60;
   }
 
-  .text-display {
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    line-height: 1.04;
-  }
-
   .text-section-title {
     @apply text-3xl md:text-4xl;
   }
@@ -415,51 +410,6 @@ html, body {
   color: hsl(var(--inverse-foreground) / 0.92);
 }
 /* The sage tick is intentional on every band, but keep the label TEXT muted. */
-
-/* ─── Calculator range slider ─── */
-/* The size slider is the estimator's primary measurement control, and on a
-   phone it was a 3px-tall touch target: the element WAS the painted track, so
-   the entire draggable region was three pixels of cross-axis. The 20px thumb
-   drew outside that box, meaning a tap on the visible thumb could miss the
-   input altogether.
-
-   The element is now a 44px touch target. Vertical padding plus
-   background-clip: content-box keeps the PAINTED track at 3px, so the inline
-   progress gradient still renders exactly as before and nothing looks thicker. */
-.brc-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 44px;
-  padding: 20.5px 0;
-  background-color: transparent;
-  background-clip: content-box;
-  border-radius: 3px;
-  outline: none;
-  cursor: pointer;
-}
-.brc-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: hsl(var(--accent));
-  border: 3px solid hsl(var(--card));
-  box-shadow: 0 2px 8px hsl(var(--primary) / 0.28);
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-.brc-slider::-webkit-slider-thumb:hover {
-  box-shadow: 0 2px 14px hsl(var(--primary) / 0.4);
-}
-.brc-slider::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: hsl(var(--accent));
-  border: 3px solid hsl(var(--card));
-  cursor: pointer;
-}
 
 .scrollbar-hide {
   -ms-overflow-style: none;

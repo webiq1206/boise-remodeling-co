@@ -11,6 +11,7 @@ import { CTA_QUOTE } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { NavEstimateButton } from "@/components/modals/NavEstimateButton";
 import { SaveContactLink } from "@/components/SaveContactLink";
+import { isPortalPath } from "@/lib/portalRoutes";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
@@ -44,15 +45,7 @@ export function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isActivePath = (href: string) =>
     href === "/" ? pathname === "/" : Boolean(pathname?.startsWith(href));
-  const isPortal =
-    pathname?.startsWith("/admin") ||
-    pathname?.startsWith("/subcontractor/portal") ||
-    pathname?.startsWith("/subcontractor/leads") ||
-    pathname?.startsWith("/subcontractor/compliance") ||
-    pathname?.startsWith("/subcontractor/projects") ||
-    pathname?.startsWith("/subcontractor/contracts") ||
-    pathname === "/subcontractor" ||
-    pathname?.startsWith("/subcontractor/purchases");
+  const isPortal = isPortalPath(pathname);
 
   if (isPortal) {
     return (
@@ -219,6 +212,7 @@ export function Navigation() {
                     </a>
                     <NavEstimateButton
                       variant="brand"
+                      surface="mobile-menu"
                       className="w-full"
                       onExtraClick={() => setMobileOpen(false)}
                     >
@@ -254,6 +248,7 @@ export function Navigation() {
           </a>
           <NavEstimateButton
             asLink
+            surface="mobile-sticky"
             className="flex items-center justify-center gap-2 py-4 text-sm font-normal text-foreground"
             data-testid="button-begin-conversation-mobile"
           >

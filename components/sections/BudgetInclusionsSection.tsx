@@ -10,7 +10,7 @@ import {
   OPTIONAL_ENHANCEMENTS,
 } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
-import { Button } from "@/components/ui/button";
+import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { CTA_SECONDARY } from "@/shared/ctaCopy";
 
 export function BudgetInclusionsSection() {
@@ -104,9 +104,7 @@ export function BudgetInclusionsSection() {
           </div>
 
           <Reveal className="mt-12">
-            <Button variant="brandOutline" asChild>
-              <a href="#consult">{CTA_SECONDARY}</a>
-            </Button>
+            <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
           </Reveal>
         </div>
       </div>

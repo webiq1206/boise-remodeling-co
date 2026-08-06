@@ -136,6 +136,13 @@ export default function Re10RepairsPage() {
             <strong className="font-normal text-foreground">What is an RE-10?</strong>{" "}
             {RE10_DEFINITION}
           </p>
+          <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
+            Have architectural drawings instead?{" "}
+            <Link href="/remodel-plans-boise" className="text-accent-legible hover:underline">
+              Get a plan-based estimate
+            </Link>
+            .
+          </p>
         </div>
       </Section>
 

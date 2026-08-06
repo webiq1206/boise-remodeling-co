@@ -8,7 +8,7 @@ import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Reveal } from '@/components/Reveal';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { Button } from '@/components/ui/button';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { PageHeroBand } from '@/components/sections/PageHeroBand';
@@ -138,9 +138,9 @@ export default function ServicesIndexPage() {
                 <p className="text-sm leading-relaxed mb-5 text-muted-foreground">
                   Every remodel starts with a free in-home visit and an honest planning range, with no obligation.
                 </p>
-                <ConsultCTA variant="brand" className="self-start">
+                <EstimateCTA variant="brand" className="self-start">
                   {CTA_PRIMARY}
-                </ConsultCTA>
+                </EstimateCTA>
               </div>
             </Reveal>
           </div>
@@ -191,8 +191,8 @@ export default function ServicesIndexPage() {
               Book a free in-home visit or get an instant planning range for your project.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
-              <ConsultCTA variant="brand">{CTA_PRIMARY}</ConsultCTA>
-              <Button variant="heroGhost" asChild><a href="/#consult">{CTA_SECONDARY}</a></Button>
+              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+              <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
             </div>
           </MarketingCard>
         </div>

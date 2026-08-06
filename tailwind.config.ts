@@ -135,7 +135,7 @@ export default {
         mono: ["Menlo", "Monaco", "monospace"],
       },
       fontSize: {
-        display: ["clamp(2.5rem,6vw,5rem)", { lineHeight: "1.04", letterSpacing: "-0.025em" }],
+        display: ["clamp(2.5rem,6vw,4.5rem)", { lineHeight: "1.04", letterSpacing: "-0.025em" }],
         "section-title": ["1.875rem", { lineHeight: "1.15", letterSpacing: "-0.025em" }],
         "section-title-lg": ["2.25rem", { lineHeight: "1.15", letterSpacing: "-0.025em" }],
       },

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
-import { Button } from "@/components/ui/button";
+import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { VALUE_MODEL } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
 import { CTA_PRIMARY } from "@/shared/ctaCopy";
@@ -40,9 +40,7 @@ export function ValueOverheadSection() {
             </p>
 
             <div className="mt-8">
-              <Button variant="brand" asChild>
-                <a href="#calculator">{CTA_PRIMARY}</a>
-              </Button>
+              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
             </div>
           </Reveal>
 

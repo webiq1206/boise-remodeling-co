@@ -16,7 +16,7 @@ import {
 } from "@/lib/schema";
 import { CITIES, TREASURE_VALLEY_CITIES } from "@/shared/contentData";
 import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
-import { Button } from "@/components/ui/button";
+import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { SITE_IMAGES } from "@/shared/siteImages";
 
@@ -63,12 +63,10 @@ export default function AreasHubPage() {
             Treasure Valley design-build remodeling service areas.
           </p>
           <div className="flex flex-wrap gap-3">
-            <ConsultCTA variant="brand">
+            <EstimateCTA variant="brand">
               {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
-            </ConsultCTA>
-            <Button variant="heroGhost" asChild>
-              <a href="/#consult">{CTA_SECONDARY}</a>
-            </Button>
+            </EstimateCTA>
+            <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
 

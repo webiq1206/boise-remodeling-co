@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Upload, Check, X, ArrowRight, Loader2, FileText, Ruler } from "lucide-react";
+import { X, Plus, Ruler, Mail, FileText, ClipboardList, Printer, RefreshCw } from "lucide-react";
 import { Section } from "@/components/marketing/Section";
-import { Button } from "@/components/ui/button";
 import type { PlanExtractionResult, PlanRoom, PlanQuality } from "@/shared/plans/extraction";
 import {
   classifyUpload,
@@ -14,15 +13,34 @@ import {
 } from "@/shared/re10/uploads";
 import { PLAN_EVENTS } from "@/shared/plans/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
+import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
+import { useModals } from "@/components/modals/modalsContext";
+import {
+  DetailList,
+  PriceHeadline,
+  ResultCard,
+  ResultDisclosure,
+  SegmentedControl,
+  StepHeading,
+  StickyResultActions,
+  StickyStepNav,
+  TextField,
+  UploadField,
+  WizardError,
+  WizardProgress,
+  type WizardStepMeta,
+} from "@/components/estimate/wizard";
 
 /**
  * The plan-set estimator wizard.
  *
- * FOUR STEPS, SAME SHAPE AS THE RE-10 WIZARD AND FOR THE SAME REASON. Upload,
- * confirm what we measured, contact details, range. The customer sees and
- * corrects our read BEFORE giving us anything, so the contact form is the last
- * step of getting their estimate rather than the price of finding out we
- * misread their drawings.
+ * FOUR STEPS, SAME SHAPE AS THE RE-10 WIZARD AND FOR THE SAME REASON, and now
+ * built on the same shared wizard shell (sticky nav, progress, upload field,
+ * collapsible result sections) so the two tools behave identically on a
+ * phone. Upload, confirm what we measured, contact details, range. The
+ * customer sees and corrects our read BEFORE giving us anything, so the
+ * contact form is the last step of getting their estimate rather than the
+ * price of finding out we misread their drawings.
  *
  * THE SECOND STEP ASKS ONE QUESTION THE RE-10 NEVER HAD TO. Total conditioned
  * square footage, and it is required. No sheet in the best plan set we have
@@ -106,55 +124,34 @@ const FINISHES = [
   { value: "luxury", label: "Luxury", hint: "Top of the market" },
 ] as const;
 
-const STEP_LABELS: Record<Step, string> = {
-  upload: "Upload plans",
-  measure: "Confirm measurements",
-  contact: "Your details",
-  result: "Your range",
-};
-const STEP_ORDER: Step[] = ["upload", "measure", "contact", "result"];
+const FORM_STEPS: { id: Step; meta: WizardStepMeta }[] = [
+  { id: "upload", meta: { id: "upload", section: "Documents", label: "Upload your plans and schedules" } },
+  { id: "measure", meta: { id: "measure", section: "Confirm", label: "Check what we measured" } },
+  { id: "contact", meta: { id: "contact", section: "Your details", label: "How we should reach you" } },
+  { id: "result", meta: { id: "result", section: "Estimate", label: "Your planning range" } },
+];
+const STEP_METAS = FORM_STEPS.map((s) => s.meta);
+const STEP_ORDER: Step[] = FORM_STEPS.map((s) => s.id);
 
-/** A titled block that renders nothing when its list is empty. */
-function Labelled({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-6">
-      <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">{title}</p>
-      <ul className="space-y-1.5">{children}</ul>
-    </div>
-  );
-}
-
-/**
- * The empty case is the point.
- *
- * A section with nothing in it does not render at all, because the whole design
- * is that a heading only appears when this estimate produced something to put
- * under it. A "Warnings" heading followed by nothing would be exactly the
- * boilerplate this replaced.
- */
-function DisclosureList({ title, items }: { title: string; items: string[] }) {
-  if (items.length === 0) return null;
-  return (
-    <Labelled title={title}>
-      {items.map((t, i) => (
-        <li key={i} className="text-[13px] text-inverse-muted leading-relaxed">
-          {t}
-        </li>
-      ))}
-    </Labelled>
-  );
-}
+const fileKey = (f: File) => `${f.name}:${f.size}`;
 
 export function PlansWizard() {
   const [step, setStep] = useState<Step>("upload");
-  const topRef = useRef<HTMLDivElement>(null);
+  const topRef = useRef<HTMLDivElement | null>(null);
+  /* The wizard body, watched so the site-wide Call / Text bar steps aside while
+     the estimator (and its own sticky Back / Continue) owns the bottom of the
+     screen, then returns once the visitor scrolls away. Same pattern as the
+     RE-10 and general estimator wizards - this one was previously missing it,
+     which left the global bar fighting this wizard's own controls on mobile. */
+  const sectionRef = useRef<HTMLDivElement | null>(null);
+  const setWizardRefs = (el: HTMLDivElement | null) => {
+    topRef.current = el;
+    sectionRef.current = el;
+  };
+
+  const { openConsult } = useModals();
 
   const [files, setFiles] = useState<File[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
-  // Nested children fire dragleave as the pointer crosses them, so a boolean
-  // set on the events alone flickers the whole box. Count enter/leave instead.
-  const dragDepth = useRef(0);
-  const pickerRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -201,7 +198,27 @@ export function PlansWizard() {
     if (step === "contact") trackEvent(PLAN_EVENTS.contactViewed);
   }, [step]);
 
-  const fileKey = (f: File) => `${f.name}:${f.size}`;
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let release: (() => void) | null = null;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !release) {
+          release = requestHideMobileNavBar();
+        } else if (!entry.isIntersecting && release) {
+          release();
+          release = null;
+        }
+      },
+      { rootMargin: "0px 0px -35% 0px" },
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      release?.();
+    };
+  }, []);
 
   /**
    * Add rather than replace, and name everything turned away.
@@ -211,7 +228,7 @@ export function PlansWizard() {
    * silently throw away the earlier ones and the only sign would be a short
    * room list.
    */
-  function addFiles(incoming: File[], method: "picker" | "drop") {
+  function addFiles(incoming: File[], method: "picker" | "camera" | "drop") {
     if (incoming.length === 0) return;
 
     const problems: string[] = [];
@@ -451,185 +468,67 @@ export function PlansWizard() {
   const excludedScope = (extraction?.scopeItems ?? []).filter((s) => !s.inContract);
 
   const fieldClass =
-    "w-full rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] px-3 py-2.5 " +
-    "text-[14.5px] text-inverse-foreground placeholder:text-inverse-muted/70 " +
-    "focus:outline-none focus:border-accent-legible";
+    "w-full min-h-11 rounded-md border bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground " +
+    "placeholder:text-inverse-muted/50 focus:outline-none focus:ring-2 focus:ring-accent-legible border-inverse-foreground/25";
   const labelClass = "block text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-1.5";
 
   return (
     <Section id="plans-estimator" variant="inverse" divider>
-      {/* scroll-mt clears the sticky header; without it every step change lands
-          the heading behind the navigation. */}
-      <div className="container px-4 max-w-3xl mx-auto scroll-mt-24" ref={topRef}>
-        <ol className="flex flex-wrap gap-x-2 gap-y-1 mb-8" aria-label="Progress">
-          {STEP_ORDER.map((s, i) => (
-            <li
-              key={s}
-              className={
-                "text-[12px] tracking-[0.08em] uppercase " +
-                (i === stepIndex
-                  ? "text-inverse-foreground"
-                  : i < stepIndex
-                    ? "text-accent-legible"
-                    : "text-inverse-muted/60")
-              }
-            >
-              {i > 0 && <span className="mr-2 text-inverse-muted/40">/</span>}
-              {i < stepIndex && <Check className="inline h-3 w-3 mr-1" aria-hidden="true" />}
-              {STEP_LABELS[s]}
-            </li>
-          ))}
-        </ol>
+      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={setWizardRefs}>
+        {step !== "result" ? (
+          <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />
+        ) : null}
 
-        {error && (
-          <div
-            role="alert"
-            className="mb-6 rounded-sm border border-red-400/40 bg-red-500/10 p-4 text-[13.5px] text-inverse-foreground leading-relaxed"
-          >
-            {error}
-          </div>
-        )}
+        <WizardError message={error} />
 
         {/* ------------------------------------------------------- 1. upload */}
-        {step === "upload" && (
+        {step === "upload" ? (
           <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-3">
-              Send your plans and get a range built from your own drawings
-            </h2>
-            <p className="text-sm md:text-base text-inverse-foreground/80 leading-relaxed mb-7">
-              Upload the floor plans and any door, window or finish schedules. We read the room
-              areas and dimensions, show you what we measured, and you correct it before anything
-              is priced.
-            </p>
-
-            <div
-              onDragEnter={(e) => {
-                e.preventDefault();
-                dragDepth.current += 1;
-                setIsDragging(true);
-              }}
-              onDragOver={(e) => e.preventDefault()}
-              onDragLeave={(e) => {
-                e.preventDefault();
-                dragDepth.current = Math.max(0, dragDepth.current - 1);
-                if (dragDepth.current === 0) setIsDragging(false);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                dragDepth.current = 0;
-                setIsDragging(false);
-                addFiles(Array.from(e.dataTransfer?.files ?? []), "drop");
-              }}
-              data-testid="dropzone-plan-files"
-              className={
-                "rounded-sm border border-dashed p-7 sm:p-8 text-center transition-colors " +
-                (isDragging
-                  ? "border-accent-legible bg-accent-legible/10"
-                  : "border-inverse-foreground/30 bg-inverse-foreground/[0.04]")
+            <StepHeading
+              eyebrow="Plan-set estimator"
+              title="Send your plans and get a range built from your own drawings"
+              description="Upload the floor plans and any door, window or finish schedules. We read the room areas and dimensions, show you what we measured, and you correct it before anything is priced."
+              help={
+                <>
+                  If you have a full permit set, send the floor plans and the schedules rather than
+                  every sheet - those are the ones we price from.
+                </>
               }
-            >
-              <Upload className="h-6 w-6 mx-auto mb-3 text-inverse-muted" aria-hidden="true" />
-              <span className="hidden [@media(pointer:fine)]:block text-[15px] text-inverse-foreground mb-1">
-                {isDragging ? "Drop them here" : "Drag your drawings here"}
-              </span>
-              <span className="[@media(pointer:fine)]:hidden block text-[15px] text-inverse-foreground mb-1">
-                Add your drawings
-              </span>
-
-              {/* THE SIZE ADVICE IS SPECIFIC BECAUSE THE CEILING IS REAL AND IS
-                  NOT MEASURED IN MEGABYTES. A 27-sheet scanned permit set goes
-                  through where 5 sheets of vector CAD does not, so "send the
-                  floor plans and schedules" is the only advice that reliably
-                  works. Better said here than after a two-minute wait. */}
-              <span className="block text-[12.5px] text-inverse-muted mb-5 max-w-md mx-auto leading-relaxed">
-                PDFs. If you have a full permit set, send the floor plans and the schedules rather
-                than every sheet - those are the ones we price from.
-              </span>
-
-              <Button
-                type="button"
-                variant="heroGhost"
-                className="w-full sm:w-auto"
-                onClick={() => pickerRef.current?.click()}
-                data-testid="button-plans-choose-files"
-              >
-                <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
-                <span className="hidden [@media(pointer:fine)]:inline">Browse files</span>
-                <span className="[@media(pointer:fine)]:hidden">Choose files</span>
-              </Button>
-
-              <input
-                ref={pickerRef}
-                id="plan-files"
-                type="file"
-                multiple
-                accept={UPLOAD_ACCEPT}
-                className="sr-only"
-                data-testid="input-plan-files"
-                onChange={(e) => {
-                  addFiles(Array.from(e.target.files ?? []), "picker");
-                  e.target.value = "";
-                }}
-              />
-            </div>
-
-            {files.length > 0 && (
-              <ul className="mt-4 space-y-1.5" data-testid="list-plan-files">
-                {files.map((f) => (
-                  <li key={fileKey(f)} className="flex items-center gap-2 text-[13px] text-inverse-muted">
-                    <Check className="h-3.5 w-3.5 text-accent-legible flex-shrink-0" aria-hidden="true" />
-                    <span className="truncate">{f.name}</span>
-                    <button
-                      type="button"
-                      onClick={() => removeFile(f)}
-                      className="ml-auto flex-shrink-0 p-1 -m-1 text-inverse-muted hover:text-inverse-foreground transition-colors"
-                      aria-label={`Remove ${f.name}`}
-                      data-testid="button-plans-remove-file"
-                    >
-                      <X className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <Button
-              variant="brand"
-              className="mt-7 w-full sm:w-auto"
+            />
+            <UploadField
+              files={files}
+              onAdd={addFiles}
+              onRemove={removeFile}
+              accept={UPLOAD_ACCEPT}
+              acceptLabel={`PDFs. ${READABLE_FORMATS_LABEL} read automatically.`}
+              limitLabel={`Up to ${MAX_UPLOAD_FILES} files, ${Math.round(MAX_TOTAL_UPLOAD_BYTES / (1024 * 1024))} MB total.`}
+              headline="Add your drawings"
+              allowCamera={false}
               disabled={busy}
-              onClick={analyze}
-              data-testid="button-plans-analyze"
-            >
-              {busy ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Reading your drawings...
-                </>
-              ) : (
-                <>
-                  Read my plans <ArrowRight className="ml-2 h-4 w-4" />
-                </>
-              )}
-            </Button>
-            <p className="mt-4 text-[12px] text-inverse-muted leading-relaxed">
-              No contact details needed yet. A large set can take a couple of minutes to read.
-            </p>
+            />
+            <StickyStepNav
+              onNext={analyze}
+              nextLabel="Read my plans"
+              nextDisabled={files.length === 0}
+              busy={busy}
+              busyLabel="Reading your drawings..."
+              nextTestId="button-plans-analyze"
+              hint="No contact details needed yet. A large set can take a couple of minutes to read."
+            />
           </div>
-        )}
+        ) : null}
 
         {/* ------------------------------------------------------ 2. measure */}
-        {step === "measure" && extraction && (
+        {step === "measure" && extraction ? (
           <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-3">
-              Here is what we measured. Is it right?
-            </h2>
-            <p className="text-sm text-inverse-foreground/80 leading-relaxed mb-7">
-              Take out anything that is not part of this project. Then tell us the total finished
-              square footage of the home, which is how we check our read.
-            </p>
+            <StepHeading
+              title="Here is what we measured. Is it right?"
+              description="Take out anything that is not part of this project. Then tell us the total finished square footage of the home, which is how we check our read."
+            />
 
-            {attachedOnly.length > 0 && (
+            {attachedOnly.length > 0 ? (
               <div
-                className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
+                className="mb-6 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
                 data-testid="notice-plans-attached-only"
               >
                 <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
@@ -638,30 +537,29 @@ export function PlansWizard() {
                   Nothing in {attachedOnly.length === 1 ? "it" : "them"} is in the list below.
                 </p>
               </div>
-            )}
+            ) : null}
 
             {/* THE SQUARE FOOTAGE QUESTION. First, prominent, and explained.
                 It is the only thing standing between a good read and a price
                 built on it, and a field somebody skips is worth nothing. */}
-            <div className="mb-7 rounded-sm border border-accent-legible/40 bg-accent-legible/[0.07] p-5">
-              <label htmlFor="plans-total-sqft" className={labelClass}>
-                <Ruler className="inline h-3.5 w-3.5 mr-1.5 -mt-0.5" aria-hidden="true" />
-                Total finished square footage
-              </label>
-              <input
+            <div className="mb-7 rounded-md border border-accent-legible/40 bg-accent-legible/[0.07] p-5">
+              <TextField
                 id="plans-total-sqft"
-                type="text"
-                inputMode="numeric"
+                label="Total finished square footage"
+                required
                 value={totalSqFt}
-                onChange={(e) => setTotalSqFt(e.target.value)}
+                onChange={setTotalSqFt}
+                inputMode="numeric"
                 placeholder="e.g. 2,400"
-                className={fieldClass + " max-w-[220px]"}
-                data-testid="input-plans-total-sqft"
+                testId="input-plans-total-sqft"
+                help={
+                  extraction.statedTotalSqFt
+                    ? "Your drawings state this. Correct it if it is wrong."
+                    : "Your drawings do not state a total, and we cannot get one reliably off the dimensions. Yours is the number we compare our room measurements against, so we can catch a misread before it reaches your price."
+                }
               />
-              <p className="mt-2.5 text-[12.5px] text-inverse-foreground/75 leading-relaxed">
-                {extraction.statedTotalSqFt
-                  ? "Your drawings state this. Correct it if it is wrong."
-                  : "Your drawings do not state a total, and we cannot get one reliably off the dimensions. Yours is the number we compare our room measurements against, so we can catch a misread before it reaches your price."}
+              <p className="mt-2.5 flex items-center gap-1.5 text-[11.5px] text-accent-legible/90">
+                <Ruler className="h-3 w-3" aria-hidden="true" /> The one number that catches a misread
               </p>
             </div>
 
@@ -712,11 +610,11 @@ export function PlansWizard() {
                 </span>{" "}
                 sq ft
               </p>
-              {unmeasured.length > 0 && (
+              {unmeasured.length > 0 ? (
                 <p className="text-[13px] text-inverse-muted">
                   {unmeasured.length} with no printed area
                 </p>
-              )}
+              ) : null}
             </div>
 
             <ul className="space-y-2" data-testid="list-plan-rooms">
@@ -724,16 +622,16 @@ export function PlansWizard() {
                 <li
                   key={r.id}
                   className={
-                    "rounded-sm border px-4 py-3 transition-colors " +
+                    "rounded-md border p-4 transition-colors " +
                     (r.inScope
                       ? "border-inverse-foreground/15 bg-inverse-foreground/[0.05]"
-                      : "border-inverse-foreground/10 bg-transparent opacity-50")
+                      : "border-inverse-foreground/10 bg-transparent opacity-60")
                   }
                 >
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-[14.5px] text-inverse-foreground leading-snug truncate">{r.name}</p>
-                      <p className="mt-0.5 text-[12.5px] text-inverse-muted">
+                      <p className="text-[14.5px] text-inverse-foreground leading-snug">{r.name}</p>
+                      <p className="mt-1 text-[12.5px] text-inverse-muted">
                         {r.areaSqFt && r.areaSqFt > 0
                           ? `${Math.round(r.areaSqFt).toLocaleString("en-US")} sq ft`
                           : "No printed area on the sheet"}
@@ -748,11 +646,11 @@ export function PlansWizard() {
                       onClick={() =>
                         setRooms((prev) => prev.map((p) => (p.id === r.id ? { ...p, inScope: !p.inScope } : p)))
                       }
-                      className="flex-shrink-0 rounded-sm border border-inverse-foreground/25 px-2.5 py-1 text-[12px] text-inverse-muted hover:text-inverse-foreground hover:border-inverse-foreground/50 transition-colors"
+                      className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-md border border-inverse-foreground/25 text-inverse-muted transition-colors hover:text-inverse-foreground"
+                      aria-label={r.inScope ? `Remove ${r.name}` : `Add back ${r.name}`}
                       data-testid="button-plans-toggle-room"
-                      aria-pressed={r.inScope}
                     >
-                      {r.inScope ? "In project" : "Not included"}
+                      {r.inScope ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
                     </button>
                   </div>
                 </li>
@@ -765,7 +663,7 @@ export function PlansWizard() {
                 gas fireplace, a structural beam and a driveway widening all
                 priced as nothing. Shown here so the customer can see we read it
                 and say if we missed something. */}
-            {scopeItems.length > 0 && (
+            {scopeItems.length > 0 ? (
               <div className="mt-8">
                 <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-3">
                   Work we read off your drawings ({scopeItems.length})
@@ -778,15 +676,15 @@ export function PlansWizard() {
                   ))}
                 </ul>
               </div>
-            )}
+            ) : null}
 
             {/* LOUDER THAN THE REST, because this is what someone assumes is in
                 the price. The Squier patio deck is marked "separate permit" on
                 the sheet; the Gambardella greenhouse and swim spa are "by
                 others". Quoting them would be as wrong as omitting real work. */}
-            {excludedScope.length > 0 && (
+            {excludedScope.length > 0 ? (
               <div
-                className="mt-6 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] p-4"
+                className="mt-6 rounded-md border border-inverse-foreground/25 bg-inverse-foreground/[0.06] p-4"
                 data-testid="notice-plans-excluded-scope"
               >
                 <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
@@ -803,11 +701,11 @@ export function PlansWizard() {
                   If you want us to price any of it, say so in the notes on the next step.
                 </p>
               </div>
-            )}
+            ) : null}
 
             {/* Named rather than dropped. A room that vanished without
                 explanation is exactly the failure the RE-10 flow shipped once. */}
-            {unmeasured.length > 0 && (
+            {unmeasured.length > 0 ? (
               <p className="mt-4 text-[12.5px] text-inverse-muted leading-relaxed">
                 {unmeasured.map((r) => r.name).join(", ")}{" "}
                 {unmeasured.length === 1 ? "carries" : "carry"} no printed area on your drawings, so{" "}
@@ -815,296 +713,371 @@ export function PlansWizard() {
                 {unmeasured.length === 1 ? "its size" : "their sizes"} in the notes on the next step
                 and we will fold {unmeasured.length === 1 ? "it" : "them"} in.
               </p>
-            )}
+            ) : null}
 
-            <div className="mt-7 flex flex-col sm:flex-row gap-3">
-              <Button variant="brand" onClick={confirmMeasurements} data-testid="button-plans-confirm">
-                These look right <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <Button variant="heroGhost" onClick={() => goTo("upload")} data-testid="button-plans-back-upload">
-                Add more sheets
-              </Button>
-            </div>
+            <StickyStepNav
+              onBack={() => goTo("upload")}
+              backLabel="Add more sheets"
+              onNext={confirmMeasurements}
+              nextLabel="These look right"
+              nextTestId="button-plans-confirm"
+            />
           </div>
-        )}
+        ) : null}
 
         {/* ------------------------------------------------------ 3. contact */}
-        {step === "contact" && (
+        {step === "contact" ? (
           <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-3">
-              Where should we send it?
-            </h2>
-            <p className="text-sm text-inverse-foreground/80 leading-relaxed mb-7">
-              Your range appears on the next screen. We will email you a copy with what we measured,
-              so you can check it against your own drawings.
-            </p>
+            <StepHeading
+              title="Where should we send it?"
+              description="Your range appears on the next screen. We will email you a copy with what we measured, so you can check it against your own drawings."
+            />
+            <div className="space-y-4">
+              <TextField label="Your name" required value={name} onChange={setName} autoComplete="name" testId="input-plans-name" />
+              <TextField label="Property address" required value={address} onChange={setAddress} autoComplete="street-address" testId="input-plans-address" />
 
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <label htmlFor="plans-name" className={labelClass}>Your name</label>
-                <input id="plans-name" value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} data-testid="input-plans-name" />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="plans-address" className={labelClass}>Property address</label>
-                <input id="plans-address" value={address} onChange={(e) => setAddress(e.target.value)} className={fieldClass} data-testid="input-plans-address" />
-              </div>
               <div>
-                <label htmlFor="plans-email" className={labelClass}>Email</label>
-                <input id="plans-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={fieldClass} data-testid="input-plans-email" />
-              </div>
-              <div>
-                <label htmlFor="plans-phone" className={labelClass}>Phone</label>
-                <input id="plans-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className={fieldClass} data-testid="input-plans-phone" />
-              </div>
-              <div>
-                <label htmlFor="plans-preferred" className={labelClass}>Best way to reach you</label>
-                <select
-                  id="plans-preferred"
+                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Best way to reach you</p>
+                <SegmentedControl
+                  label="Best way to reach you"
+                  options={[
+                    { value: "email", label: "Email" },
+                    { value: "phone", label: "Phone" },
+                    { value: "text", label: "Text" },
+                  ]}
                   value={preferredContact}
-                  onChange={(e) => setPreferredContact(e.target.value as typeof preferredContact)}
-                  className={fieldClass}
-                  data-testid="select-plans-preferred"
-                >
-                  <option value="email" className="text-foreground">Email</option>
-                  <option value="phone" className="text-foreground">Phone</option>
-                  <option value="text" className="text-foreground">Text</option>
-                </select>
+                  onChange={setPreferredContact}
+                  columns={3}
+                  testIdPrefix="plans-preferred"
+                />
               </div>
+
+              <TextField
+                label="Email"
+                required={preferredContact === "email"}
+                optionalHint={preferredContact !== "email"}
+                type="email"
+                value={email}
+                onChange={setEmail}
+                autoComplete="email"
+                testId="input-plans-email"
+              />
+              <TextField
+                label="Phone"
+                required={preferredContact !== "email"}
+                optionalHint={preferredContact === "email"}
+                type="tel"
+                value={phone}
+                onChange={setPhone}
+                autoComplete="tel"
+                testId="input-plans-phone"
+              />
+              <TextField
+                label="Timeline"
+                optionalHint
+                value={timeline}
+                onChange={setTimeline}
+                placeholder="e.g. start in spring"
+                testId="input-plans-timeline"
+              />
+
               <div>
-                <label htmlFor="plans-timeline" className={labelClass}>Timeline (optional)</label>
-                <input id="plans-timeline" value={timeline} onChange={(e) => setTimeline(e.target.value)} placeholder="e.g. start in spring" className={fieldClass} data-testid="input-plans-timeline" />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="plans-notes" className={labelClass}>Anything we should know? (optional)</label>
-                <textarea id="plans-notes" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={fieldClass} data-testid="input-plans-notes" />
+                <label htmlFor="plans-notes" className="mb-1.5 flex items-baseline justify-between text-[12.5px] text-inverse-muted">
+                  <span>Anything we should know</span>
+                  <span className="text-inverse-muted/70">Optional</span>
+                </label>
+                <textarea
+                  id="plans-notes"
+                  rows={3}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="w-full rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                  data-testid="input-plans-notes"
+                />
               </div>
             </div>
 
-            <div className="mt-7 flex flex-col sm:flex-row gap-3">
-              <Button variant="brand" disabled={busy} onClick={submit} data-testid="button-plans-submit">
-                {busy ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Building your range...
-                  </>
-                ) : (
-                  <>
-                    Show my range <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-              <Button variant="heroGhost" onClick={() => goTo("measure")} data-testid="button-plans-back-measure">
-                Back to measurements
-              </Button>
-            </div>
+            <StickyStepNav
+              onBack={() => goTo("measure")}
+              backLabel="Back to measurements"
+              onNext={submit}
+              nextLabel="Show my range"
+              busy={busy}
+              busyLabel="Building your range..."
+              nextTestId="button-plans-submit"
+            />
           </div>
-        )}
+        ) : null}
 
         {/* ------------------------------------------------------- 4. result */}
-        {step === "result" && result && (
-          <div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-inverse-foreground mb-2">
-              Your planning range
-            </h2>
-            <p className="text-3xl md:text-4xl font-light text-inverse-foreground tracking-tight mb-2" data-testid="text-plans-range">
-              {result.range}
-            </p>
-            <p className="text-[13px] text-inverse-muted mb-7">{result.propertyAddress}</p>
-
-            {/* WHERE THE NUMBER CAME FROM, SAID PLAINLY EITHER WAY. A range
-                built from measured drawings and one built from a figure someone
-                typed are different products, and letting them look identical
-                would be the quiet kind of dishonesty this flow exists to avoid. */}
-            <div
-              className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
-              data-testid="notice-plans-provenance"
-            >
-              {result.pricedFromDrawings && result.measurements ? (
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
-                  Priced from your drawings: {result.measurements.sqft.toLocaleString("en-US")} sq ft
-                  across {result.measurements.measuredRooms} rooms, with{" "}
-                  {result.measurements.interiorPerimeterFt.toLocaleString("en-US")} linear feet of
-                  interior wall
-                  {result.measurements.ceilingHeight !== null
-                    ? ` and ${result.measurements.ceilingHeight.toFixed(1)} foot ceilings`
-                    : ""}
-                  .
-                </p>
-              ) : (
-                <>
-                  <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
-                    We read your drawings, but they did not carry enough measurement for us to price
-                    from them directly, so this range is built from the total area you gave us.
-                  </p>
-                  <ul className="mt-2 space-y-1">
-                    {result.blockers.map((b, i) => (
-                      <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </div>
-
-            {result.notMeasured.length > 0 && (
-              <div className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
-                  Not in the measured area: {result.notMeasured.join(", ")}. These carry no printed
-                  size on your drawings. Send us their dimensions and we will fold them in.
-                </p>
-              </div>
-            )}
-
-            {result.scopeItems.length > 0 && (
-              <div className="mb-6">
-                <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">
-                  What this covers ({result.scopeItems.length} items read from your drawings)
-                </p>
-                <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-1.5">
-                  {result.scopeItems.map((s, i) => (
-                    <li key={i} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                      <span className="text-inverse-muted">{s.category}</span> · {s.description}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Repeated on the result screen on purpose. Someone who skimmed
-                the confirmation step still has to leave knowing what is not in
-                the number they are about to plan around. */}
-            {result.excludedScope.length > 0 && (
-              <div
-                className="mb-6 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] p-4"
-                data-testid="notice-plans-result-excluded"
-              >
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
-                  Not included, because your drawings give it to someone else:
-                </p>
-                <ul className="space-y-1">
-                  {result.excludedScope.map((s, i) => (
-                    <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
-                      {s.description}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <div className="mb-6">
-              <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">What we used</p>
-              <ul className="space-y-1.5">
-                {result.selections.map((s, i) => (
-                  <li key={i} className="text-[13.5px] text-inverse-foreground/85">
-                    <span className="text-inverse-muted">{s.label}:</span> {s.value}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* ------------------------------------------------ the disclosure
-                EVERY SECTION BELOW IS GENERATED FROM THIS ESTIMATE. Nothing
-                renders unless the calculation produced it, so an empty list
-                means the thing genuinely does not apply rather than that we
-                forgot to write it. See shared/estimate/remodelDisclosure.ts. */}
-            <div className="mb-6 rounded-sm border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">
-              <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
-                {CONFIDENCE_COPY[result.disclosure.confidence]}
-              </p>
-            </div>
-
-            <DisclosureList
-              title="What we assumed to price this"
-              items={result.disclosure.assumptions}
-            />
-
-            {result.disclosure.included.length > 0 && (
-              <Labelled title={`In this range (${result.disclosure.included.length})`}>
-                {result.disclosure.included.map((i, k) => (
-                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
-                    <span className="text-inverse-muted">{i.detail}</span>
-                  </li>
-                ))}
-              </Labelled>
-            )}
-
-            {result.disclosure.allowances.length > 0 && (
-              <Labelled title="Carried at an allowance">
-                {result.disclosure.allowances.map((i, k) => (
-                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
-                    <span className="text-inverse-muted">{i.detail}</span>
-                  </li>
-                ))}
-              </Labelled>
-            )}
-
-            {/* Not in the range, and the section a customer most needs to read. */}
-            {(result.disclosure.excluded.length > 0 || result.disclosure.optional.length > 0) && (
-              <Labelled title="Not in this range">
-                {[...result.disclosure.excluded, ...result.disclosure.optional].map((i, k) => (
-                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
-                    <span className="text-inverse-muted">{i.detail}</span>
-                  </li>
-                ))}
-              </Labelled>
-            )}
-
-            {result.disclosure.needsAttention.length > 0 && (
-              <Labelled title="Priced after someone has seen it">
-                {result.disclosure.needsAttention.map((i, k) => (
-                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                    <span className="text-inverse-foreground">{i.label}.</span>{" "}
-                    <span className="text-inverse-muted">{i.detail}</span>
-                  </li>
-                ))}
-              </Labelled>
-            )}
-
-            {result.disclosure.missing.length > 0 && (
-              <Labelled title="What we could not confirm">
-                {result.disclosure.missing.map((m, k) => (
-                  <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                    <span className="text-inverse-foreground">{m.what}</span>{" "}
-                    <span className="text-inverse-muted">
-                      ({m.where}). {m.effect} {m.remedy}
-                    </span>
-                  </li>
-                ))}
-              </Labelled>
-            )}
-
-            <DisclosureList title="Worth knowing before you start" items={result.disclosure.warnings} />
-            <DisclosureList title="What will move the final number" items={result.disclosure.factors} />
-            <DisclosureList title="What happens next" items={result.disclosure.nextSteps} />
-
-            {/* THE ACKNOWLEDGMENT. Only the lines that apply to this estimate,
-                so it is short enough to actually be read. */}
-            {result.disclosure.acknowledgments.length > 0 && (
-              <div className="mb-7 rounded-sm border border-inverse-foreground/20 p-4">
-                <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-2.5">
-                  Before you use this number
-                </p>
-                <ul className="space-y-1.5">
-                  {result.disclosure.acknowledgments.map((a, k) => (
-                    <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
-                      {a}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
-              {result.emailed
-                ? "We have emailed you a copy with everything we measured."
-                : "Call us and we will walk through it with you."}
-            </p>
-          </div>
-        )}
+        {step === "result" && result ? (
+          <PlansResult
+            result={result}
+            documents={documents}
+            onEditScope={() => goTo("measure")}
+            onUploadMore={() => goTo("upload")}
+            onRequestConsult={() => {
+              trackEvent(PLAN_EVENTS.consultationRequested);
+              openConsult();
+            }}
+          />
+        ) : null}
       </div>
     </Section>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   RESULT
+══════════════════════════════════════════════════════════════════════ */
+
+function PlansResult({
+  result,
+  documents,
+  onEditScope,
+  onUploadMore,
+  onRequestConsult,
+}: {
+  result: EstimateResponse;
+  documents: { filename: string; url: string }[];
+  onEditScope: () => void;
+  onUploadMore: () => void;
+  onRequestConsult: () => void;
+}) {
+  const notInThisRange = [...result.disclosure.excluded, ...result.disclosure.optional];
+
+  return (
+    <div data-testid="plans-result" className="space-y-4">
+      {/* Overview */}
+      <ResultCard testId="plans-overview">
+        <PriceHeadline
+          label="Planning range"
+          price={result.range}
+          category={result.propertyAddress}
+        />
+        {result.emailed ? (
+          <p className="mt-3 flex items-center gap-2 text-[13px] text-inverse-foreground/85">
+            <Mail className="h-4 w-4 text-accent-legible" aria-hidden="true" />
+            A copy is on its way to your inbox.
+          </p>
+        ) : (
+          <p className="mt-3 text-[13px] text-inverse-foreground/85">
+            Call us and we will walk through it with you.
+          </p>
+        )}
+      </ResultCard>
+
+      {/* Where the number came from, said plainly either way. A range built
+          from measured drawings and one built from a figure someone typed
+          are different products, and letting them look identical would be
+          the quiet kind of dishonesty this flow exists to avoid. */}
+      <ResultCard title="Where this range came from" testId="plans-provenance">
+        {result.pricedFromDrawings && result.measurements ? (
+          <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
+            Priced from your drawings: {result.measurements.sqft.toLocaleString("en-US")} sq ft
+            across {result.measurements.measuredRooms} rooms, with{" "}
+            {result.measurements.interiorPerimeterFt.toLocaleString("en-US")} linear feet of interior
+            wall
+            {result.measurements.ceilingHeight !== null
+              ? ` and ${result.measurements.ceilingHeight.toFixed(1)} foot ceilings`
+              : ""}
+            .
+          </p>
+        ) : (
+          <>
+            <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
+              We read your drawings, but they did not carry enough measurement for us to price from
+              them directly, so this range is built from the total area you gave us.
+            </p>
+            <DetailList items={result.blockers} />
+          </>
+        )}
+        {result.notMeasured.length > 0 ? (
+          <p className="mt-3 text-[13px] text-inverse-muted leading-relaxed">
+            Not in the measured area: {result.notMeasured.join(", ")}. These carry no printed size on
+            your drawings. Send us their dimensions and we will fold them in.
+          </p>
+        ) : null}
+      </ResultCard>
+
+      {/* What this covers, ordered as the drawings read */}
+      {result.scopeItems.length > 0 ? (
+        <ResultCard title={`What this covers (${result.scopeItems.length})`} icon={FileText} testId="plans-covers">
+          <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-1.5">
+            {result.scopeItems.map((s, i) => (
+              <li key={i} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                <span className="text-inverse-muted">{s.category}</span> · {s.description}
+              </li>
+            ))}
+          </ul>
+        </ResultCard>
+      ) : null}
+
+      {/* Repeated on the result screen on purpose. Someone who skimmed the
+          confirmation step still has to leave knowing what is not in the
+          number they are about to plan around. */}
+      {result.excludedScope.length > 0 ? (
+        <ResultCard title="Not included, given to someone else" testId="plans-result-excluded">
+          <p className="mb-2 text-[13.5px] text-inverse-foreground leading-relaxed">
+            Your drawings give this work to someone else, so it is not in your range:
+          </p>
+          <DetailList marker="cross" items={result.excludedScope.map((s) => s.description)} />
+        </ResultCard>
+      ) : null}
+
+      {/* What we used */}
+      <ResultCard title="What we used" testId="plans-selections">
+        <ul className="space-y-1.5">
+          {result.selections.map((s, i) => (
+            <li key={i} className="text-[13.5px] text-inverse-foreground/85">
+              <span className="text-inverse-muted">{s.label}:</span> {s.value}
+            </li>
+          ))}
+        </ul>
+      </ResultCard>
+
+      {/* Confidence statement */}
+      <ResultCard title="How to read this range" testId="plans-confidence">
+        <p className="text-[13.5px] leading-relaxed text-inverse-muted">
+          {CONFIDENCE_COPY[result.disclosure.confidence]}
+        </p>
+      </ResultCard>
+
+      {/* ------------------------------------------------ the disclosure
+          EVERY SECTION BELOW IS GENERATED FROM THIS ESTIMATE. Nothing renders
+          unless the calculation produced it, so a missing section means the
+          thing genuinely does not apply rather than that we forgot to write
+          it. Collapsed by default so the result screen is scannable instead
+          of a wall of always-open text. */}
+      {result.disclosure.assumptions.length > 0 ? (
+        <ResultDisclosure title="What we assumed to price this" count={result.disclosure.assumptions.length} testId="plans-assumptions">
+          <DetailList items={result.disclosure.assumptions} />
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.included.length > 0 ? (
+        <ResultDisclosure title="In this range" count={result.disclosure.included.length} testId="plans-included">
+          <ul className="space-y-1.5">
+            {result.disclosure.included.map((i, k) => (
+              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                <span className="text-inverse-muted">{i.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.allowances.length > 0 ? (
+        <ResultDisclosure title="Carried at an allowance" count={result.disclosure.allowances.length} testId="plans-allowances">
+          <ul className="space-y-1.5">
+            {result.disclosure.allowances.map((i, k) => (
+              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                <span className="text-inverse-muted">{i.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </ResultDisclosure>
+      ) : null}
+
+      {notInThisRange.length > 0 ? (
+        <ResultDisclosure title="Not in this range" count={notInThisRange.length} testId="plans-not-in-range">
+          <ul className="space-y-1.5">
+            {notInThisRange.map((i, k) => (
+              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                <span className="text-inverse-muted">{i.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.needsAttention.length > 0 ? (
+        <ResultDisclosure title="Priced after someone has seen it" count={result.disclosure.needsAttention.length} testId="plans-needs-attention">
+          <ul className="space-y-1.5">
+            {result.disclosure.needsAttention.map((i, k) => (
+              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                <span className="text-inverse-foreground">{i.label}.</span>{" "}
+                <span className="text-inverse-muted">{i.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.missing.length > 0 ? (
+        <ResultDisclosure title="What we could not confirm" count={result.disclosure.missing.length} testId="plans-missing">
+          <ul className="space-y-1.5">
+            {result.disclosure.missing.map((m, k) => (
+              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                <span className="text-inverse-foreground">{m.what}</span>{" "}
+                <span className="text-inverse-muted">
+                  ({m.where}). {m.effect} {m.remedy}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.warnings.length > 0 ? (
+        <ResultDisclosure title="Worth knowing before you start" count={result.disclosure.warnings.length} testId="plans-warnings">
+          <DetailList items={result.disclosure.warnings} />
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.factors.length > 0 ? (
+        <ResultDisclosure title="What will move the final number" count={result.disclosure.factors.length} testId="plans-factors">
+          <DetailList items={result.disclosure.factors} />
+        </ResultDisclosure>
+      ) : null}
+
+      {result.disclosure.nextSteps.length > 0 ? (
+        <ResultDisclosure title="What happens next" count={result.disclosure.nextSteps.length} testId="plans-next-steps">
+          <DetailList items={result.disclosure.nextSteps} />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* THE ACKNOWLEDGMENT. Only the lines that apply to this estimate, so it
+          stays short enough to actually be read - kept open by default since
+          it is the shortest, most decision-relevant section. */}
+      {result.disclosure.acknowledgments.length > 0 ? (
+        <ResultDisclosure
+          title="Before you use this number"
+          count={result.disclosure.acknowledgments.length}
+          defaultOpen
+          testId="plans-acknowledgments"
+        >
+          <DetailList items={result.disclosure.acknowledgments} />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* Uploaded documents */}
+      {documents.length > 0 ? (
+        <ResultCard title="Documents you sent" icon={FileText} testId="plans-documents">
+          <ul className="space-y-1.5">
+            {documents.map((d) => (
+              <li key={d.url} className="flex items-center gap-2 text-[12.5px] text-inverse-muted">
+                <ClipboardList className="h-3.5 w-3.5 flex-shrink-0 text-accent-legible" aria-hidden="true" />
+                <span className="truncate">{d.filename}</span>
+              </li>
+            ))}
+          </ul>
+        </ResultCard>
+      ) : null}
+
+      <StickyResultActions
+        primaryLabel="Schedule a free visit"
+        onPrimary={onRequestConsult}
+        onEditScope={onEditScope}
+        primaryTestId="link-plans-consult"
+        secondary={[
+          { label: "Print", icon: Printer, onClick: () => window.print(), testId: "plans-print" },
+          { label: "Upload more sheets", icon: RefreshCw, onClick: onUploadMore, testId: "plans-upload-more" },
+        ]}
+      />
+    </div>
   );
 }

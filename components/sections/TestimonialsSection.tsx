@@ -37,6 +37,11 @@ export function TestimonialsSection({ limit = 4, showViewAll = true }: Testimoni
   const items = TESTIMONIALS.slice(0, limit);
   const [featured, ...rest] = items;
 
+  // No real reviews yet - render nothing rather than an empty-looking
+  // section (a heading and a "Read all reviews" button with no reviews
+  // under them). This activates automatically once TESTIMONIALS is populated.
+  if (items.length === 0) return null;
+
   return (
     <Section id="testimonials" variant="greige" divider>
       <div className="container px-4">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import * as SliderPrimitive from "@radix-ui/react-slider";
 import type { LucideIcon } from "lucide-react";
 import {
   Check, ChevronDown, ArrowRight, ArrowLeft, Lock, Calculator, Printer, RefreshCw,
@@ -21,6 +22,7 @@ import {
   type ReviewItem,
 } from "@/components/estimate/wizard";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
+import { CTA_SECONDARY } from "@/shared/ctaCopy";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import type { PropertyProfile } from "@/shared/propertyProfile";
 import {
@@ -490,6 +492,10 @@ export function EstimateCalculator({
   /* Top of the wizard card. Every step change brings this just below the
      sticky site header so the new step heading is the first thing in view. */
   const topRef = useRef<HTMLDivElement>(null);
+  /* The current step's heading. Moved to on every step change so a screen
+     reader or keyboard user who is not visually tracking the scroll still
+     gets told the step changed, not just a sighted user watching it scroll. */
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   /* ── Guided step machine ──────────────────────────────────────────────
      The estimator is presented one screen at a time. `phase` is the coarse
@@ -516,6 +522,7 @@ export function EstimateCalculator({
       const top = el.getBoundingClientRect().top + window.scrollY - headerH - 12;
       const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
       window.scrollTo({ top: Math.max(0, top), behavior: prefersReducedMotion ? "instant" : "smooth" });
+      headingRef.current?.focus({ preventScroll: true });
     });
   }
 
@@ -1315,8 +1322,11 @@ export function EstimateCalculator({
      count and section, so the number is not repeated here. */
   const renderStepLabel = (_stepKey: string, label: string, className?: string) => (
     <h2
+      ref={headingRef}
+      tabIndex={-1}
       className={cn(
         "font-sans font-light text-[clamp(1.4rem,5.5vw,2rem)] leading-[1.12] tracking-tight text-inverse-foreground mb-4",
+        "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm",
         className,
       )}
       data-testid="step-heading"
@@ -1344,7 +1354,7 @@ export function EstimateCalculator({
       {renderStepLabel("project", "Choose your project")}
       <div
         className="grid grid-cols-2 sm:grid-cols-3 gap-2.5"
-        role="tablist"
+        role="radiogroup"
         aria-label="Project type"
       >
         {PROJECT_TYPE_ORDER.map((type) => {
@@ -1355,8 +1365,8 @@ export function EstimateCalculator({
             <button
               key={type}
               type="button"
-              role="tab"
-              aria-selected={active}
+              role="radio"
+              aria-checked={active}
               onClick={() => {
                 handleSelectProject(type);
                 setPendingAdvance("project");
@@ -1477,8 +1487,15 @@ export function EstimateCalculator({
   );
 
   /* Step 4 - Size: a precise sqft slider (cost is very size-sensitive). The chosen
-     layout pre-sets a smart default; the slider fine-tunes for accuracy. */
-  const sizePct = ((sqft - sizeConfig.min) / (sizeConfig.max - sizeConfig.min)) * 100;
+     layout pre-sets a smart default; the slider fine-tunes for accuracy.
+
+     Built on Radix's Slider primitive rather than a bare <input type="range">
+     - that hand-rolled control set `outline: none` with no focus-visible
+     replacement, leaving keyboard users with no visible focus indicator on
+     the estimator's highest-traffic control. Radix provides full keyboard
+     support (arrow keys, Home/End, Page Up/Down), correct ARIA, and a
+     focus-visible ring for free; the value-fill track is also native to
+     Radix's Range element instead of a manually computed gradient. */
   const sizeGrid = (
     <div className="mt-6 scroll-mt-20" ref={sizeRef}>
       <div className="flex items-baseline justify-between mb-3">
@@ -1491,24 +1508,26 @@ export function EstimateCalculator({
           <span className="text-[13px] text-inverse-muted ml-1">sq ft</span>
         </span>
       </div>
-      <input
-        type="range"
-        className="brc-slider"
+      <SliderPrimitive.Root
+        className="relative flex h-11 w-full touch-none select-none items-center"
         min={sizeConfig.min}
         max={sizeConfig.max}
         step={sizeConfig.step}
-        value={sqft}
-        onChange={(e) => handleSqft(Number(e.target.value))}
-        data-testid="calc-sqft-slider"
-        aria-label="Approximate square footage"
-        style={{
-          // backgroundImage, NOT the `background` shorthand. The shorthand
-          // resets background-clip to border-box, which defeated the
-          // content-box clip that keeps the painted track 3px tall inside a
-          // 44px touch target - the slider rendered as a thick 44px bar.
-          backgroundImage: `linear-gradient(to right, hsl(var(--accent-legible)) 0%, hsl(var(--accent-legible)) ${sizePct}%, hsl(var(--inverse-foreground) / 0.14) ${sizePct}%, hsl(var(--inverse-foreground) / 0.14) 100%)`,
-        }}
-      />
+        value={[sqft]}
+        onValueChange={([v]) => handleSqft(v)}
+      >
+        <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-inverse-foreground/[0.14]">
+          <SliderPrimitive.Range className="absolute h-full bg-accent-legible" />
+        </SliderPrimitive.Track>
+        {/* aria-label belongs on the Thumb, not the Root - Radix puts
+            role="slider" on the Thumb, so that is the element AT needs a
+            name for. Root has no ARIA role of its own. */}
+        <SliderPrimitive.Thumb
+          data-testid="calc-sqft-slider"
+          aria-label="Approximate square footage"
+          className="block h-6 w-6 flex-shrink-0 rounded-full border-[3px] border-card bg-accent shadow-[0_2px_8px_hsl(var(--primary)/0.28)] transition-shadow hover:shadow-[0_2px_14px_hsl(var(--primary)/0.4)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible focus-visible:ring-offset-2 focus-visible:ring-offset-inverse"
+        />
+      </SliderPrimitive.Root>
       <div className="flex justify-between mt-2 text-[12px] text-inverse-muted">
         <span>Compact ({sizeConfig.min.toLocaleString()})</span>
         <span>Large ({sizeConfig.max.toLocaleString()} sq ft)</span>
@@ -2446,7 +2465,9 @@ export function EstimateCalculator({
       {phase === "review" && (
         <div>
           <h2
-            className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground"
+            ref={headingRef}
+            tabIndex={-1}
+            className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm"
             data-testid="step-heading"
           >
             Review your project
@@ -2502,7 +2523,7 @@ export function EstimateCalculator({
         <div>
           {resultPanel}
           <StickyResultActions
-            primaryLabel="Book a Free Site Visit"
+            primaryLabel={CTA_SECONDARY}
             onPrimary={handleBookVisit}
             onEditScope={goEditScope}
             secondary={[

@@ -4,6 +4,7 @@ import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
 import { TextLink } from "@/components/marketing/TextLink";
 import { Button } from "@/components/ui/button";
+import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { SERVICES } from "@/shared/contentData";
 import { servicePath } from "@/lib/seo-routes";
 import { CTA_SECONDARY } from "@/shared/ctaCopy";
@@ -74,9 +75,7 @@ export function ServicesGrid() {
               <p className="text-sm leading-relaxed mb-5 text-muted-foreground">
                 Every remodel starts with a free in-home visit and an honest planning range, with no obligation.
               </p>
-              <Button variant="brand" className="self-start" asChild>
-                <a href="#consult">{CTA_SECONDARY}</a>
-              </Button>
+              <ConsultCTA variant="brand" className="self-start">{CTA_SECONDARY}</ConsultCTA>
             </div>
           </Reveal>
         </div>

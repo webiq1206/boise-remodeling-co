@@ -7,7 +7,7 @@ import { Reveal } from '@/components/Reveal';
 import { RelatedLinks } from './RelatedLinks';
 import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
 import type { FAQItem } from '@/shared/seoContent';
-import { Button } from '@/components/ui/button';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import {
@@ -206,12 +206,10 @@ export function LandingPageTemplate({
             {overview}
           </p>
           <div className="flex flex-wrap gap-3">
-            <ConsultCTA variant="brand">
+            <EstimateCTA variant="brand">
               {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
-            </ConsultCTA>
-            <Button variant="heroGhost" asChild>
-              <a href="/#consult">{CTA_SECONDARY}</a>
-            </Button>
+            </EstimateCTA>
+            <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
           </div>
           {planningFrom && (
             <p className="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-inverse-foreground/80">
@@ -618,7 +616,7 @@ export function LandingPageTemplate({
                   Free 60 to 90 minute in-home visit. Planning guidance, design direction, no
                   obligation.
                 </p>
-                <ConsultCTA variant="brand">{CTA_PRIMARY}</ConsultCTA>
+                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
               </div>
             </MarketingCard>
           </Reveal>

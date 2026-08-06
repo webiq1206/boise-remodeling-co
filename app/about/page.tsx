@@ -20,7 +20,7 @@ import {
 import { CITIES, TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { HERO_STATS, PRINCIPLES, TRUST_ITEMS } from '@/shared/siteContent';
 import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
-import { Button } from '@/components/ui/button';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { AreaCard } from '@/components/marketing/AreaCard';
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
@@ -143,12 +143,10 @@ export default function AboutPage() {
               guarantee on our labor. Every detail, every decision - handled with intention.
             </p>
             <div className="flex flex-wrap gap-3 mb-8">
-              <ConsultCTA variant="brand">
+              <EstimateCTA variant="brand">
                 {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
-              </ConsultCTA>
-              <Button variant="heroGhost" asChild>
-                <a href="/#consult">{CTA_SECONDARY}</a>
-              </Button>
+              </EstimateCTA>
+              <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
             </div>
             <div className="grid grid-cols-3 gap-3 max-w-xl">
               {HERO_STATS.map((stat) => (
@@ -336,7 +334,7 @@ export default function AboutPage() {
                 Schedule a free in-home visit for planning guidance, design direction, and an honest
                 project range.
               </p>
-              <ConsultCTA variant="brand">{CTA_PRIMARY}</ConsultCTA>
+              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
             </MarketingCard>
           </div>
         </Section>

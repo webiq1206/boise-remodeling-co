@@ -150,45 +150,9 @@ export class MemStorage implements IStorage {
 
     sampleGalleryPhotos.forEach(photo => this.galleryPhotos.set(photo.id, photo));
 
-    // Seed testimonials
-    const sampleTestimonials: Testimonial[] = [
-      {
-        id: randomUUID(),
-        customerName: 'Sarah M.',
-        serviceType: 'kitchen-remodel',
-        city: 'boise',
-        rating: '5',
-        testimonial: 'Boise Remodeling Co did an amazing job on our kitchen. On time, clear communication throughout, and the results were stunning.',
-        createdAt: new Date(),
-      },
-      {
-        id: randomUUID(),
-        customerName: 'Mike R.',
-        serviceType: 'bathroom-remodel',
-        city: 'meridian',
-        rating: '5',
-        testimonial: 'Our master bath went from builder-grade to magazine-worthy. The team was professional and communicated throughout the entire project.',
-        createdAt: new Date(),
-      },
-      {
-        id: randomUUID(),
-        customerName: 'Jennifer K.',
-        serviceType: 'whole-home-remodel',
-        city: 'eagle',
-        rating: '5',
-        testimonial: 'We stayed in our home through a full renovation and the team made it as painless as possible. Absolutely love the result.',
-        createdAt: new Date(),
-      },
-      {
-        id: randomUUID(),
-        customerName: 'David L.',
-        serviceType: 'room-addition',
-        city: 'nampa',
-        rating: '5',
-        testimonial: 'Fantastic craftsmanship and reliable timeline. Our new master suite addition exceeded every expectation.',
-        createdAt: new Date(),
-      },
-    ];
+    // No testimonials seeded. There are no real customer reviews yet - do not
+    // fabricate placeholder ones. Populate this once real reviews exist.
+    const sampleTestimonials: Testimonial[] = [];
 
     sampleTestimonials.forEach(testimonial => this.testimonials.set(testimonial.id, testimonial));
 
@@ -834,44 +798,10 @@ export class DBStorage implements IStorage {
   }
 
   private async seedTestimonials(): Promise<void> {
-    const sampleTestimonials = [
-      {
-        customerName: 'Sarah M.',
-        serviceType: 'kitchen-remodel',
-        city: 'boise',
-        rating: '5',
-        testimonial: 'Boise Remodeling Co did an amazing job on our kitchen. On time, clear communication throughout, and the results were stunning.',
-        createdAt: new Date(),
-      },
-      {
-        customerName: 'Mike R.',
-        serviceType: 'bathroom-remodel',
-        city: 'meridian',
-        rating: '5',
-        testimonial: 'Our master bath went from builder-grade to magazine-worthy. The team was professional and communicated throughout the entire project.',
-        createdAt: new Date(),
-      },
-      {
-        customerName: 'Jennifer K.',
-        serviceType: 'whole-home-remodel',
-        city: 'eagle',
-        rating: '5',
-        testimonial: 'We stayed in our home through a full renovation and the team made it as painless as possible. Absolutely love the result.',
-        createdAt: new Date(),
-      },
-      {
-        customerName: 'David L.',
-        serviceType: 'room-addition',
-        city: 'nampa',
-        rating: '5',
-        testimonial: 'Fantastic craftsmanship and reliable timeline. Our new master suite addition exceeded every expectation.',
-        createdAt: new Date(),
-      },
-    ];
-
-    for (const testimonial of sampleTestimonials) {
-      await db.insert(testimonials).values(testimonial);
-    }
+    // No-op. There are no real customer reviews yet, and this previously
+    // wrote four fabricated ones (fake names, fake quotes) straight into the
+    // production testimonials table on first run whenever that table was
+    // empty. Do not fabricate reviews - wire this up once real ones exist.
   }
 
   private async syncBlogPosts(): Promise<void> {

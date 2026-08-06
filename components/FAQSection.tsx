@@ -10,6 +10,8 @@ import {
 import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
 import { Button } from "@/components/ui/button";
+import { EstimateCTA } from "@/components/modals/EstimateCTA";
+import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
 import { HOMEPAGE_FAQS } from "@/shared/homepageFaqs";
 
@@ -64,12 +66,8 @@ export function FAQSection() {
             </div>
           )}
           <div className="mt-10 flex flex-wrap gap-3 justify-center">
-            <Button variant="brand" asChild>
-              <a href="#calculator">{CTA_PRIMARY}</a>
-            </Button>
-            <Button variant="brandOutline" asChild>
-              <a href="#consult">{CTA_SECONDARY}</a>
-            </Button>
+            <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+            <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
           </div>
         </div>
       </div>

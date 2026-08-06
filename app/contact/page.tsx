@@ -32,8 +32,8 @@ import { SITE_CONFIG } from '@/shared/siteConfig';
 import { CITIES, TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
 import { CONSULT_BULLETS, HERO_STATS } from '@/shared/siteContent';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
-import { Button } from '@/components/ui/button';
 import { AreaCard } from '@/components/marketing/AreaCard';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
@@ -259,15 +259,13 @@ export default function ContactPage() {
             </a>
             <div className="flex flex-wrap gap-3 mb-8">
               {/* Primary action on the contact page is the inline form below -
-                  one tap from the hero. The estimator lives on the homepage. */}
-              <Button variant="brand" asChild>
-                <a href="#consult">
-                  Request your free visit <ArrowRight className="h-4 w-4" />
-                </a>
-              </Button>
-              <Button variant="heroGhost" asChild>
-                <a href="/estimate">Get an instant estimate</a>
-              </Button>
+                  one tap from the hero. The estimator lives on the homepage.
+                  Same sitewide CTA labels/components as everywhere else, just
+                  with this page's deliberate visual emphasis reversed. */}
+              <ConsultCTA variant="brand">
+                {CTA_SECONDARY} <ArrowRight className="h-4 w-4" />
+              </ConsultCTA>
+              <EstimateCTA variant="heroGhost">{CTA_PRIMARY}</EstimateCTA>
             </div>
             <div className="grid grid-cols-3 gap-3 max-w-xl">
               {HERO_STATS.map((stat) => (
@@ -408,8 +406,8 @@ export default function ContactPage() {
                   ))}
                 </ul>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-                  <ConsultCTA variant="brand">{CTA_PRIMARY}</ConsultCTA>
-                  <Button variant="brandOutline" asChild><a href="#consult">{CTA_SECONDARY}</a></Button>
+                  <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+                  <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
                 </div>
               </Reveal>
             </div>
@@ -533,10 +531,8 @@ export default function ContactPage() {
                   Or send us a text message
                 </a>
                 <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3">
-                  <ConsultCTA variant="brand">{CTA_PRIMARY}</ConsultCTA>
-                  <Button variant="heroGhost" asChild>
-                    <a href="#consult">{CTA_SECONDARY}</a>
-                  </Button>
+                  <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+                  <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
                 </div>
               </MarketingCard>
             </Reveal>

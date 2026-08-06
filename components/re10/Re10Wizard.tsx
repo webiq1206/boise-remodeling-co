@@ -615,7 +615,7 @@ export function Re10Wizard() {
 
               <div>
                 <p className="mb-1.5 text-[12.5px] text-inverse-muted">Your role</p>
-                <ChoiceGrid label="Your role" columns={2} multi>
+                <ChoiceGrid label="Your role" columns={2}>
                   {ROLES.map((r) => (
                     <OptionCard
                       key={r.value}

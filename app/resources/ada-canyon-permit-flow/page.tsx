@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, Download } from 'lucide-react';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import { Section } from '@/components/marketing/Section';
 import { PermitFlowGraphic } from './PermitFlowGraphic';
-import { ConsultCTA } from '@/components/modals/ConsultCTA';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { CTA_PRIMARY } from '@/shared/ctaCopy';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
@@ -108,10 +108,10 @@ export default function AdaCanyonPermitFlowPage() {
           </div>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <ConsultCTA variant="brand">
+            <EstimateCTA variant="brand">
               {CTA_PRIMARY}
               <ArrowRight className="ml-2 h-4 w-4" />
-            </ConsultCTA>
+            </EstimateCTA>
             <Link
               href="/guides/boise-remodeling-process-guide"
               className="inline-flex items-center text-sm text-accent-legible hover:underline"

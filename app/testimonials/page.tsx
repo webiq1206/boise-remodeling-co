@@ -6,7 +6,7 @@ import { PageHeroBand } from '@/components/sections/PageHeroBand';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
-import { Button } from '@/components/ui/button';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
@@ -66,12 +66,10 @@ export default function TestimonialsPage() {
           then picture the same clarity and craftsmanship in your home.
         </p>
         <div className="flex flex-wrap gap-3">
-          <ConsultCTA variant="brand">
+          <EstimateCTA variant="brand">
             {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
-          </ConsultCTA>
-          <Button variant="heroGhost" asChild>
-            <a href="/#consult">{CTA_SECONDARY}</a>
-          </Button>
+          </EstimateCTA>
+          <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
         </div>
       </PageHeroBand>
 
@@ -98,7 +96,7 @@ export default function TestimonialsPage() {
               Schedule a free in-home visit for planning guidance, design direction, and an honest
               project range.
             </p>
-            <ConsultCTA variant="brand">{CTA_PRIMARY}</ConsultCTA>
+            <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
           </div>
         </div>
       </Section>

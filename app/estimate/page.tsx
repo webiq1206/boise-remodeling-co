@@ -12,7 +12,7 @@ import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
 import { SITE_IMAGES } from "@/shared/siteImages";
 import { CONSULT_BULLETS } from "@/shared/siteContent";
 import { CTA_SECONDARY } from "@/shared/ctaCopy";
-import { Button } from "@/components/ui/button";
+import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { Check } from "lucide-react";
 
 const EstimateCalculator = dynamic(
@@ -98,11 +98,16 @@ export default function EstimatePage() {
               finish level. When you&apos;re ready for detail, book a free in-home visit and we&apos;ll
               walk through scope, design direction, and a written project range together.
             </p>
-            <Button variant="brandOutline" asChild>
-              <Link href="/contact#consult">
-                {CTA_SECONDARY} <ArrowRight className="ml-2 h-4 w-4" />
+            <ConsultCTA variant="brandOutline">
+              {CTA_SECONDARY} <ArrowRight className="ml-2 h-4 w-4" />
+            </ConsultCTA>
+            <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
+              Have architectural drawings instead?{" "}
+              <Link href="/remodel-plans-boise" className="text-accent-legible hover:underline">
+                Get a plan-based estimate
               </Link>
-            </Button>
+              .
+            </p>
           </div>
           <MarketingCard padding="lg">
             <p className="text-sm font-normal text-foreground mb-4">Your free visit includes</p>

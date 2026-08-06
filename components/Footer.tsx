@@ -157,9 +157,10 @@ export function Footer() {
               {[
                 { label: "About", href: "/about" },
                 { label: "Our Work", href: "/testimonials" },
-                // Sitewide link so the RE-10 page is reachable from every page
-                // and never ships orphaned.
+                // Sitewide links so the specialized estimator pages are
+                // reachable from every page and never ship orphaned.
                 { label: "RE-10 Repairs", href: "/re-10-repairs-boise" },
+                { label: "Estimate From Plans", href: "/remodel-plans-boise" },
                 { label: "Contact", href: "/contact" },
                 { label: "Why Choose Us", href: "/#why-choose-us" },
                 { label: "How We Build", href: "/#how-we-build" },
@@ -249,30 +250,13 @@ export function Footer() {
             <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Start a Conversation
             </h3>
+            {/* Contact details (phone, text, email, save-to-contacts) already
+                live in the brand column at the start of this footer - repeating
+                them here just to fill a column duplicated the same four links
+                on every page. This column is for the two sitewide CTAs and the
+                one link that belongs nowhere else. */}
             <ul className="space-y-2.5">
               <FooterCTAs />
-              <li>
-                <BusinessPhoneLink
-                  className="block text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                  data-testid="link-footer-column-phone"
-                />
-              </li>
-              <li>
-                <Button variant="brandInverseOutline" size="sm" asChild>
-                  <SaveContactLink showIcon />
-                </Button>
-              </li>
-              <li>
-                <a
-                  href={SITE_CONFIG.phoneSmsHref}
-                  className="text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
-                >
-                  Text us
-                </a>
-              </li>
-              <li>
-                <EmailLink className="text-sm text-left text-inverse-muted hover:text-inverse-foreground transition-colors" />
-              </li>
             </ul>
             <div className="mt-6 pt-6 border-t border-inverse-foreground/10">
               <a

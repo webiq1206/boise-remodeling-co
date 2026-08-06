@@ -76,7 +76,13 @@ const nextConfig = {
       '/get-a-quote': '/#consult',
       '/get-a-free-quote': '/#consult',
       '/quote': '/#consult',
-      '/estimate': '/#calculator',
+      // '/estimate' is NOT a legacy alias - it is the real canonical page
+      // (app/estimate/page.tsx, sitemap priority 0.9). This redirect was
+      // predating that page and was permanently 308-redirecting every visit
+      // to /estimate back to the homepage's inline calculator instead,
+      // silently making the dedicated page unreachable from anywhere on the
+      // site (nav, footer, every EstimateCTA click off the homepage) and
+      // from search results.
       '/portfolio': '/testimonials',
       '/gallery': '/#gallery',
       '/our-work': '/testimonials',
