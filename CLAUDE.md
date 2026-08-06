@@ -210,19 +210,25 @@ surface as the generic "We could not read those drawings"; it now maps to
 
 ### Still to do
 
-1. **Redeploy, and this one now matters to customers.** Production is running
-   pre-`65400e3`: no coverage gate, no `/remodel-plans-boise`, no estimate
-   route. The page is live-ready in the repo and absent from the deployment.
-2. **Verify the wizard live on real drawings.** The analyze step cannot run
-   locally (the API key is production-only), so the four sets have only gone
-   through the endpoint directly, never through the UI. The measure, contact and
-   result steps were driven end to end against the real estimate route with the
-   analyze response stubbed in the browser, which is not the same as a real read
-   reaching the screen. Do that once after the redeploy.
+1. ~~Redeploy~~ **DONE, confirmed 2026-08-06.** `819c587` (coverage gate,
+   `/remodel-plans-boise`, estimate route all included) was published to
+   production at `2026-08-05 19:37:49 UTC`, build `d323a4be-ae22-4f6e-ae1f-
+   572d702065f7` - the `ba01e70` "Published your App" marker commit on
+   `origin/main`. Checked live: `https://boiseremodeling.co/remodel-plans-boise`
+   serves the real four-step wizard, not a 404. Local, `origin/main`, and
+   production are all the same commit right now.
+2. **Verify the wizard live on real drawings.** Still open - the redeploy
+   landing does not by itself satisfy this. The analyze step cannot run locally
+   (the API key is production-only), so the four sets have only gone through
+   the endpoint directly, never through the UI, and the measure/contact/result
+   steps were only driven with the analyze response stubbed in the browser.
+   Now that production has the route, upload a real set through
+   `/remodel-plans-boise` and confirm a real read reaches the confirm-
+   measurements screen.
 3. Optional: add `ANTHROPIC_API_KEY` to `.env.local` so the analyze step can be
    exercised from a dev machine. Without it `/api/plans/analyze` answers 503 and
    the wizard shows the send-them-to-us-by-hand path, which is correct behaviour
-   but untestable ground.
+   but untestable ground. (Confirmed still absent: no `.env.local` in the repo.)
 
 **Rendering a sheet to look at it yourself** needs `pdf-to-img` (pdfjs plus a
 prebuilt canvas, no system dependencies); there is no `pdftoppm`, Ghostscript or
