@@ -96,7 +96,7 @@ export default function RemodelPlansPage() {
       <PageHeroBand
         imageSrc={SITE_IMAGES.budgetDetail}
         imageAlt="Construction drawings for a Boise remodel laid out during estimating"
-        scrim={0.86}
+        scrim={0.75}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Estimate From Plans" }]} />
         <div className="brc-label text-inverse-muted mt-6 mb-4">

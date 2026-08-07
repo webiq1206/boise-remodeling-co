@@ -49,7 +49,7 @@ export default function TestimonialsPage() {
       <PageHeroBand
         imageSrc={GALLERY_IMAGES.kitchen.after}
         imageAlt="After: modern kitchen remodel in Boise Idaho"
-        scrim={0.82}
+        scrim={0.75}
       >
         <Breadcrumbs
           items={[

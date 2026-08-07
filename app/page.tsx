@@ -116,7 +116,7 @@ export default function HomePage() {
       <ProcessSection />
       <BrandStatementBand />
       <FAQSection />
-      <Section id="consult" divider className="relative overflow-hidden pb-28 md:pb-28">
+      <Section id="consult" divider className="scroll-mt-16 relative overflow-hidden pb-28 md:pb-28">
         {/* Warm, dimmed lifestyle photo grounds the closing section. Directional
             scrims keep the left-column copy legible and fade the edges into the
             page ground; the form card floats above on its own shadow. */}
@@ -127,9 +127,9 @@ export default function HomePage() {
             fill
             loading="lazy"
             sizes="100vw"
-            className="object-cover opacity-[0.28] img-brand-grade"
+            className="object-cover opacity-[0.4] img-brand-grade"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/85 to-background/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/50" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-transparent to-background" />
         </div>
         <div className="container px-4 relative z-10">

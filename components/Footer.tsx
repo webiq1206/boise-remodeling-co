@@ -24,29 +24,17 @@ export function Footer() {
       <div className="container px-4 py-16 md:py-20">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-10 mb-12 lg:gap-0 lg:divide-x lg:divide-inverse-foreground/10 [&>*]:lg:px-6 [&>*:first-child]:lg:pl-0 [&>*:last-child]:lg:pr-0">
           <div className="lg:col-span-2">
-            <div className="mb-5 flex items-center gap-4">
-              {/* Dark-background brand seal; circular clip drops the square
-                  corners so its dark ground reads as a seamless medallion on
-                  the dark footer band */}
-              {/* `on-charcoal` rather than the plain bone seal: that variant
-                  carries its own disc, which is what the kit says to use over a
-                  ground rather than relying on a CSS clip. */}
-              <img
-                src="/brand/svg/seal/any/boise-remodeling-co-seal-on-charcoal-accent.svg"
-                alt=""
-                aria-hidden="true"
-                width={56}
-                height={56}
-                className="h-14 w-14 shrink-0 rounded-full"
-              />
-              {/* The full lockup, which is the wordmark plus the descriptor
-                  line. 1617.52 x 319.77 viewBox, so 45px tall is 228 wide. */}
+            <div className="mb-5">
+              {/* Wordmark-only footer branding (the seal was removed - one
+                  clean lockup instead of two competing marks). Full lockup =
+                  wordmark plus descriptor line; 1617.52 x 319.77 viewBox, so
+                  52px tall is 263 wide. */}
               <img
                 src="/brand/svg/wordmark-full/dark/boise-remodeling-co-wordmark-full-bone-accent.svg"
                 alt="Boise Remodeling Co"
-                width={228}
-                height={45}
-                className="h-[45px] w-auto"
+                width={263}
+                height={52}
+                className="h-[52px] w-auto"
               />
             </div>
             <p className="text-sm mb-6 text-inverse-muted font-sans">

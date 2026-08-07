@@ -5,8 +5,14 @@
  */
 
 export const SITE_IMAGES = {
-  /** Homepage hero - great room with kitchen visible; distinct from whole-home after. */
-  hero: "/images/hero-great-room.webp",
+  /**
+   * Homepage hero - open-concept kitchen (navy island, brass fixtures) with a
+   * sight line into the sunlit living room; golden-hour light. Chosen over the
+   * previous hero-great-room.webp for a brighter, more impressive first
+   * impression. The blog registry keeps its own copy of this image at
+   * /images/blog/how-to-budget-remodel-boise.webp, so no double-use on page.
+   */
+  hero: "/images/hero-remodel-interior.webp",
   /** Design-build / plan review split panels. */
   process: "/images/process-design-review.webp",
   /**

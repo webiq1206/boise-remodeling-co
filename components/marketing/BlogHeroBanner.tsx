@@ -18,7 +18,7 @@ export function BlogHeroBanner({ src, alt, priority = false }: BlogHeroBannerPro
         sizes="100vw"
         className="object-cover opacity-[0.82] img-brand-grade"
       />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/90 via-inverse/40 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/40 to-transparent" />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/50 via-inverse/10 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
       <div
@@ -45,7 +45,7 @@ export function HubHeroBanner({ src, alt }: HubHeroBannerProps) {
         sizes="(max-width: 768px) 100vw, 896px"
         className="object-cover opacity-[0.82] img-brand-grade"
       />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/90 via-inverse/30 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/30 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-16 pointer-events-none bg-gradient-to-t from-background via-background/50 to-transparent" />
       <div
         className="absolute inset-0 pointer-events-none"

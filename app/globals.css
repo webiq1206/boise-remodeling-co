@@ -185,12 +185,16 @@ html, body {
     font-weight: 400;
   }
 
+  /* Display headings (h1/h2) stay light - at their sizes the thin weight is
+     the elegance. Smaller headings (h3-h6) render at body-adjacent sizes where
+     300 reads faint rather than refined, so they carry regular weight. */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-montserrat, "Helvetica Neue", system-ui, sans-serif);
-    font-weight: 300;
     letter-spacing: -0.02em;
     color: hsl(var(--heading));
   }
+  h1, h2 { font-weight: 300; }
+  h3, h4, h5, h6 { font-weight: 400; }
 
   p { @apply leading-relaxed; }
 
@@ -444,7 +448,8 @@ html, body {
 .blog-content {
   color: hsl(var(--foreground));
   line-height: 1.8;
-  font-size: 1rem;
+  /* 17px, not 16 - long-form reading size on the 42rem measure. */
+  font-size: 1.0625rem;
 }
 .blog-content h2 {
   font-size: 1.75rem;
@@ -492,8 +497,11 @@ html, body {
   line-height: 1.7;
 }
 .blog-content li strong { color: hsl(var(--foreground)); }
-/* Emphasis via brighter bone tone, not weight (brand rule: never above 400) */
-.blog-content strong { color: hsl(var(--heading)); font-weight: 400; }
+/* Emphasis via a brighter bone tone AND a medium weight. The original brand
+   rule capped strong at 400 (color-only emphasis), which read as faint in
+   long-form body copy - 500 keeps the elegance while letting emphasis
+   actually register at reading size. */
+.blog-content strong { color: hsl(var(--heading)); font-weight: 500; }
 .blog-content blockquote {
   border-left: 2px solid hsl(var(--primary));
   padding: 1rem 1.25rem;
@@ -522,7 +530,9 @@ html, body {
 .blog-content td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid hsl(var(--border));
-  color: hsl(var(--muted-foreground));
+  /* Full foreground, not muted - table cells are content, not chrome, and the
+     mist tone at 0.9rem was the faintest text on the page. */
+  color: hsl(var(--foreground));
 }
 .blog-content tr:last-child td { border-bottom: none; }
 .blog-content img {

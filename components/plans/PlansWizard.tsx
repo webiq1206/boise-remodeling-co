@@ -586,7 +586,10 @@ export function PlansWizard() {
   const labelClass = "block text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-1.5";
 
   return (
-    <Section id="plans-estimator" variant="inverse" divider>
+    /* scroll-mt-16 clears the 61px sticky header when hero CTAs jump here via
+       the #plans-estimator hash. The inner topRef div's own scroll-mt only
+       protects in-wizard step transitions, not this anchor landing. */
+    <Section id="plans-estimator" variant="inverse" divider className="scroll-mt-16">
       <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />

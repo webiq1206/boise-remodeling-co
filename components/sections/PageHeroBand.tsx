@@ -4,7 +4,10 @@ import { GRAIN_URL } from "@/lib/grain";
 interface PageHeroBandProps {
   imageSrc: string;
   imageAlt: string;
-  /** Optional extra scrim strength 0–1 (default 0.75). */
+  /** Optional extra scrim strength 0–1 (default 0.66). Values much above
+      ~0.75 flatten the photograph into the charcoal ground - the band's text
+      sits at the bottom where this gradient is already at full strength, so
+      the top two-thirds of the image can stay visible. */
   scrim?: number;
   children: React.ReactNode;
 }

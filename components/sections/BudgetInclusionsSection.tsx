@@ -16,7 +16,10 @@ import { CTA_SECONDARY } from "@/shared/ctaCopy";
 export function BudgetInclusionsSection() {
   return (
     <Section id="budget" variant="inverse" divider className="relative overflow-hidden">
-      {/* Subtle photographic texture behind the dark band so it does not read flat */}
+      {/* Photographic ground behind the dark band. Previously the image sat at
+          10% opacity under a flat 75% scrim AND a 90% gradient - effectively
+          invisible. One gradient over a somewhat-present image keeps the copy
+          fully legible while letting the photograph actually read as a photo. */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <Image
           src={SITE_IMAGES.budgetDetail}
@@ -24,10 +27,9 @@ export function BudgetInclusionsSection() {
           fill
           loading="lazy"
           sizes="100vw"
-          className="object-cover opacity-[0.10] img-brand-grade"
+          className="object-cover opacity-[0.22] img-brand-grade"
         />
-        <div className="absolute inset-0 bg-inverse/75" />
-        <div className="absolute inset-0 bg-gradient-to-b from-inverse/90 via-inverse/55 to-inverse/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-inverse/85 via-inverse/50 to-inverse/85" />
       </div>
       <div className="container px-4 relative z-10">
         <div className="max-w-5xl mx-auto">

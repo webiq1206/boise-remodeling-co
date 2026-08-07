@@ -531,7 +531,10 @@ export function Re10Wizard() {
   const includedCount = repairs.filter((r) => r.included).length;
 
   return (
-    <Section id="re10-estimator" variant="inverse" divider>
+    /* scroll-mt-16 clears the 61px sticky header when hero CTAs jump here via
+       the #re10-estimator hash. The inner topRef div's own scroll-mt only
+       protects in-wizard step transitions, not this anchor landing. */
+    <Section id="re10-estimator" variant="inverse" divider className="scroll-mt-16">
       <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />

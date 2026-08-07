@@ -37,25 +37,26 @@ export function HeroSection() {
       <section className="relative min-h-[85vh] md:min-h-screen flex items-center overflow-hidden bg-inverse">
         <Image
           src={SITE_IMAGES.hero}
-          alt="Modern luxury home interior remodel in Boise Idaho Treasure Valley"
+          alt="Open-concept kitchen remodel with a navy island and brass fixtures opening to a sunlit living room, Boise Idaho Treasure Valley"
           fill
           priority
           sizes="(max-width: 768px) 100vw, 1400px"
-          className="object-cover opacity-[0.86] img-brand-grade"
+          className="object-cover opacity-[0.92] img-brand-grade"
         />
-        {/* Ends at /25 rather than /15. The stat cards live in the last third
-            of this gradient, and at /15 the photo was effectively unscrimmed
-            behind them. /25 steadies that side without flattening the image.
+        {/* Scrim stops tuned for the golden-hour interior: dark enough on the
+            left where the headline sits, opening up quickly so the photograph
+            carries the right two-thirds of the frame. Ends at /25 rather than
+            /15 because the stat cards live in that last third.
 
             If you change these, HARD-RESTART the dev server and confirm the
             gradient still computes. Editing a scrim opacity can leave Next's
             Tailwind pass stale, and an ungenerated class is not an error - the
             rule is simply absent, the scrim vanishes, and the page looks like
             someone deleted it. */}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/85 via-inverse/45 to-inverse/25" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/75 via-inverse/40 to-inverse/25" />
         {/* Mobile: text + stat cards span full width over the bright image centre,
             so add a vertical scrim that the desktop horizontal gradient doesn't cover. */}
-        <div className="md:hidden absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/90 via-inverse/60 to-inverse/35" />
+        <div className="md:hidden absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/55 to-inverse/30" />
         <div className="absolute inset-x-0 top-0 h-40 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/35 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-32 pointer-events-none bg-gradient-to-t from-background via-background/50 to-transparent" />
         <div
@@ -107,17 +108,23 @@ export function HeroSection() {
         </div>
       </section>
 
-      <div className="bg-background border-t border-border/60 py-8 md:py-10">
+      {/* Trust bar. Sage-tinted so it reads as a deliberate branded band
+          rather than a bare grid on the page ground - the tint follows the
+          established bg-accent-legible/[0.07] + border-accent-legible idiom
+          used by the estimator cards and CTA bands. The sage tick before each
+          item is the same brand accent the eyebrow labels use. */}
+      <div className="bg-accent-legible/[0.07] border-t border-accent-legible/25 py-8 md:py-10">
         <div className="container px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 max-w-5xl mx-auto border-l border-t border-border/70">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 max-w-5xl mx-auto border-l border-t border-accent-legible/20">
             {TRUST_ITEMS.map((item, i) => (
               <div
                 key={item}
-                className="flex items-center justify-center px-4 py-5 md:py-4 text-center border-r border-b border-border/70"
+                className="flex items-center justify-center gap-2 px-4 py-5 md:py-4 text-center border-r border-b border-accent-legible/20"
               >
+                <span className="h-1 w-1 flex-shrink-0 rounded-full bg-accent-legible" aria-hidden="true" />
                 <span
                   className={`text-[11px] leading-snug tracking-[0.2em] uppercase ${
-                    i < 2 ? "text-foreground" : "text-muted-foreground"
+                    i < 2 ? "text-foreground" : "text-foreground/80"
                   }`}
                 >
                   {item}

@@ -97,7 +97,7 @@ export default function Re10RepairsPage() {
       <PageHeroBand
         imageSrc={SITE_IMAGES.processInProgress}
         imageAlt="Boise Remodeling Co carpenter completing inspection repairs in a Treasure Valley home before closing"
-        scrim={0.86}
+        scrim={0.75}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "RE-10 Repairs" }]} />
         <div className="brc-label text-inverse-muted mt-6 mb-4">

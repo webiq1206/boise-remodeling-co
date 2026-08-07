@@ -70,7 +70,7 @@ export default function EstimatePage() {
       <PageHeroBand
         imageSrc={SITE_IMAGES.budgetDetail}
         imageAlt="Quartz kitchen island detail in a remodeled Treasure Valley home"
-        scrim={0.85}
+        scrim={0.75}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Project Estimator" }]} />
         <div className="brc-label text-inverse-muted mt-6 mb-4">Free planning tool</div>

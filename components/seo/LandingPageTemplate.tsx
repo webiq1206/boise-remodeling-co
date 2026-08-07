@@ -182,7 +182,7 @@ export function LandingPageTemplate({
             priority
           />
         )}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/90 via-inverse/60 to-transparent" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/60 to-transparent" />
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/60 via-inverse/15 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-44 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
@@ -323,7 +323,7 @@ export function LandingPageTemplate({
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-inverse/90 via-inverse/55 to-inverse/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-inverse/80 via-inverse/55 to-inverse/30" />
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }}

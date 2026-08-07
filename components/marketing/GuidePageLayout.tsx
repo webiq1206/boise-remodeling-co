@@ -9,12 +9,7 @@ import {
 } from 'lucide-react';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { CONTENT_AUTHOR } from '@/shared/authors';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
+import { ArticleFaqs } from './ArticleFaqs';
 import { Chip } from './Chip';
 import { BlogEndCta } from './BlogEndCta';
 import { RelatedPostCards } from './RelatedPostCards';
@@ -73,12 +68,12 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
             ]}
           />
 
-          <header className="max-w-3xl mb-8 md:mb-10 mt-2">
+          <header className="max-w-[42rem] mb-8 md:mb-10 mt-2">
             {hub && <Chip className="mb-4">{hub.categoryLabel}</Chip>}
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-sans font-light tracking-tight text-foreground mb-4">
               {guide.title}
             </h1>
-            <p className="text-lg text-muted-foreground mb-5 max-w-2xl">{guide.excerpt}</p>
+            <p className="text-lg text-muted-foreground mb-5">{guide.excerpt}</p>
             <div role="presentation" className="border-t border-border/60 mb-5" />
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
@@ -155,30 +150,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
               </GuideContentBlocks>
 
               {guide.faqs.length > 0 && (
-                <section className="mt-12 pt-8 border-t border-border" data-testid="guide-faqs">
-                  <p className="text-xs font-normal uppercase tracking-wider text-muted-foreground mb-3">
-                    Common questions
-                  </p>
-                  <h2 className="text-xl md:text-2xl font-sans font-light tracking-tight text-foreground mb-6">
-                    Frequently asked questions
-                  </h2>
-                  <Accordion type="single" collapsible className="w-full">
-                    {guide.faqs.map((faq, i) => (
-                      <AccordionItem
-                        key={faq.question}
-                        value={`faq-${i}`}
-                        className="border-0 border-t border-border"
-                      >
-                        <AccordionTrigger className="text-left py-5 hover:no-underline font-sans font-normal text-sm text-foreground">
-                          {faq.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-sm leading-relaxed pb-6 text-muted-foreground">
-                          {faq.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </section>
+                <ArticleFaqs faqs={guide.faqs} testId="guide-faqs" />
               )}
 
               {guide.tags && guide.tags.length > 0 && (
