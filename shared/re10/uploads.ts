@@ -128,7 +128,24 @@ export const READABLE_FORMATS_LABEL = "PDF, JPG, PNG, WEBP or GIF";
  */
 export function isStoredDocumentUrl(url: string): boolean {
   if (typeof url !== "string" || url.length === 0 || url.length > 2000) return false;
-  // Root-relative is what our own storage hands back.
-  if (url.startsWith("/") && !url.startsWith("//")) return true;
+  // Root-relative is what our own storage hands back, and it is ONLY ever
+  // /api/documents/local/<encoded key>. Accepting any root-relative path let a
+  // crafted submission point the lead-email attachment reader at
+  // ..%2F..%2F-style keys; the storage layer now rejects those too, but the
+  // request should never validate in the first place. The decoded key must be
+  // relative, with no parent segments, backslashes, or null bytes.
+  if (url.startsWith("/")) {
+    const prefix = "/api/documents/local/";
+    if (!url.startsWith(prefix)) return false;
+    let key: string;
+    try {
+      key = decodeURIComponent(url.slice(prefix.length));
+    } catch {
+      return false;
+    }
+    if (key.length === 0 || key.length > 512) return false;
+    if (key.includes("\0") || key.includes("\\") || key.startsWith("/")) return false;
+    return key.split("/").every((s) => s.length > 0 && s !== "." && s !== "..");
+  }
   return /^https?:\/\/[^\s]+$/i.test(url);
 }

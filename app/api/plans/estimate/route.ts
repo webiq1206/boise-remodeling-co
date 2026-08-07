@@ -15,6 +15,7 @@ import {
 } from "@/shared/plans/extraction";
 import { planMeasurements, planScopePatch } from "@/shared/plans/estimateInput";
 import { isStoredDocumentUrl } from "@/shared/re10/uploads";
+import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { deliverPlanLead } from "@/server/services/planLead";
 import type { PlanContact } from "@/server/services/planEmail";
 import type { ProjectType } from "@/shared/estimateEngine";
@@ -161,7 +162,20 @@ const FINISH_LABELS: Record<(typeof QUALITIES)[number], string> = {
   luxury: "Luxury",
 };
 
+/* Same reasoning as the RE-10 estimate limit: two emails and a lead row per
+   accepted request, unauthenticated. */
+const RATE_LIMIT = 12;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+
 export async function POST(request: NextRequest) {
+  const limit = rateLimit(clientKeyFrom(request.headers, "plans-estimate"), RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { message: "Too many requests in a short time. Wait a few minutes and try again." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
   let parsed;
   try {
     parsed = bodySchema.safeParse(await request.json());

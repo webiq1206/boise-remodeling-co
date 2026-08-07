@@ -9,6 +9,37 @@ function useLocalStorage(): boolean {
 }
 
 /**
+ * A storage key is only ever something this module generated itself
+ * (`re10/<batch>/<n>-<filename>` and friends). Everything that READS by key,
+ * however, receives that key from an untrusted place - a client-posted
+ * document URL on the estimate routes, or the raw URL path on the public
+ * GET /api/documents/local/[...key] route - and the disk fallback joins it
+ * into a filesystem path. Without this check, `..%2F..%2F.env.local` walked
+ * out of .uploads and read (or unlinked) arbitrary files inside the app root.
+ *
+ * Reject rather than sanitize: a key containing a parent segment, a
+ * backslash, a null byte, or an absolute prefix is not a mistyped key, it is
+ * an attack, and there is nothing to salvage from it.
+ */
+export function isSafeStorageKey(key: string): boolean {
+  if (typeof key !== "string" || key.length === 0 || key.length > 512) return false;
+  if (key.includes("\0") || key.includes("\\")) return false;
+  if (key.startsWith("/") || /^[a-zA-Z]:/.test(key)) return false;
+  const segments = key.split("/");
+  return segments.every((s) => s.length > 0 && s !== "." && s !== "..");
+}
+
+/** Resolve a validated key inside the uploads root, with containment proof. */
+function safeLocalPath(key: string): string | null {
+  if (!isSafeStorageKey(key)) return null;
+  const resolved = path.resolve(LOCAL_UPLOAD_DIR, key);
+  if (resolved !== LOCAL_UPLOAD_DIR && !resolved.startsWith(LOCAL_UPLOAD_DIR + path.sep)) {
+    return null;
+  }
+  return resolved;
+}
+
+/**
  * The database is a better fallback than the container filesystem.
  *
  * Without a blob token this used to write to disk on an ephemeral container,
@@ -67,8 +98,9 @@ export async function uploadFile(
 
 export async function deleteFile(urlOrKey: string): Promise<void> {
   if (useLocalStorage()) {
-    const key = urlOrKey.replace(/^\/api\/documents\/local\//, "");
-    const filePath = path.join(LOCAL_UPLOAD_DIR, decodeURIComponent(key));
+    const key = decodeURIComponent(urlOrKey.replace(/^\/api\/documents\/local\//, ""));
+    const filePath = safeLocalPath(key);
+    if (!filePath) return; // hostile or malformed key - nothing legitimate to delete
     try {
       const { unlink } = await import("fs/promises");
       await unlink(filePath);
@@ -91,6 +123,10 @@ export async function deleteFile(urlOrKey: string): Promise<void> {
  * container goes away.
  */
 export async function readLocalFile(key: string): Promise<Buffer | null> {
+  // Validate BEFORE any lookup. The DB lookup is an exact-match and cannot
+  // traverse, but a key that fails validation is hostile by definition and
+  // must not fall through to the disk read below.
+  if (!isSafeStorageKey(key)) return null;
   const db = await dbStore();
   if (db) {
     try {
@@ -103,7 +139,8 @@ export async function readLocalFile(key: string): Promise<Buffer | null> {
     }
   }
   try {
-    const filePath = path.join(LOCAL_UPLOAD_DIR, key);
+    const filePath = safeLocalPath(key);
+    if (!filePath) return null;
     return await readFile(filePath);
   } catch {
     return null;

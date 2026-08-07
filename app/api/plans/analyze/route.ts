@@ -10,6 +10,7 @@ import {
   READABLE_FORMATS_LABEL,
 } from "@/shared/re10/uploads";
 import { uploadFile } from "@/lib/storage/blob";
+import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { randomUUID } from "crypto";
 
 /**
@@ -31,7 +32,20 @@ export const runtime = "nodejs";
 // A 40-sheet permit set takes real time to read.
 export const maxDuration = 300;
 
+/* Same reasoning as the RE-10 analyze limit: unauthenticated route, real model
+   tokens per accepted request. Plan sets are heavier and retried less often. */
+const RATE_LIMIT = 6;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+
 export async function POST(request: NextRequest) {
+  const limit = rateLimit(clientKeyFrom(request.headers, "plans-analyze"), RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "rate-limited", message: "Too many uploads in a short time. Wait a few minutes and try again." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
   if (!isPlanExtractionConfigured()) {
     return NextResponse.json(
       {

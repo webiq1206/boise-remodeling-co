@@ -10,6 +10,7 @@ import {
 } from "@/shared/costs/re10Repairs";
 import { EXTRACTABLE_KINDS, EXTRACTION_REVIEW_REASONS } from "@/shared/re10/extraction";
 import { isStoredDocumentUrl } from "@/shared/re10/uploads";
+import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { deliverRe10Lead } from "@/server/services/re10Lead";
 import { buildRe10Disclosure } from "@/shared/estimate/re10Disclosure";
 import type { Re10Contact } from "@/server/services/re10Email";
@@ -123,7 +124,21 @@ function daysUntil(date: string | undefined): number | null {
   return Number.isFinite(days) ? days : null;
 }
 
+/* Every accepted request sends two emails and writes a lead row, with no
+   login in front of it. Slightly looser than the analyze limit because a
+   legitimate visitor edits and re-prices. */
+const RATE_LIMIT = 12;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+
 export async function POST(request: NextRequest) {
+  const limit = rateLimit(clientKeyFrom(request.headers, "re10-estimate"), RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { message: "Too many requests in a short time. Wait a few minutes and try again." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
   let parsed;
   try {
     parsed = bodySchema.safeParse(await request.json());

@@ -19,6 +19,7 @@ import { findForbiddenPhrase } from "../shared/costCatalog";
 import { RE10_EVENTS, RE10_FUNNEL_ORDER } from "../shared/re10/analyticsEvents";
 import { EXTRACTABLE_KINDS, EXTRACTION_SCHEMA, EXTRACTION_REVIEW_REASONS } from "../shared/re10/extraction";
 import { classifyUpload, resolveMimeType, UPLOAD_ACCEPT, isStoredDocumentUrl } from "../shared/re10/uploads";
+import { isSafeStorageKey } from "../lib/storage/blob";
 import fs from "fs";
 
 let checks = 0;
@@ -254,18 +255,55 @@ for (const r of EXTRACTION_REVIEW_REASONS) {
  */
 for (const [url, ok] of [
   ["/api/documents/local/re10%2Fabc%2F0-RE-10.pdf", true],
-  ["/uploads/re10/x.pdf", true],
+  // Unencoded slashes and spaces both occur in real stored keys.
+  ["/api/documents/local/re10/abc/0-My%20RE-10.pdf", true],
   ["https://blob.example.com/re10/x.pdf", true],
   ["http://localhost:3000/api/documents/x.pdf", true],
   ["", false],
   ["javascript:alert(1)", false],
   ["//evil.example.com/x.pdf", false],
   ["not a url at all", false],
+  // Only the storage layer's own URL shape is a valid root-relative link.
+  // Accepting any leading-slash path let the lead-email attachment reader be
+  // pointed at arbitrary files; these must all be rejected at validation.
+  ["/uploads/re10/x.pdf", false],
+  ["/etc/passwd", false],
+  ["/api/documents/local/..%2F..%2F.env.local", false],
+  ["/api/documents/local/../../.env.local", false],
+  ["/api/documents/local/re10%2F..%2F..%2F..%2F.env.local", false],
+  ["/api/documents/local/re10%2F%2E%2E%2Fsecret.pdf", false],
+  ["/api/documents/local/", false],
+  ["/api/documents/local/a%5Cb.pdf", false], // backslash in decoded key
+  ["/api/documents/local/%00.pdf", false], // null byte
+  ["/api/documents/local/%2Fabs.pdf", false], // decoded key must stay relative
 ] as const) {
   check(
     isStoredDocumentUrl(url) === ok,
     `isStoredDocumentUrl(${JSON.stringify(url)}) should be ${ok} - a wrong answer here either breaks every upload submission or accepts a hostile link`,
   );
+}
+
+/* The storage layer must reject hostile keys even if a caller skips URL
+   validation - defense in depth for the disk fallback in readLocalFile and
+   the unlink path in deleteFile. */
+{
+  for (const [key, ok] of [
+    ["re10/abc/0-RE-10.pdf", true],
+    ["plans/batch/1-Sheet A105.pdf", true],
+    ["../../.env.local", false],
+    ["re10/../../secret", false],
+    ["/etc/passwd", false],
+    ["a\\b.pdf", false],
+    ["\0", false],
+    ["", false],
+    [".", false],
+    ["re10//x.pdf", false], // empty segment
+  ] as const) {
+    check(
+      isSafeStorageKey(key) === ok,
+      `isSafeStorageKey(${JSON.stringify(key)}) should be ${ok}`,
+    );
+  }
 }
 check(
   /isStoredDocumentUrl/.test(fs.readFileSync("app/api/re10/estimate/route.ts", "utf8")),

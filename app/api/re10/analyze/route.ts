@@ -8,6 +8,7 @@ import {
   READABLE_FORMATS_LABEL,
 } from "@/shared/re10/uploads";
 import { uploadFile } from "@/lib/storage/blob";
+import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { randomUUID } from "crypto";
 
 /**
@@ -36,7 +37,21 @@ export const runtime = "nodejs";
 // Analysis of a long inspection report with photos genuinely takes a while.
 export const maxDuration = 300;
 
+/* Each accepted request spends real model tokens on up to 12 files, with no
+   login in front of it. Per-IP fixed window: generous enough for a homeowner
+   re-trying a failed read, hostile to a loop. */
+const RATE_LIMIT = 6;
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+
 export async function POST(request: NextRequest) {
+  const limit = rateLimit(clientKeyFrom(request.headers, "re10-analyze"), RATE_LIMIT, RATE_WINDOW_MS);
+  if (!limit.ok) {
+    return NextResponse.json(
+      { error: "rate-limited", message: "Too many uploads in a short time. Wait a few minutes and try again." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
+  }
+
   if (!isExtractionConfigured()) {
     // 503, not 500: the code is fine, the environment is not configured. The
     // UI uses this to offer the manual path instead of showing an error.
