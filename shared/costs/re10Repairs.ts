@@ -820,6 +820,9 @@ export interface PricedRepair {
   quantity: number;
   /** True when no measurement was given and defaultQty was used. */
   quantityAssumed: boolean;
+  /** True when a supplied measurement exceeded the sane ceiling for the kind
+      and was clamped - the quote must say so, and the alert hook must fire. */
+  quantityClamped: boolean;
   lines: CostLine[];
   /** Sum of `lines`, before minimums, mobilization and margin. */
   directCost: number;
@@ -928,10 +931,39 @@ function rowsFor(code: string): LineItem[] {
  * is trivially small still consumes a tradesman's afternoon, and the group-level
  * minimum needs to know that.
  */
+/**
+ * The largest quantity a single RE-10 line can plausibly carry, per unit.
+ *
+ * The request schema's cap (100,000) exists to bound the payload, not the
+ * price: 100,000 EA interior doors validated cleanly and quoted $58.7M, and
+ * that number went to the customer's inbox and the CRM. A real repair
+ * addendum tops out around a house's worth of any one repair, so the ceiling
+ * is generous against every legitimate document and hostile to a typo or a
+ * crafted request. Clamped quantities are flagged so the quote says so.
+ */
+export function maxQuantityFor(kind: RepairKind): number {
+  const r = RECIPES[kind];
+  switch (r.unit) {
+    case "EA":
+      return Math.max(20, r.defaultQty * 10);
+    case "LF":
+      return Math.max(600, r.defaultQty * 25);
+    case "SF":
+      return Math.max(3000, r.defaultQty * 25);
+  }
+}
+
 export function priceRepair(input: RepairItemInput): PricedRepair {
   const recipe = RECIPES[input.kind];
-  const quantityAssumed = input.quantity == null || !Number.isFinite(input.quantity) || input.quantity <= 0;
-  const quantity = quantityAssumed ? recipe.defaultQty : (input.quantity as number);
+  // No measurement, a non-number, or a token below any real measurement
+  // (0.0001 "square feet") all mean the same thing: price the typical size
+  // and say the size was assumed.
+  const quantityAssumed =
+    input.quantity == null || !Number.isFinite(input.quantity) || input.quantity < 0.1;
+  const maxQty = maxQuantityFor(input.kind);
+  const supplied = quantityAssumed ? recipe.defaultQty : (input.quantity as number);
+  const quantityClamped = supplied > maxQty;
+  const quantity = quantityClamped ? maxQty : supplied;
 
   const lines: CostLine[] = [];
   for (const c of recipe.components) {
@@ -949,6 +981,7 @@ export function priceRepair(input: RepairItemInput): PricedRepair {
     trade: recipe.trade,
     quantity,
     quantityAssumed,
+    quantityClamped,
     lines,
     directCost,
     crewMinutes: (recipe.crewMinutes ?? 60) * (quantityAssumed ? 1 : Math.max(1, quantity / recipe.defaultQty)),
@@ -1192,10 +1225,36 @@ export function estimateRe10(
   const minimumPrice = activeCrews.reduce((s, c) => s + CREW_MINIMUM_PRICE[c], 0);
   const sellingPrice = Math.max(pricedAtMargin, minimumPrice);
   const minimumPriceApplied = sellingPrice - pricedAtMargin;
-  const grossProfit = sellingPrice - totalInternalCost;
-  // The floor can only raise the price, so the realised margin is at or above
-  // the applied one. Report what actually happened rather than the target.
-  const realisedMargin = sellingPrice > 0 ? grossProfit / sellingPrice : margin;
+
+  /**
+   * THE QUOTE MUST NOT ROUND THROUGH A FLOOR.
+   *
+   * Rounding used to happen at the very end, on its own, which quietly undid
+   * every guard above it: a small list whose selling price cleared the 50%
+   * margin floor by a few dollars rounded DOWN a whole step and landed at a
+   * 43% margin, and two-crew lists rounded below the sum of the minimum visit
+   * prices. Nearly a quarter of sampled small lists breached the floor this
+   * way, invisibly, because the verifier asserted on sellingPrice while the
+   * customer, the email, and the CRM all carried quotedPrice.
+   *
+   * floorPrice is the lowest number the business may utter: the crew visit
+   * minimums, or the price at which the realised margin is exactly the floor,
+   * whichever is higher. If nearest-step rounding lands below it, round UP to
+   * the next step instead. Rounding above the selling price is fine - it is a
+   * few dollars of extra margin - rounding below a floor is a policy breach.
+   */
+  const step = stepFor(sellingPrice);
+  const floorPrice = Math.max(minimumPrice, totalInternalCost / (1 - RE10_MARGIN_FLOOR));
+  let quotedPrice = sellingPrice > 0 ? roundTo(sellingPrice, step) : 0;
+  if (sellingPrice > 0 && quotedPrice < floorPrice) {
+    quotedPrice = Math.ceil(floorPrice / step) * step;
+  }
+
+  // Profit and realised margin are reported on the number we actually quote,
+  // not the pre-rounding selling price - the CRM told the team "50.0%" while
+  // the invoice would have collected 42.8%.
+  const grossProfit = quotedPrice - totalInternalCost;
+  const realisedMargin = quotedPrice > 0 ? grossProfit / quotedPrice : margin;
 
   // Customer amounts per trade are the selling price split by each trade's share
   // of cost. Splitting the priced total, rather than pricing each trade
@@ -1206,7 +1265,6 @@ export function estimateRe10(
   }
 
   const { band, confidence, uncertainty } = resolveBand(priced, ctx);
-  const step = stepFor(sellingPrice);
   const low = sellingPrice > 0 ? roundTo(sellingPrice * (1 - band), step) : 0;
   const high = sellingPrice > 0 ? roundTo(sellingPrice * (1 + band), step) : 0;
 
@@ -1216,6 +1274,16 @@ export function estimateRe10(
     assumptions.push(
       `${assumedCount} repair${assumedCount === 1 ? "" : "s"} had no measurement in the documents, so a typical size for that repair was assumed.`,
     );
+  }
+  const clampedItems = priced.filter((p) => p.quantityClamped);
+  if (clampedItems.length > 0) {
+    assumptions.push(
+      `${clampedItems.length} repair${clampedItems.length === 1 ? "" : "s"} listed a measurement larger than this kind of repair plausibly runs, so ${clampedItems.length === 1 ? "it was" : "they were"} priced at the largest realistic size. Confirmed at the walkthrough.`,
+    );
+    warnings.push({
+      severity: "warn",
+      message: `Quantity clamped on ${clampedItems.map((p) => p.recipe.label).join(", ")}: the supplied measurement exceeded the sane ceiling for the repair kind. Verify against the document.`,
+    });
   }
   // Items priced despite carrying a caveat have to say so. Pricing something
   // whose extent the document never defined and then presenting it like a
@@ -1309,8 +1377,11 @@ export function estimateRe10(
      * better off than a range whose low end was doing the anchoring, and the
      * protection belongs in the stated assumptions rather than in padding that
      * would push us out of the market bands.
+     *
+     * Rounded to a step above, WITH the floor guard - see the quotedPrice
+     * computation next to floorPrice.
      */
-    quotedPrice: roundTo(sellingPrice, stepFor(sellingPrice)),
+    quotedPrice,
     /** Held this long, so the quote bounds our exposure and their deadline. */
     quoteValidDays: QUOTE_VALID_DAYS,
     low,

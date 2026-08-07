@@ -32,6 +32,7 @@ import {
   type EstimateRefinements,
 } from "@/shared/estimateEngine";
 import { resolveQuotedRange } from "@/shared/costs/resolve";
+import { logPricingAlert } from "@/server/services/pricingAlerts";
 import { forwardToLeadDashboard } from "@/server/services/leadDashboardForward";
 import { readUnitCostOverrides } from "@/app/api/admin/pricing/route";
 import {
@@ -65,6 +66,12 @@ const refinementsSchema = z
     bathroomCount: z.number().int().min(0).max(12).nullable().optional(),
     kitchenIncluded: z.boolean().nullable().optional(),
     aduConfig: z.enum(["detached", "attached"]).nullable().optional(),
+    // Partial-scope chips (kitchen/bathroom). Omitting this from the schema
+    // meant zod STRIPPED it from the client payload, so the server recomputed
+    // a full-scope price while the page showed a partial-scope one - the
+    // email and CRM disagreed with the screen by up to 180%. Unknown ids are
+    // harmless (scope rules ignore them); null/absent means full scope.
+    upgradeScope: z.array(z.string().max(24)).max(8).nullable().optional(),
   })
   .optional()
   .nullable();
@@ -115,9 +122,24 @@ function verifyEstimate(
   estimate: NonNullable<z.infer<typeof estimateSchema>>
 ): VerifiedEstimate | null {
   const sizeConfig = getProjectSizeConfig(estimate.project);
-  if (estimate.sqft < sizeConfig.min || estimate.sqft > sizeConfig.max) {
-    return null;
+  // CLAMP rather than bail. Returning null here made the route insert a lead
+  // with every estimate field empty while still telling the visitor
+  // "success" - reachable through a stale sessionStorage restore. The UI
+  // slider enforces these same bounds, so a clamped value matches what any
+  // legitimate client could have produced; the clamp is alerted on so a
+  // drifted client build gets noticed.
+  const requestedSqft = estimate.sqft;
+  const sqft = Math.min(sizeConfig.max, Math.max(sizeConfig.min, estimate.sqft));
+  if (sqft !== requestedSqft) {
+    logPricingAlert("estimate-unresolvable", {
+      route: "consultation",
+      reason: "sqft-out-of-bounds-clamped",
+      requestedSqft,
+      clampedTo: sqft,
+      project: estimate.project,
+    });
   }
+  estimate = { ...estimate, sqft };
 
   const refinements: EstimateRefinements = {
     ...EMPTY_REFINEMENTS,
@@ -150,9 +172,16 @@ function verifyEstimate(
     estimate.priceLow !== recomputed.priceLow ||
     estimate.priceHigh !== recomputed.priceHigh
   ) {
-    console.warn(
-      `[consultation] Estimate mismatch (client ${estimate.priceLow}-${estimate.priceHigh}, server ${recomputed.priceLow}-${recomputed.priceHigh}); using server values`
-    );
+    logPricingAlert("recompute-mismatch", {
+      route: "consultation",
+      clientLow: estimate.priceLow,
+      clientHigh: estimate.priceHigh,
+      serverLow: recomputed.priceLow,
+      serverHigh: recomputed.priceHigh,
+      project: estimate.project,
+      finish: estimate.finish,
+      sqft: estimate.sqft,
+    });
   }
 
   return {

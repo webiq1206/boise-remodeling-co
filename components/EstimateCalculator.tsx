@@ -757,9 +757,28 @@ export function EstimateCalculator({
 
       setActiveProject(project);
       setSubtype(p.subtype);
-      if (typeof p.sqft === "number" && Number.isFinite(p.sqft)) setSqft(p.sqft);
-      if (Array.isArray(p.addOns)) setAddOns(p.addOns.filter((a: unknown) => typeof a === "string"));
-      if (typeof p.finish === "string") setFinish(p.finish as FinishLevel);
+      /* A restored record is untrusted input: it survives deploys that may
+         have changed size bounds, finish availability, or chip ids, and it is
+         hand-editable. An out-of-range sqft used to flow to the engine, price
+         on screen, and then be silently nulled server-side - a lead recorded
+         with no estimate while the visitor saw "success". Clamp and filter
+         against the same rules the live UI enforces. */
+      const effProject: ProjectType =
+        SUBTYPE_DATA[project]?.[p.subtype]?.projectOverride ?? project;
+      if (typeof p.sqft === "number" && Number.isFinite(p.sqft)) {
+        const sc = PROJECT_SIZE_CONFIG[effProject];
+        setSqft(Math.min(sc.max, Math.max(sc.min, Math.round(p.sqft))));
+      }
+      if (Array.isArray(p.addOns)) {
+        const validChips = new Set(PROJECT_CONFIGS[project].chips.map((c) => c.id));
+        setAddOns(p.addOns.filter((a: unknown): a is string => typeof a === "string" && validChips.has(a)));
+      }
+      if (
+        typeof p.finish === "string" &&
+        getAvailableFinishLevels(effProject).includes(p.finish as FinishLevel)
+      ) {
+        setFinish(p.finish as FinishLevel);
+      }
       if (typeof p.budgetInput === "string") setBudgetInput(p.budgetInput);
       if (p.peScope === null || typeof p.peScope === "string") setPeScope(p.peScope);
       if (p.cabTier === null || typeof p.cabTier === "string") setCabTier(p.cabTier);

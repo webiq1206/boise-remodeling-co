@@ -172,28 +172,37 @@ for (const ctx of CONTEXTS) {
 
       const label = `n=${n} pool=${pool.length} ctx=${JSON.stringify(ctx)}`;
 
-      // (a0) The minimum visit price may only ever RAISE the price, so the
-      //      realised margin sits at or above the target and never below it.
-      check(est.realisedMargin >= est.appliedMargin - 1e-9, `${label}: realised margin fell below the target`);
+      // (a0) The minimum visit price may only ever RAISE the price. Rounding
+      //      to a quoting step can shave the realised margin slightly below
+      //      the APPLIED (uplifted) margin - that is fine; what it may never
+      //      do is take it below the FLOOR, which (b) asserts on the quote.
       check(est.minimumPriceApplied >= -0.01, `${label}: minimum price reduced the price`);
 
       // (a) The floor is absolute.
       check(est.appliedMargin >= RE10_MARGIN_FLOOR - 1e-9, `${label}: margin ${est.appliedMargin} below the 50% floor`);
       check(est.appliedMargin <= RE10_MARGIN_CEILING + 1e-9, `${label}: margin ${est.appliedMargin} above the ceiling`);
 
-      // (b) TRUE GROSS MARGIN, recomputed. price = cost / (1 - m) means
-      //     profit / price must equal m. This is the check that catches a
-      //     markup-vs-margin regression, which is the expensive mistake.
-      const realised = est.grossProfit / est.sellingPrice;
+      // (b) TRUE GROSS MARGIN, recomputed - ON THE QUOTED PRICE. Every guard
+      //     used to be asserted on sellingPrice while the customer, the email
+      //     and the CRM carried quotedPrice, and nearest-step rounding was
+      //     quietly taking a quarter of small lists below the floor. The
+      //     number the business runs on is the number the checks run on.
+      const realised = est.grossProfit / est.quotedPrice;
       check(near(realised, est.realisedMargin, 1e-6), `${label}: reported realised margin does not match profit/price`);
       check(realised >= RE10_MARGIN_FLOOR - 1e-9, `${label}: realised margin ${realised} below the 50% floor`);
-      check(near(est.sellingPrice - est.totalInternalCost, est.grossProfit, 0.01), `${label}: gross profit does not reconcile`);
+      check(near(est.quotedPrice - est.totalInternalCost, est.grossProfit, 0.01), `${label}: gross profit does not reconcile`);
       // Derived from the floor, not hardcoded: a 50% floor doubles cost, a 30%
       // floor multiplies it by 1/0.7. Hardcoding the multiple meant this check
       // asserted a policy that had already changed.
       check(
-        est.sellingPrice >= est.totalInternalCost / (1 - RE10_MARGIN_FLOOR) - 0.01,
-        `${label}: price does not clear the ${(RE10_MARGIN_FLOOR * 100).toFixed(0)}% margin floor over cost`,
+        est.quotedPrice >= est.totalInternalCost / (1 - RE10_MARGIN_FLOOR) - 0.01,
+        `${label}: quoted price does not clear the ${(RE10_MARGIN_FLOOR * 100).toFixed(0)}% margin floor over cost`,
+      );
+      // The quote never drifts more than one rounding step from the priced
+      // figure, and only ever upward past it (the floor guard rounds up).
+      check(
+        est.quotedPrice >= est.sellingPrice - 250 && est.quotedPrice <= est.sellingPrice + 500,
+        `${label}: quoted ${est.quotedPrice} strayed from selling ${est.sellingPrice}`,
       );
 
       // (c) NO DOUBLE COUNTING. The total must be exactly the sum of its parts.

@@ -67,6 +67,14 @@ type Step = "upload" | "review" | "contact" | "property" | "result";
 interface EditableRepair extends ExtractedRepair {
   id: string;
   included: boolean;
+  /**
+   * The measurement AS TYPED. The field used to bind the parsed number back
+   * into the input, which deleted a trailing decimal point on every render -
+   * typing "12.5" became "12", then the next keystroke made it "125", a 10x
+   * quantity error submitted silently. Text state round-trips faithfully;
+   * parsing happens once, at submit.
+   */
+  quantityText: string;
 }
 
 interface ResultDisclosureShape {
@@ -127,6 +135,19 @@ const STEP_METAS = FORM_STEPS.map((s) => s.meta);
 const STEP_ORDER: Step[] = FORM_STEPS.map((s) => s.id);
 
 const fileKey = (f: File) => `${f.name}:${f.size}`;
+
+/**
+ * Typed measurement -> posted quantity. Empty, zero, or unparseable text all
+ * become null, which the pricing engine treats as "use the typical size for
+ * this repair" - the same thing that happens when the document itself has no
+ * measurement. Capped at the request schema's ceiling so a wild entry cannot
+ * turn into a submit-time 400.
+ */
+function parseQuantity(text: string): number | null {
+  const n = Number(text);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return Math.min(n, 100_000);
+}
 
 export function Re10Wizard() {
   const [step, setStep] = useState<Step>("upload");
@@ -203,7 +224,21 @@ export function Re10Wizard() {
       if (p.extraction) setExtraction(p.extraction);
       if (Array.isArray(p.attachedOnly)) setAttachedOnly(p.attachedOnly);
       if (Array.isArray(p.documents)) setDocuments(p.documents);
-      if (Array.isArray(p.repairs)) setRepairs(p.repairs);
+      if (Array.isArray(p.repairs)) {
+        // A record saved before quantityText existed restores without it;
+        // derive the text from the stored numeric quantity.
+        setRepairs(
+          p.repairs.map((r: EditableRepair) => ({
+            ...r,
+            quantityText:
+              typeof r.quantityText === "string"
+                ? r.quantityText
+                : r.quantity != null
+                  ? String(r.quantity)
+                  : "",
+          })),
+        );
+      }
       if (typeof p.name === "string") setName(p.name);
       if (typeof p.email === "string") setEmail(p.email);
       if (typeof p.phone === "string") setPhone(formatPhoneInput(p.phone));
@@ -348,7 +383,14 @@ export function Re10Wizard() {
         repairs_found: extracted.repairs.length,
         unmapped: extracted.unmapped.length,
       });
-      setRepairs(extracted.repairs.map((r, i) => ({ ...r, id: `r${i}`, included: true })));
+      setRepairs(
+        extracted.repairs.map((r, i) => ({
+          ...r,
+          id: `r${i}`,
+          included: true,
+          quantityText: r.quantity != null ? String(r.quantity) : "",
+        })),
+      );
 
       if (extracted.repairs.length === 0) {
         const reason = !extracted.looksLikeRe10
@@ -442,7 +484,10 @@ export function Re10Wizard() {
             description: r.verbatim,
             kind: r.kind,
             location: r.location,
-            quantity: r.quantity ?? null,
+            // Parsed once here from the typed text. Garbage, "0", and empty
+            // all become null, which the engine prices at the typical size -
+            // never a submit-time 400 the visitor cannot trace to a field.
+            quantity: parseQuantity(r.quantityText),
             sourceRef: r.sourceRef,
             needsReview: r.needsReview,
           })),
@@ -656,21 +701,20 @@ export function Re10Wizard() {
                   {r.included ? (
                     <div className="mt-3 flex items-center gap-2">
                       <label htmlFor={`qty-${r.id}`} className="whitespace-nowrap text-[12.5px] text-inverse-muted">
-                        {r.quantity == null ? "Add a measurement" : "Measurement"}
+                        {parseQuantity(r.quantityText) == null ? "Add a measurement" : "Measurement"}
                       </label>
                       <input
                         id={`qty-${r.id}`}
                         type="text"
                         inputMode="decimal"
-                        value={r.quantity ?? ""}
+                        value={r.quantityText}
                         placeholder={String(RECIPES[r.kind]?.defaultQty ?? "")}
                         onChange={(e) => {
+                          // Store what was typed (digits and one decimal point);
+                          // parse only at submit so a trailing "." survives.
                           const raw = e.target.value.replace(/[^\d.]/g, "");
-                          const n = raw === "" ? null : Number(raw);
                           setRepairs((prev) =>
-                            prev.map((p) =>
-                              p.id === r.id ? { ...p, quantity: n != null && Number.isFinite(n) ? n : null } : p,
-                            ),
+                            prev.map((p) => (p.id === r.id ? { ...p, quantityText: raw } : p)),
                           );
                         }}
                         className="min-h-11 w-24 rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground placeholder:text-inverse-muted/60 focus:outline-none focus:ring-2 focus:ring-accent-legible"
