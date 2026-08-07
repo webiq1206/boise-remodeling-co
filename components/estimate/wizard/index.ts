@@ -1,5 +1,5 @@
 export { WizardProgress, StepDoneChip, type WizardStepMeta } from "./WizardProgress";
-export { StepHeading, WizardError, StickyStepNav } from "./StepScaffold";
+export { StepHeading, StepTransition, WizardError, StickyStepNav } from "./StepScaffold";
 export {
   OptionCard,
   ChoiceGrid,

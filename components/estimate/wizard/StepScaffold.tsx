@@ -84,6 +84,24 @@ export function StepHeading({
 }
 
 /* ══════════════════════════════════════════════════════════════════════
+   STEP TRANSITION
+   Wraps one wizard screen. Give it a key that changes with the step and the
+   remount replays a short fade-up, so moving between questions feels like an
+   app transition rather than content snapping into place. Reduced motion is
+   flattened globally in globals.css.
+══════════════════════════════════════════════════════════════════════ */
+
+export function StepTransition({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={cn("wizard-step-enter", className)}>{children}</div>;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
    ERROR BANNER
    Plain language, near the controls, focus-managed so a screen reader and a
    sighted keyboard user both land on it. Never a bare "Something went wrong".

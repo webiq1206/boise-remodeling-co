@@ -27,6 +27,8 @@ import {
 import { RE10_EVENTS } from "@/shared/re10/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
+import { postFormWithProgress, type UploadStatus } from "@/lib/uploadWithProgress";
+import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
 import {
   ChoiceGrid,
   DetailList,
@@ -34,9 +36,9 @@ import {
   PriceHeadline,
   ResultCard,
   ResultDisclosure,
-  ReviewSection,
   SegmentedControl,
   StepHeading,
+  StepTransition,
   StickyResultActions,
   StickyStepNav,
   TextField,
@@ -141,6 +143,17 @@ export function Re10Wizard() {
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /* Live send state for the upload step: a real percentage while the files
+     travel, then a named processing phase while the server reads them. */
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus | null>(null);
+  /* Field-level messages so a missed input is pointed at, not described in a
+     banner. Cleared per field the moment that field changes. */
+  const [fieldErrors, setFieldErrors] = useState<{
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+  }>({});
   const [extraction, setExtraction] = useState<ExtractionResult | null>(null);
   const [attachedOnly, setAttachedOnly] = useState<string[]>([]);
   const [documents, setDocuments] = useState<{ filename: string; url: string }[]>([]);
@@ -163,6 +176,88 @@ export function Re10Wizard() {
   useEffect(() => {
     trackEvent(RE10_EVENTS.started);
   }, []);
+
+  /* ── Progress survives a refresh ─────────────────────────────────────
+     Everything except the raw File objects (which a browser cannot persist)
+     is mirrored to sessionStorage: the step, the read we showed, the
+     corrections made to it, and the contact answers. A reload resumes where
+     the visitor was instead of asking them to re-upload and start over.
+
+     The one restore rule: a step is never restored beyond what its data
+     supports, so "result" without a stored result (or "review" without an
+     extraction) falls back to the last step that can actually render. The
+     result screen itself only ever exists after contact submission, so
+     restoring it can never skip the gate. */
+  const PROGRESS_KEY = "brc_re10_wizard_v1";
+  /* State, not a ref: flipping it is batched into the same commit as the
+     restored values, so the save effect cannot fire in between with
+     pre-restore defaults and clobber the record it was about to load. */
+  const [progressRestored, setProgressRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(PROGRESS_KEY);
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      if (p?.v !== 1) return;
+      if (p.extraction) setExtraction(p.extraction);
+      if (Array.isArray(p.attachedOnly)) setAttachedOnly(p.attachedOnly);
+      if (Array.isArray(p.documents)) setDocuments(p.documents);
+      if (Array.isArray(p.repairs)) setRepairs(p.repairs);
+      if (typeof p.name === "string") setName(p.name);
+      if (typeof p.email === "string") setEmail(p.email);
+      if (typeof p.phone === "string") setPhone(formatPhoneInput(p.phone));
+      if (p.preferredContact === "email" || p.preferredContact === "phone" || p.preferredContact === "text") {
+        setPreferredContact(p.preferredContact);
+      }
+      if (typeof p.role === "string" && ROLES.some((r) => r.value === p.role)) setRole(p.role);
+      if (typeof p.brokerage === "string") setBrokerage(p.brokerage);
+      if (typeof p.address === "string") setAddress(p.address);
+      if (typeof p.closingDate === "string") setClosingDate(p.closingDate);
+      if (typeof p.repairDeadline === "string") setRepairDeadline(p.repairDeadline);
+      if (p.occupancy === "occupied" || p.occupancy === "vacant" || p.occupancy === "unknown") {
+        setOccupancy(p.occupancy);
+      }
+      if (typeof p.notes === "string") setNotes(p.notes);
+      if (p.result) setResult(p.result);
+
+      const wanted: Step = STEP_ORDER.includes(p.step) ? p.step : "upload";
+      const supported: Step =
+        wanted === "result" && !p.result
+          ? p.extraction ? "contact" : "upload"
+          : wanted !== "upload" && !p.extraction
+            ? "upload"
+            : wanted;
+      setStep(supported);
+    } catch {
+      /* A corrupt record just means starting fresh. */
+    } finally {
+      setProgressRestored(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!progressRestored) return;
+    try {
+      sessionStorage.setItem(
+        PROGRESS_KEY,
+        JSON.stringify({
+          v: 1,
+          step, extraction, attachedOnly, documents, repairs,
+          name, email, phone, preferredContact, role, brokerage,
+          address, closingDate, repairDeadline, occupancy, notes, result,
+        }),
+      );
+    } catch {
+      /* Private mode / quota: the visitor simply loses refresh recovery. */
+    }
+  }, [
+    progressRestored,
+    step, extraction, attachedOnly, documents, repairs,
+    name, email, phone, preferredContact, role, brokerage,
+    address, closingDate, repairDeadline, occupancy, notes, result,
+  ]);
 
   // A file dropped anywhere except the box must not navigate the page away.
   useEffect(() => {
@@ -231,11 +326,12 @@ export function Re10Wizard() {
     }
     setBusy(true);
     setError(null);
+    setUploadStatus({ phase: "uploading", percent: 0 });
     try {
       const form = new FormData();
       files.forEach((f) => form.append("files", f));
-      const res = await fetch("/api/re10/analyze", { method: "POST", body: form });
-      const data = await res.json();
+      const res = await postFormWithProgress("/api/re10/analyze", form, setUploadStatus);
+      const data = (res.data ?? {}) as ExtractionResult & { message?: string; error?: string; stored?: unknown; attachedOnly?: unknown };
       if (!res.ok) {
         setError(data.message ?? "We could not read those documents.");
         trackEvent(RE10_EVENTS.analysisFailed, { reason: String(data.error ?? res.status) });
@@ -273,10 +369,11 @@ export function Re10Wizard() {
 
       goTo("review");
     } catch {
-      setError("Something went wrong sending those files. Try again.");
+      setError("Something went wrong sending those files. Your documents are still attached below, so just try again.");
       trackEvent(RE10_EVENTS.analysisFailed, { reason: "network" });
     } finally {
       setBusy(false);
+      setUploadStatus(null);
     }
   }
 
@@ -288,17 +385,28 @@ export function Re10Wizard() {
     return true;
   }
 
+  /* Field-level checks. An email is validated for shape even when it is not
+     the preferred channel: a mistyped address silently loses the written copy
+     of the estimate. Focus lands on the first field that needs attention. */
   function validateContact(): boolean {
+    const next: typeof fieldErrors = {};
     if (!name.trim() || name.trim().length < 2) {
-      setError("Please enter your full name so we know who to send this to.");
-      return false;
+      next.name = "Please enter your full name so we know who to send this to.";
     }
     if (preferredContact === "email" && !email.trim()) {
-      setError("Add an email address, or change your preferred contact method below.");
-      return false;
+      next.email = "Add an email address, or change your preferred contact method below.";
+    } else if (email.trim() && !isValidEmail(email)) {
+      next.email = "That email address does not look complete. Check it and try again.";
     }
     if (preferredContact !== "email" && !phone.trim()) {
-      setError("Add a phone number, or change your preferred contact method below.");
+      next.phone = "Add a phone number, or change your preferred contact method below.";
+    } else if (phone.trim() && !isValidPhone(phone)) {
+      next.phone = "Please enter a valid 10-digit phone number.";
+    }
+    setFieldErrors((p) => ({ ...next, address: p.address }));
+    const first = (["name", "email", "phone"] as const).find((k) => next[k]);
+    if (first) {
+      document.getElementById(`re10-${first}`)?.focus();
       return false;
     }
     return true;
@@ -310,12 +418,13 @@ export function Re10Wizard() {
       return;
     }
     if (!name.trim()) {
-      setError("We need your name.");
+      setFieldErrors((p) => ({ ...p, name: "We need your name." }));
       goTo("contact");
       return;
     }
     if (!address.trim()) {
-      setError("We need the property address.");
+      setFieldErrors((p) => ({ ...p, address: "We need the property address." }));
+      document.getElementById("re10-address")?.focus();
       return;
     }
 
@@ -432,7 +541,7 @@ export function Re10Wizard() {
 
         {/* ------------------------------------------------------- 1. upload */}
         {step === "upload" ? (
-          <div>
+          <StepTransition>
             <StepHeading
               eyebrow="RE-10 repair estimator"
               title="Upload your RE-10 and get a firm price"
@@ -454,6 +563,8 @@ export function Re10Wizard() {
               limitLabel={`Up to ${MAX_UPLOAD_FILES} files, ${Math.round(MAX_TOTAL_UPLOAD_BYTES / (1024 * 1024))} MB total.`}
               headline="Add your RE-10"
               disabled={busy}
+              status={uploadStatus}
+              processingLabel="Reading your documents..."
             />
             <StickyStepNav
               onNext={analyze}
@@ -464,12 +575,12 @@ export function Re10Wizard() {
               nextTestId="button-re10-analyze"
               hint="No contact details needed yet. You will see the repairs we found first."
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ------------------------------------------------------- 2. review */}
         {step === "review" && extraction ? (
-          <div>
+          <StepTransition>
             <StepHeading
               title="Here is what we read. Is it right?"
               description="Remove anything that should not be included, and add a measurement where we did not find one. The more you correct here, the more exact your price."
@@ -600,18 +711,30 @@ export function Re10Wizard() {
               nextTestId="button-re10-confirm"
               hint={`${includedCount} repair${includedCount === 1 ? "" : "s"} will be priced.`}
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ------------------------------------------------------ 3. contact */}
         {step === "contact" ? (
-          <div>
+          <StepTransition>
             <StepHeading
               title="Where should we send it?"
               description="Enter your contact information to view your RE-10 repair estimate and receive a copy by your preferred method."
             />
             <div className="space-y-4">
-              <TextField label="Full name" required value={name} onChange={setName} autoComplete="name" testId="input-re10-name" />
+              <TextField
+                id="re10-name"
+                label="Full name"
+                required
+                value={name}
+                onChange={(v) => {
+                  setName(v);
+                  setFieldErrors((p) => (p.name ? { ...p, name: undefined } : p));
+                }}
+                autoComplete="name"
+                error={fieldErrors.name}
+                testId="input-re10-name"
+              />
 
               <div>
                 <p className="mb-1.5 text-[12.5px] text-inverse-muted">Your role</p>
@@ -645,23 +768,36 @@ export function Re10Wizard() {
               </div>
 
               <TextField
+                id="re10-email"
                 label="Email"
                 required={preferredContact === "email"}
                 optionalHint={preferredContact !== "email"}
                 type="email"
                 value={email}
-                onChange={setEmail}
+                onChange={(v) => {
+                  setEmail(v);
+                  setFieldErrors((p) => (p.email ? { ...p, email: undefined } : p));
+                }}
                 autoComplete="email"
+                inputMode="email"
+                error={fieldErrors.email}
                 testId="input-re10-email"
               />
               <TextField
+                id="re10-phone"
                 label="Phone"
                 required={preferredContact !== "email"}
                 optionalHint={preferredContact === "email"}
                 type="tel"
                 value={phone}
-                onChange={setPhone}
+                onChange={(v) => {
+                  setPhone(formatPhoneInput(v));
+                  setFieldErrors((p) => (p.phone ? { ...p, phone: undefined } : p));
+                }}
                 autoComplete="tel"
+                inputMode="tel"
+                placeholder="(208) 555-0123"
+                error={fieldErrors.phone}
                 testId="input-re10-phone"
               />
             </div>
@@ -675,18 +811,30 @@ export function Re10Wizard() {
               nextLabel="Continue"
               nextTestId="button-re10-contact-next"
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ----------------------------------------------------- 4. property */}
         {step === "property" ? (
-          <div>
+          <StepTransition>
             <StepHeading
               title="The property and your timeline"
               description="We prefill what the RE-10 already told us. Confirm the address and add the repair deadline so we can hold the right price."
             />
             <div className="space-y-4">
-              <TextField label="Property address" required value={address} onChange={setAddress} autoComplete="street-address" testId="input-re10-address" />
+              <TextField
+                id="re10-address"
+                label="Property address"
+                required
+                value={address}
+                onChange={(v) => {
+                  setAddress(v);
+                  setFieldErrors((p) => (p.address ? { ...p, address: undefined } : p));
+                }}
+                autoComplete="street-address"
+                error={fieldErrors.address}
+                testId="input-re10-address"
+              />
               <div className="grid gap-4 sm:grid-cols-2">
                 <TextField label="Repair deadline" optionalHint type="date" value={repairDeadline} onChange={setRepairDeadline} />
                 <TextField label="Closing date" optionalHint type="date" value={closingDate} onChange={setClosingDate} />
@@ -732,11 +880,12 @@ export function Re10Wizard() {
               busyLabel="Building your price..."
               nextTestId="button-re10-submit"
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ------------------------------------------------------- 5. result */}
         {step === "result" && result ? (
+          <StepTransition>
           <Re10Result
             result={result}
             documents={documents}
@@ -747,6 +896,7 @@ export function Re10Wizard() {
             }}
             onRequestOnsite={() => trackEvent(RE10_EVENTS.onsiteRequested)}
           />
+          </StepTransition>
         ) : null}
       </div>
     </Section>

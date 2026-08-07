@@ -14,14 +14,19 @@ import {
 import { PLAN_EVENTS } from "@/shared/plans/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
+import { postFormWithProgress, type UploadStatus } from "@/lib/uploadWithProgress";
+import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
 import { useModals } from "@/components/modals/modalsContext";
 import {
+  ChoiceGrid,
   DetailList,
+  OptionCard,
   PriceHeadline,
   ResultCard,
   ResultDisclosure,
   SegmentedControl,
   StepHeading,
+  StepTransition,
   StickyResultActions,
   StickyStepNav,
   TextField,
@@ -154,6 +159,20 @@ export function PlansWizard() {
   const [files, setFiles] = useState<File[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /* Live send state for the upload step: a real percentage while the sheets
+     travel, then a named processing phase while the server reads them. A plan
+     set is the largest thing this site ever uploads, so this is the flow
+     where a silent spinner hurt the most. */
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus | null>(null);
+  /* Field-level messages so a missed input is pointed at, not described in a
+     banner. Cleared per field the moment that field changes. */
+  const [fieldErrors, setFieldErrors] = useState<{
+    totalSqFt?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+  }>({});
 
   const [extraction, setExtraction] = useState<AnalyzeResponse | null>(null);
   const [rooms, setRooms] = useState<EditableRoom[]>([]);
@@ -178,6 +197,83 @@ export function PlansWizard() {
   useEffect(() => {
     trackEvent(PLAN_EVENTS.started);
   }, []);
+
+  /* ── Progress survives a refresh ─────────────────────────────────────
+     Everything except the raw File objects (which a browser cannot persist)
+     is mirrored to sessionStorage: the step, the read we showed, the room
+     corrections, and the contact answers. A reload resumes where the visitor
+     was instead of asking them to re-upload a 20 MB plan set.
+
+     The one restore rule: a step is never restored beyond what its data
+     supports, and the result screen only ever exists after contact
+     submission, so restoring it can never skip the gate. */
+  const PROGRESS_KEY = "brc_plans_wizard_v1";
+  /* State, not a ref: flipping it is batched into the same commit as the
+     restored values, so the save effect cannot fire in between with
+     pre-restore defaults and clobber the record it was about to load. */
+  const [progressRestored, setProgressRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(PROGRESS_KEY);
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      if (p?.v !== 1) return;
+      if (p.extraction) setExtraction(p.extraction);
+      if (Array.isArray(p.rooms)) setRooms(p.rooms);
+      if (Array.isArray(p.documents)) setDocuments(p.documents);
+      if (Array.isArray(p.attachedOnly)) setAttachedOnly(p.attachedOnly);
+      if (typeof p.totalSqFt === "string") setTotalSqFt(p.totalSqFt);
+      if (PROJECTS.some((x) => x.value === p.projectType)) setProjectType(p.projectType);
+      if (FINISHES.some((x) => x.value === p.finishLevel)) setFinishLevel(p.finishLevel);
+      if (typeof p.name === "string") setName(p.name);
+      if (typeof p.email === "string") setEmail(p.email);
+      if (typeof p.phone === "string") setPhone(formatPhoneInput(p.phone));
+      if (p.preferredContact === "email" || p.preferredContact === "phone" || p.preferredContact === "text") {
+        setPreferredContact(p.preferredContact);
+      }
+      if (typeof p.address === "string") setAddress(p.address);
+      if (typeof p.timeline === "string") setTimeline(p.timeline);
+      if (typeof p.notes === "string") setNotes(p.notes);
+      if (p.result) setResult(p.result);
+
+      const wanted: Step = STEP_ORDER.includes(p.step) ? p.step : "upload";
+      const supported: Step =
+        wanted === "result" && !p.result
+          ? p.extraction ? "contact" : "upload"
+          : wanted !== "upload" && !p.extraction
+            ? "upload"
+            : wanted;
+      setStep(supported);
+    } catch {
+      /* A corrupt record just means starting fresh. */
+    } finally {
+      setProgressRestored(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!progressRestored) return;
+    try {
+      sessionStorage.setItem(
+        PROGRESS_KEY,
+        JSON.stringify({
+          v: 1,
+          step, extraction, rooms, documents, attachedOnly,
+          totalSqFt, projectType, finishLevel,
+          name, email, phone, preferredContact, address, timeline, notes, result,
+        }),
+      );
+    } catch {
+      /* Private mode / quota: the visitor simply loses refresh recovery. */
+    }
+  }, [
+    progressRestored,
+    step, extraction, rooms, documents, attachedOnly,
+    totalSqFt, projectType, finishLevel,
+    name, email, phone, preferredContact, address, timeline, notes, result,
+  ]);
 
   /**
    * A file dropped anywhere except the box must not navigate away. The
@@ -281,11 +377,12 @@ export function PlansWizard() {
     }
     setBusy(true);
     setError(null);
+    setUploadStatus({ phase: "uploading", percent: 0 });
     try {
       const form = new FormData();
       files.forEach((f) => form.append("files", f));
-      const res = await fetch("/api/plans/analyze", { method: "POST", body: form });
-      const data = await res.json();
+      const res = await postFormWithProgress("/api/plans/analyze", form, setUploadStatus);
+      const data = (res.data ?? {}) as AnalyzeResponse & { message?: string; error?: string };
       if (!res.ok) {
         setError(data.message ?? "We could not read those drawings.");
         trackEvent(PLAN_EVENTS.analysisFailed, { reason: String(data.error ?? res.status) });
@@ -331,17 +428,22 @@ export function PlansWizard() {
 
       goTo("measure");
     } catch {
-      setError("Something went wrong sending those drawings. Try again.");
+      setError("Something went wrong sending those drawings. Your sheets are still attached below, so just try again.");
       trackEvent(PLAN_EVENTS.analysisFailed, { reason: "network" });
     } finally {
       setBusy(false);
+      setUploadStatus(null);
     }
   }
 
   function confirmMeasurements() {
     const total = Number(totalSqFt.replace(/[^0-9.]/g, ""));
     if (!Number.isFinite(total) || total <= 0) {
-      setError("We need the total finished square footage of the home. It is the number we check our read against.");
+      setFieldErrors((p) => ({
+        ...p,
+        totalSqFt: "We need the total finished square footage of the home. It is the number we check our read against.",
+      }));
+      document.getElementById("plans-total-sqft")?.focus();
       return;
     }
     if (rooms.filter((r) => r.inScope).length === 0) {
@@ -358,16 +460,30 @@ export function PlansWizard() {
   }
 
   async function submit() {
-    if (!name.trim() || !address.trim()) {
-      setError("We need your name and the property address.");
-      return;
+    /* Field-level checks, focus on the first field that needs attention. An
+       email is validated for shape even when it is not the preferred channel:
+       a mistyped address silently loses the written copy of the range. */
+    const next: typeof fieldErrors = {};
+    if (!name.trim()) {
+      next.name = "We need your name.";
+    }
+    if (!address.trim()) {
+      next.address = "We need the property address.";
     }
     if (preferredContact === "email" && !email.trim()) {
-      setError("Add an email address, or change your preferred contact method.");
-      return;
+      next.email = "Add an email address, or change your preferred contact method.";
+    } else if (email.trim() && !isValidEmail(email)) {
+      next.email = "That email address does not look complete. Check it and try again.";
     }
     if (preferredContact !== "email" && !phone.trim()) {
-      setError("Add a phone number, or change your preferred contact method.");
+      next.phone = "Add a phone number, or change your preferred contact method.";
+    } else if (phone.trim() && !isValidPhone(phone)) {
+      next.phone = "Please enter a valid 10-digit phone number.";
+    }
+    if (Object.keys(next).length > 0) {
+      setFieldErrors((p) => ({ ...p, ...next }));
+      const first = (["name", "address", "email", "phone"] as const).find((k) => next[k]);
+      if (first) document.getElementById(`plans-${first}`)?.focus();
       return;
     }
 
@@ -467,9 +583,6 @@ export function PlansWizard() {
   const scopeItems = (extraction?.scopeItems ?? []).filter((s) => s.inContract);
   const excludedScope = (extraction?.scopeItems ?? []).filter((s) => !s.inContract);
 
-  const fieldClass =
-    "w-full min-h-11 rounded-md border bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground " +
-    "placeholder:text-inverse-muted/50 focus:outline-none focus:ring-2 focus:ring-accent-legible border-inverse-foreground/25";
   const labelClass = "block text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-1.5";
 
   return (
@@ -483,7 +596,7 @@ export function PlansWizard() {
 
         {/* ------------------------------------------------------- 1. upload */}
         {step === "upload" ? (
-          <div>
+          <StepTransition>
             <StepHeading
               eyebrow="Plan-set estimator"
               title="Send your plans and get a range built from your own drawings"
@@ -505,6 +618,8 @@ export function PlansWizard() {
               headline="Add your drawings"
               allowCamera={false}
               disabled={busy}
+              status={uploadStatus}
+              processingLabel="Reading your drawings..."
             />
             <StickyStepNav
               onNext={analyze}
@@ -515,12 +630,12 @@ export function PlansWizard() {
               nextTestId="button-plans-analyze"
               hint="No contact details needed yet. A large set can take a couple of minutes to read."
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ------------------------------------------------------ 2. measure */}
         {step === "measure" && extraction ? (
-          <div>
+          <StepTransition>
             <StepHeading
               title="Here is what we measured. Is it right?"
               description="Take out anything that is not part of this project. Then tell us the total finished square footage of the home, which is how we check our read."
@@ -548,9 +663,13 @@ export function PlansWizard() {
                 label="Total finished square footage"
                 required
                 value={totalSqFt}
-                onChange={setTotalSqFt}
+                onChange={(v) => {
+                  setTotalSqFt(v);
+                  setFieldErrors((p) => (p.totalSqFt ? { ...p, totalSqFt: undefined } : p));
+                }}
                 inputMode="numeric"
                 placeholder="e.g. 2,400"
+                error={fieldErrors.totalSqFt}
                 testId="input-plans-total-sqft"
                 help={
                   extraction.statedTotalSqFt
@@ -563,42 +682,34 @@ export function PlansWizard() {
               </p>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-4 mb-7">
+            {/* The same selection cards the other estimators use, not dropdowns:
+                every option is visible, every target is thumb-sized, and the
+                selected state reads at a glance. */}
+            <div className="mb-7 space-y-5">
               <div>
-                <label htmlFor="plans-project-type" className={labelClass}>
-                  What are we pricing?
-                </label>
-                <select
-                  id="plans-project-type"
-                  value={projectType}
-                  onChange={(e) => setProjectType(e.target.value as typeof projectType)}
-                  className={fieldClass}
-                  data-testid="select-plans-project-type"
-                >
+                <p className={labelClass}>What are we pricing?</p>
+                <ChoiceGrid label="What are we pricing?" columns={2}>
                   {PROJECTS.map((p) => (
-                    <option key={p.value} value={p.value} className="text-foreground">
-                      {p.label}
-                    </option>
+                    <OptionCard
+                      key={p.value}
+                      selected={projectType === p.value}
+                      onSelect={() => setProjectType(p.value)}
+                      title={p.label}
+                      testId={`select-plans-project-type-${p.value}`}
+                    />
                   ))}
-                </select>
+                </ChoiceGrid>
               </div>
               <div>
-                <label htmlFor="plans-finish-level" className={labelClass}>
-                  Finish level
-                </label>
-                <select
-                  id="plans-finish-level"
+                <p className={labelClass}>Finish level</p>
+                <SegmentedControl
+                  label="Finish level"
+                  options={FINISHES.map((f) => ({ value: f.value, label: f.label, sub: f.hint }))}
                   value={finishLevel}
-                  onChange={(e) => setFinishLevel(e.target.value as typeof finishLevel)}
-                  className={fieldClass}
-                  data-testid="select-plans-finish-level"
-                >
-                  {FINISHES.map((f) => (
-                    <option key={f.value} value={f.value} className="text-foreground">
-                      {f.label} - {f.hint}
-                    </option>
-                  ))}
-                </select>
+                  onChange={setFinishLevel}
+                  columns={2}
+                  testIdPrefix="select-plans-finish-level"
+                />
               </div>
             </div>
 
@@ -722,19 +833,43 @@ export function PlansWizard() {
               nextLabel="These look right"
               nextTestId="button-plans-confirm"
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ------------------------------------------------------ 3. contact */}
         {step === "contact" ? (
-          <div>
+          <StepTransition>
             <StepHeading
               title="Where should we send it?"
               description="Your range appears on the next screen. We will email you a copy with what we measured, so you can check it against your own drawings."
             />
             <div className="space-y-4">
-              <TextField label="Your name" required value={name} onChange={setName} autoComplete="name" testId="input-plans-name" />
-              <TextField label="Property address" required value={address} onChange={setAddress} autoComplete="street-address" testId="input-plans-address" />
+              <TextField
+                id="plans-name"
+                label="Your name"
+                required
+                value={name}
+                onChange={(v) => {
+                  setName(v);
+                  setFieldErrors((p) => (p.name ? { ...p, name: undefined } : p));
+                }}
+                autoComplete="name"
+                error={fieldErrors.name}
+                testId="input-plans-name"
+              />
+              <TextField
+                id="plans-address"
+                label="Property address"
+                required
+                value={address}
+                onChange={(v) => {
+                  setAddress(v);
+                  setFieldErrors((p) => (p.address ? { ...p, address: undefined } : p));
+                }}
+                autoComplete="street-address"
+                error={fieldErrors.address}
+                testId="input-plans-address"
+              />
 
               <div>
                 <p className="mb-1.5 text-[12.5px] text-inverse-muted">Best way to reach you</p>
@@ -753,23 +888,36 @@ export function PlansWizard() {
               </div>
 
               <TextField
+                id="plans-email"
                 label="Email"
                 required={preferredContact === "email"}
                 optionalHint={preferredContact !== "email"}
                 type="email"
                 value={email}
-                onChange={setEmail}
+                onChange={(v) => {
+                  setEmail(v);
+                  setFieldErrors((p) => (p.email ? { ...p, email: undefined } : p));
+                }}
                 autoComplete="email"
+                inputMode="email"
+                error={fieldErrors.email}
                 testId="input-plans-email"
               />
               <TextField
+                id="plans-phone"
                 label="Phone"
                 required={preferredContact !== "email"}
                 optionalHint={preferredContact === "email"}
                 type="tel"
                 value={phone}
-                onChange={setPhone}
+                onChange={(v) => {
+                  setPhone(formatPhoneInput(v));
+                  setFieldErrors((p) => (p.phone ? { ...p, phone: undefined } : p));
+                }}
                 autoComplete="tel"
+                inputMode="tel"
+                placeholder="(208) 555-0123"
+                error={fieldErrors.phone}
                 testId="input-plans-phone"
               />
               <TextField
@@ -806,11 +954,12 @@ export function PlansWizard() {
               busyLabel="Building your range..."
               nextTestId="button-plans-submit"
             />
-          </div>
+          </StepTransition>
         ) : null}
 
         {/* ------------------------------------------------------- 4. result */}
         {step === "result" && result ? (
+          <StepTransition>
           <PlansResult
             result={result}
             documents={documents}
@@ -821,6 +970,7 @@ export function PlansWizard() {
               openConsult();
             }}
           />
+          </StepTransition>
         ) : null}
       </div>
     </Section>

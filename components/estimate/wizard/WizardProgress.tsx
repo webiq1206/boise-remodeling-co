@@ -71,7 +71,7 @@ export function WizardProgress({ steps, currentIndex, className }: WizardProgres
             <li key={step.id} className="flex-1">
               <span
                 className={cn(
-                  "flex h-1.5 w-full items-center justify-center rounded-full transition-colors",
+                  "flex h-1.5 w-full items-center justify-center rounded-full transition-colors duration-300 ease-out",
                   state === "done" && "bg-accent-legible",
                   state === "current" && "bg-accent-legible/70",
                   state === "upcoming" && "bg-inverse-foreground/15",

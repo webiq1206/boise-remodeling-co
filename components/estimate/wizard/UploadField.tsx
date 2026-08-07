@@ -1,9 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Camera, Check, FileText, Upload, X } from "lucide-react";
+import { Camera, Check, FileText, Loader2, Upload, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import type { UploadStatus } from "@/lib/uploadWithProgress";
 
 export interface UploadFieldProps {
   files: File[];
@@ -19,6 +20,14 @@ export interface UploadFieldProps {
   allowCamera?: boolean;
   headline?: string;
   disabled?: boolean;
+  /**
+   * Live send state while the files travel and are read. Uploading shows a
+   * real percentage; processing shows an indeterminate sweep, because that is
+   * the slow server-side read and stillness there looks like a hang.
+   */
+  status?: UploadStatus | null;
+  /** What the processing phase is doing, e.g. "Reading your documents...". */
+  processingLabel?: string;
 }
 
 const prettyBytes = (bytes: number) => {
@@ -45,6 +54,8 @@ export function UploadField({
   allowCamera = true,
   headline = "Add your files",
   disabled = false,
+  status = null,
+  processingLabel = "Reading your documents...",
 }: UploadFieldProps) {
   const [isDragging, setIsDragging] = useState(false);
   const dragDepth = useRef(0);
@@ -148,6 +159,40 @@ export function UploadField({
         ) : null}
       </div>
 
+      {status ? (
+        <div
+          className="mt-4 rounded-md border border-accent-legible/30 bg-inverse-foreground/[0.05] p-3.5"
+          role="status"
+          aria-live="polite"
+          data-testid="upload-status"
+        >
+          <div className="flex items-center justify-between gap-3 text-[13px] text-inverse-foreground">
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin text-accent-legible" aria-hidden="true" />
+              {status.phase === "uploading" ? "Sending your files..." : processingLabel}
+            </span>
+            {status.phase === "uploading" && status.percent !== null ? (
+              <span className="tabular-nums text-inverse-muted">{status.percent}%</span>
+            ) : null}
+          </div>
+          <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-inverse-foreground/15">
+            {status.phase === "uploading" && status.percent !== null ? (
+              <div
+                className="h-full rounded-full bg-accent-legible transition-[width] duration-200 ease-out"
+                style={{ width: `${status.percent}%` }}
+              />
+            ) : (
+              <div className="h-2/4 min-h-full w-2/5 rounded-full bg-accent-legible/80 wizard-progress-sweep" />
+            )}
+          </div>
+          {status.phase === "processing" ? (
+            <p className="mt-2 text-[12px] text-inverse-muted">
+              Your files are in. This is the reading step, and a large set can take a minute or two.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {files.length > 0 ? (
         <ul className="mt-4 space-y-2" data-testid="upload-file-list">
           {files.map((f) => (
@@ -165,9 +210,10 @@ export function UploadField({
               <button
                 type="button"
                 onClick={() => onRemove(f)}
+                disabled={disabled}
                 aria-label={`Remove ${f.name}`}
                 data-testid="upload-remove"
-                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-md text-inverse-muted hover:bg-inverse-foreground/10 hover:text-inverse-foreground"
+                className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-md text-inverse-muted hover:bg-inverse-foreground/10 hover:text-inverse-foreground disabled:opacity-40 disabled:pointer-events-none"
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>

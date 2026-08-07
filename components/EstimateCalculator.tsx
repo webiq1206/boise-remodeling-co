@@ -14,13 +14,16 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/marketing";
 import {
   WizardProgress,
+  StepTransition,
   StickyStepNav,
   ReviewSection,
   EditScopeCta,
   StickyResultActions,
+  TextField,
   type WizardStepMeta,
   type ReviewItem,
 } from "@/components/estimate/wizard";
+import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import { CTA_SECONDARY } from "@/shared/ctaCopy";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
@@ -452,6 +455,15 @@ export function EstimateCalculator({
   const [gatePhone,     setGatePhone]     = useState("");
   const [gateLoading,   setGateLoading]   = useState(false);
   const [gateError,     setGateError]     = useState<string | null>(null);
+  /* Field-level messages, so a rejected submit points at the exact input to
+     fix instead of a single banner the visitor has to decode. Each field
+     clears its own message the moment it is edited. */
+  const [gateFieldErrors, setGateFieldErrors] = useState<{
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+  }>({});
   /* Property address. Collected here as well as on the consultation form: this
      gate is the path most leads arrive through, and without it the team cannot
      confirm the property is inside the service area, and the county property
@@ -693,7 +705,7 @@ export function EstimateCalculator({
     const { prefill } = applyLeadParams();
     if (prefill.name) setGateName(prefill.name);
     if (prefill.email) setGateEmail(prefill.email);
-    if (prefill.phone) setGatePhone(prefill.phone);
+    if (prefill.phone) setGatePhone(formatPhoneInput(prefill.phone));
     // A visitor who already gave us their details should never be asked again,
     // including on a later visit, so this reads durable storage and restores
     // both the gate state AND the saved contact info (needed to resubmit an
@@ -701,7 +713,7 @@ export function EstimateCalculator({
     const saved = readStoredPrefill();
     if (saved.name) setGateName(saved.name);
     if (saved.email) setGateEmail(saved.email);
-    if (saved.phone) setGatePhone(saved.phone);
+    if (saved.phone) setGatePhone(formatPhoneInput(saved.phone));
     if (saved.address) setGateAddress(saved.address);
     if (hasPassedGate()) {
       setGateSubmitted(true);
@@ -713,6 +725,91 @@ export function EstimateCalculator({
       setLastSentKey(readLastSentKey());
     }
   }, []);
+
+  /* ── Progress survives a refresh ─────────────────────────────────────
+     Every answer and the visitor's place in the flow are mirrored to
+     sessionStorage, so an accidental reload or a tab that briefly navigates
+     away resumes exactly where they were instead of at question one. Session
+     scope on purpose: contact identity is stored durably elsewhere, but a
+     half-finished project description should not follow someone for weeks.
+
+     The one rule on restore: a saved phase can never reveal more than the
+     gate allows. "gate" resumes at review (the form re-opens cleanly from
+     there), and "result" resumes at result only for a visitor who has
+     actually passed the gate. */
+  const PROGRESS_KEY = "brc_estimate_progress_v1";
+  /* State, not a ref, on purpose: flipping it is batched into the same commit
+     as the restored values, so the save effect below cannot fire in between
+     with pre-restore defaults and clobber the record it was about to load.
+     (With a ref it did exactly that, and dev StrictMode's second mount then
+     restored the clobbered defaults.) */
+  const [progressRestored, setProgressRestored] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(PROGRESS_KEY);
+      if (!raw) return;
+      const p = JSON.parse(raw);
+      if (p?.v !== 1) return;
+      if (!(p.activeProject in SUBTYPE_DATA)) return;
+      const project = p.activeProject as ProjectType;
+      if (typeof p.subtype !== "string" || !(p.subtype in SUBTYPE_DATA[project])) return;
+
+      setActiveProject(project);
+      setSubtype(p.subtype);
+      if (typeof p.sqft === "number" && Number.isFinite(p.sqft)) setSqft(p.sqft);
+      if (Array.isArray(p.addOns)) setAddOns(p.addOns.filter((a: unknown) => typeof a === "string"));
+      if (typeof p.finish === "string") setFinish(p.finish as FinishLevel);
+      if (typeof p.budgetInput === "string") setBudgetInput(p.budgetInput);
+      if (p.peScope === null || typeof p.peScope === "string") setPeScope(p.peScope);
+      if (p.cabTier === null || typeof p.cabTier === "string") setCabTier(p.cabTier);
+      if (p.bathCount === null || typeof p.bathCount === "number") setBathCount(p.bathCount);
+      if (typeof p.bathCountConfirmed === "boolean") setBathCountConfirmed(p.bathCountConfirmed);
+      if (p.kitchenIn === null || typeof p.kitchenIn === "boolean") setKitchenIn(p.kitchenIn);
+      if (typeof p.edited === "boolean") setEdited(p.edited);
+      if (p.chosen && typeof p.chosen === "object") {
+        setChosen({
+          project: Boolean(p.chosen.project),
+          subtype: Boolean(p.chosen.subtype),
+          finish: Boolean(p.chosen.finish),
+        });
+      }
+      if (typeof p.gateAddress === "string" && p.gateAddress) setGateAddress(p.gateAddress);
+      if (typeof p.formIdx === "number") setFormIdx(Math.max(0, Math.floor(p.formIdx)));
+      if (p.phase === "review" || p.phase === "gate") {
+        setPhase("review");
+      } else if (p.phase === "result" && hasPassedGate()) {
+        setPhase("result");
+      }
+    } catch {
+      /* A corrupt record just means starting fresh, never a broken estimator. */
+    } finally {
+      setProgressRestored(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!progressRestored) return;
+    try {
+      sessionStorage.setItem(
+        PROGRESS_KEY,
+        JSON.stringify({
+          v: 1,
+          activeProject, subtype, sqft, addOns, finish, budgetInput,
+          peScope, cabTier, bathCount, bathCountConfirmed, kitchenIn,
+          edited, chosen, gateAddress, phase, formIdx,
+        }),
+      );
+    } catch {
+      /* Private mode / quota: the visitor simply loses refresh recovery. */
+    }
+  }, [
+    progressRestored,
+    activeProject, subtype, sqft, addOns, finish, budgetInput,
+    peScope, cabTier, bathCount, bathCountConfirmed, kitchenIn,
+    edited, chosen, gateAddress, phase, formIdx,
+  ]);
 
   /* The budget deliberately survives a change of project type. It used to be
      cleared here because the brackets offered were per-project, so a kitchen
@@ -1183,9 +1280,13 @@ export function EstimateCalculator({
     setGateSubmitted(false);
     setGateOpen(true);
     setResendState("idle");
+    setPhase("gate");
+    scrollWizardTop();
   }
 
-  /* Forget this visitor on this device (shared computers, wrong person). */
+  /* Forget this visitor on this device (shared computers, wrong person). The
+     gate is no longer passed after this, so the result must leave the screen
+     with it: the flow lands on review, one step short of the price. */
   function handleForgetIdentity() {
     clearStoredIdentity();
     setSavedIdentity(null);
@@ -1194,27 +1295,36 @@ export function EstimateCalculator({
     setLastSentKey(null);
     setResendState("idle");
     setGateName(""); setGateEmail(""); setGatePhone("");
+    setPhase("review");
+    scrollWizardTop();
   }
 
   async function handleGateSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    /* Explicit client-side validation before touching the API */
+    /* Explicit client-side validation before touching the API. Field by
+       field, so the message sits on the input it is about and focus lands on
+       the first one that needs attention. */
+    const fieldErrors: typeof gateFieldErrors = {};
     if (!gateName.trim() || gateName.trim().length < 2) {
-      setGateError("Please enter your first name.");
-      return;
+      fieldErrors.name = "Please enter your first name.";
     }
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!gateEmail.trim() || !emailRe.test(gateEmail.trim())) {
-      setGateError("Please enter a valid email address.");
-      return;
+    if (!gateEmail.trim() || !isValidEmail(gateEmail)) {
+      fieldErrors.email = "Please enter a valid email address.";
     }
-    if (gatePhone.replace(/\D/g, "").length < 10) {
-      setGateError("Please enter a valid 10-digit phone number.");
-      return;
+    if (!isValidPhone(gatePhone)) {
+      fieldErrors.phone = "Please enter a valid 10-digit phone number.";
     }
     if (!gateAddress.trim() || !HOUSE_NUMBER_REGEX.test(gateAddress.trim())) {
-      setGateError("Please enter your property address, including a house number.");
+      fieldErrors.address = "Please enter your property address, including a house number.";
+    }
+    setGateFieldErrors(fieldErrors);
+    if (Object.keys(fieldErrors).length > 0) {
+      setGateError(null);
+      const firstInvalid = (["name", "email", "phone", "address"] as const).find((k) => fieldErrors[k]);
+      if (firstInvalid) {
+        document.getElementById(`gate-${firstInvalid}`)?.focus();
+      }
       return;
     }
     /* Budget is optional: an extra required field before the number is friction
@@ -2243,15 +2353,19 @@ export function EstimateCalculator({
           </span>
         </div>
 
-        {/* Blurred price teaser */}
+        {/* Blurred price teaser. A MASK, NEVER THE NUMBER: the real range must
+            not exist anywhere in the DOM until the gate is passed, and a CSS
+            blur over the true figures is one devtools click from a free
+            estimate. The mask is the same for every project so its shape
+            carries no information either. */}
         <div className="relative select-none">
           <div
             className="brc-display-num tabular-nums leading-none text-inverse-foreground text-[clamp(32px,8vw,52px)] blur-sm pointer-events-none"
             aria-hidden="true"
           >
-            {formatPlanningCurrency(result.priceLow)}
+            {"$●●,●●●"}
             <span className="text-inverse-muted/90 mx-2 text-xl">to</span>
-            {formatPlanningCurrency(result.priceHigh)}
+            {"$●●,●●●"}
           </div>
           <div className="absolute inset-0 flex items-center">
             <span className="inline-flex items-center gap-1.5 text-[12px] text-inverse-muted bg-inverse px-3 py-1.5 rounded-full border border-inverse-foreground/15">
@@ -2264,47 +2378,59 @@ export function EstimateCalculator({
         {/* Contact form. The submit control lives in the sticky step nav below,
             so on a phone the primary action is always pinned within thumb reach
             even while the visitor scrolls through the fields. */}
-        <form ref={gateSubmitRef} onSubmit={handleGateSubmit} className="space-y-3">
-          <input
-            type="text"
-            placeholder="First name"
+        {/* noValidate: the handler below runs our inline, styled, per-field
+            validation on every submit, so the browser's native bubbles never
+            compete with it (two different error styles for one form). */}
+        <form ref={gateSubmitRef} onSubmit={handleGateSubmit} noValidate className="space-y-3">
+          <TextField
+            id="gate-name"
+            label="First name"
+            required
             value={gateName}
-            onChange={(e) => setGateName(e.target.value)}
-            required
-            minLength={2}
-            className="w-full bg-inverse-foreground/[0.07] border border-inverse-foreground/20 rounded-md px-4 py-3 text-[14px] text-inverse-foreground placeholder:text-inverse-muted/90 outline-none focus:border-inverse-foreground/50 transition-colors"
-            data-testid="gate-input-name"
-            aria-label="First name"
+            onChange={(v) => {
+              setGateName(v);
+              setGateFieldErrors((p) => (p.name ? { ...p, name: undefined } : p));
+            }}
             autoComplete="given-name"
+            error={gateFieldErrors.name}
+            testId="gate-input-name"
           />
-          <input
+          <TextField
+            id="gate-email"
+            label="Email address"
+            required
             type="email"
-            placeholder="Email address"
             value={gateEmail}
-            onChange={(e) => setGateEmail(e.target.value)}
-            required
-            className="w-full bg-inverse-foreground/[0.07] border border-inverse-foreground/20 rounded-md px-4 py-3 text-[14px] text-inverse-foreground placeholder:text-inverse-muted/90 outline-none focus:border-inverse-foreground/50 transition-colors"
-            data-testid="gate-input-email"
-            aria-label="Email address"
+            onChange={(v) => {
+              setGateEmail(v);
+              setGateFieldErrors((p) => (p.email ? { ...p, email: undefined } : p));
+            }}
             autoComplete="email"
+            inputMode="email"
+            error={gateFieldErrors.email}
+            testId="gate-input-email"
           />
-          <input
-            type="tel"
-            placeholder="Phone number"
-            value={gatePhone}
-            onChange={(e) => setGatePhone(e.target.value)}
+          <TextField
+            id="gate-phone"
+            label="Phone number"
             required
-            minLength={10}
-            className="w-full bg-inverse-foreground/[0.07] border border-inverse-foreground/20 rounded-md px-4 py-3 text-[14px] text-inverse-foreground placeholder:text-inverse-muted/90 outline-none focus:border-inverse-foreground/50 transition-colors"
-            data-testid="gate-input-phone"
-            aria-label="Phone number"
+            type="tel"
+            value={gatePhone}
+            onChange={(v) => {
+              setGatePhone(formatPhoneInput(v));
+              setGateFieldErrors((p) => (p.phone ? { ...p, phone: undefined } : p));
+            }}
             autoComplete="tel"
+            inputMode="tel"
+            placeholder="(208) 555-0123"
+            error={gateFieldErrors.phone}
+            testId="gate-input-phone"
           />
 
           {/* Address was collected in step 2. Show a read-only confirmation when
-              already filled. When skipped, show a minimal fallback input so the
-              visitor can still submit without scrolling back up. */}
-          {gateAddress.trim() ? (
+              already filled. When skipped, offer the same autocomplete the
+              address step has, so the fallback is not a lesser control. */}
+          {gateAddress.trim() && !gateFieldErrors.address ? (
             <div className="rounded-md border border-inverse-foreground/15 bg-inverse-foreground/[0.04] px-4 py-3">
               <p className="text-[11px] text-inverse-muted/90 mb-0.5 uppercase tracking-wide">Property address</p>
               <p className="text-[13.5px] text-inverse-foreground leading-snug">{gateAddress}</p>
@@ -2312,19 +2438,32 @@ export function EstimateCalculator({
             </div>
           ) : (
             <div>
-              <input
-                type="text"
-                placeholder="Property address (house number + street)"
+              <label htmlFor="gate-address" className="mb-1.5 block text-[12.5px] text-inverse-muted">
+                Property address<span className="text-accent-legible"> *</span>
+              </label>
+              <AddressAutocomplete
+                id="gate-address"
+                variant="inverse"
                 value={gateAddress}
-                onChange={(e) => setGateAddress(e.target.value)}
-                className="w-full bg-inverse-foreground/[0.07] border border-inverse-foreground/20 rounded-md px-4 py-3 text-[14px] text-inverse-foreground placeholder:text-inverse-muted/90 outline-none focus:border-inverse-foreground/50 transition-colors"
+                onChange={(v) => {
+                  setGateAddress(v);
+                  setGateFieldErrors((p) => (p.address ? { ...p, address: undefined } : p));
+                }}
+                onProfileResolved={(profile) => {
+                  setGateProfile(profile);
+                  if (profile?.formattedAddress) setGateAddress(profile.formattedAddress);
+                }}
                 data-testid="gate-input-address"
-                aria-label="Property address"
-                autoComplete="street-address"
               />
-              <p className="mt-1.5 text-[11.5px] text-inverse-muted/90">
-                So we can confirm we serve your area and check county records before your visit.
-              </p>
+              {gateFieldErrors.address ? (
+                <p className="mt-1.5 text-[12.5px] text-destructive" role="alert">
+                  {gateFieldErrors.address}
+                </p>
+              ) : (
+                <p className="mt-1.5 text-[11.5px] text-inverse-muted/90">
+                  So we can confirm we serve your area and check county records before your visit.
+                </p>
+              )}
             </div>
           )}
           {/* THE ONE BUDGET ASK. Asked here, before the range, so the estimate
@@ -2450,8 +2589,10 @@ export function EstimateCalculator({
 
       {phase === "form" && (
         <div>
-          {safeFormIdx === 0 && introEyebrow}
-          {formStepBodies[currentFormId]}
+          <StepTransition key={currentFormId}>
+            {safeFormIdx === 0 && introEyebrow}
+            {formStepBodies[currentFormId]}
+          </StepTransition>
           <StickyStepNav
             onBack={safeFormIdx > 0 || editReturn ? backFromForm : undefined}
             onNext={nextFromForm}
@@ -2463,7 +2604,7 @@ export function EstimateCalculator({
       )}
 
       {phase === "review" && (
-        <div>
+        <StepTransition>
           <h2
             ref={headingRef}
             tabIndex={-1}
@@ -2498,12 +2639,12 @@ export function EstimateCalculator({
             nextLabel={gateSubmitted ? "See my estimate" : "Get my estimate"}
             nextTestId="review-continue"
           />
-        </div>
+        </StepTransition>
       )}
 
       {phase === "gate" && (
         <div>
-          {leadsGatePanel}
+          <StepTransition>{leadsGatePanel}</StepTransition>
           <StickyStepNav
             onBack={() => {
               setGateOpen(false);
@@ -2521,7 +2662,7 @@ export function EstimateCalculator({
 
       {phase === "result" && (
         <div>
-          {resultPanel}
+          <StepTransition>{resultPanel}</StepTransition>
           <StickyResultActions
             primaryLabel={CTA_SECONDARY}
             onPrimary={handleBookVisit}
