@@ -17,7 +17,9 @@ export type PricingAlertKind =
   | "estimate-unresolvable"
   | "quantity-clamped"
   | "zero-total"
-  | "implausible-total";
+  | "implausible-total"
+  /** The chat assistant produced a dollar figure no pricing tool returned. */
+  | "assistant-ungrounded-price";
 
 /** Above this, a quote is more likely a bug or an attack than a remodel. */
 export const IMPLAUSIBLE_QUOTE_CEILING = 2_000_000;

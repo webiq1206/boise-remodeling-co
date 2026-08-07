@@ -294,6 +294,45 @@ buys the same confidence as a stamped permit set.
 bar produces numbers that are internally consistent and completely wrong, and
 nothing downstream can detect it.
 
+## Estimating assistant - BUILT, needs the redeploy
+
+A chat assistant mounted site-wide (`components/assistant/AssistantWidget.tsx`,
+launcher bottom-right) that prices conversationally. `/api/assistant/chat` runs
+a tool loop where the tools ARE the estimators: `price_remodel_estimate` runs
+`calculateEstimate` + `resolveQuotedRange`, `price_repair_list` runs
+`estimateRe10`, `capture_lead` delivers to the same three destinations as every
+other lead (`server/services/assistantLead.ts`). Verified live: chat prices
+match direct engine runs to the dollar, and a pool question yields zero numbers
+and a redirect to what we do price.
+
+**Pricing accuracy is structural, not prompted, in this order:**
+
+1. Prices exist only in tool results. The model gathers inputs; the engines
+   compute. Tool results carry the customer-safe shape only - never cost,
+   margin, or an internal band - so the disclosure wall holds in chat.
+2. The grounding guard (`server/services/assistantGuard.ts`) scans every
+   reply before it leaves: a dollar figure no tool returned and no customer
+   typed gets one corrective retry, then the reply is dropped for a safe
+   fallback and `[pricing-alert] assistant-ungrounded-price` fires. Exact
+   integers only - a "close" number is a different number.
+3. The route is stateless; the client stores the transcript HMAC-signed
+   (SESSION_SECRET) and the server only continues a history it wrote. A
+   forged transcript is a 409 reset, so a crafted client cannot seed "the
+   assistant already promised $X".
+
+The lead's estimate block comes from server-side session state written when a
+pricing tool ran, never from model arguments. Context pickup sends estimator
+settings (project/finish/sqft) but deliberately no prices - the assistant
+re-runs the engine instead of trusting the page. `verify:assistant` (in
+prebuild) pins all of it without a model: tool prices equal direct engine runs
+exactly, no internal field names in any tool result, the guard catches
+fabricated/nearby numbers, tampered transcripts fail, capture_lead fails safe
+offline, and every partial-scope chip still changes the priced result.
+
+CONTACT_FAQS moved to `shared/content/contactFaqs.ts` (contact page + assistant
+fact sheet read the same list). Assistant funnel events:
+`shared/assistant/analyticsEvents.ts`.
+
 ## Environment
 
 `ANTHROPIC_API_KEY` is set in Replit Secrets (production only - not local, so
