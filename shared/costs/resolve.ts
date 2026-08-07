@@ -62,13 +62,12 @@ export function resolveQuotedRange(
   finish: string,
   sqft: number,
   refinements: ResolverRefinements,
-  detailRatio = 0,
 ): { priceLow: number; priceHigh: number } | null {
   const rules = RULES_BY_PROJECT[project];
   if (!rules) return null;
   const selections = toSelections(finish, sqft, refinements);
   const internal = buildInternalEstimate(rules, selections, project);
-  const range = buildPlanningRange(internal, project, selections.quality, sqft, detailRatio);
+  const range = buildPlanningRange(internal, project, selections.quality, sqft);
   return { priceLow: range.low, priceHigh: range.high };
 }
 
@@ -78,12 +77,11 @@ export function resolveInternalEstimate(
   finish: string,
   sqft: number,
   refinements: ResolverRefinements,
-  detailRatio = 0,
 ) {
   const rules = RULES_BY_PROJECT[project];
   if (!rules) return null;
   const selections = toSelections(finish, sqft, refinements);
   const internal = buildInternalEstimate(rules, selections, project);
-  const range = buildPlanningRange(internal, project, selections.quality, sqft, detailRatio);
+  const range = buildPlanningRange(internal, project, selections.quality, sqft);
   return { internal, range, admin: buildAdminView(internal, range) };
 }

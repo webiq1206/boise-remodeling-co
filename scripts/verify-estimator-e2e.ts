@@ -344,9 +344,9 @@ for (const project of PROJECTS) {
   const detailRatio = maxFields > 0 ? detailCount / maxFields : 0;
 
   // What the browser shows.
-  const displayed = resolveQuotedRange(project, quality, base, refinements, detailRatio)!;
+  const displayed = resolveQuotedRange(project, quality, base, refinements)!;
   // What the server recomputes on submit (same resolver, same inputs).
-  const server = resolveQuotedRange(project, quality, base, refinements, detailRatio)!;
+  const server = resolveQuotedRange(project, quality, base, refinements)!;
   t(`consistency/${project}/display-equals-server`, displayed.priceLow === server.priceLow && displayed.priceHigh === server.priceHigh);
 
   const guide = calculateEstimate({ project, finish: quality as never, sqft: base, refinements }, detailCount);
@@ -379,7 +379,7 @@ for (const project of PROJECTS) {
   t(`consistency/${project}/customer-lacks-breakdown`, !custHtml.includes("Internal breakdown"));
 
   // The admin rollup must reconcile to the quoted centre.
-  const resolved = resolveInternalEstimate(project, quality, base, refinements, detailRatio)!;
+  const resolved = resolveInternalEstimate(project, quality, base, refinements)!;
   const rowSum = resolved.admin.trades.reduce((s, x) => s + x.customerAmount, 0);
   t(`consistency/${project}/admin-rows-sum-to-centre`, Math.abs(rowSum - resolved.admin.customerPrice) < 1);
 }

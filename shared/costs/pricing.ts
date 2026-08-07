@@ -153,9 +153,6 @@ const BASE_BAND = 0.15;
  */
 const MIN_BAND = 0.15;
 
-/** How much of the band detail can remove. Zero while MIN_BAND equals BASE_BAND. */
-const BAND_TIGHTENING = 0.5;
-
 export interface PlanningRange {
   low: number;
   high: number;
@@ -189,9 +186,13 @@ function roundTo(value: number, step: number): number {
 /**
  * Build the customer-facing planning range.
  *
- * `detailRatio` is 0 when the homeowner gave only the minimum and 1 when every
- * question that affects price has been answered. More detail tightens the band;
- * it never widens it, and it never moves the centre.
+ * The band is FIXED at BASE_BAND (0.15, back-tested; see above) and can only
+ * WIDEN via `bandPenalty`. A `detailRatio` parameter used to promise that
+ * answering more questions narrowed the band, but MIN_BAND deliberately
+ * equals BASE_BAND, so the entire tightening term was mathematically inert -
+ * every caller computed and threaded a ratio that could not change a single
+ * output. The dead parameter was removed rather than left implying a
+ * behaviour the policy explicitly rejects.
  */
 /**
  * The most a thin brief may widen the band.
@@ -211,14 +212,12 @@ export function buildPlanningRange(
   project: ProjectType,
   quality: QualityLevel,
   sqft: number,
-  detailRatio = 0,
   /** Extra half-width for weak information. Widens only; see above. */
   bandPenalty = 0,
 ): PlanningRange {
   const decision = decideMargin(estimate.totalInternalCost, project, quality, sqft);
-  const clamped = Math.min(1, Math.max(0, detailRatio));
   const penalty = Math.min(MAX_BAND_WIDENING, Math.max(0, bandPenalty));
-  const band = Math.max(MIN_BAND, BASE_BAND * (1 - BAND_TIGHTENING * clamped)) + penalty;
+  const band = MIN_BAND + penalty;
 
   const centre = decision.price;
   const step = stepFor(centre);

@@ -568,8 +568,6 @@ export interface RepairItemInput {
   sourceRef?: string;
   /** Set when the extractor could not read the request cleanly. */
   needsReview?: ReviewReason;
-  /** True when a photo was supplied for this item. Narrows the range. */
-  hasPhoto?: boolean;
 }
 
 /** Everything about the property and the deal that changes the price. */
@@ -1053,8 +1051,16 @@ function resolveBand(
 
   const assumed = priced.filter((p) => p.quantityAssumed);
   const assumedShare = assumed.length / priced.length;
-  const photoShare = priced.filter((p) => p.input.hasPhoto).length / priced.length;
 
+  /* NO PHOTO SIGNAL. A per-item hasPhoto flag used to add a +0.05 band
+     penalty when under half the items carried one - but no client ever set
+     the flag (the extractor does not emit it and the wizard never sent it),
+     so EVERY estimate carried the penalty, "high confidence" was
+     mathematically unreachable, and every customer was told "fewer than half
+     the items have a photo" even when they uploaded twelve. Worse, the flag
+     sat in the request schema, so a crafted POST could claim photos and buy
+     a narrower band. Until a photo signal exists that the server can verify
+     itself, confidence rests on what the server actually knows. */
   let band = 0.14;
   const uncertainty: string[] = [];
 
@@ -1066,10 +1072,6 @@ function resolveBand(
         (names.length ? ` (${names.join(", ")})` : "") +
         ". A measurement or a photo would tighten these.",
     );
-  }
-  if (photoShare < 0.5) {
-    band += 0.05;
-    uncertainty.push("Fewer than half the items have a photo. Photos are the single fastest way to narrow this range.");
   }
   if (!ctx.hasInspectionReport) {
     band += 0.04;

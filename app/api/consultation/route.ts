@@ -25,7 +25,6 @@ import {
   EMPTY_REFINEMENTS,
   calculateEstimate,
   countVisibleUserRefinements,
-  getMaxRefinementFields,
   getProjectSizeConfig,
   getSetRefinementKeys,
   PROJECT_LABELS,
@@ -158,13 +157,11 @@ function verifyEstimate(
   );
   // The quoted range comes from the line-item cost engine, via the same shared
   // resolver the calculator uses, so the page and the email can never disagree.
-  const maxFields = getMaxRefinementFields(estimate.project);
   const lineItemRange = resolveQuotedRange(
     estimate.project,
     estimate.finish,
     estimate.sqft,
     refinements,
-    maxFields > 0 ? detailCount / maxFields : 0,
   );
   const recomputed = { ...guide, ...(lineItemRange ?? {}) };
 

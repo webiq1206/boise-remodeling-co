@@ -152,7 +152,6 @@ function sampleList(n: number, seedKinds: RepairKind[]): RepairItemInput[] {
     kind: seedKinds[i % seedKinds.length],
     description: `item ${i}`,
     quantity: i % 3 === 0 ? undefined : (i % 17) + 1,
-    hasPhoto: i % 2 === 0,
   }));
 }
 
@@ -287,7 +286,7 @@ const bandCtx: Re10Context = {
 let inBand = 0;
 for (const [kind, band] of Object.entries(MARKET_PRICE_BAND)) {
   const [lo, hi] = band as [number, number];
-  const est = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "", hasPhoto: true }], bandCtx);
+  const est = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "" }], bandCtx);
   if (est.priced.length === 0) continue;
   const price = est.sellingPrice;
 
@@ -323,7 +322,7 @@ const worstCtx: Re10Context = {
 
 for (const [kind, band] of Object.entries(MARKET_PRICE_BAND)) {
   const [, hi] = band as [number, number];
-  const est = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "", hasPhoto: true }], worstCtx);
+  const est = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "" }], worstCtx);
   if (est.priced.length === 0) continue;
   check(
     est.sellingPrice <= hi * (1 + MAX_URGENCY_PREMIUM),
@@ -331,7 +330,7 @@ for (const [kind, band] of Object.entries(MARKET_PRICE_BAND)) {
       `${(MAX_URGENCY_PREMIUM * 100).toFixed(0)}% over the ${hi} market ceiling`,
   );
   // And urgency must actually cost more, or the uplifts are decorative.
-  const standard = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "", hasPhoto: true }], bandCtx);
+  const standard = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "" }], bandCtx);
   check(est.sellingPrice >= standard.sellingPrice, `${kind}: a rush job priced at or below a relaxed one`);
 }
 
@@ -339,12 +338,12 @@ for (const [kind, band] of Object.entries(MARKET_PRICE_BAND)) {
 
 for (const kind of ALL_KINDS) {
   if (RECIPES[kind].alwaysReview) continue;
-  const solo = estimateRe10([{ id: "1", kind, description: "", hasPhoto: true }], bandCtx).sellingPrice;
+  const solo = estimateRe10([{ id: "1", kind, description: "" }], bandCtx).sellingPrice;
   const base = Array.from({ length: 6 }, (_, i) => ({
-    id: "b" + i, kind: "drywall-patch" as RepairKind, description: "", quantity: 10, hasPhoto: true,
+    id: "b" + i, kind: "drywall-patch" as RepairKind, description: "", quantity: 10,
   }));
   const basePrice = estimateRe10(base, bandCtx).sellingPrice;
-  const marginal = estimateRe10([...base, { id: "x", kind, description: "", hasPhoto: true }], bandCtx).sellingPrice - basePrice;
+  const marginal = estimateRe10([...base, { id: "x", kind, description: "" }], bandCtx).sellingPrice - basePrice;
 
   // Adding a repair to a visit already happening must cost less than sending
   // someone out for it alone. If it does not, bundling is not being rewarded and
@@ -422,7 +421,7 @@ const vague: RepairItemInput[] = [
   { id: "2", kind: "trim-repair", description: "" },
   { id: "3", kind: "flooring-patch", description: "" },
 ];
-const precise: RepairItemInput[] = vague.map((v) => ({ ...v, quantity: 12, hasPhoto: true }));
+const precise: RepairItemInput[] = vague.map((v) => ({ ...v, quantity: 12 }));
 
 const vagueEst = estimateRe10(vague, { hasInspectionReport: false });
 const preciseEst = estimateRe10(precise, { hasInspectionReport: true });

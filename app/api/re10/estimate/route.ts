@@ -38,7 +38,8 @@ const repairSchema = z.object({
   quantity: z.number().positive().max(100_000).nullable().optional(),
   sourceRef: z.string().max(200).optional(),
   needsReview: z.enum(EXTRACTION_REVIEW_REASONS as [ReviewReason, ...ReviewReason[]]).optional(),
-  hasPhoto: z.boolean().optional(),
+  // No hasPhoto: the flag was client-assertable, verified by nothing, and fed
+  // the confidence band - a crafted POST could buy a narrower range with it.
 });
 
 /**
@@ -121,7 +122,11 @@ function daysUntil(date: string | undefined): number | null {
   const target = Date.parse(date);
   if (Number.isNaN(target)) return null;
   const days = Math.round((target - Date.now()) / 86_400_000);
-  return Number.isFinite(days) ? days : null;
+  if (!Number.isFinite(days)) return null;
+  // A deadline already in the past is the MOST urgent case, not "no
+  // deadline": the negative number used to skip the rush uplift entirely
+  // while the quote still printed the date. Clamp to zero days out.
+  return Math.max(0, days);
 }
 
 /* Every accepted request sends two emails and writes a lead row, with no
@@ -161,7 +166,6 @@ export async function POST(request: NextRequest) {
     quantity: r.quantity ?? null,
     sourceRef: r.sourceRef,
     needsReview: r.needsReview,
-    hasPhoto: r.hasPhoto,
   }));
 
   const estimate = estimateRe10(items, {

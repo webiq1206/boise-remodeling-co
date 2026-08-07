@@ -128,7 +128,13 @@ const SOFT_COSTS: ComponentDef[] = [
     id: "contingency",
     label: "Contingency",
     unit: "percent of project",
-    share: 0.05,
+    /* Matches what the price actually contains. The engine carries a 10%
+       contingency on direct cost (CONTINGENCY_RATE, engine.ts), which works
+       out to ~6% of the customer price once margin is applied
+       (0.1d / (1.1d / 0.7) = 6.4%). The display said 5% while the price held
+       10-on-direct - the breakdown a homeowner reads should not understate
+       the cushion the number is built on. */
+    share: 0.06,
     quantity: { kind: "lot" },
     group: "soft",
     note: "Held for conditions found once walls are open. Unused contingency is not spent.",
@@ -137,7 +143,7 @@ const SOFT_COSTS: ComponentDef[] = [
     id: "overhead-profit",
     label: "Overhead and profit",
     unit: "percent of project",
-    share: 0.13,
+    share: 0.12,
     quantity: { kind: "lot" },
     group: "soft",
     note: "Insurance, warranty, licensing, and the cost of running a licensed contractor.",

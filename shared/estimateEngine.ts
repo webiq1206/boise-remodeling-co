@@ -811,7 +811,16 @@ export function getPriceData(project: ProjectType, finish: FinishLevel): PriceDa
 
 export function formatPlanningCurrency(n: number): string {
   if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
-  if (n >= 1000) return `$${Math.round(n / 1000)}k`;
+  if (n >= 1000) {
+    // The quoted range is stepped in $500 increments below $25k, so a range
+    // end is often not a whole thousand. Math.round(n/1000) printed $20,500
+    // as "$21k" on the page while the email said "$20,500" - two different
+    // numbers for the same estimate in the same hour. One decimal only when
+    // it is needed keeps "$28k" clean and "$20.5k" honest.
+    const thousands = n / 1000;
+    const rounded = Math.round(thousands * 10) / 10;
+    return Number.isInteger(rounded) ? `$${rounded}k` : `$${rounded.toFixed(1)}k`;
+  }
   return `$${n.toLocaleString()}`;
 }
 

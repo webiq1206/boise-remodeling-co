@@ -283,7 +283,7 @@ export async function POST(request: NextRequest) {
         ? `${Math.round(measurements.sqft).toLocaleString("en-US")} sq ft measured from your drawings`
         : `${body.statedTotalSqFt.toLocaleString("en-US")} sq ft`,
     },
-  ], 0, disclosure.bandPenalty);
+  ], disclosure.bandPenalty);
 
   const contact: PlanContact = {
     name: body.name,

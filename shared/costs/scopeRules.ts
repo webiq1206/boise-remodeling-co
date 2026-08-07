@@ -388,15 +388,28 @@ function interiorShellRules(project: string): ScopeRule[] {
       qty: (d, s) => d.floorArea * (ELECTRICAL_INTENSITY[project] ?? 1) * (movesSystems(s) ? 1.35 : 1),
       assumption: "Electrical labor carries a 35% uplift when circuits are relocated.",
     },
+    /* Fixture materials respect the kitchen's LIGHTING chip. The chip was
+       offered ("what are you upgrading?") and then read by nothing: selecting
+       lighting alone dropped $18k of cabinet/counter scope while the lighting
+       itself changed no line, and cabinets-only still paid full fixture
+       materials. Only the kitchen has a lighting chip, so other projects'
+       partial scopes (bathroom shower/vanity, whole-home rooms) are
+       unaffected - redoing() is true for them regardless. Electrical LABOR
+       stays ungated: circuits, disconnects and code work accompany cabinet
+       and counter replacement whether or not fixtures change. */
     {
       code: "03-09-04-M", // Standard interior fixtures, SF
       qty: (d, s) => d.floorArea * (ELECTRICAL_INTENSITY[project] ?? 1),
-      when: (s) => s.quality === "refresh" || s.quality === "mid-range",
+      when: (s) =>
+        (s.quality === "refresh" || s.quality === "mid-range") &&
+        (project !== "kitchen" || redoing(s, "lighting")),
     },
     {
       code: "03-09-06-M", // Decorative interior fixtures, SF
       qty: (d, s) => d.floorArea * (ELECTRICAL_INTENSITY[project] ?? 1),
-      when: (s) => s.quality === "high-end" || s.quality === "luxury",
+      when: (s) =>
+        (s.quality === "high-end" || s.quality === "luxury") &&
+        (project !== "kitchen" || redoing(s, "lighting")),
     },
     {
       code: "03-03-04", // Building demolition + haul, SF
@@ -471,9 +484,15 @@ export const BATHROOM_RULES: ScopeRule[] = [
      ventilation and the rough-in. Site overhead in commonRules is deliberately
      NOT multiplied - two bathrooms in one job share a dumpster, a permit and a
      supervisor. */
+  /* THE UPGRADE CHIPS ARE READ HERE. The wizard offers SHOWER / VANITY / TUB
+     / TILE and these rules used to ignore all four - the documented
+     asking-and-ignoring antipattern (see bathCount above), on the estimator's
+     second-most-used project. Null scope stays a full remodel (redoing() is
+     true); a selected subset gates each line to the work it names. */
   {
     code: "03-16-01", // Tile, SF - floor plus a wet wall
     qty: (d, s) => (d.floorArea + d.interiorPerimeter * 0.45 * 7),
+    when: (s) => redoing(s, "tile") || redoing(s, "shower"),
     assumption:
       "Tile covers the floor plus a shower surround roughly 7 feet high across 45% of the perimeter, per bathroom in scope.",
   },
@@ -481,21 +500,28 @@ export const BATHROOM_RULES: ScopeRule[] = [
     code: "03-17-03", // Vanity, LF
     qty: (d, s) =>
       Math.max(4, d.floorArea * 0.05) * (s.fixtureCount && s.fixtureCount > 1 ? 1.6 : 1),
+    when: (s) => redoing(s, "vanity"),
     assumption: "Vanity run scales with room size, floored at a 4 foot single vanity, per bathroom in scope.",
   },
   {
     code: "03-19-06", // Shower glass, EA
     qty: () => 1,
-    when: (s) => s.quality !== "refresh",
+    when: (s) => s.quality !== "refresh" && redoing(s, "shower"),
   },
   {
     code: "03-19-01", // Bath hardware, EA
-    qty: (_d, s) => Math.max(1, s.fixtureCount ?? 1) * 4,
+    /* Flat four pieces PER BATHROOM - the whole takeoff is already multiplied
+       by bathroomCount (engine `instances`). The old fixtureCount * 4 * count
+       shape charged a primary suite (fixtureCount 3) for 12 pieces per
+       bathroom, 24 across two bathrooms, purely from which layout card was
+       tapped - a $4,000 swing the assumption text never described. */
+    qty: () => 4,
     assumption: "Four hardware pieces per bathroom: towel bar, ring, paper holder, hooks.",
   },
   {
-    code: "03-19-07", // Mirrors, EA
+    code: "03-19-07", // Mirrors, EA - one, or two over a double vanity
     qty: (_d, s) => (s.fixtureCount && s.fixtureCount > 1 ? 2 : 1),
+    when: (s) => redoing(s, "vanity"),
   },
   {
     code: "03-15-04", // Vinyl flooring where not tiled
@@ -507,6 +533,8 @@ export const BATHROOM_RULES: ScopeRule[] = [
     code: "03-10-03", // Plumbing, SF-equivalent
     qty: (d, s) =>
       d.floorArea * PLUMBING_INTENSITY.bathroom * (movesSystems(s) ? 1.3 : 1) * (changesLayout(s) ? 1.25 : 1),
+    // Any wet-work chip carries the rough-in; a tile-only refresh does not.
+    when: (s) => redoing(s, "shower") || redoing(s, "tub") || redoing(s, "vanity"),
     assumption:
       "Bathroom plumbing is priced at 4.5x the whole-dwelling per-square-foot rate: a rough-in, supply, drain, vent and three fixtures against a small floor.",
   },
@@ -738,14 +766,28 @@ function buildShellRules(project: string): ScopeRule[] {
  * inherit from, only a function that must be told which project it is building.
  */
 export const ADDITION_RULES: ScopeRule[] = [
-  ...buildShellRules("addition"),
+  /* CODE COLLISIONS ARE SILENT QUANTITY LOSS. The dedup in
+     buildInternalEstimate keeps the LARGER quantity when two rules emit the
+     same code, so the shell's 03-08-02 (HVAC tie-in, qty 2) and the bathroom
+     pack's 03-08-02 (one exhaust fan per bathroom) fought: at one bathroom
+     the fan was dropped, at three the tie-in was. Same shape on 03-10-03,
+     where the wet-room uplift is MEANT to replace the base rate but did so
+     by winning a dedup that logged a warning nobody read. Both codes are
+     filtered out of the packs here and re-emitted once, with the combined
+     semantics stated. ADU_RULES already does this for 03-08-02.  */
+  ...buildShellRules("addition").filter((r) => r.code !== "03-08-02" && r.code !== "03-10-03"),
   // An addition carries a bathroom only if the homeowner says so, hence a
   // default of zero. Previously the field was shown and then ignored entirely.
-  ...bathroomFixtureRules("addition", 0),
+  ...bathroomFixtureRules("addition", 0).filter((r) => r.code !== "03-08-02"),
   {
-    code: "03-10-03", // Plumbing uplift for a wet room in the addition
-    qty: (d, s) => d.floorArea * PLUMBING_INTENSITY.addition * (bathCount(s, 0) > 0 ? 2.6 : 1),
-    when: (s) => bathCount(s, 0) > 0,
+    code: "03-08-02", // Exhaust / HVAC tie-in + one exhaust fan per bathroom, EA
+    qty: (_d, s) => 2 + bathCount(s, 0),
+    assumption:
+      "HVAC extended from the existing system rather than replaced, plus an exhaust fan for each bathroom in the addition.",
+  },
+  {
+    code: "03-10-03", // Plumbing: base rate, or the full wet-room rough-in
+    qty: (d, s) => d.floorArea * PLUMBING_INTENSITY.addition * (movesSystems(s) ? 1.35 : 1) * (bathCount(s, 0) > 0 ? 2.6 : 1),
     assumption:
       "An addition containing a bathroom carries a full rough-in, which the base addition plumbing rate does not.",
   },

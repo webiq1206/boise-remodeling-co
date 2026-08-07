@@ -51,7 +51,6 @@ export function estimateProject(
   project: ProjectType,
   selections: ScopeSelections,
   leadSelectionRows: LeadSelectionRow[],
-  detailRatio = 0,
   /**
    * Extra half-width for thin information, from a disclosure builder.
    *
@@ -69,7 +68,6 @@ export function estimateProject(
     project,
     selections.quality as QualityLevel,
     selections.sqft,
-    detailRatio,
     bandPenalty,
   );
 

@@ -11,7 +11,7 @@ for (const p of PROJECTS) {
   const cfg = getProjectSizeConfig(p);
   for (const sf of [cfg.min, Math.round((cfg.min+cfg.max)/2), cfg.max]) {
     for (const f of FINISHES) {
-      const r = resolveQuotedRange(p, f, sf, EMPTY_REFINEMENTS, 0.5);
+      const r = resolveQuotedRange(p, f, sf, EMPTY_REFINEMENTS);
       if (!r) { fail(`no range ${p}/${f}/${sf}`); continue; }
       const internal = resolveInternalEstimate(p, f, sf, EMPTY_REFINEMENTS);
       const trades = internal ? internal.admin.trades.slice(0,2).map(t=>t.division) : [];

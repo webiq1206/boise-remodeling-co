@@ -620,10 +620,7 @@ export function EstimateCalculator({
   const result = useMemo<EstimateResult>(() => {
     const input: EstimateInput = { project: effectiveProject, finish, sqft, refinements };
     const guide = calculateEstimate(input, userRefinementCount);
-
-    const maxFields = getMaxRefinementFields(effectiveProject);
-    const detailRatio = maxFields > 0 ? userRefinementCount / maxFields : 0;
-    const range = resolveQuotedRange(effectiveProject, finish, sqft, refinements, detailRatio);
+    const range = resolveQuotedRange(effectiveProject, finish, sqft, refinements);
     return range ? { ...guide, ...range } : guide;
   }, [effectiveProject, finish, sqft, refinements, userRefinementCount]);
 
