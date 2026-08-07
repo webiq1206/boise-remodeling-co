@@ -64,7 +64,12 @@ async function main() {
     if (!EXTRACTABLE_KINDS.includes(r.kind)) flag(`"${r.kind}" is not a kind the estimator can price`);
     if (!RECIPES[r.kind]) flag(`"${r.kind}" has no recipe`);
   }
-  if (unmapped.length > 0) console.log(`\nUNMAPPED (${unmapped.length})\n  ${unmapped.join("\n  ")}`);
+  if (unmapped.length > 0)
+    console.log(
+      `\nUNMAPPED (${unmapped.length})\n  ${unmapped
+        .map((u) => `${u.verbatim}${u.reason ? ` - ${u.reason}` : ""}`)
+        .join("\n  ")}`,
+    );
 
   /* What a correct read of this fixture looks like. Not an exact-match test -
      several of these map to more than one defensible kind - but the specific

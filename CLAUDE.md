@@ -17,13 +17,29 @@ each one caught something real:
 
 | Command | Guards |
 |---|---|
-| `verify:estimate` | the main estimator engine |
-| `verify:re10` | 44 repair kinds, incl. market price bands |
-| `verify:re10-delivery` | disclosure wall, funnel events, upload contract |
+| `verify:estimate` | the main estimator engine, incl. takeoff-with-override reconciliation |
+| `verify:cost-pricing` | the quoted-price engine: margin guards, duplicate codes, GOLDEN_QUOTED exact-dollar table |
+| `verify:estimator-e2e` | page -> route -> email agreement for the guide estimator |
+| `verify:estimate-routes` | executes the actual POST handlers (the only suite that does) |
+| `verify:re10` | 44 repair kinds, incl. market price bands, asserted on `quotedPrice` |
+| `verify:re10-delivery` | disclosure wall, funnel events, upload contract, traversal keys |
 | `verify:plans` | the gates that let a plan set tighten a price |
 | `verify:plans-delivery` | plans disclosure wall, funnel events, request contract |
 | `verify:no-em-dash` | house style, blocks the build |
 | `check:re10-extraction` | live API call, NOT in prebuild (costs money) |
+
+`verify:cost-pricing` and `verify:estimator-e2e` sat orphaned for months -
+passing, and run by nothing. If a suite exists, it goes in prebuild. The
+GOLDEN_QUOTED table pins exact dollars at every project x finish x baseline
+size because invariants cannot catch a uniform repricing; when a price is
+changed ON PURPOSE, update the goldens in the same commit and say why.
+
+`verify:estimate-routes` exists because every audited defect that reached
+production lived in the route layer, where no other suite executes: zod
+stripping a field, rounding after the margin guard, a traversal URL in the
+document list. It imports the POST handlers and calls them with constructed
+Requests, after scrubbing delivery env vars so accepted requests are pure
+computation (no email, no DB row, no CRM forward) even where secrets exist.
 
 **tsc baseline is 22 pre-existing errors.** Not zero. Compare against 22; do
 not "fix" the others as a side quest.
@@ -33,7 +49,20 @@ the owner to run it.
 
 ## Pricing rules, learned the hard way
 
-- **True gross margin**, never markup: `price = cost / (1 - margin)`. 50% floor.
+- **True gross margin**, never markup: `price = cost / (1 - margin)`. The two
+  engines run DIFFERENT margin policies on purpose: RE-10 repairs floor at 50%
+  (`RE10_MARGIN_FLOOR` - small jobs, real mobilization cost), the main remodel
+  engine targets 30% with a 22% floor (`shared/costs/pricing.ts` - competitive
+  whole-project work). Do not "unify" them.
+- **Guards run on `quotedPrice`, the number the customer sees.** Rounding to a
+  step is the LAST operation, so any floor or band check on `sellingPrice` is
+  checking a number nobody is quoted - that exact gap once put 23% of sampled
+  RE-10 lists below the margin floor. If rounding would breach the floor, round
+  UP to the next step.
+- **Pricing anomalies are alerted, not swallowed**: `logPricingAlert()` in
+  `server/services/pricingAlerts.ts` (grep logs for `[pricing-alert]`), and the
+  alert kinds ride the CRM passthrough `estimate` object so the lead itself
+  says its price needed attention.
 - **Firm price, not a range.** A range anchored agents on the low end while the
   high end made us look expensive - we earned the bottom and were judged on the
   top. Firm price at the same margin-correct number was +50% effective revenue
@@ -44,7 +73,14 @@ the owner to run it.
   handed the internal estimate, so it cannot leak a margin. Keep it that way.
 - **Nothing the customer asked for may silently vanish.** Anything not in the
   price is named and shown as excluded. This was a real bug: 7 of 20 requested
-  repairs disappeared between the review screen and the quote.
+  repairs disappeared between the review screen and the quote. It recurred in
+  a second form: repairs the customer toggled OFF on review vanished from the
+  quote, the disclosure, both emails and the CRM. Exclusions travel too.
+- **Flagged, deliberately NOT changed** (business numbers, owner's call):
+  `planningFrom` and GBP starting prices drift from engine floors (GBP
+  whole-home $180k sits above the engine's mid-range ceiling); the main
+  estimator carries no waste factors because the back-test calibration was fit
+  without them - adding waste on top would double-count it.
 
 ## RE-10 estimator - DONE, live
 
@@ -225,10 +261,13 @@ surface as the generic "We could not read those drawings"; it now maps to
    Now that production has the route, upload a real set through
    `/remodel-plans-boise` and confirm a real read reaches the confirm-
    measurements screen.
-3. Optional: add `ANTHROPIC_API_KEY` to `.env.local` so the analyze step can be
-   exercised from a dev machine. Without it `/api/plans/analyze` answers 503 and
-   the wizard shows the send-them-to-us-by-hand path, which is correct behaviour
-   but untestable ground. (Confirmed still absent: no `.env.local` in the repo.)
+3. ~~Add `ANTHROPIC_API_KEY` to `.env.local`~~ **DONE, verified 2026-08-07.**
+   The key is in `.env.local` (gitignored, never commit it) and
+   `check:re10-extraction` ran the whole chain against the live API from this
+   machine: synthetic RE-10 read in 16s, 6 repairs mapped, foundation crack
+   correctly routed to review. The owner should ROTATE this key once the
+   current project wraps, since it transited chat. Note: the tsx scripts load
+   it via `--env-file-if-exists=.env.local`; `next dev` loads it natively.
 
 **Rendering a sheet to look at it yourself** needs `pdf-to-img` (pdfjs plus a
 prebuilt canvas, no system dependencies); there is no `pdftoppm`, Ghostscript or
