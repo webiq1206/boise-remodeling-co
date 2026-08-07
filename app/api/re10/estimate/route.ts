@@ -206,7 +206,9 @@ export async function POST(request: NextRequest) {
         description: p.input.description,
         label: p.recipe.label,
         location: p.input.location ?? null,
-        quantityAssumed: p.quantityAssumed,
+        // A clamped quantity is not the customer's number any more than an
+        // assumed one is; both must display as ours, not theirs.
+        quantityAssumed: p.quantityAssumed || p.quantityClamped,
         quantity: p.quantity,
         unit: p.recipe.unit,
       })),

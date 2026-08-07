@@ -729,6 +729,15 @@ export const REPAIR_GRADE_BY_DIVISION: Record<string, number> = {
   LANDSCAPE: 0.32,
   // Protection and clean-up: a repair protects one room, not a whole site.
   "SITE REQUIREMENTS": 0.35,
+  /* The three below previously fell through to REPAIR_GRADE_DEFAULT_FACTOR
+     silently. They are pinned EXPLICITLY at that same value so nothing
+     reprices, and so the verifier can require every division a recipe touches
+     to have a researched entry - a catalog rename now fails the build instead
+     of degrading to the default without a trace. Owner: these three are the
+     ones that have not had a bespoke factor researched yet. */
+  "MECHANICAL (HVAC)": 0.42,
+  INSULATION: 0.42,
+  "SITE WORK": 0.42,
 };
 
 /** Used for any division without an explicit factor above. */
@@ -807,6 +816,15 @@ export const MARKET_PRICE_BAND: Partial<Record<RepairKind, [number, number]>> = 
   "fence-gate-repair": [280, 900],
   "gutter-repair": [120, 480],
   "safety-correction": [110, 300],
+  /* The four PRICED_WITH_CAVEAT kinds. They price into real quotes (at an
+     allowance, confirmed on site) but sat outside every commercial guard -
+     no band, no minimum sweep, no margin sweep. These bands are set around
+     the current calibrated quotes with headroom comparable to their sibling
+     kinds; OWNER: confirm against local market data when convenient. */
+  "drain-leak-repair": [350, 900],
+  "window-seal-repair": [300, 850],
+  "roof-minor-repair": [400, 1100],
+  "general-minor-repair": [150, 600],
 };
 
 /* ------------------------------------------------------------- estimating */

@@ -21,6 +21,8 @@ import {
   MARKET_PRICE_BAND,
   TRADE_LABELS,
   REVIEW_REASON_TEXT,
+  PRICED_WITH_CAVEAT,
+  REPAIR_GRADE_BY_DIVISION,
   RE10_MARGIN_FLOOR,
   RE10_MARGIN_CEILING,
   RE10_CONTINGENCY_RATE,
@@ -32,6 +34,7 @@ import {
   type Re10Context,
   type ReviewReason,
 } from "../shared/costs/re10Repairs";
+import { LINE_ITEMS } from "../shared/costs/lineItemCatalog";
 
 let checks = 0;
 let failures = 0;
@@ -46,6 +49,18 @@ const check = (cond: boolean, msg: string) => {
 const near = (a: number, b: number, tol = 0.01) => Math.abs(a - b) <= tol;
 
 const ALL_KINDS = Object.keys(RECIPES) as RepairKind[];
+
+/**
+ * Kinds the commercial guards must cover: everything that can appear in a
+ * priced quote. `alwaysReview` used to exclude five kinds wholesale, but four
+ * of them (the PRICED_WITH_CAVEAT reasons) ARE priced into real quotes at an
+ * allowance - they were the only priced kinds with no band, no minimum test
+ * and no margin sweep.
+ */
+function isCommerciallyPriced(kind: RepairKind): boolean {
+  const r = RECIPES[kind].alwaysReview;
+  return !r || (PRICED_WITH_CAVEAT as readonly string[]).includes(r);
+}
 
 /* ------------------------------------------------- 1. catalog integrity */
 
@@ -253,19 +268,36 @@ for (const ctx of CONTEXTS) {
 /* ------------------------------------- 6. crew minimums, and their absence */
 
 for (const kind of ALL_KINDS) {
-  if (RECIPES[kind].alwaysReview) continue;
+  if (!isCommerciallyPriced(kind)) continue;
   const crew = CREW_FOR_TRADE[RECIPES[kind].trade];
   const est = estimateRe10([{ id: "1", kind, description: "single tiny item", quantity: 1 }]);
   if (est.priced.length === 0) continue;
 
   // One small repair must never bill under what it costs to send that crew out.
-  // The minimum is a PRICE, so it is checked against the price - the earlier
-  // version compared it to cost and, marked up, quoted $1,505 for a light switch.
+  // The minimum is a PRICE, so it is checked against the QUOTED price - the
+  // selling price cleared it while nearest-step rounding took the quote under.
   check(
-    est.sellingPrice >= CREW_MINIMUM_PRICE[crew] - 0.01,
-    `${kind}: single-item job priced at ${Math.round(est.sellingPrice)}, under the ${crew} minimum ${CREW_MINIMUM_PRICE[crew]}`,
+    est.quotedPrice >= CREW_MINIMUM_PRICE[crew] - 0.01,
+    `${kind}: single-item job quoted at ${est.quotedPrice}, under the ${crew} minimum ${CREW_MINIMUM_PRICE[crew]}`,
   );
+}
 
+/* Multi-crew lists carry the SUM of the crew minimums, and the quote must
+   clear that sum after rounding - the exact shape the audit caught quoting
+   $500 against a $530 two-crew floor. */
+for (const pair of [
+  ["supply-valve-replace", "outlet-switch-replace"],
+  ["safety-correction", "supply-valve-replace"],
+  ["toilet-repair", "gfci-install"],
+] as const) {
+  const est = estimateRe10(pair.map((kind, i) => ({ id: String(i), kind: kind as RepairKind, description: "" })));
+  if (est.priced.length < 2) continue;
+  const crews = new Set(est.trades.map((t) => t.crew));
+  const minSum = [...crews].reduce((s2, c) => s2 + CREW_MINIMUM_PRICE[c], 0);
+  check(
+    est.quotedPrice >= minSum - 0.01,
+    `${pair.join("+")}: quoted ${est.quotedPrice} under the ${[...crews].join("+")} minimum sum ${minSum}`,
+  );
 }
 
 /* ------------------------------- 6b. THE MARKET BAND. The competitiveness guard.
@@ -288,11 +320,25 @@ for (const [kind, band] of Object.entries(MARKET_PRICE_BAND)) {
   const [lo, hi] = band as [number, number];
   const est = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "" }], bandCtx);
   if (est.priced.length === 0) continue;
-  const price = est.sellingPrice;
+  /* The QUOTED price is the market-facing number. The band constrains the
+     price before quantization; rounding to the $100 quoting step (or up past
+     a floor) may carry it at most one step beyond the researched edge. */
+  const price = est.quotedPrice;
+  const BAND_STEP_ALLOWANCE = 100;
 
-  check(price <= hi, `${kind}: quoted ${Math.round(price)} against a market ceiling of ${hi} - priced out of the job`);
-  check(price >= lo, `${kind}: quoted ${Math.round(price)} against a market floor of ${lo} - leaving money on the table`);
-  if (price >= lo && price <= hi) inBand++;
+  /* These four kinds ALWAYS sat past their researched ceilings once the real
+     quoted number was checked - the selling price passed while the $100 step
+     (or the margin-floor round-up) carried the quote over. The one-step
+     allowance is quantization, not policy: anything further out fails. */
+  check(
+    price <= hi + BAND_STEP_ALLOWANCE,
+    `${kind}: quoted ${Math.round(price)} against a market ceiling of ${hi} - priced out of the job`,
+  );
+  check(
+    price >= lo - BAND_STEP_ALLOWANCE,
+    `${kind}: quoted ${Math.round(price)} against a market floor of ${lo} - leaving money on the table`,
+  );
+  if (price >= lo - BAND_STEP_ALLOWANCE && price <= hi + BAND_STEP_ALLOWANCE) inBand++;
 
   // Margin must survive the whole recalibration. Competitiveness that costs the
   // margin floor is not competitiveness, it is a discount.
@@ -325,19 +371,24 @@ for (const [kind, band] of Object.entries(MARKET_PRICE_BAND)) {
   const est = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "" }], worstCtx);
   if (est.priced.length === 0) continue;
   check(
-    est.sellingPrice <= hi * (1 + MAX_URGENCY_PREMIUM),
-    `${kind}: worst-case rush price ${Math.round(est.sellingPrice)} is more than ` +
+    est.quotedPrice <= hi * (1 + MAX_URGENCY_PREMIUM) + 100,
+    `${kind}: worst-case rush quote ${est.quotedPrice} is more than ` +
       `${(MAX_URGENCY_PREMIUM * 100).toFixed(0)}% over the ${hi} market ceiling`,
   );
   // And urgency must actually cost more, or the uplifts are decorative.
+  // Compared on the pre-quantization price: a $30 uplift can vanish into the
+  // same $100 step without being decorative.
   const standard = estimateRe10([{ id: "1", kind: kind as RepairKind, description: "" }], bandCtx);
   check(est.sellingPrice >= standard.sellingPrice, `${kind}: a rush job priced at or below a relaxed one`);
 }
 
 /* --------------- 6c. bundled work must be cheaper per item than standalone */
 
+// Bundling economics are asserted on the pre-quantization selling price:
+// the marginal cost of one added item can legitimately round into the same
+// $100 step, and that is quantization, not a bundling failure.
 for (const kind of ALL_KINDS) {
-  if (RECIPES[kind].alwaysReview) continue;
+  if (!isCommerciallyPriced(kind)) continue;
   const solo = estimateRe10([{ id: "1", kind, description: "" }], bandCtx).sellingPrice;
   const base = Array.from({ length: 6 }, (_, i) => ({
     id: "b" + i, kind: "drywall-patch" as RepairKind, description: "", quantity: 10,
@@ -364,7 +415,7 @@ check(bigDrywall.worthwhile, "a twelve-item drywall list should clear the worthw
 // The worthwhile flag has to track the threshold exactly, because the team will
 // act on it.
 for (const kind of ALL_KINDS) {
-  if (RECIPES[kind].alwaysReview) continue;
+  if (!isCommerciallyPriced(kind)) continue;
   const est = estimateRe10([{ id: "1", kind, description: "", quantity: 1 }]);
   if (est.priced.length === 0) continue;
   check(
@@ -447,6 +498,64 @@ check(
 );
 
 /* -------------------------------------------------------------------- done */
+
+
+/* ------------------------------------------- 9. GOLDEN QUOTED SCENARIOS
+
+   Exact-dollar regression traps on the number the customer, the email and
+   the CRM carry. Every other check in this file is an invariant, and a
+   uniform repricing sails through invariants. Snapshot 2026-08-07, after the
+   quoted-price floor guard and quantity clamps. To intentionally reprice:
+   verify the new numbers by hand, then update this table in the same commit. */
+{
+  const goldCtx: Re10Context = { occupancy: "vacant", access: "standard", daysToDeadline: 45, hasInspectionReport: true };
+  const mk = (list: [RepairKind, number | null][]): RepairItemInput[] =>
+    list.map(([kind, quantity], i) => ({ id: String(i), description: kind, kind, quantity }));
+
+  const GOLDEN: { name: string; ctx: Re10Context; list: [RepairKind, number | null][]; quoted: number }[] = [
+    { name: "single small repair", ctx: goldCtx, list: [["drywall-patch", null]], quoted: 400 },
+    { name: "two-crew minimum-bound pair", ctx: goldCtx, list: [["supply-valve-replace", null], ["outlet-switch-replace", null]], quoted: 600 },
+    { name: "medium mixed list", ctx: goldCtx, list: [["drywall-repaint-wall", 2], ["toilet-repair", 1], ["gfci-install", 3], ["caulking-weatherproofing", 40]], quoted: 1200 },
+    { name: "large multi-trade list", ctx: goldCtx, list: [["trim-repair", 24], ["interior-door-replace", 2], ["flooring-patch", 30], ["faucet-replace", 2], ["light-fixture-replace", 3], ["siding-repair", 60]], quoted: 3700 },
+    { name: "caveat kind in a real list", ctx: goldCtx, list: [["general-minor-repair", null], ["drywall-patch", 8]], quoted: 600 },
+    { name: "occupied rush with uplifts", ctx: { occupancy: "occupied", access: "difficult", daysToDeadline: 3, hasInspectionReport: false }, list: [["drywall-patch", 12], ["interior-door-adjust", 2]], quoted: 800 },
+  ];
+
+  for (const g of GOLDEN) {
+    const est = estimateRe10(mk(g.list), g.ctx);
+    check(
+      est.quotedPrice === g.quoted,
+      `golden "${g.name}": quoted ${est.quotedPrice}, expected ${g.quoted}. If this repricing is intentional, update the golden in the same commit.`,
+    );
+  }
+}
+
+/* ------------------------- 10. GRADE FACTORS RESOLVE, EXPLICITLY, ALWAYS
+
+   REPAIR_GRADE_BY_DIVISION is keyed on the catalog's division STRINGS with a
+   silent 0.42 fallback. A catalog rename used to degrade a researched factor
+   to the default with no failure anywhere. Every key must name a real
+   division, and every division a recipe touches must carry an explicit entry. */
+{
+  const catalogDivisions = new Set(LINE_ITEMS.map((li) => li.division));
+  for (const key of Object.keys(REPAIR_GRADE_BY_DIVISION)) {
+    check(catalogDivisions.has(key), `grade factor key "${key}" matches no catalog division - a rename broke it`);
+  }
+  const usedDivisions = new Set<string>();
+  for (const recipe of Object.values(RECIPES)) {
+    for (const c of recipe.components) {
+      for (const li of LINE_ITEMS) {
+        if (li.code === c.code || li.code === `${c.code}-M` || li.code === `${c.code}-L`) usedDivisions.add(li.division);
+      }
+    }
+  }
+  for (const d of usedDivisions) {
+    check(
+      d in REPAIR_GRADE_BY_DIVISION,
+      `division "${d}" is priced by a recipe but has no explicit grade factor - it is silently taking the 0.42 default`,
+    );
+  }
+}
 
 console.log(
   failures === 0

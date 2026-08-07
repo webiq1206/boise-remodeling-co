@@ -83,6 +83,16 @@ for (const project of PROJECTS) {
         new Set(codes).size === codes.length,
         `${project}/${quality}@${sqft}: a cost code appears more than once in the takeoff`,
       );
+      /* The check above inspects buildInternalEstimate's OUTPUT, which is
+         already deduplicated - it can never fail. The dedup itself records
+         every collision it resolved as a warning, and a collision means one
+         rule's quantity was silently discarded (the addition 03-08-02 bug
+         dropped either the exhaust fan or the HVAC tie-in this way). Zero
+         warnings is the invariant that actually bites. */
+      check(
+        internal.warnings.length === 0,
+        `${project}/${quality}@${sqft}: engine warnings present - ${internal.warnings.map((w) => w.message).join(" | ")}`,
+      );
 
       const range = buildPlanningRange(internal, project, quality, sqft);
 
@@ -344,6 +354,71 @@ for (const project of PROJECTS) {
         `${project}/${quality} @ ${usd(budget)}: budget copy uses discouraging framing`,
       );
     }
+  }
+}
+
+/* ============================================= 8. GOLDEN QUOTED RANGES
+   THE REGRESSION TRAP THIS SUITE WAS MISSING. Every check above is an
+   invariant, and invariants cannot notice a uniform repricing: double every
+   unit cost and monotonicity, margins and reconciliation all still hold.
+   These are the exact customer-facing numbers from resolveQuotedRange - the
+   same function the calculator page, both lead routes, and the emails use -
+   at every project x finish baseline. A UI refactor, a catalog edit, or a
+   rule change that moves ANY quoted price now fails the build, which is the
+   point: repricing must be a decision, recorded here, never a side effect.
+
+   Snapshot date 2026-08-07, after the scope-rule corrections (bathroom chip
+   gating, hardware double-count, addition code collisions). To intentionally
+   reprice: verify the new numbers by hand, then update this table in the
+   same commit as the change that moves them. */
+const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
+  kitchen: {
+    refresh: [13500, 18000],
+    "mid-range": [28000, 38000],
+    "high-end": [49000, 66000],
+    luxury: [78000, 106000],
+  },
+  bathroom: {
+    refresh: [9000, 12500],
+    "mid-range": [15000, 20500],
+    "high-end": [24000, 32000],
+    luxury: [37000, 50000],
+  },
+  "whole-home": {
+    refresh: [77000, 104000],
+    "mid-range": [125000, 170000],
+    "high-end": [235000, 320000],
+    luxury: [370000, 500000],
+  },
+  addition: {
+    "mid-range": [81000, 109000],
+    "high-end": [105000, 145000],
+    luxury: [150000, 200000],
+  },
+  adu: {
+    "mid-range": [145000, 195000],
+    "high-end": [200000, 270000],
+    luxury: [285000, 385000],
+  },
+  basement: {
+    "mid-range": [52000, 70000],
+    "high-end": [79000, 107000],
+    luxury: [120000, 165000],
+  },
+};
+
+for (const project of PROJECTS) {
+  const goldens = GOLDEN_QUOTED[project];
+  if (!goldens) continue;
+  const base = BASELINE_SQFT[project];
+  for (const [quality, [low, high]] of Object.entries(goldens)) {
+    const r = resolveQuotedRange(project, quality, base, {});
+    check(r !== null, `${project}/${quality}: golden baseline failed to resolve`);
+    if (!r) continue;
+    check(
+      r.priceLow === low && r.priceHigh === high,
+      `${project}/${quality} @ ${base}sf: quoted ${usd(r.priceLow)}-${usd(r.priceHigh)} does not match the golden ${usd(low)}-${usd(high)}. If this repricing is intentional, update GOLDEN_QUOTED in the same commit.`,
+    );
   }
 }
 

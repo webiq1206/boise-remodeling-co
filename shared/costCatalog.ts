@@ -298,6 +298,29 @@ function quantityFor(basis: QuantityBasis, sqft: number): number {
  * directly, and the remainder of the total is distributed across the still
  * derived components in proportion to their shares.
  */
+/**
+ * Bounds on an admin-entered unit-cost override.
+ *
+ * Zero is rejected because a $0 unit cost does not mean "free" anywhere in
+ * this model - it silently removes the component's cost while keeping its
+ * line, and the redistribution then misstates every other line. The ceiling
+ * exists because `remaining = max(0, total - measuredCost)`: one runaway
+ * override larger than the whole project collapses every derived line to $0
+ * and makes the displayed total diverge from the quoted range with no error
+ * anywhere. 250k comfortably exceeds any real installed unit cost.
+ */
+export const OVERRIDE_MIN_UNIT_COST = 0.01;
+export const OVERRIDE_MAX_UNIT_COST = 250_000;
+
+export function isValidOverrideValue(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    value >= OVERRIDE_MIN_UNIT_COST &&
+    value <= OVERRIDE_MAX_UNIT_COST
+  );
+}
+
 export function buildTakeoff(
   project: ProjectType,
   finish: FinishLevel,
@@ -313,7 +336,7 @@ export function buildTakeoff(
 ): Takeoff {
   const components = getComponents(project).map((component) => {
     const override = overrides?.[component.id];
-    return override !== undefined && Number.isFinite(override) && override >= 0
+    return isValidOverrideValue(override)
       ? { ...component, unitCost: override }
       : component;
   });

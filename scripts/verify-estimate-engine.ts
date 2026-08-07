@@ -558,6 +558,28 @@ for (const project of projects) {
         takeoff.lines.every((line) => line.cost >= 0 && Number.isFinite(line.cost)),
         `${project}/${finish} @${sqft}sf: takeoff produced a negative or non-finite line`,
       );
+
+      /* WITH AN ADMIN OVERRIDE APPLIED. Every check above ran against catalog
+         defaults only, so a bad database override was invisible to every build
+         gate. A modest real override (1.5x the derived unit cost of the first
+         direct line) must keep the takeoff reconciling and every line sane -
+         the runaway-override case is excluded at the validation boundary
+         (isValidOverrideValue), which is asserted separately below. */
+      const firstDirect = takeoff.lines.find((l) => l.group === "direct" && l.unitCost > 0);
+      if (firstDirect) {
+        const overridden = buildTakeoff(project, finish, sqft, midpoint, {
+          [firstDirect.id]: firstDirect.unitCost * 1.5,
+        });
+        const oDrift = Math.abs(overridden.total - midpoint);
+        check(
+          oDrift <= overridden.lines.length,
+          `${project}/${finish} @${sqft}sf: takeoff with an override on "${firstDirect.id}" drifts ${oDrift.toFixed(2)} from midpoint`,
+        );
+        check(
+          overridden.lines.every((line) => line.cost >= 0 && Number.isFinite(line.cost)),
+          `${project}/${finish} @${sqft}sf: override takeoff produced a negative or non-finite line`,
+        );
+      }
       sweepChecks++;
 
       // CLIENT VIEW. Project management and overhead must never appear as

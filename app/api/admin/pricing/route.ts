@@ -22,6 +22,9 @@ import {
   COST_CATALOG_VERSION,
   buildTakeoff,
   getComponents,
+  isValidOverrideValue,
+  OVERRIDE_MIN_UNIT_COST,
+  OVERRIDE_MAX_UNIT_COST,
   type UnitCostOverrides,
 } from "@/shared/costCatalog";
 import {
@@ -71,7 +74,7 @@ export async function readUnitCostOverrides(): Promise<UnitCostOverrides> {
     if (!parsed || typeof parsed !== "object") return {};
     const out: UnitCostOverrides = {};
     for (const [id, value] of Object.entries(parsed as Record<string, unknown>)) {
-      if (typeof value === "number" && Number.isFinite(value) && value >= 0) out[id] = value;
+      if (isValidOverrideValue(value)) out[id] = value;
     }
     return out;
   } catch {
@@ -178,9 +181,14 @@ export async function PATCH(request: Request) {
     delete overrides[componentId];
   } else {
     const unitCost = Number(body.unitCost);
-    if (!Number.isFinite(unitCost) || unitCost < 0) {
+    if (!isValidOverrideValue(unitCost)) {
       return NextResponse.json(
-        { error: "unitCost must be a non-negative number, or null to clear" },
+        {
+          error:
+            `unitCost must be a number between ${OVERRIDE_MIN_UNIT_COST} and ${OVERRIDE_MAX_UNIT_COST}, ` +
+            "or null to clear. Zero is not accepted: it removes the component's cost while keeping its line, " +
+            "which misstates the whole breakdown.",
+        },
         { status: 400 }
       );
     }

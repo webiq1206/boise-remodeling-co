@@ -104,9 +104,13 @@ for (const contact of CONTACTS) {
       ["contingency", est.contingency],
       ["sellingPrice", est.sellingPrice],
     ] as const) {
+      /* An internal figure that happens to EQUAL the displayed quote is not a
+         leak - when a crew minimum binds on a round total, sellingPrice ==
+         quotedPrice == the number the customer is supposed to see, and the
+         old check would have failed the build on a legitimate email. Only a
+         figure the customer has no reason to see is a leak. */
+      if (Math.round(value) === est.quotedPrice) continue;
       const rendered = "$" + Math.round(value).toLocaleString("en-US");
-      // The selling price legitimately equals nothing the customer sees (the
-      // range is rounded off it), so a bare match is a real leak.
       check(!ct.includes(rendered), `${label}: customer email exposes ${name} (${rendered})`);
     }
 
