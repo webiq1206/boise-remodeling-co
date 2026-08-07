@@ -76,6 +76,8 @@ export function buildRe10CustomerEmail(
     validDays: number;
     categories: { trade: string; itemCount: number; items: { description: string; quantityAssumed: boolean; quantity?: number; unit?: string }[] }[];
     needsOnsite: { description: string; why: string }[];
+    /** Repairs the customer removed on the review screen. Named, not vanished. */
+    excluded?: { description: string }[];
     uncertainty: string[];
     assumptions: string[];
   },
@@ -103,6 +105,17 @@ export function buildRe10CustomerEmail(
           <p style="margin:0 0 10px;color:${EMAIL_BRAND.textMuted};font-size:13px;line-height:1.6;">These are not in the price above. We would rather tell you that now than have it appear at the walkthrough.</p>
           <ul style="margin:0;padding-left:18px;color:${EMAIL_BRAND.textMuted};font-size:13px;line-height:1.6;">
             ${view.needsOnsite.map((n) => `<li><span style="color:${EMAIL_BRAND.text};">${escapeHtml(n.description)}</span> - ${escapeHtml(n.why)}</li>`).join("")}
+          </ul>
+        </div>`
+      : "";
+
+  const excluded =
+    (view.excluded?.length ?? 0) > 0
+      ? `<div style="margin:28px 0;border:1px solid ${EMAIL_BRAND.hairline};border-radius:6px;padding:18px;">
+          <p style="${SECTION_TITLE}">Removed at your request</p>
+          <p style="margin:0 0 10px;color:${EMAIL_BRAND.textMuted};font-size:13px;line-height:1.6;">You took these off the list before pricing, so they are not in the number above. Add any of them back and we will re-price.</p>
+          <ul style="margin:0;padding-left:18px;color:${EMAIL_BRAND.textMuted};font-size:13px;line-height:1.6;">
+            ${(view.excluded ?? []).map((x) => `<li>${escapeHtml(x.description)}</li>`).join("")}
           </ul>
         </div>`
       : "";
@@ -137,6 +150,7 @@ export function buildRe10CustomerEmail(
     </div>
 
     ${onsite}
+    ${excluded}
     ${narrowing}
 
     <div style="margin:28px 0;">
@@ -180,6 +194,8 @@ export interface Re10AdminExtras {
   missingDocuments?: string[];
   unmapped?: { verbatim: string; reason?: string }[];
   documentNotes?: string[];
+  /** Repairs the customer removed on the review screen. */
+  excluded?: { description: string }[];
 }
 
 export function buildRe10AdminEmail(
@@ -187,6 +203,16 @@ export function buildRe10AdminEmail(
   est: Re10Estimate,
   extras: Re10AdminExtras = {},
 ): string {
+  const excludedBlock =
+    extras.excluded && extras.excluded.length > 0
+      ? `<div style="margin:20px 0;padding:12px 14px;border:1px solid ${EMAIL_BRAND.hairline};">
+          <p style="${SECTION_TITLE}">Removed by the customer on review (${extras.excluded.length})</p>
+          <ul style="margin:0;padding-left:18px;font-size:13px;">
+            ${extras.excluded.map((x) => `<li style="margin:4px 0;color:${EMAIL_BRAND.text};">${escapeHtml(x.description)}</li>`).join("")}
+          </ul>
+        </div>`
+      : "";
+
   const unmappedBlock =
     extras.unmapped && extras.unmapped.length > 0
       ? `<div style="margin:20px 0;padding:12px 14px;border:1px solid #b45309;background:#fffbeb;">
@@ -321,6 +347,7 @@ export function buildRe10AdminEmail(
 
     ${review}
     ${unmappedBlock}
+    ${excludedBlock}
     ${docsBlock}
     ${notesBlock}
     ${warnings}

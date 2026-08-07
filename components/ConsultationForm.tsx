@@ -151,6 +151,20 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
       }
     }
     applyPrefill();
+
+    /* A wizard dead-end (an RE-10 where nothing was priceable) hands its
+       context here so the visitor does not retype what the upload already
+       said. Prefills the note - visible and editable, never hidden. */
+    try {
+      const ctx = sessionStorage.getItem("brc_consult_context");
+      if (ctx && !form.getValues("message")) {
+        form.setValue("message", ctx.slice(0, 2000), { shouldValidate: false });
+        setShowNote(true);
+      }
+    } catch {
+      /* storage unavailable - nothing to prefill */
+    }
+
     window.addEventListener(PREFILL_UPDATED_EVENT, applyPrefill);
     return () => window.removeEventListener(PREFILL_UPDATED_EVENT, applyPrefill);
   }, [form]);
@@ -259,6 +273,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
     onSuccess: (_data, variables) => {
       setSuccess(true);
       sessionStorage.removeItem("brc_estimate");
+        sessionStorage.removeItem("brc_consult_context");
       // Conversion event: a submitted consultation request is the PRIMARY lead
       // (estimate on the site, then submit). GA generate_lead + Meta Lead. The
       // Meta Lead carries the visitor's email + phone, which the server-side

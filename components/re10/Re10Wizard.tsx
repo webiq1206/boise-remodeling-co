@@ -27,6 +27,7 @@ import {
 import { RE10_EVENTS } from "@/shared/re10/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
+import { useModals } from "@/components/modals/modalsContext";
 import { postFormWithProgress, type UploadStatus } from "@/lib/uploadWithProgress";
 import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
 import {
@@ -190,9 +191,41 @@ export function Re10Wizard() {
   const [closingDate, setClosingDate] = useState("");
   const [repairDeadline, setRepairDeadline] = useState("");
   const [occupancy, setOccupancy] = useState<"occupied" | "vacant" | "unknown">("unknown");
+  /* The engine has always priced an access uplift (limited/difficult), but no
+     client ever asked the question, so every estimate silently priced as
+     "standard". Asking is the fix - this is exactly the "collect what
+     actually affects price" rule. */
+  const [access, setAccess] = useState<"standard" | "limited" | "difficult">("standard");
   const [notes, setNotes] = useState("");
 
   const [result, setResult] = useState<EstimateResponse | null>(null);
+  /* True when the last analysis stored the files but priced nothing - the
+     dead-end that used to produce zero lead and zero notification. */
+  const [unpriceable, setUnpriceable] = useState(false);
+  const { openConsult } = useModals();
+
+  /* The hand-off from the dead end. The files ARE stored by the analyze step;
+     what used to be missing was any way for a lead to exist. The consult form
+     is the canonical lead path, so the context (what was asked for, where the
+     documents live) rides into its note field rather than a new lead system. */
+  function sendUnpriceableToTeam() {
+    const parts: string[] = ["RE-10 uploaded but nothing was automatically priceable - please price by hand."];
+    if (extraction && extraction.unmapped.length > 0) {
+      parts.push("Requests read from the document:");
+      for (const u of extraction.unmapped.slice(0, 20)) parts.push(`- ${u.verbatim}`);
+    }
+    if (documents.length > 0) {
+      parts.push("Uploaded documents:");
+      for (const d of documents) parts.push(`- ${d.filename}: ${d.url}`);
+    }
+    try {
+      sessionStorage.setItem("brc_consult_context", parts.join("\n"));
+    } catch {
+      /* storage unavailable - the modal still opens; they can describe it */
+    }
+    trackEvent(RE10_EVENTS.onsiteRequested, { from: "unpriceable-upload" });
+    openConsult();
+  }
 
   useEffect(() => {
     trackEvent(RE10_EVENTS.started);
@@ -253,6 +286,9 @@ export function Re10Wizard() {
       if (p.occupancy === "occupied" || p.occupancy === "vacant" || p.occupancy === "unknown") {
         setOccupancy(p.occupancy);
       }
+      if (p.access === "standard" || p.access === "limited" || p.access === "difficult") {
+        setAccess(p.access);
+      }
       if (typeof p.notes === "string") setNotes(p.notes);
       if (p.result) setResult(p.result);
 
@@ -281,7 +317,7 @@ export function Re10Wizard() {
           v: 1,
           step, extraction, attachedOnly, documents, repairs,
           name, email, phone, preferredContact, role, brokerage,
-          address, closingDate, repairDeadline, occupancy, notes, result,
+          address, closingDate, repairDeadline, occupancy, access, notes, result,
         }),
       );
     } catch {
@@ -291,7 +327,7 @@ export function Re10Wizard() {
     progressRestored,
     step, extraction, attachedOnly, documents, repairs,
     name, email, phone, preferredContact, role, brokerage,
-    address, closingDate, repairDeadline, occupancy, notes, result,
+    address, closingDate, repairDeadline, occupancy, access, notes, result,
   ]);
 
   // A file dropped anywhere except the box must not navigate the page away.
@@ -373,6 +409,7 @@ export function Re10Wizard() {
         return;
       }
       const extracted = data as ExtractionResult;
+      setUnpriceable(false);
       setExtraction(extracted);
       setDocuments(Array.isArray(data.stored) ? data.stored : []);
       setAttachedOnly(Array.isArray(data.attachedOnly) ? data.attachedOnly : []);
@@ -393,6 +430,7 @@ export function Re10Wizard() {
       );
 
       if (extracted.repairs.length === 0) {
+        setUnpriceable(true);
         const reason = !extracted.looksLikeRe10
           ? "not-a-re10"
           : extracted.unmapped.length > 0
@@ -506,6 +544,14 @@ export function Re10Wizard() {
           unmapped: extraction?.unmapped ?? [],
           documentNotes: extraction?.documentNotes ?? [],
           notes: notes.trim() || undefined,
+          // The customer's own removals travel too - anything not in the
+          // price is named, including the things they excluded themselves.
+          excluded: repairs
+            .filter((r) => !r.included)
+            .map((r) => ({ description: r.verbatim })),
+          looksLikeRe10: extraction?.looksLikeRe10,
+          attachedOnly,
+          access,
         }),
       });
       const data = await res.json();
@@ -614,6 +660,27 @@ export function Re10Wizard() {
               status={uploadStatus}
               processingLabel="Reading your documents..."
             />
+
+            {unpriceable ? (
+              <div
+                className="mt-5 rounded-md border border-accent-legible/40 bg-accent-legible/[0.07] p-4"
+                data-testid="notice-re10-unpriceable"
+              >
+                <p className="text-[13.5px] leading-relaxed text-inverse-foreground mb-3">
+                  Your documents are stored with us either way. Leave your details and our team
+                  will price the list by hand - usually within one business day.
+                </p>
+                <button
+                  type="button"
+                  onClick={sendUnpriceableToTeam}
+                  data-testid="button-re10-send-to-team"
+                  className="inline-flex min-h-11 items-center rounded-md border border-accent-legible/50 bg-inverse-foreground/[0.06] px-4 text-[14px] text-inverse-foreground transition-colors hover:border-accent-legible hover:bg-inverse-foreground/[0.1]"
+                >
+                  Send this to our team
+                </button>
+              </div>
+            ) : null}
+
             <StickyStepNav
               onNext={analyze}
               nextLabel="Review my repair list"
@@ -901,6 +968,22 @@ export function Re10Wizard() {
                   onChange={setOccupancy}
                   columns={3}
                   testIdPrefix="re10-occupancy"
+                />
+              </div>
+
+              <div>
+                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Getting our crews in is</p>
+                <SegmentedControl
+                  label="Getting our crews in is"
+                  options={[
+                    { value: "standard", label: "Straightforward", sub: "Lockbox or someone home" },
+                    { value: "limited", label: "Limited windows", sub: "Showings, tenants" },
+                    { value: "difficult", label: "Tricky", sub: "Restricted or coordinated" },
+                  ]}
+                  value={access}
+                  onChange={setAccess}
+                  columns={3}
+                  testIdPrefix="re10-access"
                 />
               </div>
 

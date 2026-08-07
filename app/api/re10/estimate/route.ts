@@ -106,6 +106,24 @@ const bodySchema = z
       .optional(),
     /** Extractor observations worth putting in front of the estimator. */
     documentNotes: z.array(z.string().max(1000)).max(20).optional(),
+    /**
+     * Repairs the customer toggled OFF on the review screen.
+     *
+     * The one exclusion channel the customer drives used to vanish entirely:
+     * only the kept repairs were posted, so a removed item was absent from
+     * the price, the customer's copy, the disclosure, the admin email and
+     * the CRM - with only an analytics count surviving. CLAUDE.md's rule is
+     * that anything not in the price is named and shown as excluded, and
+     * that has to include the things the customer excluded themselves.
+     */
+    excluded: z
+      .array(z.object({ description: z.string().max(2000) }))
+      .max(80)
+      .optional(),
+    /** Whether the analyze step judged the upload to read as an RE-10. */
+    looksLikeRe10: z.boolean().optional(),
+    /** Files stored for the team but not machine-readable (docx, HEIC). */
+    attachedOnly: z.array(z.string().max(300)).max(12).optional(),
   })
   .refine((b) => (b.preferredContact === "email" ? Boolean(b.email) : true), {
     message: "An email address is required when email is the preferred contact method.",
@@ -209,6 +227,9 @@ export async function POST(request: NextRequest) {
           "This one does not fit the categories we price automatically, so we price it after seeing it.",
       })),
     ],
+    // The customer's own removals, restated so the quote says what it does
+    // NOT cover in the same breath as what it does.
+    excluded: body.excluded ?? [],
     uncertainty: estimate.uncertainty,
     assumptions: estimate.assumptions,
   };
@@ -233,6 +254,9 @@ export async function POST(request: NextRequest) {
     documentCount: (body.documents ?? []).length || 1,
     repairDeadline: body.repairDeadline ?? null,
     occupancy: body.occupancy,
+    excluded: body.excluded,
+    attachedOnly: body.attachedOnly,
+    looksLikeRe10: body.looksLikeRe10,
   });
 
   const contact: Re10Contact = {
@@ -260,6 +284,8 @@ export async function POST(request: NextRequest) {
     documents: body.documents ?? [],
     unmapped: body.unmapped ?? [],
     documentNotes: body.documentNotes ?? [],
+    excluded: body.excluded ?? [],
+    attachedOnly: body.attachedOnly ?? [],
   });
 
   return NextResponse.json({

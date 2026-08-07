@@ -62,6 +62,10 @@ export interface Re10DeliveryInput {
   unmapped?: { verbatim: string; reason?: string }[];
   /** What the extractor noticed about the document itself. */
   documentNotes?: string[];
+  /** Repairs the customer toggled OFF on the review screen. Named everywhere. */
+  excluded?: { description: string }[];
+  /** Files stored for the team but not machine-readable. */
+  attachedOnly?: string[];
 }
 
 export interface Re10DeliveryResult {
@@ -156,6 +160,16 @@ function buildRe10Notes(input: Re10DeliveryInput): string {
   if (input.unmapped && input.unmapped.length > 0) {
     lines.push(``, `NOT IN THE RANGE - NO CATEGORY MATCHED (${input.unmapped.length})`);
     for (const u of input.unmapped) lines.push(`  ${u.verbatim}${u.reason ? ` - ${u.reason}` : ""}`);
+  }
+
+  if (input.excluded && input.excluded.length > 0) {
+    lines.push(``, `REMOVED BY THE CUSTOMER ON REVIEW (${input.excluded.length})`);
+    for (const x of input.excluded) lines.push(`  ${x.description}`);
+  }
+
+  if (input.attachedOnly && input.attachedOnly.length > 0) {
+    lines.push(``, `STORED BUT NOT MACHINE-READABLE (${input.attachedOnly.length})`);
+    for (const f of input.attachedOnly) lines.push(`  ${f}`);
   }
 
   if (input.documentNotes && input.documentNotes.length > 0) {
@@ -320,6 +334,7 @@ export async function deliverRe10Lead(input: Re10DeliveryInput): Promise<Re10Del
     const adminHtml = buildRe10AdminEmail(contact, estimate, {
       unmapped: input.unmapped,
       documentNotes: input.documentNotes,
+      excluded: input.excluded,
       attached: attachments.map((a) => a.filename),
       missingDocuments: missing,
     });

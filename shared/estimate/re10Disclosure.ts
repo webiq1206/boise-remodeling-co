@@ -30,6 +30,10 @@ export interface Re10DisclosureInput {
   documentCount?: number;
   /** Repairs the customer typed in themselves rather than us reading them. */
   manuallyAdded?: string[];
+  /** Repairs the customer toggled OFF on the review screen. */
+  excluded?: { description: string }[];
+  /** Files stored for the team but not machine-readable (docx, HEIC). */
+  attachedOnly?: string[];
   repairDeadline?: string | null;
   occupancy?: "occupied" | "vacant" | "unknown";
 }
@@ -254,6 +258,31 @@ export function buildRe10Disclosure(input: Re10DisclosureInput): Disclosure {
       docLabel,
       "It is not in the price below.",
       "We will price it by hand. Call us and we will walk through it.",
+    );
+  }
+
+  /* THE CUSTOMER'S OWN EXCLUSIONS. The review screen lets them remove a
+     repair before pricing, and that removal used to erase the item from every
+     downstream record. An excluded repair is exactly the thing the disclosure
+     exists to name: it is in the document, it is not in the price, and the
+     customer chose that. */
+  for (const [i, x] of (input.excluded ?? []).entries()) {
+    b.item(
+      `customer-excluded-${i}`,
+      x.description,
+      "excluded",
+      "Removed at your request on the review screen, so it is not in this price. Add it back any time and we will re-price.",
+      "toggled off by the customer before pricing",
+    );
+  }
+
+  for (const [i, f] of (input.attachedOnly ?? []).entries()) {
+    b.gap(
+      `attached-only-${i}`,
+      `"${f}" was stored for our team but could not be read automatically`,
+      docLabel,
+      "Anything inside it is not reflected in this price.",
+      "We review it by hand; mention anything important from it in your notes.",
     );
   }
 
