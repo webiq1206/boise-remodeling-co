@@ -168,6 +168,10 @@ async function main(): Promise<void> {
     check(typeof item?.quantity === "number" && item.quantity < 99_000, `absurd EA quantity must be clamped, got ${item?.quantity}`);
     check(item?.quantityAssumed === true, "a clamped quantity must be flagged quantityAssumed so the customer sees it is not their number");
     check(huge.json?.price < IMPLAUSIBLE_QUOTE_CEILING, `clamped quote must stay plausible, got ${huge.json?.price}`);
+    check(
+      huge.alerts.some((a) => a.includes("quantity-clamped")),
+      "clamping a quantity must fire a quantity-clamped pricing alert",
+    );
   }
 
   {

@@ -14,6 +14,11 @@ import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { deliverRe10Lead } from "@/server/services/re10Lead";
 import { buildRe10Disclosure } from "@/shared/estimate/re10Disclosure";
 import type { Re10Contact } from "@/server/services/re10Email";
+import {
+  IMPLAUSIBLE_QUOTE_CEILING,
+  logPricingAlert,
+  type PricingAlertKind,
+} from "@/server/services/pricingAlerts";
 
 /**
  * The gated step: contact details in, planning range out.
@@ -193,6 +198,39 @@ export async function POST(request: NextRequest) {
     hasInspectionReport: body.hasInspectionReport ?? false,
   });
 
+  // Anomalies are alerted AND ride the CRM record, so the person working the
+  // lead sees that this price needed attention without going log-diving.
+  const pricingAlerts: PricingAlertKind[] = [];
+  const clamped = estimate.priced.filter((p) => p.quantityClamped);
+  if (clamped.length > 0) {
+    pricingAlerts.push("quantity-clamped");
+    logPricingAlert("quantity-clamped", {
+      route: "re10-estimate",
+      items: clamped.map((p) => ({
+        kind: p.input.kind,
+        requested: p.input.quantity,
+        used: p.quantity,
+      })),
+    });
+  }
+  if (estimate.priced.length > 0 && estimate.quotedPrice <= 0) {
+    pricingAlerts.push("zero-total");
+    logPricingAlert("zero-total", {
+      route: "re10-estimate",
+      pricedCount: estimate.priced.length,
+      quotedPrice: estimate.quotedPrice,
+    });
+  }
+  if (estimate.quotedPrice > IMPLAUSIBLE_QUOTE_CEILING) {
+    pricingAlerts.push("implausible-total");
+    logPricingAlert("implausible-total", {
+      route: "re10-estimate",
+      quotedPrice: estimate.quotedPrice,
+      ceiling: IMPLAUSIBLE_QUOTE_CEILING,
+      pricedCount: estimate.priced.length,
+    });
+  }
+
   // CUSTOMER-FACING SHAPE. Range, categories, scope, caveats. No cost, no
   // margin, no line item, no mention of what anything cost us.
   const customerView = {
@@ -288,6 +326,7 @@ export async function POST(request: NextRequest) {
     documentNotes: body.documentNotes ?? [],
     excluded: body.excluded ?? [],
     attachedOnly: body.attachedOnly ?? [],
+    pricingAlerts,
   });
 
   return NextResponse.json({

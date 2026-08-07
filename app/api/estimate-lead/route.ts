@@ -40,7 +40,7 @@ import {
   buildProjectGoals,
 } from "@/server/services/leadRecord";
 import { formatUsd, type PropertyEnrichment } from "@/server/services/consultationEmail";
-import { logPricingAlert } from "@/server/services/pricingAlerts";
+import { IMPLAUSIBLE_QUOTE_CEILING, logPricingAlert } from "@/server/services/pricingAlerts";
 
 const refinementsSchema = z
   .object({
@@ -101,7 +101,7 @@ const bodySchema = z.object({
 
 function verifyEstimate(
   estimate: z.infer<typeof estimateSchema>
-): VerifiedEstimate | null {
+, alertKinds: string[]): VerifiedEstimate | null {
   const sizeConfig = getProjectSizeConfig(estimate.project);
   // CLAMP rather than bail. Returning null here made the route insert a lead
   // with every estimate field empty while still telling the visitor
@@ -112,6 +112,7 @@ function verifyEstimate(
   const requestedSqft = estimate.sqft;
   const sqft = Math.min(sizeConfig.max, Math.max(sizeConfig.min, estimate.sqft));
   if (sqft !== requestedSqft) {
+    alertKinds.push("estimate-unresolvable");
     logPricingAlert("estimate-unresolvable", {
       route: "estimate-lead",
       reason: "sqft-out-of-bounds-clamped",
@@ -146,12 +147,37 @@ function verifyEstimate(
     estimate.priceLow !== recomputed.priceLow ||
     estimate.priceHigh !== recomputed.priceHigh
   ) {
+    alertKinds.push("recompute-mismatch");
     logPricingAlert("recompute-mismatch", {
       route: "estimate-lead",
       clientLow: estimate.priceLow,
       clientHigh: estimate.priceHigh,
       serverLow: recomputed.priceLow,
       serverHigh: recomputed.priceHigh,
+      project: estimate.project,
+      finish: estimate.finish,
+      sqft: estimate.sqft,
+    });
+  }
+
+  // The engine cannot produce these; if one appears, something upstream of
+  // the price is broken and the lead must say so rather than look normal.
+  if (recomputed.priceLow <= 0 || recomputed.priceHigh <= 0) {
+    alertKinds.push("zero-total");
+    logPricingAlert("zero-total", {
+      route: "estimate-lead",
+      priceLow: recomputed.priceLow,
+      priceHigh: recomputed.priceHigh,
+      project: estimate.project,
+      finish: estimate.finish,
+      sqft: estimate.sqft,
+    });
+  } else if (recomputed.priceHigh > IMPLAUSIBLE_QUOTE_CEILING) {
+    alertKinds.push("implausible-total");
+    logPricingAlert("implausible-total", {
+      route: "estimate-lead",
+      priceHigh: recomputed.priceHigh,
+      ceiling: IMPLAUSIBLE_QUOTE_CEILING,
       project: estimate.project,
       finish: estimate.finish,
       sqft: estimate.sqft,
@@ -187,7 +213,8 @@ export async function POST(request: NextRequest) {
     }
 
     const data = parsed.data;
-    const estimate = verifyEstimate(data.estimate);
+    const pricingAlertKinds: string[] = [];
+    const estimate = verifyEstimate(data.estimate, pricingAlertKinds);
 
     if (db) {
       try {
@@ -253,7 +280,12 @@ export async function POST(request: NextRequest) {
       // The homeowner's own words stay in finalNotes; the estimate record goes
       // to estimateSummary, which the dashboard sizes for it (20k vs 2k).
       finalNotes: undefined,
-      estimate: estimate ? buildLeadEstimateRecord(estimate, unitCostOverrides) : undefined,
+      estimate: estimate
+        ? {
+            ...buildLeadEstimateRecord(estimate, unitCostOverrides),
+            ...(pricingAlertKinds.length > 0 ? { pricingAlerts: pricingAlertKinds } : {}),
+          }
+        : undefined,
       // Zoning, lot size, assessed value, owner and occupancy as structured
       // fields, alongside the same rows the admin email renders.
       property: buildLeadPropertyRecord(crmProfile),

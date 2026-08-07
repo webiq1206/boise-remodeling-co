@@ -31,6 +31,13 @@ import {
  * estimator's copy or scope changes, the CRM record follows automatically.
  */
 export interface LeadEstimateRecord {
+  /**
+   * Pricing-alert kinds the route raised while verifying this estimate
+   * (recompute mismatch, clamped sqft, zero or implausible total). Set by the
+   * route, not here, because only the route saw the client's original numbers.
+   * Rides the CRM passthrough so the team sees the price needed attention.
+   */
+  pricingAlerts?: string[];
   projectType: string;
   projectLabel: string;
   /** The layout/type card chosen, e.g. "L-Shape". */

@@ -66,6 +66,12 @@ export interface Re10DeliveryInput {
   excluded?: { description: string }[];
   /** Files stored for the team but not machine-readable. */
   attachedOnly?: string[];
+  /**
+   * Pricing-alert kinds the route raised while computing this estimate
+   * (clamped quantities, a zero or implausible total). Carried onto the CRM
+   * record so the person working the lead sees the price needed attention.
+   */
+  pricingAlerts?: string[];
 }
 
 export interface Re10DeliveryResult {
@@ -134,6 +140,11 @@ async function collectAttachments(
 function buildRe10Notes(input: Re10DeliveryInput): string {
   const { contact, estimate } = input;
   const lines: string[] = [
+    // First line of the notes, above even the price, because a lead whose
+    // price needed attention should not read like a normal one.
+    ...(input.pricingAlerts && input.pricingAlerts.length > 0
+      ? [`*** PRICING ALERTS: ${input.pricingAlerts.join(", ")} - check the logs before quoting further ***`, ``]
+      : []),
     `RE-10 REPAIR ESTIMATE`,
     `Property: ${contact.propertyAddress}`,
     contact.repairDeadline ? `Repair deadline: ${contact.repairDeadline}` : "",
@@ -199,6 +210,7 @@ function buildRe10CrmRecord(input: Re10DeliveryInput) {
   const { contact, estimate } = input;
   return {
     kind: "re10-repair-estimate" as const,
+    pricingAlerts: input.pricingAlerts ?? [],
     property: {
       address: contact.propertyAddress,
       occupancy: contact.occupancy ?? "unknown",
