@@ -342,6 +342,51 @@ function commonRules(project: string, opts: { permitAlways?: boolean } = {}): Sc
       code: "03-02-07", // Daily clean, MO
       qty: (_d, s) => projectMonths(project, s.sqft) * oh * tierScope(s),
     },
+    /**
+     * EQUIPMENT, TEMPORARY UTILITIES AND STORAGE.
+     *
+     * All three sit in the owner's rate card, priced, and were referenced by
+     * NOTHING - no scope rule on any project type selected them, so every
+     * estimate the engine has ever produced carried zero equipment cost. On a
+     * two-storey addition that means no lift, no scaffold, and no compactor in
+     * a six-figure number, which is underpricing rather than competitiveness.
+     *
+     * The values are the card's own; only the applicability is decided here,
+     * and it is deliberately narrow. A kitchen refresh genuinely does not rent
+     * a lift, so it is not charged for one - "where applicable" cuts both ways,
+     * and padding a small job to be safe is the same error facing the other
+     * direction.
+     */
+    {
+      code: "03-02-03", // Temp equipment rentals, EA
+      qty: (_d, s) => (changesLayout(s) ? 1.5 : 1) * tierScope(s),
+      // Lifts, scaffolding and specialist machinery belong to work that goes
+      // above one storey or opens the structure. An interior refit does not.
+      when: (s) =>
+        (project === "addition" || project === "adu" || project === "whole-home" || project === "basement") &&
+        s.quality !== "refresh",
+      assumption:
+        "Scaffolding, a lift or specialist machinery is carried on work that opens the structure or goes above one storey.",
+    },
+    {
+      code: "03-02-01", // Temp utilities, MO
+      qty: (_d, s) => projectMonths(project, s.sqft) * oh * tierScope(s),
+      // Only where the home's own services cannot serve the work: a detached
+      // ADU has no supply of its own until it is connected.
+      when: (s) => project === "adu" || project === "addition",
+      assumption:
+        "Temporary power and water are carried on detached and new-footprint work, which cannot run off the existing home's services.",
+    },
+    {
+      code: "03-02-05", // Site storage, MO
+      qty: (_d, s) => projectMonths(project, s.sqft) * oh * tierScope(s),
+      // A container earns its place once there is more material than the
+      // garage holds. Single-room work stages inside the house.
+      when: (s) =>
+        project === "whole-home" || project === "addition" || project === "adu",
+      assumption:
+        "Secure on-site storage is carried on whole-home and new-footprint work, where materials arrive faster than they are installed.",
+    },
     {
       code: "03-23-02", // Final clean, SF
       qty: (d) => d.floorArea,

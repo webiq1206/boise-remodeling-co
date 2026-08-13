@@ -10,6 +10,8 @@ import {
 import { uploadFile } from "@/lib/storage/blob";
 import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { randomUUID } from "crypto";
+import { summarizeInventory } from "@/shared/documents/pageInventory";
+import { assessReadiness } from "@/shared/documents/readiness";
 
 /**
  * Upload an RE-10 and get back the repairs it contains.
@@ -161,10 +163,37 @@ export async function POST(request: NextRequest) {
   if (!outcome.ok) {
     const status = outcome.reason === "busy" ? 503 : outcome.reason === "not-configured" ? 503 : 422;
     return NextResponse.json(
-      { error: outcome.reason, message: outcome.message, batch, stored },
+      {
+        error: outcome.reason,
+        message: outcome.message,
+        batch,
+        stored,
+        // Even a failed read reports what it managed to open, so the customer
+        // is told which pages were the problem rather than that "it" failed.
+        coverage: outcome.inventory ? summarizeInventory(outcome.inventory) : null,
+      },
       { status },
     );
   }
+
+  const readiness = assessReadiness({
+    inventory: outcome.inventory,
+    trail: outcome.trail,
+    hasPriceableContent: outcome.result.repairs.length > 0 || outcome.result.unmapped.length > 0,
+  });
+
+  const coverage = summarizeInventory(outcome.inventory);
+
+  /* The audit trail is INTERNAL. It names sheets, quotes source text and shows
+     how each quantity was arrived at - useful to an estimator checking a
+     number, and noise to a customer looking at a price. It rides the lead, not
+     this response. */
+  console.info(
+    `[re10/analyze] batch=${batch} pages=${coverage.totalPages} read=${coverage.read} ` +
+      `failed=${coverage.failed} deep=${coverage.deepRead} repairs=${outcome.result.repairs.length} ` +
+      `unmapped=${outcome.result.unmapped.length} duplicates=${outcome.duplicates.length} ` +
+      `conflicts=${outcome.quantityConflicts.length}`,
+  );
 
   return NextResponse.json({
     batch,
@@ -172,5 +201,46 @@ export async function POST(request: NextRequest) {
     // Named back so nobody believes a file was analysed when it was only filed.
     attachedOnly,
     ...outcome.result,
+    /* Page-by-page evidence that the whole document was read. This is the
+       answer to "did you look at all 104 sheets", and it is a fact rather
+       than a reassurance. */
+    coverage,
+    pages: outcome.inventory.pages.map((p) => ({
+      index: p.index,
+      filename: p.filename,
+      page: p.pageInFile,
+      status: p.status,
+      kind: p.kind,
+      medium: p.medium,
+      sheet: p.sheet,
+      title: p.title,
+      deepRead: p.deepRead,
+      failureReason: p.failureReason ?? null,
+    })),
+    /* Restatements and contradictions are put to the customer as questions
+       rather than resolved behind their back: silently merging two repairs
+       loses scope, and silently picking one of two quantities is a guess. */
+    duplicates: outcome.duplicates.map((d) => ({
+      a: d.a,
+      b: d.b,
+      reason: d.reason,
+      descriptionA: outcome.result.repairs[d.a]?.verbatim ?? "",
+      descriptionB: outcome.result.repairs[d.b]?.verbatim ?? "",
+    })),
+    quantityConflicts: outcome.quantityConflicts.map((c) => ({
+      a: c.a,
+      b: c.b,
+      quantityA: c.quantityA,
+      quantityB: c.quantityB,
+      descriptionA: outcome.result.repairs[c.a]?.verbatim ?? "",
+      descriptionB: outcome.result.repairs[c.b]?.verbatim ?? "",
+    })),
+    readiness: {
+      canFinalize: readiness.canFinalize,
+      confidence: readiness.confidence,
+      summary: readiness.summary,
+      blockers: readiness.blockers,
+      questions: readiness.questions,
+    },
   });
 }

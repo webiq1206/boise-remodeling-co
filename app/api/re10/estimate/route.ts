@@ -54,7 +54,22 @@ const repairSchema = z.object({
  */
 const bodySchema = z
   .object({
-    repairs: z.array(repairSchema).min(1).max(80),
+    /**
+     * CAPS THAT USED TO DESTROY THE WHOLE LEAD.
+     *
+     * repairs was 80 and unmapped was 40, with no client-side guard against
+     * either. A long inspection response with 41 unmappable requests failed
+     * validation at the LAST click - after the agent had typed their name,
+     * email, phone and property address - and surfaced the raw zod string
+     * ("Array must contain at most 40 element(s)") with nothing to act on.
+     * The document that most needs pricing by a human was the one guaranteed
+     * to lose the lead.
+     *
+     * The ceilings now sit above any real document (the largest RE-10 in the
+     * corpus carries 20 requests; 65 is a stress fixture), and the estimator
+     * already bounds per-item quantities and total price independently.
+     */
+    repairs: z.array(repairSchema).min(1).max(300),
     name: z.string().min(2).max(120),
     email: z.string().email().max(200).optional().or(z.literal("")),
     phone: z.string().max(40).optional().or(z.literal("")),
@@ -107,10 +122,10 @@ const bodySchema = z
      */
     unmapped: z
       .array(z.object({ verbatim: z.string().max(2000), reason: z.string().max(1000).optional() }))
-      .max(40)
+      .max(300)
       .optional(),
     /** Extractor observations worth putting in front of the estimator. */
-    documentNotes: z.array(z.string().max(1000)).max(20).optional(),
+    documentNotes: z.array(z.string().max(1000)).max(60).optional(),
     /**
      * Repairs the customer toggled OFF on the review screen.
      *
@@ -123,7 +138,7 @@ const bodySchema = z
      */
     excluded: z
       .array(z.object({ description: z.string().max(2000) }))
-      .max(80)
+      .max(300)
       .optional(),
     /** Whether the analyze step judged the upload to read as an RE-10. */
     looksLikeRe10: z.boolean().optional(),

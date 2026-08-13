@@ -370,7 +370,32 @@ for (const project of PROJECTS) {
    Snapshot date 2026-08-07, after the scope-rule corrections (bathroom chip
    gating, hardware double-count, addition code collisions). To intentionally
    reprice: verify the new numbers by hand, then update this table in the
-   same commit as the change that moves them. */
+   same commit as the change that moves them.
+
+   REPRICED 2026-08-13, ON PURPOSE, for equipment and temporary site services.
+   The catalog has carried three priced rows that no scope rule referenced:
+   03-02-03 temporary equipment rentals ($800 EA), 03-02-01 temporary utilities
+   ($450 MO) and 03-02-05 site storage ($200 MO). Every estimate the engine had
+   ever produced therefore carried zero equipment cost - no lift, no scaffold,
+   no container - which is underpricing, not competitiveness. They are now
+   selected where they genuinely apply and nowhere else, so kitchen and
+   bathroom are UNCHANGED by design and the movement is confined to work that
+   opens a structure or adds a footprint:
+
+     whole-home  refresh    high +1,000  (+1.0%)
+     whole-home  high-end   +5,000       (+2.1%)
+     whole-home  luxury     +5,000       (+1.3%)
+     addition    mid-range  +4,000/6,000 (+4.9%/+5.5%)
+     addition    high-end   +10,000      (+9.5%)
+     addition    luxury     +5,000/15,000(+3.3%/+7.5%)
+     adu         mid-range  +5,000       (+3.4%)
+     adu         high-end   +5,000       (+2.5%)
+     adu         luxury     +10,000/15,000
+     basement    high-end   +1,000/2,000 (+1.3%/+1.9%)
+
+   Addition high-end moves most because a two-storey addition is exactly the
+   job that rents scaffolding, runs temporary power and needs a container, and
+   was previously carrying none of it. */
 const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
   kitchen: {
     refresh: [13500, 18000],
@@ -385,24 +410,24 @@ const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
     luxury: [37000, 50000],
   },
   "whole-home": {
-    refresh: [77000, 104000],
+    refresh: [77000, 105000],
     "mid-range": [125000, 170000],
-    "high-end": [235000, 320000],
-    luxury: [370000, 500000],
+    "high-end": [240000, 325000],
+    luxury: [375000, 505000],
   },
   addition: {
-    "mid-range": [81000, 109000],
-    "high-end": [105000, 145000],
-    luxury: [150000, 200000],
+    "mid-range": [85000, 115000],
+    "high-end": [115000, 155000],
+    luxury: [155000, 215000],
   },
   adu: {
-    "mid-range": [145000, 195000],
-    "high-end": [200000, 270000],
-    luxury: [285000, 385000],
+    "mid-range": [150000, 200000],
+    "high-end": [205000, 275000],
+    luxury: [295000, 400000],
   },
   basement: {
     "mid-range": [52000, 70000],
-    "high-end": [79000, 107000],
+    "high-end": [80000, 109000],
     luxury: [120000, 165000],
   },
 };

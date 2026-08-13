@@ -12,6 +12,9 @@ import {
 import { uploadFile } from "@/lib/storage/blob";
 import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { randomUUID } from "crypto";
+import { summarizeInventory } from "@/shared/documents/pageInventory";
+import { assessReadiness } from "@/shared/documents/readiness";
+import { conflicts } from "@/shared/documents/auditTrail";
 
 /**
  * Upload a plan set, get back measurements - and an honest verdict on whether
@@ -141,16 +144,89 @@ export async function POST(request: NextRequest) {
   const outcome = await extractPlans(readable);
   if (!outcome.ok) {
     const status = outcome.reason === "busy" || outcome.reason === "not-configured" ? 503 : 422;
-    return NextResponse.json({ error: outcome.reason, message: outcome.message, batch, stored }, { status });
+    return NextResponse.json(
+      {
+        error: outcome.reason,
+        message: outcome.message,
+        batch,
+        stored,
+        coverage: outcome.inventory ? summarizeInventory(outcome.inventory) : null,
+      },
+      { status },
+    );
   }
 
   const result = outcome.result;
+  const coverage = summarizeInventory(outcome.inventory);
+
+  /* Readiness is computed from the read itself: pages we could not open,
+     values two sheets disagree about, and the stated total the whole
+     cross-check depends on. A set can be perfectly legible and still not be
+     ready, which is the case `assessPlanQuality` was already making about
+     measurements and this extends to the document as a whole. */
+  const readiness = assessReadiness({
+    inventory: outcome.inventory,
+    trail: outcome.trail,
+    hasPriceableContent: result.rooms.length > 0 || result.scopeItems.length > 0,
+    missingCriticalInputs:
+      result.statedTotalSqFt == null
+        ? [
+            {
+              label: "a stated total floor area",
+              question: "What is the total square footage of the area being remodelled?",
+              why:
+                "No sheet in the set prints a total, so there is nothing to check our room-by-room read against. " +
+                "Your number is genuinely independent of our reading of the drawings, which is exactly what makes it useful.",
+            },
+          ]
+        : [],
+  });
+
+  console.info(
+    `[plans/analyze] batch=${batch} pages=${coverage.totalPages} read=${coverage.read} ` +
+      `failed=${coverage.failed} deep=${coverage.deepRead} rooms=${result.rooms.length} ` +
+      `scope=${result.scopeItems.length} mergedRooms=${outcome.duplicateRoomsMerged} ` +
+      `conflicts=${conflicts(outcome.trail).length}`,
+  );
 
   return NextResponse.json({
     batch,
     stored,
     attachedOnly,
     ...result,
+    /** Page-by-page proof the whole set was looked at, not sampled. */
+    coverage,
+    pages: outcome.inventory.pages.map((p) => ({
+      index: p.index,
+      filename: p.filename,
+      page: p.pageInFile,
+      status: p.status,
+      kind: p.kind,
+      medium: p.medium,
+      sheet: p.sheet,
+      title: p.title,
+      deepRead: p.deepRead,
+      failureReason: p.failureReason ?? null,
+    })),
+    /** Restated rooms counted once, and the count of how many that was. */
+    duplicateRoomsMerged: outcome.duplicateRoomsMerged,
+    /** Values two sheets disagree about. Asked, never silently resolved. */
+    conflicts: conflicts(outcome.trail).map((c) => ({
+      label: c.label,
+      unit: c.unit,
+      values: (c.competingValues ?? []).map((v) => ({
+        value: v.value,
+        sheet: v.source.sheet,
+        page: v.source.pageIndex,
+      })),
+    })),
+    readiness: {
+      canFinalize: readiness.canFinalize,
+      confidence: readiness.confidence,
+      summary: readiness.summary,
+      blockers: readiness.blockers,
+      questions: readiness.questions,
+    },
     /** Diagnostics, shown to the customer as plainly as they are computed. */
     quality: assessPlanQuality(result),
     /**

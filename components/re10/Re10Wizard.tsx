@@ -212,7 +212,10 @@ export function Re10Wizard() {
     const parts: string[] = ["RE-10 uploaded but nothing was automatically priceable - please price by hand."];
     if (extraction && extraction.unmapped.length > 0) {
       parts.push("Requests read from the document:");
-      for (const u of extraction.unmapped.slice(0, 20)) parts.push(`- ${u.verbatim}`);
+      // Every request, not the first twenty. This note IS the lead when
+      // nothing was priceable, and a silent truncation here is the whole
+      // reason the customer contacted us disappearing into a slice().
+      for (const u of extraction.unmapped) parts.push(`- ${u.verbatim}`);
     }
     if (documents.length > 0) {
       parts.push("Uploaded documents:");
@@ -1167,6 +1170,54 @@ function Re10Result({
               </span>
             ))}
           />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* Needs attention: named, and NOT in the price. Computed since the
+          disclosure was written and rendered nowhere until now - which is
+          exactly the silent-vanish this codebase keeps having to close. */}
+      {disclosure && disclosure.needsAttention.length > 0 ? (
+        <ResultDisclosure
+          title="In your document, not in this price"
+          count={disclosure.needsAttention.length}
+          testId="re10-needs-attention"
+        >
+          <DetailList
+            marker="cross"
+            items={disclosure.needsAttention.map((n) => (
+              <span key={n.label}>
+                <span className="text-inverse-foreground/90">{n.label}</span>
+                {n.detail ? ` - ${n.detail}` : ""}
+              </span>
+            ))}
+          />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* What we could not read. On a scan this is the single most useful
+          thing on the screen, and it was reaching the admin email only. */}
+      {disclosure && disclosure.missing.length > 0 ? (
+        <ResultDisclosure
+          title="What we could not read"
+          count={disclosure.missing.length}
+          testId="re10-missing"
+        >
+          <DetailList
+            items={disclosure.missing.map((m, i) => (
+              <span key={`${m.what}-${i}`}>
+                <span className="text-inverse-foreground/90">{m.what}</span>
+                {m.effect ? ` - ${m.effect}` : ""}
+                {m.remedy ? ` ${m.remedy}` : ""}
+              </span>
+            ))}
+          />
+        </ResultDisclosure>
+      ) : null}
+
+      {/* Warnings about the read itself. */}
+      {disclosure && disclosure.warnings.length > 0 ? (
+        <ResultDisclosure title="Worth knowing" count={disclosure.warnings.length} testId="re10-warnings">
+          <DetailList items={disclosure.warnings} />
         </ResultDisclosure>
       ) : null}
 

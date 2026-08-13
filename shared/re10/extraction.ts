@@ -54,6 +54,13 @@ export interface UnmappedItem {
 }
 
 export interface ExtractionResult {
+  /**
+   * How many distinct requests the model counted on the pages it was given,
+   * before extracting any of them. Compared against what actually came back;
+   * see the schema comment for why a count is the only way to catch a short
+   * enumeration.
+   */
+  requestCountOnPages?: number;
   repairs: ExtractedRepair[];
   unmapped: UnmappedItem[];
   /** What the document says about the property, when it says anything. */
@@ -110,10 +117,27 @@ export const EXTRACTION_SCHEMA = {
     propertyAddress: { type: ["string", "null"] },
     closingDate: { type: ["string", "null"], description: "ISO date if stated, otherwise null." },
     repairDeadline: { type: ["string", "null"], description: "ISO date if stated, otherwise null." },
+    /**
+     * COUNT FIRST, THEN EXTRACT, THEN RECONCILE.
+     *
+     * A long list is not lost to truncation - measured at 5,968 output tokens
+     * against a 16,000 ceiling while thirteen of sixty-five requests went
+     * unlisted. The model simply stops enumerating and treats the job as done,
+     * the same starvation already documented for the plans schema. Counting is
+     * a far easier task than extracting, so the count comes back right when
+     * the list does not, and the caller compares the two and re-reads a
+     * smaller bite when they disagree. Nothing else can catch this: a short
+     * list is indistinguishable from a complete one without a target.
+     */
+    requestCountOnPages: {
+      type: "integer",
+      description:
+        "Before extracting anything, COUNT the distinct repair requests visible on these pages and report the number here. Count every numbered or bulleted request, including ones you will place in unmapped, and including any that continue from a previous page. This is a count of what is printed, not of what you managed to extract.",
+    },
     looksLikeRe10: { type: "boolean", description: "True if this reads as an RE-10, inspection response, or repair addendum." },
     documentNotes: { type: "array", items: { type: "string" }, description: "Anything a human should know: unreadable pages, handwriting, ambiguity." },
   },
-  required: ["repairs", "unmapped", "looksLikeRe10", "documentNotes"],
+  required: ["requestCountOnPages", "repairs", "unmapped", "looksLikeRe10", "documentNotes"],
   additionalProperties: false,
 } as const;
 
