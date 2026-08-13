@@ -66,6 +66,39 @@ interface AnalyzeResponse extends PlanExtractionResult {
   quality: PlanQuality;
   stored?: { filename: string; url: string }[];
   attachedOnly?: string[];
+  /* Page-level evidence from the document pipeline. Same shape the RE-10
+     wizard consumes; a plan set is the case it was built for. */
+  coverage?: DocumentCoverage;
+  readiness?: DocumentReadiness;
+  conflicts?: PlanConflict[];
+  duplicateRoomsMerged?: number;
+  coverageSummary?: string;
+  auditTrail?: string;
+}
+
+interface DocumentCoverage {
+  totalPages: number;
+  read: number;
+  failed: number;
+  deepRead: number;
+  scanned: number;
+  handwritten: number;
+  everyPageRead: boolean;
+  failedPages: { index: number; filename: string; pageInFile: number; reason: string }[];
+}
+
+interface DocumentReadiness {
+  canFinalize: boolean;
+  confidence: number;
+  summary: string;
+  blockers: { kind: string; message: string; remedy: string; blocking: boolean }[];
+  questions: { id: string; question: string; why: string }[];
+}
+
+interface PlanConflict {
+  label: string;
+  unit: string | null;
+  values: { value: number | null; sheet: string | null; page: number }[];
 }
 
 interface EstimateResponse {
@@ -405,6 +438,12 @@ export function PlansWizard() {
         rooms_found: read.rooms.length,
         can_tighten: read.quality.canTightenPrice,
         coverage: read.quality.measuredRoomCoverage,
+        // Page coverage is a different fact from measurement coverage: one
+        // says how much of the DOCUMENT we read, the other how much of the
+        // floor area carried a printed dimension. Both matter, separately.
+        pages_total: read.coverage?.totalPages ?? 0,
+        pages_failed: read.coverage?.failed ?? 0,
+        sheet_conflicts: read.conflicts?.length ?? 0,
       });
       if (!read.quality.canTightenPrice) {
         trackEvent(PLAN_EVENTS.narrowingBlocked, { blockers: read.quality.blockers.length });
@@ -522,6 +561,8 @@ export function PlansWizard() {
           // them a lead arrives with no record of what was uncertain.
           warnings: extraction?.warnings ?? [],
           sheetsUsed: extraction?.sheetsUsed ?? [],
+          coverageSummary: extraction?.coverageSummary,
+          auditTrail: extraction?.auditTrail,
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
@@ -643,6 +684,99 @@ export function PlansWizard() {
               title="Here is what we measured. Is it right?"
               description="Take out anything that is not part of this project. Then tell us the total finished square footage of the home, which is how we check our read."
             />
+
+            {/* HOW MUCH OF THE SET WE READ, as a fact. On a hundred-sheet
+                permit set this is the first thing worth knowing, and the
+                honest answer to what the customer is really asking when they
+                upload one. Distinct from measurement coverage below. */}
+            {extraction.coverage && extraction.coverage.totalPages > 0 ? (
+              <div
+                className={`mb-6 rounded-md border p-4 ${
+                  extraction.coverage.everyPageRead
+                    ? "border-inverse-foreground/20 bg-inverse-foreground/[0.06]"
+                    : "border-amber-400/40 bg-amber-400/[0.08]"
+                }`}
+                data-testid="plans-coverage"
+              >
+                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
+                  {extraction.coverage.everyPageRead
+                    ? `We read all ${extraction.coverage.totalPages} sheet${extraction.coverage.totalPages === 1 ? "" : "s"} you sent`
+                    : `We read ${extraction.coverage.read} of ${extraction.coverage.totalPages} sheets`}
+                  {extraction.coverage.deepRead > 0
+                    ? `, and examined ${extraction.coverage.deepRead} of them in detail because they carry measurements`
+                    : ""}
+                  {extraction.coverage.scanned > 0 ? `. ${extraction.coverage.scanned} were scanned` : ""}
+                  {extraction.coverage.handwritten > 0 ? `, ${extraction.coverage.handwritten} carry handwriting` : ""}.
+                  {typeof extraction.duplicateRoomsMerged === "number" && extraction.duplicateRoomsMerged > 0
+                    ? ` ${extraction.duplicateRoomsMerged} room${extraction.duplicateRoomsMerged === 1 ? " was" : "s were"} shown on more than one sheet and counted once.`
+                    : ""}
+                </p>
+                {extraction.coverage.failedPages.length > 0 ? (
+                  <ul className="mt-2 space-y-1">
+                    {extraction.coverage.failedPages.map((f) => (
+                      <li key={f.index} className="text-[12.5px] text-inverse-muted">
+                        Could not read {f.filename} page {f.pageInFile}: {f.reason} Anything shown
+                        only on that sheet is NOT in this estimate.
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
+
+            {/* Values two sheets disagree about. Asked, never resolved behind
+                the customer's back: a superseded sheet and a current one look
+                identical to a reader that has only the numbers. */}
+            {extraction.conflicts && extraction.conflicts.length > 0 ? (
+              <div
+                className="mb-6 rounded-md border border-amber-400/40 bg-amber-400/[0.08] p-4"
+                data-testid="plans-conflicts"
+              >
+                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                  {extraction.conflicts.length === 1
+                    ? "Two sheets disagree on one measurement"
+                    : `Sheets disagree on ${extraction.conflicts.length} measurements`}
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {extraction.conflicts.map((c, i) => (
+                    <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                      <span className="text-inverse-foreground/90">{c.label}</span>:{" "}
+                      {c.values
+                        .map((v) => `${v.value ?? "not stated"}${c.unit ? ` ${c.unit}` : ""}${v.sheet ? ` on ${v.sheet}` : ""}`)
+                        .join(" versus ")}
+                      . We have not assumed either. Correct it below and we will price that one.
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {/* What stands between this read and a tightened price, each with
+                something the customer can actually do. */}
+            {extraction.readiness && !extraction.readiness.canFinalize &&
+            extraction.readiness.blockers.some((b) => b.blocking) ? (
+              <div
+                className="mb-6 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
+                data-testid="plans-blockers"
+              >
+                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                  Before we can price this from the drawings
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {extraction.readiness.blockers
+                    .filter((b) => b.blocking)
+                    .map((b, i) => (
+                      <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                        <span className="text-inverse-foreground/90">{b.message}</span> {b.remedy}
+                      </li>
+                    ))}
+                </ul>
+                <p className="mt-2 text-[12.5px] text-inverse-muted">
+                  You can still carry on. We will build a range from the total you give us and say
+                  plainly that the drawings were not used.
+                </p>
+              </div>
+            ) : null}
 
             {attachedOnly.length > 0 ? (
               <div

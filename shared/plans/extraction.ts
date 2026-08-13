@@ -130,6 +130,36 @@ export interface PlanScopeItem {
   sheet: string | null;
   /** False when the drawings hand this to someone else. */
   inContract: boolean;
+  /**
+   * HOW THIS ITEM COUNTS COMMERCIALLY, which `inContract` alone cannot say.
+   *
+   * A drawing set distinguishes four things that a single boolean flattens
+   * into two, and flattening them is how a customer ends up believing an
+   * alternate was quoted:
+   *
+   * - "base": ordinary work, in the price.
+   * - "allowance": a budget line the drawings set for a selection nobody has
+   *   made yet ("plumbing fixtures allowance $14,000"). Real money, but a
+   *   PLACEHOLDER, and the final figure moves with the selection.
+   * - "alternate": deliberately priced SEPARATELY and NOT in the base bid.
+   *   Pricing one into the total overstates the job; ignoring it entirely
+   *   loses a request the customer made.
+   * - "optional": shown as a possibility the owner may or may not take.
+   *
+   * Anything the drawings hand to somebody else stays `inContract: false` and
+   * is reported as excluded regardless of this field.
+   */
+  commercialStatus: "base" | "allowance" | "alternate" | "optional";
+  /**
+   * Dollar figure the drawings state for an allowance. ZERO means not stated.
+   *
+   * Deliberately not nullable. Structured outputs cap a schema at 16
+   * union-typed parameters and this set was already at the line: adding one
+   * more `["number", "null"]` took it to 17 and the API rejected every
+   * request outright. Zero is unambiguous here because an allowance of zero
+   * dollars is not a thing a drawing sets.
+   */
+  statedAmount: number;
 }
 
 /**
@@ -245,8 +275,19 @@ export const PLAN_EXTRACTION_SCHEMA = {
           description: { type: "string" },
           sheet: { type: ["string", "null"] },
           inContract: { type: "boolean" },
+          commercialStatus: {
+            type: "string",
+            enum: ["base", "allowance", "alternate", "optional"],
+            description:
+              'How the drawings treat this commercially. "allowance" when a budget figure is set for a selection not yet made (the sheet usually says ALLOWANCE and a dollar amount). "alternate" when it is to be priced separately and is NOT in the base bid (ALTERNATE No. 1, ADD ALTERNATE, PRICE SEPARATELY). "optional" when shown as a possibility the owner may not take. "base" for ordinary work. Use "base" unless the sheet actually says otherwise; do not infer an alternate from the fact that work looks discretionary.',
+          },
+          statedAmount: {
+            type: "number",
+            description:
+              "The dollar figure the drawings state for an allowance. Use 0 when no figure is stated. Never estimate one.",
+          },
         },
-        required: ["category", "description", "sheet", "inContract"],
+        required: ["category", "description", "sheet", "inContract", "commercialStatus", "statedAmount"],
       },
     },
     scopeFacts: {

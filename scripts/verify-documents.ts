@@ -35,8 +35,8 @@ import { assessReadiness, MIN_MEAN_LEGIBILITY } from "../shared/documents/readin
 import { mergePlanReads, type ChunkedRead } from "../shared/plans/merge";
 import { findDuplicatePairs, findQuantityConflicts, similarity, DUPLICATE_THRESHOLD } from "../shared/re10/duplicates";
 import { buildSyntheticPlanSet, buildLargeRe10, buildSyntheticPlanSetPages, buildLargeRe10Pages } from "./lib/syntheticPlanSet";
-import type { PlanExtractionResult, PlanRoom } from "../shared/plans/extraction";
-import type { ExtractedRepair } from "../shared/re10/extraction";
+import { PLAN_EXTRACTION_SCHEMA, type PlanExtractionResult, type PlanRoom } from "../shared/plans/extraction";
+import { EXTRACTION_SCHEMA, type ExtractedRepair } from "../shared/re10/extraction";
 
 let checks = 0;
 let failures = 0;
@@ -415,6 +415,64 @@ async function main(): Promise<void> {
     check(
       Math.max(...re10.map((p) => p.length)) <= Math.floor(580 / 12),
       "fixture pages must not overflow the page box, or items render invisibly",
+    );
+  }
+
+  console.log("verify-documents: extraction schemas stay inside the API's union limit");
+  {
+    /* FOUND THE HARD WAY. Adding one nullable field to the plan schema took it
+       from 16 union-typed parameters to 17, and the API rejected EVERY request
+       with "Schemas contains too many parameters with union types". Nothing in
+       the type system or the build catches that - it fails at runtime, on all
+       traffic, the moment the change deploys. So it is a build gate now. */
+    const UNION_LIMIT = 16;
+    const countUnions = (node: unknown): number => {
+      if (!node || typeof node !== "object") return 0;
+      const n = node as Record<string, unknown>;
+      let total = Array.isArray(n.type) || n.anyOf ? 1 : 0;
+      for (const value of Object.values(n)) total += countUnions(value);
+      return total;
+    };
+    const planUnions = countUnions(PLAN_EXTRACTION_SCHEMA);
+    const re10Unions = countUnions(EXTRACTION_SCHEMA);
+    check(
+      planUnions <= UNION_LIMIT,
+      `the plan schema has ${planUnions} union-typed parameters against a limit of ${UNION_LIMIT}. ` +
+        `Make a field non-nullable (0 or "" as the absent value) before adding another.`,
+    );
+    check(
+      re10Unions <= UNION_LIMIT,
+      `the RE-10 schema has ${re10Unions} union-typed parameters against a limit of ${UNION_LIMIT}.`,
+    );
+  }
+
+  console.log("verify-documents: allowances and alternates stay out of base scope");
+  {
+    const items = [
+      { category: "structural" as const, description: "New pad footings", sheet: "S1.1", inContract: true, commercialStatus: "base" as const, statedAmount: null },
+      { category: "plumbing" as const, description: "Plumbing fixtures allowance", sheet: "G0.2", inContract: true, commercialStatus: "allowance" as const, statedAmount: 14000 },
+      { category: "envelope" as const, description: "Screened porch at rear", sheet: "G0.2", inContract: true, commercialStatus: "alternate" as const, statedAmount: null },
+      { category: "site" as const, description: "Driveway widening BY OTHERS", sheet: "C1.1", inContract: false, commercialStatus: "base" as const, statedAmount: null },
+    ];
+
+    // The exact filters the estimate route applies at both call sites.
+    const base = items.filter((i) => i.inContract && i.commercialStatus === "base");
+    const allowances = items.filter((i) => i.inContract && i.commercialStatus === "allowance");
+    const alternates = items.filter(
+      (i) => i.inContract && (i.commercialStatus === "alternate" || i.commercialStatus === "optional"),
+    );
+    const excluded = items.filter((i) => !i.inContract);
+
+    check(base.length === 1, `only ordinary work is base scope, got ${base.length}`);
+    check(!base.some((i) => /allowance/i.test(i.description)), "an allowance must never be priced as base scope");
+    check(!base.some((i) => /porch/i.test(i.description)), "an alternate must never be priced as base scope");
+    check(allowances.length === 1 && allowances[0].statedAmount === 14000, "the allowance keeps its stated figure");
+    check(alternates.length === 1, "the alternate is carried, not dropped");
+    check(excluded.length === 1, "out-of-contract work stays excluded");
+    /* Nothing may vanish: every item must land in exactly one bucket. */
+    check(
+      base.length + allowances.length + alternates.length + excluded.length === items.length,
+      "every scope item must land in exactly one bucket - nothing silently dropped",
     );
   }
 

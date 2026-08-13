@@ -80,6 +80,11 @@ const scopeItemSchema = z.object({
   description: z.string().min(1).max(600),
   sheet: z.string().max(60).nullable().optional(),
   inContract: z.boolean(),
+  /* Defaulted rather than required, so a client from before this field
+     existed still submits successfully instead of 400ing at the last step -
+     the failure mode that once broke every RE-10 carrying a file. */
+  commercialStatus: z.enum(["base", "allowance", "alternate", "optional"]).optional().default("base"),
+  statedAmount: z.number().nonnegative().max(10_000_000).optional().default(0),
 });
 
 const scopeFactsSchema = z.object({
@@ -112,6 +117,12 @@ const bodySchema = z
     looksLikePlans: z.boolean().optional(),
     extractionProjectType: z.enum(["new-build", "remodel", "addition", "unclear"]).optional(),
     warnings: z.array(z.string().max(2000)).max(40).optional(),
+    /* Provenance from the analyze step, forwarded so the lead carries it.
+       Descriptive only: nothing here reaches the estimator, so a client that
+       edits it changes what the team reads about where a number came from and
+       cannot change the number. Never rendered to the customer. */
+    coverageSummary: z.string().max(2000).optional(),
+    auditTrail: z.string().max(60_000).optional(),
     sheetsUsed: z.array(z.string().max(60)).max(120).optional(),
     /** The whole job, not just the floor area. See PlanScopeItem. */
     scopeItems: z.array(scopeItemSchema).max(300).optional(),
@@ -307,11 +318,23 @@ export async function POST(request: NextRequest) {
     statedTotalSqFt: body.statedTotalSqFt,
     blockers: quality.blockers,
     notMeasured,
-    scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract),
+    /* BASE SCOPE ONLY. An alternate is explicitly NOT in the base bid, and an
+       allowance is a placeholder whose figure moves with a selection nobody
+       has made. Pricing either as ordinary work overstates the job; dropping
+       them loses a request. Both travel separately. */
+    scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract && i.commercialStatus === "base"),
     excludedScope: (body.scopeItems ?? []).filter((i) => !i.inContract),
+    allowances: (body.scopeItems ?? [])
+      .filter((i) => i.inContract && i.commercialStatus === "allowance")
+      .map((i) => ({ description: i.description, sheet: i.sheet, statedAmount: i.statedAmount || null })),
+    alternates: (body.scopeItems ?? [])
+      .filter((i) => i.inContract && (i.commercialStatus === "alternate" || i.commercialStatus === "optional"))
+      .map((i) => ({ description: i.description, sheet: i.sheet })),
     warnings: body.warnings ?? [],
     sheetsUsed: body.sheetsUsed ?? [],
     documents: body.documents ?? [],
+    coverageSummary: body.coverageSummary,
+    auditTrail: body.auditTrail,
   });
 
   /* CUSTOMER-FACING SHAPE. The lead view, the measurements, and why the
@@ -344,8 +367,17 @@ export async function POST(request: NextRequest) {
      * otherwise assume was included. Both travel even when the gates blocked the
      * measurements, because the scope is still real.
      */
-    scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract),
+    /* Same split on the screen the customer reads: confirmed work, budget
+       placeholders, and things deliberately outside the base number are three
+       different promises and must not look like one list. */
+    scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract && i.commercialStatus === "base"),
     excludedScope: (body.scopeItems ?? []).filter((i) => !i.inContract),
+    allowances: (body.scopeItems ?? [])
+      .filter((i) => i.inContract && i.commercialStatus === "allowance")
+      .map((i) => ({ description: i.description, sheet: i.sheet, statedAmount: i.statedAmount || null })),
+    alternates: (body.scopeItems ?? [])
+      .filter((i) => i.inContract && (i.commercialStatus === "alternate" || i.commercialStatus === "optional"))
+      .map((i) => ({ description: i.description, sheet: i.sheet })),
     blockers: quality.blockers,
     notMeasured,
     propertyAddress: body.propertyAddress,

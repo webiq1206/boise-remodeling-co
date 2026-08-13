@@ -356,6 +356,21 @@ repeated every 20 (so "62 items" held 23 distinct ones and a correct read
 looked like truncation). **If a completeness check fails, suspect the fixture
 before the pipeline.**
 
+**Structured-output schemas cap at 16 union-typed parameters.** Adding one
+nullable field to the plan schema took it to 17 and the API rejected EVERY
+request with "too many parameters with union types" - a runtime failure on all
+traffic, invisible to tsc and to the build. Use 0 or "" as the absent value
+instead of a nullable union. `verify:documents` now counts them and fails the
+build first; the plan schema sits exactly at 16.
+
+**Allowances and alternates are not base scope.** `commercialStatus` on each
+scope item separates base / allowance / alternate / optional, and the estimate
+route filters base-only into the priced list while carrying the others through
+to the lead and the result screen. An allowance is a placeholder whose figure
+moves with a selection nobody has made; an alternate is explicitly NOT in the
+base bid. Pricing either as ordinary work overstates the job, and dropping
+them loses a request the customer made.
+
 ### Cost-stack gaps, NAMED not guessed
 
 Equipment is now priced: `03-02-03`, `03-02-01` and `03-02-05` sat in the card,

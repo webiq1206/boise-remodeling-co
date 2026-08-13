@@ -49,7 +49,25 @@ export interface PlanDeliveryInput {
   scopeItems: { category: string; description: string; sheet?: string | null }[];
   /** Work the drawings hand to someone else. Named on every surface. */
   excludedScope: { category: string; description: string; sheet?: string | null }[];
+  /**
+   * Budget placeholders the drawings set for selections nobody has made yet.
+   * Real money, but the final figure moves - so they are listed apart from
+   * confirmed scope rather than blended into it.
+   */
+  allowances?: { description: string; sheet?: string | null; statedAmount?: number | null }[];
+  /** Work the drawings mark to be priced separately, NOT in the base bid. */
+  alternates?: { description: string; sheet?: string | null }[];
   warnings: string[];
+  /**
+   * Page-level coverage and the extraction audit trail.
+   *
+   * INTERNAL ONLY, same as the RE-10 lead. This is how an estimator checks a
+   * figure against a hundred-sheet set without opening it: which sheet a room
+   * area came from, the text it was read out of, and which sheets we could not
+   * read at all. Never shown to the customer.
+   */
+  coverageSummary?: string;
+  auditTrail?: string;
   sheetsUsed: string[];
   documents: { filename: string; url: string }[];
 }
@@ -155,6 +173,28 @@ function buildPlanNotes(input: PlanDeliveryInput): string {
     for (const d of input.documents) lines.push(`  ${d.filename}: ${absoluteDocUrl(d.url)}`);
   }
   if (contact.notes) lines.push(``, `THEIR NOTE`, `  ${contact.notes}`);
+
+  if (input.allowances && input.allowances.length > 0) {
+    lines.push(``, `ALLOWANCES STATED ON THE DRAWINGS (placeholders, not confirmed scope)`);
+    for (const a of input.allowances) {
+      lines.push(
+        `  ${a.description}${a.statedAmount ? ` - $${Math.round(a.statedAmount).toLocaleString("en-US")} stated` : ""}${a.sheet ? ` (${a.sheet})` : ""}`,
+      );
+    }
+  }
+
+  if (input.alternates && input.alternates.length > 0) {
+    lines.push(``, `ALTERNATES AND OPTIONS - NOT IN THE BASE NUMBER`);
+    for (const a of input.alternates) lines.push(`  ${a.description}${a.sheet ? ` (${a.sheet})` : ""}`);
+  }
+
+  if (input.coverageSummary) {
+    lines.push(``, `DOCUMENT COVERAGE`, `  ${input.coverageSummary}`);
+  }
+  /* The audit trail last: long, and the estimator's tool rather than the
+     reader's. Everything above says what this lead is; this says where each
+     number came from. */
+  if (input.auditTrail) lines.push(``, input.auditTrail);
 
   return lines.filter((l) => l !== undefined).join("\n");
 }
