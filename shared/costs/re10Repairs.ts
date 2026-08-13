@@ -248,6 +248,38 @@ const R = (
  * proportionally more of it.
  */
 const PROTECT: Component = { code: "03-02-04", flat: 60, why: "Floor and furniture protection, per work area" };
+/**
+ * TWO COST COMPONENTS ARE MISSING FROM THIS ENGINE AND NEED THE OWNER'S RATES.
+ * Recorded here rather than guessed at, because a fabricated rate is worse
+ * than a named gap: the gap can be closed in one line, a wrong number cannot
+ * be found again.
+ *
+ * 1. DISPOSAL BEYOND CLEAN-UP LABOUR. `CLEANUP` charges 0.12 MO against the
+ *    Daily Clean row ($200/MO labour), which after the SITE REQUIREMENTS grade
+ *    factor is about $8.40 per repair. That is site tidying, and it is roughly
+ *    right for what it is. What is NOT priced anywhere is the haul itself -
+ *    trailer or roll-off, and the tipping fee. A list with drywall demolition,
+ *    flooring tear-out and roofing debris carries zero dollars of it today.
+ *    The card's dumpster row (03-02-06, $150/MO) is a whole-project monthly
+ *    rate and does not translate to a half-day repair visit, so there is no
+ *    honest value to derive from what we already have.
+ *    NEEDED: the typical cost of one dump run or one small roll-off, and
+ *    roughly how many repairs share one.
+ *
+ * 2. PERMITS. `permit-uncertain` is a review reason, not a cost, and it is
+ *    attached to exactly one recipe (water-heater-replace). Every other kind
+ *    that can pull a permit - GFCI and outlet work, exhaust venting, hose bibs
+ *    - prices with zero permit dollars, and because permit-uncertain is not in
+ *    PRICED_WITH_CAVEAT the one recipe that has it is pulled from the quote
+ *    entirely rather than priced with the fee. The card's permit row
+ *    (03-01-01) is a $4,000 whole-project fee and is not a repair permit.
+ *    NEEDED: the typical Ada/Canyon County electrical and plumbing permit fee,
+ *    and whether an inspection trip is billed on top.
+ *
+ * Until both are supplied, `buildRe10Disclosure` states plainly that permits
+ * and disposal beyond site clean-up are not included, so the omission is
+ * disclosed to the customer rather than silently absorbed.
+ */
 const CLEANUP: Component = { code: "03-02-07", flat: 0.12, why: "Clean-up and haul-out of debris" };
 
 export const RECIPES: Record<RepairKind, Recipe> = {
@@ -599,7 +631,16 @@ export const RE10_MARGIN_FLOOR = 0.5;
 /** Highest the risk uplifts may carry the margin. */
 export const RE10_MARGIN_CEILING = 0.62;
 
-/** Contingency on an inspection list, above the 10% used on remodels. */
+/**
+ * Contingency on an inspection list.
+ *
+ * THE COMMENT HERE USED TO CONTRADICT THE VALUE: it read "above the 10% used
+ * on remodels" while the number is 8%, which is below it. The value is what
+ * runs and is left untouched, because moving it reprices every repair quote
+ * and that is the owner's call, not a tidy-up. FLAGGED FOR THE OWNER: decide
+ * whether the intent was 8% (and the comment was wrong) or something above the
+ * remodel engine's 10% (and the value is wrong). Until then this is 8%.
+ */
 export const RE10_CONTINGENCY_RATE = 0.08;
 
 /**
@@ -686,8 +727,18 @@ export const QUOTE_VALID_DAYS = 30;
  * stock trim against custom millwork. Labor moves less, because the hours are
  * the hours and a repair often takes LONGER per unit than new work.
  */
-export const REPAIR_GRADE_MATERIAL_FACTOR = 0.58;
-export const REPAIR_GRADE_LABOUR_FACTOR = 0.82;
+/**
+ * SUPERSEDED AND DELIBERATELY NOT USED. Kept only as the record of why the
+ * per-division table below exists: a single global material/labour pair was
+ * the second attempt and it failed against the market on all 32 priceable
+ * kinds. `lineFor` reads REPAIR_GRADE_BY_DIVISION and nothing else.
+ *
+ * They were previously exported with the explanation above and referenced
+ * nowhere, which reads exactly like live policy to anyone grepping for how
+ * repairs are graded. Not exported now, so that mistake cannot be made.
+ */
+const SUPERSEDED_GLOBAL_GRADE_FACTORS = { material: 0.58, labour: 0.82 } as const;
+void SUPERSEDED_GLOBAL_GRADE_FACTORS;
 
 /**
  * PER-DIVISION GRADE FACTORS, because one global factor cannot be right.

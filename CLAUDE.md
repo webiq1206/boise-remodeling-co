@@ -25,8 +25,10 @@ each one caught something real:
 | `verify:re10-delivery` | disclosure wall, funnel events, upload contract, traversal keys |
 | `verify:plans` | the gates that let a plan set tighten a price |
 | `verify:plans-delivery` | plans disclosure wall, funnel events, request contract |
+| `verify:documents` | page pipeline: pagination, coverage, merge, dedup, conflicts, readiness |
 | `verify:no-em-dash` | house style, blocks the build |
 | `check:re10-extraction` | live API call, NOT in prebuild (costs money) |
+| `check:large-documents` | 104-sheet set + 62-item RE-10 against the real API, NOT in prebuild |
 
 `verify:cost-pricing` and `verify:estimator-e2e` sat orphaned for months -
 passing, and run by nothing. If a suite exists, it goes in prebuild. The
@@ -293,6 +295,85 @@ buys the same confidence as a stamped permit set.
 `"scaled"` is deliberately excluded from trustworthy sources. A misread scale
 bar produces numbers that are internally consistent and completely wrong, and
 nothing downstream can detect it.
+
+## Document processing - REBUILT for whole sets
+
+Both extractors used to send every uploaded file in ONE model request. That
+could not scale, and the proof was already in the corpus: 13.2MB / 27 scanned
+sheets went through while 4.7MB / 5 vector sheets was rejected outright,
+because what the API carries is the RASTERISED sheet, not bytes on disk. One
+heavy sheet took the whole set down. **No byte ceiling can be tuned into
+correctness - a limit in the wrong unit is wrong at every value.**
+
+Worse, `re10Extract` checked only `stop_reason === "refusal"`. A structured
+response that hits the token ceiling STILL PARSES: the decoder closes the array
+and returns a shorter list, indistinguishable from a complete one. A long
+repair document silently became a quote for part of the job.
+
+**The pipeline is page-level end to end** (`server/services/documentSplit.ts`,
+`documentCensus.ts`; `shared/documents/{pageInventory,auditTrail,readiness}.ts`):
+
+1. `buildInventory` paginates with pdf-lib (`ignoreEncryption` - agency portals
+   stamp permit sets). Every page gets a record: READ with sheet and title, or
+   FAILED with a reason. Never neither.
+2. **Census pass** indexes every page with Haiku: kind, vector/scanned/
+   handwritten, legibility, and whether it carries quantities. Cheap, complete,
+   and the evidence the whole set was looked at.
+3. **Deep pass** spends Opus only on pages the census found numbers on, in
+   parallel chunks, with a retry ladder that halves a rejected chunk to a
+   single page. One bad sheet costs that sheet.
+4. Merge dedups on identity, so a room tagged on the plan and again in the
+   tabulation counts ONCE. Existing/demolition phases are kept as evidence and
+   never summed - that double count once priced 1,714 SF as 3,056 SF.
+
+**Enumeration starvation is a separate failure from truncation, and only a
+count catches it.** A three-page RE-10 returned 52 of 65 items at 5,968 output
+tokens against a 16,000 ceiling: the model stops enumerating and treats the job
+as done. `requestCountOnPages` makes it COUNT before extracting; the caller
+reconciles and re-reads a smaller bite when they disagree. That took the same
+document to 65 of 65. Repair chunks are 2 pages, not 4, for the same reason.
+
+**Contradictions are recorded, never resolved.** Two sheets stating two areas
+for one room is a fact about the document. It becomes a conflict, blocks a
+tightened price, and turns into a question. Averaging or picking the newer
+sheet is guessing.
+
+**Suspected duplicate repairs are FLAGGED, never merged** (`shared/re10/
+duplicates.ts`). Restatements get priced twice if ignored, but a threshold
+confident enough to catch every one will eventually eat "bedroom 1" vs
+"bedroom 2" - which is the silent-vanish bug wearing a hat. Asking costs one
+line of screen.
+
+Live proof (`npm run check:large-documents`): 104 sheets, all 104 read, 55
+deep-read, 91s; the deliberate 303-vs-268 SF conflict detected; 6 out-of-
+contract items caught. 62-item RE-10: 65 of 65 requests.
+
+**Fixtures live in `scripts/lib/syntheticPlanSet.ts`** and carry the real traps
+on purpose. Two fixture bugs cost debugging rounds and are now asserted
+against in `verify:documents`: text rendered above the MediaBox (invisible to
+the reader, looks exactly like a dropped item), and generated items that
+repeated every 20 (so "62 items" held 23 distinct ones and a correct read
+looked like truncation). **If a completeness check fails, suspect the fixture
+before the pipeline.**
+
+### Cost-stack gaps, NAMED not guessed
+
+Equipment is now priced: `03-02-03`, `03-02-01` and `03-02-05` sat in the card,
+priced, referenced by no scope rule, so every estimate ever produced carried
+zero equipment - no lift or scaffold on a two-storey addition. Wired where
+applicable only; kitchen and bathroom unchanged; goldens updated 2026-08-13
+with per-project deltas.
+
+**Two RE-10 components still need the owner's numbers** and are documented at
+`CLEANUP` in `re10Repairs.ts` rather than invented:
+- **disposal beyond clean-up labour** (haul + tip fee; ~$8.40/repair of tidying
+  is priced, haulage is not)
+- **permits** ($0 today; `permit-uncertain` is a review reason on one recipe)
+
+Both are DISCLOSED to the customer as excluded, so the omission is visible
+rather than absorbed. Also flagged: `RE10_CONTINGENCY_RATE` is 0.08 while its
+comment claimed "above the 10% used on remodels" - comment corrected to match
+the running value, owner to decide which was intended.
 
 ## Estimating assistant - BUILT, needs the redeploy
 

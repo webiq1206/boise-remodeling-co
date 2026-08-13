@@ -350,6 +350,16 @@ export function buildRe10Disclosure(input: Re10DisclosureInput): Disclosure {
       "Not in this price unless a specific repair above says otherwise. Most inspection repairs do not need one; where a permit is required we bill the fee at cost.",
       "no permit-bearing repair in the priced list",
     );
+    /* Site clean-up IS priced; the haul is not. Stated because the engine
+       carries no disposal cost beyond tidying, and an undisclosed omission is
+       the thing this whole disclosure exists to prevent. */
+    b.item(
+      "disposal-re10",
+      "Skip hire and dump fees on debris-heavy work",
+      "excluded",
+      "Site clean-up and tidying are included. Where a repair generates more than a truck load - a large drywall tear-out, flooring or roofing debris - the container and tip fee are billed at cost.",
+      "always disclosed: the engine prices clean-up labour, not haulage",
+    );
     b.item(
       "hazmat-re10",
       "Asbestos, lead, mould and contaminated materials",
