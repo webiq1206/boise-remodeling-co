@@ -17,6 +17,34 @@ import { Section } from "@/components/marketing/Section";
 import { RECIPES } from "@/shared/costs/re10Repairs";
 import { RE10_PRICING_DISCLAIMER } from "@/shared/content/re10Content";
 import type { ExtractedRepair, ExtractionResult } from "@/shared/re10/extraction";
+
+/** Coverage and readiness as the analyze route reports them. */
+interface DocumentCoverage {
+  totalPages: number;
+  read: number;
+  failed: number;
+  deepRead: number;
+  scanned: number;
+  handwritten: number;
+  everyPageRead: boolean;
+  failedPages: { index: number; filename: string; pageInFile: number; reason: string }[];
+}
+
+interface DocumentReadiness {
+  canFinalize: boolean;
+  confidence: number;
+  summary: string;
+  blockers: { kind: string; message: string; remedy: string; blocking: boolean }[];
+  questions: { id: string; question: string; why: string }[];
+}
+
+interface DuplicateNotice {
+  a: number;
+  b: number;
+  reason: string;
+  descriptionA: string;
+  descriptionB: string;
+}
 import {
   classifyUpload,
   MAX_UPLOAD_FILES,
@@ -177,6 +205,15 @@ export function Re10Wizard() {
     address?: string;
   }>({});
   const [extraction, setExtraction] = useState<ExtractionResult | null>(null);
+  /* Page-by-page coverage and the readiness verdict from the analyze step.
+     These answer "did you read all of it?" with a fact rather than a
+     reassurance, and they gate how confidently the result is presented. */
+  const [coverage, setCoverage] = useState<DocumentCoverage | null>(null);
+  const [readiness, setReadiness] = useState<DocumentReadiness | null>(null);
+  const [duplicates, setDuplicates] = useState<DuplicateNotice[]>([]);
+  /* Provenance strings from the analyze step, carried to the lead so an
+     estimator can trace any figure back to a sheet. Never displayed. */
+  const [provenance, setProvenance] = useState<{ coverageSummary?: string; auditTrail?: string }>({});
   const [attachedOnly, setAttachedOnly] = useState<string[]>([]);
   const [documents, setDocuments] = useState<{ filename: string; url: string }[]>([]);
   const [repairs, setRepairs] = useState<EditableRepair[]>([]);
@@ -259,6 +296,10 @@ export function Re10Wizard() {
       if (p?.v !== 1) return;
       if (p.extraction) setExtraction(p.extraction);
       if (Array.isArray(p.attachedOnly)) setAttachedOnly(p.attachedOnly);
+      if (p.coverage) setCoverage(p.coverage);
+      if (p.readiness) setReadiness(p.readiness);
+      if (Array.isArray(p.duplicates)) setDuplicates(p.duplicates);
+      if (p.provenance) setProvenance(p.provenance);
       if (Array.isArray(p.documents)) setDocuments(p.documents);
       if (Array.isArray(p.repairs)) {
         // A record saved before quantityText existed restores without it;
@@ -318,7 +359,7 @@ export function Re10Wizard() {
         PROGRESS_KEY,
         JSON.stringify({
           v: 1,
-          step, extraction, attachedOnly, documents, repairs,
+          step, extraction, attachedOnly, documents, repairs, coverage, readiness, duplicates, provenance,
           name, email, phone, preferredContact, role, brokerage,
           address, closingDate, repairDeadline, occupancy, access, notes, result,
         }),
@@ -328,7 +369,7 @@ export function Re10Wizard() {
     }
   }, [
     progressRestored,
-    step, extraction, attachedOnly, documents, repairs,
+    step, extraction, attachedOnly, documents, repairs, coverage, readiness, duplicates, provenance,
     name, email, phone, preferredContact, role, brokerage,
     address, closingDate, repairDeadline, occupancy, access, notes, result,
   ]);
@@ -414,6 +455,16 @@ export function Re10Wizard() {
       const extracted = data as ExtractionResult;
       setUnpriceable(false);
       setExtraction(extracted);
+      const withEvidence = data as typeof data & {
+        coverage?: DocumentCoverage;
+        readiness?: DocumentReadiness;
+        duplicates?: DuplicateNotice[];
+      };
+      setCoverage(withEvidence.coverage ?? null);
+      setReadiness(withEvidence.readiness ?? null);
+      setDuplicates(Array.isArray(withEvidence.duplicates) ? withEvidence.duplicates : []);
+      const prov = data as typeof data & { coverageSummary?: string; auditTrail?: string };
+      setProvenance({ coverageSummary: prov.coverageSummary, auditTrail: prov.auditTrail });
       setDocuments(Array.isArray(data.stored) ? data.stored : []);
       setAttachedOnly(Array.isArray(data.attachedOnly) ? data.attachedOnly : []);
       if (extracted.propertyAddress) setAddress((a) => a || extracted.propertyAddress!);
@@ -422,6 +473,9 @@ export function Re10Wizard() {
       trackEvent(RE10_EVENTS.analysisCompleted, {
         repairs_found: extracted.repairs.length,
         unmapped: extracted.unmapped.length,
+        pages_total: withEvidence.coverage?.totalPages ?? 0,
+        pages_failed: withEvidence.coverage?.failed ?? 0,
+        can_finalize: withEvidence.readiness?.canFinalize ?? true,
       });
       setRepairs(
         extracted.repairs.map((r, i) => ({
@@ -555,6 +609,8 @@ export function Re10Wizard() {
           looksLikeRe10: extraction?.looksLikeRe10,
           attachedOnly,
           access,
+          coverageSummary: provenance.coverageSummary,
+          auditTrail: provenance.auditTrail,
         }),
       });
       const data = await res.json();
@@ -703,6 +759,90 @@ export function Re10Wizard() {
               title="Here is what we read. Is it right?"
               description="Remove anything that should not be included, and add a measurement where we did not find one. The more you correct here, the more exact your price."
             />
+
+            {/* WHAT WE ACTUALLY READ, stated as a fact. On a long document this
+                is the first thing worth knowing, and until now the only
+                evidence was that some repairs came back. */}
+            {coverage && coverage.totalPages > 0 ? (
+              <div
+                className={`mb-5 rounded-md border p-4 ${
+                  coverage.everyPageRead
+                    ? "border-inverse-foreground/20 bg-inverse-foreground/[0.06]"
+                    : "border-amber-400/40 bg-amber-400/[0.08]"
+                }`}
+                data-testid="re10-coverage"
+              >
+                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
+                  {coverage.everyPageRead
+                    ? `We read all ${coverage.totalPages} page${coverage.totalPages === 1 ? "" : "s"} you sent`
+                    : `We read ${coverage.read} of ${coverage.totalPages} pages`}
+                  {coverage.scanned > 0 ? `, ${coverage.scanned} of them scanned` : ""}
+                  {coverage.handwritten > 0 ? `, ${coverage.handwritten} with handwriting` : ""}.
+                </p>
+                {coverage.failedPages.length > 0 ? (
+                  <ul className="mt-2 space-y-1">
+                    {coverage.failedPages.map((f) => (
+                      <li key={f.index} className="text-[12.5px] text-inverse-muted">
+                        Could not read {f.filename} page {f.pageInFile}: {f.reason} Anything on it is
+                        NOT in your price.
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
+
+            {/* Anything that would make a tightened price a guess, said plainly,
+                each with something the customer can actually do about it. */}
+            {readiness && !readiness.canFinalize && readiness.blockers.length > 0 ? (
+              <div
+                className="mb-5 rounded-md border border-amber-400/40 bg-amber-400/[0.08] p-4"
+                data-testid="re10-blockers"
+              >
+                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                  Before we can price this tightly
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {readiness.blockers
+                    .filter((b) => b.blocking)
+                    .map((b, i) => (
+                      <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                        <span className="text-inverse-foreground/90">{b.message}</span> {b.remedy}
+                      </li>
+                    ))}
+                </ul>
+                <p className="mt-2 text-[12.5px] text-inverse-muted">
+                  You can still carry on. We will price what we could read and say plainly what was
+                  left out.
+                </p>
+              </div>
+            ) : null}
+
+            {/* Possible restatements. ASKED, never merged behind their back:
+                dropping one silently would lose real scope, and pricing both
+                charges twice for one job. */}
+            {duplicates.length > 0 ? (
+              <div
+                className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
+                data-testid="re10-duplicates"
+              >
+                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                  {duplicates.length === 1
+                    ? "One of these may be listed twice"
+                    : `${duplicates.length} of these may be listed twice`}
+                </p>
+                <ul className="mt-2 space-y-2">
+                  {duplicates.map((d, i) => (
+                    <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                      <span className="text-inverse-foreground/90">{d.descriptionA}</span>
+                      {" and "}
+                      <span className="text-inverse-foreground/90">{d.descriptionB}</span>. {d.reason}{" "}
+                      If it is one job, untick one of them below.
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             {!extraction.looksLikeRe10 ? (
               <div className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">

@@ -144,6 +144,17 @@ const bodySchema = z
     looksLikeRe10: z.boolean().optional(),
     /** Files stored for the team but not machine-readable (docx, HEIC). */
     attachedOnly: z.array(z.string().max(300)).max(12).optional(),
+    /**
+     * Coverage and audit trail from the analyze step, forwarded so the lead
+     * carries them.
+     *
+     * NOT TRUSTED FOR ANYTHING PRICED. These are descriptive strings that ride
+     * into the internal notes; nothing here reaches the engine, so a client
+     * that edits them changes only what the team reads about provenance, and
+     * cannot move a number. Length-capped and never rendered to the customer.
+     */
+    coverageSummary: z.string().max(2000).optional(),
+    auditTrail: z.string().max(60_000).optional(),
   })
   .refine((b) => (b.preferredContact === "email" ? Boolean(b.email) : true), {
     message: "An email address is required when email is the preferred contact method.",
@@ -342,6 +353,8 @@ export async function POST(request: NextRequest) {
     excluded: body.excluded ?? [],
     attachedOnly: body.attachedOnly ?? [],
     pricingAlerts,
+    coverageSummary: body.coverageSummary,
+    auditTrail: body.auditTrail,
   });
 
   return NextResponse.json({

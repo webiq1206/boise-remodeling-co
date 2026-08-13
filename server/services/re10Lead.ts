@@ -72,6 +72,17 @@ export interface Re10DeliveryInput {
    * record so the person working the lead sees the price needed attention.
    */
   pricingAlerts?: string[];
+  /**
+   * Page-by-page evidence of what was read, and the internal audit trail
+   * showing where each extracted fact came from.
+   *
+   * INTERNAL ONLY. This is what an estimator needs to check a number against
+   * the document without reading a hundred sheets themselves - which sheet a
+   * quantity came from, the text it was read out of, and which pages we could
+   * not read at all. It never goes to the customer.
+   */
+  coverageSummary?: string;
+  auditTrail?: string;
 }
 
 export interface Re10DeliveryResult {
@@ -161,6 +172,10 @@ function buildRe10Notes(input: Re10DeliveryInput): string {
     ),
   ];
 
+  if (input.coverageSummary) {
+    lines.push(``, `DOCUMENT COVERAGE`, `  ${input.coverageSummary}`);
+  }
+
   if (estimate.review.length > 0) {
     lines.push(``, `NEEDS ONSITE`);
     for (const r of estimate.review) lines.push(`  ${r.input.description} - ${r.text}`);
@@ -194,6 +209,11 @@ function buildRe10Notes(input: Re10DeliveryInput): string {
   }
 
   if (contact.notes) lines.push(``, `THEIR NOTE`, `  ${contact.notes}`);
+
+  /* The audit trail last: it is long, and it is the estimator's tool rather
+     than the reader's. Everything above answers "what is this lead"; this
+     answers "where did that number come from". */
+  if (input.auditTrail) lines.push(``, input.auditTrail);
 
   return lines.filter((l) => l !== undefined).join("\n");
 }

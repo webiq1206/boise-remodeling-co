@@ -10,7 +10,8 @@ import {
 import { uploadFile } from "@/lib/storage/blob";
 import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { randomUUID } from "crypto";
-import { summarizeInventory } from "@/shared/documents/pageInventory";
+import { summarizeInventory, describeCoverage } from "@/shared/documents/pageInventory";
+import { renderAuditTrail } from "@/shared/documents/auditTrail";
 import { assessReadiness } from "@/shared/documents/readiness";
 
 /**
@@ -235,6 +236,12 @@ export async function POST(request: NextRequest) {
       descriptionA: outcome.result.repairs[c.a]?.verbatim ?? "",
       descriptionB: outcome.result.repairs[c.b]?.verbatim ?? "",
     })),
+    /* Provenance, round-tripped so it can ride the lead. Descriptive only:
+       nothing here reaches the pricing engine, so a client that edits it
+       changes what the team reads about where a number came from and cannot
+       change the number. The customer is never shown it. */
+    coverageSummary: describeCoverage(outcome.inventory),
+    auditTrail: renderAuditTrail(outcome.trail),
     readiness: {
       canFinalize: readiness.canFinalize,
       confidence: readiness.confidence,
