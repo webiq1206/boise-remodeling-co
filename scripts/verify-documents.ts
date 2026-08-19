@@ -40,6 +40,7 @@ import { EXTRACTION_SCHEMA, type ExtractedRepair } from "../shared/re10/extracti
 import { packPages, MAX_PLAN_PAGES, PART_MAX_PAGES, PART_MAX_BYTES } from "../shared/documents/uploadPlan";
 import { MAX_REQUEST_UPLOAD_BYTES } from "../shared/re10/uploads";
 import { parseFeet } from "../shared/takeoff/units";
+import { getProjectSizeConfig } from "../shared/estimateEngine";
 import { buildBid, renderTakeoff, DEFAULT_MARKUP, type TakeoffItem } from "../shared/takeoff/bid";
 import { rateFromAnswer, type Rate } from "../shared/takeoff/costBook";
 import { canonicalWorkType, type ClassifiedWork } from "../shared/takeoff/workTypes";
@@ -808,6 +809,35 @@ async function main(): Promise<void> {
       check(q.why.length > 15, `a question must say why it is being asked: "${q.question}"`);
       check(q.unblocks.length > 0, "a question that unblocks nothing must not be asked");
     }
+  }
+
+  console.log("verify-documents: a building outside the calibration is refused, not priced");
+  {
+    /* THE MOST DANGEROUS OUTPUT THIS PRODUCT CAN MAKE is a confident number in
+       the right format about the wrong kind of job. The plans estimate route
+       accepted a stated area up to 100,000 sq ft with no bound check against
+       the engine's calibrated range, so a 17,178 sq ft commercial restaurant
+       came back as "$615,000 to $1,140,000" - a residential remodel range for
+       a building type the calibration has never seen. These pin the bound. */
+    for (const project of ["kitchen", "bathroom", "whole-home", "addition", "adu", "basement"] as const) {
+      const config = getProjectSizeConfig(project);
+      check(config.max > config.min && config.max > 0, `${project} must declare a usable size range`);
+      check(
+        config.baselineSqft >= config.min && config.baselineSqft <= config.max,
+        `${project}: the baseline must sit inside the calibrated range`,
+      );
+    }
+
+    /* The exact comparison the route makes. Clamping would be WRONG here - it
+       would silently price 8,000 feet of a 17,178 foot building - so the
+       route refuses instead, and this asserts the direction of that choice. */
+    const wholeHome = getProjectSizeConfig("whole-home");
+    check(17178 > wholeHome.max, "a 17,178 sq ft building must fall outside the whole-home calibration");
+    check(1714 <= wholeHome.max && 1714 >= wholeHome.min, "a 1,714 sq ft remodel must remain inside it");
+    check(
+      wholeHome.max <= 10_000,
+      `the whole-home ceiling must stay a residential one, is ${wholeHome.max}`,
+    );
   }
 
   console.log("verify-documents: bounded concurrency");

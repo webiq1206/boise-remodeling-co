@@ -19,7 +19,8 @@ import { isStoredDocumentUrl } from "@/shared/re10/uploads";
 import { clientKeyFrom, rateLimit } from "@/lib/rateLimit";
 import { deliverPlanLead } from "@/server/services/planLead";
 import type { PlanContact } from "@/server/services/planEmail";
-import type { ProjectType } from "@/shared/estimateEngine";
+import { getProjectSizeConfig, type ProjectType } from "@/shared/estimateEngine";
+import { logPricingAlert } from "@/server/services/pricingAlerts";
 
 /**
  * The gated step: confirmed measurements in, planning range out.
@@ -258,6 +259,53 @@ export async function POST(request: NextRequest) {
     warnings: body.warnings ?? [],
   };
   result.roomAreaTotalSqFt = asDrawnFloorArea(result) || null;
+
+  /**
+   * IS THIS EVEN A BUILDING THIS ESTIMATOR KNOWS HOW TO PRICE?
+   *
+   * `statedTotalSqFt` accepted anything up to 100,000 with no bound check,
+   * while the cost engine is calibrated between `getProjectSizeConfig`'s min
+   * and max - 800 to 8,000 square feet for a whole home. A 17,178 square foot
+   * commercial restaurant therefore came back as "$615,000 to $1,140,000",
+   * a residential remodel range applied to a building type the calibration has
+   * never seen, with nothing on screen saying so. That is the single most
+   * dangerous output this product can make: a confident number, in the right
+   * format, about the wrong kind of job.
+   *
+   * The sibling lead routes clamp out-of-bounds area and alert; clamping is
+   * wrong HERE because it would silently price 8,000 feet of a 17,178 foot
+   * building. So this refuses instead. The read is not wasted - the quantities
+   * and the scope are real and are returned - but no range is produced, and
+   * the customer is told plainly that a building this size needs an estimator.
+   */
+  const sizeConfig = getProjectSizeConfig(body.projectType as ProjectType);
+  if (body.statedTotalSqFt > sizeConfig.max || body.statedTotalSqFt < sizeConfig.min) {
+    logPricingAlert("estimate-unresolvable", {
+      route: "plans-estimate",
+      reason: "area-outside-calibrated-range",
+      statedTotalSqFt: body.statedTotalSqFt,
+      project: body.projectType,
+      min: sizeConfig.min,
+      max: sizeConfig.max,
+    });
+    return NextResponse.json({
+      outOfScope: true,
+      range: null,
+      low: null,
+      high: null,
+      message:
+        body.statedTotalSqFt > sizeConfig.max
+          ? `At ${body.statedTotalSqFt.toLocaleString("en-US")} sq ft this is larger than our instant estimator covers, which is calibrated up to ${sizeConfig.max.toLocaleString("en-US")} sq ft for this kind of project. We have read your drawings and kept everything we measured - an estimator will price it properly rather than us showing you a number built for a different size of job.`
+          : `At ${body.statedTotalSqFt.toLocaleString("en-US")} sq ft this is smaller than our instant estimator covers for this kind of project. Send it over and we will price it by hand.`,
+      /* The read is still worth everything it cost. Handing back the measured
+         scope means the estimator starts from a takeoff rather than from the
+         drawings, which is most of the work. */
+      scopeItems: (body.scopeItems ?? []).filter((i) => i.inContract && i.commercialStatus === "base"),
+      excludedScope: (body.scopeItems ?? []).filter((i) => !i.inContract),
+      statedTotalSqFt: body.statedTotalSqFt,
+      sheetsUsed: body.sheetsUsed ?? [],
+    });
+  }
 
   const quality = assessPlanQuality(result);
   const measurements = planMeasurements(result);

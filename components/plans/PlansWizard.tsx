@@ -17,6 +17,9 @@ import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import { postFormWithProgress, type UploadStatus } from "@/lib/uploadWithProgress";
 import { splitForUpload } from "@/lib/planSplitter";
 import { mergePlanReads } from "@/shared/plans/merge";
+import { assessPlanQuality } from "@/shared/plans/extraction";
+import { SITE_CONFIG } from "@/shared/siteConfig";
+import { assessReadiness } from "@/shared/documents/readiness";
 import { conflicts } from "@/shared/documents/auditTrail";
 import { MAX_PLAN_PAGES, describeUploadProgress } from "@/shared/documents/uploadPlan";
 import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
@@ -143,10 +146,36 @@ function mergeAnalyzeParts(parts: AnalyzeResponse[], expectedPages: number): Ana
       })),
   };
 
-  const first = parts[0];
+  /* QUALITY AND READINESS ARE RECOMPUTED FROM THE MERGED SET, never taken
+     from a batch. Taking them from parts[0] meant a 103-sheet upload reported
+     the quality of its cover sheet: the blockers, the measured-room coverage
+     and canTightenPrice all described four pages out of a hundred. The price
+     was never affected - the estimate route re-runs assessPlanQuality on the
+     server over whatever is posted - but the customer was being shown a
+     verdict about the wrong document, which is its own kind of wrong. */
+  const mergedResult = merged.result as unknown as AnalyzeResponse;
+  const quality = assessPlanQuality(merged.result);
+  const readiness = assessReadiness({
+    inventory: { pages: [], unpaginated: [] },
+    trail: merged.trail,
+    hasPriceableContent: merged.result.rooms.length > 0 || merged.result.scopeItems.length > 0,
+    missingCriticalInputs:
+      merged.result.statedTotalSqFt == null
+        ? [
+            {
+              label: "a stated total floor area",
+              question: "What is the total square footage of the area being remodelled?",
+              why:
+                "No sheet in the set prints a total, so there is nothing to check our room-by-room read against. " +
+                "Your number is genuinely independent of our reading of the drawings, which is what makes it useful.",
+            },
+          ]
+        : [],
+  });
+
   return {
-    ...(merged.result as unknown as AnalyzeResponse),
-    quality: first.quality,
+    ...mergedResult,
+    quality,
     stored: parts.flatMap((p) => p.stored ?? []),
     attachedOnly: parts.flatMap((p) => p.attachedOnly ?? []),
     pages,
@@ -161,7 +190,18 @@ function mergeAnalyzeParts(parts: AnalyzeResponse[], expectedPages: number): Ana
         page: v.source.pageIndex,
       })),
     })),
-    readiness: first.readiness,
+    readiness: {
+      canFinalize: readiness.canFinalize,
+      confidence: readiness.confidence,
+      summary: readiness.summary,
+      blockers: readiness.blockers,
+      /* Questions from every batch, not just the first: an unmeasured item on
+         sheet 90 is exactly as worth asking about as one on sheet 2. */
+      questions: [
+        ...readiness.questions,
+        ...parts.flatMap((p) => p.readiness?.questions ?? []),
+      ].filter((q, i, all) => all.findIndex((x) => x.id === q.id) === i),
+    },
     coverageSummary:
       `${coverage.read} of ${coverage.totalPages} sheets read` +
       (coverage.deepRead > 0 ? `, ${coverage.deepRead} examined in detail` : "") +
@@ -332,6 +372,8 @@ export function PlansWizard() {
   const [notes, setNotes] = useState("");
 
   const [result, setResult] = useState<EstimateResponse | null>(null);
+  /* Set when the building is outside what the instant estimator covers. */
+  const [outOfScope, setOutOfScope] = useState<string | null>(null);
 
   // Fires once on mount. The denominator for every other stage.
   useEffect(() => {
@@ -769,6 +811,20 @@ export function PlansWizard() {
           reason: "estimate-rejected",
           fields: Object.keys(fieldErrors).join(",") || String(res.status),
         });
+        return;
+      }
+
+      /* OUT OF SCOPE IS NOT AN ERROR AND NOT A RANGE. A building outside the
+         engine's calibrated size gets no number - showing one would be a
+         residential figure for a job the calibration has never seen - but the
+         read is real and the customer should see that we did the work and are
+         handing it to a person. Fires the funnel event as a blocked narrowing
+         rather than a generated estimate, so this does not read as a priced
+         lead in the numbers. */
+      if ((data as { outOfScope?: boolean }).outOfScope) {
+        setOutOfScope((data as { message?: string }).message ?? null);
+        trackEvent(PLAN_EVENTS.narrowingBlocked, { reason: "outside-calibrated-size" });
+        goTo("result");
         return;
       }
 
@@ -1376,6 +1432,41 @@ export function PlansWizard() {
         ) : null}
 
         {/* ------------------------------------------------------- 4. result */}
+        {/* A building we do not price instantly. Says what we DID do, why there
+            is no number, and hands over to a person - rather than a blank
+            screen or, far worse, a residential range for a restaurant. */}
+        {step === "result" && outOfScope ? (
+          <StepTransition>
+            <div
+              className="rounded-md border border-accent-legible/40 bg-accent-legible/[0.07] p-6"
+              data-testid="plans-out-of-scope"
+            >
+              <h2 className="text-[19px] font-semibold text-inverse-foreground">
+                We read your drawings. This one needs an estimator, not an instant number.
+              </h2>
+              <p className="mt-3 text-[13.5px] leading-relaxed text-inverse-muted">{outOfScope}</p>
+              <p className="mt-3 text-[13.5px] leading-relaxed text-inverse-muted">
+                Your details and everything we measured have gone to our team. We would rather hand you
+                a real price than a fast one built for a different size of job.
+              </p>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <a
+                  href={`tel:${SITE_CONFIG.phoneTel}`}
+                  className="rounded-sm bg-inverse-foreground px-4 py-2 text-[13.5px] font-medium text-inverse"
+                >
+                  Call {SITE_CONFIG.phone}
+                </a>
+                <a
+                  href="/contact"
+                  className="rounded-sm border border-inverse-foreground/30 px-4 py-2 text-[13.5px] text-inverse-foreground"
+                >
+                  Send a message instead
+                </a>
+              </div>
+            </div>
+          </StepTransition>
+        ) : null}
+
         {step === "result" && result ? (
           <StepTransition>
           <PlansResult
