@@ -6,7 +6,7 @@ import {
   classifyUpload,
   resolveMimeType,
   MAX_UPLOAD_FILES,
-  MAX_TOTAL_UPLOAD_BYTES,
+  MAX_REQUEST_UPLOAD_BYTES,
   READABLE_FORMATS_LABEL,
 } from "@/shared/re10/uploads";
 import { uploadFile } from "@/lib/storage/blob";
@@ -35,9 +35,18 @@ export const runtime = "nodejs";
 // A 40-sheet permit set takes real time to read.
 export const maxDuration = 300;
 
-/* Same reasoning as the RE-10 analyze limit: unauthenticated route, real model
-   tokens per accepted request. Plan sets are heavier and retried less often. */
-const RATE_LIMIT = 6;
+/**
+ * THE UNIT CHANGED, SO THE LIMIT HAD TO.
+ *
+ * This was 6 per 10 minutes, set when one upload meant one request. Sets are
+ * now split in the browser and arrive as a part per few sheets, so a single
+ * legitimate 103-sheet submission is around 32 requests and the old ceiling
+ * would have 429'd it from part seven onward - turning the fix for large sets
+ * into a new way for large sets to fail. The limit is now high enough for two
+ * full-size submissions and still bounds an abusive caller, and the real cost
+ * control is MAX_PLAN_PAGES, which caps the sheets one visitor can send.
+ */
+const RATE_LIMIT = 150;
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 
 export async function POST(request: NextRequest) {
@@ -66,6 +75,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "failed", message: "Could not read the upload." }, { status: 400 });
   }
 
+  /**
+   * Custom instructions, and where this batch sits in the whole submission.
+   *
+   * A large set arrives as several parts, split in the browser (see
+   * lib/planSplitter.ts). Each part is analysed on its own and the client
+   * merges them, so nothing here has to hold a 124MB body in memory. The
+   * offset keeps page numbers in the customer's own numbering.
+   */
+  const instructions = (form.get("instructions") ?? "").toString().slice(0, 2000).trim() || undefined;
+  const pageOffsetRaw = Number(form.get("pageOffset") ?? 1);
+  const pageOffset = Number.isFinite(pageOffsetRaw) && pageOffsetRaw >= 1 ? Math.floor(pageOffsetRaw) : 1;
+
   const uploaded = form.getAll("files").filter((f): f is File => f instanceof File);
   if (uploaded.length === 0) {
     return NextResponse.json({ error: "failed", message: "No files were attached." }, { status: 400 });
@@ -88,13 +109,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  /**
+   * A per-REQUEST guard, not a per-SET one.
+   *
+   * The browser splits a set into parts well under this, so a legitimate
+   * upload never approaches it however many sheets it carries - the 123.8MB
+   * commercial set that could not be uploaded at all arrives as twenty-odd
+   * small parts. What remains here is a guard against a hand-crafted request,
+   * where buffering an enormous body would cost the container rather than the
+   * caller.
+   */
   const total = uploaded.reduce((sum, f) => sum + f.size, 0);
-  if (total > MAX_TOTAL_UPLOAD_BYTES) {
+  if (total > MAX_REQUEST_UPLOAD_BYTES) {
     return NextResponse.json(
       {
         error: "too-large",
         message:
-          "That plan set is too large to analyze in one go. Send the floor plans, the demolition plan and any schedules - those are the sheets we price from - rather than the full set.",
+          "That batch is larger than we accept in one request. Reload the page and upload again; the drawings are split into batches automatically.",
       },
       { status: 400 },
     );
@@ -141,7 +172,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const outcome = await extractPlans(readable);
+  const outcome = await extractPlans(readable, { instructions, pageOffset });
   if (!outcome.ok) {
     const status = outcome.reason === "busy" || outcome.reason === "not-configured" ? 503 : 422;
     return NextResponse.json(

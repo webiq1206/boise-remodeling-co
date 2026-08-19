@@ -73,7 +73,31 @@ export function isPlanExtractionConfigured(): boolean {
 class TruncatedError extends Error {}
 class RefusedError extends Error {}
 
-export async function extractPlans(files: PlanInput[]): Promise<PlanExtractionOutcome> {
+export interface PlanExtractOptions {
+  /**
+   * What the customer asked for, verbatim.
+   *
+   * Threaded into both passes. It never reduces what is READ - every page is
+   * still indexed and reported - it changes what is looked for while reading.
+   * A takeoff request for one trade on a hundred-sheet commercial set is a
+   * different question from "measure this house", and answering the second
+   * when the first was asked is how a confident, useless result gets made.
+   */
+  instructions?: string;
+  /**
+   * Global 1-based index of this batch's first page.
+   *
+   * A large set is uploaded in parts, and each part is analysed on its own.
+   * The offset keeps page numbers meaningful across the whole submission, so
+   * "we could not read page 137" means the customer's page 137.
+   */
+  pageOffset?: number;
+}
+
+export async function extractPlans(
+  files: PlanInput[],
+  options: PlanExtractOptions = {},
+): Promise<PlanExtractionOutcome> {
   if (!isPlanExtractionConfigured()) {
     return { ok: false, reason: "not-configured", message: "Plan analysis is not configured on this environment." };
   }
@@ -96,6 +120,14 @@ export async function extractPlans(files: PlanInput[]): Promise<PlanExtractionOu
   const client = new Anthropic();
   const inventory = await buildInventory(usable);
 
+  /* Re-number into the whole submission's page space. A part covering sheets
+     41 to 48 must report them as 41 to 48, not as 1 to 8, or every coverage
+     claim and every "we could not read page N" is wrong by an offset. */
+  const offset = Math.max(0, (options.pageOffset ?? 1) - 1);
+  if (offset > 0) {
+    for (const page of inventory.pages) page.index += offset;
+  }
+
   if (inventory.pages.length === 0) {
     return {
       ok: false,
@@ -109,7 +141,7 @@ export async function extractPlans(files: PlanInput[]): Promise<PlanExtractionOu
   try {
     // Pass one: index every sheet. Cheap, complete, and the evidence that the
     // whole set was looked at rather than sampled.
-    await censusPages(usable, inventory, client);
+    await censusPages(usable, inventory, client, options.instructions);
 
     // Pass two: the expensive read, only where the index found quantities.
     const targets = inventory.pages.filter((p) => p.status === "read" && p.pricingRelevant);
@@ -136,7 +168,7 @@ export async function extractPlans(files: PlanInput[]): Promise<PlanExtractionOu
       const wave = queue.splice(0, queue.length);
       const retries = await mapWithConcurrency(wave, DEEP_CONCURRENCY, async (chunk) => {
         try {
-          const { result, tokens } = await extractChunk(chunk, client);
+          const { result, tokens } = await extractChunk(chunk, client, options.instructions);
           const first = inventory.pages.find((p) => p.index === chunk.pageIndices[0]);
           reads.push({
             result,
@@ -214,13 +246,18 @@ export async function extractPlans(files: PlanInput[]): Promise<PlanExtractionOu
 async function extractChunk(
   chunk: PageChunk,
   client: Anthropic,
+  instructions?: string,
 ): Promise<{ result: PlanExtractionResult; tokens: { inputTokens: number; outputTokens: number } }> {
+  const system = instructions
+    ? `${PLAN_EXTRACTION_SYSTEM_PROMPT}\n\nWHAT THIS CUSTOMER ASKED FOR, VERBATIM: "${instructions}"\n\nHonour that request in what you PRIORITISE, never in what you report as fact. Put everything matching it into scopeItems in as much detail as the sheets support - each item quoted from the drawing, with its sheet, its dimensions or count where printed, and its material or finish where specified. Keep recording room areas and the other fields as normal: they are what the estimate is checked against, and dropping them because they were not asked for would leave the read unverifiable. If these sheets carry nothing matching the request, say so by returning no matching scope items rather than stretching something unrelated to fit.`
+    : PLAN_EXTRACTION_SYSTEM_PROMPT;
+
   const stream = client.beta.messages.stream({
     model: DEEP_MODEL,
     max_tokens: 16000,
     betas: ["server-side-fallback-2026-07-01"],
     fallbacks: "default",
-    system: PLAN_EXTRACTION_SYSTEM_PROMPT,
+    system,
     output_config: {
       format: { type: "json_schema", schema: PLAN_EXTRACTION_SCHEMA as unknown as Record<string, unknown> },
     },

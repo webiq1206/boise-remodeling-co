@@ -18,6 +18,20 @@
 export const MAX_UPLOAD_FILES = 12;
 export const MAX_TOTAL_UPLOAD_BYTES = 24 * 1024 * 1024;
 
+/**
+ * The ceiling on ONE request, which is not the ceiling on one plan set.
+ *
+ * A 123.8MB commercial set of 103 sheets was refused outright by the 24MB
+ * limit above, and raising that constant would have been the wrong fix twice
+ * over: `request.formData()` buffers the entire body, so a 124MB upload costs
+ * several hundred megabytes of container memory before a single sheet is
+ * read, and the same 300-second window would have had to cover both the
+ * upload and the analysis. Plan sets are split in the browser instead
+ * (lib/planSplitter.ts) and arrive as parts of a few sheets each. This bounds
+ * one part; MAX_PLAN_PAGES bounds the set.
+ */
+export const MAX_REQUEST_UPLOAD_BYTES = 32 * 1024 * 1024;
+
 /** Types the extractor can send to the model: PDF and the four image formats. */
 const READABLE_MIME = new Set([
   "application/pdf",

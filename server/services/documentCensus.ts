@@ -110,6 +110,15 @@ export async function censusPages(
   files: SourceFile[],
   inventory: PageInventory,
   client: Anthropic,
+  /**
+   * What the customer asked us to focus on, in their own words.
+   *
+   * Steers WHICH pages earn a detailed read without narrowing which pages are
+   * looked at: every sheet is still indexed, so the coverage claim stays true.
+   * "Millwork only" should make the casework details and interior elevations
+   * pricing-relevant on a set where the room areas are not the point.
+   */
+  instructions?: string,
 ): Promise<CensusOutcome> {
   const chunks = await buildChunks(
     files,
@@ -127,7 +136,7 @@ export async function censusPages(
     const wave = queue.splice(0, queue.length);
     const retries = await mapWithConcurrency(wave, CENSUS_CONCURRENCY, async (chunk) => {
       try {
-        const pages = await censusChunk(chunk, client);
+        const pages = await censusChunk(chunk, client, instructions);
         applyCensus(inventory, chunk, pages);
         return null;
       } catch (err) {
@@ -152,11 +161,19 @@ export async function censusPages(
   return { ok: failedPages.size < inventory.pages.length, failed: failedPages.size };
 }
 
-async function censusChunk(chunk: PageChunk, client: Anthropic): Promise<CensusPage[]> {
+async function censusChunk(
+  chunk: PageChunk,
+  client: Anthropic,
+  instructions?: string,
+): Promise<CensusPage[]> {
+  const system = instructions
+    ? `${CENSUS_PROMPT}\n\nWHAT THIS CUSTOMER ASKED FOR, VERBATIM: "${instructions}"\n\nIndex every page exactly as instructed above - the customer's focus never reduces which pages you look at or report. It DOES widen carriesQuantities: a page carrying information relevant to what they asked for is pricing-relevant even if it carries no room areas. On a millwork or casework request that means interior elevations, enlarged plans, casework details, finish schedules and equipment schedules all count.`
+    : CENSUS_PROMPT;
+
   const message = await client.messages.create({
     model: CENSUS_MODEL,
     max_tokens: 4000,
-    system: CENSUS_PROMPT,
+    system,
     output_config: {
       format: { type: "json_schema", schema: CENSUS_SCHEMA as unknown as Record<string, unknown> },
     },

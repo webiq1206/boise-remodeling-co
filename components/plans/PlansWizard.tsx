@@ -15,6 +15,10 @@ import { PLAN_EVENTS } from "@/shared/plans/analyticsEvents";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import { postFormWithProgress, type UploadStatus } from "@/lib/uploadWithProgress";
+import { splitForUpload } from "@/lib/planSplitter";
+import { mergePlanReads } from "@/shared/plans/merge";
+import { conflicts } from "@/shared/documents/auditTrail";
+import { MAX_PLAN_PAGES, describeUploadProgress } from "@/shared/documents/uploadPlan";
 import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
 import { useModals } from "@/components/modals/modalsContext";
 import {
@@ -74,6 +78,97 @@ interface AnalyzeResponse extends PlanExtractionResult {
   duplicateRoomsMerged?: number;
   coverageSummary?: string;
   auditTrail?: string;
+  /** Per-page manifest, in the whole submission's page numbering. */
+  pages?: PageManifestEntry[];
+}
+
+interface PageManifestEntry {
+  index: number;
+  filename: string;
+  page: number;
+  status: string;
+  kind: string;
+  medium: string;
+  sheet: string | null;
+  title: string | null;
+  deepRead: boolean;
+  failureReason: string | null;
+}
+
+/**
+ * Fold the per-batch reads back into one answer.
+ *
+ * The merge itself is `mergePlanReads`, the same shared function the server
+ * uses when a set arrives in one piece, so a set split into twenty parts and
+ * the same set read whole come out identical: rooms deduplicated on identity,
+ * existing and demolition phases kept but never summed, contradictions raised
+ * rather than resolved. Coverage is summed across batches, and a batch that
+ * failed entirely leaves its pages absent - which the totals then report as
+ * unread rather than quietly shrinking the denominator.
+ *
+ * Doing this client-side is safe because it decides nothing: the estimate
+ * route re-runs every quality gate server-side on whatever is posted back, and
+ * there is nowhere in that request to put a price.
+ */
+function mergeAnalyzeParts(parts: AnalyzeResponse[], expectedPages: number): AnalyzeResponse {
+  const merged = mergePlanReads(
+    parts.map((p, i) => ({
+      result: p as unknown as PlanExtractionResult,
+      pageIndices: (p.pages ?? []).map((pg) => pg.index),
+      filename: p.pages?.[0]?.filename ?? `batch-${i + 1}`,
+      sheet: p.pages?.[0]?.sheet ?? null,
+    })),
+  );
+
+  const pages = parts.flatMap((p) => p.pages ?? []).sort((a, b) => a.index - b.index);
+  const readPages = pages.filter((p) => p.status === "read").length;
+  const coverage: DocumentCoverage = {
+    // The DENOMINATOR is what the customer sent, not what came back. A batch
+    // that failed outright contributes no page records, and counting only the
+    // records we have would report 100% coverage of a partial read.
+    totalPages: expectedPages,
+    read: readPages,
+    failed: expectedPages - readPages,
+    deepRead: pages.filter((p) => p.deepRead).length,
+    scanned: pages.filter((p) => p.medium === "scanned").length,
+    handwritten: pages.filter((p) => p.medium === "handwritten").length,
+    everyPageRead: readPages === expectedPages,
+    failedPages: pages
+      .filter((p) => p.status !== "read")
+      .map((p) => ({
+        index: p.index,
+        filename: p.filename,
+        pageInFile: p.page,
+        reason: p.failureReason ?? "This sheet could not be read.",
+      })),
+  };
+
+  const first = parts[0];
+  return {
+    ...(merged.result as unknown as AnalyzeResponse),
+    quality: first.quality,
+    stored: parts.flatMap((p) => p.stored ?? []),
+    attachedOnly: parts.flatMap((p) => p.attachedOnly ?? []),
+    pages,
+    coverage,
+    duplicateRoomsMerged: merged.duplicateRoomsMerged,
+    conflicts: conflicts(merged.trail).map((c) => ({
+      label: c.label,
+      unit: c.unit,
+      values: (c.competingValues ?? []).map((v) => ({
+        value: v.value,
+        sheet: v.source.sheet,
+        page: v.source.pageIndex,
+      })),
+    })),
+    readiness: first.readiness,
+    coverageSummary:
+      `${coverage.read} of ${coverage.totalPages} sheets read` +
+      (coverage.deepRead > 0 ? `, ${coverage.deepRead} examined in detail` : "") +
+      (coverage.failed > 0 ? `, ${coverage.failed} could NOT be read` : "") +
+      ".",
+    auditTrail: parts.map((p) => p.auditTrail).filter(Boolean).join("\n\n"),
+  };
 }
 
 interface DocumentCoverage {
@@ -197,6 +292,12 @@ export function PlansWizard() {
      set is the largest thing this site ever uploads, so this is the flow
      where a silent spinner hurt the most. */
   const [uploadStatus, setUploadStatus] = useState<UploadStatus | null>(null);
+  /* Batch progress across a split upload, and the customer's own brief. */
+  const [batchTotal, setBatchTotal] = useState(0);
+  const [batchDone, setBatchDone] = useState(0);
+  const [instructions, setInstructions] = useState("");
+  /* Sheets seen so far, filled in once the split has counted them. */
+  const [filePageEstimate, setFilePageEstimate] = useState(0);
   /* Field-level messages so a missed input is pointed at, not described in a
      banner. Cleared per field the moment that field changes. */
   const [fieldErrors, setFieldErrors] = useState<{
@@ -412,20 +513,90 @@ export function PlansWizard() {
     setError(null);
     setUploadStatus({ phase: "uploading", percent: 0 });
     try {
-      const form = new FormData();
-      files.forEach((f) => form.append("files", f));
-      const res = await postFormWithProgress("/api/plans/analyze", form, setUploadStatus);
-      const data = (res.data ?? {}) as AnalyzeResponse & { message?: string; error?: string };
-      if (!res.ok) {
-        setError(data.message ?? "We could not read those drawings.");
-        trackEvent(PLAN_EVENTS.analysisFailed, { reason: String(data.error ?? res.status) });
+      /* SPLIT FIRST, IN THE BROWSER. A real commercial set is 100+ sheets and
+         well over 100MB, which no single request should ever carry. Each part
+         is a handful of sheets, so progress is honest and one bad part costs
+         that part. See lib/planSplitter.ts. */
+      const split = await splitForUpload(files, (done, total) => {
+        setFilePageEstimate(total);
+        setUploadStatus({ phase: "uploading", percent: Math.round((done / Math.max(1, total)) * 40) });
+      });
+      if (!split.ok) {
+        setError(split.error ?? "We could not open those drawings.");
+        trackEvent(PLAN_EVENTS.analysisFailed, { reason: "split-failed" });
+        return;
+      }
+      setBatchTotal(split.parts.length);
+      setFilePageEstimate(split.totalPages);
+
+      const partReads: AnalyzeResponse[] = [];
+      const failure: { message: string; error?: string }[] = [];
+      let completed = 0;
+
+      /* BATCHES RUN CONCURRENTLY, BUT NOT ALL AT ONCE.
+         Measured at roughly 68 seconds per batch of four 30x42 sheets, so a
+         103-sheet set read one batch at a time is over half an hour of
+         staring at a progress bar. The server already reads several sheets in
+         parallel within a batch, so the client cap stays deliberately low:
+         enough to cut the wall clock by two thirds, not so much that one
+         visitor saturates the account's rate limit and starts failing their
+         own batches. */
+      const UPLOAD_CONCURRENCY = 3;
+      let cursor = 0;
+
+      const runOne = async (part: (typeof split.parts)[number], i: number) => {
+        const form = new FormData();
+        form.append("files", new File([part.blob], part.filename, { type: "application/pdf" }));
+        form.append("pageOffset", String(part.pageOffset));
+        if (instructions.trim()) form.append("instructions", instructions.trim());
+
+        try {
+          const res = await postFormWithProgress("/api/plans/analyze", form, () => {});
+          const data = (res.data ?? {}) as AnalyzeResponse & { message?: string; error?: string };
+          if (!res.ok) {
+            /* One failed batch is NOT the end of the set. Record it, keep
+               going, and report it as unread pages rather than throwing away
+               every sheet that did read. */
+            if (failure.length === 0) failure.push({ message: data.message ?? "", error: data.error });
+            console.warn(`[plans] batch ${i + 1} of ${split.parts.length} failed:`, data.error);
+            return;
+          }
+          partReads.push(data);
+        } catch {
+          if (failure.length === 0) failure.push({ message: "", error: "network" });
+          console.warn(`[plans] batch ${i + 1} of ${split.parts.length} could not be sent`);
+        } finally {
+          completed += 1;
+          setBatchDone(completed);
+          // Splitting owns the first 40% of the bar, uploading the rest.
+          setUploadStatus({
+            phase: "processing",
+            percent: 40 + Math.round((completed / split.parts.length) * 60),
+          });
+        }
+      };
+
+      await Promise.all(
+        Array.from({ length: Math.min(UPLOAD_CONCURRENCY, split.parts.length) }, async () => {
+          for (;;) {
+            const i = cursor++;
+            if (i >= split.parts.length) return;
+            await runOne(split.parts[i], i);
+          }
+        }),
+      );
+      setBatchDone(split.parts.length);
+
+      if (partReads.length === 0) {
+        setError(failure[0]?.message || "We could not read those drawings.");
+        trackEvent(PLAN_EVENTS.analysisFailed, { reason: String(failure[0]?.error ?? "all-batches-failed") });
         return;
       }
 
-      const read = data as AnalyzeResponse;
+      const read = mergeAnalyzeParts(partReads, split.totalPages);
       setExtraction(read);
-      setDocuments(Array.isArray(data.stored) ? data.stored : []);
-      setAttachedOnly(Array.isArray(data.attachedOnly) ? data.attachedOnly : []);
+      setDocuments(Array.isArray(read.stored) ? read.stored : []);
+      setAttachedOnly(Array.isArray(read.attachedOnly) ? read.attachedOnly : []);
       setRooms(read.rooms.map((r, i) => ({ ...r, id: `room-${i}` })));
 
       // The drawings often state a total. When they do, prefill it and leave it
@@ -658,13 +829,47 @@ export function PlansWizard() {
               onRemove={removeFile}
               accept={UPLOAD_ACCEPT}
               acceptLabel={`PDFs. ${READABLE_FORMATS_LABEL} read automatically.`}
-              limitLabel={`Up to ${MAX_UPLOAD_FILES} files, ${Math.round(MAX_TOTAL_UPLOAD_BYTES / (1024 * 1024))} MB total.`}
+              limitLabel={`Up to ${MAX_PLAN_PAGES} sheets. Large sets are split and uploaded automatically, so file size is not a limit.`}
               headline="Add your drawings"
               allowCamera={false}
               disabled={busy}
               status={uploadStatus}
-              processingLabel="Reading your drawings..."
+              processingLabel={
+                batchTotal > 1
+                  ? describeUploadProgress(batchDone, batchTotal, filePageEstimate)
+                  : "Reading your drawings..."
+              }
             />
+
+            {/* THE CUSTOMER'S OWN BRIEF. A full commercial set is read very
+                differently depending on what is being asked for: "all of the
+                millwork" wants casework details and interior elevations, and
+                a whole-home remodel wants room areas. Guessing which is being
+                asked produces a confident answer to the wrong question. */}
+            <div className="mt-6">
+              <label
+                htmlFor="plans-instructions"
+                className="block text-[13px] font-semibold uppercase tracking-wide text-inverse-foreground/80"
+              >
+                What should we focus on? <span className="font-normal normal-case opacity-70">(optional)</span>
+              </label>
+              <p className="mt-1 text-[12.5px] leading-relaxed text-inverse-muted">
+                Tell us in your own words. For example: &quot;all of the millwork and casework only&quot;, or
+                &quot;just the kitchen and the two bathrooms&quot;. We read every sheet either way; this
+                changes what we look for while reading.
+              </p>
+              <textarea
+                id="plans-instructions"
+                data-testid="plans-instructions"
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                maxLength={2000}
+                rows={3}
+                disabled={busy}
+                placeholder="e.g. Estimate all of the millwork only"
+                className="mt-2 w-full resize-y rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-[13.5px] text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
+              />
+            </div>
             <StickyStepNav
               onNext={analyze}
               nextLabel="Read my plans"

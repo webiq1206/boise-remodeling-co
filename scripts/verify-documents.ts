@@ -37,6 +37,8 @@ import { findDuplicatePairs, findQuantityConflicts, similarity, DUPLICATE_THRESH
 import { buildSyntheticPlanSet, buildLargeRe10, buildSyntheticPlanSetPages, buildLargeRe10Pages } from "./lib/syntheticPlanSet";
 import { PLAN_EXTRACTION_SCHEMA, type PlanExtractionResult, type PlanRoom } from "../shared/plans/extraction";
 import { EXTRACTION_SCHEMA, type ExtractedRepair } from "../shared/re10/extraction";
+import { packPages, MAX_PLAN_PAGES, PART_MAX_PAGES, PART_MAX_BYTES } from "../shared/documents/uploadPlan";
+import { MAX_REQUEST_UPLOAD_BYTES } from "../shared/re10/uploads";
 
 let checks = 0;
 let failures = 0;
@@ -415,6 +417,63 @@ async function main(): Promise<void> {
     check(
       Math.max(...re10.map((p) => p.length)) <= Math.floor(580 / 12),
       "fixture pages must not overflow the page box, or items render invisibly",
+    );
+  }
+
+  console.log("verify-documents: upload splitting for very large sets");
+  {
+    /* THE 123.8MB SET THAT COULD NOT BE UPLOADED. 103 sheets of 30x42 inch
+       drawings against a 24MB ceiling: refused at the door, before a single
+       page was read. Splitting happens in the browser now, so what bounds a
+       submission is the page count rather than a byte size nobody can act on. */
+    const MB = 1024 * 1024;
+
+    // Typical: 103 sheets averaging 1.2MB, as measured on the real set.
+    const typical = Array.from({ length: 103 }, (_, i) => (i % 7 === 0 ? 2.4 : 1.1) * MB);
+    const groups = packPages(typical, PART_MAX_PAGES, PART_MAX_BYTES);
+    check(
+      new Set(groups.flat()).size === typical.length,
+      `every page must land in exactly one part, got ${new Set(groups.flat()).size} of ${typical.length}`,
+    );
+    check(
+      groups.flat().length === typical.length,
+      "a page must never be packed into two parts - that would double count it",
+    );
+    check(
+      groups.every((g) => g.length <= PART_MAX_PAGES),
+      "no part may exceed the page budget",
+    );
+    check(
+      groups.every((g) => g.length === 1 || g.reduce((sum, i) => sum + typical[i], 0) <= PART_MAX_BYTES),
+      "no multi-page part may exceed the byte budget",
+    );
+    check(
+      groups.every((g, i) => i === 0 || g[0] === groups[i - 1][groups[i - 1].length - 1] + 1),
+      "parts must stay in page order so the page offsets are meaningful",
+    );
+
+    /* A single sheet heavier than the whole budget cannot be split further.
+       It must travel ALONE rather than dragging a readable sheet down with it. */
+    const withMonster = [1 * MB, 30 * MB, 1 * MB];
+    const monsterGroups = packPages(withMonster, PART_MAX_PAGES, PART_MAX_BYTES);
+    check(
+      monsterGroups.some((g) => g.length === 1 && g[0] === 1),
+      "an oversized single page must be packed alone",
+    );
+    check(
+      new Set(monsterGroups.flat()).size === 3,
+      "the pages either side of an oversized one must still be packed",
+    );
+
+    check(packPages([], PART_MAX_PAGES, PART_MAX_BYTES).length === 0, "no pages means no parts, not one empty part");
+    check(packPages([MB]).length === 1, "a single small page is one part");
+
+    /* The page ceiling has to be high enough for a real commercial set and
+       stated in pages, because that is the unit a customer can reason about. */
+    check(MAX_PLAN_PAGES >= 200, `the page ceiling must be at least 200, is ${MAX_PLAN_PAGES}`);
+    check(
+      PART_MAX_BYTES < MAX_REQUEST_UPLOAD_BYTES,
+      "a part must always fit inside the per-request ceiling with room to spare",
     );
   }
 
