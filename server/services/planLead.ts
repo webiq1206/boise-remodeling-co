@@ -68,6 +68,8 @@ export interface PlanDeliveryInput {
    */
   coverageSummary?: string;
   auditTrail?: string;
+  /** What the customer told us when the drawings did not say. */
+  clarifications?: { question: string; answer: string }[];
   sheetsUsed: string[];
   documents: { filename: string; url: string }[];
 }
@@ -186,6 +188,13 @@ function buildPlanNotes(input: PlanDeliveryInput): string {
   if (input.alternates && input.alternates.length > 0) {
     lines.push(``, `ALTERNATES AND OPTIONS - NOT IN THE BASE NUMBER`);
     for (const a of input.alternates) lines.push(`  ${a.description}${a.sheet ? ` (${a.sheet})` : ""}`);
+  }
+
+  /* High in the notes: these are answers to things the drawings left out, so
+     they belong beside the measurements rather than buried under them. */
+  if (input.clarifications && input.clarifications.length > 0) {
+    lines.push(``, `ANSWERED BY THE CUSTOMER`);
+    for (const c of input.clarifications) lines.push(`  Q: ${c.question}`, `  A: ${c.answer}`);
   }
 
   if (input.coverageSummary) {

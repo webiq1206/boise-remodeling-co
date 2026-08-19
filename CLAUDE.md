@@ -444,6 +444,30 @@ on the same sheet.
 **To make it price, the owner supplies rates - by answering questions as they
 bid.** Nothing else is blocking.
 
+### Where the interview actually happens
+
+**Two audiences, two surfaces, and the split is load-bearing.** A rate question
+asks what this company charges; only the estimator can answer it, and putting
+it in front of a customer is asking them to quote themselves. A measurement
+question asks how big something is; only the customer or architect can answer
+that. Question ids are prefixed `rate:` so a customer surface can filter them,
+and `verify:documents` pins that contract.
+
+- `/admin/takeoff` (admin-guarded, 401 anonymous) is where rate questions are
+  answered. Paste a scope list, it classifies, then asks ONE question at a
+  time with the running bid beside it - priced count, scope coverage, and a
+  partial total that says loudly it is partial. Every answer POSTs to
+  `/api/takeoff/rates`, which writes it into the book, and the takeoff is
+  re-priced against the book that now includes it.
+- The plans wizard asks the customer-facing ones, one at a time, on the
+  measure step. Answers ride to the lead under ANSWERED BY THE CUSTOMER, above
+  the coverage block, because they are answers to things the drawings left
+  out. Skipping is always allowed - a question nobody can answer today must
+  not block the rest.
+- `components/takeoff/ClarifyInterview.tsx` is the shared one-question
+  component: prompt, why, the sheets it came from, a running coverage bar, and
+  "I do not know yet".
+
 ### Cost-stack gaps, NAMED not guessed
 
 Equipment is now priced: `03-02-03`, `03-02-01` and `03-02-05` sat in the card,

@@ -758,6 +758,58 @@ async function main(): Promise<void> {
     check(canonicalWorkType("") === "unclassified", "an empty work type must not become an empty key");
   }
 
+  console.log("verify-documents: questions reach the right audience");
+  {
+    const work = (over: Partial<ClassifiedWork> = {}): ClassifiedWork => ({
+      workType: "bar-front", trade: "millwork", attributes: { grade: "custom" },
+      confidence: 0.9, needsToKnow: [], ...over,
+    });
+    const bid = buildBid(
+      [
+        { description: "Bar front", trade: "millwork", quantity: 22.69, unit: "LF", sheet: "A403",
+          commercialStatus: "base", inContract: true, work: work() },
+        { description: "Back bar, not dimensioned", trade: "millwork", quantity: 0, unit: "", sheet: "A404",
+          commercialStatus: "base", inContract: true, work: work({ workType: "back-bar" }) },
+      ],
+      DEFAULT_MARKUP,
+      [],
+    );
+
+    /* THE SPLIT THAT MATTERS. A rate question asks what this company charges,
+       which only the estimator can answer; a measurement question asks how big
+       something is, which only the customer or architect can. Showing a
+       customer the first is asking them to quote themselves, so the wizard
+       filters on the id prefix and this pins that contract. */
+    const rateIds = bid.questions.filter((q) => q.kind === "rate").map((q) => q.id);
+    const measureIds = bid.questions.filter((q) => q.kind === "measurement").map((q) => q.id);
+    check(rateIds.length > 0 && measureIds.length > 0, "the fixture must produce one of each kind");
+    check(
+      rateIds.every((id) => id.startsWith("rate:")),
+      "rate question ids must be prefixed so a customer surface can filter them out",
+    );
+    check(
+      measureIds.every((id) => !id.startsWith("rate:")),
+      "a measurement question must never carry the rate prefix",
+    );
+
+    // The exact filter the plans wizard applies.
+    const customerFacing = bid.questions.filter((q) => !q.id.startsWith("rate:"));
+    check(
+      customerFacing.every((q) => q.kind !== "rate"),
+      "no rate question may survive the customer-facing filter",
+    );
+    check(customerFacing.length === measureIds.length, "every non-rate question must reach the customer");
+
+    /* Each question must carry enough context to be answerable on its own -
+       an interview that shows one question at a time cannot rely on the
+       surrounding list for meaning. */
+    for (const q of bid.questions) {
+      check(q.question.trim().endsWith("?"), `a question must read as a question: "${q.question}"`);
+      check(q.why.length > 15, `a question must say why it is being asked: "${q.question}"`);
+      check(q.unblocks.length > 0, "a question that unblocks nothing must not be asked");
+    }
+  }
+
   console.log("verify-documents: bounded concurrency");
   {
     let running = 0;

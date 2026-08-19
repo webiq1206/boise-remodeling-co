@@ -298,6 +298,12 @@ export function PlansWizard() {
   const [instructions, setInstructions] = useState("");
   /* Sheets seen so far, filled in once the split has counted them. */
   const [filePageEstimate, setFilePageEstimate] = useState(0);
+  /* Measurement and scope questions the read raised, asked ONE at a time.
+     Rate questions are deliberately absent here: what this company charges is
+     not something to ask the customer. Those go to /admin/takeoff. */
+  const [askedIndex, setAskedIndex] = useState(0);
+  const [questionAnswers, setQuestionAnswers] = useState<Record<string, string>>({});
+  const [questionDraft, setQuestionDraft] = useState("");
   /* Field-level messages so a missed input is pointed at, not described in a
      banner. Cleared per field the moment that field changes. */
   const [fieldErrors, setFieldErrors] = useState<{
@@ -734,6 +740,12 @@ export function PlansWizard() {
           sheetsUsed: extraction?.sheetsUsed ?? [],
           coverageSummary: extraction?.coverageSummary,
           auditTrail: extraction?.auditTrail,
+          /* Asking and then discarding the answer would be worse than not
+             asking. These ride into the internal notes beside the drawings. */
+          clarifications: Object.entries(questionAnswers).map(([id, answer]) => {
+            const q = (extraction?.readiness?.questions ?? []).find((x) => x.id === id);
+            return { question: q?.question ?? id, answer };
+          }),
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
@@ -982,6 +994,70 @@ export function PlansWizard() {
                 </p>
               </div>
             ) : null}
+
+            {/* ONE QUESTION AT A TIME. A read of a hundred sheets can raise a
+                dozen things it could not measure; a dozen fields is a form
+                somebody abandons, and one question with the sheet it came from
+                is a thing somebody answers. Answers ride to the team with the
+                lead so the estimator sees them beside the drawings. */}
+            {(() => {
+              const asks = (extraction.readiness?.questions ?? []).filter(
+                (q) => !String(q.id).startsWith("rate:"),
+              );
+              if (asks.length === 0 || askedIndex >= asks.length) return null;
+              const q = asks[askedIndex];
+              return (
+                <div
+                  className="mb-6 rounded-md border border-accent-legible/40 bg-accent-legible/[0.07] p-4"
+                  data-testid="plans-question"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[11px] font-semibold uppercase tracking-wide text-inverse-muted">
+                      One quick question
+                    </span>
+                    <span className="text-[11px] text-inverse-muted" data-testid="plans-question-counter">
+                      {askedIndex + 1} of {asks.length}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-[14px] font-semibold leading-snug text-inverse-foreground">
+                    {q.question}
+                  </p>
+                  <p className="mt-1 text-[12.5px] leading-relaxed text-inverse-muted">{q.why}</p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <input
+                      data-testid="plans-question-input"
+                      value={questionDraft}
+                      onChange={(e) => setQuestionDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key !== "Enter") return;
+                        e.preventDefault();
+                        if (!questionDraft.trim()) return;
+                        setQuestionAnswers((prev) => ({ ...prev, [q.id]: questionDraft.trim() }));
+                        setQuestionDraft("");
+                        setAskedIndex((i) => i + 1);
+                      }}
+                      placeholder="Your answer"
+                      className="flex-1 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-[13.5px] text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                      aria-label={q.question}
+                    />
+                    <button
+                      type="button"
+                      data-testid="plans-question-next"
+                      onClick={() => {
+                        if (questionDraft.trim()) {
+                          setQuestionAnswers((prev) => ({ ...prev, [q.id]: questionDraft.trim() }));
+                        }
+                        setQuestionDraft("");
+                        setAskedIndex((i) => i + 1);
+                      }}
+                      className="rounded-sm bg-inverse-foreground px-3 py-2 text-[13px] font-medium text-inverse"
+                    >
+                      {questionDraft.trim() ? "Next" : "Skip"}
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
 
             {attachedOnly.length > 0 ? (
               <div

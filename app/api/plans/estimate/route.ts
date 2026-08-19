@@ -130,6 +130,13 @@ const bodySchema = z
        cannot change the number. Never rendered to the customer. */
     coverageSummary: z.string().max(2000).optional(),
     auditTrail: z.string().max(60_000).optional(),
+    /* Answers to the questions the read raised. Descriptive only - they reach
+       the estimator's notes, never the engine, so a client cannot move a
+       number with them. */
+    clarifications: z
+      .array(z.object({ question: z.string().max(400), answer: z.string().max(600) }))
+      .max(40)
+      .optional(),
     sheetsUsed: z.array(z.string().max(60)).max(120).optional(),
     /** The whole job, not just the floor area. See PlanScopeItem. */
     scopeItems: z.array(scopeItemSchema).max(300).optional(),
@@ -342,6 +349,7 @@ export async function POST(request: NextRequest) {
     documents: body.documents ?? [],
     coverageSummary: body.coverageSummary,
     auditTrail: body.auditTrail,
+    clarifications: body.clarifications,
   });
 
   /* CUSTOMER-FACING SHAPE. The lead view, the measurements, and why the
