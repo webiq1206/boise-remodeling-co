@@ -41,7 +41,9 @@ import { packPages, MAX_PLAN_PAGES, PART_MAX_PAGES, PART_MAX_BYTES } from "../sh
 import { MAX_REQUEST_UPLOAD_BYTES } from "../shared/re10/uploads";
 import { parseFeet } from "../shared/takeoff/units";
 import { buildBid, renderTakeoff, DEFAULT_MARKUP, type TakeoffItem } from "../shared/takeoff/bid";
-import type { Rate } from "../shared/takeoff/costBook";
+import { rateFromAnswer, type Rate } from "../shared/takeoff/costBook";
+import { canonicalWorkType, type ClassifiedWork } from "../shared/takeoff/workTypes";
+import { nextQuestion, orderQuestions } from "../shared/takeoff/clarify";
 
 let checks = 0;
 let failures = 0;
@@ -555,6 +557,9 @@ async function main(): Promise<void> {
       sheet: "A403",
       commercialStatus: "base",
       inContract: true,
+      // Pricing requires a classification: a rate is matched to WHAT the item
+      // is, not to its trade. An unclassified item goes to a question.
+      work: { workType: "bar-front", trade: "millwork", attributes: { grade: "custom" }, confidence: 0.9, needsToKnow: [] },
       ...over,
     });
 
@@ -571,6 +576,8 @@ async function main(): Promise<void> {
     const book: Rate[] = [
       {
         id: "millwork.bar-front",
+        workType: "bar-front",
+        grade: "custom",
         trade: "millwork",
         label: "Bar front millwork",
         unit: "LF",
@@ -627,6 +634,128 @@ async function main(): Promise<void> {
     check(doc.includes("BY OTHERS"), "the takeoff document must list out-of-contract work");
 
     check(buildBid([], DEFAULT_MARKUP, book).sellingPrice === 0, "no items means no price, not a default");
+  }
+
+  console.log("verify-documents: clarifying questions, one at a time");
+  {
+    const work = (over: Partial<ClassifiedWork> = {}): ClassifiedWork => ({
+      workType: "bar-front",
+      trade: "millwork",
+      attributes: { grade: "custom" },
+      confidence: 0.9,
+      needsToKnow: [],
+      ...over,
+    });
+    const item = (over: Partial<TakeoffItem> = {}): TakeoffItem => ({
+      description: "Bar front millwork",
+      trade: "millwork",
+      quantity: 22.69,
+      unit: "LF",
+      sheet: "A403",
+      commercialStatus: "base",
+      inContract: true,
+      work: work(),
+      ...over,
+    });
+
+    /* ONE QUESTION PER WORK TYPE, NOT PER LINE. Three bar elevations are one
+       rate question; asking three times is the wall of questions this exists
+       to avoid. */
+    const threeRuns = buildBid(
+      [item({ quantity: 22.69 }), item({ quantity: 19.89 }), item({ quantity: 15.69, sheet: "A404" })],
+      DEFAULT_MARKUP,
+      [],
+    );
+    const rateQs = threeRuns.questions.filter((q) => q.kind === "rate");
+    check(rateQs.length === 1, `three lines of one work type must ask ONE rate question, got ${rateQs.length}`);
+    check(rateQs[0].unblocks.length === 3, "the question must report that it unblocks all three lines");
+    check(
+      Math.abs(rateQs[0].quantityAtStake - 58.27) < 0.02,
+      `the question must state the total quantity at stake, got ${rateQs[0].quantityAtStake}`,
+    );
+    check(rateQs[0].why.includes("A403"), "the question must cite the sheets it came from");
+
+    /* Different work types are different questions, because the prices differ
+       by an order of magnitude. */
+    const twoTypes = buildBid(
+      [item(), item({ work: work({ workType: "glass-shelving" }), unit: "EA", quantity: 4 })],
+      DEFAULT_MARKUP,
+      [],
+    );
+    check(
+      twoTypes.questions.filter((q) => q.kind === "rate").length === 2,
+      "two work types must produce two rate questions - one rate cannot price both",
+    );
+
+    /* ANSWERING ONE PRICES EVERY LINE OF THAT TYPE, and asks the next thing. */
+    const answer = rateFromAnswer({
+      workType: "bar-front", trade: "millwork", grade: "custom", unit: "LF",
+      unitCost: 420, label: "Bar front", answeredOn: new Date().toISOString().slice(0, 10),
+    });
+    const afterAnswer = buildBid(
+      [item({ quantity: 22.69 }), item({ quantity: 19.89 })],
+      DEFAULT_MARKUP,
+      [answer],
+    );
+    check(afterAnswer.priced.length === 2, "one answer must price every line of that work type");
+    check(
+      afterAnswer.directCost === Math.round((22.69 + 19.89) * 420),
+      `direct cost must be the summed quantity x the answered rate, got ${afterAnswer.directCost}`,
+    );
+    check(
+      afterAnswer.questions.filter((q) => q.kind === "rate").length === 0,
+      "an answered question must not be asked again",
+    );
+
+    /* A LOW-CONFIDENCE CLASSIFICATION MUST NOT REACH A RATE. Pricing a misread
+       assembly confidently is worse than asking about it. */
+    const unsure = buildBid([item({ work: work({ confidence: 0.3 }) })], DEFAULT_MARKUP, [answer]);
+    check(unsure.priced.length === 0, "an item classified with low confidence must not be priced");
+    check(
+      unsure.questions.some((q) => q.kind === "scope"),
+      "a low-confidence item must raise a scope question instead",
+    );
+
+    /* Grade is part of the key: a custom rate must not silently price a stock
+       unit, but a near match is usable WITH a caveat the estimator can see. */
+    const stockItem = item({ work: work({ attributes: { grade: "standard" } }) });
+    const nearMatch = buildBid([stockItem], DEFAULT_MARKUP, [answer]);
+    check(nearMatch.priced.length === 1, "a different-grade rate for the same work type is a usable match");
+    check(Boolean(nearMatch.priced[0].caveat), "a different-grade match must carry a caveat");
+    check(
+      nearMatch.warnings.some((w) => w.includes("custom")),
+      "the grade substitution must be surfaced as a warning, not applied silently",
+    );
+
+    /* An unmeasured item asks for a measurement, not a rate, and in the unit
+       that work is normally measured in. */
+    const unmeasuredBid = buildBid([item({ quantity: 0, unit: "" })], DEFAULT_MARKUP, [answer]);
+    const mq = unmeasuredBid.questions.find((q) => q.kind === "measurement");
+    check(Boolean(mq), "an unquantified item must raise a measurement question");
+    check(mq?.answer.type === "quantity", "a measurement question must expect a quantity");
+    check(mq?.unit === "LF", `a bar front must be asked for in LF, got ${mq?.unit}`);
+
+    /* ORDERING: rate questions first, and the one unblocking most lines wins. */
+    const ordered = orderQuestions([
+      ...twoTypes.questions.filter((q) => q.kind === "rate"),
+      ...unmeasuredBid.questions.filter((q) => q.kind === "measurement"),
+    ]);
+    check(ordered[0].kind === "rate", "a rate question must be asked before a measurement question");
+
+    const many = buildBid(
+      [item(), item(), item(), item({ work: work({ workType: "glass-shelving" }), unit: "EA", quantity: 1 })],
+      DEFAULT_MARKUP,
+      [],
+    );
+    const first = nextQuestion(many.questions, new Set());
+    check(first?.workType === "bar-front", `the question unblocking most lines must come first, got ${first?.workType}`);
+    check(nextQuestion(many.questions, new Set(many.questions.map((q) => q.id))) === null, "no questions left means null, not a repeat");
+
+    /* Work-type keys must be stable, or a company appears to have no rate for
+       work it has priced a hundred times. */
+    check(canonicalWorkType("Bar Front") === "bar-front", "work type keys must canonicalise");
+    check(canonicalWorkType("bar_front ") === "bar-front", "punctuation and case must not fork the key");
+    check(canonicalWorkType("") === "unclassified", "an empty work type must not become an empty key");
   }
 
   console.log("verify-documents: bounded concurrency");

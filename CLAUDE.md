@@ -403,7 +403,46 @@ fronts, 15.69 LF bar island, waterfall edges and glass shelving as EA, server
 stations at 12.78 and 6.79 LF, across 13 trades - and a $0 total with
 `completeBid: false` because the book is empty. That is the correct output.
 
-**To make it price, the owner supplies rates.** Nothing else is blocking.
+### Understanding the work, and asking ONE good question at a time
+
+Rates keyed by trade+unit put a paneled bar front and a glass display shelf in
+the same bucket - work that differs by an order of magnitude - and "no rate for
+millwork/LF" is not a question anyone can act on. So:
+
+- `server/services/scopeClassifier.ts` is a **separate pass** (Sonnet, cheap,
+  re-runnable) that decides what each item IS: a `workType` slug
+  (`bar-front`, `back-bar`, `base-cabinet-run`), a grade, material/finish/size,
+  a **confidence**, and `needsToKnow`. Separate because the plan schema is at
+  the 16-union ceiling and because reclassifying should not re-read drawings.
+- `COMMON_WORK_TYPES` seeds ~35 slugs so recurring work converges on one key
+  instead of fragmenting into synonyms that hide a rate we already have. The
+  classifier may coin new slugs - it produced `bar-island-casework` and
+  `countertop-support-bracket` on the first real run, which is how coverage
+  reaches "anything".
+- **Confidence below 0.6 never reaches a rate.** A misread assembly priced
+  confidently is a wrong number wearing a right one's clothes; it becomes a
+  scope question instead.
+- `matchRate` is a two-rung ladder: exact work type + grade, then same work
+  type at another grade **with a caveat the estimator sees**. Nothing looser -
+  falling back to "some other millwork rate" is the coarse lookup again.
+- `shared/takeoff/clarify.ts` builds the interview. **One question per work
+  type, not per line** (three bar elevations are one rate question covering
+  58 LF), ordered by how much each answer unblocks, rate questions before
+  measurement ones because a rate is answerable on the spot. Rate questions go
+  to the estimator; measurement questions go to the customer or architect -
+  collapsing them sends half the list to someone who cannot answer it.
+- Answers persist via `server/services/rateBookStore.ts` into `siteSettings`
+  (no schema migration, same pattern as unit-cost overrides), keyed on
+  workType+grade+unit so the same question is never asked twice.
+
+Proven on the real commercial set: 26 questions queued, and answering three
+took coverage 0 -> 9 -> 18 -> 23% with the price building as it went. It also
+flagged a likely double count unprompted - the overview plan scored 0.35 and
+asked whether it duplicated the separate bar front, back bar and island lines
+on the same sheet.
+
+**To make it price, the owner supplies rates - by answering questions as they
+bid.** Nothing else is blocking.
 
 ### Cost-stack gaps, NAMED not guessed
 

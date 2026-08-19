@@ -1,4 +1,6 @@
-import { COST_BOOK, findRate, isStale, type Rate } from "./costBook";
+import { COST_BOOK, isStale, matchRate, type Rate } from "./costBook";
+import { attributeKey, type ClassifiedWork } from "./workTypes";
+import { buildQuestions, type ClarifiableItem, type ClarifyingQuestion } from "./clarify";
 import { TRADE_LABELS, type StatedUnit, type TakeoffUnit, type Trade } from "./units";
 
 /**
@@ -28,6 +30,12 @@ export interface TakeoffItem {
   commercialStatus: "base" | "allowance" | "alternate" | "optional";
   inContract: boolean;
   statedAmount?: number;
+  /**
+   * What the item IS, from the classifier. Optional so a caller without a
+   * classification still gets a takeoff; without it nothing can price, which
+   * is the honest outcome rather than a fallback rate.
+   */
+  work?: ClassifiedWork;
 }
 
 export interface PricedLine {
@@ -36,6 +44,8 @@ export interface PricedLine {
   /** quantity x unitCost, before any markup. */
   cost: number;
   rateIsStale: boolean;
+  /** Set when the rate matched the work but not the grade. */
+  caveat?: string;
 }
 
 export interface BidMarkup {
@@ -85,6 +95,14 @@ export interface BidResult {
   /** True only when every base item priced. Gates presenting a total. */
   completeBid: boolean;
   warnings: string[];
+  /**
+   * What to ask, best question first, one at a time.
+   *
+   * This is the difference between "we cannot price 20 items" and a working
+   * estimate: each answer is applied and the next question is chosen knowing
+   * it. See shared/takeoff/clarify.ts.
+   */
+  questions: ClarifyingQuestion[];
 }
 
 export function buildBid(
@@ -118,16 +136,33 @@ export function buildBid(
       unmeasured.push(item);
       continue;
     }
-    const rate = findRate(item.trade, item.unit as TakeoffUnit, book);
-    if (!rate) {
+
+    /* A classification we do not trust must NOT reach a rate. Pricing a
+       misread assembly at a confident rate is a wrong number wearing a right
+       one's clothes; it goes to a question instead. */
+    if (!item.work || item.work.confidence < 0.6) {
       measuredUnpriced.push(item);
       continue;
     }
-    const stale = isStale(rate);
-    if (stale) {
-      warnings.push(`Rate "${rate.label}" was last confirmed ${rate.effective} and may be out of date.`);
+
+    const grade = attributeKey(item.work.attributes) as Rate["grade"];
+    const match = matchRate(item.work.workType, grade, item.unit as TakeoffUnit, book);
+    if (!match) {
+      measuredUnpriced.push(item);
+      continue;
     }
-    priced.push({ item, rate, cost: item.quantity * rate.unitCost, rateIsStale: stale });
+    const stale = isStale(match.rate);
+    if (stale) {
+      warnings.push(`Rate "${match.rate.label}" was last confirmed ${match.rate.effective} and may be out of date.`);
+    }
+    if (match.caveat) warnings.push(`${item.description.slice(0, 60)}: ${match.caveat}`);
+    priced.push({
+      item,
+      rate: match.rate,
+      cost: item.quantity * match.rate.unitCost,
+      rateIsStale: stale,
+      caveat: match.caveat,
+    });
   }
 
   const directCost = priced.reduce((sum, line) => sum + line.cost, 0);
@@ -148,6 +183,34 @@ export function buildBid(
         `They are NOT in the total.`,
     );
   }
+
+  /* The question queue is built from EVERY unpriced base item, measured or
+     not, so one pass produces the whole interview rather than a total that
+     silently omits things. */
+  const clarifiable: ClarifiableItem[] = [];
+  for (const line of priced) {
+    clarifiable.push({
+      description: line.item.description,
+      trade: line.item.trade,
+      quantity: line.item.quantity,
+      unit: line.item.unit,
+      sheet: line.item.sheet,
+      work: line.item.work ?? { workType: "unclassified", trade: line.item.trade, attributes: {}, confidence: 1, needsToKnow: [] },
+      priced: true,
+    });
+  }
+  for (const item of [...measuredUnpriced, ...unmeasured]) {
+    clarifiable.push({
+      description: item.description,
+      trade: item.trade,
+      quantity: item.quantity,
+      unit: item.unit,
+      sheet: item.sheet,
+      work: item.work ?? { workType: "unclassified", trade: item.trade, attributes: {}, confidence: 0, needsToKnow: [] },
+      priced: false,
+    });
+  }
+  const questions = buildQuestions(clarifiable);
   if (unmeasured.length > 0) {
     warnings.push(
       `${unmeasured.length} item(s) could not be quantified from the drawings and are NOT in the total.`,
@@ -172,6 +235,7 @@ export function buildBid(
        the total is a partial sum, which must never be presented as a bid. */
     completeBid: measuredUnpriced.length === 0 && unmeasured.length === 0 && priced.length > 0,
     warnings,
+    questions,
   };
 }
 
