@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { TRADES, type Trade } from "@/shared/takeoff/units";
 import { z } from "zod";
 import {
   estimateProject,
@@ -84,6 +85,12 @@ const scopeItemSchema = z.object({
      existed still submits successfully instead of 400ing at the last step -
      the failure mode that once broke every RE-10 carrying a file. */
   commercialStatus: z.enum(["base", "allowance", "alternate", "optional"]).optional().default("base"),
+  /* Quantity, unit and trade: what makes an item priceable rather than just
+     described. All defaulted, so a client build that predates them still
+     submits successfully rather than 400ing at the last step. */
+  quantity: z.number().nonnegative().max(10_000_000).optional().default(0),
+  unit: z.enum(["EA", "LF", "SF", "SY", "CY", "TON", "LB", "HR", "LS", ""]).optional().default(""),
+  trade: z.enum(TRADES as unknown as [Trade, ...Trade[]]).optional().default("general-conditions"),
   statedAmount: z.number().nonnegative().max(10_000_000).optional().default(0),
 });
 

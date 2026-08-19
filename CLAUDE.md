@@ -371,6 +371,40 @@ moves with a selection nobody has made; an alternate is explicitly NOT in the
 base bid. Pricing either as ordinary work overstates the job, and dropping
 them loses a request the customer made.
 
+### Bidding anything: takeoff engine + open rate book
+
+`shared/takeoff/{units,costBook,bid}.ts`. The goal is to bid commercial as
+well as residential, and the split that makes it possible is: **takeoff is
+general, rates are not.** A quantity with a unit is the same problem on a
+house or a steakhouse; a dollar-per-linear-foot of bar millwork is a business
+fact this repo cannot derive.
+
+- Plan scope items now carry `quantity`, `unit` (EA/LF/SF/SY/CY/TON/LB/HR/LS)
+  and `trade` (25 trades, at the granularity a sub bids). `parseFeet()` turns
+  `18'-2 3/4"` into 18.23 because nothing multiplies a dimension string by a
+  rate. Quantity 0 means the drawings did not say - NEVER a guess.
+- `COST_BOOK` **ships empty on purpose.** Seeding it with plausible national
+  averages would make the estimator produce a number for anything, which is
+  the exact failure this codebase exists to prevent. Every rate carries its
+  basis (historical / subcontractor / published / judgement), its source, and
+  an effective date; anything over a year old prices but is flagged stale.
+- `buildBid()` returns THREE outcomes, not two: priced, **measured but
+  unpriced** (we know the quantity, nobody has given us a rate), and
+  **unmeasured** (the drawings did not say enough). That distinction is the
+  useful one: the first is an afternoon with a rate card, the second is a
+  question for the architect. `completeBid` is false unless every base item
+  priced, and the total is only ever the sum of priced lines.
+- Margin is a true gross margin (`cost / (1 - margin)`), asserted in
+  `verify:documents` so a third engine cannot drift from the other two.
+
+Verified on a real 103-sheet commercial set (Prime American Steakhouse) with
+"estimate all of the millwork and casework only": 22.69 LF and 19.89 LF bar
+fronts, 15.69 LF bar island, waterfall edges and glass shelving as EA, server
+stations at 12.78 and 6.79 LF, across 13 trades - and a $0 total with
+`completeBid: false` because the book is empty. That is the correct output.
+
+**To make it price, the owner supplies rates.** Nothing else is blocking.
+
 ### Cost-stack gaps, NAMED not guessed
 
 Equipment is now priced: `03-02-03`, `03-02-01` and `03-02-05` sat in the card,

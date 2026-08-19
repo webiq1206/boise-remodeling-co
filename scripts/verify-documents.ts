@@ -39,6 +39,9 @@ import { PLAN_EXTRACTION_SCHEMA, type PlanExtractionResult, type PlanRoom } from
 import { EXTRACTION_SCHEMA, type ExtractedRepair } from "../shared/re10/extraction";
 import { packPages, MAX_PLAN_PAGES, PART_MAX_PAGES, PART_MAX_BYTES } from "../shared/documents/uploadPlan";
 import { MAX_REQUEST_UPLOAD_BYTES } from "../shared/re10/uploads";
+import { parseFeet } from "../shared/takeoff/units";
+import { buildBid, renderTakeoff, DEFAULT_MARKUP, type TakeoffItem } from "../shared/takeoff/bid";
+import type { Rate } from "../shared/takeoff/costBook";
 
 let checks = 0;
 let failures = 0;
@@ -533,6 +536,97 @@ async function main(): Promise<void> {
       base.length + allowances.length + alternates.length + excluded.length === items.length,
       "every scope item must land in exactly one bucket - nothing silently dropped",
     );
+  }
+
+  console.log("verify-documents: takeoff quantities and the bid builder");
+  {
+    // Dimension strings taken verbatim off a real commercial set.
+    check(parseFeet("18'-2 3/4\"") === 18.23, `18'-2 3/4" must parse to 18.23, got ${parseFeet("18'-2 3/4\"")}`);
+    check(parseFeet("22'-8 1/4\"") === 22.69, "22'-8 1/4\" must parse to 22.69");
+    check(parseFeet("3'-6\"") === 3.5, "3'-6\" must parse to 3.5");
+    check(parseFeet("PER INTERIOR DESIGNER") === null, "a non-dimension must parse to null, never to a number");
+    check(parseFeet("") === null, "an empty string must not become a quantity");
+
+    const item = (over: Partial<TakeoffItem> = {}): TakeoffItem => ({
+      description: "Main bar millwork front",
+      trade: "millwork",
+      quantity: 22.69,
+      unit: "LF",
+      sheet: "A403",
+      commercialStatus: "base",
+      inContract: true,
+      ...over,
+    });
+
+    /* THE SHIPPED STATE: an empty rate book. A complete takeoff, a total of
+       zero, and loud warnings - never a plausible number with nothing behind
+       it. This is the single most important behaviour in the file. */
+    const empty = buildBid([item(), item({ quantity: 0, unit: "" })], DEFAULT_MARKUP, []);
+    check(empty.sellingPrice === 0, "with no rates on file the total must be zero, not an estimate");
+    check(!empty.completeBid, "a bid with unpriced scope must never report itself complete");
+    check(empty.measuredUnpriced.length === 1, "a measured item with no rate must be reported as such");
+    check(empty.unmeasured.length === 1, "an unquantified item must be reported separately from an unpriced one");
+    check(empty.warnings.some((w) => w.includes("NOT in the total")), "the warning must say the work is not in the total");
+
+    const book: Rate[] = [
+      {
+        id: "millwork.bar-front",
+        trade: "millwork",
+        label: "Bar front millwork",
+        unit: "LF",
+        unitCost: 400,
+        basis: "historical",
+        source: "test",
+        effective: new Date().toISOString().slice(0, 10),
+        market: "commercial",
+      },
+    ];
+    const priced = buildBid([item()], DEFAULT_MARKUP, book);
+    check(priced.priced.length === 1, "an item with a matching rate must price");
+    check(priced.directCost === Math.round(22.69 * 400), `direct cost must be quantity x rate, got ${priced.directCost}`);
+    check(priced.completeBid, "every base item priced means a complete bid");
+    check(priced.scopeCoverage === 1, "coverage must be 1 when everything priced");
+
+    /* Margin is a TRUE GROSS MARGIN, never a markup on cost - the same rule
+       both existing engines run, asserted here so a third engine cannot drift
+       from it. */
+    const expectedSelling = priced.totalCost / (1 - DEFAULT_MARKUP.margin);
+    check(
+      Math.abs(priced.sellingPrice - expectedSelling) <= 1,
+      `selling price must be cost/(1-margin), got ${priced.sellingPrice} against ${Math.round(expectedSelling)}`,
+    );
+    check(priced.sellingPrice > priced.totalCost, "selling price must exceed cost");
+
+    // A stale rate still prices, but says so.
+    const staleBook: Rate[] = [{ ...book[0], effective: "2015-01-01" }];
+    const stale = buildBid([item()], DEFAULT_MARKUP, staleBook);
+    check(stale.priced[0].rateIsStale, "a rate older than the staleness window must be flagged");
+    check(stale.warnings.some((w) => w.includes("out of date")), "the estimator must be warned about a stale rate");
+
+    // Allowances, alternates and by-others never enter the base total.
+    const mixed = buildBid(
+      [
+        item(),
+        item({ commercialStatus: "allowance", statedAmount: 14000 }),
+        item({ commercialStatus: "alternate" }),
+        item({ inContract: false }),
+      ],
+      DEFAULT_MARKUP,
+      book,
+    );
+    check(mixed.priced.length === 1, "only base scope may be priced into the total");
+    check(mixed.allowances.length === 1 && mixed.alternates.length === 1 && mixed.excluded.length === 1, "each is carried separately");
+    check(
+      mixed.directCost === priced.directCost,
+      "adding an allowance, an alternate and a by-others item must not change the base total",
+    );
+
+    const doc = renderTakeoff(mixed);
+    check(doc.includes("22.69 LF"), "the takeoff document must show the measured quantity");
+    check(doc.includes("ALLOWANCES"), "the takeoff document must list allowances separately");
+    check(doc.includes("BY OTHERS"), "the takeoff document must list out-of-contract work");
+
+    check(buildBid([], DEFAULT_MARKUP, book).sellingPrice === 0, "no items means no price, not a default");
   }
 
   console.log("verify-documents: bounded concurrency");

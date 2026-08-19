@@ -1,3 +1,5 @@
+import { TRADES, type StatedUnit, type Trade } from "../takeoff/units";
+
 /**
  * Reading a remodel or new-build plan set well enough to price it.
  *
@@ -151,6 +153,26 @@ export interface PlanScopeItem {
    */
   commercialStatus: "base" | "allowance" | "alternate" | "optional";
   /**
+   * WHAT THERE IS OF IT, in a unit a rate card can multiply.
+   *
+   * Descriptions alone produced excellent prose and nothing priceable: "main
+   * bar millwork, 18'-2 3/4" long x 3'-6" high" is a takeoff a human still
+   * has to do. Quantity plus unit is a takeoff the engine can price.
+   *
+   * ZERO means the drawings did not state enough to measure this item. That
+   * is a normal outcome and must never be filled in with a guess - an item
+   * with no quantity is reported as needing a measurement, which is honest,
+   * where an invented one is a wrong number nobody can see is wrong.
+   *
+   * Both fields are deliberately non-nullable: structured outputs cap a schema
+   * at 16 union-typed parameters and this one already sits exactly at the
+   * limit. See the note on statedAmount below.
+   */
+  quantity: number;
+  unit: StatedUnit;
+  /** Who does the work. Drives which section of the rate book applies. */
+  trade: Trade;
+  /**
    * Dollar figure the drawings state for an allowance. ZERO means not stated.
    *
    * Deliberately not nullable. Structured outputs cap a schema at 16
@@ -281,13 +303,33 @@ export const PLAN_EXTRACTION_SCHEMA = {
             description:
               'How the drawings treat this commercially. "allowance" when a budget figure is set for a selection not yet made (the sheet usually says ALLOWANCE and a dollar amount). "alternate" when it is to be priced separately and is NOT in the base bid (ALTERNATE No. 1, ADD ALTERNATE, PRICE SEPARATELY). "optional" when shown as a possibility the owner may not take. "base" for ordinary work. Use "base" unless the sheet actually says otherwise; do not infer an alternate from the fact that work looks discretionary.',
           },
+          quantity: {
+            type: "number",
+            description:
+              "How much of it there is, in the unit below. Convert drawing dimensions to decimals (18'-2 3/4\" is 18.23 LF). Use 0 when the sheets do not state enough to measure it - NEVER estimate, and never infer a quantity from a similar item elsewhere.",
+          },
+          unit: {
+            type: "string",
+            enum: ["EA", "LF", "SF", "SY", "CY", "TON", "LB", "HR", "LS", ""],
+            description:
+              'The unit the quantity is in. EA for countable things (doors, casework units, fixtures), LF for runs (bar fronts, trim, countertops), SF for areas, LS for scope with no natural unit. Use "" when quantity is 0.',
+          },
+          trade: {
+            type: "string",
+            enum: TRADES,
+            description:
+              "Which trade does this work. Casework, bars, built-ins, shelving and architectural woodwork are \"millwork\". Baseboard, casing and door hanging are \"finish-carpentry\".",
+          },
           statedAmount: {
             type: "number",
             description:
               "The dollar figure the drawings state for an allowance. Use 0 when no figure is stated. Never estimate one.",
           },
         },
-        required: ["category", "description", "sheet", "inContract", "commercialStatus", "statedAmount"],
+        required: [
+          "category", "description", "sheet", "inContract",
+          "commercialStatus", "quantity", "unit", "trade", "statedAmount",
+        ],
       },
     },
     scopeFacts: {
