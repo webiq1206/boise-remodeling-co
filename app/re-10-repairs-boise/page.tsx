@@ -95,19 +95,26 @@ export default function Re10RepairsPage() {
 
       {/* ------------------------------------------------------------ hero */}
       <PageHeroBand
+        compact
         imageSrc={SITE_IMAGES.processInProgress}
         imageAlt="Boise Remodeling Co carpenter completing inspection repairs in a Treasure Valley home before closing"
         scrim={0.75}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "RE-10 Repairs" }]} />
-        <div className="brc-label text-inverse-muted mt-6 mb-4">
+        {/* THE TOOL IS THE PAGE. On a phone the primary action sat 2,343px
+            down behind a full hero and a three-paragraph explainer. Mobile
+            gets the headline and one line; desktop keeps the full pitch. */}
+        <div className="brc-label text-inverse-muted mt-4 mb-3 md:mt-6 md:mb-4">
           For agents, buyers and sellers
         </div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <h1 className="font-sans font-light text-[clamp(1.75rem,7vw,4.5rem)] leading-[1.08] tracking-tight text-inverse-foreground max-w-3xl mb-2 md:mb-4">
           RE-10 repairs completed correctly and{" "}
           <em className="brc-accent">on schedule</em>
         </h1>
-        <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-7">
+        <p className="text-body text-inverse-foreground/85 max-w-2xl mb-4 md:hidden">
+          Upload your RE-10 and get a firm price.
+        </p>
+        <p className="hidden md:block text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-7">
           We complete inspection-related repairs for Boise-area real estate transactions, with one
           point of contact, clear scheduling against your closing date, and documentation you can
           put straight in the file.
@@ -126,17 +133,20 @@ export default function Re10RepairsPage() {
         </div>
       </PageHeroBand>
 
-      {/* ------------------------------- direct answer, above everything else */}
+      {/* Direct answer. Below the TOOL on a phone (see the wizard's own
+          ordering) would be a bigger change; hiding the two definition
+          paragraphs on mobile keeps the lead sentence and removes ~900px
+          between the hero and the thing the page is for. */}
       <Section spacing="sm">
         <div className="container px-4 max-w-3xl mx-auto">
           <p className="text-lg md:text-xl text-foreground leading-relaxed font-light">
             {RE10_DIRECT_ANSWER}
           </p>
-          <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
+          <p className="mt-5 hidden md:block text-sm text-muted-foreground leading-relaxed">
             <strong className="font-normal text-foreground">What is an RE-10?</strong>{" "}
             {RE10_DEFINITION}
           </p>
-          <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
+          <p className="mt-5 hidden md:block text-sm text-muted-foreground leading-relaxed">
             Have architectural drawings instead?{" "}
             <Link href="/remodel-plans-boise" className="text-accent-legible hover:underline">
               Get a plan-based estimate

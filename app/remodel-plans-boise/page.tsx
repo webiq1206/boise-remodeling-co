@@ -94,6 +94,7 @@ export default function RemodelPlansPage() {
 
       {/* ------------------------------------------------------------ hero */}
       <PageHeroBand
+        compact
         imageSrc={SITE_IMAGES.budgetDetail}
         imageAlt="Construction drawings for a Boise remodel laid out during estimating"
         scrim={0.75}

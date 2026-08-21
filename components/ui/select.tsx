@@ -20,7 +20,8 @@ const SelectTrigger = React.forwardRef<
     ref={ref}
     className={cn(
       // text-base on mobile prevents iOS Safari from zooming the page on focus.
-      "flex h-9 w-full items-center justify-between rounded-sm border border-input bg-background px-3 py-2 text-base md:text-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+      /* Same 44px touch floor as Input; a select is tapped, not hovered. */
+      "flex h-11 md:h-9 w-full items-center justify-between rounded-sm border border-input bg-background px-3 py-2 text-base md:text-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
       className
     )}
     {...props}
