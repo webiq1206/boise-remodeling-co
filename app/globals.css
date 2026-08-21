@@ -809,8 +809,14 @@
 }
 
 /* Marketing text link (tertiary action) - reveals sage on hover */
+/* min-h-11 on phones: this class is the "Learn more" / "Schedule a free visit"
+   affordance and it measured 21px tall. On the services and areas cards it sits
+   inside a card that carries its own inset-0 overlay link, so the card was
+   always the real target there - but on the homepage there is no overlay and
+   this IS the only target. Sized here rather than at the call sites so both
+   cases are covered, and growing it inside an overlaid card is harmless. */
 .brc-text-link {
-  @apply inline-flex items-center gap-2 text-sm font-normal text-foreground underline-offset-2 hover:underline hover:text-accent-legible transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm;
+  @apply inline-flex items-center gap-2 min-h-11 md:min-h-0 text-sm font-normal text-foreground underline-offset-2 hover:underline hover:text-accent-legible transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm;
 }
 /* Arrow in text links picks up the sage on hover too */
 .brc-text-link:hover svg {
