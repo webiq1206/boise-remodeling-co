@@ -939,6 +939,7 @@ export function PlansWizard() {
               />
             </div>
             <StickyStepNav
+              ownsScreen
               onNext={analyze}
               nextLabel="Read my plans"
               nextDisabled={files.length === 0}
@@ -1301,6 +1302,7 @@ export function PlansWizard() {
             ) : null}
 
             <StickyStepNav
+              ownsScreen
               onBack={() => goTo("upload")}
               backLabel="Add more sheets"
               onNext={confirmMeasurements}
@@ -1420,6 +1422,7 @@ export function PlansWizard() {
             </div>
 
             <StickyStepNav
+              ownsScreen
               onBack={() => goTo("measure")}
               backLabel="Back to measurements"
               onNext={submit}

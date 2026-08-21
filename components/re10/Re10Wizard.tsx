@@ -741,6 +741,7 @@ export function Re10Wizard() {
             ) : null}
 
             <StickyStepNav
+              ownsScreen
               onNext={analyze}
               nextLabel="Review my repair list"
               nextDisabled={files.length === 0}
@@ -954,6 +955,7 @@ export function Re10Wizard() {
             ) : null}
 
             <StickyStepNav
+              ownsScreen
               onBack={() => goTo("upload")}
               backLabel="Add documents"
               onNext={() => {
@@ -1060,6 +1062,7 @@ export function Re10Wizard() {
             </div>
 
             <StickyStepNav
+              ownsScreen
               onBack={() => goTo("review")}
               onNext={() => {
                 if (!validateContact()) return;
@@ -1146,6 +1149,7 @@ export function Re10Wizard() {
             </div>
 
             <StickyStepNav
+              ownsScreen
               onBack={() => goTo("contact")}
               onNext={submit}
               nextLabel="See my repair price"

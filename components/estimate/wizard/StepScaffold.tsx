@@ -149,6 +149,17 @@ export interface StickyStepNavProps {
   hint?: string;
   nextTestId?: string;
   backTestId?: string;
+  /**
+   * FIXED ONLY WHEN THE WIZARD OWNS THE SCREEN.
+   *
+   * On a dedicated wizard page the nav must be fixed, or the Continue button
+   * sits below the fold on a phone. EMBEDDED in a long marketing page it must
+   * NOT be: a fixed bar there pins Back/Continue over the hero for a
+   * calculator the visitor is 2,300px away from and has not scrolled to. Same
+   * component, two situations, and the caller is the only thing that knows
+   * which one it is in.
+   */
+  ownsScreen?: boolean;
 }
 
 export function StickyStepNav({
@@ -164,6 +175,7 @@ export function StickyStepNav({
   hint,
   nextTestId = "wizard-next",
   backTestId = "wizard-back",
+  ownsScreen = false,
 }: StickyStepNavProps) {
   return (
     <>
@@ -171,7 +183,7 @@ export function StickyStepNav({
           step content hides underneath it - which is how a "sticky footer"
           quietly eats the final form field. Desktop keeps the bar in flow and
           needs no spacer. */}
-      <div aria-hidden="true" className="h-[104px] sm:hidden" />
+      {ownsScreen ? <div aria-hidden="true" className="h-[104px] sm:hidden" /> : null}
       <div
         /**
          * FIXED ON MOBILE, STICKY ON DESKTOP, and the difference matters.
@@ -185,7 +197,18 @@ export function StickyStepNav({
          * scrolling. The wizard already hides the site-wide Call/Text bar
          * while it owns the screen, so nothing collides.
          */
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:sticky sm:-mx-6 sm:mt-8 sm:px-6"
+        className={cn(
+          "z-30 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:sticky sm:-mx-6 sm:mt-8 sm:px-6",
+          ownsScreen
+            ? "fixed inset-x-0 bottom-0"
+            /* Embedded on the homepage the site-wide Call/Text bar (54px,
+               z-100) also owns the bottom edge, and it wins on z-index - it
+               sat directly on top of Continue. An IntersectionObserver was
+               meant to hide it and never fired, which is a race worth not
+               depending on. Resting above it is deterministic and leaves both
+               bars usable. */
+            : "sticky bottom-[60px] sm:bottom-0 -mx-4 mt-8",
+        )}
         data-testid="wizard-sticky-nav"
       >
       {hint ? (

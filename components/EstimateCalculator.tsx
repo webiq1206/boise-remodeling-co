@@ -25,6 +25,7 @@ import {
 } from "@/components/estimate/wizard";
 import { formatPhoneInput, isValidEmail, isValidPhone } from "@/lib/wizardFormat";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
+import { usePathname } from "next/navigation";
 import { CTA_SECONDARY } from "@/shared/ctaCopy";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import type { PropertyProfile } from "@/shared/propertyProfile";
@@ -500,6 +501,12 @@ export function EstimateCalculator({
   const gateSubmitRef  = useRef<HTMLFormElement>(null);
   const resultRef      = useRef<HTMLDivElement>(null);
   const sectionRef     = useRef<HTMLDivElement>(null);
+  /* Does this instance own the bottom of the screen? A modal always does, and
+     so does the dedicated /estimate page. Embedded in the homepage it does
+     NOT - a fixed Back/Continue bar there floats over the hero for a
+     calculator the visitor has not scrolled to. */
+  const pathname = usePathname();
+  const ownsScreen = inModal || pathname === "/estimate";
   const allChosenScrolled  = useRef(false);
   /* Top of the wizard card. Every step change brings this just below the
      sticky site header so the new step heading is the first thing in view. */
@@ -2620,6 +2627,7 @@ export function EstimateCalculator({
             {formStepBodies[currentFormId]}
           </StepTransition>
           <StickyStepNav
+            ownsScreen={ownsScreen}
             onBack={safeFormIdx > 0 || editReturn ? backFromForm : undefined}
             onNext={nextFromForm}
             nextDisabled={!stepComplete(currentFormId)}
@@ -2654,6 +2662,7 @@ export function EstimateCalculator({
             ))}
           </div>
           <StickyStepNav
+            ownsScreen={ownsScreen}
             onBack={() => {
               setEditReturn(false);
               setFormIdx(formStepIds.length - 1);
@@ -2672,6 +2681,7 @@ export function EstimateCalculator({
         <div>
           <StepTransition>{leadsGatePanel}</StepTransition>
           <StickyStepNav
+            ownsScreen={ownsScreen}
             onBack={() => {
               setGateOpen(false);
               setPhase("review");
