@@ -25,7 +25,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                   /* 21px tall on a phone before this. A breadcrumb is a real
                      navigation control, so it gets a real target on mobile and
                      keeps its compact desktop rhythm. */
-                  className="inline-flex items-center min-h-11 md:min-h-0 hover:text-foreground transition-colors hover:underline"
+                  className="inline-flex items-center min-h-11 lg:min-h-0 hover:text-foreground transition-colors hover:underline"
                 >
                   {item.name}
                 </Link>

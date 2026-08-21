@@ -25,7 +25,7 @@ export function Chip({ children, active, className, onClick }: ChipProps) {
            on a phone. Padded to 44 on mobile only, so the desktop chip row
            keeps its compact rhythm. */
         onClick &&
-          "min-h-11 md:min-h-0 cursor-pointer hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "min-h-11 lg:min-h-0 cursor-pointer hover:bg-muted/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         className
       )}
     >

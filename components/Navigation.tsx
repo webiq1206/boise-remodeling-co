@@ -69,7 +69,7 @@ export function Navigation() {
         <nav className="container flex h-[60px] items-center justify-between gap-4 px-4 md:px-6">
           <Logo />
 
-          <div className="hidden md:flex items-center gap-0">
+          <div className="hidden lg:flex items-center gap-0">
             {NAV_LINKS.map((link) => {
               const active = isActivePath(link.href);
               return (
@@ -91,7 +91,7 @@ export function Navigation() {
             })}
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <div className="flex flex-col items-end gap-0.5">
               <a
                 href={SITE_CONFIG.phoneHref}
@@ -122,7 +122,7 @@ export function Navigation() {
 
           {/* Mobile menu - Radix Dialog gives focus trap, Escape, scroll-lock,
               inert background, and auto aria-expanded/aria-controls on the trigger. */}
-          <div className="flex md:hidden items-center gap-2">
+          <div className="flex lg:hidden items-center gap-2">
             <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
               <Dialog.Trigger asChild>
                 {/* The shared icon size is 36px, which suits dense admin
@@ -140,9 +140,9 @@ export function Navigation() {
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-[190] bg-background/80 backdrop-blur-sm md:hidden" />
+                <Dialog.Overlay className="fixed inset-0 z-[190] bg-background/80 backdrop-blur-sm lg:hidden" />
                 <Dialog.Content
-                  className="fixed inset-0 z-[200] bg-background flex flex-col md:hidden focus:outline-none"
+                  className="fixed inset-0 z-[200] bg-background flex flex-col lg:hidden focus:outline-none"
                   data-testid="mobile-nav-drawer"
                 >
                   <Dialog.Title className="sr-only">Navigation menu</Dialog.Title>
@@ -243,7 +243,7 @@ export function Navigation() {
       {!wizardOwnsBottom && (
       <div
         data-mobile-nav-bar=""
-        className="fixed left-0 right-0 bottom-0 z-[100] md:hidden pb-safe border-t bg-background/97 backdrop-blur-md border-border"
+        className="fixed left-0 right-0 bottom-0 z-[100] lg:hidden pb-safe border-t bg-background/97 backdrop-blur-md border-border"
       >
         <div className="grid grid-cols-3 divide-x divide-border">
           <a

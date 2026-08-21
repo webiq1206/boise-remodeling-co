@@ -114,7 +114,7 @@ export default function AdaCanyonPermitFlowPage() {
             </EstimateCTA>
             <Link
               href="/guides/boise-remodeling-process-guide"
-              className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline"
+              className="inline-flex items-center min-h-11 lg:min-h-0 text-sm text-accent-legible hover:underline"
             >
               Remodeling process guide
             </Link>

@@ -25,7 +25,7 @@ export function EmailLink({
       onClick={handleClick}
       /* Callers supply the typography; the tap target is not theirs to forget.
          Measured at 26px tall on /contact before this. */
-      className={cn("inline-flex items-center min-h-11 md:min-h-0", className)}
+      className={cn("inline-flex items-center min-h-11 lg:min-h-0", className)}
       aria-label={`${label} - send email to ${SITE_CONFIG.name}`}
     >
       {label}

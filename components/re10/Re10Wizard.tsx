@@ -685,7 +685,7 @@ export function Re10Wizard() {
        the #re10-estimator hash. The inner topRef div's own scroll-mt only
        protects in-wizard step transitions, not this anchor landing. */
     <Section id="re10-estimator" variant="inverse" divider className="scroll-mt-16">
-      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={setWizardRefs}>
+      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4 sm:px-6" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />
         ) : null}

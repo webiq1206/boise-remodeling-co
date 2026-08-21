@@ -855,7 +855,7 @@
    collapses so the pitch matches the target and neighbours cannot overlap.
    The footer gets taller on mobile - that is the cost of the links being
    hittable, and it is the last thing on the page. Unchanged from md up. */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   footer nav ul > li + li,
   footer ul[class*="space-y"] > li + li {
     margin-top: 0;
@@ -881,6 +881,14 @@
   }
 }
 
+/* TOUCH SIZING RUNS TO 1023px, NOT 767px.
+   These were max-width: 767px, which is the md breakpoint - so a 768px iPad
+   in portrait, a touch device, got desktop-sized targets. Measured on the
+   plans wizard at 768x1024: 42 interactive elements under 44px, all of them
+   compliant one pixel narrower. The Tailwind side had the same fault
+   (`md:min-h-0`, `h-11 md:h-9`) and moved to `lg:` in the same change, so the
+   rule across the codebase is now: below lg is the touch layout, which is
+   also where the header switches to the hamburger. */
 /* THE CONTACT ACTIONS ARE THE HIGHEST-INTENT TAPS ON THE SITE.
    Measured on /contact at 375px: the phone number 29px tall, "Save to
    contacts" 18px, "Prefer to text? Message us" 21px. These same links are
@@ -890,7 +898,7 @@
    Inline occurrences inside prose keep their natural size - growing a link in
    the middle of a sentence would break the line rhythm, and a phone number
    mentioned mid-paragraph is not the tap the page is asking for. */
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   a[href^="tel:"]:not(p a):not(li a),
   a[href^="sms:"]:not(p a):not(li a),
   a[href$=".vcf"]:not(p a):not(li a) {

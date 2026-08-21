@@ -17,11 +17,30 @@ const KEY_LOCATION = process.env.KEY_LOCATION ?? 'https://boiseremodeling.co/f9e
 const INDEXNOW_API = 'https://api.indexnow.org/indexnow';
 
 /**
+ * Every network call in this script is bounded.
+ *
+ * There was no timeout on any fetch, and this script used to run in the
+ * FOREGROUND ahead of the server in start.sh - so one hung connection to a
+ * search engine could stop the site from booting, and the deploy's Promote
+ * step failed with "built successfully but failed to start". start.sh now
+ * backgrounds this, and these timeouts mean it also cannot run forever.
+ *
+ * @param {string} url
+ * @param {RequestInit} [init]
+ * @returns {Promise<Response>}
+ */
+function fetchWithTimeout(url, init = {}) {
+  return fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+}
+
+const FETCH_TIMEOUT_MS = 10_000;
+
+/**
  * @param {string} url
  * @returns {Promise<string>}
  */
 async function fetchText(url) {
-  const res = await fetch(url, { redirect: 'follow' });
+  const res = await fetchWithTimeout(url, { redirect: 'follow' });
   if (!res.ok) {
     throw new Error(`HTTP ${res.status} fetching ${url}`);
   }
@@ -100,7 +119,7 @@ async function main() {
   ];
 
   for (const { url, label } of checks) {
-    const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
+    const res = await fetchWithTimeout(url, { method: 'HEAD', redirect: 'follow' });
     console.log(`[IndexNow] ${label} ${res.ok ? 'OK' : 'FAIL'} (${res.status}) ${url}`);
     if (!res.ok) {
       console.warn(`[IndexNow] WARNING: ${label} returned HTTP ${res.status} at ${url}. Proceeding anyway. The key file must be publicly accessible before search engines will validate it.`);
@@ -137,7 +156,7 @@ async function main() {
 
   let succeeded = false;
   for (const { url, name } of endpoints) {
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -172,6 +191,9 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(`[IndexNow] Error: ${err.message}`);
-  process.exit(1);
+  // Exit 0, not 1. This is a best-effort search-engine ping running alongside
+  // the server; a non-zero exit here signalled "the deploy failed" for
+  // something that has no bearing on whether the site serves.
+  console.error(`[IndexNow] Error (non-fatal, site is unaffected): ${err.message}`);
+  process.exit(0);
 });

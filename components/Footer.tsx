@@ -22,8 +22,14 @@ export function Footer() {
   return (
     <footer className="bg-inverse text-inverse-foreground">
       <div className="container px-4 py-16 md:py-20">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-10 mb-12 lg:gap-0 lg:divide-x lg:divide-inverse-foreground/10 [&>*]:lg:px-6 [&>*:first-child]:lg:pl-0 [&>*:last-child]:lg:pr-0">
-          <div className="lg:col-span-2">
+        <div /* The eight-column treatment starts at xl, not lg. At lg the columns get
+             px-6 each, which leaves 76px of content per column - and "Basement
+             Remodeling" needs 87. That overflowed the column, the footer, and the
+             document, so EVERY page scrolled horizontally by 20px at exactly
+             1024px wide. Pre-existing; found by testing the wizard at tablet
+             widths. md gets four columns, which fits. */
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-10 mb-12 xl:gap-0 xl:divide-x xl:divide-inverse-foreground/10 [&>*]:xl:px-6 [&>*:first-child]:xl:pl-0 [&>*:last-child]:xl:pr-0">
+          <div className="xl:col-span-2">
             <div className="mb-5">
               {/* Wordmark-only footer branding (the seal was removed - one
                   clean lockup instead of two competing marks). Full lockup =

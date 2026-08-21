@@ -438,7 +438,7 @@ export function LandingPageTemplate({
                         <li key={link.href} className="list-none">
                           <Link
                             href={link.href}
-                            className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline font-normal"
+                            className="inline-flex items-center min-h-11 lg:min-h-0 text-sm text-accent-legible hover:underline font-normal"
                           >
                             {link.label}
                             <ArrowRight className="ml-1 h-3.5 w-3.5" />

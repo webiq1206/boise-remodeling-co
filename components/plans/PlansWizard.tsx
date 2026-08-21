@@ -870,7 +870,7 @@ export function PlansWizard() {
        the #plans-estimator hash. The inner topRef div's own scroll-mt only
        protects in-wizard step transitions, not this anchor landing. */
     <Section id="plans-estimator" variant="inverse" divider className="scroll-mt-16">
-      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4" ref={setWizardRefs}>
+      <div className="container mx-auto max-w-3xl scroll-mt-24 px-4 sm:px-6" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />
         ) : null}
@@ -1094,7 +1094,7 @@ export function PlansWizard() {
                         setAskedIndex((i) => i + 1);
                       }}
                       placeholder="Your answer"
-                      className="flex-1 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-body text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                      className="flex-1 min-h-11 lg:min-h-0 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-body text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
                       aria-label={q.question}
                     />
                     <button
@@ -1107,7 +1107,7 @@ export function PlansWizard() {
                         setQuestionDraft("");
                         setAskedIndex((i) => i + 1);
                       }}
-                      className="rounded-sm bg-inverse-foreground px-3 py-2 text-body-sm font-medium text-inverse"
+                      className="min-h-11 lg:min-h-0 rounded-sm bg-inverse-foreground px-3 py-2 text-body-sm font-medium text-inverse"
                     >
                       {questionDraft.trim() ? "Next" : "Skip"}
                     </button>

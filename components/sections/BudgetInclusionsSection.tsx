@@ -95,7 +95,7 @@ export function BudgetInclusionsSection() {
                   </p>
                   <a
                     href="#consult"
-                    className="inline-flex items-center gap-2 min-h-11 md:min-h-0 text-sm font-normal text-inverse-foreground hover:text-inverse-muted transition-colors"
+                    className="inline-flex items-center gap-2 min-h-11 lg:min-h-0 text-sm font-normal text-inverse-foreground hover:text-inverse-muted transition-colors"
                   >
                     Ask about visualizations
                     <ArrowRight className="h-4 w-4" />

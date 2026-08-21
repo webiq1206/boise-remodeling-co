@@ -83,7 +83,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
               <span>{readingTime} min read</span>
               <Link
                 href={CONTENT_AUTHOR.url}
-                className="flex items-center gap-2 min-h-11 md:min-h-0 hover:text-foreground transition-colors"
+                className="flex items-center gap-2 min-h-11 lg:min-h-0 hover:text-foreground transition-colors"
               >
                 <User className="h-4 w-4" />
                 {CONTENT_AUTHOR.name}
@@ -126,7 +126,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
                         <li key={c.slug}>
                           <Link
                             href={`/blog/${c.slug}`}
-                            className="text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 md:min-h-0"
+                            className="text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 lg:min-h-0"
                           >
                             {c.title}
                             <ArrowRight className="ml-1 h-3 w-3 shrink-0" />
@@ -137,7 +137,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
                     {publishedClusters.length >= CATEGORY_HUB_MIN_POSTS && hub && (
                       <Link
                         href={categoryHubPath(guide.hubSlug)}
-                        className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-foreground mt-4"
+                        className="inline-flex items-center min-h-11 lg:min-h-0 text-sm text-muted-foreground hover:text-foreground mt-4"
                       >
                         View all in {hub.title}
                         <ArrowRight className="ml-1 h-4 w-4" />

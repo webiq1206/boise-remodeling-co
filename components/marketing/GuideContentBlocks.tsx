@@ -61,7 +61,7 @@ export function GuideJumpChips({ headings }: GuideJumpChipsProps) {
           <Link
             key={h.id}
             href={`#${h.id}`}
-            className="inline-flex items-center min-h-11 md:min-h-0 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-foreground hover:bg-muted transition-colors"
+            className="inline-flex items-center min-h-11 lg:min-h-0 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-foreground hover:bg-muted transition-colors"
           >
             {h.text.length > 42 ? `${h.text.slice(0, 40)}…` : h.text}
           </Link>
