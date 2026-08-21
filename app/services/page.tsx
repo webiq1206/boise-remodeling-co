@@ -112,7 +112,7 @@ export default function ServicesIndexPage() {
                       </p>
                       <div className="mt-auto pt-4 border-t border-border/60 flex items-center justify-between gap-3">
                         <div>
-                          <div className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                          <div className="text-caption uppercase tracking-[0.14em] text-muted-foreground">
                             Planning from
                           </div>
                           <div className="brc-display-num text-foreground text-lg leading-none mt-0.5">

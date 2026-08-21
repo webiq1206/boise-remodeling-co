@@ -280,7 +280,7 @@ function QuoteBreakdownSection({ lead }: { lead: Lead }) {
                           {serviceName}
                         </span>
                         {(svcFreq !== "one-time" || (lead.frequency && lead.frequency !== "one-time")) && (
-                          <Badge variant={recurring ? "default" : "secondary"} className="text-[9px] px-1 py-0">
+                          <Badge variant={recurring ? "default" : "secondary"} className="text-caption px-1 py-0">
                             {recurring ? `Recurring (${formatFreqLabel(svcFreq)})` : "One-time"}
                           </Badge>
                         )}
@@ -290,17 +290,17 @@ function QuoteBreakdownSection({ lead }: { lead: Lead }) {
                       </span>
                     </div>
                     {item.description && (
-                      <p className="text-[11px] text-muted-foreground mt-0.5" data-testid={`text-service-desc-${lead.id}-${index}`}>
+                      <p className="text-label text-muted-foreground mt-0.5" data-testid={`text-service-desc-${lead.id}-${index}`}>
                         {item.description}
                       </p>
                     )}
                     {measurement && (
-                      <p className="text-[11px] text-muted-foreground mt-0.5" data-testid={`text-service-measurement-${lead.id}-${index}`}>
+                      <p className="text-label text-muted-foreground mt-0.5" data-testid={`text-service-measurement-${lead.id}-${index}`}>
                         Measurement: {measurement}
                       </p>
                     )}
                     {item.calculationExplanation && (
-                      <p className="text-[11px] text-muted-foreground/70 italic mt-1 pl-2 border-l-2 border-muted" data-testid={`text-service-explanation-${lead.id}-${index}`}>
+                      <p className="text-label text-muted-foreground/70 italic mt-1 pl-2 border-l-2 border-muted" data-testid={`text-service-explanation-${lead.id}-${index}`}>
                         {item.calculationExplanation}
                       </p>
                     )}
@@ -898,7 +898,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
             {notes.map((note, index) => (
               <div key={index} className="bg-muted/50 rounded-md px-2 py-1.5 text-xs">
                 <div className="flex items-start justify-between mb-0.5">
-                  <p className="font-medium text-[11px] text-muted-foreground">{note.addedBy}</p>
+                  <p className="font-medium text-label text-muted-foreground">{note.addedBy}</p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(note.addedAt).toLocaleDateString("en-US", {
                       month: "short",
@@ -953,12 +953,12 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
               {lead.name}
             </CardTitle>
             {priority !== "normal" && (
-              <Badge className={`${getPriorityColor(priority)} text-[10px] px-1.5 py-0`}>
+              <Badge className={`${getPriorityColor(priority)} text-caption px-1.5 py-0`}>
                 <Flag className="h-2.5 w-2.5 mr-0.5" />
                 {priority.toUpperCase()}
               </Badge>
             )}
-            <Badge variant={lead.status === "pending_admin" ? "default" : lead.status === "purchased" ? "secondary" : lead.status === "archived" ? "destructive" : "outline"} className="text-[10px] px-1.5 py-0" data-testid={`badge-status-${lead.id}`}>
+            <Badge variant={lead.status === "pending_admin" ? "default" : lead.status === "purchased" ? "secondary" : lead.status === "archived" ? "destructive" : "outline"} className="text-caption px-1.5 py-0" data-testid={`badge-status-${lead.id}`}>
               {lead.status === "pending_admin" ? "Pending Review" : lead.status === "purchased" ? "Purchased" : lead.status === "archived" ? "Archived" : "Available"}
             </Badge>
             {lead.possibleDuplicates && lead.possibleDuplicates.length > 0 && (
@@ -966,7 +966,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                 <HoverCardTrigger asChild>
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 text-amber-700 border-amber-500 dark:text-amber-400 dark:border-amber-600 cursor-help"
+                    className="text-caption px-1.5 py-0 text-amber-700 border-amber-500 dark:text-amber-400 dark:border-amber-600 cursor-help"
                     data-testid={`badge-duplicate-${lead.id}`}
                   >
                     Possible duplicate
@@ -988,14 +988,14 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                         </a>
                         <span className="text-muted-foreground">{d.matchedOn.join(' + ')}</span>
                         <span className="text-muted-foreground">{new Date(d.createdAt).toLocaleDateString()}</span>
-                        <Badge variant="secondary" className="text-[10px] px-1 py-0">{d.status}</Badge>
+                        <Badge variant="secondary" className="text-caption px-1 py-0">{d.status}</Badge>
                         {d.status !== "archived" && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
                               <Button
                                 size="sm"
                                 variant="outline"
-                                className="h-7 text-[11px]"
+                                className="h-7 text-label"
                                 disabled={mergeLeadsMutation.isPending}
                                 data-testid={`button-merge-${lead.id}-${d.id}`}
                               >
@@ -1031,7 +1031,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
             {lead.updatedAt && lead.createdAt && new Date(lead.updatedAt).getTime() - new Date(lead.createdAt).getTime() > 60000 && (
               <Badge
                 variant="outline"
-                className="text-[10px] px-1.5 py-0 text-blue-700 border-blue-500 dark:text-blue-400 dark:border-blue-600"
+                className="text-caption px-1.5 py-0 text-blue-700 border-blue-500 dark:text-blue-400 dark:border-blue-600"
                 title={`Updated ${new Date(lead.updatedAt).toLocaleString()}`}
                 data-testid={`badge-updated-${lead.id}`}
               >
@@ -1168,7 +1168,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
             {editingPrice ? (
               <div className="space-y-1.5 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <label className="text-[10px] text-muted-foreground w-16 flex-shrink-0">Estimate:</label>
+                  <label className="text-caption text-muted-foreground w-16 flex-shrink-0">Estimate:</label>
                   <Input
                     type="number"
                     step="1"
@@ -1181,7 +1181,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                   />
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <label className="text-[10px] text-muted-foreground w-16 flex-shrink-0">Lead $:</label>
+                  <label className="text-caption text-muted-foreground w-16 flex-shrink-0">Lead $:</label>
                   <Input
                     type="number"
                     step="1"
@@ -1196,7 +1196,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                 <div className="flex gap-1">
                   <Button
                     size="sm"
-                    className="h-6 text-[10px] px-2"
+                    className="h-6 text-caption px-2"
                     data-testid={`button-save-price-${lead.id}`}
                     onClick={() => {
                       const updates: Partial<Lead> = {};
@@ -1218,7 +1218,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-6 text-[10px] px-2"
+                    className="h-6 text-caption px-2"
                     onClick={() => setEditingPrice(false)}
                     data-testid={`button-cancel-price-${lead.id}`}
                   >
@@ -1232,7 +1232,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                   <p className="font-medium text-sm leading-tight">
                     {lead.finalQuote ? formatQuoteRangeWholeFromValue(lead.finalQuote, 0.15) : "Pending"}
                   </p>
-                  <p className="text-muted-foreground text-[11px] leading-tight">
+                  <p className="text-muted-foreground text-label leading-tight">
                     Lead: {formatCurrency(lead.currentLeadPrice)}
                     {lead.baseLeadPrice !== lead.currentLeadPrice && (
                       <span className="ml-1">(was {formatCurrency(lead.baseLeadPrice)})</span>
@@ -1260,7 +1260,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
             <Clock className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
             <div>
               <p className="font-medium text-sm leading-tight">{formatDate(lead.createdAt)}</p>
-              <p className="text-muted-foreground text-[11px] leading-tight">
+              <p className="text-muted-foreground text-label leading-tight">
                 {formatLeadAge(lead.createdAt)}, {getLeadFrequencyDisplay(lead)}
               </p>
             </div>
@@ -1295,7 +1295,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
 
         <div className={`${expanded ? 'block' : 'hidden'} md:block space-y-2`}>
           {lead.quoteId && (
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground border-t pt-2">
+            <div className="flex items-center gap-1.5 text-label text-muted-foreground border-t pt-2">
               <Hash className="h-3 w-3" />
               <span>Quote ID: {lead.quoteId}</span>
             </div>
@@ -1326,7 +1326,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
           {leadTags.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {leadTags.map((tag, idx) => (
-                <Badge key={idx} variant="outline" className="text-[10px] px-1.5 py-0">
+                <Badge key={idx} variant="outline" className="text-caption px-1.5 py-0">
                   <Tag className="h-2.5 w-2.5 mr-0.5" />
                   {tag}
                 </Badge>
@@ -1339,7 +1339,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
               <p className="text-xs font-medium mb-1.5 text-muted-foreground">Services</p>
               <div className="flex flex-wrap gap-1">
                 {lead.selectedServices.map((serviceId, index) => (
-                  <Badge key={index} variant="outline" className="text-[11px] px-1.5 py-0">
+                  <Badge key={index} variant="outline" className="text-label px-1.5 py-0">
                     {getServiceName(serviceId)}
                   </Badge>
                 ))}

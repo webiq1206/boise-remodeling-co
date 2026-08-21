@@ -70,7 +70,7 @@ export function ClarifyInterview({
     return (
       <div className="rounded-md border border-border bg-muted/40 p-6 text-center" data-testid="interview-done">
         <p className="text-sm font-semibold">Nothing left to ask.</p>
-        <p className="mt-1 text-[13px] text-muted-foreground">
+        <p className="mt-1 text-body-sm text-muted-foreground">
           {progress.pricedCount} item{progress.pricedCount === 1 ? "" : "s"} priced,{" "}
           {Math.round(progress.coverage * 100)}% of the scope covered.
         </p>
@@ -116,23 +116,23 @@ export function ClarifyInterview({
   return (
     <div className="rounded-md border border-border bg-background p-5" data-testid="interview-question">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="text-label font-semibold uppercase tracking-wide text-muted-foreground">
           {kindLabel}
         </span>
-        <span className="text-[11px] text-muted-foreground" data-testid="interview-counter">
+        <span className="text-label text-muted-foreground" data-testid="interview-counter">
           {answeredCount + 1} of {totalQuestions}
         </span>
       </div>
 
-      <p className="mt-2 text-[15px] font-semibold leading-snug" data-testid="interview-prompt">
+      <p className="mt-2 text-body font-semibold leading-snug" data-testid="interview-prompt">
         {question.question}
       </p>
-      <p className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground" data-testid="interview-why">
+      <p className="mt-1.5 text-body-sm leading-relaxed text-muted-foreground" data-testid="interview-why">
         {question.why}
       </p>
 
       {question.sheets.length > 0 ? (
-        <p className="mt-1 text-[12px] text-muted-foreground">
+        <p className="mt-1 text-label text-muted-foreground">
           Read from {question.sheets.join(", ")}.
         </p>
       ) : null}
@@ -162,7 +162,7 @@ export function ClarifyInterview({
       </div>
 
       {error ? (
-        <p className="mt-1.5 text-[12.5px] text-destructive" data-testid="interview-error">
+        <p className="mt-1.5 text-body-sm text-destructive" data-testid="interview-error">
           {error}
         </p>
       ) : null}
@@ -194,7 +194,7 @@ export function ClarifyInterview({
 
       {/* Every answer moves this, which is the reason to answer the next one. */}
       <div className="mt-5 border-t border-border pt-3">
-        <div className="flex items-center justify-between text-[12px] text-muted-foreground">
+        <div className="flex items-center justify-between text-label text-muted-foreground">
           <span>
             {progress.pricedCount} priced, {progress.remainingCount} still unpriced
           </span>
@@ -207,7 +207,7 @@ export function ClarifyInterview({
           />
         </div>
         {progress.sellingPrice > 0 ? (
-          <p className="mt-2 text-[13px]" data-testid="interview-running-total">
+          <p className="mt-2 text-body-sm" data-testid="interview-running-total">
             Priced so far:{" "}
             <span className="font-semibold">${progress.sellingPrice.toLocaleString("en-US")}</span>
             <span className="text-muted-foreground"> (partial - not a bid until everything is priced)</span>

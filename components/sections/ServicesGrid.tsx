@@ -50,7 +50,7 @@ export function ServicesGrid() {
                   {service.shortDescription}
                 </p>
                 <div className="mb-4 flex items-baseline gap-2">
-                  <span className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                  <span className="text-caption uppercase tracking-[0.14em] text-muted-foreground">
                     Planning from
                   </span>
                   <span className="brc-display-num text-foreground text-base leading-none">

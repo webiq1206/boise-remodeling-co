@@ -144,7 +144,7 @@ export default function AdminTakeoffPage() {
             <CardTitle className="text-base">Load a takeoff</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-[13px] leading-relaxed text-muted-foreground">
+            <p className="text-body-sm leading-relaxed text-muted-foreground">
               Paste the scope items from an analysed plan set. Every rate you answer below is kept, so
               the next job that carries the same work is priced without asking again.
               {rateCount > 0 ? ` The book currently holds ${rateCount} rate${rateCount === 1 ? "" : "s"}.` : ""}
@@ -155,7 +155,7 @@ export default function AdminTakeoffPage() {
               onChange={(e) => setRaw(e.target.value)}
               rows={6}
               placeholder='[{"description":"Bar front millwork","trade":"millwork","quantity":22.69,"unit":"LF","sheet":"A403","commercialStatus":"base","inContract":true}]'
-              className="w-full rounded-sm border border-border bg-background p-2 font-mono text-[12px]"
+              className="w-full rounded-sm border border-border bg-background p-2 font-mono text-label"
             />
             <button
               type="button"
@@ -167,7 +167,7 @@ export default function AdminTakeoffPage() {
               {busy ? "Working..." : "Classify and start"}
             </button>
             {error ? (
-              <p className="text-[13px] text-destructive" data-testid="takeoff-error">
+              <p className="text-body-sm text-destructive" data-testid="takeoff-error">
                 {error}
               </p>
             ) : null}
@@ -192,7 +192,7 @@ export default function AdminTakeoffPage() {
               <CardTitle className="text-base">The bid so far</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-3 text-[13px]">
+              <div className="grid grid-cols-2 gap-3 text-body-sm">
                 <Stat label="Priced" value={String(bid.pricedCount)} />
                 <Stat label="No rate yet" value={String(bid.measuredUnpricedCount)} />
                 <Stat label="Not measured" value={String(bid.unmeasuredCount)} />
@@ -202,19 +202,19 @@ export default function AdminTakeoffPage() {
               </div>
 
               {!bid.completeBid ? (
-                <p className="rounded-sm border border-amber-400/40 bg-amber-400/[0.08] p-3 text-[12.5px] leading-relaxed">
+                <p className="rounded-sm border border-amber-400/40 bg-amber-400/[0.08] p-3 text-body-sm leading-relaxed">
                   This is a PARTIAL total. {bid.measuredUnpricedCount + bid.unmeasuredCount} item(s) are
                   not in it. Do not send it as a bid until everything is priced or deliberately excluded.
                 </p>
               ) : (
-                <p className="rounded-sm border border-border bg-muted/40 p-3 text-[12.5px]">
+                <p className="rounded-sm border border-border bg-muted/40 p-3 text-body-sm">
                   Every base item is priced. This total covers the whole takeoff.
                 </p>
               )}
 
               {bid.lines.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="w-full text-[12.5px]">
+                  <table className="w-full text-body-sm">
                     <thead>
                       <tr className="border-b border-border text-left text-muted-foreground">
                         <th className="py-1 pr-2 font-medium">Item</th>
@@ -229,7 +229,7 @@ export default function AdminTakeoffPage() {
                           <td className="py-1.5 pr-2">
                             {l.description.slice(0, 70)}
                             {l.caveat ? (
-                              <span className="block text-[11.5px] text-amber-700">{l.caveat}</span>
+                              <span className="block text-label text-amber-700">{l.caveat}</span>
                             ) : null}
                           </td>
                           <td className="py-1.5 pr-2 whitespace-nowrap">
@@ -245,7 +245,7 @@ export default function AdminTakeoffPage() {
               ) : null}
 
               {bid.warnings.length > 0 ? (
-                <ul className="space-y-1 text-[12.5px] text-muted-foreground">
+                <ul className="space-y-1 text-body-sm text-muted-foreground">
                   {bid.warnings.map((w, i) => (
                     <li key={i}>{w}</li>
                   ))}
@@ -262,8 +262,8 @@ export default function AdminTakeoffPage() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-sm border border-border p-2">
-      <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="text-[15px] font-semibold">{value}</div>
+      <div className="text-label uppercase tracking-wide text-muted-foreground">{label}</div>
+      <div className="text-body font-semibold">{value}</div>
     </div>
   );
 }

@@ -725,7 +725,7 @@ export function Re10Wizard() {
                 className="mt-5 rounded-md border border-accent-legible/40 bg-accent-legible/[0.07] p-4"
                 data-testid="notice-re10-unpriceable"
               >
-                <p className="text-[13.5px] leading-relaxed text-inverse-foreground mb-3">
+                <p className="text-body leading-relaxed text-inverse-foreground mb-3">
                   Your documents are stored with us either way. Leave your details and our team
                   will price the list by hand - usually within one business day.
                 </p>
@@ -733,7 +733,7 @@ export function Re10Wizard() {
                   type="button"
                   onClick={sendUnpriceableToTeam}
                   data-testid="button-re10-send-to-team"
-                  className="inline-flex min-h-11 items-center rounded-md border border-accent-legible/50 bg-inverse-foreground/[0.06] px-4 text-[14px] text-inverse-foreground transition-colors hover:border-accent-legible hover:bg-inverse-foreground/[0.1]"
+                  className="inline-flex min-h-11 items-center rounded-md border border-accent-legible/50 bg-inverse-foreground/[0.06] px-4 text-body text-inverse-foreground transition-colors hover:border-accent-legible hover:bg-inverse-foreground/[0.1]"
                 >
                   Send this to our team
                 </button>
@@ -772,7 +772,7 @@ export function Re10Wizard() {
                 }`}
                 data-testid="re10-coverage"
               >
-                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
+                <p className="text-body leading-relaxed text-inverse-foreground">
                   {coverage.everyPageRead
                     ? `We read all ${coverage.totalPages} page${coverage.totalPages === 1 ? "" : "s"} you sent`
                     : `We read ${coverage.read} of ${coverage.totalPages} pages`}
@@ -782,7 +782,7 @@ export function Re10Wizard() {
                 {coverage.failedPages.length > 0 ? (
                   <ul className="mt-2 space-y-1">
                     {coverage.failedPages.map((f) => (
-                      <li key={f.index} className="text-[12.5px] text-inverse-muted">
+                      <li key={f.index} className="text-body-sm text-inverse-muted">
                         Could not read {f.filename} page {f.pageInFile}: {f.reason} Anything on it is
                         NOT in your price.
                       </li>
@@ -799,19 +799,19 @@ export function Re10Wizard() {
                 className="mb-5 rounded-md border border-amber-400/40 bg-amber-400/[0.08] p-4"
                 data-testid="re10-blockers"
               >
-                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                <p className="text-body font-semibold text-inverse-foreground">
                   Before we can price this tightly
                 </p>
                 <ul className="mt-2 space-y-2">
                   {readiness.blockers
                     .filter((b) => b.blocking)
                     .map((b, i) => (
-                      <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                      <li key={i} className="text-body-sm leading-relaxed text-inverse-muted">
                         <span className="text-inverse-foreground/90">{b.message}</span> {b.remedy}
                       </li>
                     ))}
                 </ul>
-                <p className="mt-2 text-[12.5px] text-inverse-muted">
+                <p className="mt-2 text-body-sm text-inverse-muted">
                   You can still carry on. We will price what we could read and say plainly what was
                   left out.
                 </p>
@@ -826,14 +826,14 @@ export function Re10Wizard() {
                 className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
                 data-testid="re10-duplicates"
               >
-                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                <p className="text-body font-semibold text-inverse-foreground">
                   {duplicates.length === 1
                     ? "One of these may be listed twice"
                     : `${duplicates.length} of these may be listed twice`}
                 </p>
                 <ul className="mt-2 space-y-2">
                   {duplicates.map((d, i) => (
-                    <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                    <li key={i} className="text-body-sm leading-relaxed text-inverse-muted">
                       <span className="text-inverse-foreground/90">{d.descriptionA}</span>
                       {" and "}
                       <span className="text-inverse-foreground/90">{d.descriptionB}</span>. {d.reason}{" "}
@@ -846,7 +846,7 @@ export function Re10Wizard() {
 
             {!extraction.looksLikeRe10 ? (
               <div className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4">
-                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
+                <p className="text-body leading-relaxed text-inverse-foreground">
                   This did not read like an RE-10 or inspection response. Check you sent the right
                   pages, or carry on and we will review it by hand.
                 </p>
@@ -858,7 +858,7 @@ export function Re10Wizard() {
                 className="mb-5 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
                 data-testid="notice-re10-attached-only"
               >
-                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
+                <p className="text-body leading-relaxed text-inverse-foreground">
                   {attachedOnly.join(", ")} {attachedOnly.length === 1 ? "is" : "are"} attached for
                   our team but {attachedOnly.length === 1 ? "was" : "were"} not read automatically.
                   Mention anything in {attachedOnly.length === 1 ? "it" : "them"} in the notes, or we
@@ -880,8 +880,8 @@ export function Re10Wizard() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-[14.5px] leading-relaxed text-inverse-foreground">{r.verbatim}</p>
-                      <p className="mt-1 text-[12.5px] text-inverse-muted">
+                      <p className="text-body leading-relaxed text-inverse-foreground">{r.verbatim}</p>
+                      <p className="mt-1 text-body-sm text-inverse-muted">
                         {RECIPES[r.kind]?.label ?? r.kind}
                         {r.location ? ` / ${r.location}` : ""}
                         {r.confidence !== "high" ? ` / ${r.confidence} confidence` : ""}
@@ -902,7 +902,7 @@ export function Re10Wizard() {
                   </div>
 
                   {r.needsReview ? (
-                    <p className="mt-2.5 flex items-start gap-2 text-[12.5px] leading-relaxed text-inverse-foreground/75">
+                    <p className="mt-2.5 flex items-start gap-2 text-body-sm leading-relaxed text-inverse-foreground/75">
                       <AlertTriangle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-accent-legible" aria-hidden="true" />
                       Needs an onsite look. We will list it separately rather than guess at a price.
                     </p>
@@ -910,7 +910,7 @@ export function Re10Wizard() {
 
                   {r.included ? (
                     <div className="mt-3 flex items-center gap-2">
-                      <label htmlFor={`qty-${r.id}`} className="whitespace-nowrap text-[12.5px] text-inverse-muted">
+                      <label htmlFor={`qty-${r.id}`} className="whitespace-nowrap text-body-sm text-inverse-muted">
                         {parseQuantity(r.quantityText) == null ? "Add a measurement" : "Measurement"}
                       </label>
                       <input
@@ -927,9 +927,9 @@ export function Re10Wizard() {
                             prev.map((p) => (p.id === r.id ? { ...p, quantityText: raw } : p)),
                           );
                         }}
-                        className="min-h-11 w-24 rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground placeholder:text-inverse-muted/60 focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                        className="min-h-11 w-24 rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 text-body-lg text-inverse-foreground placeholder:text-inverse-muted/60 focus:outline-none focus:ring-2 focus:ring-accent-legible"
                       />
-                      <span className="text-[12.5px] text-inverse-muted">
+                      <span className="text-body-sm text-inverse-muted">
                         {RECIPES[r.kind]?.unit === "SF" ? "sq ft" : RECIPES[r.kind]?.unit === "LF" ? "linear ft" : "count"}
                       </span>
                     </div>
@@ -940,12 +940,12 @@ export function Re10Wizard() {
 
             {extraction.unmapped.length > 0 ? (
               <div className="mt-5 rounded-md border border-inverse-foreground/15 p-4">
-                <p className="mb-2 text-[13px] text-inverse-foreground">
+                <p className="mb-2 text-body-sm text-inverse-foreground">
                   We could not categorise these, so a person will look at them:
                 </p>
                 <ul className="space-y-1.5">
                   {extraction.unmapped.map((u) => (
-                    <li key={u.verbatim} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                    <li key={u.verbatim} className="text-body-sm leading-relaxed text-inverse-muted">
                       {u.verbatim} <span className="text-inverse-muted/70">({u.reason})</span>
                     </li>
                   ))}
@@ -994,7 +994,7 @@ export function Re10Wizard() {
               />
 
               <div>
-                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Your role</p>
+                <p className="mb-1.5 text-body-sm text-inverse-muted">Your role</p>
                 <ChoiceGrid label="Your role" columns={2}>
                   {ROLES.map((r) => (
                     <OptionCard
@@ -1009,7 +1009,7 @@ export function Re10Wizard() {
               </div>
 
               <div>
-                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Preferred contact method</p>
+                <p className="mb-1.5 text-body-sm text-inverse-muted">Preferred contact method</p>
                 <SegmentedControl
                   label="Preferred contact method"
                   options={[
@@ -1099,7 +1099,7 @@ export function Re10Wizard() {
               <TextField label="Brokerage or company" optionalHint value={brokerage} onChange={setBrokerage} />
 
               <div>
-                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Property is</p>
+                <p className="mb-1.5 text-body-sm text-inverse-muted">Property is</p>
                 <SegmentedControl
                   label="Property is"
                   options={[
@@ -1115,7 +1115,7 @@ export function Re10Wizard() {
               </div>
 
               <div>
-                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Getting our crews in is</p>
+                <p className="mb-1.5 text-body-sm text-inverse-muted">Getting our crews in is</p>
                 <SegmentedControl
                   label="Getting our crews in is"
                   options={[
@@ -1131,7 +1131,7 @@ export function Re10Wizard() {
               </div>
 
               <div>
-                <label htmlFor="re10-notes" className="mb-1.5 flex items-baseline justify-between text-[12.5px] text-inverse-muted">
+                <label htmlFor="re10-notes" className="mb-1.5 flex items-baseline justify-between text-body-sm text-inverse-muted">
                   <span>Anything else we should know</span>
                   <span className="text-inverse-muted/70">Optional</span>
                 </label>
@@ -1140,7 +1140,7 @@ export function Re10Wizard() {
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                  className="w-full rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-body-lg text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
                 />
               </div>
             </div>
@@ -1219,9 +1219,9 @@ function Re10Result({
             { label: `Held ${result.validDays} days`, tone: "accent" },
           ]}
         />
-        {contextLine ? <p className="mt-3 text-[13px] text-inverse-muted">{contextLine}</p> : null}
+        {contextLine ? <p className="mt-3 text-body-sm text-inverse-muted">{contextLine}</p> : null}
         {result.emailed ? (
-          <p className="mt-3 flex items-center gap-2 text-[13px] text-inverse-foreground/85">
+          <p className="mt-3 flex items-center gap-2 text-body-sm text-inverse-foreground/85">
             <Mail className="h-4 w-4 text-accent-legible" aria-hidden="true" />
             A copy is on its way to your inbox.
           </p>
@@ -1230,10 +1230,10 @@ function Re10Result({
 
       {/* Pricing notes */}
       <ResultCard title="How to read this price" icon={ShieldCheck}>
-        <p className="text-[13px] leading-relaxed text-inverse-muted">{RE10_PRICING_DISCLAIMER}</p>
+        <p className="text-body-sm leading-relaxed text-inverse-muted">{RE10_PRICING_DISCLAIMER}</p>
         {result.uncertainty.length > 0 ? (
           <div className="mt-3">
-            <p className="mb-2 text-[12.5px] text-inverse-foreground/90">What would firm this up</p>
+            <p className="mb-2 text-body-sm text-inverse-foreground/90">What would firm this up</p>
             <DetailList items={result.uncertainty} />
           </div>
         ) : null}
@@ -1244,12 +1244,12 @@ function Re10Result({
         <ul className="space-y-3">
           {result.categories.map((c) => (
             <li key={c.trade} className="rounded-md bg-inverse-foreground/[0.05] p-3.5">
-              <p className="mb-1.5 text-[14px] text-inverse-foreground">
+              <p className="mb-1.5 text-body text-inverse-foreground">
                 {c.label} <span className="text-inverse-muted">({c.itemCount} {c.itemCount === 1 ? "item" : "items"})</span>
               </p>
               <ul className="space-y-1">
                 {c.items.map((i, n) => (
-                  <li key={n} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                  <li key={n} className="text-body-sm leading-relaxed text-inverse-muted">
                     {i.description}
                     {i.location ? ` (${i.location})` : ""}
                     {i.quantityAssumed && i.quantity ? ` - priced for ${i.quantity} ${i.unit ?? ""}` : ""}
@@ -1264,12 +1264,12 @@ function Re10Result({
       {/* Needs onsite */}
       {result.needsOnsite.length > 0 ? (
         <ResultCard title="Priced after an onsite look" icon={AlertTriangle} testId="re10-onsite">
-          <p className="mb-3 text-[12.5px] leading-relaxed text-inverse-muted">
+          <p className="mb-3 text-body-sm leading-relaxed text-inverse-muted">
             These are in your document but not in the number above. We price them after seeing them.
           </p>
           <ul className="space-y-2.5">
             {result.needsOnsite.map((n, i) => (
-              <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+              <li key={i} className="text-body-sm leading-relaxed text-inverse-muted">
                 <span className="text-inverse-foreground/90">{n.description}</span> - {n.why}
               </li>
             ))}
@@ -1373,7 +1373,7 @@ function Re10Result({
         <ResultCard title="Documents you sent" icon={FileText} testId="re10-documents">
           <ul className="space-y-1.5">
             {documents.map((d) => (
-              <li key={d.url} className="flex items-center gap-2 text-[12.5px] text-inverse-muted">
+              <li key={d.url} className="flex items-center gap-2 text-body-sm text-inverse-muted">
                 <ClipboardList className="h-3.5 w-3.5 flex-shrink-0 text-accent-legible" aria-hidden="true" />
                 <span className="truncate">{d.filename}</span>
               </li>

@@ -167,6 +167,18 @@ export function AssistantWidget() {
   // Chat has no place over the client portal or admin surfaces.
   if (!pathname || isPortalPath(pathname) || pathname.startsWith("/admin")) return null;
 
+  /* NOR OVER A WIZARD THAT OWNS THE BOTTOM OF THE SCREEN. The launcher floats
+     bottom-right at exactly the height of the estimator's fixed Back/Continue
+     bar, so on a phone it covered the primary action of the step. The
+     estimator and the RE-10 wizard already hide the site-wide Call/Text bar
+     for the same reason; the launcher follows the same rule and comes back
+     everywhere else. */
+  const wizardOwnsBottom =
+    pathname === "/estimate" ||
+    pathname.startsWith("/re-10") ||
+    pathname.startsWith("/remodel-plans");
+  if (wizardOwnsBottom && !open) return null;
+
   const estimatorHref = pathname === "/" ? "/#calculator" : "/estimate";
 
   return (

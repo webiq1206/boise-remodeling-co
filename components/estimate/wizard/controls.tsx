@@ -64,9 +64,9 @@ export function OptionCard({
       ) : null}
 
       <span className={cn("min-w-0", layout === "row" && "flex-1 pr-6")}>
-        <span className="block text-[15px] text-inverse-foreground leading-tight">{title}</span>
+        <span className="block text-body text-inverse-foreground leading-tight">{title}</span>
         {subtitle ? (
-          <span className="mt-1 block text-[12.5px] text-inverse-muted leading-snug">{subtitle}</span>
+          <span className="mt-1 block text-body-sm text-inverse-muted leading-snug">{subtitle}</span>
         ) : null}
       </span>
 
@@ -172,8 +172,8 @@ export function SegmentedControl<T extends string>({
                 : "border-accent-legible/30 bg-inverse-foreground/[0.07] text-inverse-muted hover:border-accent-legible/55 hover:text-inverse-foreground hover-elevate",
             )}
           >
-            <span className="text-[14px] leading-tight text-inverse-foreground">{opt.label}</span>
-            {opt.sub ? <span className="text-[11.5px] leading-tight text-inverse-muted">{opt.sub}</span> : null}
+            <span className="text-body leading-tight text-inverse-foreground">{opt.label}</span>
+            {opt.sub ? <span className="text-label leading-tight text-inverse-muted">{opt.sub}</span> : null}
           </button>
         );
       })}
@@ -216,12 +216,12 @@ export function QuantityStepper({
         <Minus className="h-4 w-4" aria-hidden="true" />
       </button>
       <span
-        className="min-w-[3ch] text-center text-[18px] tabular-nums text-inverse-foreground"
+        className="min-w-[3ch] text-center text-title-sm tabular-nums text-inverse-foreground"
         role="status"
         aria-live="polite"
       >
         {value}
-        {unit ? <span className="ml-1 text-[12px] text-inverse-muted">{unit}</span> : null}
+        {unit ? <span className="ml-1 text-label text-inverse-muted">{unit}</span> : null}
       </span>
       <button
         type="button"
@@ -278,7 +278,7 @@ export function TextField({
   const helpId = `${fieldId}-help`;
   return (
     <div>
-      <label htmlFor={fieldId} className="mb-1.5 flex items-baseline justify-between gap-2 text-[12.5px] text-inverse-muted">
+      <label htmlFor={fieldId} className="mb-1.5 flex items-baseline justify-between gap-2 text-body-sm text-inverse-muted">
         <span>
           {label}
           {required ? <span className="text-accent-legible"> *</span> : null}
@@ -298,17 +298,17 @@ export function TextField({
         onChange={(e) => onChange(e.target.value)}
         data-testid={testId}
         className={cn(
-          "w-full min-h-11 rounded-md border bg-inverse-foreground/5 px-3 text-[16px] text-inverse-foreground placeholder:text-inverse-muted/50 focus:outline-none focus:ring-2 focus:ring-accent-legible",
+          "w-full min-h-11 rounded-md border bg-inverse-foreground/5 px-3 text-body-lg text-inverse-foreground placeholder:text-inverse-muted/50 focus:outline-none focus:ring-2 focus:ring-accent-legible",
           error ? "border-destructive/70" : "border-inverse-foreground/25",
         )}
       />
       {help && !error ? (
-        <p id={helpId} className="mt-1.5 text-[12px] text-inverse-muted leading-relaxed">
+        <p id={helpId} className="mt-1.5 text-label text-inverse-muted leading-relaxed">
           {help}
         </p>
       ) : null}
       {error ? (
-        <p id={errId} className="mt-1.5 text-[12.5px] text-destructive">
+        <p id={errId} className="mt-1.5 text-body-sm text-destructive">
           {error}
         </p>
       ) : null}

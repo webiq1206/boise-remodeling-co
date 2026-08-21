@@ -360,7 +360,7 @@ export default function PurchaseHistoryPage() {
                   return (
                     <Badge
                       variant="outline"
-                      className="text-[10px] px-1.5 py-0 text-muted-foreground"
+                      className="text-caption px-1.5 py-0 text-muted-foreground"
                       title={`Exported ${when.toLocaleString()}`}
                       data-testid={`badge-exported-${lead.id}`}
                     >
@@ -374,7 +374,7 @@ export default function PurchaseHistoryPage() {
                     <HoverCardTrigger asChild>
                       <Badge
                         variant="outline"
-                        className="text-[10px] px-1.5 py-0 text-amber-700 border-amber-500 dark:text-amber-400 dark:border-amber-600 cursor-help"
+                        className="text-caption px-1.5 py-0 text-amber-700 border-amber-500 dark:text-amber-400 dark:border-amber-600 cursor-help"
                         data-testid={`badge-duplicate-${lead.id}`}
                       >
                         Possible duplicate
@@ -400,7 +400,7 @@ export default function PurchaseHistoryPage() {
                 {lead.updatedAt && lead.createdAt && new Date(lead.updatedAt).getTime() - new Date(lead.createdAt).getTime() > 60000 && (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 text-blue-700 border-blue-500 dark:text-blue-400 dark:border-blue-600"
+                    className="text-caption px-1.5 py-0 text-blue-700 border-blue-500 dark:text-blue-400 dark:border-blue-600"
                     title={`Updated ${new Date(lead.updatedAt).toLocaleString()}`}
                     data-testid={`badge-updated-${lead.id}`}
                   >

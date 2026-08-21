@@ -863,7 +863,7 @@ export function PlansWizard() {
   const scopeItems = (extraction?.scopeItems ?? []).filter((s) => s.inContract);
   const excludedScope = (extraction?.scopeItems ?? []).filter((s) => !s.inContract);
 
-  const labelClass = "block text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-1.5";
+  const labelClass = "block text-body-sm uppercase tracking-[0.08em] text-inverse-muted mb-1.5";
 
   return (
     /* scroll-mt-16 clears the 61px sticky header when hero CTAs jump here via
@@ -917,11 +917,11 @@ export function PlansWizard() {
             <div className="mt-6">
               <label
                 htmlFor="plans-instructions"
-                className="block text-[13px] font-semibold uppercase tracking-wide text-inverse-foreground/80"
+                className="block text-body-sm font-semibold uppercase tracking-wide text-inverse-foreground/80"
               >
                 What should we focus on? <span className="font-normal normal-case opacity-70">(optional)</span>
               </label>
-              <p className="mt-1 text-[12.5px] leading-relaxed text-inverse-muted">
+              <p className="mt-1 text-body-sm leading-relaxed text-inverse-muted">
                 Tell us in your own words. For example: &quot;all of the millwork and casework only&quot;, or
                 &quot;just the kitchen and the two bathrooms&quot;. We read every sheet either way; this
                 changes what we look for while reading.
@@ -935,7 +935,7 @@ export function PlansWizard() {
                 rows={3}
                 disabled={busy}
                 placeholder="e.g. Estimate all of the millwork only"
-                className="mt-2 w-full resize-y rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-[13.5px] text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                className="mt-2 w-full resize-y rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-body text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
               />
             </div>
             <StickyStepNav
@@ -971,7 +971,7 @@ export function PlansWizard() {
                 }`}
                 data-testid="plans-coverage"
               >
-                <p className="text-[13.5px] leading-relaxed text-inverse-foreground">
+                <p className="text-body leading-relaxed text-inverse-foreground">
                   {extraction.coverage.everyPageRead
                     ? `We read all ${extraction.coverage.totalPages} sheet${extraction.coverage.totalPages === 1 ? "" : "s"} you sent`
                     : `We read ${extraction.coverage.read} of ${extraction.coverage.totalPages} sheets`}
@@ -987,7 +987,7 @@ export function PlansWizard() {
                 {extraction.coverage.failedPages.length > 0 ? (
                   <ul className="mt-2 space-y-1">
                     {extraction.coverage.failedPages.map((f) => (
-                      <li key={f.index} className="text-[12.5px] text-inverse-muted">
+                      <li key={f.index} className="text-body-sm text-inverse-muted">
                         Could not read {f.filename} page {f.pageInFile}: {f.reason} Anything shown
                         only on that sheet is NOT in this estimate.
                       </li>
@@ -1005,14 +1005,14 @@ export function PlansWizard() {
                 className="mb-6 rounded-md border border-amber-400/40 bg-amber-400/[0.08] p-4"
                 data-testid="plans-conflicts"
               >
-                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                <p className="text-body font-semibold text-inverse-foreground">
                   {extraction.conflicts.length === 1
                     ? "Two sheets disagree on one measurement"
                     : `Sheets disagree on ${extraction.conflicts.length} measurements`}
                 </p>
                 <ul className="mt-2 space-y-2">
                   {extraction.conflicts.map((c, i) => (
-                    <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                    <li key={i} className="text-body-sm leading-relaxed text-inverse-muted">
                       <span className="text-inverse-foreground/90">{c.label}</span>:{" "}
                       {c.values
                         .map((v) => `${v.value ?? "not stated"}${c.unit ? ` ${c.unit}` : ""}${v.sheet ? ` on ${v.sheet}` : ""}`)
@@ -1032,19 +1032,19 @@ export function PlansWizard() {
                 className="mb-6 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
                 data-testid="plans-blockers"
               >
-                <p className="text-[13.5px] font-semibold text-inverse-foreground">
+                <p className="text-body font-semibold text-inverse-foreground">
                   Before we can price this from the drawings
                 </p>
                 <ul className="mt-2 space-y-2">
                   {extraction.readiness.blockers
                     .filter((b) => b.blocking)
                     .map((b, i) => (
-                      <li key={i} className="text-[12.5px] leading-relaxed text-inverse-muted">
+                      <li key={i} className="text-body-sm leading-relaxed text-inverse-muted">
                         <span className="text-inverse-foreground/90">{b.message}</span> {b.remedy}
                       </li>
                     ))}
                 </ul>
-                <p className="mt-2 text-[12.5px] text-inverse-muted">
+                <p className="mt-2 text-body-sm text-inverse-muted">
                   You can still carry on. We will build a range from the total you give us and say
                   plainly that the drawings were not used.
                 </p>
@@ -1068,17 +1068,17 @@ export function PlansWizard() {
                   data-testid="plans-question"
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span className="text-[11px] font-semibold uppercase tracking-wide text-inverse-muted">
+                    <span className="text-label font-semibold uppercase tracking-wide text-inverse-muted">
                       One quick question
                     </span>
-                    <span className="text-[11px] text-inverse-muted" data-testid="plans-question-counter">
+                    <span className="text-label text-inverse-muted" data-testid="plans-question-counter">
                       {askedIndex + 1} of {asks.length}
                     </span>
                   </div>
-                  <p className="mt-2 text-[14px] font-semibold leading-snug text-inverse-foreground">
+                  <p className="mt-2 text-body font-semibold leading-snug text-inverse-foreground">
                     {q.question}
                   </p>
-                  <p className="mt-1 text-[12.5px] leading-relaxed text-inverse-muted">{q.why}</p>
+                  <p className="mt-1 text-body-sm leading-relaxed text-inverse-muted">{q.why}</p>
                   <div className="mt-3 flex items-center gap-2">
                     <input
                       data-testid="plans-question-input"
@@ -1093,7 +1093,7 @@ export function PlansWizard() {
                         setAskedIndex((i) => i + 1);
                       }}
                       placeholder="Your answer"
-                      className="flex-1 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-[13.5px] text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                      className="flex-1 rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 py-2 text-body text-inverse-foreground placeholder:text-inverse-muted focus:outline-none focus:ring-2 focus:ring-accent-legible"
                       aria-label={q.question}
                     />
                     <button
@@ -1106,7 +1106,7 @@ export function PlansWizard() {
                         setQuestionDraft("");
                         setAskedIndex((i) => i + 1);
                       }}
-                      className="rounded-sm bg-inverse-foreground px-3 py-2 text-[13px] font-medium text-inverse"
+                      className="rounded-sm bg-inverse-foreground px-3 py-2 text-body-sm font-medium text-inverse"
                     >
                       {questionDraft.trim() ? "Next" : "Skip"}
                     </button>
@@ -1120,7 +1120,7 @@ export function PlansWizard() {
                 className="mb-6 rounded-md border border-inverse-foreground/20 bg-inverse-foreground/[0.06] p-4"
                 data-testid="notice-plans-attached-only"
               >
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
+                <p className="text-body text-inverse-foreground leading-relaxed">
                   {attachedOnly.join(", ")} {attachedOnly.length === 1 ? "is" : "are"} attached for
                   our team but {attachedOnly.length === 1 ? "was" : "were"} not read automatically.
                   Nothing in {attachedOnly.length === 1 ? "it" : "them"} is in the list below.
@@ -1151,7 +1151,7 @@ export function PlansWizard() {
                     : "Your drawings do not state a total, and we cannot get one reliably off the dimensions. Yours is the number we compare our room measurements against, so we can catch a misread before it reaches your price."
                 }
               />
-              <p className="mt-2.5 flex items-center gap-1.5 text-[11.5px] text-accent-legible/90">
+              <p className="mt-2.5 flex items-center gap-1.5 text-label text-accent-legible/90">
                 <Ruler className="h-3 w-3" aria-hidden="true" /> The one number that catches a misread
               </p>
             </div>
@@ -1188,7 +1188,7 @@ export function PlansWizard() {
             </div>
 
             <div className="mb-3 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-              <p className="text-[13px] text-inverse-muted">
+              <p className="text-body-sm text-inverse-muted">
                 <span className="text-inverse-foreground">{measuredRooms.length}</span> rooms measured,{" "}
                 <span className="text-inverse-foreground">
                   {Math.round(measuredArea).toLocaleString("en-US")}
@@ -1196,7 +1196,7 @@ export function PlansWizard() {
                 sq ft
               </p>
               {unmeasured.length > 0 ? (
-                <p className="text-[13px] text-inverse-muted">
+                <p className="text-body-sm text-inverse-muted">
                   {unmeasured.length} with no printed area
                 </p>
               ) : null}
@@ -1215,8 +1215,8 @@ export function PlansWizard() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-[14.5px] text-inverse-foreground leading-snug">{r.name}</p>
-                      <p className="mt-1 text-[12.5px] text-inverse-muted">
+                      <p className="text-body text-inverse-foreground leading-snug">{r.name}</p>
+                      <p className="mt-1 text-body-sm text-inverse-muted">
                         {r.areaSqFt && r.areaSqFt > 0
                           ? `${Math.round(r.areaSqFt).toLocaleString("en-US")} sq ft`
                           : "No printed area on the sheet"}
@@ -1250,12 +1250,12 @@ export function PlansWizard() {
                 and say if we missed something. */}
             {scopeItems.length > 0 ? (
               <div className="mt-8">
-                <p className="text-[12.5px] uppercase tracking-[0.08em] text-inverse-muted mb-3">
+                <p className="text-body-sm uppercase tracking-[0.08em] text-inverse-muted mb-3">
                   Work we read off your drawings ({scopeItems.length})
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-2" data-testid="list-plan-scope">
                   {scopeItems.map((s, i) => (
-                    <li key={i} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+                    <li key={i} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                       <span className="text-inverse-muted">{s.category}</span> · {s.description}
                     </li>
                   ))}
@@ -1272,17 +1272,17 @@ export function PlansWizard() {
                 className="mt-6 rounded-md border border-inverse-foreground/25 bg-inverse-foreground/[0.06] p-4"
                 data-testid="notice-plans-excluded-scope"
               >
-                <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
+                <p className="text-body text-inverse-foreground leading-relaxed mb-2">
                   Your drawings give this work to someone else, so it will not be in your price:
                 </p>
                 <ul className="space-y-1">
                   {excludedScope.map((s, i) => (
-                    <li key={i} className="text-[12.5px] text-inverse-muted leading-relaxed">
+                    <li key={i} className="text-body-sm text-inverse-muted leading-relaxed">
                       {s.description}
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2.5 text-[12.5px] text-inverse-muted leading-relaxed">
+                <p className="mt-2.5 text-body-sm text-inverse-muted leading-relaxed">
                   If you want us to price any of it, say so in the notes on the next step.
                 </p>
               </div>
@@ -1291,7 +1291,7 @@ export function PlansWizard() {
             {/* Named rather than dropped. A room that vanished without
                 explanation is exactly the failure the RE-10 flow shipped once. */}
             {unmeasured.length > 0 ? (
-              <p className="mt-4 text-[12.5px] text-inverse-muted leading-relaxed">
+              <p className="mt-4 text-body-sm text-inverse-muted leading-relaxed">
                 {unmeasured.map((r) => r.name).join(", ")}{" "}
                 {unmeasured.length === 1 ? "carries" : "carry"} no printed area on your drawings, so{" "}
                 {unmeasured.length === 1 ? "it is" : "they are"} not in the measured figure. Mention{" "}
@@ -1346,7 +1346,7 @@ export function PlansWizard() {
               />
 
               <div>
-                <p className="mb-1.5 text-[12.5px] text-inverse-muted">Best way to reach you</p>
+                <p className="mb-1.5 text-body-sm text-inverse-muted">Best way to reach you</p>
                 <SegmentedControl
                   label="Best way to reach you"
                   options={[
@@ -1404,7 +1404,7 @@ export function PlansWizard() {
               />
 
               <div>
-                <label htmlFor="plans-notes" className="mb-1.5 flex items-baseline justify-between text-[12.5px] text-inverse-muted">
+                <label htmlFor="plans-notes" className="mb-1.5 flex items-baseline justify-between text-body-sm text-inverse-muted">
                   <span>Anything we should know</span>
                   <span className="text-inverse-muted/70">Optional</span>
                 </label>
@@ -1413,7 +1413,7 @@ export function PlansWizard() {
                   rows={3}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-[16px] text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
+                  className="w-full rounded-md border border-inverse-foreground/25 bg-inverse-foreground/5 px-3 py-2.5 text-body-lg text-inverse-foreground focus:outline-none focus:ring-2 focus:ring-accent-legible"
                   data-testid="input-plans-notes"
                 />
               </div>
@@ -1441,24 +1441,24 @@ export function PlansWizard() {
               className="rounded-md border border-accent-legible/40 bg-accent-legible/[0.07] p-6"
               data-testid="plans-out-of-scope"
             >
-              <h2 className="text-[19px] font-semibold text-inverse-foreground">
+              <h2 className="text-title-sm font-semibold text-inverse-foreground">
                 We read your drawings. This one needs an estimator, not an instant number.
               </h2>
-              <p className="mt-3 text-[13.5px] leading-relaxed text-inverse-muted">{outOfScope}</p>
-              <p className="mt-3 text-[13.5px] leading-relaxed text-inverse-muted">
+              <p className="mt-3 text-body leading-relaxed text-inverse-muted">{outOfScope}</p>
+              <p className="mt-3 text-body leading-relaxed text-inverse-muted">
                 Your details and everything we measured have gone to our team. We would rather hand you
                 a real price than a fast one built for a different size of job.
               </p>
               <div className="mt-5 flex flex-wrap gap-2">
                 <a
                   href={`tel:${SITE_CONFIG.phoneTel}`}
-                  className="rounded-sm bg-inverse-foreground px-4 py-2 text-[13.5px] font-medium text-inverse"
+                  className="rounded-sm bg-inverse-foreground px-4 py-2 text-body font-medium text-inverse"
                 >
                   Call {SITE_CONFIG.phone}
                 </a>
                 <a
                   href="/contact"
-                  className="rounded-sm border border-inverse-foreground/30 px-4 py-2 text-[13.5px] text-inverse-foreground"
+                  className="rounded-sm border border-inverse-foreground/30 px-4 py-2 text-body text-inverse-foreground"
                 >
                   Send a message instead
                 </a>
@@ -1515,12 +1515,12 @@ function PlansResult({
           category={result.propertyAddress}
         />
         {result.emailed ? (
-          <p className="mt-3 flex items-center gap-2 text-[13px] text-inverse-foreground/85">
+          <p className="mt-3 flex items-center gap-2 text-body-sm text-inverse-foreground/85">
             <Mail className="h-4 w-4 text-accent-legible" aria-hidden="true" />
             A copy is on its way to your inbox.
           </p>
         ) : (
-          <p className="mt-3 text-[13px] text-inverse-foreground/85">
+          <p className="mt-3 text-body-sm text-inverse-foreground/85">
             Call us and we will walk through it with you.
           </p>
         )}
@@ -1532,7 +1532,7 @@ function PlansResult({
           the quiet kind of dishonesty this flow exists to avoid. */}
       <ResultCard title="Where this range came from" testId="plans-provenance">
         {result.pricedFromDrawings && result.measurements ? (
-          <p className="text-[13.5px] text-inverse-foreground leading-relaxed">
+          <p className="text-body text-inverse-foreground leading-relaxed">
             Priced from your drawings: {result.measurements.sqft.toLocaleString("en-US")} sq ft
             across {result.measurements.measuredRooms} rooms, with{" "}
             {result.measurements.interiorPerimeterFt.toLocaleString("en-US")} linear feet of interior
@@ -1544,7 +1544,7 @@ function PlansResult({
           </p>
         ) : (
           <>
-            <p className="text-[13.5px] text-inverse-foreground leading-relaxed mb-2">
+            <p className="text-body text-inverse-foreground leading-relaxed mb-2">
               We read your drawings, but they did not carry enough measurement for us to price from
               them directly, so this range is built from the total area you gave us.
             </p>
@@ -1552,7 +1552,7 @@ function PlansResult({
           </>
         )}
         {result.notMeasured.length > 0 ? (
-          <p className="mt-3 text-[13px] text-inverse-muted leading-relaxed">
+          <p className="mt-3 text-body-sm text-inverse-muted leading-relaxed">
             Not in the measured area: {result.notMeasured.join(", ")}. These carry no printed size on
             your drawings. Send us their dimensions and we will fold them in.
           </p>
@@ -1564,7 +1564,7 @@ function PlansResult({
         <ResultCard title={`What this covers (${result.scopeItems.length})`} icon={FileText} testId="plans-covers">
           <ul className="grid sm:grid-cols-2 gap-x-5 gap-y-1.5">
             {result.scopeItems.map((s, i) => (
-              <li key={i} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+              <li key={i} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                 <span className="text-inverse-muted">{s.category}</span> · {s.description}
               </li>
             ))}
@@ -1577,7 +1577,7 @@ function PlansResult({
           number they are about to plan around. */}
       {result.excludedScope.length > 0 ? (
         <ResultCard title="Not included, given to someone else" testId="plans-result-excluded">
-          <p className="mb-2 text-[13.5px] text-inverse-foreground leading-relaxed">
+          <p className="mb-2 text-body text-inverse-foreground leading-relaxed">
             Your drawings give this work to someone else, so it is not in your range:
           </p>
           <DetailList marker="cross" items={result.excludedScope.map((s) => s.description)} />
@@ -1588,7 +1588,7 @@ function PlansResult({
       <ResultCard title="What we used" testId="plans-selections">
         <ul className="space-y-1.5">
           {result.selections.map((s, i) => (
-            <li key={i} className="text-[13.5px] text-inverse-foreground/85">
+            <li key={i} className="text-body text-inverse-foreground/85">
               <span className="text-inverse-muted">{s.label}:</span> {s.value}
             </li>
           ))}
@@ -1597,7 +1597,7 @@ function PlansResult({
 
       {/* Confidence statement */}
       <ResultCard title="How to read this range" testId="plans-confidence">
-        <p className="text-[13.5px] leading-relaxed text-inverse-muted">
+        <p className="text-body leading-relaxed text-inverse-muted">
           {CONFIDENCE_COPY[result.disclosure.confidence]}
         </p>
       </ResultCard>
@@ -1618,7 +1618,7 @@ function PlansResult({
         <ResultDisclosure title="In this range" count={result.disclosure.included.length} testId="plans-included">
           <ul className="space-y-1.5">
             {result.disclosure.included.map((i, k) => (
-              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+              <li key={k} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                 <span className="text-inverse-foreground">{i.label}.</span>{" "}
                 <span className="text-inverse-muted">{i.detail}</span>
               </li>
@@ -1631,7 +1631,7 @@ function PlansResult({
         <ResultDisclosure title="Carried at an allowance" count={result.disclosure.allowances.length} testId="plans-allowances">
           <ul className="space-y-1.5">
             {result.disclosure.allowances.map((i, k) => (
-              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+              <li key={k} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                 <span className="text-inverse-foreground">{i.label}.</span>{" "}
                 <span className="text-inverse-muted">{i.detail}</span>
               </li>
@@ -1644,7 +1644,7 @@ function PlansResult({
         <ResultDisclosure title="Not in this range" count={notInThisRange.length} testId="plans-not-in-range">
           <ul className="space-y-1.5">
             {notInThisRange.map((i, k) => (
-              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+              <li key={k} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                 <span className="text-inverse-foreground">{i.label}.</span>{" "}
                 <span className="text-inverse-muted">{i.detail}</span>
               </li>
@@ -1657,7 +1657,7 @@ function PlansResult({
         <ResultDisclosure title="Priced after someone has seen it" count={result.disclosure.needsAttention.length} testId="plans-needs-attention">
           <ul className="space-y-1.5">
             {result.disclosure.needsAttention.map((i, k) => (
-              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+              <li key={k} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                 <span className="text-inverse-foreground">{i.label}.</span>{" "}
                 <span className="text-inverse-muted">{i.detail}</span>
               </li>
@@ -1670,7 +1670,7 @@ function PlansResult({
         <ResultDisclosure title="What we could not confirm" count={result.disclosure.missing.length} testId="plans-missing">
           <ul className="space-y-1.5">
             {result.disclosure.missing.map((m, k) => (
-              <li key={k} className="text-[13px] text-inverse-foreground/85 leading-relaxed">
+              <li key={k} className="text-body-sm text-inverse-foreground/85 leading-relaxed">
                 <span className="text-inverse-foreground">{m.what}</span>{" "}
                 <span className="text-inverse-muted">
                   ({m.where}). {m.effect} {m.remedy}
@@ -1718,7 +1718,7 @@ function PlansResult({
         <ResultCard title="Documents you sent" icon={FileText} testId="plans-documents">
           <ul className="space-y-1.5">
             {documents.map((d) => (
-              <li key={d.url} className="flex items-center gap-2 text-[12.5px] text-inverse-muted">
+              <li key={d.url} className="flex items-center gap-2 text-body-sm text-inverse-muted">
                 <ClipboardList className="h-3.5 w-3.5 flex-shrink-0 text-accent-legible" aria-hidden="true" />
                 <span className="truncate">{d.filename}</span>
               </li>

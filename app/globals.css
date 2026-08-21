@@ -2,9 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  overflow-x: clip;
-}
+/**
+ * OVERFLOW-X BELONGS ON html ALONE, NOT ON body.
+ *
+ * `overflow-x: clip` on body makes body the scrollport for every `position:
+ * sticky` descendant, and body is the height of the whole document - so a
+ * sticky element has nothing to stick against and never engages. That is
+ * exactly what broke the estimator on a phone: the wizard's sticky footer is
+ * 104px tall and sat at y=787 on an 812px viewport, putting the Continue
+ * button 16px BELOW the fold on load. The primary action of the primary
+ * conversion flow was off-screen, on the device most people use.
+ *
+ * On html the clip still stops sideways scroll, and sticky resolves against
+ * the viewport the way it is meant to.
+ */
+/**
+ * NO overflow-x CLIP ON html OR body, and that is load-bearing.
+ *
+ * Either one silently breaks `position: sticky` for every descendant: an
+ * element with overflow other than `visible` becomes the sticky scrollport,
+ * and both html and body are the height of the whole document, so a sticky
+ * footer has nothing to stick against. It never engages and simply sits where
+ * it fell in the flow.
+ *
+ * That is what put the estimator's Continue button 16px BELOW the fold on a
+ * 375x812 phone: the primary action of the primary conversion flow, off
+ * screen on load, on the device most people use. The clip was hiding a
+ * sideways overflow rather than fixing it; anything that genuinely overflows
+ * is clipped at its own container instead, where it can be seen and fixed.
+ */
 
 * {
   box-sizing: border-box;
@@ -407,8 +433,11 @@ html, body {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 11px;
-  letter-spacing: 0.14em;
+  /* 13px, not 11px. Uppercase and 0.14em tracking each cost legibility on
+     their own and this eyebrow stacks both, so the size has to compensate
+     rather than compound them. Tracking eased slightly for the same reason. */
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: hsl(var(--muted-foreground));
 }

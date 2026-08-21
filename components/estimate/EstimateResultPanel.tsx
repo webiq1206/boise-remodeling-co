@@ -87,7 +87,7 @@ function IncludedSection({ included, project }: { included: string[]; project?: 
         className="flex w-full items-center justify-between gap-2 py-1 text-left"
         data-testid="button-toggle-scope"
       >
-        <span className="text-[11px] font-normal text-inverse-foreground/90">
+        <span className="text-label font-normal text-inverse-foreground/90">
           What&apos;s typically included{" "}
           <span className="text-inverse-muted">({included.length})</span>
         </span>
@@ -113,10 +113,10 @@ function IncludedSection({ included, project }: { included: string[]; project?: 
               </div>
             ))}
           </div>
-          <p className="text-[11px] leading-relaxed text-inverse-muted">{INCLUDED_SCOPE_NOTE}</p>
+          <p className="text-label leading-relaxed text-inverse-muted">{INCLUDED_SCOPE_NOTE}</p>
           {project === "kitchen" && (
             <p
-              className="text-[11px] leading-relaxed text-inverse-muted mt-1.5"
+              className="text-label leading-relaxed text-inverse-muted mt-1.5"
               data-testid="appliance-disclaimer"
             >
               {APPLIANCE_DISCLAIMER}
@@ -199,7 +199,7 @@ export function EstimateResultPanel({
       <div className="flex items-center justify-between mb-3">
         <div className="brc-label text-inverse-muted">Planning range</div>
         {result && (
-          <div className="text-[10px] tracking-wide uppercase px-2 py-1 rounded-sm bg-inverse-foreground/15 text-inverse-foreground/90">
+          <div className="text-caption tracking-wide uppercase px-2 py-1 rounded-sm bg-inverse-foreground/15 text-inverse-foreground/90">
             {result.confidenceLabel}
           </div>
         )}
@@ -221,7 +221,7 @@ export function EstimateResultPanel({
             <AnimatedPrice value={result.priceHigh} />
           </div>
 
-          <p className="text-[11px] text-inverse-muted mb-4">
+          <p className="text-label text-inverse-muted mb-4">
             Based only on your selections. Your exact investment is confirmed at your free in-home
             visit.
           </p>
@@ -229,7 +229,7 @@ export function EstimateResultPanel({
           {/* Precision meter: the more detail provided, the tighter the range.
               Doubles as a nudge to answer the optional questions. */}
           <div className="mb-4">
-            <div className="flex justify-between text-[11px] mb-1.5 text-inverse-muted">
+            <div className="flex justify-between text-label mb-1.5 text-inverse-muted">
               <span>Estimate precision</span>
               <span>{result.confidencePercent}%</span>
             </div>
@@ -246,7 +246,7 @@ export function EstimateResultPanel({
                 style={{ width: `${result.confidencePercent}%` }}
               />
             </div>
-            <p className="text-[11px] text-inverse-muted mt-1.5">
+            <p className="text-label text-inverse-muted mt-1.5">
               {result.confidencePercent >= 85
                 ? "Fully detailed - this is your tightest planning range."
                 : "Add optional details to tighten this range."}
@@ -267,7 +267,7 @@ export function EstimateResultPanel({
             <ArrowRight className="h-4 w-4" />
           </Button>
 
-          <p className="text-[11px] text-center text-inverse-muted mb-2">
+          <p className="text-label text-center text-inverse-muted mb-2">
             Free 60 to 90 min in-home visit. No obligation.
           </p>
 
@@ -276,7 +276,7 @@ export function EstimateResultPanel({
             onClick={() => setLegalOpen((prev) => !prev)}
             aria-expanded={legalOpen}
             aria-controls="estimate-legal-note"
-            className="flex w-full items-center justify-center gap-1 text-[11px] text-inverse-muted/80 hover:text-inverse-muted"
+            className="flex w-full items-center justify-center gap-1 text-label text-inverse-muted/80 hover:text-inverse-muted"
           >
             Why a range, not a fixed price?
             <ChevronDown className={cn("h-3 w-3 transition-transform", legalOpen && "rotate-180")} />
@@ -284,7 +284,7 @@ export function EstimateResultPanel({
           {legalOpen && (
             <p
               id="estimate-legal-note"
-              className="text-[11px] leading-relaxed text-inverse-muted mt-2"
+              className="text-label leading-relaxed text-inverse-muted mt-2"
             >
               This estimate is for planning purposes only. It is not a proposal, bid, or guaranteed
               project cost. Ranges reflect market conditions, project type, size, location, finish
@@ -314,7 +314,7 @@ export function EstimateResultPanel({
 
           <ProgressChecklist progress={progress} />
 
-          <p className="text-[11px] leading-relaxed text-inverse-muted border-t border-inverse-foreground/10 pt-4">
+          <p className="text-label leading-relaxed text-inverse-muted border-t border-inverse-foreground/10 pt-4">
             Takes about 60 seconds. Planning estimate only, not a binding quote - final pricing
             requires an in-home evaluation.
           </p>

@@ -68,17 +68,27 @@ export default function EstimatePage() {
       <JsonLd data={schemas} />
 
       <PageHeroBand
+        compact
         imageSrc={SITE_IMAGES.budgetDetail}
         imageAlt="Quartz kitchen island detail in a remodeled Treasure Valley home"
         scrim={0.75}
       >
+        {/* THE TOOL IS THE PAGE, and on a phone the hero was hiding it. At
+            469px of heading and marketing copy, the first thing a visitor had
+            to choose sat at y=868 on an 812px screen - below the fold, on a
+            page whose entire purpose is that choice. Desktop has room for the
+            full band; mobile gets the orientation and nothing else. */}
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Project Estimator" }]} />
-        <div className="brc-label text-inverse-muted mt-6 mb-4">Free planning tool</div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <div className="brc-label text-inverse-muted mt-4 mb-3 md:mt-6 md:mb-4">Free planning tool</div>
+        <h1 className="font-sans font-light text-[clamp(1.75rem,7vw,4.5rem)] leading-[1.08] tracking-tight text-inverse-foreground max-w-3xl mb-2 md:mb-4">
           Treasure Valley remodel{" "}
           <em className="brc-accent">estimator</em>
         </h1>
-        <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed">
+        {/* One short line on a phone; the full pitch on desktop. */}
+        <p className="text-body text-inverse-foreground/85 max-w-2xl md:hidden">
+          An instant planning range in about 60 seconds.
+        </p>
+        <p className="hidden md:block text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed">
           Answer a few questions about your project and get an instant planning range based on real
           Treasure Valley remodel costs - takes about 60 seconds, no obligation.
         </p>

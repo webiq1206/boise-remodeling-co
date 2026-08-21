@@ -35,7 +35,7 @@ export function WizardProgress({ steps, currentIndex, className }: WizardProgres
   return (
     <div className={cn("mb-6", className)} data-testid="wizard-progress">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[12px] tracking-[0.12em] uppercase text-inverse-muted">
+        <p className="text-label tracking-[0.12em] uppercase text-inverse-muted">
           Step <span className="text-inverse-foreground">{clamped + 1}</span> of {total}
           {current?.section ? (
             <>
@@ -46,12 +46,12 @@ export function WizardProgress({ steps, currentIndex, className }: WizardProgres
             </>
           ) : null}
         </p>
-        <p className="text-[12px] text-inverse-muted tabular-nums" aria-hidden="true">
+        <p className="text-label text-inverse-muted tabular-nums" aria-hidden="true">
           {percent}%
         </p>
       </div>
 
-      <p className="mt-1 text-[13.5px] text-inverse-foreground/90 leading-snug">
+      <p className="mt-1 text-body text-inverse-foreground/90 leading-snug">
         {current?.label}
       </p>
 
@@ -96,7 +96,7 @@ export function WizardProgress({ steps, currentIndex, className }: WizardProgres
  */
 export function StepDoneChip({ label }: { label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-legible/30 bg-accent-legible/10 px-2.5 py-1 text-[12px] text-inverse-foreground">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-legible/30 bg-accent-legible/10 px-2.5 py-1 text-label text-inverse-foreground">
       <Check className="h-3 w-3 text-accent-legible" aria-hidden="true" />
       {label}
     </span>

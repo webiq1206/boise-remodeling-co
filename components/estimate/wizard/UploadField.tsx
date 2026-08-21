@@ -91,15 +91,15 @@ export function UploadField({
         )}
       >
         <Upload className="mx-auto mb-3 h-6 w-6 text-inverse-muted" aria-hidden="true" />
-        <span className="hidden [@media(pointer:fine)]:block text-[15px] text-inverse-foreground">
+        <span className="hidden [@media(pointer:fine)]:block text-body text-inverse-foreground">
           {isDragging ? "Drop them here" : "Drag your files here, or"}
         </span>
-        <span className="[@media(pointer:fine)]:hidden block text-[15px] text-inverse-foreground">
+        <span className="[@media(pointer:fine)]:hidden block text-body text-inverse-foreground">
           {headline}
         </span>
-        <span className="mt-1 block text-[12.5px] text-inverse-muted">{acceptLabel}</span>
+        <span className="mt-1 block text-body-sm text-inverse-muted">{acceptLabel}</span>
         {limitLabel ? (
-          <span className="mt-0.5 block text-[12px] text-inverse-muted/80">{limitLabel}</span>
+          <span className="mt-0.5 block text-label text-inverse-muted/80">{limitLabel}</span>
         ) : null}
 
         <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
@@ -166,7 +166,7 @@ export function UploadField({
           aria-live="polite"
           data-testid="upload-status"
         >
-          <div className="flex items-center justify-between gap-3 text-[13px] text-inverse-foreground">
+          <div className="flex items-center justify-between gap-3 text-body-sm text-inverse-foreground">
             <span className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-accent-legible" aria-hidden="true" />
               {status.phase === "uploading" ? "Sending your files..." : processingLabel}
@@ -186,7 +186,7 @@ export function UploadField({
             )}
           </div>
           {status.phase === "processing" ? (
-            <p className="mt-2 text-[12px] text-inverse-muted">
+            <p className="mt-2 text-label text-inverse-muted">
               Your files are in. This is the reading step, and a large set can take a minute or two.
             </p>
           ) : null}
@@ -204,8 +204,8 @@ export function UploadField({
                 <Check className="h-3.5 w-3.5 text-accent-legible" aria-hidden="true" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-[13.5px] text-inverse-foreground">{f.name}</span>
-                <span className="block text-[11.5px] text-inverse-muted">{prettyBytes(f.size)} - ready</span>
+                <span className="block truncate text-body text-inverse-foreground">{f.name}</span>
+                <span className="block text-label text-inverse-muted">{prettyBytes(f.size)} - ready</span>
               </span>
               <button
                 type="button"

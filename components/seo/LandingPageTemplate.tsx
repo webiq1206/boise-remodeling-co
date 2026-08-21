@@ -213,7 +213,7 @@ export function LandingPageTemplate({
           </div>
           {planningFrom && (
             <p className="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-inverse-foreground/80">
-              <span className="uppercase tracking-[0.12em] text-[11px]">Planning from</span>
+              <span className="uppercase tracking-[0.12em] text-label">Planning from</span>
               <span className="brc-display-num text-inverse-foreground text-lg leading-none">
                 {planningFrom}
               </span>
@@ -483,7 +483,7 @@ export function LandingPageTemplate({
                             sizes="(max-width: 640px) 50vw, 25vw"
                             className="object-cover"
                           />
-                          <span className="absolute bottom-1 left-1 text-[10px] uppercase tracking-wide bg-inverse/70 text-inverse-foreground px-1.5 py-0.5 rounded">
+                          <span className="absolute bottom-1 left-1 text-caption uppercase tracking-wide bg-inverse/70 text-inverse-foreground px-1.5 py-0.5 rounded">
                             Before
                           </span>
                         </div>
@@ -495,7 +495,7 @@ export function LandingPageTemplate({
                             sizes="(max-width: 640px) 50vw, 25vw"
                             className="object-cover"
                           />
-                          <span className="absolute bottom-1 left-1 text-[10px] uppercase tracking-wide bg-accent text-accent-foreground px-1.5 py-0.5 rounded">
+                          <span className="absolute bottom-1 left-1 text-caption uppercase tracking-wide bg-accent text-accent-foreground px-1.5 py-0.5 rounded">
                             After
                           </span>
                         </div>

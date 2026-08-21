@@ -42,6 +42,12 @@ function Logo() {
 
 export function Navigation() {
   const pathname = usePathname();
+  /* Pages whose own wizard owns the bottom of a phone screen. Kept beside the
+     route rather than inferred, so adding a wizard page is one line here. */
+  const wizardOwnsBottom =
+    pathname === "/estimate" ||
+    (pathname?.startsWith("/re-10") ?? false) ||
+    (pathname?.startsWith("/remodel-plans") ?? false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const isActivePath = (href: string) =>
     href === "/" ? pathname === "/" : Boolean(pathname?.startsWith(href));
@@ -72,7 +78,7 @@ export function Navigation() {
                   href={link.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "relative px-4 py-2 text-[13px] font-normal transition-colors rounded-sm hover-elevate",
+                    "relative px-4 py-2 text-body-sm font-normal transition-colors rounded-sm hover-elevate",
                     active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
@@ -89,7 +95,7 @@ export function Navigation() {
             <div className="flex flex-col items-end gap-0.5">
               <a
                 href={SITE_CONFIG.phoneHref}
-                className="flex items-center gap-2 text-[13px] font-normal transition-colors text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2 text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
                 data-testid="link-phone-desktop"
               >
                 <span className="relative flex h-2 w-2">
@@ -98,13 +104,13 @@ export function Navigation() {
                 </span>
                 {SITE_CONFIG.phone}
               </a>
-              <SaveContactLink className="text-[11px] text-muted-foreground hover:text-foreground transition-colors">
+              <SaveContactLink className="text-label text-muted-foreground hover:text-foreground transition-colors">
                 Save to contacts
               </SaveContactLink>
             </div>
             <a
               href={SITE_CONFIG.phoneSmsHref}
-              className="text-[13px] font-normal transition-colors text-muted-foreground hover:text-foreground"
+              className="text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
               data-testid="link-text-desktop"
             >
               Text us
@@ -226,7 +232,15 @@ export function Navigation() {
         </nav>
       </header>
 
-      {/* Sticky bottom bar */}
+      {/* Sticky bottom bar.
+          NOT ON A PAGE A WIZARD OWNS. The estimator and both document wizards
+          put their own Back/Continue bar at the bottom of a phone screen, and
+          this bar renders at z-100 against their z-30 - so it sat physically
+          on top of the Continue button, covering the primary action of the
+          primary conversion flow. The estimator already asks for this via an
+          IntersectionObserver, but an observer is a race on first paint and
+          the route is a fact, so the route decides. */}
+      {!wizardOwnsBottom && (
       <div
         data-mobile-nav-bar=""
         className="fixed left-0 right-0 bottom-0 z-[100] md:hidden pb-safe border-t bg-background/97 backdrop-blur-md border-border"
@@ -256,6 +270,7 @@ export function Navigation() {
           </NavEstimateButton>
         </div>
       </div>
+      )}
     </>
   );
 }

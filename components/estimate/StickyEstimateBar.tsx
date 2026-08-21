@@ -77,10 +77,10 @@ export function StickyEstimateBar({
           data-testid="estimate-bar-sheet"
         >
           <div className="flex items-baseline justify-between gap-3 mb-2">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+            <p className="text-label uppercase tracking-wide text-muted-foreground">
               {summary}
             </p>
-            <p className="text-[11px] text-muted-foreground">{result.confidenceLabel}</p>
+            <p className="text-label text-muted-foreground">{result.confidenceLabel}</p>
           </div>
           <ul className="space-y-1.5 mb-2">
             {result.included.slice(0, SHEET_SCOPE_COUNT).map((item) => (
@@ -93,7 +93,7 @@ export function StickyEstimateBar({
               </li>
             ))}
           </ul>
-          <p className="text-[10px] leading-snug text-muted-foreground">
+          <p className="text-caption leading-snug text-muted-foreground">
             Planning estimate only, not a binding quote.
           </p>
         </div>
@@ -110,7 +110,7 @@ export function StickyEstimateBar({
           data-testid="estimate-bar-toggle"
         >
           <span className="min-w-0">
-            <span className="block text-[10px] uppercase tracking-wide truncate text-muted-foreground">
+            <span className="block text-caption uppercase tracking-wide truncate text-muted-foreground">
               {result ? summary : "Your planning range"}
             </span>
             {result ? (

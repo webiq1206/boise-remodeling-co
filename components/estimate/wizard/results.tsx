@@ -37,13 +37,13 @@ export function ReviewSection({
       data-testid={testId}
     >
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h3 className="text-[13px] tracking-[0.06em] uppercase text-inverse-foreground">{title}</h3>
+        <h3 className="text-body-sm tracking-[0.06em] uppercase text-inverse-foreground">{title}</h3>
         {onEdit ? (
           <button
             type="button"
             onClick={onEdit}
             data-testid={testId ? `${testId}-edit` : undefined}
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-2 text-[13px] text-accent-legible underline underline-offset-4 hover:text-inverse-foreground"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-2 text-body-sm text-accent-legible underline underline-offset-4 hover:text-inverse-foreground"
           >
             <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
             {editLabel}
@@ -52,7 +52,7 @@ export function ReviewSection({
       </div>
       <dl className="space-y-2">
         {items.map((item, i) => (
-          <div key={i} className="flex items-start justify-between gap-4 text-[13.5px]">
+          <div key={i} className="flex items-start justify-between gap-4 text-body">
             <dt className="text-inverse-muted">{item.label}</dt>
             <dd className="text-right text-inverse-foreground">{item.value}</dd>
           </div>
@@ -85,7 +85,7 @@ export function ResultCard({
       data-testid={testId}
     >
       {title ? (
-        <h3 className="mb-3 flex items-center gap-2 text-[13px] tracking-[0.06em] uppercase text-inverse-foreground">
+        <h3 className="mb-3 flex items-center gap-2 text-body-sm tracking-[0.06em] uppercase text-inverse-foreground">
           {Icon ? <Icon className="h-4 w-4 text-accent-legible" aria-hidden="true" /> : null}
           {title}
         </h3>
@@ -115,12 +115,12 @@ export function PriceHeadline({
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-[12px] tracking-[0.14em] uppercase text-inverse-muted">{label}</p>
+        <p className="text-label tracking-[0.14em] uppercase text-inverse-muted">{label}</p>
         {statusChips?.map((chip) => (
           <span
             key={chip.label}
             className={cn(
-              "rounded-full px-2.5 py-0.5 text-[11px] tracking-wide",
+              "rounded-full px-2.5 py-0.5 text-label tracking-wide",
               chip.tone === "muted"
                 ? "bg-inverse-foreground/12 text-inverse-foreground/85"
                 : "bg-accent-legible/20 text-inverse-foreground",
@@ -136,7 +136,7 @@ export function PriceHeadline({
       >
         {price}
       </div>
-      {category ? <p className="mt-2 text-[14px] text-inverse-muted">{category}</p> : null}
+      {category ? <p className="mt-2 text-body text-inverse-muted">{category}</p> : null}
     </div>
   );
 }
@@ -160,7 +160,7 @@ export function EditScopeCta({
       onClick={onClick}
       data-testid={testId}
       className={cn(
-        "group flex w-full items-center justify-center gap-2 rounded-md border border-accent-legible/40 bg-inverse-foreground/[0.06] px-4 py-3 text-center min-h-12 text-[14px] text-inverse-foreground transition-colors hover:border-accent-legible/70 hover:bg-inverse-foreground/[0.1]",
+        "group flex w-full items-center justify-center gap-2 rounded-md border border-accent-legible/40 bg-inverse-foreground/[0.06] px-4 py-3 text-center min-h-12 text-body text-inverse-foreground transition-colors hover:border-accent-legible/70 hover:bg-inverse-foreground/[0.1]",
         className,
       )}
     >
@@ -187,7 +187,7 @@ export function DetailList({
   return (
     <ul className="space-y-2">
       {items.map((item, i) => (
-        <li key={i} className="flex items-start gap-2.5 text-[13px] text-inverse-muted leading-relaxed">
+        <li key={i} className="flex items-start gap-2.5 text-body-sm text-inverse-muted leading-relaxed">
           {marker !== "none" ? (
             <span
               className={cn(
@@ -227,7 +227,7 @@ export function ResultDisclosure({
         aria-expanded={open}
         className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left min-h-12"
       >
-        <span className="text-[13px] tracking-[0.06em] uppercase text-inverse-foreground">
+        <span className="text-body-sm tracking-[0.06em] uppercase text-inverse-foreground">
           {title}
           {typeof count === "number" ? <span className="ml-1.5 text-inverse-muted">({count})</span> : null}
         </span>
@@ -275,7 +275,7 @@ export function StickyResultActions({
         type="button"
         variant="brand"
         onClick={onPrimary}
-        className="min-h-12 w-full text-[15px]"
+        className="min-h-12 w-full text-body"
         data-testid={primaryTestId}
       >
         {primaryLabel}
@@ -289,7 +289,7 @@ export function StickyResultActions({
                 type="button"
                 onClick={action.onClick}
                 data-testid={action.testId}
-                className="inline-flex min-h-11 items-center gap-1.5 px-2 text-[12.5px] text-inverse-muted hover:text-inverse-foreground"
+                className="inline-flex min-h-11 items-center gap-1.5 px-2 text-body-sm text-inverse-muted hover:text-inverse-foreground"
               >
                 {action.icon ? <action.icon className="h-3.5 w-3.5" aria-hidden="true" /> : null}
                 {action.label}

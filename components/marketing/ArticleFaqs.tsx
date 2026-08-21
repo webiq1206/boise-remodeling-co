@@ -41,10 +41,10 @@ export function ArticleFaqs({
             value={`faq-${i}`}
             className="border-0 border-t border-border"
           >
-            <AccordionTrigger className="text-left py-5 hover:no-underline font-sans font-normal text-[15px] text-foreground">
+            <AccordionTrigger className="text-left py-5 hover:no-underline font-sans font-normal text-body text-foreground">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-[15px] leading-relaxed pb-6 text-foreground/90">
+            <AccordionContent className="text-body leading-relaxed pb-6 text-foreground/90">
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

@@ -1,5 +1,45 @@
 import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { extendTailwindMerge } from "tailwind-merge"
+
+/**
+ * tailwind-merge has to be TOLD about custom font sizes, or it silently eats
+ * text colours.
+ *
+ * FOUND IN THE BROWSER, NOT IN REVIEW. The wizard's Continue button rendered
+ * as a blank cream bar: cream text on a cream background, contrast 1:1, the
+ * label invisible in its disabled state. The cause is that twMerge groups
+ * every `text-*` class together unless it can classify it. `text-[13.5px]` is
+ * unambiguously a size, so the old arbitrary values were safe - but a NAMED
+ * size like `text-body` looks exactly like a colour to the merger, so
+ * `cn("... text-primary-foreground", "text-body")` dropped the colour as a
+ * conflict and left the button inheriting the section's cream.
+ *
+ * Registering the scale here is what makes the named sizes safe to use
+ * anywhere. Anything added to `fontSize` in tailwind.config.ts belongs in
+ * this list too.
+ */
+const twMerge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      "font-size": [
+        {
+          text: [
+            "caption",
+            "label",
+            "body-sm",
+            "body",
+            "body-lg",
+            "title-sm",
+            "title",
+            "display",
+            "section-title",
+            "section-title-lg",
+          ],
+        },
+      ],
+    },
+  },
+})
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

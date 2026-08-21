@@ -134,7 +134,54 @@ export default {
         serif: ["var(--font-fraunces)", "Georgia", "serif"],
         mono: ["Menlo", "Monaco", "monospace"],
       },
+      /**
+       * THE TYPE SCALE. Seven steps, and nothing outside them.
+       *
+       * WHY THIS EXISTS. An audit found 316 hardcoded pixel sizes across 28
+       * files spanning fifteen distinct values from 9px to 22px - 93 of them
+       * at 11px or smaller. That is not a system, it is drift, and it is the
+       * measurable reason body text read as too small. Six adjacent labels
+       * could be 11px, 11.5px, 12px and 12.5px with no rule saying which was
+       * right, so every new component picked a number by eye.
+       *
+       * THE FLOOR IS 13px AND BODY IS 16px, deliberately. Below about 13px
+       * text stops being comfortably readable for anyone over forty, and a
+       * marketing site cannot assume young eyes. `body` at 16px matters twice
+       * over: it is the readability baseline AND the point below which mobile
+       * Safari zooms the viewport when an input takes focus, which is the
+       * single most common cause of a form feeling broken on a phone.
+       *
+       * Line heights ride with the size because they are not independent -
+       * small text needs proportionally more leading to stay scannable, and
+       * headings need less to stay tight.
+       */
       fontSize: {
+        /**
+         * Tailwind's own small steps, RAISED to the floor.
+         *
+         * `text-xs` is used 179 times across the site as "small label", and
+         * its stock 12px sits below the readability floor. Redefining it here
+         * lifts every one of those at once and keeps them consistent; editing
+         * 179 call sites would have drifted again within a month. `text-sm`
+         * becomes the label size for the same reason.
+         */
+        xs: ["0.8125rem", { lineHeight: "1.45" }],
+        sm: ["0.875rem", { lineHeight: "1.5" }],
+        base: ["1rem", { lineHeight: "1.65" }],
+        /** Fine print: timestamps, legal, source citations. The floor. */
+        caption: ["0.8125rem", { lineHeight: "1.45" }],
+        /** Field labels, eyebrows, badges, table headers. */
+        label: ["0.875rem", { lineHeight: "1.4" }],
+        /** Supporting copy that sits beside the main text. */
+        "body-sm": ["0.9375rem", { lineHeight: "1.6" }],
+        /** Default reading size, and the mobile input floor. */
+        body: ["1rem", { lineHeight: "1.65" }],
+        /** Lead paragraphs and intros. */
+        "body-lg": ["1.125rem", { lineHeight: "1.6" }],
+        /** Card and step titles. */
+        "title-sm": ["1.25rem", { lineHeight: "1.3", letterSpacing: "-0.01em" }],
+        /** Sub-section headings. */
+        title: ["1.5rem", { lineHeight: "1.25", letterSpacing: "-0.015em" }],
         display: ["clamp(2.5rem,6vw,4.5rem)", { lineHeight: "1.04", letterSpacing: "-0.025em" }],
         "section-title": ["1.875rem", { lineHeight: "1.15", letterSpacing: "-0.025em" }],
         "section-title-lg": ["2.25rem", { lineHeight: "1.15", letterSpacing: "-0.025em" }],

@@ -24,7 +24,7 @@ function StatCard({ num, label }: { num: string; label: string }) {
       {/* Was text-inverse-muted. At 10-11px over the photo that measured 3.4:1,
           already under the 4.5:1 AA needs before the scrim above it was
           lightened, which would have taken it lower still. */}
-      <div className="mt-1 md:mt-1.5 text-[10px] md:text-[11px] tracking-[0.06em] md:tracking-[0.1em] uppercase text-inverse-foreground/85 leading-snug">
+      <div className="mt-1 md:mt-1.5 text-caption md:text-label tracking-[0.06em] md:tracking-[0.1em] uppercase text-inverse-foreground/85 leading-snug">
         {label}
       </div>
     </div>
@@ -123,7 +123,7 @@ export function HeroSection() {
               >
                 <span className="h-1 w-1 flex-shrink-0 rounded-full bg-accent-legible" aria-hidden="true" />
                 <span
-                  className={`text-[11px] leading-snug tracking-[0.2em] uppercase ${
+                  className={`text-label leading-snug tracking-[0.2em] uppercase ${
                     i < 2 ? "text-foreground" : "text-foreground/80"
                   }`}
                 >

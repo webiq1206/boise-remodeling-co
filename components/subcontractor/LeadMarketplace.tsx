@@ -339,7 +339,7 @@ function QuoteBreakdownSection({ lead }: { lead: Lead }) {
                         <div className="flex items-center gap-1.5 flex-wrap min-w-0">
                           <span className="font-medium text-xs">{serviceName}</span>
                           {(svcFreq !== "one-time" || (lead.frequency && lead.frequency !== "one-time")) && (
-                            <Badge variant={recurring ? "default" : "secondary"} className="text-[9px] px-1 py-0">
+                            <Badge variant={recurring ? "default" : "secondary"} className="text-caption px-1 py-0">
                               {recurring ? `Recurring (${formatFreqLabel(svcFreq)})` : "One-time"}
                             </Badge>
                           )}
@@ -347,10 +347,10 @@ function QuoteBreakdownSection({ lead }: { lead: Lead }) {
                         <span className="font-semibold text-xs text-primary flex-shrink-0">{formatPriceRange(price)}</span>
                       </div>
                       {measurement && (
-                        <p className="text-[11px] text-muted-foreground mt-0.5">{measurement}</p>
+                        <p className="text-label text-muted-foreground mt-0.5">{measurement}</p>
                       )}
                       {item.description && (
-                        <p className="text-[11px] text-muted-foreground mt-0.5">{item.description}</p>
+                        <p className="text-label text-muted-foreground mt-0.5">{item.description}</p>
                       )}
                     </div>
                   );
@@ -1171,7 +1171,7 @@ function SubcontractorPortalContent() {
                     aria-label={`Select ${lead.name} for export`}
                     data-testid={`checkbox-purchase-${lead.id}`}
                   />
-                  <Badge variant="default" className="text-[10px] px-1.5 py-0 flex-shrink-0">
+                  <Badge variant="default" className="text-caption px-1.5 py-0 flex-shrink-0">
                     Purchased
                   </Badge>
                 </>
@@ -1182,7 +1182,7 @@ function SubcontractorPortalContent() {
                 return (
                   <Badge
                     variant="outline"
-                    className="text-[10px] px-1.5 py-0 flex-shrink-0 text-muted-foreground"
+                    className="text-caption px-1.5 py-0 flex-shrink-0 text-muted-foreground"
                     title={`Exported ${when.toLocaleString()}`}
                     data-testid={`badge-exported-${lead.id}`}
                   >
@@ -1197,7 +1197,7 @@ function SubcontractorPortalContent() {
                     {getLeadDisplayTitle(lead)}
                   </CardTitle>
                   {!isPurchased && hasTimeDiscount && (
-                    <Badge variant="outline" className="text-[10px] px-1.5 py-0 text-primary border-primary">
+                    <Badge variant="outline" className="text-caption px-1.5 py-0 text-primary border-primary">
                       Price Reduced
                     </Badge>
                   )}
@@ -1206,7 +1206,7 @@ function SubcontractorPortalContent() {
                       <HoverCardTrigger asChild>
                         <Badge
                           variant="outline"
-                          className="text-[10px] px-1.5 py-0 text-amber-700 border-amber-500 dark:text-amber-400 dark:border-amber-600 cursor-help"
+                          className="text-caption px-1.5 py-0 text-amber-700 border-amber-500 dark:text-amber-400 dark:border-amber-600 cursor-help"
                           data-testid={`badge-duplicate-${lead.id}`}
                         >
                           Possible duplicate
@@ -1232,7 +1232,7 @@ function SubcontractorPortalContent() {
                   {lead.updatedAt && lead.createdAt && new Date(lead.updatedAt).getTime() - new Date(lead.createdAt).getTime() > 60000 && (
                     <Badge
                       variant="outline"
-                      className="text-[10px] px-1.5 py-0 text-blue-700 border-blue-500 dark:text-blue-400 dark:border-blue-600"
+                      className="text-caption px-1.5 py-0 text-blue-700 border-blue-500 dark:text-blue-400 dark:border-blue-600"
                       title={`Updated ${new Date(lead.updatedAt).toLocaleString()}`}
                       data-testid={`badge-updated-${lead.id}`}
                     >
@@ -1240,7 +1240,7 @@ function SubcontractorPortalContent() {
                     </Badge>
                   )}
                 </div>
-                <div className="text-[11px] mt-0.5 flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
+                <div className="text-label mt-0.5 flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
                   <MapPin className="h-3 w-3 flex-shrink-0" />
                   {(() => {
                     const headerCleaned = isPurchased
@@ -1321,7 +1321,7 @@ function SubcontractorPortalContent() {
                 <p className="font-medium leading-tight">
                   {lead.finalQuote ? formatQuoteRangeWholeFromValue(lead.finalQuote, 0.15) : "Contact for quote"}
                 </p>
-                <p className="text-muted-foreground text-[10px] leading-tight">Est. value</p>
+                <p className="text-muted-foreground text-caption leading-tight">Est. value</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
@@ -1330,7 +1330,7 @@ function SubcontractorPortalContent() {
                 <p className="font-medium leading-tight">
                   {formatLeadAge(lead.createdAt)}
                 </p>
-                <p className="text-muted-foreground text-[10px] leading-tight">{getLeadFrequencyDisplay(lead)} service</p>
+                <p className="text-muted-foreground text-caption leading-tight">{getLeadFrequencyDisplay(lead)} service</p>
               </div>
             </div>
           </div>
@@ -1354,7 +1354,7 @@ function SubcontractorPortalContent() {
                 <p className="text-xs font-medium mb-1 text-muted-foreground">Services Requested</p>
                 <div className="flex flex-wrap gap-1">
                   {lead.selectedServices.map((serviceId, index) => (
-                    <Badge key={index} variant="outline" className="text-[11px] px-1.5 py-0">
+                    <Badge key={index} variant="outline" className="text-label px-1.5 py-0">
                       {getServiceName(serviceId)}
                     </Badge>
                   ))}
@@ -1363,7 +1363,7 @@ function SubcontractorPortalContent() {
             )}
 
             {!isPurchased && (
-              <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground border-t pt-2">
+              <div className="flex items-center gap-1.5 text-label text-muted-foreground border-t pt-2">
                 <Eye className="h-3 w-3" />
                 <span className="italic">Contact info revealed after purchase</span>
               </div>
@@ -1389,7 +1389,7 @@ function SubcontractorPortalContent() {
           )}
 
           {isPurchased && lead.purchasedAt && (
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground pt-2 border-t">
+            <div className="flex items-center gap-1.5 text-label text-muted-foreground pt-2 border-t">
               <Receipt className="h-3 w-3" />
               <span>Purchased {new Date(lead.purchasedAt).toLocaleDateString()}</span>
             </div>

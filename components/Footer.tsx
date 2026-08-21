@@ -42,7 +42,7 @@ export function Footer() {
             </p>
             <div className="space-y-2">
               <BusinessPhoneLink
-                className="block text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
+                className="flex min-h-[44px] items-center text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
                 data-testid="link-footer-phone"
               />
               {/* A BUTTON, NOT A TEXT LINK. Saving the vCard is the one action
@@ -54,12 +54,12 @@ export function Footer() {
               </Button>
               <a
                 href={SITE_CONFIG.phoneSmsHref}
-                className="block text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
+                className="flex min-h-[44px] items-center text-sm text-inverse-muted hover:text-inverse-foreground transition-colors"
                 data-testid="link-footer-text"
               >
                 Text us
               </a>
-              <EmailLink className="block text-sm text-left text-inverse-muted hover:text-inverse-foreground transition-colors" />
+              <EmailLink className="flex min-h-[44px] items-center text-sm text-left text-inverse-muted hover:text-inverse-foreground transition-colors" />
               <p className="text-sm text-inverse-muted">
                 {SITE_CONFIG.address.cityState} · {SITE_CONFIG.address.serviceArea}
               </p>
@@ -69,7 +69,9 @@ export function Footer() {
               <div className="flex gap-4 pt-2">
                 <a
                   href="https://www.facebook.com/boiseremodeling"
-                  className="text-accent-legible hover:text-inverse-foreground transition-colors"
+                  /* A 20px icon is a 20px tap target. The negative margin keeps
+                     the visual size while giving the thumb 44px to land on. */
+                  className="-m-3 flex min-h-[44px] min-w-[44px] items-center justify-center p-3 text-accent-legible hover:text-inverse-foreground transition-colors"
                   rel="noopener noreferrer"
                   target="_blank"
                   aria-label="Boise Remodeling Co on Facebook"
@@ -82,7 +84,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Services
             </h3>
             <ul className="space-y-2.5">
@@ -100,7 +102,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Resources
             </h3>
             <ul className="space-y-2.5">
@@ -138,7 +140,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Studio
             </h3>
             <ul className="space-y-2.5">
@@ -167,7 +169,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               <Link href="/areas" className="hover:text-inverse-foreground transition-colors">
                 Service Areas
               </Link>
@@ -187,7 +189,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               From the Blog
             </h3>
             <ul className="space-y-2.5">
@@ -235,7 +237,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-[11px] tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Start a Conversation
             </h3>
             {/* Contact details (phone, text, email, save-to-contacts) already
@@ -258,7 +260,7 @@ export function Footer() {
         </div>
 
         <div className="py-5 border-t border-b border-inverse-foreground/10 mb-5">
-          <p className="text-[11px] tracking-[0.08em] text-inverse-muted">
+          <p className="text-label tracking-[0.08em] text-inverse-muted">
             Serving {CITIES.map((c) => c.name).join(" · ")} · Ada and Canyon County, Idaho
           </p>
         </div>

@@ -42,7 +42,7 @@ export function StepHeading({
   return (
     <div className={cn("mb-5", className)}>
       {eyebrow ? (
-        <p className="text-[12px] tracking-[0.14em] uppercase text-accent-legible/90 mb-2">
+        <p className="text-label tracking-[0.14em] uppercase text-accent-legible/90 mb-2">
           {eyebrow}
         </p>
       ) : null}
@@ -55,7 +55,7 @@ export function StepHeading({
         {title}
       </h2>
       {description ? (
-        <p className="mt-2.5 text-[14px] text-inverse-foreground/80 leading-relaxed">
+        <p className="mt-2.5 text-body text-inverse-foreground/80 leading-relaxed">
           {description}
         </p>
       ) : null}
@@ -66,14 +66,14 @@ export function StepHeading({
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="inline-flex min-h-11 items-center gap-1.5 text-[13px] text-inverse-foreground underline underline-offset-4 decoration-accent-legible/50 hover:decoration-accent-legible"
+            className="inline-flex min-h-11 items-center gap-1.5 text-body-sm text-inverse-foreground underline underline-offset-4 decoration-accent-legible/50 hover:decoration-accent-legible"
           >
             <HelpCircle className="h-4 w-4 text-accent-legible" aria-hidden="true" />
             {helpLabel}
             <ChevronDown className={cn("h-4 w-4 transition-transform", open && "rotate-180")} aria-hidden="true" />
           </button>
           {open ? (
-            <div className="mt-2 rounded-md border border-accent-legible/20 bg-inverse-foreground/[0.05] p-3.5 text-[13px] text-inverse-muted leading-relaxed">
+            <div className="mt-2 rounded-md border border-accent-legible/20 bg-inverse-foreground/[0.05] p-3.5 text-body-sm text-inverse-muted leading-relaxed">
               {help}
             </div>
           ) : null}
@@ -119,7 +119,7 @@ export function WizardError({ message }: { message: string | null }) {
       tabIndex={-1}
       role="alert"
       data-testid="wizard-error"
-      className="mb-5 flex items-start gap-2.5 rounded-md border border-destructive/50 bg-destructive/10 p-3.5 text-[13.5px] text-inverse-foreground leading-relaxed focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/60"
+      className="mb-5 flex items-start gap-2.5 rounded-md border border-destructive/50 bg-destructive/10 p-3.5 text-body text-inverse-foreground leading-relaxed focus:outline-none focus-visible:ring-2 focus-visible:ring-destructive/60"
     >
       <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-destructive" aria-hidden="true" />
       <span>{message}</span>
@@ -166,12 +166,30 @@ export function StickyStepNav({
   backTestId = "wizard-back",
 }: StickyStepNavProps) {
   return (
-    <div
-      className="sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
-      data-testid="wizard-sticky-nav"
-    >
+    <>
+      {/* Spacer. The bar is FIXED on a phone, so without this the last of the
+          step content hides underneath it - which is how a "sticky footer"
+          quietly eats the final form field. Desktop keeps the bar in flow and
+          needs no spacer. */}
+      <div aria-hidden="true" className="h-[104px] sm:hidden" />
+      <div
+        /**
+         * FIXED ON MOBILE, STICKY ON DESKTOP, and the difference matters.
+         *
+         * `position: sticky; bottom: 0` does NOT pull an element up into the
+         * viewport - it only holds it there once you have scrolled to it. So
+         * on a 375x812 phone the Continue button sat at y=828, sixteen pixels
+         * BELOW the fold on load: the primary action of the primary
+         * conversion flow, off screen, on the device most people use. Fixed
+         * positioning is what actually guarantees it is reachable without
+         * scrolling. The wizard already hides the site-wide Call/Text bar
+         * while it owns the screen, so nothing collides.
+         */
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:sticky sm:-mx-6 sm:mt-8 sm:px-6"
+        data-testid="wizard-sticky-nav"
+      >
       {hint ? (
-        <p className="mb-2 text-center text-[12px] text-inverse-muted">{hint}</p>
+        <p className="mb-2 text-center text-label text-inverse-muted">{hint}</p>
       ) : null}
       <div className="flex items-center gap-2.5 pb-3">
         {onBack ? (
@@ -207,7 +225,7 @@ export function StickyStepNav({
           onClick={onNext}
           disabled={nextDisabled || busy}
           data-testid={nextTestId}
-          className="min-h-12 flex-1 px-6 text-[15px]"
+          className="min-h-12 flex-1 px-6 text-body"
         >
           {busy ? (
             <>
@@ -220,8 +238,9 @@ export function StickyStepNav({
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </>
           )}
-        </Button>
+          </Button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

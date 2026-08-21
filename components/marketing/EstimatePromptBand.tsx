@@ -62,7 +62,7 @@ export function EstimatePromptBand({
                   {CTA_PRIMARY}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </EstimateCTA>
-                <p className="text-[11px] text-muted-foreground text-center sm:text-left">
+                <p className="text-label text-muted-foreground text-center sm:text-left">
                   Free · Not a binding quote
                 </p>
               </div>
