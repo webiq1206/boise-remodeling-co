@@ -39,7 +39,7 @@ function ExploreFurther({ serviceSlug }: { serviceSlug?: string }) {
           <li key={link.href} className="list-none">
             <Link
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="flex items-center min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               {link.label} →
             </Link>
@@ -63,7 +63,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
             <Link
               key={city.slug}
               href={cityServicePath(serviceSlug, city.slug)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2 border-b border-border"
+              className="flex items-center min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors py-2 border-b border-border"
             >
               {city.name}, Idaho
             </Link>

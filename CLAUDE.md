@@ -43,8 +43,23 @@ document list. It imports the POST handlers and calls them with constructed
 Requests, after scrubbing delivery env vars so accepted requests are pure
 computation (no email, no DB row, no CRM forward) even where secrets exist.
 
-**tsc baseline is 22 pre-existing errors.** Not zero. Compare against 22; do
-not "fix" the others as a side quest.
+**tsc baseline is 20 pre-existing errors.** Not zero. Compare against 20; do
+not "fix" them as a side quest.
+
+It said 22, and 22 was wrong - measured at 23 on `1617ae7`, `c19cf34` and
+`a81d540`, so the doc had been stale for a while. A stale baseline is how a
+real regression hides: a genuine new error lands, the count reads "23, that is
+the doc's 22 plus the one I just added", and the hunt starts in the wrong
+place. It cost one round here. Re-measure before trusting the number.
+
+Three of those 23 were one real bug, now fixed: `/resources`,
+`/resources/ada-canyon-permit-flow` and `/blog/category/[hubSlug]` passed
+`spacing="lg"` to `<Section>`, which accepts only `default | sm | none`.
+`Section` is a plain conditional, not cva - an unmatched value matches NO
+branch, so those three pages rendered with **no vertical section spacing at
+all** and their last line of content sat flush against the footer. A type
+error that was quietly a layout defect. Set to `spacing="default"`; the
+explicit `pt-28 md:pt-32` still governs the top.
 
 **Never run `db:push` against the live database.** Add the schema, then tell
 the owner to run it.

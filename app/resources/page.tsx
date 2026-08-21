@@ -41,7 +41,7 @@ export default function ResourcesIndexPage() {
   ];
 
   return (
-    <Section spacing="lg" className="pt-28 md:pt-32">
+    <Section spacing="default" className="pt-28 md:pt-32">
       <JsonLd data={schemas} />
       <div className="container px-4 max-w-4xl mx-auto">
         <p className="text-xs font-normal uppercase tracking-wider text-accent-legible mb-3">
@@ -85,7 +85,7 @@ export default function ResourcesIndexPage() {
               <a
                 href={r.href}
                 download
-                className="inline-flex items-center text-sm text-accent-legible hover:underline font-normal"
+                className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline font-normal"
               >
                 <Download className="h-4 w-4 mr-1" />
                 Download PDF
@@ -105,7 +105,7 @@ export default function ResourcesIndexPage() {
               <p className="text-sm text-muted-foreground flex-1 mb-4">{r.description}</p>
               <Link
                 href={r.href}
-                className="inline-flex items-center text-sm text-accent-legible hover:underline font-normal"
+                className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline font-normal"
               >
                 View infographic
                 <ArrowRight className="h-4 w-4 ml-1" />

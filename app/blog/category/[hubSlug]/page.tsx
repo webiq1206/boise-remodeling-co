@@ -124,7 +124,7 @@ export default function BlogCategoryHubPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Section spacing="lg" className="pt-28 md:pt-32">
+      <Section spacing="default" className="pt-28 md:pt-32">
         <div className="container px-4 max-w-6xl mx-auto">
           <Breadcrumbs
             items={[

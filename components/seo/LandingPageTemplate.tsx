@@ -87,7 +87,7 @@ export interface LandingProof {
 function HeroBreadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-inverse-foreground/80">
+      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-inverse-foreground/80 [&_a]:inline-flex [&_a]:items-center [&_a]:min-h-11 md:[&_a]:min-h-0">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           return (
@@ -438,7 +438,7 @@ export function LandingPageTemplate({
                         <li key={link.href} className="list-none">
                           <Link
                             href={link.href}
-                            className="inline-flex items-center text-sm text-accent-legible hover:underline font-normal"
+                            className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline font-normal"
                           >
                             {link.label}
                             <ArrowRight className="ml-1 h-3.5 w-3.5" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 
 interface EmailLinkProps {
@@ -22,7 +23,9 @@ export function EmailLink({
     <button
       type="button"
       onClick={handleClick}
-      className={className}
+      /* Callers supply the typography; the tap target is not theirs to forget.
+         Measured at 26px tall on /contact before this. */
+      className={cn("inline-flex items-center min-h-11 md:min-h-0", className)}
       aria-label={`${label} - send email to ${SITE_CONFIG.name}`}
     >
       {label}

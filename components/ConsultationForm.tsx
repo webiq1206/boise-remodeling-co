@@ -445,7 +445,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
                 <button
                   type="button"
                   onClick={() => setAttached(false)}
-                  className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  className="inline-flex items-center gap-1 min-h-11 md:min-h-0 text-xs text-muted-foreground hover:text-foreground"
                   data-testid="button-drop-estimate"
                 >
                   <X className="h-3.5 w-3.5" />
@@ -454,7 +454,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
                 <button
                   type="button"
                   onClick={handleRevise}
-                  className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+                  className="inline-flex items-center min-h-11 md:min-h-0 text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
                   data-testid="button-revise-estimate"
                 >
                   Revise
@@ -614,7 +614,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
                 onClick={() => setShowAddrInfo((v) => !v)}
                 aria-expanded={showAddrInfo}
                 aria-controls="address-info"
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1"
+                className="inline-flex items-center gap-1 min-h-11 md:min-h-0 text-xs text-muted-foreground hover:text-foreground mt-1"
                 data-testid="button-address-info"
               >
                 Why we ask for your address
@@ -663,7 +663,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
           <button
             type="button"
             onClick={() => setShowNote(true)}
-            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            className="inline-flex items-center gap-1.5 min-h-11 md:min-h-0 text-xs text-muted-foreground hover:text-foreground"
             data-testid="button-add-note"
           >
             <Plus className="h-3.5 w-3.5" />

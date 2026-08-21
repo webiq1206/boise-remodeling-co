@@ -249,6 +249,27 @@
 }
 
 /* ─── Elevate system ─── */
+/* SECTION SPACING IS A COMPONENT DEFAULT, NOT A UTILITY.
+   These lived in @layer utilities, which Tailwind emits AFTER its own
+   utilities - so `<Section spacing="default" className="pt-10">` silently
+   rendered 96px of top padding instead of 40px, and `cn()` could not catch it
+   because tailwind-merge has no idea `section-y` is padding. Found on /blog,
+   where the author asked for pt-10 and got a 96px dead band above the topic
+   filter.
+
+   In @layer components they are emitted BEFORE utilities, so any pt-/pb-/py-
+   written alongside overrides them, which is what every call site already
+   assumed. Do not move these back. */
+@layer components {
+  .section-y {
+    @apply py-24 md:py-32;
+  }
+
+  .section-y-sm {
+    @apply py-16 md:py-20;
+  }
+}
+
 @layer utilities {
   input[type="search"]::-webkit-search-cancel-button {
     @apply hidden;
@@ -364,13 +385,6 @@
     animation: wizard-progress-sweep 1.4s ease-in-out infinite;
   }
 
-  .section-y {
-    @apply py-24 md:py-32;
-  }
-
-  .section-y-sm {
-    @apply py-16 md:py-20;
-  }
 
   .section-divider {
     @apply border-t border-border/60;
@@ -605,7 +619,10 @@
 }
 
 .blog-content figcaption {
-  font-size: 0.75rem;
+  /* 0.75rem here outranked the `text-xs` the markup asks for (element+class
+     beats class), so image captions rendered 12px while the rest of the site
+     floors at 13. Matched to the scale's caption step. */
+  font-size: 0.8125rem;
   color: hsl(var(--muted-foreground));
   margin-top: 0.5rem;
   text-align: center;
@@ -633,9 +650,14 @@
   align-items: center;
   gap: 0.5rem;
   margin: 0 0 0.55rem;
-  font-size: 0.68rem;
+  /* Was 0.68rem, which renders 10.88px - the smallest text left on the site
+     after the type scale landed, and it appears nine times on a single guide
+     page. Uppercase at 0.15em tracking is already hard to read small; at 11px
+     on a phone it is a squint. Raised to the scale's caption step (13px) and
+     the tracking eased to match .brc-label, which made the same trade. */
+  font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: hsl(var(--accent-legible));
 }
@@ -813,6 +835,76 @@
   }
   .mb-safe {
     margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* FOOTER LINKS ARE A THUMB TARGET, NOT A SITEMAP ENTRY.
+   The footer nav lists render 18px-tall links on a 34px pitch, which is a
+   16px gap between two adjacent destinations - measured on /services, 40 of
+   45 footer links were under 44px tall. The contact actions at the top of the
+   footer were already 44px; only the nav columns were missed.
+
+   Fixed here rather than at 45 call sites: on phones the link becomes a block
+   with enough vertical padding to reach exactly 44px, and the list's own gap
+   collapses so the pitch matches the target and neighbours cannot overlap.
+   The footer gets taller on mobile - that is the cost of the links being
+   hittable, and it is the last thing on the page. Unchanged from md up. */
+@media (max-width: 767px) {
+  footer nav ul > li + li,
+  footer ul[class*="space-y"] > li + li {
+    margin-top: 0;
+  }
+
+  footer ul > li > a,
+  footer ul > li > button {
+    display: block;
+    padding-block: 13px;
+  }
+
+  /* The four links that sit outside a list: the "Service Areas" column
+     heading, the subcontractor login, and the two legal links on the bottom
+     row. Each is surrounded by whitespace, so the hit area grows into that
+     whitespace with a matching negative margin and the layout does not move. */
+  footer h3 > a,
+  footer a[href="/api/login"],
+  footer a[href="/privacy-policy"],
+  footer a[href="/terms-of-service"] {
+    display: inline-block;
+    padding-block: 13px;
+    margin-block: -13px;
+  }
+}
+
+/* THE CONTACT ACTIONS ARE THE HIGHEST-INTENT TAPS ON THE SITE.
+   Measured on /contact at 375px: the phone number 29px tall, "Save to
+   contacts" 18px, "Prefer to text? Message us" 21px. These same links are
+   repeated in hero bands, CTA bands and the footer, so they are fixed once
+   here by destination rather than at every call site.
+
+   Inline occurrences inside prose keep their natural size - growing a link in
+   the middle of a sentence would break the line rhythm, and a phone number
+   mentioned mid-paragraph is not the tap the page is asking for. */
+@media (max-width: 767px) {
+  a[href^="tel:"]:not(p a):not(li a),
+  a[href^="sms:"]:not(p a):not(li a),
+  a[href$=".vcf"]:not(p a):not(li a) {
+    /* flex, NOT inline-flex. These anchors carry no display utility, so their
+       natural display is `inline` and they wrap as text - the footer's three
+       contact links were flowing onto three separate lines that way. Making
+       them inline-flex turned each into one unbreakable inline box and all
+       three fitted on a single 343px row, crammed edge to edge with no gap.
+       Block-level flex keeps one per line, and lets the container's space-y
+       actually separate them, which it never could while they were inline. */
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    /* NO width: fit-content here. It was the obvious companion to display:flex
+       and it silently shrank the global Call/Text bar's targets from their
+       full 125px grid cell down to the 26px width of the word "Call" - a tap
+       anywhere else in the cell would have missed. Letting these stretch to
+       their container is right in both places: the bar's cells fill, and the
+       footer's links get a full-column hit area, which is what the footer nav
+       links above already do. */
   }
 }
 

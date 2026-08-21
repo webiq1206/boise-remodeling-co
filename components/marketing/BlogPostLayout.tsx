@@ -86,7 +86,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
               <span>{readingTime} min read</span>
               <Link
                 href={CONTENT_AUTHOR.url}
-                className="flex items-center gap-2 hover:text-foreground transition-colors"
+                className="flex items-center gap-2 min-h-11 md:min-h-0 hover:text-foreground transition-colors"
               >
                 <User className="h-4 w-4" />
                 {CONTENT_AUTHOR.name}
@@ -113,7 +113,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
                     </p>
                     <Link
                       href={guidePath(pillarSlug)}
-                      className="text-sm text-accent-legible hover:underline inline-flex items-center font-normal"
+                      className="text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 md:min-h-0 font-normal"
                     >
                       {hub.title}
                       <ArrowRight className="ml-1 h-4 w-4" />
@@ -123,7 +123,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
                         <span className="text-muted-foreground mx-2">·</span>
                         <Link
                           href={categoryHubPath(post.hubSlug)}
-                          className="text-sm text-muted-foreground hover:text-accent-legible hover:underline"
+                          className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-muted-foreground hover:text-accent-legible hover:underline"
                         >
                           All articles in this topic
                         </Link>

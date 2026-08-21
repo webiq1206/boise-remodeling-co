@@ -56,7 +56,7 @@ export default function BlogPage() {
         </p>
         <Link
           href="/guides"
-          className="text-sm text-inverse-foreground/90 hover:text-inverse-foreground inline-flex items-center transition-colors"
+          className="text-sm text-inverse-foreground/90 hover:text-inverse-foreground inline-flex items-center min-h-11 md:min-h-0 transition-colors"
         >
           Browse full remodeling guides
           <ArrowRight className="ml-1 h-4 w-4" />

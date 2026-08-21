@@ -37,7 +37,7 @@ function HeroBreadcrumbs() {
 
   return (
     <nav aria-label="Breadcrumb">
-      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-inverse-foreground/80">
+      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-inverse-foreground/80 [&_a]:inline-flex [&_a]:items-center [&_a]:min-h-11 md:[&_a]:min-h-0">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           return (

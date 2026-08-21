@@ -22,7 +22,10 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
               {item.href && !isLast ? (
                 <Link 
                   href={item.href}
-                  className="hover:text-foreground transition-colors hover:underline"
+                  /* 21px tall on a phone before this. A breadcrumb is a real
+                     navigation control, so it gets a real target on mobile and
+                     keeps its compact desktop rhythm. */
+                  className="inline-flex items-center min-h-11 md:min-h-0 hover:text-foreground transition-colors hover:underline"
                 >
                   {item.name}
                 </Link>

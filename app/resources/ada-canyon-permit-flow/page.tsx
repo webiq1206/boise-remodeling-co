@@ -54,7 +54,7 @@ export default function AdaCanyonPermitFlowPage() {
   return (
     <div className="flex flex-col pb-20">
       <JsonLd data={schemas} />
-      <Section spacing="lg" className="pt-28 md:pt-32">
+      <Section spacing="default" className="pt-28 md:pt-32">
         <div className="container px-4 max-w-4xl mx-auto">
           <Link
             href="/resources"
@@ -114,7 +114,7 @@ export default function AdaCanyonPermitFlowPage() {
             </EstimateCTA>
             <Link
               href="/guides/boise-remodeling-process-guide"
-              className="inline-flex items-center text-sm text-accent-legible hover:underline"
+              className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline"
             >
               Remodeling process guide
             </Link>

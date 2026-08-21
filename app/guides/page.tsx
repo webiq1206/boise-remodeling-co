@@ -87,7 +87,7 @@ export default function GuidesIndexPage() {
         </p>
         <Link
           href="/resources"
-          className="text-sm text-inverse-foreground/90 hover:text-inverse-foreground inline-flex items-center transition-colors"
+          className="text-sm text-inverse-foreground/90 hover:text-inverse-foreground inline-flex items-center min-h-11 md:min-h-0 transition-colors"
         >
           Free PDF worksheets &amp; permit infographic
           <ArrowRight className="ml-1 h-4 w-4" />
@@ -118,7 +118,7 @@ export default function GuidesIndexPage() {
                   <GuideCardStats guide={guide} />
                   <Link
                     href={guidePath(guide.slug)}
-                    className="inline-flex items-center text-sm text-accent-legible hover:underline"
+                    className="inline-flex items-center min-h-11 md:min-h-0 text-sm text-accent-legible hover:underline"
                   >
                     Read guide
                     <ArrowRight className="ml-1 h-4 w-4" />
@@ -154,7 +154,7 @@ export default function GuidesIndexPage() {
                   <GuideCardStats guide={guide} />
                   <Link
                     href={guidePath(guide.slug)}
-                    className="text-sm text-accent-legible hover:underline inline-flex items-center"
+                    className="text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 md:min-h-0"
                   >
                     Read
                     <ArrowRight className="ml-1 h-3 w-3" />
@@ -177,14 +177,14 @@ export default function GuidesIndexPage() {
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                   <Link
                     href={guidePath(hub.pillarSlug)}
-                    className="text-accent-legible hover:underline inline-flex items-center"
+                    className="text-accent-legible hover:underline inline-flex items-center min-h-11 md:min-h-0"
                   >
                     Pillar guide
                     <ArrowRight className="ml-1 h-3 w-3" />
                   </Link>
                   <Link
                     href={`/blog/category/${hub.hubSlug}`}
-                    className="text-muted-foreground hover:text-accent-legible hover:underline"
+                    className="inline-flex items-center min-h-11 md:min-h-0 text-muted-foreground hover:text-accent-legible hover:underline"
                   >
                     Related articles
                   </Link>

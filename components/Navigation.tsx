@@ -25,7 +25,7 @@ const NAV_LINKS = [
 
 function Logo() {
   return (
-    <Link href="/" className="flex items-center" aria-label="Boise Remodeling Co - home">
+    <Link href="/" className="flex h-full min-h-11 items-center" aria-label="Boise Remodeling Co - home">
       {/* Bone wordmark with the sage Co., which is the dark-ground lockup the
           brand kit specifies. width/height match the 1617.52 x 159.96 viewBox
           so the browser reserves the right box and the header does not shift. */}
