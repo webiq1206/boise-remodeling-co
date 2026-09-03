@@ -11,7 +11,14 @@ const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 /** Canonical NAP - use verbatim on GBP and all citations. */
 export const GBP_NAP = {
   name: 'Boise Remodeling Co',
-  legalName: 'Boise Remodeling Co LLC',
+  /**
+   * The registered legal entity behind this DBA. Google verifies a business
+   * name against the entity on record, and this block is used verbatim on GBP
+   * and every citation - so `name` carries the DBA customers search for and
+   * `legalName` carries P5 Home Co LLC, which is the company that actually
+   * holds the registration.
+   */
+  legalName: 'P5 Home Co LLC',
   phone: SITE_CONFIG.phone,
   email: SITE_CONFIG.email,
   website: SITE,
