@@ -275,6 +275,20 @@ export function Footer() {
           <div className="flex flex-wrap gap-4">
             <span>&copy; {currentYear} Boise Remodeling Co. All rights reserved.</span>
             <span>License details available upon request</span>
+            {/* Required parent-company disclosure. This brand is a DBA of
+                P5 Home Co LLC, not a separate company, and the branded link
+                gives that claim somewhere to resolve - for a reader deciding
+                who signs the contract, and for the entity graph, which
+                declares the same relationship in JSON-LD. */}
+            <span>
+              Boise Remodeling Co is a DBA of{" "}
+              <a
+                href="https://p5homeco.com"
+                className="underline underline-offset-2 transition-colors hover:text-inverse-foreground"
+              >
+                P5 Home Co LLC
+              </a>
+            </span>
           </div>
           <div className="flex gap-4">
             <Link href="/privacy-policy" className="transition-colors hover:text-inverse-foreground">

@@ -24,6 +24,26 @@ const baseUrl = getBaseUrl();
 export const ORG_ID = `${baseUrl}/#organization`;
 export const LOCALBUSINESS_ID = `${baseUrl}/#localbusiness`;
 export const WEBSITE_ID = `${baseUrl}/#website`;
+
+/**
+ * The parent entity. Every brand in this family is a DBA of P5 Home Co LLC,
+ * not a separate company, and the P5 site already declares this site as one of
+ * its `subOrganization` nodes using exactly this `@id` scheme
+ * (`{childOrigin}/#organization`). Asserting `parentOrganization` back at P5
+ * from this side closes the loop, so the two graphs join into one entity
+ * instead of sitting on their domains as strangers.
+ *
+ * Hardcoded rather than derived: this is a fixed external origin, and the
+ * `@id` must match the P5 graph byte for byte or the nodes will not merge.
+ */
+const P5_ORIGIN = 'https://p5homeco.com';
+export const P5_ORG_ID = `${P5_ORIGIN}/#organization`;
+export const P5_PARENT_ORGANIZATION = {
+  '@type': 'Organization',
+  '@id': P5_ORG_ID,
+  name: 'P5 Home Co',
+  url: P5_ORIGIN,
+} as const;
 /**
  * THE SEAL ON ITS OWN CHARCOAL DISC, NOT THE TRANSPARENT BONE ONE.
  *
@@ -220,6 +240,7 @@ export function generateOrganizationSchema(): SchemaContext {
     '@id': ORG_ID,
     name: BUSINESS_INFO.name,
     legalName: BUSINESS_INFO.legalName,
+    parentOrganization: P5_PARENT_ORGANIZATION,
     ...(BUSINESS_INFO.alternateName.length
       ? { alternateName: BUSINESS_INFO.alternateName }
       : {}),
