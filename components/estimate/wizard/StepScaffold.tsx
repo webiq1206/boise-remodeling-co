@@ -49,7 +49,7 @@ export function StepHeading({
       <h2
         ref={headingRef}
         tabIndex={-1}
-        className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm"
+        className="font-serif text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm"
         data-testid="step-heading"
       >
         {title}

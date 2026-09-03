@@ -47,7 +47,7 @@ export default function ResourcesIndexPage() {
         <p className="text-xs font-normal uppercase tracking-wider text-accent-legible mb-3">
           Free downloads
         </p>
-        <h1 className="text-3xl md:text-4xl font-sans font-light tracking-tight text-foreground mb-4">
+        <h1 className="text-3xl md:text-4xl font-serif tracking-tight text-foreground mb-4">
           Remodel planning resources
         </h1>
         <p className="text-lg text-muted-foreground mb-5 max-w-2xl">

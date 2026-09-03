@@ -311,7 +311,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
           <h3
             ref={successHeadingRef}
             tabIndex={-1}
-            className="font-sans font-light text-2xl text-foreground outline-none"
+            className="font-serif text-2xl text-foreground outline-none"
           >
             Request received{submitted ? `, ${submitted.name.split(" ")[0]}` : ""}.
           </h3>

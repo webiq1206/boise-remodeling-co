@@ -47,7 +47,7 @@ export default function BlogPage() {
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Blog" }]} />
         <div className="brc-label text-inverse-muted mt-6 mb-4">Blog</div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
           Remodeling Insights &amp; Ideas
         </h1>
         <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">

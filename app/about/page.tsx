@@ -128,7 +128,7 @@ export default function AboutPage() {
               {SPEAKABLE_SUMMARY}
             </p>
             <div className="brc-label brc-label-on-photo mt-6 mb-5">About us</div>
-            <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-4xl mb-6">
+            <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-4xl mb-6">
               About Boise Remodeling{' '}
               <em className="brc-accent">Co</em>
             </h1>
@@ -209,7 +209,7 @@ export default function AboutPage() {
                 </ul>
                 <div className="mt-8 pt-8 border-t border-border">
                   <div className="brc-label text-muted-foreground mb-3">Our commitment</div>
-                  <h3 className="font-sans font-normal text-base text-foreground mb-2">
+                  <h3 className="font-serif font-normal text-base text-foreground mb-2">
                     One accountable team
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
@@ -238,7 +238,7 @@ export default function AboutPage() {
                 </div>
                 <div className="mt-8 pt-8 border-t border-border">
                   <div className="brc-label text-muted-foreground mb-3">Where your money goes</div>
-                  <h3 className="font-sans font-normal text-base text-foreground mb-2">
+                  <h3 className="font-serif font-normal text-base text-foreground mb-2">
                     Don't pay for a contractor's overhead
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
@@ -288,7 +288,7 @@ export default function AboutPage() {
                     <DisplayNum className="text-2xl text-inverse-foreground/20 leading-none mb-4 block">
                       {formatStepNumber(i)}
                     </DisplayNum>
-                    <h3 className="font-sans font-normal text-sm mb-2 text-inverse-foreground">
+                    <h3 className="font-serif font-normal text-sm mb-2 text-inverse-foreground">
                       {title}
                     </h3>
                     <p className="text-sm text-inverse-muted leading-relaxed">{desc}</p>
@@ -327,7 +327,7 @@ export default function AboutPage() {
         <Section divider spacing="sm">
           <div className="container px-4 max-w-2xl mx-auto">
             <MarketingCard className="cta-card-dark p-10 md:p-12 text-center">
-              <h2 className="font-sans font-light text-section-title mb-4 text-inverse-foreground">
+              <h2 className="font-serif text-section-title mb-4 text-inverse-foreground">
                 Ready to start your project?
               </h2>
               <p className="text-base text-inverse-muted mb-8">

@@ -40,7 +40,7 @@ export function FeaturedBeforeAfterSection({
               aspectClass="aspect-[16/10] md:aspect-[21/9]"
             />
             <div className="p-6 md:p-8">
-              <h3 className="font-sans font-normal text-lg text-foreground mb-2">
+              <h3 className="font-serif font-normal text-lg text-foreground mb-2">
                 {project.title}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">

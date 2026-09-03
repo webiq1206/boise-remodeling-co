@@ -31,7 +31,7 @@ export function ArticleFaqs({
       <p className="text-xs font-normal uppercase tracking-wider text-muted-foreground mb-3">
         Common questions
       </p>
-      <h2 className="text-xl md:text-2xl font-sans font-light tracking-tight text-foreground mb-6">
+      <h2 className="text-xl md:text-2xl font-serif tracking-tight text-foreground mb-6">
         Frequently asked questions
       </h2>
       <Accordion type="single" collapsible className="w-full">

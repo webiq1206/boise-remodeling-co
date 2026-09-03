@@ -43,7 +43,7 @@ export function ServicesGrid() {
                     className="object-cover img-brand-grade transition-transform duration-300 ease-out group-hover:scale-[1.02]"
                   />
                 </div>
-                <h3 className="font-sans font-normal text-base mb-2 text-foreground">
+                <h3 className="font-serif font-normal text-base mb-2 text-foreground">
                   {service.name}
                 </h3>
                 <p className="text-sm leading-relaxed mb-3 text-muted-foreground">
@@ -69,7 +69,7 @@ export function ServicesGrid() {
           <Reveal delay={primary.length * 40}>
             <div className="h-full min-h-[220px] rounded-sm border border-card-border bg-card p-6 md:p-8 flex flex-col justify-center">
               <div className="brc-label mb-3">Not sure where to start</div>
-              <h3 className="font-sans font-light text-xl md:text-2xl tracking-tight mb-2 text-foreground">
+              <h3 className="font-serif text-xl md:text-2xl tracking-tight mb-2 text-foreground">
                 Tell us about your <em className="brc-accent">project</em>
               </h3>
               <p className="text-sm leading-relaxed mb-5 text-muted-foreground">

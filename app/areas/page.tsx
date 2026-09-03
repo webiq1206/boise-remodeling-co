@@ -51,7 +51,7 @@ export default function AreasHubPage() {
         >
           <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Service Areas" }]} />
           <div className="brc-label text-inverse-muted mt-6 mb-4">Treasure Valley</div>
-          <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+          <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
             Treasure Valley service{" "}
             <em className="brc-accent">areas</em>
           </h1>

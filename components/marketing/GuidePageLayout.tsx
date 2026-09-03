@@ -70,7 +70,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
 
           <header className="max-w-[42rem] mb-8 md:mb-10 mt-2">
             {hub && <Chip className="mb-4">{hub.categoryLabel}</Chip>}
-            <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-sans font-light tracking-tight text-foreground mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {guide.title}
             </h1>
             <p className="text-lg text-muted-foreground mb-5">{guide.excerpt}</p>

@@ -86,9 +86,9 @@
 
   /* Page base - charcoal #1C1F1E */
   --background: 160 5% 12%;
-  --foreground: 37 14% 89%;        /* body text #E6E3DE */
+  --foreground: 40 32% 92%;  /* P5 bone #F1EDE4 */
   --heading: 30 20% 96%;           /* bone #F7F5F3 */
-  --border: 154 6% 24%;            /* hairline #39403D */
+  --border: 40 8% 27%;  /* hairline warmed toward bone, like P5's --line */
   --card: 156 6% 16%;              /* surface #262B29 */
   --card-foreground: 37 14% 89%;
   --card-border: 154 6% 24%;
@@ -128,7 +128,7 @@
   --secondary-foreground: 37 14% 89%;
 
   --muted: 156 6% 16%;
-  --muted-foreground: 105 4% 61%;     /* mist #9AA098 */
+  --muted-foreground: 147 9% 52%;  /* P5 sage #7A9184 */
   --faint: 129 3% 45%;                /* #6E756F */
 
   /* THE BRAND ACCENT, AND IT IS THE ONLY ONE. The kit is explicit: never
@@ -204,6 +204,7 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 64px;
   }
 
   body {
@@ -215,7 +216,9 @@
      the elegance. Smaller headings (h3-h6) render at body-adjacent sizes where
      300 reads faint rather than refined, so they carry regular weight. */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-montserrat, "Helvetica Neue", system-ui, sans-serif);
+    /* Cormorant Garamond for every heading, as on P5. */
+    font-family: var(--font-cormorant, Georgia, serif);
+    font-weight: 400;
     letter-spacing: -0.02em;
     color: hsl(var(--heading));
   }
@@ -262,11 +265,11 @@
    assumed. Do not move these back. */
 @layer components {
   .section-y {
-    @apply py-24 md:py-32;
+    @apply py-20 md:py-[130px];
   }
 
   .section-y-sm {
-    @apply py-16 md:py-20;
+    @apply py-14 md:py-20;
   }
 }
 
@@ -348,6 +351,10 @@
     animation: pulse-accent 2s ease-in-out infinite;
   }
 
+  @keyframes hero-reveal { from { transform: scale(1.06); opacity: .6; } to { transform: scale(1); opacity: 1; } }
+  .animate-hero-reveal { animation: hero-reveal 1300ms ease both; }
+  @media (prefers-reduced-motion: reduce) { .animate-hero-reveal { animation: none; } }
+
   @keyframes fade-up {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
@@ -423,7 +430,8 @@
 
 /* ─── Decorative accent (Fraunces italic emphasis) ─── */
 .brc-accent {
-  font-family: var(--font-fraunces, Georgia, serif);
+  font-family: var(--font-cormorant, Georgia, serif);
+  font-weight: 500;
   font-style: italic;
   font-optical-sizing: auto;
   /* Accent WORDS are the serif grace note AND the brand's sage moment. The kit
@@ -435,7 +443,7 @@
 
 /* ─── Decorative display numerals (Fraunces: stats, prices, step markers) ─── */
 .brc-display-num {
-  font-family: var(--font-fraunces, Georgia, serif);
+  font-family: var(--font-cormorant, Georgia, serif);
   font-weight: 300;
   font-style: normal;
   font-optical-sizing: auto;
@@ -451,7 +459,8 @@
      their own and this eyebrow stacks both, so the size has to compensate
      rather than compound them. Tracking eased slightly for the same reason. */
   font-size: 0.8125rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.19em;
+  font-weight: 700;
   text-transform: uppercase;
   color: hsl(var(--muted-foreground));
 }
@@ -590,7 +599,7 @@
 .blog-content > *:first-child { margin-top: 0; }
 
 .blog-content .pull-quote {
-  font-family: var(--font-fraunces, Georgia, serif);
+  font-family: var(--font-cormorant, Georgia, serif);
   font-style: italic;
   font-size: 1.25rem;
   line-height: 1.5;

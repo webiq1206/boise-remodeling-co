@@ -67,7 +67,7 @@ export default function AdaCanyonPermitFlowPage() {
           <p className="text-xs font-normal uppercase tracking-wider text-accent-legible mb-3">
             Visual guide
           </p>
-          <h1 className="text-3xl md:text-4xl font-sans font-light tracking-tight text-foreground mb-4">
+          <h1 className="text-3xl md:text-4xl font-serif tracking-tight text-foreground mb-4">
             Ada vs Canyon County permit flow
           </h1>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl">

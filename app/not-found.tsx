@@ -29,7 +29,7 @@ export default function NotFound() {
           </h1>
         </div>
 
-        <h2 className="text-2xl md:text-3xl font-sans font-light tracking-tight mb-4 text-foreground">
+        <h2 className="text-2xl md:text-3xl font-serif tracking-tight mb-4 text-foreground">
           Page Not Found
         </h2>
         <p className="text-lg text-muted-foreground mb-8">

@@ -59,7 +59,7 @@ export function RelatedPostCards({
 
   return (
     <div>
-      <h2 className="font-sans font-light text-section-title mb-6 text-foreground">{title}</h2>
+      <h2 className="font-serif text-section-title mb-6 text-foreground">{title}</h2>
       <div className="grid sm:grid-cols-2 gap-4">
         {links.map((link) => {
           const image = imageForUrl(link.url);

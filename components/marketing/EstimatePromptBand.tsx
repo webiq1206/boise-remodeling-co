@@ -42,7 +42,7 @@ export function EstimatePromptBand({
                   </div>
                   <div className="brc-label">{eyebrow}</div>
                 </div>
-                <h2 className="font-sans font-light text-[1.75rem] md:text-[2.25rem] leading-[1.08] tracking-tight text-foreground mb-3">
+                <h2 className="font-serif text-[1.75rem] md:text-[2.25rem] leading-[1.08] tracking-tight text-foreground mb-3">
                   {title}
                 </h2>
                 <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl mb-6">

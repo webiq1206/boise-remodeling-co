@@ -78,7 +78,7 @@ export default function GuidesIndexPage() {
         imageAlt={getBlogImageAlt('boise-remodeling-cost-guide')}
       >
         <div className="brc-label text-inverse-muted mb-3">Treasure Valley authority</div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
           Remodeling Guides
         </h1>
         <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
