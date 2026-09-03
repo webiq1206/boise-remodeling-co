@@ -303,7 +303,7 @@ const PROFILE_SUMMARY: Record<ProjectType, Record<FinishLevel, string[]>> = {
   },
   bathroom: {
     refresh: ["New vanity and mirror", "Tile shower refresh", "Fixtures replaced in place", "Existing layout kept"],
-    "mid-range": ["Custom tile shower", "Semi-custom vanity", "Existing layout kept", "Plumbing stays where it is"],
+    "mid-range": ["Custom tile shower", "Semi-custom vanity", "Existing layout kept", "Plumbing fixtures updated in place"],
     "high-end": ["Walk-in or wet-room shower", "Freestanding tub", "Some plumbing moved"],
     luxury: ["Full layout reconfiguration", "Steam or spa shower", "Systems relocated throughout", "Designer fixtures"],
   },
@@ -637,7 +637,7 @@ const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, PriceData>>>
     },
     "mid-range": {
       low: 22000, high: 36000, roi: 71,
-      included: ["Custom tile shower", "Semi-custom vanity", "Updated plumbing", "New windows"],
+      included: ["Custom tile shower", "Semi-custom vanity", "Plumbing fixtures updated in place", "Existing layout kept"],
     },
     "high-end": {
       low: 44000, high: 64000, roi: 65,
