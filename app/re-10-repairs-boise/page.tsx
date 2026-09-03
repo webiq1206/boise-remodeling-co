@@ -112,7 +112,7 @@ export default function Re10RepairsPage() {
           <em className="brc-accent">on schedule</em>
         </h1>
         <p className="text-body text-inverse-foreground/85 max-w-2xl mb-4 md:hidden">
-          Upload your RE-10 and get a firm price.
+          Upload your RE-10 and get an instant estimate.
         </p>
         <p className="hidden md:block text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-7">
           We complete inspection-related repairs for Boise-area real estate transactions, with one

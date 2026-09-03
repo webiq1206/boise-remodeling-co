@@ -697,7 +697,7 @@ export function Re10Wizard() {
           <StepTransition>
             <StepHeading
               eyebrow="RE-10 repair estimator"
-              title="Upload your RE-10 and get a firm price"
+              title="Upload your RE-10 and get an instant estimate"
               description="Send the RE-10, the inspection report pages, and any photos. We read the repair list, show you what we found, and you correct it before anything is priced. No contact details needed yet."
               help={
                 <>

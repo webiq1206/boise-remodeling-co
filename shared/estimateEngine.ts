@@ -194,7 +194,7 @@ const UNIVERSAL_DECREASES = [
   "Combining adjacent rooms into a single mobilization",
 ];
 
-const PROJECT_UPGRADES: Record<ProjectType, string[]> = {
+export const PROJECT_UPGRADES: Record<ProjectType, string[]> = {
   kitchen: [
     "Island addition or expansion",
     "Panel-ready or integrated appliance fronts",
@@ -294,7 +294,7 @@ const FINISH_PROFILES: Record<FinishLevel, Omit<TypicalSelections, "summary">> =
   luxury: { cabinetTier: "custom", plumbingElectrical: "full", layoutChanges: "major" },
 };
 
-const PROFILE_SUMMARY: Record<ProjectType, Record<FinishLevel, string[]>> = {
+export const PROFILE_SUMMARY: Record<ProjectType, Record<FinishLevel, string[]>> = {
   kitchen: {
     refresh: ["Stock cabinetry", "Laminate or entry quartz counters", "Existing layout kept", "Plumbing stays where it is", "LVP or tile flooring"],
     "mid-range": ["Semi-custom cabinetry", "Quartz counters", "Tile backsplash", "Existing layout kept", "Plumbing stays where it is"],
@@ -585,7 +585,7 @@ export const CONFIDENCE_LABELS = PLANNING_DETAIL_LABELS;
  * behaves and is consistent with the guide's own rates falling as project size
  * rises across categories.
  */
-const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, PriceData>>> = {
+export const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, PriceData>>> = {
   /*
    * Kitchen is calibrated 2026-07 against two issued estimates, not the guide.
    *
