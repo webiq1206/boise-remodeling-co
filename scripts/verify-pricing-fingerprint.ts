@@ -20,7 +20,15 @@ import { PRICE_MATRIX, PROFILE_SUMMARY, PROJECT_UPGRADES } from "../shared/estim
 import { RECIPES, CREW_MINIMUM_PRICE, CREW_FOR_TRADE, REPAIR_GRADE_BY_DIVISION, WORTHWHILE_JOB_PRICE, QUOTE_VALID_DAYS, CREW_HOURLY_COST, MOBILIZATION_COST, REPAIR_GRADE_DEFAULT_FACTOR } from "../shared/costs/re10Repairs";
 import { LINE_ITEMS } from "../shared/costs/lineItemCatalog";
 
-const SETS: Record<string, unknown> = { remodel: { PRICE_MATRIX, PROFILE_SUMMARY, PROJECT_UPGRADES }, re10: { RECIPES, CREW_MINIMUM_PRICE, CREW_FOR_TRADE, REPAIR_GRADE_BY_DIVISION, WORTHWHILE_JOB_PRICE, QUOTE_VALID_DAYS, CREW_HOURLY_COST, MOBILIZATION_COST, REPAIR_GRADE_DEFAULT_FACTOR, LINE_ITEMS } };
+// The remodel catalog is shared by Remodeling and Construction; Construction's
+// tables also hold its new-home types, so only the six shared remodel keys are
+// hashed as `remodel` (must match across both sites). The full tables are
+// hashed as `pricingAll` for this site alone.
+const REMODEL_KEYS = ["kitchen", "bathroom", "whole-home", "addition", "adu", "basement"] as const;
+const pick = (t: Record<string, unknown>) => Object.fromEntries(REMODEL_KEYS.filter((k) => k in t).map((k) => [k, t[k]]));
+const SETS: Record<string, unknown> = {
+  remodel: { PRICE_MATRIX: pick(PRICE_MATRIX as Record<string, unknown>), PROFILE_SUMMARY: pick(PROFILE_SUMMARY as Record<string, unknown>), PROJECT_UPGRADES: pick(PROJECT_UPGRADES as Record<string, unknown>) },
+  pricingAll: { PRICE_MATRIX, PROFILE_SUMMARY, PROJECT_UPGRADES }, re10: { RECIPES, CREW_MINIMUM_PRICE, CREW_FOR_TRADE, REPAIR_GRADE_BY_DIVISION, WORTHWHILE_JOB_PRICE, QUOTE_VALID_DAYS, CREW_HOURLY_COST, MOBILIZATION_COST, REPAIR_GRADE_DEFAULT_FACTOR, LINE_ITEMS } };
 
 function canon(v: unknown): unknown {
   if (Array.isArray(v)) return v.map(canon);
