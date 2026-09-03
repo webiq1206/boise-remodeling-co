@@ -304,7 +304,7 @@ const PROFILE_SUMMARY: Record<ProjectType, Record<FinishLevel, string[]>> = {
   bathroom: {
     refresh: ["New vanity and mirror", "Tile shower refresh", "Fixtures replaced in place", "Existing layout kept"],
     "mid-range": ["Custom tile shower", "Semi-custom vanity", "Existing layout kept", "Plumbing stays where it is"],
-    "high-end": ["Walk-in or wet-room shower", "Freestanding tub", "Some plumbing moved", "Heated floors"],
+    "high-end": ["Walk-in or wet-room shower", "Freestanding tub", "Some plumbing moved"],
     luxury: ["Full layout reconfiguration", "Steam or spa shower", "Systems relocated throughout", "Designer fixtures"],
   },
   "whole-home": {
@@ -637,15 +637,15 @@ const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, PriceData>>>
     },
     "mid-range": {
       low: 22000, high: 36000, roi: 71,
-      included: ["Custom tile shower", "Semi-custom vanity", "Heated floors", "Updated plumbing", "New windows"],
+      included: ["Custom tile shower", "Semi-custom vanity", "Updated plumbing", "New windows"],
     },
     "high-end": {
       low: 44000, high: 64000, roi: 65,
-      included: ["Wet room or custom walk-in shower", "Freestanding soaking tub", "Radiant heated floors", "Custom built-ins", "High-end plumbing fixtures"],
+      included: ["Wet room or custom walk-in shower", "Freestanding soaking tub", "Custom built-ins", "High-end plumbing fixtures"],
     },
     luxury: {
       low: 72000, high: 112000, roi: 58,
-      included: ["Steam shower system", "Spa soaking tub", "Heated floors and walls", "Full layout reconfiguration", "Designer fixtures throughout"],
+      included: ["Steam shower system", "Spa soaking tub", "Full layout reconfiguration", "Designer fixtures throughout"],
     },
   },
   /*
