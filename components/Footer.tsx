@@ -291,6 +291,9 @@ export function Footer() {
             </span>
           </div>
           <div className="flex gap-4">
+            <Link href="/sitemap" className="transition-colors hover:text-inverse-foreground">
+              Site Map
+            </Link>
             <Link href="/privacy-policy" className="transition-colors hover:text-inverse-foreground">
               Privacy Policy
             </Link>
