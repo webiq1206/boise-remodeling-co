@@ -1463,7 +1463,7 @@ export function EstimateCalculator({
       ref={headingRef}
       tabIndex={-1}
       className={cn(
-        "font-sans font-light text-[clamp(1.4rem,5.5vw,2rem)] leading-[1.12] tracking-tight text-inverse-foreground mb-4",
+        "font-serif text-[clamp(1.4rem,5.5vw,2rem)] leading-[1.12] tracking-tight text-inverse-foreground mb-4",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm",
         className,
       )}
@@ -2642,7 +2642,7 @@ export function EstimateCalculator({
           <h2
             ref={headingRef}
             tabIndex={-1}
-            className="font-sans font-light text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm"
+            className="font-serif text-[clamp(1.5rem,5.5vw,2.25rem)] leading-[1.1] tracking-tight text-inverse-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible rounded-sm"
             data-testid="step-heading"
           >
             Review your project

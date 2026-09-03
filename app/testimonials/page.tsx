@@ -58,7 +58,7 @@ export default function TestimonialsPage() {
           ]}
         />
         <div className="brc-label text-inverse-muted mt-6 mb-4">Before &amp; after</div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
           Our <em className="brc-accent">work</em> across the Treasure Valley
         </h1>
         <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-8">
@@ -89,7 +89,7 @@ export default function TestimonialsPage() {
       <Section divider spacing="sm">
         <div className="container px-4 max-w-2xl mx-auto">
           <div className="marketing-card p-10 md:p-12 text-center">
-            <h2 className="font-sans font-light text-section-title mb-4 text-foreground">
+            <h2 className="font-serif text-section-title mb-4 text-foreground">
               Ready to start your project?
             </h2>
             <p className="text-base text-muted-foreground mb-8">

@@ -73,7 +73,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
 
           <header className="max-w-[42rem] mb-8 md:mb-10 mt-2">
             <Chip className="mb-4">{hub?.categoryLabel ?? post.category}</Chip>
-            <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-sans font-light tracking-tight text-foreground mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {post.title}
             </h1>
             <p className="text-lg text-muted-foreground mb-5">{post.excerpt}</p>

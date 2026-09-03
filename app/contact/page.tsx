@@ -210,7 +210,7 @@ export default function ContactPage() {
               {SPEAKABLE_SUMMARY}
             </p>
             <div className="brc-label brc-label-on-photo mt-6 mb-5">Get in touch</div>
-            <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-4xl mb-6">
+            <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-4xl mb-6">
               Contact Boise Remodeling{' '}
               <em className="brc-accent">Co</em>
             </h1>
@@ -396,7 +396,7 @@ export default function ContactPage() {
               <div className="md:col-span-2">
                 <Reveal>
                   <div className="brc-label mb-5">Request your visit</div>
-                  <h2 className="font-sans font-light text-[2rem] md:text-[2.75rem] leading-[1.08] tracking-tight mb-4 text-foreground">
+                  <h2 className="font-serif text-[2rem] md:text-[2.75rem] leading-[1.08] tracking-tight mb-4 text-foreground">
                     Tell us about your{' '}
                     <em className="brc-accent">home</em>.
                   </h2>
@@ -419,7 +419,7 @@ export default function ContactPage() {
           <div className="container px-4 max-w-3xl">
             <Reveal>
               <div className="brc-label mb-5">Common questions</div>
-              <h2 className="font-sans font-light text-[2rem] md:text-[2.5rem] leading-[1.08] tracking-tight text-foreground mb-10">
+              <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-[1.08] tracking-tight text-foreground mb-10">
                 Before you <em className="brc-accent">reach out</em>
               </h2>
               <Accordion type="single" collapsible className="w-full">
@@ -484,7 +484,7 @@ export default function ContactPage() {
           <div className="container px-4 max-w-2xl mx-auto">
             <Reveal>
               <MarketingCard className="cta-card-dark p-10 md:p-12 text-center">
-                <h2 className="font-sans font-light text-section-title mb-4 text-inverse-foreground">
+                <h2 className="font-serif text-section-title mb-4 text-inverse-foreground">
                   Prefer to talk first?
                 </h2>
                 <p className="text-base text-inverse-muted mb-2">

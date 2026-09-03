@@ -103,7 +103,7 @@ export default function RemodelPlansPage() {
         <div className="brc-label text-inverse-muted mt-6 mb-4">
           For homeowners, architects and designers
         </div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
           A remodel estimate built from{" "}
           <em className="brc-accent">your own drawings</em>
         </h1>

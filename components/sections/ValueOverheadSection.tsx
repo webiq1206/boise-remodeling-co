@@ -18,7 +18,7 @@ export function ValueOverheadSection() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <Reveal>
             <div className="brc-label mb-6">{VALUE_MODEL.eyebrow}</div>
-            <h2 className="font-sans font-light text-[2rem] md:text-[3rem] lg:text-[3.25rem] leading-[1.06] tracking-tight text-foreground">
+            <h2 className="font-serif text-[2rem] md:text-[3rem] lg:text-[3.25rem] leading-[1.06] tracking-tight text-foreground">
               {VALUE_MODEL.headlineA}
               <br />
               {VALUE_MODEL.headlineB}{" "}

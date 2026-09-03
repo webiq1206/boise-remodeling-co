@@ -80,7 +80,7 @@ export default function EstimatePage() {
             full band; mobile gets the orientation and nothing else. */}
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Project Estimator" }]} />
         <div className="brc-label text-inverse-muted mt-4 mb-3 md:mt-6 md:mb-4">Free planning tool</div>
-        <h1 className="font-sans font-light text-[clamp(1.75rem,7vw,4.5rem)] leading-[1.08] tracking-tight text-inverse-foreground max-w-3xl mb-2 md:mb-4">
+        <h1 className="font-serif text-[clamp(1.75rem,7vw,4.5rem)] leading-[1.08] tracking-tight text-inverse-foreground max-w-3xl mb-2 md:mb-4">
           Treasure Valley remodel{" "}
           <em className="brc-accent">estimator</em>
         </h1>
@@ -100,7 +100,7 @@ export default function EstimatePage() {
         <div className="container px-4 max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
           <div>
             <div className="brc-label mb-4">What happens next</div>
-            <h2 className="font-sans font-light text-2xl md:text-3xl tracking-tight text-foreground mb-4">
+            <h2 className="font-serif text-2xl md:text-3xl tracking-tight text-foreground mb-4">
               Your range is a starting point - not a quote
             </h2>
             <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-6">

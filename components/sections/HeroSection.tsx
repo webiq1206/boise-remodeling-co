@@ -41,7 +41,7 @@ export function HeroSection() {
           fill
           priority
           sizes="(max-width: 768px) 100vw, 1400px"
-          className="object-cover opacity-[0.92] img-brand-grade"
+          className="object-cover opacity-[0.92] img-brand-grade animate-hero-reveal"
         />
         {/* Scrim stops tuned for the golden-hour interior: dark enough on the
             left where the headline sits, opening up quickly so the photograph
@@ -61,7 +61,7 @@ export function HeroSection() {
         <div className="absolute inset-x-0 bottom-0 h-32 pointer-events-none bg-gradient-to-t from-background via-background/50 to-transparent" />
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat", opacity: 0.03 }}
+          style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat", opacity: 0.13 }}
         />
 
         <div className="relative z-10 container px-4 md:px-8 py-20 md:py-32 pb-16 md:pb-28">
@@ -71,7 +71,7 @@ export function HeroSection() {
                   3.15:1, under the 4.5:1 AA needs, and lightening the scrim
                   behind it would only widen that gap. */}
               <div className="brc-label brc-label-on-photo mb-6">{HERO_EYEBROW}</div>
-              <h1 className="font-sans font-light text-inverse-foreground text-display tracking-tight mb-6">
+              <h1 className="font-serif text-inverse-foreground text-display tracking-tight mb-6">
                 Boise remodeling with{" "}
                 <em className="brc-accent">clarity</em> and confidence.
               </h1>

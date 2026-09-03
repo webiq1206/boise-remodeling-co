@@ -137,7 +137,7 @@ export default function HomePage() {
             <div className="md:col-span-2">
               <Reveal>
                 <div className="brc-label mb-5">Begin a conversation</div>
-                <h2 className="font-sans font-light text-[2rem] md:text-[2.75rem] lg:text-[3.25rem] leading-[1.08] tracking-tight mb-4 text-foreground">
+                <h2 className="font-serif text-[2rem] md:text-[2.75rem] lg:text-[3.25rem] leading-[1.08] tracking-tight mb-4 text-foreground">
                   Tell us about your{" "}
                   <em className="brc-accent">home</em>.
                 </h2>

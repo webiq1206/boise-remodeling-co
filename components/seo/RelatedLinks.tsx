@@ -33,7 +33,7 @@ function ExploreFurther({ serviceSlug }: { serviceSlug?: string }) {
   ];
   return (
     <div className="border-t border-border pt-8">
-      <h2 className="font-sans font-normal text-sm mb-4 text-foreground">Explore further</h2>
+      <h2 className="font-serif font-normal text-sm mb-4 text-foreground">Explore further</h2>
       <ul className="grid sm:grid-cols-2 gap-2">
         {links.map((link) => (
           <li key={link.href} className="list-none">
@@ -55,7 +55,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
     return (
       <div className="space-y-10">
         <div>
-        <h2 className="font-sans font-light text-section-title mb-6 text-foreground">
+        <h2 className="font-serif text-section-title mb-6 text-foreground">
           {SERVICES.find((s) => s.slug === serviceSlug)?.name} by city
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -80,7 +80,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
     return (
       <div className="space-y-10">
         <div>
-          <h2 className="font-sans font-light text-section-title mb-6 text-foreground">
+          <h2 className="font-serif text-section-title mb-6 text-foreground">
             Remodeling services in {city?.name}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
@@ -106,7 +106,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
       <div className="space-y-10">
       <div className="grid md:grid-cols-2 gap-10">
         <div>
-          <h2 className="font-sans font-normal text-sm mb-4 text-foreground">
+          <h2 className="font-serif font-normal text-sm mb-4 text-foreground">
             Same service, nearby cities
           </h2>
           <ul className="space-y-2">
@@ -123,7 +123,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
           </ul>
         </div>
         <div>
-          <h2 className="font-sans font-normal text-sm mb-4 text-foreground">
+          <h2 className="font-serif font-normal text-sm mb-4 text-foreground">
             More services in {CITIES.find((c) => c.slug === citySlug)?.name}
           </h2>
           <ul className="space-y-2">

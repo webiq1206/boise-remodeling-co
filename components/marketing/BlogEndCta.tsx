@@ -10,7 +10,7 @@ import { SaveContactLink } from "@/components/SaveContactLink";
 export function BlogEndCta() {
   return (
     <MarketingCard className="cta-card-dark p-10 md:p-16 text-center max-w-4xl mx-auto">
-      <h2 className="text-2xl md:text-3xl font-sans font-light tracking-tight mb-4 text-inverse-foreground">
+      <h2 className="text-2xl md:text-3xl font-serif tracking-tight mb-4 text-inverse-foreground">
         Ready to start your project?
       </h2>
       <p className="text-inverse-muted mb-8 max-w-lg mx-auto">

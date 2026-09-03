@@ -32,7 +32,7 @@ export function PageHeader({
       )}
       <h1
         className={cn(
-          "font-sans font-light text-display md:text-[2.75rem] tracking-tight text-foreground",
+          "font-serif text-display md:text-[2.75rem] tracking-tight text-foreground",
           description ? "mb-4" : meta ? "mb-4" : "mb-0"
         )}
       >

@@ -136,7 +136,7 @@ export default function BlogCategoryHubPage({
 
           <HubHeroBanner src={hubHero} alt={hubAlt} />
 
-          <h1 className="text-3xl md:text-4xl font-sans font-light tracking-tight mb-4">
+          <h1 className="text-3xl md:text-4xl font-serif tracking-tight mb-4">
             {hub.title}
           </h1>
           <p className="text-lg text-muted-foreground mb-4 max-w-2xl">{hub.description}</p>

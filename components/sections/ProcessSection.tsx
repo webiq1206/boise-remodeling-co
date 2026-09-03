@@ -36,7 +36,7 @@ export function ProcessSection() {
         <div className="section-y-sm px-8 md:px-14 lg:px-16 bg-card border-l border-border">
           <Reveal>
             <div className="brc-label mb-5">Our process</div>
-            <h2 className="font-sans font-light text-[2rem] md:text-[2.5rem] lg:text-[2.75rem] leading-[1.08] tracking-tight mb-10 text-foreground">
+            <h2 className="font-serif text-[2rem] md:text-[2.5rem] lg:text-[2.75rem] leading-[1.08] tracking-tight mb-10 text-foreground">
               From first visit to{" "}
               <em className="brc-accent">final walkthrough</em>
             </h2>

@@ -76,7 +76,7 @@ export default function ServicesIndexPage() {
       >
         <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services' }]} />
         <div className="brc-label text-inverse-muted mt-6 mb-4">Our services</div>
-        <h1 className="font-sans font-light text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
           Design-build expertise for every major{' '}
           <em className="brc-accent">remodel</em>
         </h1>
@@ -104,7 +104,7 @@ export default function ServicesIndexPage() {
                       />
                     </div>
                     <div className="flex flex-col flex-1 p-5 md:p-6">
-                      <h2 className="font-sans font-normal text-base mb-2 text-foreground">
+                      <h2 className="font-serif font-normal text-base mb-2 text-foreground">
                         {service.name}
                       </h2>
                       <p className="text-sm leading-relaxed mb-4 text-muted-foreground flex-1">
@@ -132,7 +132,7 @@ export default function ServicesIndexPage() {
             <Reveal delay={SERVICES.length * 40}>
               <div className="h-full min-h-[220px] rounded-sm border border-card-border bg-card p-6 md:p-8 flex flex-col justify-center">
                 <div className="brc-label mb-3">Not sure where to start</div>
-                <h2 className="font-sans font-light text-xl md:text-2xl tracking-tight mb-2 text-foreground">
+                <h2 className="font-serif text-xl md:text-2xl tracking-tight mb-2 text-foreground">
                   Tell us about your <em className="brc-accent">project</em>
                 </h2>
                 <p className="text-sm leading-relaxed mb-5 text-muted-foreground">
@@ -184,7 +184,7 @@ export default function ServicesIndexPage() {
       <Section divider spacing="sm">
         <div className="container px-4 max-w-2xl mx-auto">
           <MarketingCard className="cta-card-dark p-10 md:p-12 text-center">
-            <h2 className="font-sans font-light text-section-title mb-4 text-inverse-foreground">
+            <h2 className="font-serif text-section-title mb-4 text-inverse-foreground">
               Ready to plan your <em className="brc-accent">remodel</em>?
             </h2>
             <p className="text-inverse-muted mb-8 max-w-md mx-auto">

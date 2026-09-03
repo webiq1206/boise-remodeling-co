@@ -64,7 +64,7 @@ export function BlogIndexClient() {
                 <div className="rounded-full bg-muted p-6">
                   <PenLine className="h-10 w-10 text-muted-foreground" />
                 </div>
-                <h2 className="text-2xl font-sans font-light text-foreground">Articles coming soon</h2>
+                <h2 className="text-2xl font-serif text-foreground">Articles coming soon</h2>
                 <p className="text-muted-foreground max-w-md">
                   We&apos;re writing in-depth guides on budgeting, timelines, and more.
                 </p>

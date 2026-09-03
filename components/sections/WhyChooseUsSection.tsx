@@ -39,7 +39,7 @@ export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
           {items.map((item, i) => (
             <Reveal key={item.title} delay={i * 40}>
               <div className="py-7 md:py-8">
-                <h3 className="font-sans font-light text-foreground text-xl md:text-2xl leading-snug mb-2">
+                <h3 className="font-serif text-foreground text-xl md:text-2xl leading-snug mb-2">
                   {item.title}
                 </h3>
                 <p className="text-sm md:text-base leading-relaxed text-muted-foreground">

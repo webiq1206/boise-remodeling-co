@@ -130,8 +130,8 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["var(--font-montserrat)", "Helvetica Neue", "system-ui", "sans-serif"],
-        serif: ["var(--font-fraunces)", "Georgia", "serif"],
+        sans: ["var(--font-manrope)", "Helvetica Neue", "system-ui", "sans-serif"],
+        serif: ["var(--font-cormorant)", "Georgia", "serif"],
         mono: ["Menlo", "Monaco", "monospace"],
       },
       /**
@@ -182,7 +182,7 @@ export default {
         "title-sm": ["1.25rem", { lineHeight: "1.3", letterSpacing: "-0.01em" }],
         /** Sub-section headings. */
         title: ["1.5rem", { lineHeight: "1.25", letterSpacing: "-0.015em" }],
-        display: ["clamp(2.5rem,6vw,4.5rem)", { lineHeight: "1.04", letterSpacing: "-0.025em" }],
+        display: ["clamp(3.25rem,6.4vw,6.25rem)", { lineHeight: "0.96", letterSpacing: "-0.04em" }],
         "section-title": ["1.875rem", { lineHeight: "1.15", letterSpacing: "-0.025em" }],
         "section-title-lg": ["2.25rem", { lineHeight: "1.15", letterSpacing: "-0.025em" }],
       },

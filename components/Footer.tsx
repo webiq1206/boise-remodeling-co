@@ -90,7 +90,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-serif font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Services
             </h3>
             <ul className="space-y-2.5">
@@ -108,7 +108,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-serif font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Resources
             </h3>
             <ul className="space-y-2.5">
@@ -146,7 +146,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-serif font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Studio
             </h3>
             <ul className="space-y-2.5">
@@ -175,7 +175,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-serif font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               <Link href="/areas" className="hover:text-inverse-foreground transition-colors">
                 Service Areas
               </Link>
@@ -195,7 +195,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-serif font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               From the Blog
             </h3>
             <ul className="space-y-2.5">
@@ -243,7 +243,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="font-sans font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
+            <h3 className="font-serif font-normal text-label tracking-[0.12em] uppercase mb-5 text-inverse-muted">
               Start a Conversation
             </h3>
             {/* Contact details (phone, text, email, save-to-contacts) already

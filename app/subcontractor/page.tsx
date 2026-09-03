@@ -53,7 +53,7 @@ export default function SubcontractorPage() {
       <section className="container px-4 py-16 md:py-24">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <h2 className="text-4xl md:text-5xl font-sans font-light tracking-tight text-foreground">
+            <h2 className="text-4xl md:text-5xl font-serif tracking-tight text-foreground">
               Grow Your Remodeling Business
             </h2>
             <p className="text-lg text-muted-foreground">
@@ -156,7 +156,7 @@ export default function SubcontractorPage() {
       <section className="container px-4 py-16">
         <Card className="bg-inverse border-0 text-inverse-foreground">
           <CardContent className="py-12 text-center">
-            <h3 className="text-2xl font-sans font-light mb-4">Ready to Grow Your Business?</h3>
+            <h3 className="text-2xl font-serif mb-4">Ready to Grow Your Business?</h3>
             <p className="text-inverse-muted mb-8 max-w-2xl mx-auto">
               Join our network today and start receiving high-quality remodeling leads. No monthly fees, no commitments: only pay for the leads you want.
             </p>

@@ -34,7 +34,7 @@ export function AreaCard({ city, imageSrc }: AreaCardProps) {
         <div className="mb-3">
           <Chip>{countyLabel}</Chip>
         </div>
-        <h2 className="text-lg font-sans font-light tracking-tight text-foreground line-clamp-2 mb-2">
+        <h2 className="text-lg font-serif tracking-tight text-foreground line-clamp-2 mb-2">
           {title}
         </h2>
         <p className="text-sm text-muted-foreground line-clamp-2 flex-1 leading-relaxed">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -42,6 +42,14 @@ function Logo() {
 
 export function Navigation() {
   const pathname = usePathname();
+  // P5's header: transparent over the hero, gaining ground, blur and a hairline once scrolled.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   /* Pages whose own wizard owns the bottom of a phone screen. Kept beside the
      route rather than inferred, so adding a wizard page is one line here. */
   const wizardOwnsBottom =
@@ -65,7 +73,12 @@ export function Navigation() {
 
   return (
     <>
-      <header className="sticky top-0 z-[100] w-full bg-background/97 backdrop-blur border-b border-border">
+      <header
+        className={cn(
+          "fixed top-0 z-[100] w-full transition-[background-color,border-color] duration-300",
+          scrolled ? "bg-background/95 backdrop-blur border-b border-border" : "bg-transparent border-b border-transparent",
+        )}
+      >
         <nav className="container flex h-[60px] items-center justify-between gap-4 px-4 md:px-6">
           <Logo />
 
