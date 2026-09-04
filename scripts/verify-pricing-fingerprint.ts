@@ -19,6 +19,8 @@ import { resolve } from "node:path";
 import { PRICE_MATRIX, PROFILE_SUMMARY, PROJECT_UPGRADES } from "../shared/estimateEngine";
 import { RECIPES, CREW_MINIMUM_PRICE, CREW_FOR_TRADE, REPAIR_GRADE_BY_DIVISION, WORTHWHILE_JOB_PRICE, QUOTE_VALID_DAYS, CREW_HOURLY_COST, MOBILIZATION_COST, REPAIR_GRADE_DEFAULT_FACTOR } from "../shared/costs/re10Repairs";
 import { LINE_ITEMS } from "../shared/costs/lineItemCatalog";
+import { getComponents, COST_CATALOG_VERSION } from "../shared/costCatalog";
+import { INSTALLED_UNIT_COSTS, DIRECT_COST_SHARE, NATURAL_BAND } from "../shared/costs/installedUnitCosts";
 
 // The remodel catalog is shared by Remodeling and Construction; Construction's
 // tables also hold its new-home types, so only the six shared remodel keys are
@@ -26,7 +28,20 @@ import { LINE_ITEMS } from "../shared/costs/lineItemCatalog";
 // hashed as `pricingAll` for this site alone.
 const REMODEL_KEYS = ["kitchen", "bathroom", "whole-home", "addition", "adu", "basement"] as const;
 const pick = (t: Record<string, unknown>) => Object.fromEntries(REMODEL_KEYS.filter((k) => k in t).map((k) => [k, t[k]]));
+/*
+ * The component table is part of pricing: a quantity basis (per-sqft vs lot)
+ * changes what a size does to a line just as surely as a rate does. It used to
+ * sit outside the fingerprint, so costCatalog.ts could be edited without the
+ * guard noticing. Hashed site-locally because each site carries its own project
+ * set; the shared remodel keys are still compared across sites as `remodel`.
+ */
+const ALL_PROJECTS_FOR_HASH = Object.keys(PRICE_MATRIX) as Array<keyof typeof PRICE_MATRIX>;
+const COMPONENTS_BY_PROJECT = Object.fromEntries(
+  ALL_PROJECTS_FOR_HASH.map((p) => [p, getComponents(p as never)]),
+);
+
 const SETS: Record<string, unknown> = {
+  catalog: { COST_CATALOG_VERSION, COMPONENTS_BY_PROJECT, INSTALLED_UNIT_COSTS, DIRECT_COST_SHARE, NATURAL_BAND },
   remodel: { PRICE_MATRIX: pick(PRICE_MATRIX as Record<string, unknown>), PROFILE_SUMMARY: pick(PROFILE_SUMMARY as Record<string, unknown>), PROJECT_UPGRADES: pick(PROJECT_UPGRADES as Record<string, unknown>) },
   pricingAll: { PRICE_MATRIX, PROFILE_SUMMARY, PROJECT_UPGRADES }, re10: { RECIPES, CREW_MINIMUM_PRICE, CREW_FOR_TRADE, REPAIR_GRADE_BY_DIVISION, WORTHWHILE_JOB_PRICE, QUOTE_VALID_DAYS, CREW_HOURLY_COST, MOBILIZATION_COST, REPAIR_GRADE_DEFAULT_FACTOR, LINE_ITEMS } };
 
