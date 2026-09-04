@@ -1,3 +1,6 @@
+import { NATURAL_BAND } from "./costs/installedUnitCosts";
+import { buildUpTotal } from "./costCatalog";
+
 export type ProjectType = "kitchen" | "bathroom" | "whole-home" | "addition" | "adu" | "basement";
 export type FinishLevel = "refresh" | "mid-range" | "high-end" | "luxury";
 export type LayoutChanges = "none" | "moderate" | "major";
@@ -1361,7 +1364,6 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
   const finish = normalizeFinishLevel(input.project, input.finish);
   const safeInput: EstimateInput = finish === input.finish ? input : { ...input, finish };
   const base = getPriceData(safeInput.project, safeInput.finish);
-  const sizeMult = getSizeMultiplier(input.sqft, input.project);
   const refMult = getRefinementMultipliers(input.refinements, input.project);
   const maxFields = getMaxRefinementFields(input.project);
   const { level, percent } = getPlanningDetail(userRefinementCount, maxFields);
@@ -1378,7 +1380,6 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
   // and dragged the center upward. Scaling the midpoints instead keeps the
   // center a fair expected value while staying monotonic - a more intensive
   // selection still always moves it up.
-  const baseMid = (base.low + base.high) / 2;
   const refMid = (refMult.low + refMult.high) / 2;
 
   // Whole-home kitchen and bathroom counts are priced as modules added to or
@@ -1413,16 +1414,38 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
     input.refinements.upgradeScope,
   );
 
+  /*
+   * THE CENTRE IS BUILT, NOT LOOKED UP.
+   *
+   * It used to be the PRICE_MATRIX midpoint scaled by a size elasticity - a
+   * fixed figure that the breakdown was then divided back out of. The matrix
+   * cells were wrong (owner, 2026-09-03). This sums the actual scope instead:
+   * every direct component's quantity at this size, priced at its installed
+   * (labor-inclusive) unit cost for this finish level, grossed up for the soft
+   * costs every job carries. Refinements, modules, bathroom count and partial
+   * scope still adjust it exactly as before.
+   *
+   * No size multiplier is applied any more, because the build-up scales itself:
+   * per-square-foot components grow with the project while lot-priced ones
+   * (fixtures, demolition, permits) do not. That reproduces the sublinear
+   * behaviour SIZE_ELASTICITY approximated - a 250 sqft kitchen is roughly 80%
+   * per-sqft work, an implicit elasticity near 0.85, which is what the
+   * hand-tuned curve carried.
+   */
+  const builtMid = buildUpTotal(safeInput.project, safeInput.finish, safeInput.sqft);
+
   const center = Math.max(
     1000,
-    (baseMid * sizeMult * refMid + moduleMid) * bathroomInstances * scopeMult,
+    (builtMid * refMid + moduleMid) * bathroomInstances * scopeMult,
   );
 
   // The BAND starts at the category's own natural spread and TIGHTENS as the
   // user supplies more detail, so a fully-specified estimate is genuinely more
   // precise - not just a higher "detail" score. This is what makes "improve
   // estimate accuracy" real: fewer unknowns, a narrower range.
-  const rawBand = (base.high - base.low) / (base.high + base.low);
+  // The matrix's LEVELS were wrong, but the WIDTH of its ranges reflected real
+  // variance per work type, so that spread is retained as the starting band.
+  const rawBand = NATURAL_BAND[safeInput.project];
   // Compress the category's natural spread so even a bare estimate reads as a
   // confident, personalized range - not guesswork. A too-wide range erodes
   // trust, and an inflated high end scares qualified homeowners off before we

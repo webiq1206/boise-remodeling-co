@@ -88,9 +88,9 @@ export const INSTALLED_UNIT_COSTS: Record<
     "flooring-finishes": [10, 14, 21, 30],
     "windows-doors": [1900, 2500, 3600, 5200],
     "interior-trim-paint": [7, 9, 13, 19],
-    electrical: [10000, 13000, 18000, 25000],
-    "hvac-extension": [9000, 12000, 16500, 23000],
-    "plumbing-rough": [6000, 7800, 10800, 15000],
+    electrical: [25, 32, 45, 62],
+    "hvac-extension": [22, 30, 41, 57],
+    "plumbing-rough": [15, 19, 27, 37],
   },
   adu: {
     framing: [13, 16, 21, 28],
@@ -101,9 +101,9 @@ export const INSTALLED_UNIT_COSTS: Record<
     kitchenette: [15000, 20000, 28000, 39000],
     bathroom: [14000, 19000, 26000, 36000],
     "windows-doors": [1900, 2500, 3600, 5200],
-    electrical: [12000, 15500, 21000, 29000],
-    hvac: [10000, 13000, 18000, 25000],
-    plumbing: [9500, 12500, 17000, 24000],
+    electrical: [20, 26, 35, 48],
+    hvac: [17, 22, 30, 42],
+    plumbing: [16, 21, 28, 40],
   },
   basement: {
     "framing-insulation": [9, 11, 15, 20],
@@ -129,3 +129,20 @@ export function installedUnitCost(
   const i = FINISH_ORDER.indexOf(finish as (typeof FINISH_ORDER)[number]);
   return i >= 0 ? row[i] : undefined;
 }
+
+/**
+ * Inherent uncertainty of each project type, as a fraction either side of the
+ * centre. These are the spreads the old PRICE_MATRIX carried, averaged across
+ * its tiers - the matrix's LEVELS were wrong (owner, 2026-09-03) but the width
+ * of its ranges reflected real variance in each kind of work, so the spread is
+ * kept while the level is now built up. The band still tightens from here as
+ * the visitor supplies detail; see calculateEstimate.
+ */
+export const NATURAL_BAND: Record<ProjectType, number> = {
+  kitchen: 0.21,
+  bathroom: 0.22,
+  "whole-home": 0.23,
+  addition: 0.16,
+  adu: 0.17,
+  basement: 0.22,
+};

@@ -1,3 +1,4 @@
+import { buildUpTotal } from "../shared/costCatalog";
 import {
   EMPTY_ESTIMATE_INPUT,
   EMPTY_REFINEMENTS,
@@ -422,13 +423,18 @@ for (const project of ["addition", "adu"] as ProjectType[]) {
 }
 
 // 7. SOURCE FIDELITY. At its baseline size with no refinements, every project
-//    and finish must reproduce its reference pricing exactly. That reference is
-//    the 2025 Boise Remodeling Cost Guide for every category except ADU, which
-//    is calibrated to a real closed job (see the note on the adu entry below).
-//    This is the check that keeps the estimator honest to the published
-//    pricing: any future edit to PRICE_MATRIX, the band model, or the size
-//    scaling that causes the tool to quote something other than the guide at
-//    the reference size now fails the build.
+//    and finish must reproduce THE BUILD-UP exactly - the sum of each direct
+//    component's quantity at that size times its installed unit cost, grossed
+//    up for soft costs.
+//
+//    This check used to assert the 2025 cost guide / PRICE_MATRIX instead. The
+//    owner ruled those cells wrong (2026-09-03) and the engine now prices from
+//    the build-up, so asserting the retired numbers would pin the estimator to
+//    the very figures it was corrected away from. The guard itself still
+//    matters and is unchanged in spirit: any edit to unit costs, quantities,
+//    the band model or the soft-cost share that moves a baseline quote away
+//    from what the components sum to now fails the build. COST_GUIDE_2025 is
+//    retained below only as the historical reference the change moved off.
 const COST_GUIDE_2025: Partial<Record<ProjectType, Partial<Record<FinishLevel, [number, number]>>>> = {
   // Kitchen is no longer the guide. Calibrated 2026-07 against two issued
   // estimates (EST-10088 $34,335 and EST-10049 $31,850), both scope-normalized
@@ -486,39 +492,21 @@ const COST_GUIDE_2025: Partial<Record<ProjectType, Partial<Record<FinishLevel, [
   },
 };
 
-for (const project of projects) {
-  const tiers = COST_GUIDE_2025[project];
-  if (!tiers) continue;
-  const baseline = getProjectSizeConfig(project).baselineSqft;
-  for (const finish of getAvailableFinishLevels(project)) {
-    const expected = tiers[finish];
-    if (!expected) continue;
-    const r = priceAt(project, finish, baseline, { ...EMPTY_REFINEMENTS });
-    // The floor now tracks the guide and only the ceiling is reduced, so the
-    // relationship is asymmetric. It is also no longer exact: where a category's
-    // published spread is narrow, compressing the top alone pushes the band
-    // under MIN_BAND, and the model widens it back symmetrically around the
-    // centre rather than quote a falsely precise range. So this asserts the
-    // output sits inside a sane envelope around the intended figures rather
-    // than matching them to the dollar, which would fail for that reason alone.
-    const wantLow = expected[0] * PLANNING_RANGE_ADJUSTMENT_LOW;
-    const wantHigh = expected[1] * PLANNING_RANGE_ADJUSTMENT_HIGH;
-    const tolerance = 0.12; // room for the MIN_BAND re-centring
-    check(
-      r.priceLow >= wantLow * (1 - tolerance) &&
-        r.priceLow <= wantLow * (1 + tolerance) &&
-        r.priceHigh >= wantHigh * (1 - tolerance) &&
-        r.priceHigh <= wantHigh * (1 + tolerance),
-      `cost-guide fidelity ${project}/${finish} @${baseline}sf: engine ${r.priceLow}-${r.priceHigh}, expected near ${Math.round(wantLow)}-${Math.round(wantHigh)} (guide ${expected[0]}-${expected[1]}, low x${PLANNING_RANGE_ADJUSTMENT_LOW} high x${PLANNING_RANGE_ADJUSTMENT_HIGH})`,
-    );
-
-    // The ceiling must never exceed what the guide itself publishes.
-    check(
-      r.priceHigh <= expected[1],
-      `${project}/${finish} ceiling ${r.priceHigh} exceeds the published ${expected[1]}`,
-    );
+  for (const project of projects) {
+    const baseline = getProjectSizeConfig(project).baselineSqft;
+    for (const finish of getAvailableFinishLevels(project)) {
+      const r = priceAt(project, finish, baseline, { ...EMPTY_REFINEMENTS });
+      const built = buildUpTotal(project, finish, baseline);
+      const centre = (r.priceLow + r.priceHigh) / 2;
+      // Rounding to the nearest $1,000 at each end moves the centre slightly.
+      const tolerance = 0.02;
+      check(
+        Math.abs(centre - built) / built <= tolerance,
+        `${project}/${finish}: baseline quote must reproduce the build-up ` +
+          `(quoted centre ${Math.round(centre)}, components sum to ${Math.round(built)})`
+      );
+    }
   }
-}
 
 // 8. COMPONENT TAKEOFF RECONCILIATION. The catalog prices a project from
 //    components and quantities, but it must never move a price. Shares are

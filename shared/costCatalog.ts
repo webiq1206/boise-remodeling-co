@@ -50,6 +50,7 @@
  */
 
 import type { FinishLevel, ProjectType } from "./estimateEngine";
+import { installedUnitCost, DIRECT_COST_SHARE } from "./costs/installedUnitCosts";
 
 /**
  * Bump when shares, quantity ratios, or unit costs change. Stored on every
@@ -206,9 +207,9 @@ const DIRECT_COMPONENTS: Record<ProjectType, ComponentDef[]> = {
     { id: "flooring-finishes", label: "Flooring and finishes", unit: "square foot", share: 0.07, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
     { id: "windows-doors", label: "Windows and doors", unit: "each", share: 0.06, quantity: { kind: "per-sqft-count", divisor: 90 }, group: "direct" },
     { id: "interior-trim-paint", label: "Interior trim and paint", unit: "square foot", share: 0.06, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
-    { id: "electrical", label: "Electrical", unit: "allowance", share: 0.05, quantity: { kind: "lot" }, group: "direct" },
-    { id: "hvac-extension", label: "HVAC extension", unit: "allowance", share: 0.05, quantity: { kind: "lot" }, group: "direct" },
-    { id: "plumbing-rough", label: "Plumbing rough-in", unit: "allowance", share: 0.03, quantity: { kind: "lot" }, group: "direct" },
+    { id: "electrical", label: "Electrical", unit: "square foot", share: 0.05, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
+    { id: "hvac-extension", label: "HVAC extension", unit: "square foot", share: 0.05, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
+    { id: "plumbing-rough", label: "Plumbing rough-in", unit: "square foot", share: 0.03, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
   ],
   adu: [
     { id: "framing", label: "Framing and structure", unit: "square foot", share: 0.13, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
@@ -219,9 +220,9 @@ const DIRECT_COMPONENTS: Record<ProjectType, ComponentDef[]> = {
     { id: "kitchenette", label: "Kitchen or kitchenette", unit: "allowance", share: 0.06, quantity: { kind: "lot" }, group: "direct" },
     { id: "bathroom", label: "Bathroom", unit: "allowance", share: 0.06, quantity: { kind: "lot" }, group: "direct" },
     { id: "windows-doors", label: "Windows and doors", unit: "each", share: 0.05, quantity: { kind: "per-sqft-count", divisor: 90 }, group: "direct" },
-    { id: "electrical", label: "Electrical system", unit: "allowance", share: 0.05, quantity: { kind: "lot" }, group: "direct" },
-    { id: "hvac", label: "HVAC system", unit: "allowance", share: 0.04, quantity: { kind: "lot" }, group: "direct", note: "Separate system sized for the unit." },
-    { id: "plumbing", label: "Plumbing system", unit: "allowance", share: 0.04, quantity: { kind: "lot" }, group: "direct" },
+    { id: "electrical", label: "Electrical system", unit: "square foot", share: 0.05, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
+    { id: "hvac", label: "HVAC system", unit: "square foot", share: 0.04, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct", note: "Separate system sized for the unit." },
+    { id: "plumbing", label: "Plumbing system", unit: "square foot", share: 0.04, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
   ],
   basement: [
     { id: "framing-insulation", label: "Framing and insulation", unit: "square foot", share: 0.13, quantity: { kind: "per-sqft", factor: 1.0 }, group: "direct" },
@@ -334,11 +335,19 @@ export function buildTakeoff(
    */
   overrides?: UnitCostOverrides
 ): Takeoff {
+  /*
+   * Every direct component is priced from its real installed unit cost for this
+   * finish level (materials and labor in one figure - see installedUnitCosts).
+   * An admin override still wins over the catalogue price. Lines are therefore
+   * "measured" rather than a share of a number handed in from outside, which is
+   * what the takeoff used to be.
+   */
   const components = getComponents(project).map((component) => {
     const override = overrides?.[component.id];
-    return isValidOverrideValue(override)
-      ? { ...component, unitCost: override }
-      : component;
+    if (isValidOverrideValue(override)) return { ...component, unitCost: override };
+    if (component.group !== "direct") return component;
+    const installed = installedUnitCost(project, component.id, finish);
+    return installed === undefined ? component : { ...component, unitCost: installed };
   });
 
   const priced = components.map((component) => {
@@ -355,7 +364,22 @@ export function buildTakeoff(
     (sum, p) => sum + p.quantity * (p.component.unitCost as number),
     0
   );
-  const remaining = Math.max(0, total - measuredCost);
+  /*
+   * Reconcile to the quoted figure.
+   *
+   * Direct lines now carry real unit costs, so at the reference scope they sum
+   * to the price on their own. Refinements, module adjustments and partial
+   * scope move the quoted total away from that baseline, so the measured lines
+   * are scaled by one common factor to land on it. The RATIOS between lines
+   * stay exactly as the real costs set them - only the whole is stretched or
+   * compressed to match the job actually being quoted - so a homeowner reading
+   * the breakdown sees proportions that came from real installed costs rather
+   * than fixed percentages.
+   */
+  const targetDirect = total * DIRECT_COST_SHARE;
+  const measuredScale =
+    measuredCost > 0 && targetDirect > 0 ? targetDirect / measuredCost : 1;
+  const remaining = Math.max(0, total - measuredCost * measuredScale);
   const derivedShareTotal = derived.reduce((sum, p) => sum + p.component.share, 0);
 
   const lines: TakeoffLine[] = priced.map(({ component, quantity }) => {
@@ -364,8 +388,8 @@ export function buildTakeoff(
     let provenance: Provenance;
 
     if (component.unitCost !== undefined) {
-      unitCost = component.unitCost;
-      cost = quantity * unitCost;
+      cost = quantity * component.unitCost * measuredScale;
+      unitCost = quantity > 0 ? cost / quantity : component.unitCost;
       provenance = "measured";
     } else {
       const weight = derivedShareTotal > 0 ? component.share / derivedShareTotal : 0;
@@ -618,4 +642,45 @@ export const TAKEOFF_SCOPE_NOTICE =
 /** Shares must sum to 1 per project or the takeoff cannot reconcile. */
 export function shareSum(project: ProjectType): number {
   return getComponents(project).reduce((sum, c) => sum + c.share, 0);
+}
+
+/**
+ * Quantity of one component at a given project size.
+ * Exported so the build-up and the takeoff can never disagree about it.
+ */
+export function quantityForComponent(component: ComponentDef, sqft: number): number {
+  return quantityFor(component.quantity, sqft);
+}
+
+/**
+ * Direct cost of the work itself: every direct component's quantity at this
+ * size, priced at its installed (labor-inclusive) unit cost for this finish.
+ */
+export function buildUpDirectCost(
+  project: ProjectType,
+  finish: FinishLevel,
+  sqft: number
+): number {
+  let direct = 0;
+  for (const component of getComponents(project)) {
+    if (component.group !== "direct") continue;
+    const unit = installedUnitCost(project, component.id, finish);
+    if (unit === undefined) continue;
+    direct += quantityFor(component.quantity, sqft) * unit;
+  }
+  return direct;
+}
+
+/**
+ * The customer price this scope builds to: direct cost grossed up for the soft
+ * costs every job carries (project management, permits, contingency, overhead
+ * and profit). Folded in here rather than shown, so no client-facing figure
+ * ever separates them out.
+ */
+export function buildUpTotal(
+  project: ProjectType,
+  finish: FinishLevel,
+  sqft: number
+): number {
+  return buildUpDirectCost(project, finish, sqft) / DIRECT_COST_SHARE;
 }
