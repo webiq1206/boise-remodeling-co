@@ -87,6 +87,15 @@ const AUDIT = () => {
     if (cs.visibility === "hidden" || cs.display === "none" || Number(cs.opacity) < 0.15) return;
     const r = el.getBoundingClientRect();
     if (!r.width || !r.height) return;
+    /* Visually-hidden text (sr-only: clipped to 1px) is read by screen readers,
+       never seen, and has no contrast requirement. Without this it is judged
+       against whatever happens to be painted under its 1px clip. */
+    if (el.classList.contains("sr-only") || (r.width <= 1 && r.height <= 1)) return;
+    /* aria-hidden text is decorative by declaration: assistive tech never reads
+       it and its visual form is a deliberate choice - the masked "$--- to $---"
+       placeholder the estimator shows before contact capture is blurred on
+       purpose, and carries an sr-only twin with the real words. */
+    if (el.closest('[aria-hidden="true"]')) return;
     /* Text sitting on a photograph has no single ground to measure against; those
        are handled with scrims and are checked by eye, not by this script. */
     if (el.closest("[data-contrast-skip]")) return;

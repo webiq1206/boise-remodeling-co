@@ -42,11 +42,11 @@ export function BrandStatementBand() {
           screen when it arrives. Sans-light became the serif so it speaks in
           the same voice as every other heading on the page. */}
       <div className="ed-shell relative z-10 py-[var(--ed-pad-lg)]" data-contrast-skip>
-        <Reveal className="max-w-[24ch]">
+        <Reveal>
           <p className="ed-eyebrow" style={{ color: "rgb(255 255 255 / 0.72)" }}>
             {STATEMENT_BAND.eyebrow}
           </p>
-          <p id="statement-band-heading" className="ed-display text-inverse-foreground">
+          <p id="statement-band-heading" className="ed-display ed-statement-display text-inverse-foreground">
             {STATEMENT_BAND.statement}{" "}
             <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
               {STATEMENT_BAND.accentWord}

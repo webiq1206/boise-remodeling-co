@@ -318,6 +318,15 @@
  */
 .ed-statement { max-width: 20ch; }
 .ed-statement-wide { max-width: 26ch; }
+/*
+ * Measure for a display-size statement, set ON the heading so `ch` resolves
+ * against the heading's own font. Set on a wrapper it resolves against the
+ * wrapper's 16px body text instead - 24ch became about 210px and an 89px
+ * heading wrapped one word per line on every statement band. Measured, then
+ * fixed here rather than at four call sites.
+ */
+.ed-statement-display { max-width: 15ch; }
+
 
 /*
  * Hairline grid. The family's alternative to a row of drop-shadowed cards: a
@@ -501,7 +510,7 @@
   .ed-panel-reverse .ed-panel-body,
   .ed-panel-body { order: 2; padding: clamp(32px, 8vw, 48px) 24px; }
 
-  .ed-statement, .ed-statement-wide { max-width: none; }
+  .ed-statement, .ed-statement-wide, .ed-statement-display { max-width: none; }
   .ed-rail { --ed-rail-w: 78%; }
 }
 
