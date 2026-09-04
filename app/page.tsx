@@ -132,34 +132,47 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/50" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-transparent to-background" />
         </div>
-        <div className="container px-4 relative z-10">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-12 items-start">
-            <div className="md:col-span-2">
+        {/* The ask. Full measure, heading at h2 scale, the form kept in its
+            card because a form needs a defined field to sit in - this is one of
+            the places a card is actually the right answer. */}
+        <div className="ed-shell relative z-10">
+          <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div className="lg:sticky lg:top-28">
               <Reveal>
-                <div className="brc-label mb-5">Begin a conversation</div>
-                <h2 className="font-serif text-[2rem] md:text-[2.75rem] lg:text-[3.25rem] leading-[1.08] tracking-tight mb-4 text-foreground">
+                <p className="ed-eyebrow">Begin a conversation</p>
+                <h2 className="ed-h2 ed-statement">
                   Tell us about your{" "}
-                  <em className="brc-accent">home</em>.
+                  <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
+                    home
+                  </em>
+                  .
                 </h2>
-                <p className="text-base leading-relaxed mb-8 text-muted-foreground">
+                <p className="ed-lede mt-8 max-w-[40ch]">
                   We will reach out within one business day to schedule your free
-                  60 to 90 minute in-home visit. You will leave with planning guidance,
-                  design direction, and no obligation.
+                  60 to 90 minute in-home visit.
                 </p>
-                <div className="space-y-3">
+                <p className="ed-body mt-4">
+                  You will leave with planning guidance, design direction, and no
+                  obligation.
+                </p>
+                <ul
+                  className="mt-8 grid list-none gap-3 border-t p-0 pt-6"
+                  style={{ borderColor: "var(--ed-line)" }}
+                >
                   {CONSULT_BULLETS.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center gap-3 text-sm text-muted-foreground"
-                    >
-                      <Check className="h-4 w-4 flex-shrink-0 text-accent-legible" />
+                    <li key={item} className="ed-body flex items-center gap-3 text-[0.875rem]">
+                      <Check
+                        className="h-4 w-4 flex-shrink-0"
+                        style={{ color: "var(--ed-accent)" }}
+                        aria-hidden="true"
+                      />
                       {item}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </Reveal>
             </div>
-            <MarketingCard className="md:col-span-3 shadow-2xl" padding="lg">
+            <MarketingCard className="shadow-2xl" padding="lg">
               <ConsultationForm />
             </MarketingCard>
           </div>

@@ -20,9 +20,12 @@ import { getServiceBackground } from "@/shared/serviceBackgrounds";
  * NOW a lead panel plus an index. The first service gets a full-height image and
  * a display-size name; the rest become a bordered index whose rows carry the
  * name, the one-line description and the planning-from figure on a single
- * horizontal baseline, inverting to bone on hover. A homeowner scanning for
+ * horizontal baseline, the name taking the accent on hover. A homeowner scanning for
  * "bathroom, and what does it start at" reads one column instead of six cards,
  * and the section still leads with a real photograph.
+ *
+ * Ground stays dark. The layout change is what fixes this section; the page is
+ * deliberately dark-dominant and spends its one light band elsewhere.
  *
  * Deliberately no client JavaScript: the hover states are CSS, so this stays a
  * server component and the section costs nothing on the wire.
@@ -34,7 +37,7 @@ export function ServicesGrid() {
   const [lead, ...rest] = primary;
 
   return (
-    <Section id="services" surface="bone" spacing="xl">
+    <Section id="services" surface="dark" spacing="xl" edge>
       <div className="ed-shell">
         <div className="ed-split ed-split-end">
           <Reveal>

@@ -1,6 +1,5 @@
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
-import { SectionHeader } from "@/components/marketing/SectionHeader";
 import {
   DIFFERENTIATORS,
   DIFFERENTIATORS_INTRO,
@@ -13,6 +12,18 @@ interface WhyChooseUsSectionProps {
   limit?: number;
 }
 
+/**
+ * What sets us apart.
+ *
+ * WAS a centred heading over a single 768px column of divided rows - a list
+ * that read as a list.
+ *
+ * NOW a split: the heading and intro hold the left column and stay put while
+ * the right column scrolls, so the claim ("clarity, not chaos") stays in view
+ * beside every piece of evidence for it. The differentiators become a numbered
+ * index in the family's step pattern, each contrast line set in the serif so
+ * the "with us / elsewhere" turn actually reads as a turn.
+ */
 export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
   const items =
     limit !== undefined
@@ -20,47 +31,48 @@ export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
       : DIFFERENTIATORS;
 
   return (
-    <Section id="why-choose-us" variant="greige" divider>
-      <div className="container px-4">
-        <SectionHeader
-          eyebrow="What sets us apart"
-          size="display"
-          title={
-            <>
-              Built for homeowners who want{" "}
-              <em className="brc-accent">clarity</em>, not chaos
-            </>
-          }
-          description={DIFFERENTIATORS_INTRO}
-          className="max-w-3xl"
-        />
-
-        <div className="max-w-3xl mx-auto divide-y divide-border border-t border-border">
-          {items.map((item, i) => (
-            <Reveal key={item.title} delay={i * 40}>
-              <div className="py-7 md:py-8">
-                <h3 className="font-serif text-foreground text-xl md:text-2xl leading-snug mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-sm md:text-base leading-relaxed text-muted-foreground">
-                  <span className="text-foreground/90">{item.contrast}</span> {item.body}
-                </p>
-              </div>
+    <Section id="why-choose-us" surface="dark" spacing="xl" edge>
+      <div className="ed-shell">
+        <div className="ed-split ed-split-narrow">
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <Reveal>
+              <p className="ed-eyebrow">What sets us apart</p>
+              <h2 className="ed-h2 ed-statement">
+                Built for homeowners who want{" "}
+                <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
+                  clarity
+                </em>
+                , not chaos
+              </h2>
+              <p className="ed-body mt-7">{DIFFERENTIATORS_INTRO}</p>
+              {limit !== undefined && (
+                <div className="mt-10 flex flex-wrap gap-x-8 gap-y-4">
+                  <a href="/about" className="ed-link">
+                    Our approach
+                  </a>
+                  <a href="#consult" className="ed-link ed-link-accent">
+                    {CTA_SECONDARY}
+                  </a>
+                </div>
+              )}
             </Reveal>
-          ))}
-        </div>
+          </div>
 
-        {limit !== undefined && (
-          <p className="text-sm text-muted-foreground text-center mt-10 max-w-xl mx-auto">
-            <a href="/about" className="text-foreground hover:text-foreground/70 transition-colors font-normal">
-              Learn more about our approach
-            </a>
-            {' · '}
-            <a href="#consult" className="text-foreground hover:text-foreground/70 transition-colors font-normal">
-              {CTA_SECONDARY}
-            </a>
-          </p>
-        )}
+          <div className="ed-steps">
+            {items.map((item, i) => (
+              <Reveal key={item.title} delay={i * 40}>
+                <div className="ed-step">
+                  <span className="ed-step-n">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3 className="ed-h3">{item.title}</h3>
+                    <p className="ed-lede mt-4 max-w-[46ch] text-[1.0625rem]">{item.contrast}</p>
+                    <p className="ed-body mt-3">{item.body}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </div>
     </Section>
   );

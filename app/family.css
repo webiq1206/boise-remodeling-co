@@ -109,7 +109,9 @@
  * already defines, so alternating grounds costs no new brand colour.
  */
 .ed-on-dark { color: var(--ed-ink); background: var(--ed-ground); }
-.ed-on-deep { color: var(--ed-ink); background: color-mix(in srgb, hsl(var(--background)) 82%, #000); }
+/* Measured at 82% the step from dark was five RGB points - a difference you
+   can prove but not see. 68% puts it clearly below the page ground. */
+.ed-on-deep { color: var(--ed-ink); background: color-mix(in srgb, hsl(var(--background)) 68%, #000); }
 .ed-on-bone { color: var(--ed-bone-ink); background: var(--ed-bone); }
 .ed-on-muted { color: var(--ed-bone-ink); background: color-mix(in srgb, hsl(var(--primary)) 93%, hsl(var(--accent))); }
 .ed-on-gradient {
