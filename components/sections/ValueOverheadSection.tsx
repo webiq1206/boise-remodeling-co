@@ -9,51 +9,75 @@ import { CTA_PRIMARY } from "@/shared/ctaCopy";
 /**
  * "Where your money goes" value band. Placed just before the estimator so it
  * frames the pricing conversation: lean overhead means more of the budget lands
- * in the home. Confident editorial voice; copy lives in shared/siteContent.ts.
+ * in the home. Copy lives in shared/siteContent.ts.
+ *
+ * LAYOUT: the first light band on the page, and the first thing a visitor meets
+ * after the hero, so it carries the biggest tonal break on the site - charcoal
+ * straight into bone. The heading runs the full measure on its own line, with
+ * the reading column and the image below it at an asymmetric 1.15/0.85, the
+ * image pulled up into the heading's whitespace. That is deliberately NOT the
+ * centred image-beside-text this used to be: the same arrangement repeated down
+ * a page is what made the old one read as assembled rather than designed.
  */
 export function ValueOverheadSection() {
   return (
-    <Section id="value" divider>
-      <div className="container px-4">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+    <Section id="value" surface="bone" spacing="xl">
+      <div className="ed-shell">
+        <Reveal>
+          <p className="ed-eyebrow">{VALUE_MODEL.eyebrow}</p>
+          <h2 className="ed-h2 ed-statement-wide">
+            {VALUE_MODEL.headlineA}
+            <br />
+            {VALUE_MODEL.headlineB}{" "}
+            <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
+              {VALUE_MODEL.accentWord}
+            </em>
+            .
+          </h2>
+        </Reveal>
+
+        <div className="mt-[clamp(40px,5vw,72px)] grid gap-[var(--ed-gutter)] lg:grid-cols-[1.15fr_0.85fr] lg:items-start">
           <Reveal>
-            <div className="brc-label mb-6">{VALUE_MODEL.eyebrow}</div>
-            <h2 className="font-serif text-[2rem] md:text-[3rem] lg:text-[3.25rem] leading-[1.06] tracking-tight text-foreground">
-              {VALUE_MODEL.headlineA}
-              <br />
-              {VALUE_MODEL.headlineB}{" "}
-              <em className="brc-accent">{VALUE_MODEL.accentWord}</em>.
-            </h2>
+            <div className="max-w-[52ch]">
+              <p className="ed-lede">{VALUE_MODEL.costs}</p>
+              <p className="ed-body mt-6">
+                {VALUE_MODEL.costsBody} {VALUE_MODEL.reframe}
+              </p>
 
-            <div className="mt-8 h-px w-16 bg-accent-legible" />
+              <p className="ed-h3 mt-10">
+                {VALUE_MODEL.taglineLead}{" "}
+                <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
+                  {VALUE_MODEL.taglineAccent}
+                </em>
+                .
+              </p>
 
-            <p className="mt-8 max-w-2xl text-lg md:text-xl leading-relaxed text-foreground/90">
-              {VALUE_MODEL.costs}
-            </p>
-            <p className="mt-3 max-w-2xl text-base md:text-lg leading-relaxed text-muted-foreground">
-              {VALUE_MODEL.costsBody} {VALUE_MODEL.reframe}
-            </p>
-
-            <p className="mt-8 font-sans font-light text-2xl md:text-3xl tracking-tight text-foreground">
-              {VALUE_MODEL.taglineLead}{" "}
-              <em className="brc-accent">{VALUE_MODEL.taglineAccent}</em>.
-            </p>
-
-            <div className="mt-8">
-              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+              <div className="mt-10">
+                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+              </div>
             </div>
           </Reveal>
 
+          {/*
+            Pulled up on large screens so the image top-aligns with the heading
+            rather than the copy, which is what makes the band read as offset
+            instead of as two equal columns.
+          */}
           <Reveal delay={80}>
-            <div className="relative aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-sm">
-              <Image
-                src={SITE_IMAGES.value}
-                alt="Custom cabinetry being leveled and a quartz countertop set during a Boise kitchen remodel, with white-oak flooring staged for installation"
-                fill
-                sizes="(max-width: 768px) 100vw, 40vw"
-                className="object-cover img-brand-grade"
-              />
-            </div>
+            <figure className="ed-zoom relative m-0 lg:-mt-[clamp(60px,7vw,120px)]">
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <Image
+                  src={SITE_IMAGES.value}
+                  alt="Custom cabinetry being leveled and a quartz countertop set during a Boise kitchen remodel, with white-oak flooring staged for installation"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover img-brand-grade"
+                />
+              </div>
+              <figcaption className="ed-small mt-4 border-t pt-4" style={{ borderColor: "var(--ed-line)" }}>
+                Kitchen install, Meridian
+              </figcaption>
+            </figure>
           </Reveal>
         </div>
       </div>

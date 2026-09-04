@@ -90,7 +90,7 @@ export function BudgetInclusionsSection() {
                   <p className="text-sm leading-relaxed mb-3 text-inverse-muted">
                     {OPTIONAL_ENHANCEMENTS.body}
                   </p>
-                  <p className="text-xs mb-4 text-inverse-muted/80">
+                  <p className="text-xs mb-4 text-inverse-muted">
                     {OPTIONAL_ENHANCEMENTS.note}
                   </p>
                   <a

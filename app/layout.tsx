@@ -12,6 +12,9 @@ import { MicrosoftClarity } from '@/components/MicrosoftClarity'
 import { ConversionTracking } from '@/components/ConversionTracking'
 import { AssistantWidget } from '@/components/assistant/AssistantWidget'
 import './globals.css'
+// The shared P5 family editorial layer. Imported after globals so it can build
+// on the site's tokens; identical file in all four brand repositories.
+import './family.css'
 
 // P5 family typefaces, self-hosted from the same two OFL variable files P5 Home Co serves.
 const manrope = localFont({

@@ -99,7 +99,7 @@ export function UploadField({
         </span>
         <span className="mt-1 block text-body-sm text-inverse-muted">{acceptLabel}</span>
         {limitLabel ? (
-          <span className="mt-0.5 block text-label text-inverse-muted/80">{limitLabel}</span>
+          <span className="mt-0.5 block text-label text-inverse-muted">{limitLabel}</span>
         ) : null}
 
         <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
