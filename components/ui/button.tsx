@@ -28,6 +28,10 @@ const buttonVariants = cva(
         /** Ghost CTA for use over dark hero imagery / inverse bands. */
         heroGhost:
           "rounded-sm border border-inverse-foreground/30 bg-inverse-foreground/10 text-inverse-foreground backdrop-blur-sm min-h-11 px-6 py-3.5",
+        /** The hero's secondary CTA: same 58px uppercase format as `brand` so the
+            pair reads as a pair, with inverse colours for use over photography. */
+        heroOutline:
+          "rounded-none border border-inverse-foreground/70 bg-inverse-foreground/[0.08] text-inverse-foreground backdrop-blur-sm min-h-[58px] px-8 text-[11px] font-bold uppercase tracking-[0.16em] gap-5 hover:bg-inverse-foreground hover:text-inverse",
         /** @deprecated Marketing uses brand only. Kept for backward compatibility. */
         brandGhost:
           "rounded-sm border border-transparent text-foreground min-h-11 px-6 py-3.5",
@@ -65,6 +69,7 @@ const buttonVariants = cva(
           "brand",
           "brandOutline",
           "heroGhost",
+          "heroOutline",
           "brandGhost",
           "brandAccent",
           "brandInverseOutline",

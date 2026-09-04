@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
-import { TextLink } from "@/components/marketing/TextLink";
 import { Button } from "@/components/ui/button";
 import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { SERVICES } from "@/shared/contentData";
@@ -122,14 +121,16 @@ export function ServicesGrid() {
                     {service.planningFrom}
                   </span>
                 </p>
-                <svg
-                  className="ed-arrow hidden transition-transform group-hover:translate-x-1 md:block"
-                  viewBox="0 0 22 15"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path d="M0 7.5h20M14 1.5l6 6-6 6" />
-                </svg>
+                <span className="hidden md:block">
+                  <svg
+                    className="ed-arrow transition-transform group-hover:translate-x-1"
+                    viewBox="0 0 22 15"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path d="M0 7.5h20M14 1.5l6 6-6 6" />
+                  </svg>
+                </span>
               </a>
             </Reveal>
           ))}
@@ -152,18 +153,14 @@ export function ServicesGrid() {
                 planning range, with no obligation.
               </p>
             </div>
-            <div className="flex flex-shrink-0 flex-col gap-4 sm:flex-row sm:items-center">
-              <ConsultCTA variant="brand">{CTA_SECONDARY}</ConsultCTA>
-              <Button variant="brandOutline" asChild>
+            <div className="flex w-full flex-shrink-0 flex-col gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-4">
+              <ConsultCTA variant="brand" className="w-full sm:w-auto">{CTA_SECONDARY}</ConsultCTA>
+              <Button variant="brandOutline" className="w-full sm:w-auto" asChild>
                 <a href="/services">All services</a>
               </Button>
             </div>
           </div>
         </Reveal>
-
-        <div className="mt-10 flex justify-center">
-          <TextLink href="#consult">{CTA_SECONDARY}</TextLink>
-        </div>
       </div>
     </Section>
   );

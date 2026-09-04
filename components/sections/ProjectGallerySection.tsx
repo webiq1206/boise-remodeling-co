@@ -56,7 +56,7 @@ export function ProjectGallerySection({
   if (!lead) return null;
 
   return (
-    <Section id="gallery" surface="deep" spacing="xl" edge className="overflow-hidden">
+    <Section id="gallery" surface="bone" spacing="xl" edge className="overflow-hidden">
       <div className="ed-shell">
         {/* LEAD: the slider at the size it deserves, heading alongside. */}
         <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.8fr_1.2fr] lg:items-end">

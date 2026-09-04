@@ -36,7 +36,7 @@ export function FAQSection() {
   const visibleFaqs = showAll ? HOMEPAGE_FAQS : HOMEPAGE_FAQS.slice(0, INITIAL_FAQ_COUNT);
 
   return (
-    <Section id="faq" surface="dark" spacing="xl" edge>
+    <Section id="faq" surface="bone" spacing="xl" edge>
       <div className="ed-shell">
         <div className="ed-split ed-split-narrow">
           <div className="lg:sticky lg:top-28 lg:self-start">
@@ -47,9 +47,9 @@ export function FAQSection() {
                 matter
               </em>
             </h2>
-            <div className="mt-10 flex flex-wrap gap-4">
-              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
-              <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+              <EstimateCTA variant="brand" className="w-full sm:w-auto">{CTA_PRIMARY}</EstimateCTA>
+              <ConsultCTA variant="brandOutline" className="w-full sm:w-auto">{CTA_SECONDARY}</ConsultCTA>
             </div>
           </div>
 

@@ -64,7 +64,7 @@ export default function StyleGuidePage() {
       <Section divider>
         <div className="container px-4 max-w-4xl space-y-6">
           <h2 className="text-section-title font-serif">Buttons & links</h2>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-3 [&>*]:w-full sm:[&>*]:w-auto">
             <Button variant="brand">Primary (brand)</Button>
             <Button variant="brandOutline">Secondary (outline)</Button>
           </div>

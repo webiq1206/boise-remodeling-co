@@ -76,6 +76,11 @@
   --ed-ink: hsl(var(--foreground));
   --ed-bone: hsl(var(--primary));
   --ed-bone-ink: hsl(var(--primary-foreground));
+  /* The raw triplets, captured here at the root so a light band can swap
+     --primary and --primary-foreground for its buttons without the swap
+     feeding back into its own ground. */
+  --ed-bone-hsl: var(--primary);
+  --ed-bone-ink-hsl: var(--primary-foreground);
   --ed-muted-ink: hsl(var(--muted-foreground));
 
   --ed-line: hsl(var(--border));
@@ -136,21 +141,27 @@
  * own palette so this stays brand-agnostic.
  */
 .ed-on-bone, .ed-on-muted {
-  --background: var(--primary);
-  --foreground: var(--primary-foreground);
+  --background: var(--ed-bone-hsl);
+  --foreground: var(--ed-bone-ink-hsl);
+  /* Buttons. `brand` fills with --primary, which on these sites IS the bone.
+     Without this swap a primary CTA on a bone band is bone-on-bone. */
+  --primary: var(--ed-bone-ink-hsl);
+  --primary-foreground: var(--ed-bone-hsl);
+  --primary-border: hsl(var(--ed-bone-ink-hsl));
   /* `--heading` is separate from `--foreground` on these sites and every h1-h6
      is coloured from it in globals. Missing it here rendered bone headings on a
      bone band at a contrast ratio of 1.00 - literally invisible - which is what
      measuring the rendered page caught and eyeballing a screenshot would not. */
-  --heading: var(--primary-foreground);
+  --heading: var(--ed-bone-ink-hsl);
   --faint: 160 4% 46%;
-  --inverse: var(--primary);
+  /* --inverse is NOT remapped: a dark overlay badge over a photograph is
+     still the right thing on a light band. */
   --surface-greige: 36 16% 93%;
   --surface-muted: 36 14% 95%;
   --card: 0 0% 100%;
-  --card-foreground: var(--primary-foreground);
+  --card-foreground: var(--ed-bone-ink-hsl);
   --popover: 0 0% 100%;
-  --popover-foreground: var(--primary-foreground);
+  --popover-foreground: var(--ed-bone-ink-hsl);
   /* ~38% lightness against a 96% ground clears 7:1 - comfortably past AA. */
   --muted: 36 16% 91%;
   --muted-foreground: 160 5% 34%;
@@ -162,14 +173,14 @@
   --accent-text: var(--accent-on-light);
 
   --ed-line: var(--ed-line-bone);
-  --ed-ink: hsl(var(--primary-foreground));
+  --ed-ink: hsl(var(--ed-bone-ink-hsl));
   /*
    * Mixed toward the BAND's own ground rather than toward `transparent`, so the
    * result is opaque and its contrast can actually be reasoned about. The first
    * pass used 62% against transparent, which composites to about 3.93:1 on bone
    * - under the 4.5:1 floor for body text. 74% clears 5:1 with headroom.
    */
-  --ed-muted-ink: color-mix(in srgb, hsl(var(--primary-foreground)) 74%, hsl(var(--primary)));
+  --ed-muted-ink: color-mix(in srgb, hsl(var(--ed-bone-ink-hsl)) 74%, hsl(var(--ed-bone-hsl)));
   --ed-accent: color-mix(in srgb, hsl(var(--accent)) 58%, #000);
 }
 
@@ -485,7 +496,9 @@
 
 @media (max-width: 1100px) {
   .ed-split, .ed-split-narrow { grid-template-columns: 1fr 1fr; }
-  .ed-matrix { --ed-cols: 2; }
+  /* Set the track list directly: an inline --ed-cols on the element would
+     otherwise beat this media query and keep four columns on a phone. */
+  .ed-matrix { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ed-panel, .ed-panel-reverse { grid-template-columns: 52% 48%; }
 }
 
@@ -500,7 +513,9 @@
   }
 
   .ed-split, .ed-split-even, .ed-split-narrow { grid-template-columns: 1fr; }
-  .ed-matrix { --ed-cols: 2; }
+  /* Set the track list directly: an inline --ed-cols on the element would
+     otherwise beat this media query and keep four columns on a phone. */
+  .ed-matrix { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ed-matrix > * { min-height: 0; }
 
   /* The image leads on mobile: it is the fastest thing to understand. */
@@ -515,7 +530,7 @@
 }
 
 @media (max-width: 560px) {
-  .ed-matrix { --ed-cols: 1; }
+  .ed-matrix { grid-template-columns: minmax(0, 1fr); }
   /* Tap targets stay comfortable rather than inheriting a desktop density. */
   .ed-link, .ed-step { min-height: 44px; }
 }

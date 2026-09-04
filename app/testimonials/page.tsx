@@ -65,11 +65,11 @@ export default function TestimonialsPage() {
           Explore recent design-build transformations. Drag any slider to compare the before and after,
           then picture the same clarity and craftsmanship in your home.
         </p>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap [&>*]:w-full sm:[&>*]:w-auto">
           <EstimateCTA variant="brand">
             {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
           </EstimateCTA>
-          <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
+          <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
         </div>
       </PageHeroBand>
 

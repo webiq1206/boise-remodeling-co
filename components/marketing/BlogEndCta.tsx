@@ -32,12 +32,12 @@ export function BlogEndCta() {
         Get an instant planning range in 60 seconds, then book a free in-home visit when you&apos;re
         ready. No obligation, no pressure.
       </p>
-      <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto sm:items-center">
         <EstimateCTA variant="brand" size="lg" data-testid="link-bottom-cta-estimate">
           {CTA_PRIMARY}
           <ArrowRight className="ml-2 h-5 w-5" />
         </EstimateCTA>
-        <Button variant="heroGhost" size="lg" asChild data-testid="link-bottom-cta-consult">
+        <Button variant="heroOutline" size="lg" asChild data-testid="link-bottom-cta-consult">
           <a href="/contact#consult">Book a free visit</a>
         </Button>
         <div className="flex flex-col items-center gap-1">

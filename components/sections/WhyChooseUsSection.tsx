@@ -65,8 +65,8 @@ export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
                   <span className="ed-step-n">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <h3 className="ed-h3">{item.title}</h3>
-                    <p className="ed-lede mt-4 max-w-[46ch] text-[1.0625rem]">{item.contrast}</p>
-                    <p className="ed-body mt-3">{item.body}</p>
+                    <p className="ed-body mt-3 max-w-[52ch] text-foreground">{item.contrast}</p>
+                    <p className="ed-body mt-2">{item.body}</p>
                   </div>
                 </div>
               </Reveal>

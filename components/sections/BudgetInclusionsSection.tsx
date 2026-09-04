@@ -81,7 +81,7 @@ export function BudgetInclusionsSection() {
                 <span className="ed-small" style={{ color: "var(--ed-accent)" }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="ed-h4 mt-auto pt-10">{point.title}</h3>
+                <h3 className="ed-h4 mt-auto pt-6 sm:pt-10">{point.title}</h3>
                 <p className="ed-body mt-3 text-[0.875rem]">{point.body}</p>
               </div>
             ))}

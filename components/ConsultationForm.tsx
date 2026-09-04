@@ -403,13 +403,14 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
                 type="button"
                 size="sm"
                 variant="brandOutline"
+                className="w-full whitespace-normal px-4 py-3 text-center sm:w-auto sm:whitespace-nowrap sm:px-8"
                 onClick={onRevise}
                 data-testid="button-start-estimate"
               >
                 Get your planning range <ArrowRight className="h-4 w-4" />
               </Button>
             ) : (
-              <EstimateCTA size="sm" variant="brandOutline" data-testid="button-start-estimate">
+              <EstimateCTA size="sm" variant="brandOutline" className="w-full whitespace-normal px-4 py-3 text-center sm:w-auto sm:whitespace-nowrap sm:px-8" data-testid="button-start-estimate">
                 Get your planning range <ArrowRight className="h-4 w-4" />
               </EstimateCTA>
             )}
@@ -675,6 +676,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
           <Button
             type="submit"
             variant="brand"
+            className="whitespace-normal px-4 py-3 text-center sm:whitespace-nowrap sm:px-8"
             disabled={mutation.isPending}
             data-testid="button-submit-consultation"
           >

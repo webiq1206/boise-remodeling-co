@@ -181,7 +181,7 @@ export default function ServicesIndexPage() {
         description="Use our Treasure Valley project estimator to see a realistic planning range for kitchen, bath, whole-home and addition work - then book a free visit when you're ready."
       />
 
-      <Section surface="deep" spacing="xl" edge>
+      <Section surface="bone" spacing="xl" edge>
         <div className="ed-shell">
           <div className="ed-split ed-split-end">
             <Reveal>
@@ -219,7 +219,7 @@ export default function ServicesIndexPage() {
               <p className="ed-body">
                 Book a free in-home visit or get an instant planning range for your project.
               </p>
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
                 <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
                 <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
               </div>
