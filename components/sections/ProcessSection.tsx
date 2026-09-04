@@ -1,62 +1,66 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
-import { DisplayNum, Section } from "@/components/marketing";
+import { Section } from "@/components/marketing";
 import { HOW_WE_BUILD_STEPS } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
 import { GRAIN_URL } from "@/lib/grain";
 
+/**
+ * How we build.
+ *
+ * WAS a 50/50 split with a 44px heading and 14px step titles - the process
+ * rendered smaller than the marketing copy around it.
+ *
+ * NOW the family's image-and-content panel at 43/57, reversed so the
+ * photograph sits on the right and the timeline leads. Each step is a numbered
+ * entry in the step pattern with a serif title at h3 scale, so the sequence
+ * reads as a sequence: a homeowner can count to five and know what "yes" sets
+ * in motion.
+ */
 export function ProcessSection() {
   return (
-    <Section id="how-we-build" variant="greige" spacing="none" divider className="p-0">
-      <div className="grid md:grid-cols-2 overflow-hidden">
-        <div className="relative min-h-[220px] md:min-h-[560px] overflow-hidden">
+    <Section id="how-we-build" surface="deep" spacing="none" edge className="p-0">
+      <div className="ed-panel ed-panel-reverse">
+        <div className="ed-panel-media">
           <Image
             src={SITE_IMAGES.processInProgress}
             alt="Kitchen remodel in progress with cabinets being installed by the Boise Remodeling Co team"
             fill
             loading="lazy"
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 820px) 100vw, 43vw"
             className="object-cover img-brand-grade"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-inverse/45 via-inverse/25 to-inverse/75" />
           <div
-            className="absolute inset-0 pointer-events-none"
+            className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat", opacity: 0.028 }}
           />
-          <div className="absolute bottom-0 left-0 p-8 md:p-12">
-            <div className="brc-label mb-3 text-inverse-muted">How We Build</div>
-            <p className="font-sans font-light text-xl md:text-2xl text-inverse-foreground">
-              Free in-home visit
-              <br />
-              to final walkthrough
-            </p>
-          </div>
+          <p className="ed-panel-caption">In progress · Boise kitchen</p>
         </div>
 
-        <div className="section-y-sm px-8 md:px-14 lg:px-16 bg-card border-l border-border">
+        <div className="ed-panel-body">
           <Reveal>
-            <div className="brc-label mb-5">Our process</div>
-            <h2 className="font-serif text-[2rem] md:text-[2.5rem] lg:text-[2.75rem] leading-[1.08] tracking-tight mb-10 text-foreground">
+            <p className="ed-eyebrow">Our process</p>
+            <h2 className="ed-h2-sm ed-statement">
               From first visit to{" "}
-              <em className="brc-accent">final walkthrough</em>
+              <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
+                final walkthrough
+              </em>
             </h2>
-            <div className="space-y-0">
-              {HOW_WE_BUILD_STEPS.map((step, i) => (
-                <div
-                  key={step.number}
-                  className={`flex gap-5 py-6 ${i < HOW_WE_BUILD_STEPS.length - 1 ? "border-b border-border" : ""}`}
-                >
-                  <DisplayNum className="text-2xl w-8 flex-shrink-0 leading-none mt-0.5 text-accent-legible">
-                    {step.number}
-                  </DisplayNum>
+          </Reveal>
+
+          <div className="ed-steps mt-[clamp(32px,4vw,56px)]">
+            {HOW_WE_BUILD_STEPS.map((step, i) => (
+              <Reveal key={step.number} delay={i * 40}>
+                <div className="ed-step">
+                  <span className="ed-step-n">{step.number}</span>
                   <div>
-                    <p className="font-normal text-sm mb-1 text-foreground">{step.title}</p>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                    <h3 className="ed-h4">{step.title}</h3>
+                    <p className="ed-body mt-2 text-[0.875rem]">{step.desc}</p>
                   </div>
                 </div>
-              ))}
-            </div>
-          </Reveal>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
     </Section>

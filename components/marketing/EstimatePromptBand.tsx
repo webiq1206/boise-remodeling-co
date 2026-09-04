@@ -1,4 +1,4 @@
-import { ArrowRight, Calculator } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Section } from "./Section";
 import { Reveal } from "@/components/Reveal";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
@@ -8,20 +8,30 @@ interface EstimatePromptBandProps {
   eyebrow?: string;
   title: React.ReactNode;
   description: string;
+  /** Kept for callers; both now render on the family's gradient ground. */
   variant?: "greige" | "canvas";
   /** Optional bullet trust points shown beside the CTA on md+. */
   bullets?: string[];
 }
 
 /**
- * Contextual estimator prompt for service, area, and content pages.
+ * Contextual estimator prompt for service, area and content pages.
  * Opens the modal off-home; scrolls to #calculator on the homepage.
+ *
+ * WAS a card inside a card: a bordered panel with an icon box, a left accent
+ * rule and a 36px heading, centred in a 1024px container on a band the same
+ * value as its neighbours. It read as a widget.
+ *
+ * NOW a statement band. The brief asked for large statement sections, and a
+ * single prompt with one action is exactly the content that suits one: display
+ * heading, a short lede, the CTA. It sits on the family's gradient ground - the
+ * one accent-tinted surface on the page - so it marks a pause between the work
+ * and the reasons, rather than being another box in a column of boxes.
  */
 export function EstimatePromptBand({
   eyebrow = "Planning your budget",
   title,
   description,
-  variant = "greige",
   bullets = [
     "Based on real Treasure Valley project costs",
     "Instant range in about 60 seconds",
@@ -29,46 +39,43 @@ export function EstimatePromptBand({
   ],
 }: EstimatePromptBandProps) {
   return (
-    <Section variant={variant} divider>
-      <div className="container px-4 max-w-5xl mx-auto">
-        <Reveal>
-          <div className="marketing-card relative overflow-hidden border-accent-legible/25 p-8 md:p-10 lg:p-12">
-            <div className="absolute inset-y-0 left-0 w-1 bg-accent-legible/70" aria-hidden />
-            <div className="grid md:grid-cols-[1fr_auto] gap-8 items-center">
-              <div>
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-accent-legible/10 text-accent-legible">
-                    <Calculator className="h-4 w-4" strokeWidth={1.5} />
-                  </div>
-                  <div className="brc-label">{eyebrow}</div>
-                </div>
-                <h2 className="font-serif text-[1.75rem] md:text-[2.25rem] leading-[1.08] tracking-tight text-foreground mb-3">
-                  {title}
-                </h2>
-                <p className="text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl mb-6">
-                  {description}
-                </p>
-                <ul className="hidden sm:grid sm:grid-cols-1 gap-2 text-sm text-muted-foreground">
-                  {bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-2">
-                      <span className="text-accent-legible mt-0.5">·</span>
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-col items-stretch sm:items-start gap-3 md:min-w-[200px]">
-                <EstimateCTA variant="brand" size="lg" className="w-full sm:w-auto">
-                  {CTA_PRIMARY}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </EstimateCTA>
-                <p className="text-label text-muted-foreground text-center sm:text-left">
-                  Free · Not a binding quote
-                </p>
-              </div>
+    <Section surface="gradient" spacing="xl" edge>
+      <div className="ed-shell">
+        <div className="ed-split ed-split-end">
+          <Reveal>
+            <p className="ed-eyebrow ed-eyebrow-accent">{eyebrow}</p>
+            <h2 className="ed-h2 ed-statement-wide">{title}</h2>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div className="flex flex-col items-start gap-6">
+              <p className="ed-body">{description}</p>
+              <EstimateCTA variant="brand" size="lg" className="w-full sm:w-auto">
+                {CTA_PRIMARY}
+                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+              </EstimateCTA>
+              <p className="ed-small">Free · Not a binding quote</p>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+        </div>
+
+        {bullets.length > 0 && (
+          <Reveal delay={120}>
+            <ul
+              className="mt-[clamp(40px,5vw,72px)] grid list-none gap-6 border-t pt-8 sm:grid-cols-3"
+              style={{ borderColor: "var(--ed-line)" }}
+            >
+              {bullets.map((b, i) => (
+                <li key={b} className="ed-body flex items-start gap-4 text-[0.875rem]">
+                  <span className="ed-small pt-1" style={{ color: "var(--ed-accent)" }}>
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        )}
       </div>
     </Section>
   );

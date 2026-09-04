@@ -3,8 +3,6 @@
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
-import { SectionHeader } from "@/components/marketing/SectionHeader";
-import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Button } from "@/components/ui/button";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { GALLERY_PROJECTS, type GalleryProject } from "@/shared/galleryData";
@@ -14,23 +12,14 @@ function cityDisplayName(slug: string) {
   return CITIES.find((c) => c.slug === slug)?.name ?? slug;
 }
 
-function BeforeAfterCard({ project }: { project: GalleryProject }) {
+function ProjectMeta({ project, lead = false }: { project: GalleryProject; lead?: boolean }) {
   const cityName = cityDisplayName(project.city);
-
   return (
-    <MarketingCard className="overflow-hidden p-0">
-      <BeforeAfterSlider
-        beforeSrc={project.beforeImageUrl}
-        afterSrc={project.afterImageUrl}
-        beforeAlt={`Before: ${project.title} in ${cityName}, Idaho`}
-        afterAlt={`After: ${project.title} in ${cityName}, Idaho`}
-        aspectClass="aspect-[4/3]"
-      />
-      <div className="p-5">
-        <h3 className="font-serif font-normal text-sm mb-1 text-foreground">{project.title}</h3>
-        <p className="text-xs text-muted-foreground leading-relaxed">{project.description}</p>
-      </div>
-    </MarketingCard>
+    <>
+      <p className="ed-eyebrow ed-eyebrow-accent !mb-3">{cityName}, Idaho</p>
+      <h3 className={lead ? "ed-h3" : "ed-h4"}>{project.title}</h3>
+      <p className={`ed-body mt-3 ${lead ? "" : "text-[0.875rem]"}`}>{project.description}</p>
+    </>
   );
 }
 
@@ -41,6 +30,20 @@ interface ProjectGallerySectionProps {
   excludeServiceTypes?: string[];
 }
 
+/**
+ * Our work.
+ *
+ * WAS six equal before/after cards in a three-column grid with 14px titles.
+ * The slider - the one genuinely interactive, genuinely persuasive thing on
+ * the page - was rendered at a third of the width and given a caption smaller
+ * than the body copy.
+ *
+ * NOW one project leads at full scale, the heading beside it, so the slider is
+ * large enough to actually be dragged and the transformation actually lands.
+ * The rest run in a horizontal, scroll-snapping rail: a homeowner browses
+ * sideways through the work the way they would flick through a portfolio,
+ * and the section stays a single screen tall instead of three rows of cards.
+ */
 export function ProjectGallerySection({
   limit = 6,
   showViewAll = true,
@@ -49,28 +52,80 @@ export function ProjectGallerySection({
   const projects = GALLERY_PROJECTS.filter(
     (p) => !excludeServiceTypes.includes(p.serviceType),
   ).slice(0, limit);
-
-  // 4 or fewer reads best as a 2-up grid of larger cards; 5+ uses 3 columns.
-  const lgCols = projects.length <= 4 ? "lg:grid-cols-2" : "lg:grid-cols-3";
+  const [lead, ...rest] = projects;
+  if (!lead) return null;
 
   return (
-    <Section id="gallery" divider>
-      <div className="container px-4">
-        <SectionHeader
-          eyebrow="Our work"
-          title="Transformations across the Treasure Valley"
-          description="Explore recent kitchen, bathroom, whole-home, and addition projects. Drag any slider to compare before and after."
-          className="mb-10 max-w-3xl"
-        />
-        <div className={`grid sm:grid-cols-2 ${lgCols} gap-6`}>
-          {projects.map((project, i) => (
-            <Reveal key={`${project.serviceType}-${project.city}`} delay={i * 60}>
-              <BeforeAfterCard project={project} />
-            </Reveal>
-          ))}
+    <Section id="gallery" surface="deep" spacing="xl" edge className="overflow-hidden">
+      <div className="ed-shell">
+        {/* LEAD: the slider at the size it deserves, heading alongside. */}
+        <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+          <Reveal>
+            <p className="ed-eyebrow">Our work</p>
+            <h2 className="ed-h2 ed-statement">
+              Transformations across the Treasure Valley
+            </h2>
+            <p className="ed-body mt-7">
+              Recent kitchen, bathroom, whole-home and addition projects. Drag
+              any slider to compare before and after.
+            </p>
+            <div className="mt-10 hidden lg:block">
+              <ProjectMeta project={lead} lead />
+            </div>
+          </Reveal>
+
+          <Reveal delay={80}>
+            <div style={{ border: "1px solid var(--ed-line)" }}>
+              <BeforeAfterSlider
+                beforeSrc={lead.beforeImageUrl}
+                afterSrc={lead.afterImageUrl}
+                beforeAlt={`Before: ${lead.title} in ${cityDisplayName(lead.city)}, Idaho`}
+                afterAlt={`After: ${lead.title} in ${cityDisplayName(lead.city)}, Idaho`}
+                aspectClass="aspect-[4/3]"
+              />
+            </div>
+            <div className="mt-6 lg:hidden">
+              <ProjectMeta project={lead} lead />
+            </div>
+          </Reveal>
         </div>
+
+        {/* THE RAIL: everything else, browsed sideways. */}
+        {rest.length > 0 && (
+          <Reveal delay={120}>
+            <div className="mt-[clamp(48px,6vw,88px)] flex items-end justify-between gap-6">
+              <p className="ed-eyebrow !mb-0">More projects</p>
+              <p className="ed-small hidden sm:block">Scroll sideways</p>
+            </div>
+            <div
+              className="ed-rail mt-6 [scrollbar-color:var(--ed-line)_transparent]"
+              style={{ ["--ed-rail-w" as string]: "31%" }}
+              aria-label="More before and after projects"
+            >
+              {rest.map((project) => (
+                <article
+                  key={`${project.serviceType}-${project.city}`}
+                  className="flex flex-col"
+                  style={{ border: "1px solid var(--ed-line)" }}
+                >
+                  <BeforeAfterSlider
+                    beforeSrc={project.beforeImageUrl}
+                    afterSrc={project.afterImageUrl}
+                    beforeAlt={`Before: ${project.title} in ${cityDisplayName(project.city)}, Idaho`}
+                    afterAlt={`After: ${project.title} in ${cityDisplayName(project.city)}, Idaho`}
+                    aspectClass="aspect-[4/3]"
+                  />
+                  <div className="p-6">
+                    <ProjectMeta project={project} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          </Reveal>
+        )}
+
         {showViewAll && (
-          <div className="mt-10 text-center">
+          <div className="mt-12">
             <Button variant="brandOutline" asChild>
               <Link href="/testimonials">See more of our work</Link>
             </Button>

@@ -276,7 +276,7 @@ export function EstimateResultPanel({
             onClick={() => setLegalOpen((prev) => !prev)}
             aria-expanded={legalOpen}
             aria-controls="estimate-legal-note"
-            className="flex w-full items-center justify-center gap-1 text-label text-inverse-muted/80 hover:text-inverse-muted"
+            className="flex w-full items-center justify-center gap-1 text-label text-inverse-muted hover:text-inverse-muted"
           >
             Why a range, not a fixed price?
             <ChevronDown className={cn("h-3 w-3 transition-transform", legalOpen && "rotate-180")} />

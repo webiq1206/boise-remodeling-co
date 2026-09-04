@@ -71,9 +71,16 @@ export function HeroSection() {
                   3.15:1, under the 4.5:1 AA needs, and lightening the scrim
                   behind it would only widen that gap. */}
               <div className="brc-label brc-label-on-photo mb-6">{HERO_EYEBROW}</div>
-              <h1 className="font-serif text-inverse-foreground text-display tracking-tight mb-6">
+              {/* Display scale from the family layer: up to 92px, tight leading,
+                  negative tracking. The old `text-display` topped out well under
+                  that, and the hero heading is the one line the whole site is
+                  judged on in the first second. */}
+              <h1 className="ed-display text-inverse-foreground mb-8 max-w-[14ch]">
                 Boise remodeling with{" "}
-                <em className="brc-accent">clarity</em> and confidence.
+                <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
+                  clarity
+                </em>{" "}
+                and confidence.
               </h1>
               {/* Full opacity, not /90: over the lightened scrim the subhead
                   measured 4.28:1 against the 4.5:1 minimum. Buying the

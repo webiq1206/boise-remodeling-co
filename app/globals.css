@@ -128,7 +128,11 @@
   --secondary-foreground: 37 14% 89%;
 
   --muted: 156 6% 16%;
-  --muted-foreground: 147 9% 52%;  /* P5 sage #7A9184 */
+  /* Secondary body text. Raised from 52% lightness, where the sage measured
+     4.21:1 on this charcoal ground and failed WCAG AA for normal-size text -
+     which covered most of the supporting copy on the site. Same sage hue, lifted
+     until it clears 4.5:1. Verified by scripts/verify-contrast.mjs. */
+  --muted-foreground: 147 9% 60%;
   --faint: 129 3% 45%;                /* #6E756F */
 
   /* THE BRAND ACCENT, AND IT IS THE ONLY ONE. The kit is explicit: never
@@ -149,6 +153,12 @@
      for "the accent that stays legible on the dark ground" by name, and
      #9AA098 on #1C1F1E is 6.21:1, comfortably AA. */
   --accent-legible: 105 4% 61%;       /* #9AA098 */
+  /* The same sage, darkened for use as TEXT on a light (bone) band. The site
+     was built dark, so --accent-legible is tuned for a charcoal ground; at 61%
+     lightness it falls to roughly 2.5:1 on bone, which fails AA. This is the
+     brand hue at a lightness that clears 7:1 there - not a new colour, the same
+     relationship --accent and --accent-legible already have. */
+  --accent-on-light: 105 8% 32%;
 
   /* Danger - muted terracotta #C77B6B */
   --destructive: 10 45% 60%;
