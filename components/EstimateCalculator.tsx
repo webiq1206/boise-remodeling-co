@@ -20,6 +20,7 @@ import {
   EditScopeCta,
   StickyResultActions,
   TextField,
+  AppFrame,
   type WizardStepMeta,
   type ReviewItem,
 } from "@/components/estimate/wizard";
@@ -387,11 +388,18 @@ const FINISH_LABELS: Record<FinishLevel, string> = {
 
 interface EstimateCalculatorProps {
   inModal?: boolean;
+  /**
+   * One-screen app mode for the standalone /estimate page: the wizard renders
+   * inside AppFrame, fixed to the viewport below the site header, with the step
+   * rail in the header and Back/Continue pinned in the footer. No page scroll.
+   */
+  fitViewport?: boolean;
   onBookVisit?: () => void;
 }
 
 export function EstimateCalculator({
   inModal = false,
+  fitViewport = false,
   onBookVisit: onBookVisitProp,
 }: EstimateCalculatorProps = {}) {
 
@@ -2357,9 +2365,9 @@ export function EstimateCalculator({
 
   const leadsGatePanel = (
     <div className="scroll-mt-20" ref={gateFormRef} aria-label="Unlock your estimate">
-      <div className="space-y-5">
+      <div className={fitViewport ? "space-y-3" : "space-y-5"}>
         {/* Header */}
-        <div className="flex items-start gap-3">
+        <div className={cn("flex items-start gap-3", fitViewport && "hidden")}>
           <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-accent-legible/20">
             <Lock className="h-4 w-4 text-accent-legible" />
           </div>
@@ -2374,7 +2382,7 @@ export function EstimateCalculator({
         </div>
 
         {/* Project summary chips */}
-        <div className="flex flex-wrap gap-2">
+        <div className={cn("flex flex-wrap gap-2", fitViewport && "hidden")}>
           <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-inverse-foreground/[0.08] border border-inverse-foreground/15 text-label text-inverse-foreground">
             {config.tabLabel}
           </span>
@@ -2414,7 +2422,7 @@ export function EstimateCalculator({
         {/* noValidate: the handler below runs our inline, styled, per-field
             validation on every submit, so the browser's native bubbles never
             compete with it (two different error styles for one form). */}
-        <form ref={gateSubmitRef} onSubmit={handleGateSubmit} noValidate className="space-y-3">
+        <form ref={gateSubmitRef} onSubmit={handleGateSubmit} noValidate className={fitViewport ? "grid grid-cols-2 gap-2.5" : "space-y-3"}>
           <TextField
             id="gate-name"
             label="First name"
@@ -2464,13 +2472,13 @@ export function EstimateCalculator({
               already filled. When skipped, offer the same autocomplete the
               address step has, so the fallback is not a lesser control. */}
           {gateAddress.trim() && !gateFieldErrors.address ? (
-            <div className="rounded-md border border-inverse-foreground/15 bg-inverse-foreground/[0.04] px-4 py-3">
+            <div className={cn("rounded-md border border-inverse-foreground/15 bg-inverse-foreground/[0.04] px-4 py-3", fitViewport && "col-span-2")}>
               <p className="text-label text-inverse-muted/90 mb-0.5 uppercase tracking-wide">Property address</p>
               <p className="text-body text-inverse-foreground leading-snug">{gateAddress}</p>
               <p className="mt-1 text-label text-inverse-muted/90">Go back to the Address step to change this.</p>
             </div>
           ) : (
-            <div>
+              <div className={fitViewport ? "col-span-2" : undefined}>
               <label htmlFor="gate-address" className="mb-1.5 block text-body-sm text-inverse-muted">
                 Property address<span className="text-accent-legible"> *</span>
               </label>
@@ -2493,7 +2501,7 @@ export function EstimateCalculator({
                   {gateFieldErrors.address}
                 </p>
               ) : (
-                <p className="mt-1.5 text-label text-inverse-muted/90">
+                <p className={cn("mt-1.5 text-label text-inverse-muted/90", fitViewport && "hidden")}>
                   So we can confirm we serve your area and check county records before your visit.
                 </p>
               )}
@@ -2712,6 +2720,101 @@ export function EstimateCalculator({
       )}
     </div>
   );
+
+  /* fitViewport: the estimator as a one-screen app. Each phase splits into a
+     body (the question, the review, the gate, the result) and a footer (its
+     nav, rendered in flow inside the frame). The frame carries the H1, the step
+     counter and the rail, so WizardProgress and the intro eyebrow are not
+     rendered here. */
+  if (fitViewport) {
+    const frameTitle = (
+      <>Remodel <em className="not-italic" style={{ color: "var(--ed-accent)" }}>estimator</em></>
+    );
+    if (phase === "result") {
+      return (
+        <AppFrame
+          title="Your estimate"
+          eyebrow="Estimate complete"
+          steps={progressSteps}
+          currentIndex={progressSteps.length - 1}
+          hideProgress
+          footer={
+            <StickyResultActions
+              inFrame
+              primaryLabel={CTA_SECONDARY}
+              onPrimary={handleBookVisit}
+              onEditScope={goEditScope}
+              secondary={[
+                { label: "Print", icon: Printer, onClick: () => window.print(), testId: "result-print" },
+                { label: "Start another", icon: RefreshCw, onClick: handleStartOver, testId: "result-start-over" },
+              ]}
+            />
+          }
+        >
+          <div ref={topRef}>{resultPanel}</div>
+        </AppFrame>
+      );
+    }
+    let body: React.ReactNode = null;
+    let footer: React.ReactNode = null;
+    if (phase === "form") {
+      body = <StepTransition key={currentFormId}>{formStepBodies[currentFormId]}</StepTransition>;
+      footer = (
+        <StickyStepNav
+          inFrame
+          onBack={safeFormIdx > 0 || editReturn ? backFromForm : undefined}
+          onNext={nextFromForm}
+          nextDisabled={!stepComplete(currentFormId)}
+          nextLabel={formNextLabel}
+          hint={!stepComplete(currentFormId) ? "Choose an option to continue." : undefined}
+        />
+      );
+    } else if (phase === "review") {
+      body = (
+        <StepTransition>
+          <h2 ref={headingRef} tabIndex={-1} className="ed-h3 focus:outline-none" data-testid="step-heading">
+            Review your project
+          </h2>
+          <p className="ed-body mt-2 mb-4 text-[0.875rem]">
+            Make sure everything looks right. Tap Edit on any line to change it.
+          </p>
+          <div className="border-t border-inverse-foreground/12">
+            {reviewSections.map((s) => (
+              <ReviewSection key={s.step} compact title={s.title} items={s.items} onEdit={() => goToForm(s.step, true)} testId={`review-${s.step}`} />
+            ))}
+          </div>
+        </StepTransition>
+      );
+      footer = (
+        <StickyStepNav
+          inFrame
+          onBack={() => { setEditReturn(false); setFormIdx(formStepIds.length - 1); setPhase("form"); scrollWizardTop(); }}
+          onNext={reviewToNext}
+          nextDisabled={!allChosen}
+          nextLabel={gateSubmitted ? "See my estimate" : "Get my estimate"}
+          nextTestId="review-continue"
+        />
+      );
+    } else if (phase === "gate") {
+      body = <StepTransition>{leadsGatePanel}</StepTransition>;
+      footer = (
+        <StickyStepNav
+          inFrame
+          onBack={() => { setGateOpen(false); setPhase("review"); scrollWizardTop(); }}
+          onNext={() => gateSubmitRef.current?.requestSubmit()}
+          busy={gateLoading}
+          busyLabel="Sending..."
+          nextLabel="Reveal my estimate"
+          nextTestId="gate-continue"
+        />
+      );
+    }
+    return (
+      <AppFrame title={frameTitle} eyebrow="Free · 60 seconds · No obligation" steps={progressSteps} currentIndex={progressIndex} footer={footer}>
+        <div ref={topRef}>{body}</div>
+      </AppFrame>
+    );
+  }
 
   /* inModal: compact card without the full-viewport section chrome. */
   if (inModal) {

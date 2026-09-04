@@ -960,3 +960,7 @@ body[data-hide-mobile-nav-bar="true"] [data-mobile-nav-bar] {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (min-width: 768px) {
+  :root { --app-header-h: 64px; }
+}

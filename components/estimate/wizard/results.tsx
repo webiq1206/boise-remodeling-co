@@ -23,14 +23,52 @@ export function ReviewSection({
   onEdit,
   editLabel = "Edit",
   testId,
+  compact = false,
 }: {
   title: string;
   items: ReviewItem[];
   onEdit?: () => void;
   editLabel?: string;
   testId?: string;
+  /**
+   * One-screen review: a single hairline row per section - title, the values
+   * joined on one line, Edit - instead of a padded card. Eight cards ran 250px
+   * past a phone's frame body; eight rows fit with room to spare.
+   */
+  compact?: boolean;
 }) {
   if (items.length === 0) return null;
+  if (compact) {
+    return (
+      <section
+        className="flex items-center justify-between gap-3 border-b border-inverse-foreground/12 py-1.5"
+        data-testid={testId}
+      >
+        <div className="min-w-0">
+          <p className="text-[0.625rem] uppercase tracking-[0.16em] text-inverse-muted">{title}</p>
+          <p className="truncate text-[0.875rem] text-inverse-foreground">
+            {items.map((item, i) => (
+              <span key={i}>
+                {i > 0 ? <span className="text-inverse-muted/60"> · </span> : null}
+                {item.value}
+              </span>
+            ))}
+          </p>
+        </div>
+        {onEdit ? (
+          <button
+            type="button"
+            onClick={onEdit}
+            data-testid={testId ? `${testId}-edit` : undefined}
+            className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-md px-2 text-[0.8125rem] text-accent-legible underline underline-offset-4 hover:text-inverse-foreground"
+          >
+            <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
+            {editLabel}
+          </button>
+        ) : null}
+      </section>
+    );
+  }
   return (
     <section
       className="rounded-md border border-inverse-foreground/15 bg-inverse-foreground/[0.05] p-4"
@@ -258,16 +296,23 @@ export function StickyResultActions({
   onEditScope,
   secondary = [],
   primaryTestId = "result-primary",
+  inFrame = false,
 }: {
   primaryLabel: string;
   onPrimary: () => void;
   onEditScope: () => void;
   secondary?: ResultSecondaryAction[];
   primaryTestId?: string;
+  /** Inside the one-screen AppFrame the frame footer is the bottom edge: render in flow. */
+  inFrame?: boolean;
 }) {
   return (
     <div
-      className="sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
+      className={
+        inFrame
+          ? "pt-1"
+          : "sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
+      }
       data-testid="result-sticky-actions"
     >
       <EditScopeCta onClick={onEditScope} className="mb-2.5" />

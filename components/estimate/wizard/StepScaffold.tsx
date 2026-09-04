@@ -160,6 +160,11 @@ export interface StickyStepNavProps {
    * which one it is in.
    */
   ownsScreen?: boolean;
+  /**
+   * Inside the one-screen AppFrame the frame footer is the bottom edge, so the
+   * nav renders in flow: no fixed, no sticky, no spacer, no negative margins.
+   */
+  inFrame?: boolean;
 }
 
 export function StickyStepNav({
@@ -176,7 +181,31 @@ export function StickyStepNav({
   nextTestId = "wizard-next",
   backTestId = "wizard-back",
   ownsScreen = false,
+  inFrame = false,
 }: StickyStepNavProps) {
+  if (inFrame) {
+    return (
+      <div data-testid="wizard-sticky-nav" className="pt-1">
+        {hint ? <p className="mb-2 text-center text-label text-inverse-muted">{hint}</p> : null}
+        <div className="flex items-center gap-2.5 pb-2">
+          {onBack ? (
+            <Button type="button" variant="heroGhost" onClick={onBack} disabled={busy} data-testid={backTestId} className="min-h-12 flex-shrink-0 px-4">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <span>{backLabel}</span>
+            </Button>
+          ) : null}
+          {onSecondary ? (
+            <Button type="button" variant="heroGhost" onClick={onSecondary} disabled={busy} className="min-h-12 flex-shrink-0 px-4" data-testid="wizard-secondary">
+              {secondaryLabel}
+            </Button>
+          ) : null}
+          <Button type="button" variant="brand" onClick={onNext} disabled={nextDisabled || busy} data-testid={nextTestId} className="min-h-12 flex-1 px-6 text-body">
+            {busy ? (<><Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />{busyLabel}</>) : (<>{nextLabel}<ArrowRight className="h-4 w-4" aria-hidden="true" /></>)}
+          </Button>
+        </div>
+      </div>
+    );
+  }
   return (
     <>
       {/* Spacer. The bar is FIXED on a phone, so without this the last of the
