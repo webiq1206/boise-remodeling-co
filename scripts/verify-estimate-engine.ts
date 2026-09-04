@@ -377,15 +377,34 @@ for (const project of projects) {
     for (const { key, values } of LADDERS) {
       if (!shows[key as string]) continue;
       let prev = 0;
+      /*
+       * SHOWN MUST MEAN WIRED.
+       *
+       * Monotonicity permits equal, so a field the UI asks about can be read,
+       * validated, stored and displayed while changing nothing about the price
+       * - and every check here still passes. That is how the basement kitchen
+       * field stayed unwired: it sat on the margin ceiling, so every value
+       * produced the identical number and nothing complained.
+       *
+       * Asking someone a question that cannot affect their answer is the
+       * defect, so a field this project actually SHOWS must produce at least
+       * two distinct prices across its own ladder.
+       */
+      const seenPrices = new Set<number>();
       for (const value of values) {
         const refinements = { ...EMPTY_REFINEMENTS, [key]: value } as EstimateRefinements;
         const m = mid(priceAt(project, finish, sqft, refinements));
+        seenPrices.add(m);
         check(
           m >= prev,
           `${project}/${finish}: scope monotonic for ${String(key)}=${String(value)} (${m} < ${prev})`,
         );
         prev = m;
       }
+      check(
+        seenPrices.size > 1,
+        `${project}/${finish}: "${String(key)}" is shown to the visitor but all ${values.length} of its values price identically ($${[...seenPrices][0]}) - collected and ignored`,
+      );
     }
   }
 }
