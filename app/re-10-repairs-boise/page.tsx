@@ -274,7 +274,7 @@ export default function Re10RepairsPage() {
       <Section divider>
         <div className="container px-4 max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
           <div>
-            <div className="brc-label mb-4">One company, whole list</div>
+            <p className="ed-eyebrow">One company, whole list</p>
             <h2 className="font-serif text-2xl md:text-3xl tracking-tight text-foreground mb-4">
               Stop calling four contractors for one repair list
             </h2>
@@ -377,7 +377,7 @@ export default function Re10RepairsPage() {
       <Section variant="greige" divider>
         <div className="container px-4 max-w-5xl mx-auto grid md:grid-cols-2 gap-10 items-start">
           <div>
-            <div className="brc-label mb-4">Communication</div>
+            <p className="ed-eyebrow">Communication</p>
             <h2 className="font-serif text-2xl md:text-3xl tracking-tight text-foreground mb-4">
               You should never have to chase us for an update
             </h2>
@@ -496,7 +496,7 @@ export default function Re10RepairsPage() {
       {/* -------------------------------------------------- final conversion */}
       <Section id="submit" variant="inverse">
         <div className="container px-4 max-w-3xl mx-auto text-center">
-          <div className="brc-label text-inverse-muted mb-4">Send it over</div>
+          <p className="ed-eyebrow">Send it over</p>
           <h2 className="font-serif text-2xl md:text-4xl tracking-tight text-inverse-foreground mb-5">
             Submit your RE-10 for review
           </h2>

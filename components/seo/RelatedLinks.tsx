@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
-import { MarketingCard } from '@/components/marketing/MarketingCard';
 
 interface RelatedLinksProps {
   serviceSlug?: string;
@@ -32,14 +31,14 @@ function ExploreFurther({ serviceSlug }: { serviceSlug?: string }) {
     { href: '/guides/boise-remodeling-cost-guide', label: 'Boise Remodeling Cost Guide' },
   ];
   return (
-    <div className="border-t border-border pt-8">
-      <h2 className="font-serif font-normal text-sm mb-4 text-foreground">Explore further</h2>
+    <div className="border-t pt-10" style={{ borderColor: "var(--ed-line)" }}>
+      <h2 className="ed-h4 mb-6">Explore further</h2>
       <ul className="grid sm:grid-cols-2 gap-2">
         {links.map((link) => (
           <li key={link.href} className="list-none">
             <Link
               href={link.href}
-              className="flex items-center min-h-11 lg:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="ed-body flex min-h-11 items-center text-[0.9375rem] transition-colors hover:[color:var(--ed-accent)] lg:min-h-0"
             >
               {link.label} →
             </Link>
@@ -55,7 +54,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
     return (
       <div className="space-y-10">
         <div>
-        <h2 className="font-serif text-section-title mb-6 text-foreground">
+        <h2 className="ed-h2-sm ed-statement-wide mb-8">
           {SERVICES.find((s) => s.slug === serviceSlug)?.name} by city
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -63,7 +62,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
             <Link
               key={city.slug}
               href={cityServicePath(serviceSlug, city.slug)}
-              className="flex items-center min-h-11 lg:min-h-0 text-sm text-muted-foreground hover:text-foreground transition-colors py-2 border-b border-border"
+              className="ed-body flex min-h-11 items-center border-b py-3 text-[0.9375rem] transition-colors hover:[color:var(--ed-accent)] lg:min-h-0 [border-color:var(--ed-line)]"
             >
               {city.name}, Idaho
             </Link>
@@ -80,16 +79,16 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
     return (
       <div className="space-y-10">
         <div>
-          <h2 className="font-serif text-section-title mb-6 text-foreground">
+          <h2 className="ed-h2-sm ed-statement-wide mb-8">
             Remodeling services in {city?.name}
           </h2>
           <div className="grid sm:grid-cols-2 gap-4">
             {SERVICES.map((service) => (
               <Link key={service.slug} href={cityServicePath(service.slug, citySlug)}>
-                <MarketingCard className="h-full hover:border-accent/40 transition-colors">
-                  <h3 className="font-normal text-sm text-foreground mb-2">{service.name}</h3>
-                  <p className="text-sm text-muted-foreground">{service.shortDescription}</p>
-                </MarketingCard>
+                <div className="ed-card ed-card-link h-full">
+                  <h3 className="ed-h4">{service.name}</h3>
+                  <p className="ed-body mt-2 text-[0.875rem]">{service.shortDescription}</p>
+                </div>
               </Link>
             ))}
           </div>
@@ -106,7 +105,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
       <div className="space-y-10">
       <div className="grid md:grid-cols-2 gap-10">
         <div>
-          <h2 className="font-serif font-normal text-sm mb-4 text-foreground">
+          <h2 className="ed-h4 mb-6">
             Same service, nearby cities
           </h2>
           <ul className="space-y-2">
@@ -114,7 +113,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
               <li key={city.slug}>
                 <Link
                   href={cityServicePath(serviceSlug, city.slug)}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="ed-body text-[0.9375rem] transition-colors hover:[color:var(--ed-accent)]"
                 >
                   {SERVICES.find((s) => s.slug === serviceSlug)?.name} in {city.name}
                 </Link>
@@ -123,7 +122,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
           </ul>
         </div>
         <div>
-          <h2 className="font-serif font-normal text-sm mb-4 text-foreground">
+          <h2 className="ed-h4 mb-6">
             More services in {CITIES.find((c) => c.slug === citySlug)?.name}
           </h2>
           <ul className="space-y-2">
@@ -131,18 +130,18 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
               <li key={service.slug}>
                 <Link
                   href={cityServicePath(service.slug, citySlug)}
-                  className="text-sm text-muted-foreground hover:text-foreground"
+                  className="ed-body text-[0.9375rem] transition-colors hover:[color:var(--ed-accent)]"
                 >
                   {service.name}
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="mt-6 pt-6 border-t border-border space-y-2">
-            <Link href={servicePath(serviceSlug)} className="text-sm font-normal text-foreground hover:text-foreground/70">
+          <div className="mt-8 border-t pt-6" style={{ borderColor: "var(--ed-line)" }}>
+            <Link href={servicePath(serviceSlug)} className="ed-link">
               All {SERVICES.find((s) => s.slug === serviceSlug)?.name} areas →
             </Link>
-            <Link href={areaPath(citySlug)} className="block text-sm font-normal text-foreground hover:text-foreground/70">
+            <Link href={areaPath(citySlug)} className="ed-link mt-4 block w-fit">
               Remodeling in {CITIES.find((c) => c.slug === citySlug)?.name} →
             </Link>
           </div>

@@ -5,7 +5,6 @@ import { getBlogImageAlt, getBlogThumbnail } from "@/shared/blogImages";
 import { BLOG_POSTS } from "@/shared/blogContent";
 import { GUIDE_PAGES } from "@/shared/guideContent";
 import { getCityServiceImage } from "@/shared/cityServiceImages";
-import { MarketingCard } from "./MarketingCard";
 
 interface RelatedPostCardsProps {
   path: string;
@@ -59,15 +58,15 @@ export function RelatedPostCards({
 
   return (
     <div>
-      <h2 className="font-serif text-section-title mb-6 text-foreground">{title}</h2>
-      <div className="grid sm:grid-cols-2 gap-4">
+      <h2 className="ed-h2-sm ed-statement-wide mb-8">{title}</h2>
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {links.map((link) => {
           const image = imageForUrl(link.url);
           return (
             <Link key={link.url} href={link.url} className="block group">
-              <MarketingCard className="overflow-hidden hover-elevate h-full">
+              <article className="ed-card ed-card-link h-full overflow-hidden p-0">
                 {image && (
-                  <div className="relative aspect-[16/9] -mx-6 -mt-6 md:-mx-8 md:-mt-8 mb-4">
+                  <div className="relative aspect-[16/9]">
                     <Image
                       src={image.src}
                       alt={image.alt}
@@ -77,10 +76,10 @@ export function RelatedPostCards({
                     />
                   </div>
                 )}
-                <p className="text-sm font-normal text-foreground group-hover:text-foreground/70 transition-colors">
+                <p className="ed-h4 p-5 text-[1rem] transition-colors group-hover:[color:var(--ed-accent)]">
                   {link.anchor}
                 </p>
-              </MarketingCard>
+              </article>
             </Link>
           );
         })}

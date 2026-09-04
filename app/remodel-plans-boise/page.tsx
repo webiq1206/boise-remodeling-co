@@ -159,7 +159,7 @@ export default function RemodelPlansPage() {
             {PLANS_PROCESS.map((s, i) => (
               <li key={s.title}>
                 <MarketingCard padding="lg">
-                  <div className="brc-label text-muted-foreground mb-2">Step {i + 1}</div>
+                  <p className="ed-eyebrow">Step {i + 1}</p>
                   <h3 className="text-base font-normal text-foreground mb-2.5">{s.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
                 </MarketingCard>

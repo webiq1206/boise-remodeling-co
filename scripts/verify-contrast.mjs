@@ -30,6 +30,7 @@ const ROUTES = [
   "/contact",
   "/gallery",
   "/estimate",
+  "/blog",
   "/services/kitchen-remodel",
   "/areas/meridian",
 ];
@@ -147,6 +148,14 @@ for (const vp of VIEWPORTS) {
     const { checked, fails } = await page.evaluate(AUDIT);
     totalChecked += checked;
     for (const f of fails) allFails.push({ ...f, route, viewport: vp.name });
+    /* The page must never scroll sideways. A full-bleed band pulled out of its
+       container with a negative margin did exactly that - 24px over at every
+       width on the areas page - so the gate measures it on every route. */
+    const overflow = await page.evaluate(() => {
+      const d = document.documentElement;
+      return d.scrollWidth > d.clientWidth ? `${d.scrollWidth}px > ${d.clientWidth}px` : null;
+    });
+    if (overflow) allFails.push({ text: `page scrolls horizontally (${overflow})`, size: 0, need: 0, got: 0, el: "html", route, viewport: vp.name });
   }
   await page.close();
 }

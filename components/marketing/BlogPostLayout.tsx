@@ -190,11 +190,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
         </div>
       </Section>
 
-      <Section divider>
-        <div className="container px-4">
-          <BlogEndCta />
-        </div>
-      </Section>
+      <BlogEndCta />
     </div>
   );
 }

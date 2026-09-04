@@ -9,6 +9,14 @@ export interface PageHeaderProps {
   className?: string;
 }
 
+/**
+ * The page head for catalog, guide and resource pages - sixteen pages share it,
+ * so it is the single lever on how those pages open.
+ *
+ * WAS a 44px h1 over 18px body in a 768px column. NOW the family display scale
+ * (up to 92px) with the eyebrow-and-rule and a serif lede, the measure set on
+ * the heading itself so it can run wide while the lede stays readable.
+ */
 export function PageHeader({
   eyebrow,
   title,
@@ -22,34 +30,15 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        "max-w-3xl",
-        centered && "mx-auto text-center",
+        centered && "mx-auto text-center [&_.ed-eyebrow]:justify-center [&_.ed-statement-display]:mx-auto [&_.ed-lede]:mx-auto",
         className
       )}
     >
-      {eyebrow && (
-        <p className={cn("brc-label mb-4", centered && "justify-center")}>{eyebrow}</p>
-      )}
-      <h1
-        className={cn(
-          "font-serif text-display md:text-[2.75rem] tracking-tight text-foreground",
-          description ? "mb-4" : meta ? "mb-4" : "mb-0"
-        )}
-      >
-        {title}
-      </h1>
-      {description && (
-        <p className="text-lg leading-relaxed text-muted-foreground max-w-2xl mx-auto mb-4">
-          {description}
-        </p>
-      )}
+      {eyebrow && <p className="ed-eyebrow">{eyebrow}</p>}
+      <h1 className="ed-display ed-statement-display">{title}</h1>
+      {description && <p className="ed-lede mt-8 max-w-[44ch]">{description}</p>}
       {meta && (
-        <div
-          className={cn(
-            "flex flex-wrap items-center gap-4 text-sm text-muted-foreground",
-            centered && "justify-center"
-          )}
-        >
+        <div className={cn("ed-small mt-6 flex flex-wrap items-center gap-4", centered && "justify-center")}>
           {meta}
         </div>
       )}
