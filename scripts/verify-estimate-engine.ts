@@ -17,6 +17,7 @@ import {
   type UserRefinementKey,
   type FinishLevel,
   type EstimateRefinements,
+  buildDynamicScope,
 } from "../shared/estimateEngine";
 import {
   buildTakeoff,
@@ -851,6 +852,71 @@ for (const project of projects) {
   console.log(
     `  lead-facing vocabulary: ${renderedEmails} rendered customer emails clean, detector proven live against the admin email.`,
   );
+}
+
+// 12. SCOPE LIST HONESTY. The per-tier `included` blurb describes a typical job
+//     at that finish level, so it will claim work the visitor has explicitly
+//     declined unless it is filtered. A scope list that contradicts the answer
+//     the visitor just gave is worse than no scope list.
+{
+  const refs = (o: Partial<typeof EMPTY_REFINEMENTS>) => ({ ...EMPTY_REFINEMENTS, ...o });
+  const scope = (project: ProjectType, finish: FinishLevel, sqft: number, r: typeof EMPTY_REFINEMENTS) =>
+    buildDynamicScope({ project, finish, sqft, refinements: r });
+
+  const noLayoutBath = scope("bathroom", "luxury", 80, refs({ layoutChanges: "none" }));
+  check(
+    !noLayoutBath.some((i) => /layout reconfiguration/i.test(i)),
+    `a luxury bathroom with no layout change must not claim a layout reconfiguration (got: ${noLayoutBath.join("; ")})`,
+  );
+
+  const noLayoutKitchen = scope("kitchen", "high-end", 250, refs({ layoutChanges: "none" }));
+  check(
+    !noLayoutKitchen.some((i) => /island addition/i.test(i)),
+    `a kitchen with no layout change must not claim an island addition (got: ${noLayoutKitchen.join("; ")})`,
+  );
+
+  const stockCabs = scope("kitchen", "high-end", 250, refs({ cabinetTier: "standard" }));
+  check(
+    stockCabs.some((i) => /standard stock cabinetry/i.test(i)) &&
+      !stockCabs.some((i) => /custom cabinetry/i.test(i)),
+    `standard cabinetry must not appear alongside custom cabinetry (got: ${stockCabs.join("; ")})`,
+  );
+
+  const semiCabs = scope("kitchen", "luxury", 250, refs({ cabinetTier: "semi-custom" }));
+  check(
+    !semiCabs.some((i) => /fully custom cabinetry/i.test(i)),
+    `semi-custom cabinetry must not claim fully custom (got: ${semiCabs.join("; ")})`,
+  );
+
+  // Suppression must be driven by an ANSWER, never by silence: an untouched
+  // refinement leaves the tier blurb exactly as written.
+  const untouched = scope("kitchen", "high-end", 250, refs({}));
+  check(
+    untouched.some((i) => /island addition/i.test(i)) &&
+      untouched.some((i) => /custom or semi-custom cabinetry/i.test(i)),
+    `an unanswered refinement must not filter the tier blurb (got: ${untouched.join("; ")})`,
+  );
+
+  // And an answer that WANTS the work suppresses nothing.
+  const majorLayout = scope("kitchen", "high-end", 250, refs({ layoutChanges: "major" }));
+  check(
+    majorLayout.some((i) => /island addition/i.test(i)),
+    `a major layout change must keep the layout scope lines (got: ${majorLayout.join("; ")})`,
+  );
+
+  // Nothing may ever render as "undefined" or blank in a customer-facing list.
+  let scopeLists = 0;
+  for (const project of projects) {
+    for (const finish of getAvailableFinishLevels(project)) {
+      const list = scope(project, finish, getProjectSizeConfig(project).baselineSqft, EMPTY_REFINEMENTS);
+      scopeLists++;
+      check(
+        list.every((i) => typeof i === "string" && i.trim().length > 0 && i !== "undefined"),
+        `${project}/${finish}: scope list has an empty or undefined entry (${list.join("; ")})`,
+      );
+    }
+  }
+  console.log(`  scope honesty: ${scopeLists} scope lists checked, contradictions suppressed only where answered.`);
 }
 
 console.log(
