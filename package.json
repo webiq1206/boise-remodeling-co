@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "links:generate": "tsx scripts/internal-links/generate.ts",
     "audit:links": "tsx scripts/internal-links/audit.ts",
+    "verify:bottom-up": "tsx scripts/verify-bottom-up-costs.ts",
     "verify:pricing": "tsx scripts/verify-pricing-fingerprint.ts",
     "verify:content": "tsx scripts/verify-content.ts",
     "verify:images": "tsx scripts/verify-blog-images.ts",
