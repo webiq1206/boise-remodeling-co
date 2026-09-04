@@ -1062,12 +1062,64 @@ export function buildDynamicScope(input: EstimateInput): string[] {
     extra.push(r.aduConfig === "attached" ? "Attached ADU" : "Detached ADU");
   }
 
+  /*
+   * Drop base-scope lines the visitor has already contradicted.
+   *
+   * `base` is the static per-tier blurb for the project and finish level. It was
+   * written to describe a typical job at that tier, so it happily claims work the
+   * visitor has just told us they do not want: someone who answers "no layout
+   * change" was still shown "Full layout reconfiguration" on a luxury bathroom
+   * and "Island addition or expansion" on a high-end kitchen, and someone who
+   * picks standard cabinets was shown "Standard stock cabinetry" AND "Custom or
+   * semi-custom cabinetry" in the same list.
+   *
+   * Only outright contradictions are removed, and only where an answer was
+   * actually given - an unanswered refinement suppresses nothing, so the tier
+   * blurb still describes the typical job until the visitor says otherwise.
+   */
+  const contradicted = base.filter((item) => !isContradicted(item, r));
+
   const seen = new Set<string>();
-  return [...extra, ...base].filter((item) => {
+  return [...extra, ...contradicted].filter((item) => {
     if (seen.has(item)) return false;
     seen.add(item);
     return true;
   });
+}
+
+/**
+ * Base-scope lines that a given answer makes untrue. Matched on the wording the
+ * PRICE_MATRIX `included` lists actually use; anything not matched is left alone,
+ * so a new tier blurb is shown in full rather than silently filtered.
+ */
+const SCOPE_CONTRADICTIONS: ReadonlyArray<{
+  readonly when: (r: EstimateRefinements) => boolean;
+  readonly drop: RegExp;
+}> = [
+  {
+    // "No layout change" cannot coexist with moving walls or adding an island.
+    when: (r) => r.layoutChanges === "none",
+    drop: /layout reconfiguration|structural (?:layout )?(?:modifications?|changes?|wall)|island addition|open-concept conversion/i,
+  },
+  {
+    // Standard cabinetry excludes both custom grades.
+    when: (r) => r.cabinetTier === "standard",
+    drop: /(?:fully |custom or semi-)?custom cabinetry/i,
+  },
+  {
+    // Semi-custom excludes fully custom, but not itself.
+    when: (r) => r.cabinetTier === "semi-custom",
+    drop: /fully custom cabinetry/i,
+  },
+  {
+    // A cosmetic-only job does not re-run plumbing and electrical.
+    when: (r) => r.plumbingElectrical === "cosmetic",
+    drop: /updated plumbing and electrical|plumbing and electrical (?:updated|rerouting)/i,
+  },
+];
+
+function isContradicted(item: string, r: EstimateRefinements): boolean {
+  return SCOPE_CONTRADICTIONS.some((rule) => rule.when(r) && rule.drop.test(item));
 }
 
 /**
