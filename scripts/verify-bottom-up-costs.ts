@@ -1,12 +1,12 @@
 /**
  * Reconciliation gate for the bottom-up cost model.
  *
- * Sums every project x finish tier from installed unit costs and compares the
- * result against the PRICE_MATRIX midpoint the site prices from today. The
- * matrix is NOT the source of truth here - it is a sanity bound. A combination
- * inside TOLERANCE means the build-up agrees with pricing that came off real
- * jobs; one outside it means the two disagree and a human has to say which is
- * right before the engine is switched over.
+ * The engine now prices from this build-up (owner ruled the old PRICE_MATRIX
+ * cells wrong, 2026-09-03), so this is no longer a gate on switching over - it
+ * is a drift monitor. It sums every project x finish tier from installed unit
+ * costs and reports how far each sits from the retired matrix cell, which is
+ * kept only as a historical reference point. Large NEW movement here means
+ * someone changed a unit cost; that should be deliberate.
  *
  * Run: npx tsx scripts/verify-bottom-up-costs.ts
  */
@@ -42,7 +42,7 @@ for (const project of Object.keys(INSTALLED_UNIT_COSTS) as ProjectType[]) {
     const mid = (cell.low + cell.high) / 2;
     const delta = (total - mid) / mid;
     checked++;
-    const flag = Math.abs(delta) <= TOLERANCE ? "ok  " : (outside++, "WIDE");
+    const flag = Math.abs(delta) <= TOLERANCE ? "ok  " : (outside++, "diff");
     rows.push(
       `  ${flag} ${project.padEnd(12)}${finish.padEnd(11)}` +
       `built ${Math.round(total).toLocaleString().padStart(9)}   ` +
@@ -55,6 +55,8 @@ for (const project of Object.keys(INSTALLED_UNIT_COSTS) as ProjectType[]) {
 console.log(rows.join("\n"));
 console.log(`\n${checked} combinations checked, ${outside} outside ±${TOLERANCE * 100}%, ${missing} missing unit costs.`);
 if (missing > 0) { console.error("Every direct component needs an installed unit cost."); process.exit(1); }
-console.log(outside > 0
-  ? `\n${outside} need owner calibration before the engine is switched to the build-up.`
-  : "\nAll combinations reconcile; the build-up is ready to drive the price.");
+console.log(
+  `\n${outside} combination(s) differ from the retired matrix by more than ` +
+    `${TOLERANCE * 100}%. That is expected where the matrix cell was wrong; ` +
+    "investigate only if this number moves unexpectedly."
+);

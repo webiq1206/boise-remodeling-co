@@ -889,6 +889,30 @@ export const ADU_RULES: ScopeRule[] = [
  */
 export const BASEMENT_RULES: ScopeRule[] = [
   ...commonRules("basement"),
+  /*
+   * The wet bar. A basement's "kitchen" is a wet bar (ASSUMED_KITCHENS marks it
+   * isWetBar), so it carries roughly half the cabinet run of an addition's full
+   * kitchen and a small countertop.
+   *
+   * These rules did not exist before. The estimator asked every basement
+   * visitor whether a kitchen was included and then priced the answer at
+   * nothing. It stayed invisible because the margin guard was pinning every
+   * basement configuration to the market ceiling, so the values came out
+   * identical for a reason the guard check tolerates. Pricing basement from the
+   * component build-up lifted it clear of that ceiling and exposed the gap.
+   */
+  {
+    code: "03-17-01", // Wet bar cabinetry, LF
+    qty: () => 6,
+    when: (s) => s.kitchenIncluded === true,
+    assumption:
+      "A basement wet bar carries about half the cabinet run of a full kitchen, and only when the homeowner says one is going in.",
+  },
+  {
+    code: "03-17-02", // Wet bar countertop, LF
+    qty: () => 5,
+    when: (s) => s.kitchenIncluded === true,
+  },
   {
     code: "03-05-02", // Framing, per SF of project
     qty: (d) => d.floorArea * 0.35,

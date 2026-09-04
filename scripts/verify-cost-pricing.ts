@@ -426,7 +426,9 @@ const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
     luxury: [295000, 400000],
   },
   basement: {
-    "mid-range": [52000, 70000],
+    // Reprice 2026-09-03: wiring the wet bar (kitchenIncluded was shown to
+    // basement visitors and priced nothing) adds real scope at this tier.
+    "mid-range": [53000, 72000],
     "high-end": [80000, 109000],
     luxury: [120000, 165000],
   },
