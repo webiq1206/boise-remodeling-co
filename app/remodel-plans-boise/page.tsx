@@ -100,14 +100,14 @@ export default function RemodelPlansPage() {
         scrim={0.75}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Estimate From Plans" }]} />
-        <div className="brc-label text-inverse-muted mt-6 mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>
           For homeowners, architects and designers
-        </div>
-        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        </p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           A remodel estimate built from{" "}
           <em className="brc-accent">your own drawings</em>
         </h1>
-        <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-7">
+        <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           Send us your floor plans. We read the room areas, ceiling heights and schedules off the
           sheets, show you exactly what we measured, and price the work from that rather than from a
           typical house of the same size.

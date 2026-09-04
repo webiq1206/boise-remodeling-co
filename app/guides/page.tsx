@@ -77,11 +77,11 @@ export default function GuidesIndexPage() {
         imageSrc={getBlogHeroImage('boise-remodeling-cost-guide')}
         imageAlt={getBlogImageAlt('boise-remodeling-cost-guide')}
       >
-        <div className="brc-label text-inverse-muted mb-3">Treasure Valley authority</div>
-        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Treasure Valley authority</p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Remodeling Guides
         </h1>
-        <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
+        <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           In-depth guides for Boise, Meridian, Eagle, Nampa, and the entire Treasure Valley - costs,
           process, locations, and planning resources from Boise Remodeling Co.
         </p>

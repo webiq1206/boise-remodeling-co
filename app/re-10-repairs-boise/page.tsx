@@ -104,10 +104,10 @@ export default function Re10RepairsPage() {
         {/* THE TOOL IS THE PAGE. On a phone the primary action sat 2,343px
             down behind a full hero and a three-paragraph explainer. Mobile
             gets the headline and one line; desktop keeps the full pitch. */}
-        <div className="brc-label text-inverse-muted mt-4 mb-3 md:mt-6 md:mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>
           For agents, buyers and sellers
-        </div>
-        <h1 className="font-serif text-[clamp(1.75rem,7vw,4.5rem)] leading-[1.08] tracking-tight text-inverse-foreground max-w-3xl mb-2 md:mb-4">
+        </p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           RE-10 repairs completed correctly and{" "}
           <em className="brc-accent">on schedule</em>
         </h1>

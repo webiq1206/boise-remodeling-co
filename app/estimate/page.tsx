@@ -79,8 +79,8 @@ export default function EstimatePage() {
             page whose entire purpose is that choice. Desktop has room for the
             full band; mobile gets the orientation and nothing else. */}
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Project Estimator" }]} />
-        <div className="brc-label text-inverse-muted mt-4 mb-3 md:mt-6 md:mb-4">Free planning tool</div>
-        <h1 className="font-serif text-[clamp(1.75rem,7vw,4.5rem)] leading-[1.08] tracking-tight text-inverse-foreground max-w-3xl mb-2 md:mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Free planning tool</p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Treasure Valley remodel{" "}
           <em className="brc-accent">estimator</em>
         </h1>

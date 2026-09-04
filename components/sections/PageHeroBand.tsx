@@ -15,7 +15,14 @@ interface PageHeroBandProps {
   children: React.ReactNode;
 }
 
-/** Full-bleed photo hero band for index pages (Phase 3). */
+/**
+ * Full-bleed photo hero band for index pages.
+ *
+ * Taller than it was - clamp(380px, 48vw, 620px) rather than a flat 420 - so
+ * the photograph gets to be a composition rather than a strip, and on the
+ * family shell (1380px) rather than the old container so its text lines up
+ * with every section beneath it.
+ */
 export function PageHeroBand({
   imageSrc,
   imageAlt,
@@ -31,7 +38,7 @@ export function PageHeroBand({
          because there the tool still fits beneath it. */
       className={cn(
         "relative flex items-end overflow-hidden bg-inverse border-b border-border/60",
-        compact ? "min-h-[220px] md:min-h-[420px]" : "min-h-[320px] md:min-h-[420px]",
+        compact ? "min-h-[240px] md:min-h-[440px]" : "min-h-[clamp(380px,48vw,620px)]",
       )}
     >
       <Image
@@ -57,7 +64,7 @@ export function PageHeroBand({
            is most of why the tool sat below the fold. Compact clears the
            header and stops there. */
         className={cn(
-          "relative z-10 w-full container px-4",
+          "relative z-10 w-full ed-shell",
           compact ? "pt-20 pb-6 md:pt-32 md:pb-16" : "pt-28 pb-12 md:pt-32 md:pb-16",
         )}
       >

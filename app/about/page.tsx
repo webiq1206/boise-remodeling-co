@@ -128,7 +128,7 @@ export default function AboutPage() {
               {SPEAKABLE_SUMMARY}
             </p>
             <div className="brc-label brc-label-on-photo mt-6 mb-5">About us</div>
-            <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-4xl mb-6">
+            <h1 className="ed-display ed-statement-display text-inverse-foreground mb-8">
               About Boise Remodeling{' '}
               <em className="brc-accent">Co</em>
             </h1>

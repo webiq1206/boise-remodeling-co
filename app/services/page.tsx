@@ -3,8 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { Section } from '@/components/marketing/Section';
-import { SectionHeader } from '@/components/marketing/SectionHeader';
-import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Reveal } from '@/components/Reveal';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -48,6 +46,7 @@ export const metadata: Metadata = {
 
 export default function ServicesIndexPage() {
   const base = getBaseUrl().replace(/\/$/, '');
+  const [lead, ...rest] = SERVICES;
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: '/' },
@@ -75,75 +74,100 @@ export default function ServicesIndexPage() {
         imageAlt="Remodeled Treasure Valley great room with warm finishes and natural light"
       >
         <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services' }]} />
-        <div className="brc-label text-inverse-muted mt-6 mb-4">Our services</div>
-        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>Our services</p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Design-build expertise for every major{' '}
-          <em className="brc-accent">remodel</em>
+          <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>remodel</em>
         </h1>
-        <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed">
-          One accountable team handles design, estimating, permitting, and construction under a single
-          contract, so your project stays aligned from the first in-home visit through the final walkthrough.
+        <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
+          One accountable team handles design, estimating, permitting and construction under a
+          single contract, from the first in-home visit through the final walkthrough.
         </p>
       </PageHeroBand>
 
-      <Section spacing="default" divider className="pt-10 md:pt-14">
-        <div className="container px-4">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {SERVICES.map((service, i) => (
+      {/* WAS seven identical cards in a three-column grid with 16px names - the
+          arrangement the redesign brief singles out. NOW the same lead-panel-plus-
+          index the homepage uses, so a homeowner who arrives from the homepage
+          recognises the pattern, and one who lands cold can scan every service and
+          its planning-from figure down a single column. */}
+      <Section surface="dark" spacing="xl">
+        <div className="ed-shell">
+          {lead && (
+            <Reveal>
+              <Link
+                href={servicePath(lead.slug)}
+                className="ed-zoom group grid overflow-hidden lg:grid-cols-[1.15fr_0.85fr]"
+                style={{ border: '1px solid var(--ed-line)' }}
+              >
+                <div className="relative min-h-[clamp(280px,38vw,460px)] overflow-hidden">
+                  <Image
+                    src={getServiceBackground(lead.slug)}
+                    alt={`${lead.name} project by Boise Remodeling Co`}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 55vw"
+                    quality={72}
+                    className="object-cover img-brand-grade"
+                  />
+                </div>
+                <div className="flex flex-col justify-center p-[clamp(28px,3.4vw,56px)]">
+                  <p className="ed-eyebrow ed-eyebrow-accent">Most requested</p>
+                  <h2 className="ed-h2-sm">{lead.name}</h2>
+                  <p className="ed-body mt-5">{lead.shortDescription}</p>
+                  <p className="ed-small mt-7 flex items-baseline gap-3">
+                    <span className="uppercase tracking-[0.16em]">Planning from</span>
+                    <span className="brc-display-num text-[1.75rem] leading-none" style={{ color: 'var(--ed-ink)' }}>
+                      {lead.planningFrom}
+                    </span>
+                  </p>
+                  <span className="ed-link ed-link-accent mt-8 self-start">
+                    Explore {lead.name.toLowerCase()}
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          )}
+
+          <div className="ed-steps mt-[clamp(40px,5vw,72px)]">
+            {rest.map((service, i) => (
               <Reveal key={service.slug} delay={Math.min(i, 5) * 40}>
-                <Link href={servicePath(service.slug)} className="group block h-full">
-                  <article className="h-full flex flex-col rounded-sm border border-card-border bg-card overflow-hidden transition-colors group-hover:border-foreground/20">
-                    <div className="relative aspect-[4/3] overflow-hidden">
-                      <Image
-                        src={getServiceBackground(service.slug)}
-                        alt={`${service.name} project by Boise Remodeling Co`}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        quality={70}
-                        className="object-cover img-brand-grade transition-transform duration-300 ease-out group-hover:scale-[1.02]"
-                      />
-                    </div>
-                    <div className="flex flex-col flex-1 p-5 md:p-6">
-                      <h2 className="font-serif font-normal text-base mb-2 text-foreground">
-                        {service.name}
-                      </h2>
-                      <p className="text-sm leading-relaxed mb-4 text-muted-foreground flex-1">
-                        {service.shortDescription}
-                      </p>
-                      <div className="mt-auto pt-4 border-t border-border/60 flex items-center justify-between gap-3">
-                        <div>
-                          <div className="text-caption uppercase tracking-[0.14em] text-muted-foreground">
-                            Planning from
-                          </div>
-                          <div className="brc-display-num text-foreground text-lg leading-none mt-0.5">
-                            {service.planningFrom}
-                          </div>
-                        </div>
-                        <span className="brc-text-link">
-                          Learn more <ArrowRight className="h-4 w-4" />
-                        </span>
-                      </div>
-                    </div>
-                  </article>
+                <Link
+                  href={servicePath(service.slug)}
+                  className="group grid items-baseline gap-x-8 gap-y-2 py-[clamp(20px,2.4vw,30px)] md:grid-cols-[minmax(210px,0.9fr)_1.6fr_auto_28px]"
+                  style={{ borderBottom: '1px solid var(--ed-line)' }}
+                >
+                  <h2 className="ed-h3 transition-colors group-hover:[color:var(--ed-accent)]">{service.name}</h2>
+                  <p className="ed-body max-w-none">{service.shortDescription}</p>
+                  <p className="ed-small flex items-baseline gap-2 whitespace-nowrap">
+                    <span className="uppercase tracking-[0.16em]">From</span>
+                    <span className="brc-display-num text-[1.25rem] leading-none" style={{ color: 'var(--ed-ink)' }}>
+                      {service.planningFrom}
+                    </span>
+                  </p>
+                  <ArrowRight className="hidden h-4 w-4 transition-transform group-hover:translate-x-1 md:block" aria-hidden="true" />
                 </Link>
               </Reveal>
             ))}
+          </div>
 
-            <Reveal delay={SERVICES.length * 40}>
-              <div className="h-full min-h-[220px] rounded-sm border border-card-border bg-card p-6 md:p-8 flex flex-col justify-center">
-                <div className="brc-label mb-3">Not sure where to start</div>
-                <h2 className="font-serif text-xl md:text-2xl tracking-tight mb-2 text-foreground">
-                  Tell us about your <em className="brc-accent">project</em>
-                </h2>
-                <p className="text-sm leading-relaxed mb-5 text-muted-foreground">
+          <Reveal>
+            <div className="ed-inset mt-[clamp(40px,5vw,72px)] flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
+              <div>
+                <p className="ed-eyebrow">Not sure where to start</p>
+                <p className="ed-h3 max-w-[24ch]">
+                  Tell us about your{' '}
+                  <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>project</em>
+                </p>
+                <p className="ed-body mt-4">
                   Every remodel starts with a free in-home visit and an honest planning range, with no obligation.
                 </p>
-                <EstimateCTA variant="brand" className="self-start">
-                  {CTA_PRIMARY}
-                </EstimateCTA>
               </div>
-            </Reveal>
-          </div>
+              <div className="flex flex-shrink-0 flex-col gap-4 sm:flex-row sm:items-center">
+                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+                <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
+              </div>
+            </div>
+          </Reveal>
         </div>
       </Section>
 
@@ -151,27 +175,30 @@ export default function ServicesIndexPage() {
         title={
           <>
             Know your range before you{' '}
-            <em className="brc-accent">commit</em>
+            <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>commit</em>
           </>
         }
-        description="Use our Treasure Valley project estimator to see a realistic planning range for kitchen, bath, whole-home, and addition work - then book a free visit when you're ready."
+        description="Use our Treasure Valley project estimator to see a realistic planning range for kitchen, bath, whole-home and addition work - then book a free visit when you're ready."
       />
 
-      <Section divider>
-        <div className="container px-4 max-w-5xl">
-          <SectionHeader
-            eyebrow="Treasure Valley"
-            size="display"
-            className="max-w-3xl"
-            title={
-              <>
+      <Section surface="deep" spacing="xl" edge>
+        <div className="ed-shell">
+          <div className="ed-split ed-split-end">
+            <Reveal>
+              <p className="ed-eyebrow">Treasure Valley</p>
+              <h2 className="ed-h2 ed-statement-wide">
                 Serving communities across the{' '}
-                <em className="brc-accent">valley</em>
-              </>
-            }
-            description="Permit paths, housing stock, and HOA requirements differ between Ada and Canyon County communities. Choose your city for local guidance."
-          />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>valley</em>
+              </h2>
+            </Reveal>
+            <Reveal delay={60}>
+              <p className="ed-body">
+                Permit paths, housing stock and HOA requirements differ between Ada and Canyon
+                County communities. Choose your city for local guidance.
+              </p>
+            </Reveal>
+          </div>
+          <div className="mt-[clamp(40px,5vw,72px)] grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {CITIES.map((city, i) => (
               <Reveal key={city.slug} delay={Math.min(i, 7) * 40}>
                 <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />
@@ -181,20 +208,23 @@ export default function ServicesIndexPage() {
         </div>
       </Section>
 
-      <Section divider spacing="sm">
-        <div className="container px-4 max-w-2xl mx-auto">
-          <MarketingCard className="cta-card-dark p-10 md:p-12 text-center">
-            <h2 className="font-serif text-section-title mb-4 text-inverse-foreground">
-              Ready to plan your <em className="brc-accent">remodel</em>?
+      <Section surface="gradient" spacing="lg" edge>
+        <div className="ed-shell">
+          <div className="ed-split ed-split-center">
+            <h2 className="ed-h2 ed-statement">
+              Ready to plan your{' '}
+              <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>remodel</em>?
             </h2>
-            <p className="text-inverse-muted mb-8 max-w-md mx-auto">
-              Book a free in-home visit or get an instant planning range for your project.
-            </p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
-              <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
+            <div>
+              <p className="ed-body">
+                Book a free in-home visit or get an instant planning range for your project.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+                <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
+              </div>
             </div>
-          </MarketingCard>
+          </div>
         </div>
       </Section>
     </>

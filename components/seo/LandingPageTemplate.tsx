@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Check, ChevronRight, Star } from 'lucide-react';
-import { DisplayNum, formatStepNumber, Section } from '@/components/marketing';
+import { Section } from '@/components/marketing';
 import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { Reveal } from '@/components/Reveal';
 import { RelatedLinks } from './RelatedLinks';
@@ -37,6 +37,17 @@ interface LandingPageTemplateProps {
   manifestPath?: string;
   /** Optional planning starting point ("$15k") shown near the hero CTAs. */
   planningFrom?: string;
+  /**
+   * Cost-and-timeline expectation, rendered directly AFTER THE HERO: the first
+   * question a visitor researches is what this costs and how long it takes, so
+   * it must not sit below inclusions and process. When provided, the `timeline`
+   * renders alongside it instead of in the lower planning-details block.
+   */
+  costGuidance?: {
+    heading: string;
+    paragraphs: string[];
+    links?: { label: string; href: string }[];
+  };
   benefits?: string[];
   inclusions?: string[];
   timeline?: string;
@@ -93,20 +104,13 @@ function HeroBreadcrumbs({ items }: { items: BreadcrumbItem[] }) {
           return (
             <li key={index} className="flex items-center gap-1.5">
               {item.href && !isLast ? (
-                <Link
-                  href={item.href}
-                  className="hover:text-inverse-foreground transition-colors"
-                >
+                <Link href={item.href} className="hover:text-inverse-foreground transition-colors">
                   {item.name}
                 </Link>
               ) : (
-                <span className={isLast ? 'text-inverse-foreground font-normal' : ''}>
-                  {item.name}
-                </span>
+                <span className={isLast ? 'text-inverse-foreground font-normal' : ''}>{item.name}</span>
               )}
-              {!isLast && (
-                <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 opacity-40" />
-              )}
+              {!isLast && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 opacity-40" />}
             </li>
           );
         })}
@@ -122,21 +126,31 @@ function HeroBreadcrumbs({ items }: { items: BreadcrumbItem[] }) {
 function splitBenefit(text: string): { lead: string; body: string } {
   const commaIdx = text.indexOf(',');
   if (commaIdx > 0 && commaIdx < text.length - 1) {
-    return {
-      lead: text.slice(0, commaIdx).trim(),
-      body: text.slice(commaIdx + 1).trim(),
-    };
+    return { lead: text.slice(0, commaIdx).trim(), body: text.slice(commaIdx + 1).trim() };
   }
   const words = text.split(' ');
   if (words.length > 6) {
-    return {
-      lead: words.slice(0, 4).join(' '),
-      body: words.slice(4).join(' '),
-    };
+    return { lead: words.slice(0, 4).join(' '), body: words.slice(4).join(' ') };
   }
   return { lead: text, body: '' };
 }
 
+const accent = { color: 'var(--ed-accent)' } as const;
+const line = { borderColor: 'var(--ed-line)' } as const;
+
+/**
+ * The landing template behind every service, area and city-service page - the
+ * highest-volume SEO routes on the site, dozens of pages from one file.
+ *
+ * Rebuilt on the family layer. Every band keeps its content and its order (the
+ * order is the sales conversation and the SEO structure - untouched), but each
+ * takes the layout that suits what it holds rather than the same card grid:
+ * benefits as a hairline matrix, inclusions as a split with an inset list,
+ * process as the family's image panel, long-form copy on the prose measure,
+ * proof as a matrix, FAQ as the parent site's split. Grounds alternate dark /
+ * deep / gradient so a long page has a rhythm; there is no light band here by
+ * design - these pages are dark-dominant like the rest of the site.
+ */
 export function LandingPageTemplate({
   h1,
   speakableSummary,
@@ -147,6 +161,7 @@ export function LandingPageTemplate({
   processImageUrl,
   manifestPath,
   planningFrom,
+  costGuidance,
   benefits,
   inclusions,
   timeline,
@@ -162,146 +177,151 @@ export function LandingPageTemplate({
 }: LandingPageTemplateProps) {
   const eyebrow = breadcrumbs[breadcrumbs.length - 2]?.name;
   const hasProof =
-    !!proof &&
-    ((proof.testimonials?.length ?? 0) > 0 || (proof.projects?.length ?? 0) > 0);
+    !!proof && ((proof.testimonials?.length ?? 0) > 0 || (proof.projects?.length ?? 0) > 0);
   const breatherImage = breatherImageUrl ?? heroImageUrl;
   const processImage = processImageUrl ?? heroImageUrl;
+  const showTimelineBelow = !!timeline && !costGuidance;
 
   return (
     <div className="flex flex-col pb-20 md:pb-0">
-
       {/* ─── Cinematic hero ─── */}
-      <section className="relative min-h-[540px] md:min-h-[78vh] flex items-end overflow-hidden bg-inverse">
+      <section className="relative min-h-[clamp(560px,78vh,860px)] flex items-end overflow-hidden bg-inverse" data-contrast-skip>
         {heroImageUrl && (
-          <Image
-            src={heroImageUrl}
-            alt=""
-            fill
-            className="object-cover opacity-[0.82] img-brand-grade"
-            sizes="100vw"
-            priority
-          />
+          <Image src={heroImageUrl} alt="" fill className="object-cover opacity-[0.82] img-brand-grade" sizes="100vw" priority />
         )}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/60 to-transparent" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/85 via-inverse/60 to-transparent" />
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/60 via-inverse/15 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-44 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }}
-        />
+        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
 
-        <div className="relative z-10 w-full container px-4 pb-14 md:pb-20 pt-10 fade-up">
+        <div className="ed-shell relative z-10 w-full pb-[clamp(56px,7vw,96px)] pt-10 fade-up">
           <HeroBreadcrumbs items={breadcrumbs} />
-          <p data-speakable="summary" className="sr-only">
-            {speakableSummary}
-          </p>
+          <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           {eyebrow && (
-            <div className="brc-label brc-label-on-photo mt-6 mb-5">{eyebrow}</div>
+            <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>{eyebrow}</p>
           )}
-          <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-4xl mb-6">
-            {h1}
-          </h1>
-          <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-8">
-            {overview}
-          </p>
-          <div className="flex flex-wrap gap-3">
+          <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
+          <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">{overview}</p>
+          <div className="mt-10 flex flex-wrap gap-4">
             <EstimateCTA variant="brand">
-              {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
+              {CTA_PRIMARY} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </EstimateCTA>
             <ConsultCTA variant="heroGhost">{CTA_SECONDARY}</ConsultCTA>
           </div>
           {planningFrom && (
-            <p className="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-inverse-foreground/80">
-              <span className="uppercase tracking-[0.12em] text-label">Planning from</span>
-              <span className="brc-display-num text-inverse-foreground text-lg leading-none">
-                {planningFrom}
-              </span>
-              <span className="opacity-40">·</span>
-              <span>Your exact range is confirmed at the free in-home visit</span>
+            <p className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-inverse-foreground/80">
+              <span className="ed-eyebrow !mb-0" style={{ color: 'rgb(255 255 255 / 0.72)' }}>Planning from</span>
+              <span className="brc-display-num text-inverse-foreground text-[1.5rem] leading-none">{planningFrom}</span>
+              <span className="ed-small text-inverse-foreground/70">Your exact range is confirmed at the free in-home visit</span>
             </p>
           )}
         </div>
       </section>
 
-      {/* ─── Benefits ─── */}
+      {/* ─── Cost and timeline expectation ───
+          Position 2 by design: cost is the question that brought the visitor
+          here, so it answers before benefits, inclusions or process. */}
+      {costGuidance && (
+        <Section surface="dark" spacing="xl">
+          <div className="ed-shell">
+            <div className="ed-split ed-split-narrow">
+              <div className="lg:sticky lg:top-28 lg:self-start">
+                <Reveal>
+                  <p className="ed-eyebrow">Cost and timeline</p>
+                  <h2 className="ed-h2 ed-statement">{costGuidance.heading}</h2>
+                  {timeline && (
+                    <div className="ed-inset mt-10">
+                      <p className="ed-eyebrow ed-eyebrow-accent">Typical timeline</p>
+                      <p className="ed-body">{timeline}</p>
+                    </div>
+                  )}
+                </Reveal>
+              </div>
+              <Reveal delay={60}>
+                {costGuidance.paragraphs.map((p, i) => (
+                  <p key={i} className={i === 0 ? 'ed-lede' : 'ed-body mt-5'}>{p}</p>
+                ))}
+                {costGuidance.links && costGuidance.links.length > 0 && (
+                  <ul className="mt-8 flex list-none flex-wrap gap-x-8 gap-y-3 p-0">
+                    {costGuidance.links.map((link) => (
+                      <li key={link.href}>
+                        <Link href={link.href} className="ed-link ed-link-accent">
+                          {link.label}
+                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </Reveal>
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {/* ─── Benefits: a hairline matrix, not a card grid ─── */}
       {benefits && benefits.length > 0 && (
-        <Section variant="greige" divider>
-          <div className="container px-4 max-w-5xl">
+        <Section surface="deep" spacing="xl" edge>
+          <div className="ed-shell">
             <Reveal>
-              <div className="brc-label mb-5">Why choose us</div>
-              <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-[1.08] tracking-tight text-foreground mb-10">
-                Why homeowners <em className="brc-accent">choose us</em>
+              <p className="ed-eyebrow">Why choose us</p>
+              <h2 className="ed-h2 ed-statement-wide">
+                Why homeowners <em className="not-italic" style={accent}>choose us</em>
               </h2>
             </Reveal>
-            <ul className="grid sm:grid-cols-2 gap-4">
-              {benefits.map((item, i) => {
-                const { lead, body } = splitBenefit(item);
-                return (
-                  <li key={item} className="list-none">
-                    <Reveal
-                      delay={Math.min(i, 5) * 70}
-                      className="marketing-card p-5 flex items-start gap-3 h-full"
-                    >
-                      <Check className="h-4 w-4 text-accent-legible flex-shrink-0 mt-0.5" />
-                      <span className="text-sm leading-relaxed">
-                        <strong className="font-normal text-foreground">{lead}</strong>
-                        {body && (
-                          <span className="text-muted-foreground">{', '}{body}</span>
-                        )}
-                      </span>
-                    </Reveal>
-                  </li>
-                );
-              })}
-            </ul>
+            <Reveal delay={60}>
+              <ul
+                className="ed-matrix mt-[clamp(40px,5vw,72px)] list-none p-0"
+                style={{ ['--ed-cols' as string]: Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '200px' }}
+              >
+                {benefits.map((item, i) => {
+                  const { lead, body } = splitBenefit(item);
+                  return (
+                    <li key={item} className="flex flex-col">
+                      <span className="ed-small" style={accent}>{String(i + 1).padStart(2, '0')}</span>
+                      <p className="ed-h4 mt-auto pt-8">{lead}</p>
+                      {body && <p className="ed-body mt-2 text-[0.875rem]">{body}</p>}
+                    </li>
+                  );
+                })}
+              </ul>
+            </Reveal>
           </div>
         </Section>
       )}
 
       {/* ─── Full-bleed image breather ─── */}
       {breatherImage && (
-        <section className="relative h-44 md:h-64 overflow-hidden" aria-hidden>
-          <Image
-            src={breatherImage}
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover img-brand-grade"
-          />
+        <section className="relative h-[clamp(220px,32vw,400px)] overflow-hidden" aria-hidden>
+          <Image src={breatherImage} alt="" fill sizes="100vw" className="object-cover img-brand-grade" />
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-inverse/10 to-background/80" />
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }}
-          />
+          <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
         </section>
       )}
 
-      {/* ─── Inclusions ─── */}
+      {/* ─── Inclusions: split, list in an inset panel ─── */}
       {inclusions && inclusions.length > 0 && (
-        <Section divider>
-          <div className="container px-4 max-w-5xl">
-            <Reveal>
-              <div className="brc-label mb-5">Scope of work</div>
-              <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-[1.08] tracking-tight text-foreground mb-10">
-                What&apos;s <em className="brc-accent">included</em>
-              </h2>
-            </Reveal>
-            <MarketingCard>
-              <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-                {inclusions.map((item, i) => (
-                  <li key={item} className="list-none">
-                    <Reveal
-                      delay={Math.min(i, 6) * 60}
-                      className="flex items-start gap-3 text-sm"
-                    >
-                      <Check className="h-4 w-4 text-accent-legible flex-shrink-0 mt-0.5" />
-                      <span className="text-muted-foreground">{item}</span>
-                    </Reveal>
-                  </li>
-                ))}
-              </ul>
-            </MarketingCard>
+        <Section surface="dark" spacing="xl">
+          <div className="ed-shell">
+            <div className="ed-split ed-split-narrow">
+              <Reveal>
+                <p className="ed-eyebrow">Scope of work</p>
+                <h2 className="ed-h2 ed-statement">
+                  What&apos;s <em className="not-italic" style={accent}>included</em>
+                </h2>
+              </Reveal>
+              <Reveal delay={60}>
+                <ul className="ed-inset m-0 grid list-none gap-x-8 gap-y-4 p-[clamp(24px,2.6vw,40px)] sm:grid-cols-2">
+                  {inclusions.map((item) => (
+                    <li key={item} className="ed-body flex items-start gap-3 text-[0.9375rem]">
+                      <Check className="mt-1 h-4 w-4 flex-shrink-0" style={accent} aria-hidden="true" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
           </div>
         </Section>
       )}
@@ -309,48 +329,31 @@ export function LandingPageTemplate({
       {/* ─── Featured before/after (service hub) ─── */}
       {featuredProject && <FeaturedBeforeAfterSection project={featuredProject} />}
 
-      {/* ─── Process (split: charcoal panel + steps) ─── */}
+      {/* ─── Process: the family's image panel, timeline leading ─── */}
       {processSteps && processSteps.length > 0 && (
-        <Section variant="greige" divider spacing="none" className="p-0">
-          <div className="grid md:grid-cols-2 overflow-hidden">
-            <div className="relative min-h-[260px] md:min-h-[520px] overflow-hidden bg-inverse">
+        <Section surface="deep" spacing="none" edge className="p-0">
+          <div className="ed-panel ed-panel-reverse">
+            <div className="ed-panel-media">
               {processImage && (
-                <Image
-                  src={processImage}
-                  alt=""
-                  fill
-                  className="object-cover img-brand-grade"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+                <Image src={processImage} alt="" fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-inverse/80 via-inverse/55 to-inverse/30" />
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }}
-              />
-              <div className="relative h-full flex flex-col justify-end p-8 md:p-12 lg:p-14">
-                <div className="brc-label brc-label-on-photo mb-4">How it works</div>
-                <h2 className="font-serif text-[2rem] md:text-[2.75rem] leading-[1.06] tracking-tight text-inverse-foreground">
-                  Our <em className="brc-accent">process</em>,
-                  <br />
-                  step by step
-                </h2>
-              </div>
+              <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
             </div>
-
-            <div className="section-y-sm px-6 md:px-12 lg:px-14 bg-card border-l border-border">
-              <div className="divide-y divide-border border-t border-border">
+            <div className="ed-panel-body">
+              <Reveal>
+                <p className="ed-eyebrow">How it works</p>
+                <h2 className="ed-h2-sm ed-statement">
+                  Our <em className="not-italic" style={accent}>process</em>, step by step
+                </h2>
+              </Reveal>
+              <div className="ed-steps mt-[clamp(32px,4vw,56px)]">
                 {processSteps.map((step, i) => (
-                  <Reveal key={step.title} delay={Math.min(i, 5) * 70}>
-                    <div className="flex gap-5 py-7">
-                      <DisplayNum className="text-2xl w-9 flex-shrink-0 leading-none mt-0.5 text-accent-legible">
-                        {formatStepNumber(i)}
-                      </DisplayNum>
+                  <Reveal key={step.title} delay={Math.min(i, 5) * 60}>
+                    <div className="ed-step">
+                      <span className="ed-step-n">{String(i + 1).padStart(2, '0')}</span>
                       <div>
-                        <h3 className="font-normal text-base text-foreground mb-1.5">{step.title}</h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {step.description}
-                        </p>
+                        <h3 className="ed-h4">{step.title}</h3>
+                        <p className="ed-body mt-2 text-[0.875rem]">{step.description}</p>
                       </div>
                     </div>
                   </Reveal>
@@ -361,43 +364,29 @@ export function LandingPageTemplate({
         </Section>
       )}
 
-      {/* ─── Timeline & local notes ─── */}
-      {(timeline || localNote) && (
-        <Section divider>
-          <div className="container px-4 max-w-5xl">
-            <div
-              className={`grid gap-6 ${timeline && localNote ? 'md:grid-cols-2' : 'max-w-2xl'}`}
-            >
-              {timeline && (
+      {/* ─── Timeline & local notes ───
+          The timeline renders up in the cost section when costGuidance hoisted
+          it; showing it twice would be noise. */}
+      {(showTimelineBelow || localNote) && (
+        <Section surface="dark" spacing="lg" edge>
+          <div className="ed-shell">
+            <div className={`grid gap-[var(--ed-gutter)] ${showTimelineBelow && localNote ? 'lg:grid-cols-2' : 'max-w-[60ch]'}`}>
+              {showTimelineBelow && (
                 <Reveal>
-                  <MarketingCard className="p-6 md:p-8 h-full">
-                    <div className="flex gap-4">
-                      <div className="w-0.5 bg-accent/50 flex-shrink-0 rounded-full" />
-                      <div>
-                        <div className="brc-label mb-3">Planning details</div>
-                        <h3 className="font-serif font-normal text-base text-foreground mt-3 mb-3">
-                          Typical timeline
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{timeline}</p>
-                      </div>
-                    </div>
-                  </MarketingCard>
+                  <div className="ed-inset h-full">
+                    <p className="ed-eyebrow ed-eyebrow-accent">Planning details</p>
+                    <h3 className="ed-h3">Typical timeline</h3>
+                    <p className="ed-body mt-4">{timeline}</p>
+                  </div>
                 </Reveal>
               )}
               {localNote && (
-                <Reveal delay={timeline ? 90 : 0}>
-                  <MarketingCard className="p-6 md:p-8 h-full">
-                    <div className="flex gap-4">
-                      <div className="w-0.5 bg-accent/50 flex-shrink-0 rounded-full" />
-                      <div>
-                        <div className="brc-label mb-3">Local details</div>
-                        <h3 className="font-serif font-normal text-base text-foreground mt-3 mb-3">
-                          Local notes
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{localNote}</p>
-                      </div>
-                    </div>
-                  </MarketingCard>
+                <Reveal delay={showTimelineBelow ? 90 : 0}>
+                  <div className="ed-inset h-full">
+                    <p className="ed-eyebrow ed-eyebrow-accent">Local details</p>
+                    <h3 className="ed-h3">Local notes</h3>
+                    <p className="ed-body mt-4">{localNote}</p>
+                  </div>
                 </Reveal>
               )}
             </div>
@@ -405,136 +394,98 @@ export function LandingPageTemplate({
         </Section>
       )}
 
-      {/* ─── Long-form content sections ─── */}
+      {/* ─── Long-form content sections: the prose measure ─── */}
       {sections && sections.length > 0 && (
-        <Section divider>
-          <div className="container px-4 max-w-3xl space-y-12">
-            {sections.map((section, i) => (
-              <Reveal key={section.heading} delay={Math.min(i, 4) * 60}>
-                <div className="prose-measure">
-                  <h2 className="font-serif text-[1.75rem] md:text-[2rem] leading-tight tracking-tight text-foreground mb-5">
-                    {section.heading}
-                  </h2>
-                  {section.paragraphs?.map((p, j) => (
-                    <p key={j} className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4">
-                      {p}
-                    </p>
-                  ))}
-                  {section.subsections?.map((sub) => (
-                    <div key={sub.heading} className="mt-6">
-                      <h3 className="font-serif font-normal text-base text-foreground mb-2">
-                        {sub.heading}
-                      </h3>
-                      {sub.paragraphs.map((p, k) => (
-                        <p key={k} className="text-sm text-muted-foreground leading-relaxed mb-3">
-                          {p}
-                        </p>
-                      ))}
-                    </div>
-                  ))}
-                  {section.links && section.links.length > 0 && (
-                    <ul className="mt-4 grid sm:grid-cols-2 gap-2">
-                      {section.links.map((link) => (
-                        <li key={link.href} className="list-none">
-                          <Link
-                            href={link.href}
-                            className="inline-flex items-center min-h-11 lg:min-h-0 text-sm text-accent-legible hover:underline font-normal"
-                          >
-                            {link.label}
-                            <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </Reveal>
-            ))}
+        <Section surface="dark" spacing="xl" edge>
+          <div className="ed-shell">
+            <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.75fr_1.25fr]">
+              <div className="hidden lg:block" aria-hidden="true" />
+              <div className="space-y-[clamp(48px,6vw,88px)]">
+                {sections.map((section, i) => (
+                  <Reveal key={section.heading} delay={Math.min(i, 4) * 60}>
+                    <h2 className="ed-h2-sm ed-statement-wide">{section.heading}</h2>
+                    {section.paragraphs?.map((p, j) => (
+                      <p key={j} className={j === 0 ? 'ed-lede mt-6 max-w-[52ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
+                    ))}
+                    {section.subsections?.map((sub) => (
+                      <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
+                        <h3 className="ed-h4">{sub.heading}</h3>
+                        {sub.paragraphs.map((p, k) => (
+                          <p key={k} className="ed-body mt-3 max-w-[62ch]">{p}</p>
+                        ))}
+                      </div>
+                    ))}
+                    {section.links && section.links.length > 0 && (
+                      <ul className="mt-6 flex list-none flex-wrap gap-x-8 gap-y-3 p-0">
+                        {section.links.map((link) => (
+                          <li key={link.href}>
+                            <Link href={link.href} className="ed-link ed-link-accent min-h-11 lg:min-h-0">
+                              {link.label}
+                              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </Reveal>
+                ))}
+              </div>
+            </div>
           </div>
         </Section>
       )}
 
       {/* ─── Local proof (matched testimonials + projects) ─── */}
       {hasProof && (
-        <Section divider>
-          <div className="container px-4 max-w-5xl">
+        <Section surface="deep" spacing="xl" edge>
+          <div className="ed-shell">
             <Reveal>
-              <div className="brc-label mb-5">Proof of work</div>
-              <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-[1.08] tracking-tight text-foreground mb-10">
-                {proofHeading ?? (
-                  <>
-                    Recent <em className="brc-accent">local work</em>
-                  </>
-                )}
+              <p className="ed-eyebrow">Proof of work</p>
+              <h2 className="ed-h2 ed-statement-wide">
+                {proofHeading ?? (<>Recent <em className="not-italic" style={accent}>local work</em></>)}
               </h2>
             </Reveal>
 
             {proof?.projects && proof.projects.length > 0 && (
-              <div className="grid gap-6 sm:grid-cols-2 mb-8">
+              <div className="mt-[clamp(40px,5vw,72px)] grid gap-6 sm:grid-cols-2">
                 {proof.projects.map((project) => (
                   <Reveal key={project.title}>
-                    <MarketingCard className="overflow-hidden h-full">
+                    <article className="flex h-full flex-col" style={{ border: '1px solid var(--ed-line)' }}>
                       <div className="grid grid-cols-2">
                         <div className="relative aspect-[4/3]">
-                          <Image
-                            src={project.beforeImageUrl}
-                            alt={`${project.title} - before`}
-                            fill
-                            sizes="(max-width: 640px) 50vw, 25vw"
-                            className="object-cover"
-                          />
-                          <span className="absolute bottom-1 left-1 text-caption uppercase tracking-wide bg-inverse/70 text-inverse-foreground px-1.5 py-0.5 rounded">
-                            Before
-                          </span>
+                          <Image src={project.beforeImageUrl} alt={`${project.title} - before`} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
+                          <span className="absolute bottom-2 left-2 bg-inverse/70 px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-inverse-foreground">Before</span>
                         </div>
                         <div className="relative aspect-[4/3]">
-                          <Image
-                            src={project.afterImageUrl}
-                            alt={`${project.title} - after`}
-                            fill
-                            sizes="(max-width: 640px) 50vw, 25vw"
-                            className="object-cover"
-                          />
-                          <span className="absolute bottom-1 left-1 text-caption uppercase tracking-wide bg-accent text-accent-foreground px-1.5 py-0.5 rounded">
-                            After
-                          </span>
+                          <Image src={project.afterImageUrl} alt={`${project.title} - after`} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
+                          <span className="absolute bottom-2 left-2 bg-accent px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--accent-foreground))" }}>After</span>
                         </div>
                       </div>
-                      <div className="p-5">
-                        <h3 className="font-normal text-base text-foreground mb-1.5">
-                          {project.title}
-                        </h3>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
-                          {project.description}
-                        </p>
+                      <div className="p-6">
+                        <h3 className="ed-h4">{project.title}</h3>
+                        <p className="ed-body mt-2 text-[0.875rem]">{project.description}</p>
                       </div>
-                    </MarketingCard>
+                    </article>
                   </Reveal>
                 ))}
               </div>
             )}
 
             {proof?.testimonials && proof.testimonials.length > 0 && (
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div
+                className="ed-matrix mt-[clamp(32px,4vw,56px)]"
+                style={{ ['--ed-cols' as string]: Math.min(proof.testimonials.length, 2), ['--ed-cell-h' as string]: '0' }}
+              >
                 {proof.testimonials.map((t) => (
-                  <Reveal key={t.name}>
-                    <MarketingCard className="p-6 h-full">
-                      <div
-                        className="flex gap-0.5 mb-3 text-accent"
-                        aria-label={`${t.rating} out of 5 stars`}
-                      >
-                        {Array.from({ length: Math.round(t.rating) }).map((_, i) => (
-                          <Star key={i} className="h-4 w-4 fill-current" />
-                        ))}
-                      </div>
-                      <blockquote className="text-sm text-muted-foreground leading-relaxed mb-3">
-                        &ldquo;{t.quote}&rdquo;
-                      </blockquote>
-                      <cite className="text-sm font-normal text-foreground not-italic">
-                        {t.name}
-                      </cite>
-                    </MarketingCard>
-                  </Reveal>
+                  <figure key={t.name} className="m-0">
+                    <div className="flex gap-0.5" aria-label={`${t.rating} out of 5 stars`}>
+                      {Array.from({ length: Math.round(t.rating) }).map((_, i) => (
+                        <Star key={i} className="h-4 w-4" style={{ fill: 'var(--ed-accent)', color: 'var(--ed-accent)' }} aria-hidden="true" />
+                      ))}
+                    </div>
+                    <blockquote className="ed-body mt-4 text-[0.9375rem]">&ldquo;{t.quote}&rdquo;</blockquote>
+                    <figcaption className="ed-h4 mt-4 text-[1rem]">{t.name}</figcaption>
+                  </figure>
                 ))}
               </div>
             )}
@@ -545,81 +496,59 @@ export function LandingPageTemplate({
       {/* ─── Estimator prompt ─── */}
       {showEstimatePrompt && (
         <EstimatePromptBand
-          title={
-            <>
-              What might your <em className="brc-accent">project</em> cost?
-            </>
-          }
+          title={<>What might your <em className="not-italic" style={accent}>project</em> cost?</>}
           description="Get an instant planning range based on real Treasure Valley remodel costs - about 60 seconds, no obligation."
         />
       )}
 
-      {/* ─── FAQ ─── */}
-      <Section variant="greige" divider>
-        <div className="container px-4 max-w-3xl">
-          <Reveal>
-            <div className="brc-label mb-5">Common questions</div>
-            <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-[1.08] tracking-tight text-foreground mb-10">
-              Frequently asked <em className="brc-accent">questions</em>
-            </h2>
-            <Accordion type="single" collapsible className="w-full">
+      {/* ─── FAQ: the parent site's split ─── */}
+      <Section surface="dark" spacing="xl" edge>
+        <div className="ed-shell">
+          <div className="ed-split ed-split-narrow">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <p className="ed-eyebrow">Common questions</p>
+              <h2 className="ed-h2 ed-statement">
+                Frequently asked <em className="not-italic" style={accent}>questions</em>
+              </h2>
+            </div>
+            <Accordion type="single" collapsible className="w-full border-t" style={line}>
               {faqs.map((faq, i) => (
-                <AccordionItem
-                  key={i}
-                  value={`faq-${i}`}
-                  className="border-0 border-t border-border"
-                >
-                  <AccordionTrigger className="text-left py-5 hover:no-underline font-sans font-normal text-sm text-foreground">
+                <AccordionItem key={i} value={`faq-${i}`} className="border-0 border-b" style={line}>
+                  <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:[color:var(--ed-accent)]">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="text-sm leading-relaxed pb-6 text-muted-foreground">
-                    {faq.answer}
-                  </AccordionContent>
+                  <AccordionContent className="ed-body pb-7 text-[0.9375rem]">{faq.answer}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
-          </Reveal>
+          </div>
         </div>
       </Section>
 
       {/* ─── Related links & posts ─── */}
-      <Section divider>
-        <div className="container px-4 max-w-5xl space-y-12">
-          <Reveal>
-            <RelatedLinks {...related} />
-          </Reveal>
-          {manifestPath && (
-            <Reveal>
-              <RelatedPostCards path={manifestPath} />
-            </Reveal>
-          )}
+      <Section surface="deep" spacing="lg" edge>
+        <div className="ed-shell space-y-12">
+          <Reveal><RelatedLinks {...related} /></Reveal>
+          {manifestPath && (<Reveal><RelatedPostCards path={manifestPath} /></Reveal>)}
         </div>
       </Section>
 
-      {/* ─── Bottom CTA strip ─── */}
-      <Section divider>
-        <div className="container px-4">
-          <Reveal>
-            <MarketingCard className="cta-card-dark relative overflow-hidden p-10 md:p-16 text-center max-w-4xl mx-auto">
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.04 }}
-              />
-              <div className="relative">
-                <div className="brc-label text-inverse-muted justify-center mb-6">
-                  Start your project
-                </div>
-                <h2 className="font-serif text-[2rem] md:text-[2.5rem] leading-tight tracking-tight text-inverse-foreground mb-4">
-                  Ready to <em className="brc-accent">begin</em>?
-                </h2>
-                <p className="text-inverse-muted mb-8 text-base leading-relaxed">
-                  Free 60 to 90 minute in-home visit. Planning guidance, design direction, no
-                  obligation.
-                </p>
-                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
-              </div>
-            </MarketingCard>
-          </Reveal>
+      {/* ─── Bottom CTA: a statement on the gradient ground ─── */}
+      <Section surface="gradient" spacing="xl" edge>
+        <div className="ed-shell">
+          <div className="ed-split ed-split-center">
+            <Reveal>
+              <p className="ed-eyebrow ed-eyebrow-accent">Start your project</p>
+              <h2 className="ed-h2 ed-statement">
+                Ready to <em className="not-italic" style={accent}>begin</em>?
+              </h2>
+            </Reveal>
+            <Reveal delay={60}>
+              <p className="ed-lede">Free 60 to 90 minute in-home visit.</p>
+              <p className="ed-body mt-3">Planning guidance, design direction, no obligation.</p>
+              <div className="mt-8"><EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA></div>
+            </Reveal>
+          </div>
         </div>
       </Section>
     </div>

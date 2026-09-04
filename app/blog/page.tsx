@@ -46,11 +46,11 @@ export default function BlogPage() {
         imageAlt={getBlogImageAlt("boise-remodeling-process-guide")}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Blog" }]} />
-        <div className="brc-label text-inverse-muted mt-6 mb-4">Blog</div>
-        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Blog</p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Remodeling Insights &amp; Ideas
         </h1>
-        <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
+        <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           Honest advice for Idaho homeowners planning their next renovation - budgeting, timelines,
           permits, and design-build guidance from Boise Remodeling Co.
         </p>

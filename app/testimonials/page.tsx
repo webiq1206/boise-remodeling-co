@@ -57,8 +57,8 @@ export default function TestimonialsPage() {
             { name: 'Our Work' },
           ]}
         />
-        <div className="brc-label text-inverse-muted mt-6 mb-4">Before &amp; after</div>
-        <h1 className="font-serif text-display tracking-tight text-inverse-foreground max-w-3xl mb-4">
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Before &amp; after</p>
+        <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Our <em className="brc-accent">work</em> across the Treasure Valley
         </h1>
         <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-8">
