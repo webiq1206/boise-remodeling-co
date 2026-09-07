@@ -639,7 +639,6 @@ export function Re10Wizard() {
       trackMetaEvent(
         "Lead",
         { content_name: "RE-10 repair estimate", value: estimate.price, currency: "USD" },
-        { email: email.trim() || undefined, phone: phone.trim() || undefined },
       );
       if (estimate.emailed) trackEvent(RE10_EVENTS.estimateEmailed);
 

@@ -30,8 +30,14 @@ import { CTA_FORM_SEND } from "@/shared/ctaCopy";
 import { CONSULT_BULLETS } from "@/shared/siteContent";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { BusinessPhoneContact } from "@/components/BusinessPhoneContact";
-import { trackEvent, trackMetaEvent } from "@/lib/analytics";
 import { readStoredPrefill, PREFILL_UPDATED_EVENT, hasPassedGate } from "@/lib/leadPrefill";
+import {
+  getOrCreateInquiryId,
+  INQUIRY_ROTATED_EVENT,
+  rotateInquiryId,
+  trackAcceptedInquiry,
+  type AcceptedInquiryResponse,
+} from "@/lib/inquiryTracking";
 import type { PropertyProfile } from "@/shared/propertyProfile";
 import {
   HOUSE_NUMBER_REGEX,
@@ -87,13 +93,26 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
   // can detach it with one tap and re-attach just as easily.
   const [attached, setAttached] = useState(true);
   const [success, setSuccess] = useState(false);
+  const [deliveryDelayed, setDeliveryDelayed] = useState(false);
   const [submitted, setSubmitted] = useState<FormData | null>(null);
   const [propertyProfile, setPropertyProfile] = useState<PropertyProfile | null>(null);
   const [addressInput, setAddressInput] = useState("");
   const [showNote, setShowNote] = useState(false);
   const [showAddrInfo, setShowAddrInfo] = useState(false);
+  const [inquiryId, setInquiryId] = useState(() => getOrCreateInquiryId());
+  const [formStartedAt] = useState(() => Date.now());
+  const [website, setWebsite] = useState("");
   const lastKeyRef = useRef<string | null>(null);
   const successHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const handleInquiryRotation = (event: Event) => {
+      const next = (event as CustomEvent<{ inquiryId?: string }>).detail?.inquiryId;
+      if (next) setInquiryId(next);
+    };
+    window.addEventListener(INQUIRY_ROTATED_EVENT, handleInquiryRotation);
+    return () => window.removeEventListener(INQUIRY_ROTATED_EVENT, handleInquiryRotation);
+  }, []);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -233,7 +252,12 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
 
   const mutation = useMutation({
     mutationFn: async (data: FormData) => {
+      const activeInquiryId = getOrCreateInquiryId();
+      if (activeInquiryId !== inquiryId) setInquiryId(activeInquiryId);
       const payload = {
+        inquiryId: activeInquiryId,
+        formStartedAt,
+        website,
         ...data,
         zip: deriveZip(data.address),
         propertyProfile,
@@ -268,26 +292,16 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || "Something went wrong");
       }
-      return res.json();
+      return res.json() as Promise<AcceptedInquiryResponse>;
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (response, variables) => {
+      if (!response.accepted) return;
       setSuccess(true);
+      setDeliveryDelayed(response.delivery === "pending_retry");
       sessionStorage.removeItem("brc_estimate");
         sessionStorage.removeItem("brc_consult_context");
-      // Conversion event: a submitted consultation request is the PRIMARY lead
-      // (estimate on the site, then submit). GA generate_lead + Meta Lead. The
-      // Meta Lead carries the visitor's email + phone, which the server-side
-      // Conversions API hashes for high match quality (best cost-per-result).
-      trackEvent("generate_lead", {
-        form: "consultation",
-        project_type: variables.projectType,
-        has_estimate: !!estimate && attached,
-      });
-      trackMetaEvent(
-        "Lead",
-        { content_name: variables.projectType, content_category: "consultation_request" },
-        { email: variables.email, phone: variables.phone },
-      );
+      trackAcceptedInquiry(response, variables.projectType);
+      rotateInquiryId();
     },
   });
 
@@ -358,7 +372,9 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
             />
           </p>
           <p className="text-xs text-muted-foreground">
-            A confirmation email is on its way to your inbox.
+            {deliveryDelayed
+              ? "Your request is safely saved, but confirmation email delivery is delayed. You do not need to resubmit."
+              : "A confirmation email is on its way to your inbox."}
           </p>
         </div>
       </div>
@@ -378,6 +394,17 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         })}
         className="space-y-4"
       >
+        <div className="absolute -left-[10000px]" aria-hidden="true">
+          <label htmlFor="consult-website">Website</label>
+          <input
+            id="consult-website"
+            name="website"
+            tabIndex={-1}
+            autoComplete="off"
+            value={website}
+            onChange={(event) => setWebsite(event.target.value)}
+          />
+        </div>
         {showTrust && (
           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5" data-testid="consult-trust-bullets">
             {CONSULT_BULLETS.map((item) => (

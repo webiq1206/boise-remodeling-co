@@ -72,6 +72,13 @@ import {
   APPLIANCE_DISCLAIMER,
 } from "@/shared/estimateEngine";
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
+import {
+  getOrCreateInquiryId,
+  INQUIRY_ROTATED_EVENT,
+  rotateInquiryId,
+  trackAcceptedInquiry,
+  type AcceptedInquiryResponse,
+} from "@/lib/inquiryTracking";
 import { GRAIN_URL } from "@/lib/grain";
 import {
   applyLeadParams,
@@ -458,6 +465,18 @@ export function EstimateCalculator({
      gateOpen=true   gateSubmitted=false -> show contact form (gate)
      gateSubmitted=true (any gateOpen)   -> show full result panel */
   const [gateOpen,      setGateOpen]      = useState(false);
+  const [inquiryId, setInquiryId] = useState(() => getOrCreateInquiryId());
+  const [formStartedAt] = useState(() => Date.now());
+  const [website, setWebsite] = useState("");
+
+  useEffect(() => {
+    const handleInquiryRotation = (event: Event) => {
+      const next = (event as CustomEvent<{ inquiryId?: string }>).detail?.inquiryId;
+      if (next) setInquiryId(next);
+    };
+    window.addEventListener(INQUIRY_ROTATED_EVENT, handleInquiryRotation);
+    return () => window.removeEventListener(INQUIRY_ROTATED_EVENT, handleInquiryRotation);
+  }, []);
   const [gateSubmitted, setGateSubmitted] = useState(false);
   const [gateName,      setGateName]      = useState("");
   const [gateEmail,     setGateEmail]     = useState("");
@@ -1282,6 +1301,9 @@ export function EstimateCalculator({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          inquiryId,
+          formStartedAt,
+          website,
           name: savedIdentity.name,
           email: savedIdentity.email,
           phone: savedIdentity.phone,
@@ -1300,11 +1322,10 @@ export function EstimateCalculator({
           },
         }),
       });
-      if (!res.ok && res.status < 500) throw new Error(String(res.status));
+      if (!res.ok) throw new Error(String(res.status));
       setLastSentKey(estimateKey);
       writeLastSentKey(estimateKey);
       setResendState("sent");
-      trackEvent("generate_lead", { project: effectiveProject, source: "estimate_resend" });
     } catch {
       setResendState("error");
     }
@@ -1325,6 +1346,7 @@ export function EstimateCalculator({
      with it: the flow lands on review, one step short of the price. */
   function handleForgetIdentity() {
     clearStoredIdentity();
+    setInquiryId(rotateInquiryId());
     setSavedIdentity(null);
     setGateSubmitted(false);
     setGateOpen(false);
@@ -1379,7 +1401,15 @@ export function EstimateCalculator({
     setGateLoading(true);
     setGateError(null);
 
+    // Resolve again at the actual submission boundary so the seven-day expiry
+    // applies even when this calculator has remained mounted in a long-lived tab.
+    const activeInquiryId = getOrCreateInquiryId();
+    if (activeInquiryId !== inquiryId) setInquiryId(activeInquiryId);
+
     const payload = {
+      inquiryId: activeInquiryId,
+      formStartedAt,
+      website,
       name: gateName.trim(),
       email: gateEmail.trim(),
       phone: gatePhone.trim(),
@@ -1413,13 +1443,13 @@ export function EstimateCalculator({
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
-        /* Happy path: contact captured, reveal result */
-        trackMetaEvent("Lead", {
-          content_name: effectiveProject,
-          content_category: "estimate_gate",
-        });
-        trackEvent("generate_lead", { project: effectiveProject, source: "estimate_gate" });
+      const response = await res.json().catch(() => null) as
+        | AcceptedInquiryResponse
+        | { message?: string }
+        | null;
+      if (res.ok && response && "accepted" in response && response.accepted) {
+        /* Happy path: contact was durably captured before any conversion fires. */
+        trackAcceptedInquiry(response, effectiveProject);
         markGatePassed();
         setSavedIdentity({ name: gateName.trim(), email: gateEmail.trim(), phone: gatePhone.trim() });
         setLastSentKey(estimateKey);
@@ -1428,27 +1458,21 @@ export function EstimateCalculator({
         setGateSubmitted(true);
         setPhase("result");
         scrollWizardTop();
-      } else if (res.status >= 500) {
-        /* Server/infra error: not the user's fault; reveal so they aren't hard-blocked */
-        console.warn("[gate] Server error", res.status, "- revealing estimate anyway");
-        markGatePassed();
-        setGateSubmitted(true);
-        setPhase("result");
-        scrollWizardTop();
       } else {
-        /* 4xx: our client validation should have caught this; show error, keep gate */
         console.warn("[gate] API returned", res.status);
-        setGateError("We could not save your details just now. Please check your name, email, phone and address, then try again.");
+        setGateError(
+          response && "message" in response && response.message
+            ? response.message
+            : "We could not safely save your request. Please try again in a moment.",
+        );
         setGateLoading(false);
         return;
       }
     } catch (err) {
-      /* Network failure: reveal so infra issues never block a real user */
       console.warn("[gate] Network error:", err);
-      markGatePassed();
-      setGateSubmitted(true);
-      setPhase("result");
-      scrollWizardTop();
+      setGateError("We could not safely save your request. Check your connection and try again.");
+      setGateLoading(false);
+      return;
     }
 
     setGateLoading(false);
@@ -2423,6 +2447,17 @@ export function EstimateCalculator({
             validation on every submit, so the browser's native bubbles never
             compete with it (two different error styles for one form). */}
         <form ref={gateSubmitRef} onSubmit={handleGateSubmit} noValidate className={fitViewport ? "grid grid-cols-2 gap-2.5" : "space-y-3"}>
+          <div className="absolute -left-[10000px]" aria-hidden="true">
+            <label htmlFor="gate-website">Website</label>
+            <input
+              id="gate-website"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={website}
+              onChange={(event) => setWebsite(event.target.value)}
+            />
+          </div>
           <TextField
             id="gate-name"
             label="First name"

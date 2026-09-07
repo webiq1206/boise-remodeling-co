@@ -2,3 +2,4 @@
 - [Em-dash build guard](em-dash-guard.md) — prebuild fails on U+2014 in code/content; use hyphens; markdown & .json deliberately out of scope.
 - [Address field validation](address-field-validation.md) — never store raw geocoder formattedAddress in the regex-validated form field; always run buildCleanAddress first.
 - [Two pricing engines](two-pricing-engines.md) — the quoted range comes from the line-item engine in shared/costs, not estimateEngine; new pricing inputs must be wired there or they silently do nothing.
+- [Lead conversion identity](lead-conversion-identity.md) — gate, consultation, retries and ad platforms share one durable inquiry ID; storage decides whether a lead is new.

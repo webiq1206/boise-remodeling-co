@@ -28,9 +28,15 @@ import {
   type EstimateRefinements,
 } from "@/shared/estimateEngine";
 import { resolveQuotedRange } from "@/shared/costs/resolve";
-import { forwardToLeadDashboard } from "@/server/services/leadDashboardForward";
+import { forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
+import {
+  acceptInquiry,
+  InquiryRejectedError,
+  recordDeliveryStatus,
+} from "@/server/services/inquiryAcceptance";
 import { readUnitCostOverrides } from "@/app/api/admin/pricing/route";
 import type { PropertyProfile } from "@/shared/propertyProfile";
+import { HOUSE_NUMBER_REGEX } from "@/shared/addressValidation";
 import {
   buildCrmIntakeFields,
   buildLeadPropertyRecord,
@@ -81,15 +87,21 @@ const estimateSchema = z.object({
 });
 
 const bodySchema = z.object({
-  name: z.string().min(2),
+  inquiryId: z.string().uuid(),
+  formStartedAt: z.number().int().positive(),
+  website: z.string().max(200).optional(),
+  name: z.string().trim().min(2).max(100),
   email: z.string().email(),
-  phone: z.string().min(10),
+  phone: z.string().refine((value) => {
+    const digits = value.replace(/\D/g, "");
+    return digits.length >= 10 && digits.length <= 15;
+  }, "Invalid phone"),
   budget: z.string().min(1).optional(),
   projectType: z.string().min(1),
   // Property address. Optional in the schema so an older client that predates
   // this field still submits successfully rather than 400ing, but the gate now
   // requires it, and the team needs it to confirm service area.
-  address: z.string().max(300).optional(),
+  address: z.string().trim().min(5).max(300).refine((value) => HOUSE_NUMBER_REGEX.test(value)),
   zip: z.string().max(10).optional(),
   propertyProfile: z
     .object({ formattedAddress: z.string(), city: z.string(), state: z.string(), zip: z.string() })
@@ -216,9 +228,22 @@ export async function POST(request: NextRequest) {
     const pricingAlertKinds: string[] = [];
     const estimate = verifyEstimate(data.estimate, pricingAlertKinds);
 
-    if (db) {
-      try {
-        await db.insert(consultationRequests).values({
+    let acceptance;
+    try {
+      acceptance = await acceptInquiry(
+        request,
+        {
+          inquiryId: data.inquiryId,
+          stage: "estimate_gate",
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          projectType: data.projectType,
+          website: data.website,
+          formStartedAt: data.formStartedAt,
+        },
+        {
           name: data.name,
           phone: data.phone,
           email: data.email,
@@ -236,10 +261,35 @@ export async function POST(request: NextRequest) {
           estimateHigh: estimate?.priceHigh?.toString() || null,
           estimateSqft: estimate?.sqft ?? null,
           estimateConfidence: estimate?.confidence || null,
-        });
-      } catch (dbErr) {
-        console.error("[estimate-lead] DB insert failed:", dbErr);
+        },
+      );
+    } catch (err) {
+      if (err instanceof InquiryRejectedError) {
+        return NextResponse.json(
+          { accepted: false, message: err.publicMessage },
+          { status: err.status },
+        );
       }
+      console.error("[estimate-lead] Persistence failed:", err);
+      return NextResponse.json(
+        {
+          accepted: false,
+          message: "We could not safely save your request. Please try again in a moment.",
+        },
+        { status: 503 },
+      );
+    }
+
+    // A retry or later consultation step updates the existing record but must
+    // not create another CRM lead, email notification or conversion.
+    if (acceptance.duplicate) {
+      return NextResponse.json({
+        accepted: true,
+        inquiryId: acceptance.inquiryId,
+        duplicate: true,
+        conversionEligible: acceptance.conversionEligible,
+        delivery: acceptance.needsDeliveryRetry ? "pending_retry" : "sent",
+      });
     }
 
     // The CRM gets exactly what the homeowner saw: every selection, the range,
@@ -261,7 +311,7 @@ export async function POST(request: NextRequest) {
 
     const crmProfile = (data.propertyProfile as PropertyEnrichment | null) ?? null;
 
-    forwardToLeadDashboard({
+    const crmResult = await forwardToLeadDashboardAsync({
       fullName: data.name,
       email: data.email,
       phone: data.phone,
@@ -301,6 +351,9 @@ export async function POST(request: NextRequest) {
       source: "boiseremodeling.co",
     });
 
+    let adminEmailSent = true;
+    let customerEmailSent = true;
+    let deliveryError = crmResult.error;
     try {
       const { client, fromEmail } = await getUncachableEmailClient();
       const from = formatFromAddress(fromEmail);
@@ -331,6 +384,8 @@ export async function POST(request: NextRequest) {
           text: htmlToPlainText(adminHtml),
         });
         if (adminResult?.error) {
+          adminEmailSent = false;
+          deliveryError = deliveryError || JSON.stringify(adminResult.error);
           console.error(
             `[estimate-lead] Admin email to ${adminEmail} failed:`,
             JSON.stringify(adminResult.error)
@@ -348,16 +403,35 @@ export async function POST(request: NextRequest) {
         text: htmlToPlainText(customerHtml),
       });
       if (customerResult?.error) {
+        customerEmailSent = false;
+        deliveryError = deliveryError || JSON.stringify(customerResult.error);
         console.error(
           `[estimate-lead] Customer email to ${data.email} failed:`,
           JSON.stringify(customerResult.error)
         );
       }
     } catch (emailErr) {
+      adminEmailSent = false;
+      customerEmailSent = false;
+      deliveryError = deliveryError || (emailErr instanceof Error ? emailErr.message : String(emailErr));
       console.error("[estimate-lead] Email send failed:", emailErr);
     }
 
-    return NextResponse.json({ success: true });
+    const allDelivered = crmResult.sent && adminEmailSent && customerEmailSent;
+    await recordDeliveryStatus(acceptance.rowId, {
+      crm: crmResult.sent ? "sent" : "failed",
+      adminEmail: adminEmailSent ? "sent" : "failed",
+      customerEmail: customerEmailSent ? "sent" : "failed",
+      ...(deliveryError ? { lastError: deliveryError.slice(0, 1000) } : {}),
+    }).catch((err) => console.error("[estimate-lead] Delivery status update failed:", err));
+
+    return NextResponse.json({
+      accepted: true,
+      inquiryId: acceptance.inquiryId,
+      duplicate: acceptance.duplicate,
+      conversionEligible: acceptance.conversionEligible,
+      delivery: allDelivered ? "sent" : "pending_retry",
+    });
   } catch (err) {
     console.error("[estimate-lead] Error:", err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

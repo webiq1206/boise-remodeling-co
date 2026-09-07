@@ -36,13 +36,19 @@ function readCookie(name: string): string | undefined {
  * but greatly improves server-side match quality; it is hashed on the server and
  * never sent to the Pixel.
  */
-export function trackMetaEvent(name: string, params: GtagParams = {}, userData?: MetaUserData): void {
+export function trackMetaEvent(
+  name: string,
+  params: GtagParams = {},
+  userData?: MetaUserData,
+  stableEventId?: string,
+): void {
   if (typeof window === 'undefined') return;
 
   const eventId =
-    typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+    stableEventId ??
+    (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
       ? crypto.randomUUID()
-      : `${name}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      : `${name}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
   const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
   if (typeof fbq === 'function') {

@@ -21,6 +21,7 @@ import {
   formatUsd,
 } from "@/server/services/consultationEmail";
 import type { PropertyProfile } from "@/shared/propertyProfile";
+import { HOUSE_NUMBER_REGEX } from "@/shared/addressValidation";
 import {
   EMPTY_REFINEMENTS,
   calculateEstimate,
@@ -32,7 +33,12 @@ import {
 } from "@/shared/estimateEngine";
 import { resolveQuotedRange } from "@/shared/costs/resolve";
 import { IMPLAUSIBLE_QUOTE_CEILING, logPricingAlert } from "@/server/services/pricingAlerts";
-import { forwardToLeadDashboard } from "@/server/services/leadDashboardForward";
+import { forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
+import {
+  acceptInquiry,
+  InquiryRejectedError,
+  recordDeliveryStatus,
+} from "@/server/services/inquiryAcceptance";
 import { readUnitCostOverrides } from "@/app/api/admin/pricing/route";
 import {
   buildCrmIntakeFields,
@@ -97,10 +103,16 @@ const estimateSchema = z
   .nullable();
 
 const bodySchema = z.object({
-  name: z.string().min(2),
-  phone: z.string().min(10),
+  inquiryId: z.string().uuid(),
+  formStartedAt: z.number().int().positive(),
+  website: z.string().max(200).optional(),
+  name: z.string().trim().min(2).max(100),
+  phone: z.string().refine((value) => {
+    const digits = value.replace(/\D/g, "");
+    return digits.length >= 10 && digits.length <= 15;
+  }, "Invalid phone"),
   email: z.string().email(),
-  address: z.string().min(5),
+  address: z.string().trim().min(5).max(300).refine((value) => HOUSE_NUMBER_REGEX.test(value)),
   zip: z.string().optional(),
   projectType: z.string().min(1),
   message: z.string().optional(),
@@ -241,10 +253,23 @@ export async function POST(request: NextRequest) {
     const pricingAlertKinds: string[] = [];
     const estimate = data.estimate ? verifyEstimate(data.estimate, pricingAlertKinds) : null;
 
-    if (db) {
-      try {
-        const profile = data.propertyProfile as Record<string, unknown> | null | undefined;
-        await db.insert(consultationRequests).values({
+    let acceptance;
+    try {
+      const profile = data.propertyProfile as Record<string, unknown> | null | undefined;
+      acceptance = await acceptInquiry(
+        request,
+        {
+          inquiryId: data.inquiryId,
+          stage: "consultation",
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+          projectType: data.projectType,
+          website: data.website,
+          formStartedAt: data.formStartedAt,
+        },
+        {
           name: data.name,
           phone: data.phone,
           email: data.email,
@@ -260,10 +285,33 @@ export async function POST(request: NextRequest) {
           estimateHigh: estimate?.priceHigh?.toString() || null,
           estimateSqft: estimate?.sqft ?? null,
           estimateConfidence: estimate?.confidence || null,
-        });
-      } catch (dbErr) {
-        console.error("[consultation] DB insert failed:", dbErr);
+        },
+      );
+    } catch (err) {
+      if (err instanceof InquiryRejectedError) {
+        return NextResponse.json(
+          { accepted: false, message: err.publicMessage },
+          { status: err.status },
+        );
       }
+      console.error("[consultation] Persistence failed:", err);
+      return NextResponse.json(
+        {
+          accepted: false,
+          message: "We could not safely save your request. Please try again in a moment.",
+        },
+        { status: 503 },
+      );
+    }
+
+    if (acceptance.duplicate) {
+      return NextResponse.json({
+        accepted: true,
+        inquiryId: acceptance.inquiryId,
+        duplicate: true,
+        conversionEligible: acceptance.conversionEligible,
+        delivery: acceptance.needsDeliveryRetry ? "pending_retry" : "sent",
+      });
     }
 
     // Same complete record as the estimate-gate path, so a lead looks identical
@@ -284,7 +332,7 @@ export async function POST(request: NextRequest) {
 
     const crmProfile = (data.propertyProfile as PropertyEnrichment | null) ?? null;
 
-    forwardToLeadDashboard({
+    const crmResult = await forwardToLeadDashboardAsync({
       fullName: data.name,
       email: data.email,
       phone: data.phone,
@@ -324,7 +372,11 @@ export async function POST(request: NextRequest) {
       source: "boiseremodeling.co",
     });
 
-    if (!data.skipEmail) {
+    const shouldSendEmail = !data.skipEmail;
+    let adminEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail ? "sent" : "skipped";
+    let customerEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail ? "sent" : "skipped";
+    let deliveryError = crmResult.error;
+    if (shouldSendEmail) {
       try {
         const { client, fromEmail } = await getUncachableEmailClient();
         const from = formatFromAddress(fromEmail);
@@ -355,6 +407,8 @@ export async function POST(request: NextRequest) {
             text: htmlToPlainText(adminHtml),
           });
           if (adminResult?.error) {
+            adminEmailStatus = "failed";
+            deliveryError = deliveryError || JSON.stringify(adminResult.error);
             console.error(
               `[consultation] Admin email to ${adminEmail} failed:`,
               JSON.stringify(adminResult.error)
@@ -375,17 +429,39 @@ export async function POST(request: NextRequest) {
           text: htmlToPlainText(customerHtml),
         });
         if (customerResult?.error) {
+          customerEmailStatus = "failed";
+          deliveryError = deliveryError || JSON.stringify(customerResult.error);
           console.error(
             `[consultation] Customer email to ${data.email} failed:`,
             JSON.stringify(customerResult.error)
           );
         }
       } catch (emailErr) {
+        adminEmailStatus = "failed";
+        customerEmailStatus = "failed";
+        deliveryError = deliveryError || (emailErr instanceof Error ? emailErr.message : String(emailErr));
         console.error("[consultation] Email send failed:", emailErr);
       }
     }
 
-    return NextResponse.json({ success: true });
+    const allDelivered =
+      crmResult.sent &&
+      adminEmailStatus !== "failed" &&
+      customerEmailStatus !== "failed";
+    await recordDeliveryStatus(acceptance.rowId, {
+      crm: crmResult.sent ? "sent" : "failed",
+      adminEmail: adminEmailStatus,
+      customerEmail: customerEmailStatus,
+      ...(deliveryError ? { lastError: deliveryError.slice(0, 1000) } : {}),
+    }).catch((err) => console.error("[consultation] Delivery status update failed:", err));
+
+    return NextResponse.json({
+      accepted: true,
+      inquiryId: acceptance.inquiryId,
+      duplicate: acceptance.duplicate,
+      conversionEligible: acceptance.conversionEligible,
+      delivery: allDelivered ? "sent" : "pending_retry",
+    });
   } catch (err) {
     console.error("[consultation] Error:", err);
     return NextResponse.json({ message: "Server error" }, { status: 500 });

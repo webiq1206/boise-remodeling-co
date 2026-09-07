@@ -432,6 +432,33 @@ export const consultationRequests = pgTable("consultation_requests", {
    * Meta lead twice. Null for every lead that arrived through the site.
    */
   fbLeadId: text("fb_lead_id"),
+  /*
+   * One browser-generated id follows a homeowner from the estimate gate to the
+   * consultation form and across safe retries. The unique index makes the
+   * database, rather than the browser, the authority on whether this is a new
+   * inquiry and therefore eligible for a new-lead conversion.
+   */
+  inquiryId: text("inquiry_id"),
+  /*
+   * A short-lived server fingerprint catches duplicate callbacks where a
+   * browser lost its inquiry id. It contains only a SHA-256 digest, never raw
+   * contact data.
+   */
+  inquiryDedupeKey: text("inquiry_dedupe_key"),
+  sourceStage: text("source_stage").default("consultation"),
+  acceptedAt: timestamp("accepted_at").defaultNow(),
+  conversionRecordedAt: timestamp("conversion_recorded_at"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+  deliveryLockedAt: timestamp("delivery_locked_at"),
+  deliveryAttemptCount: integer("delivery_attempt_count").notNull().default(0),
+  deliveryStatus: jsonb("delivery_status").$type<{
+    crm: "pending" | "sent" | "failed" | "skipped";
+    adminEmail: "pending" | "sent" | "failed" | "skipped";
+    customerEmail: "pending" | "sent" | "failed" | "skipped";
+    lastError?: string;
+    lastAttemptAt?: string;
+  }>(),
+  submissionIpHash: text("submission_ip_hash"),
   // Status
   status: text("status").notNull().default("new"), // new, contacted, converted, closed
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -439,6 +466,13 @@ export const consultationRequests = pgTable("consultation_requests", {
   uniqueIndex("consultation_requests_fb_lead_id_idx")
     .on(table.fbLeadId)
     .where(sql`fb_lead_id IS NOT NULL`),
+  uniqueIndex("consultation_requests_inquiry_id_idx")
+    .on(table.inquiryId)
+    .where(sql`inquiry_id IS NOT NULL`),
+  uniqueIndex("consultation_requests_inquiry_dedupe_idx")
+    .on(table.inquiryDedupeKey)
+    .where(sql`inquiry_dedupe_key IS NOT NULL`),
+  index("consultation_requests_ip_created_idx").on(table.submissionIpHash, table.createdAt),
 ]);
 
 export const insertConsultationRequestSchema = createInsertSchema(consultationRequests).omit({

@@ -843,7 +843,6 @@ export function PlansWizard() {
           value: Math.round((estimate.low + estimate.high) / 2),
           currency: "USD",
         },
-        { email: email.trim() || undefined, phone: phone.trim() || undefined },
       );
       if (estimate.emailed) trackEvent(PLAN_EVENTS.estimateEmailed);
 

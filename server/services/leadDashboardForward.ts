@@ -74,12 +74,19 @@ interface ForwardPayload {
 }
 
 export function forwardToLeadDashboard(payload: ForwardPayload): void {
+  void forwardToLeadDashboardAsync(payload);
+}
+
+export async function forwardToLeadDashboardAsync(payload: ForwardPayload): Promise<{
+  sent: boolean;
+  error?: string;
+}> {
   const key = process.env.LEAD_DASHBOARD_KEY;
   if (!key) {
     console.warn(
       "[lead-dashboard] LEAD_DASHBOARD_KEY is not set; lead was NOT forwarded to the CRM."
     );
-    return;
+    return { sent: false, error: "LEAD_DASHBOARD_KEY is not set" };
   }
 
   const body: ForwardPayload = {
@@ -94,28 +101,30 @@ export function forwardToLeadDashboard(payload: ForwardPayload): void {
       : undefined,
   };
 
-  fetch("https://leads.boiseremodeling.co/api/external/leads", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify(body),
-  })
-    .then(async (res) => {
-      // A rejected forward means the lead reached the inbox but not the CRM.
-      // 409 is the dashboard's 60-second duplicate guard and is expected when a
-      // visitor submits twice, so it is noted rather than flagged as an error.
-      if (res.status === 409) {
-        console.info("[lead-dashboard] Duplicate within 60s; CRM kept the existing lead.");
-        return;
-      }
-      if (!res.ok) {
-        const detail = await res.text().catch(() => "");
-        console.error(
-          `[lead-dashboard] Forward rejected: ${res.status} ${res.statusText} ${detail.slice(0, 300)}`
-        );
-      }
-    })
-    .catch((err) => console.error("[lead-dashboard] Forward failed:", err));
+  try {
+    const res = await fetch("https://leads.boiseremodeling.co/api/external/leads", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify(body),
+    });
+    // 409 means the CRM already has this callback. Treat it as delivered.
+    if (res.status === 409) {
+      console.info("[lead-dashboard] Duplicate within 60s; CRM kept the existing lead.");
+      return { sent: true };
+    }
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      const error = `${res.status} ${res.statusText} ${detail.slice(0, 300)}`;
+      console.error(`[lead-dashboard] Forward rejected: ${error}`);
+      return { sent: false, error };
+    }
+    return { sent: true };
+  } catch (err) {
+    const error = err instanceof Error ? err.message : String(err);
+    console.error("[lead-dashboard] Forward failed:", err);
+    return { sent: false, error };
+  }
 }
