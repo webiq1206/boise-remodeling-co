@@ -40,6 +40,35 @@ const MAX_FORM_AGE_MS = 24 * 60 * 60 * 1000;
 const IP_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 const IP_LIMIT = 6;
 
+interface TestInquiryRow {
+  id: string;
+  inquiryId: string;
+  fingerprint: string;
+  conversionRecordedAt: Date | null;
+  deliveryStatus: NonNullable<typeof consultationRequests.$inferInsert.deliveryStatus>;
+}
+
+let isolatedTestAdapter:
+  | { rows: Map<string, TestInquiryRow>; failWrites: boolean }
+  | null = null;
+
+/**
+ * Build-verifier persistence seam. It is inert unless the isolated route
+ * verifier explicitly installs it, and it never touches the production DB.
+ */
+export function installInquiryAcceptanceTestAdapter(options: { failWrites?: boolean } = {}): () => void {
+  if (process.env.LEAD_ROUTE_ISOLATED_TEST !== "1") {
+    throw new Error("The inquiry test adapter is restricted to the isolated lead route verifier.");
+  }
+  isolatedTestAdapter = {
+    rows: new Map(),
+    failWrites: options.failWrites === true,
+  };
+  return () => {
+    isolatedTestAdapter = null;
+  };
+}
+
 function normalized(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, " ");
 }
@@ -92,6 +121,51 @@ export async function acceptInquiry(
   values: typeof consultationRequests.$inferInsert,
 ): Promise<InquiryAcceptance> {
   validateHuman(input);
+  if (isolatedTestAdapter) {
+    if (isolatedTestAdapter.failWrites) {
+      throw new InquiryRejectedError(
+        503,
+        "We could not safely save your request. Please try again in a moment.",
+      );
+    }
+    const fingerprint = dedupeKey(input);
+    const existing = [...isolatedTestAdapter.rows.values()].find(
+      (row) => row.inquiryId === input.inquiryId || row.fingerprint === fingerprint,
+    );
+    if (existing) {
+      return {
+        accepted: true,
+        inquiryId: existing.inquiryId,
+        rowId: existing.id,
+        duplicate: true,
+        conversionEligible: !existing.conversionRecordedAt,
+        needsDeliveryRetry:
+          existing.deliveryStatus.crm === "failed" ||
+          existing.deliveryStatus.adminEmail === "failed" ||
+          existing.deliveryStatus.customerEmail === "failed",
+      };
+    }
+    const row: TestInquiryRow = {
+      id: `isolated-${isolatedTestAdapter.rows.size + 1}`,
+      inquiryId: input.inquiryId,
+      fingerprint,
+      conversionRecordedAt: null,
+      deliveryStatus: {
+        crm: "pending",
+        adminEmail: "pending",
+        customerEmail: "pending",
+      },
+    };
+    isolatedTestAdapter.rows.set(row.id, row);
+    return {
+      accepted: true,
+      inquiryId: row.inquiryId,
+      rowId: row.id,
+      duplicate: false,
+      conversionEligible: true,
+      needsDeliveryRetry: false,
+    };
+  }
   if (!db) {
     throw new InquiryRejectedError(
       503,
@@ -239,6 +313,11 @@ export async function recordDeliveryStatus(
   rowId: string,
   status: NonNullable<typeof consultationRequests.$inferInsert.deliveryStatus>,
 ): Promise<void> {
+  if (isolatedTestAdapter) {
+    const row = isolatedTestAdapter.rows.get(rowId);
+    if (row) row.deliveryStatus = status;
+    return;
+  }
   if (!db) return;
   await db
     .update(consultationRequests)

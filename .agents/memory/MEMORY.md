@@ -3,3 +3,4 @@
 - [Address field validation](address-field-validation.md) — never store raw geocoder formattedAddress in the regex-validated form field; always run buildCleanAddress first.
 - [Two pricing engines](two-pricing-engines.md) — the quoted range comes from the line-item engine in shared/costs, not estimateEngine; new pricing inputs must be wired there or they silently do nothing.
 - [Lead conversion identity](lead-conversion-identity.md) — gate, consultation, retries and ad platforms share one durable inquiry ID; storage decides whether a lead is new.
+- [Next build seed concurrency](next-build-seed-concurrency.md) — startup content seeds can run in parallel build workers; unique inserts must be database-conflict-safe.

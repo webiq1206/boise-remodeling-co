@@ -813,21 +813,26 @@ export class DBStorage implements IStorage {
     let addedCount = 0;
     for (const post of BLOG_POSTS) {
       if (!existingSlugs.has(post.slug)) {
-        await db.insert(blogPosts).values({
-          slug: post.slug,
-          title: post.title,
-          seoTitle: post.seoTitle ?? null,
-          metaDescription: post.metaDescription ?? null,
-          excerpt: post.excerpt,
-          content: post.content,
-          author: post.author,
-          category: post.category,
-          tags: post.tags,
-          faqs: post.faqs ?? [],
-          publishedAt: new Date(post.publishedAt),
-          createdAt: new Date(),
-        });
-        addedCount++;
+        const inserted = await db
+          .insert(blogPosts)
+          .values({
+            slug: post.slug,
+            title: post.title,
+            seoTitle: post.seoTitle ?? null,
+            metaDescription: post.metaDescription ?? null,
+            excerpt: post.excerpt,
+            content: post.content,
+            author: post.author,
+            category: post.category,
+            tags: post.tags,
+            faqs: post.faqs ?? [],
+            publishedAt: new Date(post.publishedAt),
+            createdAt: new Date(),
+          })
+          .onConflictDoNothing({ target: blogPosts.slug })
+          .returning({ slug: blogPosts.slug });
+        existingSlugs.add(post.slug);
+        if (inserted.length > 0) addedCount++;
       }
     }
     

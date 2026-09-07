@@ -9,14 +9,15 @@
  * a past repair deadline skipping the rush uplift, and out-of-bounds sqft
  * inserting estimate-less leads while returning success.
  *
- * SIDE-EFFECT SAFETY: prebuild runs where the production secrets exist, and
- * an accepted request normally writes a CRM row and sends two emails. The
- * env scrub below runs BEFORE the route modules load: `db` binds null at
- * import time when DATABASE_URL is absent, and the email client and CRM
- * forward check their env at call time. With all of them cleared, every
- * accepted request is a pure computation - no row, no email, no outbound
- * fetch - which is exactly what makes these routes testable at build time.
+ * SIDE-EFFECT SAFETY: prebuild runs where production secrets can exist, and
+ * an accepted request normally writes a CRM row and sends two emails. The env
+ * scrub below runs BEFORE route modules load. Estimate-lead acceptance uses an
+ * explicitly installed in-memory test adapter, while the CRM and email layers
+ * see no credentials. Separate checks uninstall or fail that adapter to prove
+ * persistence failure cannot return conversion eligibility. No database row,
+ * email, CRM request, ad event or staff notification can leave this process.
  */
+import { randomUUID } from "node:crypto";
 
 for (const key of [
   "DATABASE_URL",
@@ -28,6 +29,7 @@ for (const key of [
 ]) {
   delete process.env[key];
 }
+process.env.LEAD_ROUTE_ISOLATED_TEST = "1";
 
 let checks = 0;
 let failures = 0;
@@ -101,6 +103,7 @@ async function callRoute(
 async function main(): Promise<void> {
   const { POST: re10Post } = await import("../app/api/re10/estimate/route");
   const { POST: leadPost } = await import("../app/api/estimate-lead/route");
+  const { installInquiryAcceptanceTestAdapter } = await import("../server/services/inquiryAcceptance");
   const { RECIPES } = await import("../shared/costs/re10Repairs");
   const { EXTRACTABLE_KINDS, EXTRACTION_REVIEW_REASONS } = await import("../shared/re10/extraction");
   const {
@@ -270,19 +273,35 @@ async function main(): Promise<void> {
     return { ...guide, ...(range ?? {}) };
   };
 
-  const leadBody = (estimate: Record<string, unknown>) => ({
-    name: "Route Test",
-    email: "route-test@example.com",
-    phone: "208-555-0100",
-    projectType: "kitchen",
-    estimate: {
-      project: "kitchen",
-      finish: "mid-range",
-      sqft: sizeConfig.baselineSqft,
-      roi: 0,
-      ...estimate,
-    },
-  });
+  let leadSequence = 0;
+  const leadBody = (estimate: Record<string, unknown>) => {
+    leadSequence++;
+    return {
+      inquiryId: randomUUID(),
+      formStartedAt: Date.now() - 2_000,
+      website: "",
+      name: "Route Test",
+      email: `route-test-${leadSequence}@example.com`,
+      phone: "208-555-0100",
+      address: `${100 + leadSequence} Test Street, Boise, ID 83702`,
+      projectType: "kitchen",
+      estimate: {
+        project: "kitchen",
+        finish: "mid-range",
+        sqft: sizeConfig.baselineSqft,
+        roi: 0,
+        ...estimate,
+      },
+    };
+  };
+
+  const checkAcceptedLead = (call: RouteCall, label: string) => {
+    check(call.status === 200, `${label} should return 200, got ${call.status}`);
+    check(call.json?.accepted === true, `${label} must report accepted=true`);
+    check(call.json?.conversionEligible === true, `${label} must be conversion eligible after a new durable write`);
+    check(call.json?.duplicate === false, `${label} must report a new, non-duplicate inquiry`);
+    check(call.json?.delivery === "pending_retry", `${label} must report pending_retry with delivery credentials scrubbed`);
+  };
 
   const partial = priceKitchen({ upgradeScope: ["lighting"] });
   const full = priceKitchen({});
@@ -291,7 +310,8 @@ async function main(): Promise<void> {
     "precondition: lighting-only kitchen must price differently from full scope, or the survival test proves nothing",
   );
 
-  {
+  const uninstallSuccessfulPersistence = installInquiryAcceptanceTestAdapter();
+  try {
     // The client posts the partial-scope price it showed. If zod stripped
     // upgradeScope (the original bug), the server would recompute full-scope
     // and fire a recompute-mismatch alert - so "no alert" IS the assertion
@@ -304,14 +324,12 @@ async function main(): Promise<void> {
         refinements: { upgradeScope: ["lighting"] },
       }),
     );
-    check(survived.status === 200 && survived.json?.success === true, `partial-scope lead should succeed, got ${survived.status}`);
+    checkAcceptedLead(survived, "partial-scope lead");
     check(
       !survived.alerts.some((a) => a.includes("recompute-mismatch")),
       `upgradeScope must survive validation: server disagreed with a correctly-priced client (${survived.alerts.join("; ")})`,
     );
-  }
 
-  {
     // Negative control: a client posting the WRONG price must trip the alert,
     // proving the mismatch detector actually fires.
     const mismatch = await callRoute(
@@ -322,28 +340,53 @@ async function main(): Promise<void> {
         refinements: { upgradeScope: ["lighting"] },
       }),
     );
-    check(mismatch.status === 200, `mismatched price is alerted, not rejected, got ${mismatch.status}`);
+    checkAcceptedLead(mismatch, "mismatched-price lead");
     check(
       mismatch.alerts.some((a) => a.includes("recompute-mismatch")),
       "a client price that disagrees with the server recompute must fire a recompute-mismatch alert",
     );
-  }
 
-  {
     const oob = await callRoute(
       leadPost,
       leadBody({ sqft: 999_999, priceLow: full.priceLow, priceHigh: full.priceHigh }),
     );
-    check(oob.status === 200 && oob.json?.success === true, `out-of-bounds sqft must still capture the lead, got ${oob.status}`);
+    checkAcceptedLead(oob, "out-of-bounds sqft lead");
     check(
       oob.alerts.some((a) => a.includes("estimate-unresolvable")),
       "out-of-bounds sqft must fire an estimate-unresolvable alert instead of silently clamping",
     );
+  } finally {
+    uninstallSuccessfulPersistence();
   }
 
   {
     const invalid = await callRoute(leadPost, { name: "x" });
     check(invalid.status === 400, `invalid lead body must be 400, got ${invalid.status}`);
+  }
+
+  {
+    const unavailable = await callRoute(
+      leadPost,
+      leadBody({ priceLow: full.priceLow, priceHigh: full.priceHigh }),
+    );
+    check(unavailable.status === 503, `unavailable persistence must return 503, got ${unavailable.status}`);
+    check(unavailable.json?.accepted === false, "unavailable persistence must report accepted=false");
+    check(unavailable.json?.conversionEligible !== true, "unavailable persistence must never grant conversion eligibility");
+  }
+
+  {
+    const uninstallFailedPersistence = installInquiryAcceptanceTestAdapter({ failWrites: true });
+    try {
+      const failed = await callRoute(
+        leadPost,
+        leadBody({ priceLow: full.priceLow, priceHigh: full.priceHigh }),
+      );
+      check(failed.status === 503, `failed persistence must return 503, got ${failed.status}`);
+      check(failed.json?.accepted === false, "failed persistence must report accepted=false");
+      check(failed.json?.conversionEligible !== true, "failed persistence must never grant conversion eligibility");
+    } finally {
+      uninstallFailedPersistence();
+    }
   }
 
   if (failures > 0) {
