@@ -266,7 +266,7 @@ export default function ContactPage() {
               description="Call, email, or visit - we respond within one business day and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
               <Reveal className="sm:col-span-2">
                 <ContactChannel
                   icon={<Phone className="h-5 w-5" strokeWidth={1.5} />}

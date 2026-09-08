@@ -714,7 +714,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
           </button>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
+        <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:flex-wrap sm:items-center">
           <Button
             type="submit"
             variant="brand"
@@ -725,7 +725,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
             {mutation.isPending ? "Sending…" : CTA_FORM_SEND}
             {!mutation.isPending && <ArrowRight className="h-4 w-4" />}
           </Button>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground sm:min-w-[14rem] sm:flex-1">
             No spam. We respond within one business day.
           </p>
         </div>

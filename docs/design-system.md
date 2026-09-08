@@ -16,3 +16,28 @@ The four brand sites share one editorial layer, `app/family.css`, kept byte-iden
 ## Permitted brand variation
 - Colour tokens and accent (Remodeling sage, Construction ochre, Handyman blue, Cabinet teal), logos and wordmarks, photography, copy, service data, section order per page, and which sections a page uses. Header and footer structure follow the same pattern with brand-specific links.
 - Nothing else: type scale, spacing, primitives, button formats and estimator chrome stay shared so the sites read as one family.
+
+## Grid balance (2026-09-08)
+
+A row that ends with one lonely cell reads as unfinished, so every grid picks
+its shape from its item count instead of a fixed column number.
+
+- `.ed-matrix`: five items lay out as three then two, seven as four then three
+  (span rules in `family.css`, desktop only). In the two-column range
+  (561 to 1100 px) an odd last item takes the full row.
+- `.ed-cards-3`: the card grid for posts, guides, projects and services. One
+  column on phones, two on tablets (an odd last card is centred), three on
+  laptops and up (a lone last card is centred, a pair widens to halves).
+  Use it instead of `grid sm:grid-cols-2 lg:grid-cols-3`.
+- `.ed-grid-balance`: opt-in for one or two column Tailwind grids (option
+  cards, checklists, contact channels): the last odd item spans the row.
+- Fixed counts: nine cities use three columns; four benefits use four.
+- Two-column sections never leave a column empty. The long-form prose measure
+  carries a sticky "In this guide" index; a lone local note or timeline is a
+  split with the heading on the left; "what sets us apart" carries a photo
+  under its sticky intro.
+
+The section audit that found these lives at `scripts/_section-audit.mjs` in
+the Remodeling repo (Playwright; nine viewports; flags orphans, one-sided
+sections, sparse bands, text-only sections, overflow) with `scripts/section-sheets.py` for
+contact sheets.

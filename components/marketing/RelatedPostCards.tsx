@@ -59,7 +59,7 @@ export function RelatedPostCards({
   return (
     <div>
       <h2 className="ed-h2-sm ed-statement-wide mb-8">{title}</h2>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="ed-cards-3 gap-5">
         {links.map((link) => {
           const image = imageForUrl(link.url);
           return (

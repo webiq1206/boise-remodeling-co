@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
+import { SITE_IMAGES } from "@/shared/siteImages";
 import { Section } from "@/components/marketing/Section";
 import {
   DIFFERENTIATORS,
@@ -56,6 +58,22 @@ export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
                 </div>
               )}
             </Reveal>
+            {/* The column used to end after the intro and sit empty beside a
+                long list. A photograph now fills it, so the evidence on the
+                right has a picture of the work on the left. */}
+            <Reveal delay={60}>
+              <figure className="mt-10 hidden lg:block">
+                <div className="relative aspect-[4/3] overflow-hidden" style={{ border: "1px solid var(--ed-line)" }}>
+                  <Image
+                    src={SITE_IMAGES.value}
+                    alt="Finish samples and materials reviewed with a homeowner before a Treasure Valley remodel"
+                    fill
+                    sizes="(min-width: 1024px) 40vw, 100vw"
+                    className="object-cover img-brand-grade"
+                  />
+                </div>
+              </figure>
+            </Reveal>
           </div>
 
           <div className="ed-steps">
@@ -65,8 +83,12 @@ export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
                   <span className="ed-step-n">{String(i + 1).padStart(2, "0")}</span>
                   <div>
                     <h3 className="ed-h3">{item.title}</h3>
-                    <p className="ed-body mt-3 max-w-[52ch] text-foreground">{item.contrast}</p>
-                    <p className="ed-body mt-2">{item.body}</p>
+                    {/* The contrast ends mid-sentence and the body completes
+                        it, so they read as one paragraph with the turn in the
+                        stronger colour rather than two fragments with a gap. */}
+                    <p className="ed-body mt-3 max-w-[56ch]">
+                      <span className="text-foreground">{item.contrast}</span> {item.body}
+                    </p>
                   </div>
                 </div>
               </Reveal>

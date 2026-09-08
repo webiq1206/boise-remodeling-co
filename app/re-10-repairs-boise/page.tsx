@@ -122,7 +122,7 @@ export default function Re10RepairsPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <Button variant="brand" asChild>
             <Link href="#re10-estimator">
-              Upload your RE-10 and get an instant estimate <ArrowRight className="ml-2 h-4 w-4" />
+              Upload your RE-10 <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <Button variant="brandInverseOutline" asChild>
@@ -203,7 +203,7 @@ export default function Re10RepairsPage() {
             }
             className="mb-10 max-w-3xl"
           />
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="ed-cards-3 gap-5">
             {RE10_BENEFITS.map((b) => (
               <MarketingCard key={b.title} padding="lg">
                 <h3 className="text-base font-normal text-foreground mb-2.5">{b.title}</h3>
@@ -329,7 +329,7 @@ export default function Re10RepairsPage() {
             }
             className="mb-10 max-w-3xl"
           />
-          <ol className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-9">
+          <ol className="ed-cards-3 gap-x-8 gap-y-9">
             {RE10_PROCESS.map((s) => (
               <li key={s.step}>
                 <div className="brc-display-num text-inverse-muted/70 text-2xl mb-2">{s.step}</div>

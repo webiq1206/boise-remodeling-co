@@ -366,6 +366,48 @@
   background: hsl(var(--primary));
 }
 
+/*
+ * Grid balance. A row that ends with one lonely cell reads as unfinished, so
+ * the last odd item of a two-column grid takes the full row (opt in with
+ * .ed-grid-balance on Tailwind grids that are one or two columns wide), and a
+ * matrix holding a prime count (five or seven) redistributes into rows of
+ * three then two, or four then three, instead of leaving an orphan.
+ */
+.ed-grid-balance > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+@media (min-width: 1101px) {
+  .ed-matrix:has(> :nth-child(5):last-child) { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ed-matrix:has(> :nth-child(5):last-child) > * { grid-column: span 2; }
+  .ed-matrix:has(> :nth-child(5):last-child) > :nth-child(n + 4) { grid-column: span 3; }
+  .ed-matrix:has(> :nth-child(7):last-child) { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .ed-matrix:has(> :nth-child(7):last-child) > * { grid-column: span 3; }
+  .ed-matrix:has(> :nth-child(7):last-child) > :nth-child(n + 5) { grid-column: span 4; }
+}
+@media (max-width: 1100px) and (min-width: 561px) {
+  .ed-matrix > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+/*
+ * Card grids that never leave a lonely last card. One column on phones, two
+ * on tablets, three on laptops and up. A last row that would hold one card
+ * centres it; a last row that would hold two widens both to half.
+ */
+.ed-cards-3 { display: grid; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) {
+  .ed-cards-3 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ed-cards-3 > * { grid-column: span 2; }
+  .ed-cards-3 > :last-child:nth-child(odd) { grid-column: 2 / span 2; }
+}
+@media (min-width: 1024px) {
+  .ed-cards-3 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ed-cards-3 > :last-child:nth-child(n) { grid-column: span 2; }
+  .ed-cards-3 > :nth-last-child(2):nth-child(3n + 1),
+  .ed-cards-3 > :last-child:nth-child(3n + 2) { grid-column: span 3; }
+  .ed-cards-3 > :last-child:nth-child(3n + 1) { grid-column: 3 / span 2; }
+  /* A single card takes two thirds of the row, centred, instead of one small
+     card beside empty space. */
+  .ed-cards-3 > :only-child { grid-column: 2 / span 4; }
+}
+
 /* Full-bleed image + content panel, 57/43, reversible. */
 .ed-panel {
   display: grid;
@@ -531,6 +573,21 @@
 
 @media (max-width: 560px) {
   .ed-matrix { grid-template-columns: minmax(0, 1fr); }
+  /* A long uppercase link label wraps instead of running past the viewport. */
+  .ed-link { max-width: 100%; flex-wrap: wrap; row-gap: 4px; white-space: normal; }
   /* Tap targets stay comfortable rather than inheriting a desktop density. */
   .ed-link, .ed-step { min-height: 44px; }
+}
+
+/* Phones: a long button or link label wraps inside its control instead of
+   running past the viewport edge. */
+@media (max-width: 560px) {
+  [class~="whitespace-nowrap"] {
+    white-space: normal;
+    height: auto;
+    min-height: 44px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+  }
 }

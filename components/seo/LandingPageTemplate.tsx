@@ -151,6 +151,11 @@ const line = { borderColor: 'var(--ed-line)' } as const;
  * deep / gradient so a long page has a rhythm; there is no light band here by
  * design - these pages are dark-dominant like the rest of the site.
  */
+/** Anchor id for a long-form section heading, used by the sticky index. */
+function sectionId(heading: string): string {
+  return 'section-' + heading.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 export function LandingPageTemplate({
   h1,
   speakableSummary,
@@ -312,7 +317,7 @@ export function LandingPageTemplate({
                 </h2>
               </Reveal>
               <Reveal delay={60}>
-                <ul className="ed-inset m-0 grid list-none gap-x-8 gap-y-4 p-[clamp(24px,2.6vw,40px)] sm:grid-cols-2">
+                <ul className="ed-inset ed-grid-balance m-0 grid list-none gap-x-8 gap-y-4 p-[clamp(24px,2.6vw,40px)] sm:grid-cols-2">
                   {inclusions.map((item) => (
                     <li key={item} className="ed-body flex items-start gap-3 text-[0.9375rem]">
                       <Check className="mt-1 h-4 w-4 flex-shrink-0" style={accent} aria-hidden="true" />
@@ -370,8 +375,8 @@ export function LandingPageTemplate({
       {(showTimelineBelow || localNote) && (
         <Section surface="dark" spacing="lg" edge>
           <div className="ed-shell">
-            <div className={`grid gap-[var(--ed-gutter)] ${showTimelineBelow && localNote ? 'lg:grid-cols-2' : 'max-w-[60ch]'}`}>
-              {showTimelineBelow && (
+            {showTimelineBelow && localNote ? (
+              <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-2">
                 <Reveal>
                   <div className="ed-inset h-full">
                     <p className="ed-eyebrow ed-eyebrow-accent">Planning details</p>
@@ -379,17 +384,30 @@ export function LandingPageTemplate({
                     <p className="ed-body mt-4">{timeline}</p>
                   </div>
                 </Reveal>
-              )}
-              {localNote && (
-                <Reveal delay={showTimelineBelow ? 90 : 0}>
+                <Reveal delay={90}>
                   <div className="ed-inset h-full">
                     <p className="ed-eyebrow ed-eyebrow-accent">Local details</p>
                     <h3 className="ed-h3">Local notes</h3>
                     <p className="ed-body mt-4">{localNote}</p>
                   </div>
                 </Reveal>
-              )}
-            </div>
+              </div>
+            ) : (
+              /* One note on its own used to sit in a small box on the left of
+                 an otherwise empty band. It is now a split: the heading holds
+                 the left column, the note reads as a lede on the right. */
+              <div className="ed-split ed-split-narrow">
+                <Reveal>
+                  <p className="ed-eyebrow ed-eyebrow-accent">{showTimelineBelow ? 'Planning details' : 'Local details'}</p>
+                  <h2 className="ed-h2 ed-statement">
+                    {showTimelineBelow ? (<>Typical <em className="not-italic" style={accent}>timeline</em></>) : (<>Local <em className="not-italic" style={accent}>notes</em></>)}
+                  </h2>
+                </Reveal>
+                <Reveal delay={60}>
+                  <p className="ed-lede">{showTimelineBelow ? timeline : localNote}</p>
+                </Reveal>
+              </div>
+            )}
           </div>
         </Section>
       )}
@@ -399,11 +417,32 @@ export function LandingPageTemplate({
         <Section surface="dark" spacing="xl" edge>
           <div className="ed-shell">
             <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.75fr_1.25fr]">
-              <div className="hidden lg:block" aria-hidden="true" />
+              {/* The left column used to be empty: a prose measure on the right
+                  with nothing on the left read as copy pushed to one side. It
+                  now holds a sticky index of the sections, so the column has a
+                  job and long pages get jump links. */}
+              <aside className="lg:sticky lg:top-28 lg:self-start" aria-label="In this guide">
+                <Reveal>
+                  <p className="ed-eyebrow">In this guide</p>
+                  <ol className="m-0 list-none border-t p-0" style={line}>
+                    {sections.map((section, i) => (
+                      <li key={section.heading} className="border-b" style={line}>
+                        <a
+                          href={`#${sectionId(section.heading)}`}
+                          className="flex min-h-11 items-baseline gap-4 py-3 text-[0.9375rem] leading-snug transition-colors hover:[color:var(--ed-accent)] focus-visible:[color:var(--ed-accent)]"
+                        >
+                          <span className="ed-small shrink-0" style={accent}>{String(i + 1).padStart(2, '0')}</span>
+                          <span>{section.heading}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </Reveal>
+              </aside>
               <div className="space-y-[clamp(48px,6vw,88px)]">
                 {sections.map((section, i) => (
                   <Reveal key={section.heading} delay={Math.min(i, 4) * 60}>
-                    <h2 className="ed-h2-sm ed-statement-wide">{section.heading}</h2>
+                    <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28">{section.heading}</h2>
                     {section.paragraphs?.map((p, j) => (
                       <p key={j} className={j === 0 ? 'ed-lede mt-6 max-w-[52ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
                     ))}

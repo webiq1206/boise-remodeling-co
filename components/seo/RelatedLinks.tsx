@@ -57,7 +57,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
         <h2 className="ed-h2-sm ed-statement-wide mb-8">
           {SERVICES.find((s) => s.slug === serviceSlug)?.name} by city
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {CITIES.map((city) => (
             <Link
               key={city.slug}
@@ -82,7 +82,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
           <h2 className="ed-h2-sm ed-statement-wide mb-8">
             Remodeling services in {city?.name}
           </h2>
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
             {SERVICES.map((service) => (
               <Link key={service.slug} href={cityServicePath(service.slug, citySlug)}>
                 <div className="ed-card ed-card-link h-full">

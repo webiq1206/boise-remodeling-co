@@ -71,7 +71,7 @@ export function PermitFlowGraphic() {
         <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-4">
           Typical permit path
         </h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="ed-cards-3 gap-3">
           {STEPS.map((step, i) => (
             <div key={step.n} className="relative">
               <FlowStep {...step} />

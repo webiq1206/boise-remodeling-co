@@ -46,9 +46,13 @@ export default function SitemapPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <section className="py-16 md:py-24">
         <div className="container px-4">
-          <div className="max-w-3xl mx-auto blog-content prose-measure">
-            <h1>Site Map</h1>
-            <p className="lead text-muted-foreground">{DESCRIPTION}</p>
+          <div className="blog-content">
+            <div className="max-w-3xl">
+              <h1>Site Map</h1>
+              <p className="lead text-muted-foreground">{DESCRIPTION}</p>
+            </div>
+            {/* Groups flow into columns so a 60-link group and a 6-link group share the width evenly. */}
+            <div className="mt-10 columns-1 gap-x-10 sm:columns-2 lg:columns-3 [&_section]:mb-8 [&_section]:break-inside-avoid [&_ul]:mt-3 [&_h2]:mt-0 [&_li]:my-1">
             {groups.map((group) =>
               group.entries.length === 0 ? null : (
                 <section key={group.heading} aria-labelledby={`sitemap-${group.heading.replace(/\s+/g, "-").toLowerCase()}`}>
@@ -65,6 +69,7 @@ export default function SitemapPage() {
                 </section>
               ),
             )}
+            </div>
           </div>
         </div>
       </section>

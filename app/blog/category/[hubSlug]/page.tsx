@@ -161,7 +161,7 @@ export default function BlogCategoryHubPage({
             </p>
           )}
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="ed-cards-3 gap-6">
             {posts.map((post) => (
               <BlogCard key={post.slug} post={post} formatDate={formatDate} />
             ))}

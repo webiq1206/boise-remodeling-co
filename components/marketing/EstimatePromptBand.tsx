@@ -39,7 +39,7 @@ export function EstimatePromptBand({
   ],
 }: EstimatePromptBandProps) {
   return (
-    <Section surface="gradient" spacing="xl" edge>
+    <Section surface="gradient" spacing="lg" edge>
       <div className="ed-shell">
         <div className="ed-split ed-split-end">
           <Reveal>
@@ -62,15 +62,15 @@ export function EstimatePromptBand({
         {bullets.length > 0 && (
           <Reveal delay={120}>
             <ul
-              className="mt-[clamp(40px,5vw,72px)] grid list-none gap-6 border-t pt-8 sm:grid-cols-3"
-              style={{ borderColor: "var(--ed-line)" }}
+              className="ed-matrix mt-[clamp(40px,5vw,72px)] list-none p-0"
+              style={{ ["--ed-cols" as string]: Math.min(bullets.length, 3), ["--ed-cell-h" as string]: "0" }}
             >
               {bullets.map((b, i) => (
                 <li key={b} className="ed-body flex items-start gap-4 text-[0.875rem]">
-                  <span className="ed-small pt-1" style={{ color: "var(--ed-accent)" }}>
+                  <span className="ed-small shrink-0 pt-1" style={{ color: "var(--ed-accent)" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  {b}
+                  <span>{b}</span>
                 </li>
               ))}
             </ul>

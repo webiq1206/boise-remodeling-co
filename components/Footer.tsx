@@ -28,8 +28,8 @@ export function Footer() {
              document, so EVERY page scrolled horizontally by 20px at exactly
              1024px wide. Pre-existing; found by testing the wizard at tablet
              widths. md gets four columns, which fits. */
-          className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-x-6 gap-y-10 mb-12 xl:gap-0 xl:divide-x xl:divide-inverse-foreground/10 [&>*]:xl:px-6 [&>*:first-child]:xl:pl-0 [&>*:last-child]:xl:pr-0">
-          <div className="col-span-2 md:col-span-4 xl:col-span-2">
+          className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-8 gap-x-6 gap-y-10 mb-12 xl:gap-0 xl:divide-x xl:divide-inverse-foreground/10 [&>*]:xl:px-6 [&>*:first-child]:xl:pl-0 [&>*:last-child]:xl:pr-0">
+          <div className="col-span-2 md:col-span-3 xl:col-span-2">
             <div className="mb-5">
               {/* Wordmark-only footer branding (the seal was removed - one
                   clean lockup instead of two competing marks). Full lockup =
