@@ -591,3 +591,19 @@
     text-align: center;
   }
 }
+
+/*
+ * The header is fixed and transparent over the page, so the first section of
+ * every page must start below it with room to breathe. Heroes used to put
+ * their breadcrumb 40px from the top, which is under the 61px header. One
+ * rule covers every route: the first section (or the first child of a
+ * wrapper) gets 48px of clearance under the header. Image-first heroes that
+ * deliberately run flush to the top opt out with pt-0; the fixed estimator
+ * frame is excluded.
+ */
+:root { --ed-header-h: 61px; --ed-hero-top: calc(var(--ed-header-h) + 48px); }
+main > section:first-of-type:not(.pt-0):not(.fixed),
+main > div:first-of-type > section:first-of-type:not(.pt-0):not(.fixed),
+main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.fixed):not([data-testid="estimate-app-frame"]) {
+  padding-top: var(--ed-hero-top);
+}

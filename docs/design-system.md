@@ -41,3 +41,12 @@ The section audit that found these lives at `scripts/_section-audit.mjs` in
 the Remodeling repo (Playwright; nine viewports; flags orphans, one-sided
 sections, sparse bands, text-only sections, overflow) with `scripts/section-sheets.py` for
 contact sheets.
+
+## Header clearance (2026-09-08)
+
+The header is fixed and transparent over the page. `family.css` gives the first
+section of every route `padding-top: var(--ed-hero-top)` (header height plus
+48px) so breadcrumbs and eyebrows never sit under the menu. A hero that must
+run flush to the top (image first) opts out with `pt-0`; the fixed estimator
+frame is excluded. `scripts/_hero-gap.mjs` in the Remodeling repo measures the
+gap on every template at 1440, 834 and 390 and lists anything under 32px.
