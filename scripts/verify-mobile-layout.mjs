@@ -5,13 +5,15 @@
  */
 import { chromium } from "playwright";
 const [,, site, port, outDir, ...routes] = process.argv;
+// BASE_URL=https://example.com runs the same audit against a live site instead of localhost.
+const base = process.env.BASE_URL ? process.env.BASE_URL.replace(/\/$/, "") : `http://localhost:${port}`;
 const b = await chromium.launch();
 let failures = 0;
 const HARD = new Set(['overflow-right','overflow-left','text-clipped','overlap','image-stretched']);
-for (let i=0;i<60;i++){ try{ const r=await fetch(`http://localhost:${port}/`); if(r.ok) break; }catch{} await new Promise(r=>setTimeout(r,2000)); }
+for (let i=0;i<60;i++){ try{ const r=await fetch(`${base}/`); if(r.ok) break; }catch{} await new Promise(r=>setTimeout(r,2000)); }
 const p = await b.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
 for (const route of routes) {
-  let res; try { res = await p.goto(`http://localhost:${port}${route}`, { waitUntil: "networkidle", timeout: 120000 }); } catch(e) { console.log(`  ${site} ${route}: LOAD FAIL ${e.message.slice(0,50)}`); continue; }
+  let res; try { res = await p.goto(`${base}${route}`, { waitUntil: "networkidle", timeout: 120000 }); } catch(e) { console.log(`  ${site} ${route}: LOAD FAIL ${e.message.slice(0,50)}`); continue; }
   if (!res || res.status()>=400) { console.log(`  ${site} ${route}: HTTP ${res?res.status():'?'}`); continue; }
   // scroll through the page so reveal animations fire, then back to top
   await p.evaluate(async () => { const h=document.body.scrollHeight; for (let y=0;y<h;y+=500){ window.scrollTo(0,y); await new Promise(r=>setTimeout(r,90)); } window.scrollTo(0,0); document.querySelectorAll('.reveal-init').forEach(e=>e.classList.add('reveal-visible')); await new Promise(r=>setTimeout(r,700)); });
