@@ -273,7 +273,7 @@ export function LandingPageTemplate({
             <Reveal delay={60}>
               <ul
                 className="ed-matrix mt-[clamp(40px,5vw,72px)] list-none p-0"
-                style={{ ['--ed-cols' as string]: Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '200px' }}
+                style={{ ['--ed-cols' as string]: benefits.length === 4 ? 4 : Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '200px' }}
               >
                 {benefits.map((item, i) => {
                   const { lead, body } = splitBenefit(item);

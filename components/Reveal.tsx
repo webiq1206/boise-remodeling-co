@@ -30,7 +30,10 @@ export function Reveal({ children, className = "", style, delay = 0, threshold =
           obs.disconnect();
         }
       },
-      { threshold }
+      // A 0 entry alongside the visible-share threshold: a wrapper taller than
+      // about eight viewports (a long grid on a phone) can never reach 12%
+      // visible, and would otherwise stay at opacity 0 forever.
+      { threshold: [0, threshold], rootMargin: "0px 0px -8% 0px" }
     );
     obs.observe(el);
     return () => obs.disconnect();
