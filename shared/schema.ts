@@ -723,3 +723,57 @@ export const storedFiles = pgTable("stored_files", {
 });
 
 export type StoredFile = typeof storedFiles.$inferSelect;
+
+/*
+ * ─── Estimator sessions (partial-completion tracking) ─────────────────────────
+ *
+ * One row per estimator or lead-form session, keyed by a browser-generated
+ * pseudonymous id. It records WHERE a visitor was when they stopped, never who
+ * they are: contact fields are filled only from an explicit callback request.
+ * A server-side sweep turns an engaged, inactive, incomplete session into one
+ * abandonment email; a completed submission cancels it; a completion after the
+ * email marks the session recovered. See docs/estimator-recovery.md.
+ */
+export const estimatorSessions = pgTable("estimator_sessions", {
+  id: varchar("id", { length: 64 }).primaryKey(),
+  site: text("site").notNull(),
+  flow: text("flow").notNull(),
+  pagePath: text("page_path").notNull().default("/"),
+  device: text("device").notNull().default("unknown"),
+  startedAt: timestamp("started_at").notNull().defaultNow(),
+  lastActivityAt: timestamp("last_activity_at").notNull().defaultNow(),
+  currentStep: text("current_step"),
+  currentStepIndex: integer("current_step_index").notNull().default(0),
+  lastCompletedStep: text("last_completed_step"),
+  totalSteps: integer("total_steps").notNull().default(0),
+  completionPercent: integer("completion_percent").notNull().default(0),
+  timeSpentSeconds: integer("time_spent_seconds").notNull().default(0),
+  selections: jsonb("selections").$type<Record<string, string | number | boolean | null>>().notNull().default({}),
+  validationErrors: jsonb("validation_errors").$type<string[]>().notNull().default([]),
+  exitMethod: text("exit_method").notNull().default("unknown"),
+  engaged: boolean("engaged").notNull().default(false),
+  promptShown: boolean("prompt_shown").notNull().default(false),
+  clickedCall: boolean("clicked_call").notNull().default(false),
+  clickedText: boolean("clicked_text").notNull().default(false),
+  requestedCallback: boolean("requested_callback").notNull().default(false),
+  dismissedPrompt: boolean("dismissed_prompt").notNull().default(false),
+  contactName: text("contact_name"),
+  contactPhone: text("contact_phone"),
+  contactEmail: text("contact_email"),
+  callbackNote: text("callback_note"),
+  callbackRequestedAt: timestamp("callback_requested_at"),
+  callbackNotifiedAt: timestamp("callback_notified_at"),
+  status: text("status").notNull().default("active"), // active | notified | completed | recovered | expired
+  notifiedAt: timestamp("notified_at"),
+  notifyAttemptCount: integer("notify_attempt_count").notNull().default(0),
+  notifyLastError: text("notify_last_error"),
+  notifyLockedAt: timestamp("notify_locked_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+  index("estimator_sessions_status_activity_idx").on(table.status, table.lastActivityAt),
+  index("estimator_sessions_site_created_idx").on(table.site, table.createdAt),
+]);
+
+export type EstimatorSession = typeof estimatorSessions.$inferSelect;

@@ -9,10 +9,10 @@ import { getAllSiteUrls } from '@/lib/siteUrls';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = getBaseUrl().replace(/\/$/, '');
-  const now = new Date();
   return getAllSiteUrls().map((e) => ({
     url: e.path === '/' ? baseUrl : `${baseUrl}${e.path}`,
-    lastModified: e.lastModified ?? now,
+    // Static pages carry no lastModified: a build timestamp is not a content change.
+    ...(e.lastModified ? { lastModified: e.lastModified } : {}),
     changeFrequency: e.changeFrequency,
     priority: e.priority,
   }));

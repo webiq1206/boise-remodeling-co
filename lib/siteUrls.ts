@@ -90,7 +90,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     label: g.title,
     changeFrequency: 'monthly',
     priority: 0.9,
-    lastModified: new Date(g.publishedAt),
+    lastModified: new Date(g.updatedAt ?? g.publishedAt),
   }));
 
   const blog: SiteUrlEntry[] = BLOG_POSTS.map((p) => ({
@@ -98,7 +98,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     label: p.title,
     changeFrequency: 'yearly',
     priority: 0.6,
-    lastModified: new Date(p.publishedAt),
+    lastModified: new Date(p.updatedAt ?? p.publishedAt),
   }));
 
   const hubs: SiteUrlEntry[] = CONTENT_HUBS.flatMap((hub) => {

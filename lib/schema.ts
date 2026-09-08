@@ -464,6 +464,8 @@ export function generateWebPageSchema(page: {
   title: string;
   description: string;
   url: string;
+  /** Adds SpeakableSpecification on this node instead of a second WebPage node for the same URL. */
+  speakable?: boolean;
 }): SchemaContext {
   return {
     '@context': 'https://schema.org',
@@ -471,6 +473,9 @@ export function generateWebPageSchema(page: {
     name: page.title,
     description: page.description,
     url: `${baseUrl}${page.url}`,
+    ...(page.speakable
+      ? { speakable: { '@type': 'SpeakableSpecification', cssSelector: ["[data-speakable='summary']"] } }
+      : {}),
     isPartOf: {
       '@type': 'WebSite',
       name: BUSINESS_INFO.name,

@@ -8,7 +8,7 @@ import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
-import { buildCanonical } from "@/lib/page-metadata";
+import { buildCanonical, fitDescription } from '@/lib/page-metadata';
 import {
   generateBreadcrumbSchema,
   generateFAQSchema,
@@ -47,7 +47,7 @@ const TITLE_WITH_BRAND = "RE-10 and Inspection Repairs Boise | Boise Remodeling 
 const TITLE = "RE-10 and Inspection Repairs in Boise";
 // 154 characters, benefit-led, ends on the action.
 const DESCRIPTION =
-  "RE-10 repairs completed before closing. We handle inspection repair lists for agents, buyers and sellers across Boise and the Treasure Valley. Send yours.";
+  fitDescription("RE-10 repairs completed before closing. We handle inspection repair lists for agents, buyers and sellers across Boise and the Treasure Valley. Send yours.");
 
 export const metadata: Metadata = {
   title: { absolute: TITLE_WITH_BRAND },

@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildCanonical } from "@/lib/page-metadata";
 import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
+import { fitDescription } from '@/lib/page-metadata';
 
 const EstimateCalculator = dynamic(
   () =>
@@ -16,9 +17,9 @@ const EstimateCalculator = dynamic(
   },
 );
 
-const TITLE = "Remodel Cost Estimator | Treasure Valley";
+const TITLE = "Remodel Cost Estimator";
 const DESCRIPTION =
-  "Get an instant planning range for kitchen, bathroom, whole-home, addition, ADU, and basement remodels in Boise, Meridian, Eagle, Nampa, and the Treasure Valley. Free, no obligation.";
+  fitDescription("Get an instant planning range for kitchen, bathroom, whole-home, addition, ADU, and basement remodels in Boise, Meridian, Eagle, Nampa, and the Treasure Valley. Free, no obligation.");
 
 export const metadata: Metadata = {
   title: { absolute: `${TITLE} | Boise Remodeling Co` },

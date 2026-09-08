@@ -1,5 +1,8 @@
 "use client";
 
+import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
+import { markEstimatorCompleted } from "@/lib/estimatorSession";
+
 import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
@@ -642,6 +645,7 @@ export function Re10Wizard() {
       );
       if (estimate.emailed) trackEvent(RE10_EVENTS.estimateEmailed);
 
+      markEstimatorCompleted("re10");
       goTo("result");
     } catch {
       setError("Something went wrong. Try again.");
@@ -684,6 +688,16 @@ export function Re10Wizard() {
        the #re10-estimator hash. The inner topRef div's own scroll-mt only
        protects in-wizard step transitions, not this anchor landing. */
     <Section id="re10-estimator" variant="inverse" divider className="scroll-mt-16">
+      <EstimatorRecovery
+        flow="re10"
+        currentStep={step}
+        currentStepIndex={stepIndex}
+        totalSteps={STEP_ORDER.length}
+        lastCompletedStep={stepIndex > 0 ? STEP_ORDER[stepIndex - 1] : undefined}
+        selections={{ role, files: files.length, repairs: repairs.length, preferred_contact: preferredContact }}
+        engaged={stepIndex > 0 || files.length > 0}
+        submitted={step === "result"}
+      />
       <div className="container mx-auto max-w-3xl scroll-mt-24 px-4 sm:px-6" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />

@@ -81,6 +81,33 @@ export const FEED_ALTERNATES = {
  * The root layout template appends the brand exactly once, so child titles
  * must not carry it themselves or it doubles in the rendered <title>.
  */
+/**
+ * Search snippets truncate around 60 characters of title (with the brand
+ * suffix the root template appends) and about 155 of description. Trim the
+ * decorative middle segment before the meaningful start of a title, and close
+ * a long description at a sentence or word boundary rather than mid-word.
+ */
+const TITLE_SUFFIX_LENGTH = ` | ${SITE_CONFIG.name}`.length;
+export function fitTitle(title: string): string {
+  let t = title.replace(/[\s:|,-]+$/, '').trim();
+  if (t.length + TITLE_SUFFIX_LENGTH > 60) t = t.replace(/\s*\|\s*(Boise\s+)?Treasure Valley\b/, '').replace(/,\s*Idaho$/, ', ID');
+  if (t.length + TITLE_SUFFIX_LENGTH > 60 && t.includes(' | ')) t = t.slice(0, t.lastIndexOf(' | '));
+  // A subtitle after a colon is the expendable part; the head term comes first.
+  if (t.length + TITLE_SUFFIX_LENGTH > 60 && t.includes(': ')) t = t.slice(0, t.indexOf(': '));
+  // Then a trailing parenthetical, then anything after a question mark.
+  if (t.length + TITLE_SUFFIX_LENGTH > 60) t = t.replace(/\s*\([^)]*\)$/, '');
+  if (t.length + TITLE_SUFFIX_LENGTH > 60 && t.includes('? ')) t = t.slice(0, t.indexOf('? ') + 1);
+  return t;
+}
+export function fitDescription(description: string): string {
+  const d = description.replace(/\s+/g, ' ').trim();
+  if (d.length <= 158) return d;
+  const cut = d.slice(0, 158);
+  const sentence = cut.lastIndexOf('. ');
+  if (sentence >= 100) return cut.slice(0, sentence + 1);
+  return `${cut.slice(0, cut.lastIndexOf(' ')).replace(/[,;:]$/, '')}.`;
+}
+
 export function stripBrandSuffix(title: string): string {
   let result = title.trim();
   const suffix = `| ${BRAND_SUFFIX}`;
@@ -171,7 +198,8 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
 
   // The root layout template appends "| Boise Remodeling Co"; ensure the child
   // title never carries the brand itself (prevents duplicated brand in <title>).
-  title = stripBrandSuffix(title);
+  title = fitTitle(stripBrandSuffix(title));
+  description = fitDescription(description);
 
   const ogImage = getDefaultOgImage();
 

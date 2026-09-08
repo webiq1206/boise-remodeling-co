@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Contact, Menu, MessageSquare, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CTA_QUOTE } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
@@ -104,8 +104,7 @@ export function Navigation() {
             })}
           </div>
 
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="flex flex-col items-end gap-0.5">
+          <div className="hidden lg:flex items-center gap-3">
               <a
                 href={SITE_CONFIG.phoneHref}
                 className="flex items-center gap-2 text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
@@ -117,17 +116,27 @@ export function Navigation() {
                 </span>
                 {SITE_CONFIG.phone}
               </a>
-              <SaveContactLink className="text-label text-muted-foreground hover:text-foreground transition-colors">
-                Save to contacts
+            {/* Text and Save-to-contacts as quiet icon buttons on one row. The
+                previous stack put "Save to contacts" under the phone number,
+                which wrapped the header to two lines and read as a mistake. */}
+            <div className="flex items-center" aria-label="More ways to reach us">
+              <a
+                href={SITE_CONFIG.phoneSmsHref}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                aria-label="Text us"
+                title="Text us"
+                data-testid="link-text-desktop"
+              >
+                <MessageSquare className="h-[18px] w-[18px]" strokeWidth={1.5} aria-hidden />
+              </a>
+              <SaveContactLink
+                className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                aria-label="Save to contacts"
+                title="Save to contacts"
+              >
+                <Contact className="h-[18px] w-[18px]" strokeWidth={1.5} aria-hidden />
               </SaveContactLink>
             </div>
-            <a
-              href={SITE_CONFIG.phoneSmsHref}
-              className="text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
-              data-testid="link-text-desktop"
-            >
-              Text us
-            </a>
             <NavEstimateButton variant="brand" size="sm" className="min-h-11">
               {CTA_QUOTE}
             </NavEstimateButton>

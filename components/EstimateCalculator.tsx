@@ -12,6 +12,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/marketing";
+import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
+import { markEstimatorCompleted } from "@/lib/estimatorSession";
 import {
   WizardProgress,
   StepTransition,
@@ -1150,6 +1152,21 @@ export function EstimateCalculator({
           ? formStepIds.length + 1
           : progressSteps.length - 1;
 
+  /* Partial-completion tracking and the leave-prompt. Selections are the
+     non-identifying choices only; the server allow-lists them again. */
+  const recovery = (
+    <EstimatorRecovery
+      flow="estimate"
+      currentStep={progressSteps[progressIndex]?.id ?? "project"}
+      currentStepIndex={progressIndex}
+      totalSteps={progressSteps.length}
+      lastCompletedStep={progressIndex > 0 ? progressSteps[progressIndex - 1]?.id : undefined}
+      selections={{ project: activeProject, layout: subtype, sqft, finish, phase, bath_count: bathCount, kitchen_included: kitchenIn }}
+      engaged={progressIndex > 0 || chosen.project}
+      submitted={phase === "result" || gateSubmitted}
+    />
+  );
+
   /* ── Navigation ── */
   function goToForm(id: string, fromReview = false) {
     const idx = formStepIds.indexOf(id);
@@ -1457,6 +1474,7 @@ export function EstimateCalculator({
         setResendState("idle");
         setGateSubmitted(true);
         setPhase("result");
+        markEstimatorCompleted("estimate");
         scrollWizardTop();
       } else {
         console.warn("[gate] API returned", res.status);
@@ -2787,6 +2805,7 @@ export function EstimateCalculator({
           }
         >
           <div ref={topRef}>{resultPanel}</div>
+          {recovery}
         </AppFrame>
       );
     }
@@ -2847,6 +2866,7 @@ export function EstimateCalculator({
     return (
       <AppFrame title={frameTitle} eyebrow="Free · 60 seconds · No obligation" steps={progressSteps} currentIndex={progressIndex} footer={footer}>
         <div ref={topRef}>{body}</div>
+        {recovery}
       </AppFrame>
     );
   }
@@ -2888,6 +2908,7 @@ export function EstimateCalculator({
           </div>
         </div>
       </div>
+      {recovery}
     </Section>
   );
 }

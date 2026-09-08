@@ -20,10 +20,11 @@ import { buildCanonical, FEED_ALTERNATES } from '@/lib/page-metadata';
 import { getBaseUrl } from '@/lib/seo';
 import { generateBreadcrumbSchema } from '@/lib/schema';
 import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
+import { fitDescription } from '@/lib/page-metadata';
 
 const TITLE = 'Remodeling Services | Treasure Valley';
 const DESCRIPTION =
-  'Design-build remodeling in Boise, Meridian, Eagle, Nampa and the Treasure Valley. Kitchen, bathroom, whole-home, addition, and ADU projects under one accountable team.';
+  fitDescription('Design-build remodeling in Boise, Meridian, Eagle, Nampa and the Treasure Valley. Kitchen, bathroom, whole-home, addition, and ADU projects under one accountable team.');
 
 export const metadata: Metadata = {
   title: { absolute: `${TITLE} | Boise Remodeling Co` },

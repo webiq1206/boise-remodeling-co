@@ -14,7 +14,9 @@ import { expect, test, type Page } from "@playwright/test";
 
 async function openCalculator(page: Page) {
   await page.route("**/api/estimate-lead", (route) =>
-    route.fulfill({ status: 200, contentType: "application/json", body: "{}" }),
+    // The client only reveals the result when the server reports the lead as
+    // accepted (2026-09-07 lead-acceptance contract), so the stub must say so.
+    route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ accepted: true, conversionEligible: true, delivery: "sent" }) }),
   );
   await page.goto("/#calculator");
   await page.locator("#calculator").scrollIntoViewIfNeeded();
@@ -123,7 +125,7 @@ test.describe("Standard estimator - guided wizard (desktop)", () => {
     await page.getByTestId("wizard-back").click();
     await expect(page.getByTestId("step-heading")).toHaveText("Choose your project");
     // The earlier choice is still selected - nothing was lost moving backward.
-    await expect(page.getByTestId("calc-tab-kitchen")).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByTestId("calc-tab-kitchen")).toHaveAttribute("aria-checked", "true");
   });
 
   test("editing a section from review returns straight back to review", async ({ page }) => {

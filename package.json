@@ -15,6 +15,11 @@
     "verify:bottom-up": "tsx scripts/verify-bottom-up-costs.ts",
     "verify:pricing": "tsx scripts/verify-pricing-fingerprint.ts",
     "verify:content": "tsx scripts/verify-content.ts",
+    "generate:llms": "tsx scripts/generate-llms-txt.ts",
+    "verify:section-links": "tsx scripts/verify-section-links.ts",
+    "verify:redirect-collisions": "tsx scripts/verify-redirect-collisions.ts",
+    "verify:llms": "tsx scripts/generate-llms-txt.ts --check",
+    "verify:estimator-recovery": "tsx scripts/verify-estimator-recovery.ts",
     "verify:images": "tsx scripts/verify-blog-images.ts",
     "verify:no-em-dash": "tsx scripts/verify-no-em-dash.ts",
     "verify:lead-measurement": "tsx scripts/verify-lead-measurement.ts",
@@ -31,7 +36,7 @@
     "images:placeholders": "node scripts/generate-placeholder-images.mjs",
     "images:marketing": "node scripts/generate-marketing-images.mjs",
     "images:optimize": "node scripts/optimize-marketing-images-sharp.mjs",
-    "prebuild": "npm run verify:no-em-dash && npm run verify:estimate && npm run verify:cost-pricing && npm run verify:estimator-e2e && npm run verify:estimate-routes && npm run verify:assistant && npm run verify:documents && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:plans-delivery && npm run verify:disclosure && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run resources:generate && npm run verify:content && npm run verify:images",
+    "prebuild": "npm run verify:no-em-dash && npm run verify:estimate && npm run verify:cost-pricing && npm run verify:estimator-e2e && npm run verify:estimate-routes && npm run verify:assistant && npm run verify:documents && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:plans-delivery && npm run verify:disclosure && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run verify:section-links && npm run verify:redirect-collisions && npm run resources:generate && npm run verify:content && npm run verify:images && npm run verify:llms && npm run verify:estimator-recovery",
     "backlink:score": "node backlink-engine/src/score.mjs",
     "backlink:run": "node backlink-engine/src/run.mjs",
     "backlink:preflight": "node backlink-engine/src/preflight.mjs",
@@ -121,6 +126,7 @@
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.60.0",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/typography": "^0.5.15",

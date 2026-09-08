@@ -1,5 +1,8 @@
 "use client";
 
+import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
+import { markEstimatorCompleted } from "@/lib/estimatorSession";
+
 import { useEffect, useRef, useState } from "react";
 import { X, Plus, Ruler, Mail, FileText, ClipboardList, Printer, RefreshCw } from "lucide-react";
 import { Section } from "@/components/marketing/Section";
@@ -824,7 +827,9 @@ export function PlansWizard() {
       if ((data as { outOfScope?: boolean }).outOfScope) {
         setOutOfScope((data as { message?: string }).message ?? null);
         trackEvent(PLAN_EVENTS.narrowingBlocked, { reason: "outside-calibrated-size" });
-        goTo("result");
+        markEstimatorCompleted("plans");
+        markEstimatorCompleted("plans");
+      goTo("result");
         return;
       }
 
@@ -869,6 +874,16 @@ export function PlansWizard() {
        the #plans-estimator hash. The inner topRef div's own scroll-mt only
        protects in-wizard step transitions, not this anchor landing. */
     <Section id="plans-estimator" variant="inverse" divider className="scroll-mt-16">
+      <EstimatorRecovery
+        flow="plans"
+        currentStep={step}
+        currentStepIndex={stepIndex}
+        totalSteps={STEP_ORDER.length}
+        lastCompletedStep={stepIndex > 0 ? STEP_ORDER[stepIndex - 1] : undefined}
+        selections={{ files: files.length }}
+        engaged={stepIndex > 0 || files.length > 0}
+        submitted={step === "result"}
+      />
       <div className="container mx-auto max-w-3xl scroll-mt-24 px-4 sm:px-6" ref={setWizardRefs}>
         {step !== "result" ? (
           <WizardProgress steps={STEP_METAS} currentIndex={stepIndex} />

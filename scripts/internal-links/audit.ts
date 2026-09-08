@@ -101,7 +101,11 @@ function main() {
     console.log("[audit:links] OK no broken internal links.");
   }
 
-  console.log("[audit:links] ----- Done (warn-only, build never fails) -----");
+  if (broken.length > 0) {
+    console.error("[audit:links] ----- FAILED: broken internal links must be fixed before deploy -----");
+    process.exit(1);
+  }
+  console.log("[audit:links] ----- Done (coverage findings are advisory; broken links fail the build) -----");
 }
 
 main();

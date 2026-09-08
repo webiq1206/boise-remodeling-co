@@ -21,6 +21,7 @@ import { CTA_PRIMARY } from "@/shared/ctaCopy";
 import { HomePageSchema } from "@/components/seo/HomePageSchema";
 import { buildCanonical } from "@/lib/page-metadata";
 import { SITE_IMAGES } from "@/shared/siteImages";
+import { fitDescription } from '@/lib/page-metadata';
 
 const EstimateCalculator = dynamic(
   () =>
@@ -40,7 +41,7 @@ const EstimateCalculator = dynamic(
 export const metadata: Metadata = {
   title: { absolute: "Remodeling Contractor in Boise, ID | Boise Remodeling Co" },
   description:
-    "Design-build remodeling for Boise, Meridian, Eagle, Nampa & the Treasure Valley. Clear expectations and budget guidance. Schedule a free in-home consultation.",
+    fitDescription("Design-build remodeling for Boise, Meridian, Eagle, Nampa & the Treasure Valley. Clear expectations and budget guidance. Schedule a free in-home consultation."),
   alternates: {
     canonical: buildCanonical("/"),
     // Setting `alternates` replaces the root declaration, so the feed link has
@@ -127,10 +128,10 @@ export default function HomePage() {
             fill
             loading="lazy"
             sizes="100vw"
-            className="object-cover opacity-[0.4] img-brand-grade"
+            className="object-cover opacity-[0.52] img-brand-grade"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-background/50" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-transparent to-background" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/35" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-transparent to-background" />
         </div>
         {/* The ask. Full measure, heading at h2 scale, the form kept in its
             card because a form needs a defined field to sit in - this is one of

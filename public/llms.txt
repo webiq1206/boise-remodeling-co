@@ -1,60 +1,63 @@
 # Boise Remodeling Co
 
-> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020. Serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell. Phone (208) 477-1169.
+> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. Serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell. Phone (208) 477-1169.
 
-Design-build means one accountable team handles design, estimating, Ada and Canyon County permitting, and construction under one contract, backed by a written scope and a workmanship guarantee. 2026 planning ranges at a typical project size, from the on-site estimator: kitchen remodel $35k-$55k mid-range ($80k-$130k high-end); bathroom remodel $18k-$29k mid-range ($35k-$51k high-end); whole-home $108k-$180k mid-range ($216k-$310k high-end); room addition $96k-$136k mid-range ($160k-$224k high-end); ADU $168k-$240k mid-range ($240k-$336k high-end); basement finishing $36k-$61k mid-range ($72k-$115k high-end). These are estimated budget ranges, not quotes; a firm proposal follows an on-site consultation.
+Design-build means one accountable team handles design direction, estimating, Ada and Canyon County permitting, and construction under one contract, backed by a written scope before work starts and a workmanship guarantee at completion. Planning ranges come from an on-site estimator that prices the room, the scope and the finish level rather than a flat price per square foot; they are budget ranges, not quotes, and a firm proposal follows a free in-home visit.
 
 ## Services
 
-- [Kitchen Remodel](https://boiseremodeling.co/services/kitchen-remodel): mid-range refresh to full-gut layout changes.
-- [Bathroom Remodel](https://boiseremodeling.co/services/bathroom-remodel): guest baths to primary-suite renovations.
-- [Whole-Home Remodel](https://boiseremodeling.co/services/whole-home-remodel): multi-room and full-house renovations.
-- [Room Addition](https://boiseremodeling.co/services/room-addition): bump-outs, second stories, and new rooms.
-- [ADU / Guest House](https://boiseremodeling.co/services/adu): garage conversions and detached new builds.
-- [Basement Remodeling](https://boiseremodeling.co/services/basement-remodel): finished basements, egress, and lower-level living space.
-- [Outdoor Living & Decks](https://boiseremodeling.co/services/outdoor-living): decks, covered patios, and outdoor kitchens.
-- [Aging-in-Place Remodeling](https://boiseremodeling.co/services/aging-in-place): accessible, universal-design remodels.
+- [Kitchen Remodel](https://boiseremodeling.co/services/kitchen-remodel): Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild.
+- [Bathroom Remodel](https://boiseremodeling.co/services/bathroom-remodel): Spa-quality bathroom transformations designed around how you actually live.
+- [Whole-Home Remodel](https://boiseremodeling.co/services/whole-home-remodel): Cohesive whole-home renovations with a single project manager start to finish.
+- [Room Addition](https://boiseremodeling.co/services/room-addition): Thoughtfully designed additions that feel like they were always part of your home.
+- [ADU / Guest House](https://boiseremodeling.co/services/adu): Detached or attached accessory dwelling units designed to maximize your property value.
+- [Basement Remodeling](https://boiseremodeling.co/services/basement-remodel): Finished basements and lower-level living space, from egress and framing to a fully finished suite.
+- [Outdoor Living & Decks](https://boiseremodeling.co/services/outdoor-living): Decks, covered patios, and outdoor kitchens that extend your living space into the yard.
+- [Aging-in-Place Remodeling](https://boiseremodeling.co/services/aging-in-place): Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.
 - [RE-10 / Inspection Repairs](https://boiseremodeling.co/re-10-repairs-boise): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.
-- [Estimate From Your Plans](https://boiseremodeling.co/remodel-plans-boise): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules printed on the sheets, rather than from a stated square footage. Free, no obligation, and the homeowner confirms every measurement before anything is priced.
+- [Estimate From Your Plans](https://boiseremodeling.co/remodel-plans-boise): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules on the sheets. Free, no obligation, and the homeowner confirms every measurement before anything is priced.
 - [All Services](https://boiseremodeling.co/services): plus city pages at /services/{service}/{city} and [Service Areas](https://boiseremodeling.co/areas).
 
 ## Authoritative guides
 
+- [Boise Remodeling Cost Guide (2026 Planning Ranges)](https://boiseremodeling.co/guides/boise-remodeling-cost-guide)
 - [Treasure Valley Remodeling Guide](https://boiseremodeling.co/guides/treasure-valley-remodeling-guide)
-- [Boise Remodeling Cost Guide](https://boiseremodeling.co/guides/boise-remodeling-cost-guide)
+- [Boise ADU Guide: Rules, Costs & Building a Second Unit](https://boiseremodeling.co/guides/boise-adu-guide)
 - [Boise Kitchen Remodeling Guide](https://boiseremodeling.co/guides/boise-kitchen-remodeling-guide)
 - [Boise Bathroom Remodeling Guide](https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide)
 - [Boise Home Addition Guide](https://boiseremodeling.co/guides/boise-home-addition-guide)
-- [Boise ADU Guide (rules, costs, permits)](https://boiseremodeling.co/guides/boise-adu-guide)
 - [Whole Home Remodeling Guide](https://boiseremodeling.co/guides/whole-home-remodeling-guide)
-- [Choose a Remodeling Contractor in Boise](https://boiseremodeling.co/guides/choose-remodeling-contractor-boise)
+- [How to Choose a Remodeling Contractor in Boise](https://boiseremodeling.co/guides/choose-remodeling-contractor-boise)
 - [Boise Remodeling Process Guide](https://boiseremodeling.co/guides/boise-remodeling-process-guide)
-- [Best Remodeling ROI in Boise](https://boiseremodeling.co/guides/best-remodeling-roi-boise)
+- [Best Remodeling Projects for ROI in Boise](https://boiseremodeling.co/guides/best-remodeling-roi-boise)
 - [Outdoor Living Remodeling Guide](https://boiseremodeling.co/guides/outdoor-living-remodeling-guide)
 
-## Local permit resources
+## Local permit and location resources
 
 - [Ada County vs Canyon County permit flow](https://boiseremodeling.co/resources/ada-canyon-permit-flow)
-- City guides: [Boise](https://boiseremodeling.co/guides/boise-remodeling-guide), [Meridian](https://boiseremodeling.co/guides/meridian-remodeling-guide), [Eagle](https://boiseremodeling.co/guides/eagle-remodeling-guide), [Kuna](https://boiseremodeling.co/guides/kuna-remodeling-guide), [Star](https://boiseremodeling.co/guides/star-remodeling-guide), [Middleton](https://boiseremodeling.co/guides/middleton-remodeling-guide), [Nampa](https://boiseremodeling.co/guides/nampa-remodeling-guide), [Caldwell](https://boiseremodeling.co/guides/caldwell-remodeling-guide)
-- Neighborhood guides: [North End](https://boiseremodeling.co/guides/north-end-remodeling-guide), [Boise Bench](https://boiseremodeling.co/guides/boise-bench-remodeling-guide), [Harris Ranch](https://boiseremodeling.co/guides/harris-ranch-remodeling-guide), [East Boise](https://boiseremodeling.co/guides/east-boise-remodeling-guide), [Hidden Springs](https://boiseremodeling.co/guides/hidden-springs-remodeling-guide), [Eagle Foothills](https://boiseremodeling.co/guides/eagle-foothills-remodeling-guide)
+- City guides: [Boise Remodeling Guide](https://boiseremodeling.co/guides/boise-remodeling-guide), [Meridian Remodeling Guide](https://boiseremodeling.co/guides/meridian-remodeling-guide), [Eagle Remodeling Guide](https://boiseremodeling.co/guides/eagle-remodeling-guide), [Kuna Remodeling Guide](https://boiseremodeling.co/guides/kuna-remodeling-guide), [Star Remodeling Guide](https://boiseremodeling.co/guides/star-remodeling-guide), [Middleton Remodeling Guide](https://boiseremodeling.co/guides/middleton-remodeling-guide), [Nampa Remodeling Guide](https://boiseremodeling.co/guides/nampa-remodeling-guide), [Caldwell Remodeling Guide](https://boiseremodeling.co/guides/caldwell-remodeling-guide)
+- Neighborhood guides: [North End Remodeling Guide](https://boiseremodeling.co/guides/north-end-remodeling-guide), [Boise Bench Remodeling Guide](https://boiseremodeling.co/guides/boise-bench-remodeling-guide), [Harris Ranch Remodeling Guide](https://boiseremodeling.co/guides/harris-ranch-remodeling-guide), [East Boise Remodeling Guide](https://boiseremodeling.co/guides/east-boise-remodeling-guide), [Hidden Springs Remodeling Guide](https://boiseremodeling.co/guides/hidden-springs-remodeling-guide), [Eagle Foothills Remodeling Guide](https://boiseremodeling.co/guides/eagle-foothills-remodeling-guide)
 
 ## Blog category hubs
 
-- [Remodeling Costs](https://boiseremodeling.co/blog/category/remodeling-costs)
+- [Boise Remodeling Costs](https://boiseremodeling.co/blog/category/remodeling-costs)
 - [Kitchen Remodeling](https://boiseremodeling.co/blog/category/kitchen-remodeling)
 - [Bathroom Remodeling](https://boiseremodeling.co/blog/category/bathroom-remodeling)
 - [Home Additions](https://boiseremodeling.co/blog/category/home-additions)
-- [Whole-Home Remodeling](https://boiseremodeling.co/blog/category/whole-home-remodeling)
+- [Whole Home Remodeling](https://boiseremodeling.co/blog/category/whole-home-remodeling)
 - [Contractor Selection](https://boiseremodeling.co/blog/category/contractor-selection)
 - [Remodeling Process](https://boiseremodeling.co/blog/category/remodeling-process)
-- [Remodeling ROI](https://boiseremodeling.co/blog/category/remodeling-roi)
+- [ROI & Home Value](https://boiseremodeling.co/blog/category/remodeling-roi)
 - [Outdoor Living](https://boiseremodeling.co/blog/category/outdoor-living)
+- [Treasure Valley Locations](https://boiseremodeling.co/blog/category/treasure-valley-locations)
 
 ## About and contact
 
-- [About Boise Remodeling Co](https://boiseremodeling.co/about): design-build remodels across the Treasure Valley since 2020.
+- [About Boise Remodeling Co](https://boiseremodeling.co/about): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.
 - [Contact](https://boiseremodeling.co/contact)
-- [Free estimator](https://boiseremodeling.co/#calculator)
+- [Free remodel estimator](https://boiseremodeling.co/estimate)
+- [Before and after projects](https://boiseremodeling.co/testimonials)
+- [Planning resources and worksheets](https://boiseremodeling.co/resources)
 
 ## Optional
 
@@ -67,4 +70,4 @@ Design-build means one accountable team handles design, estimating, Ada and Cany
 - [RSS feed](https://boiseremodeling.co/feed.xml): guides and articles, newest first, with publication and revision dates.
 - [Full text for LLMs](https://boiseremodeling.co/llms-full.txt): expanded reference copy of the core facts.
 
-Last updated: 2026-07-22.
+Last updated: 2026-09-08.

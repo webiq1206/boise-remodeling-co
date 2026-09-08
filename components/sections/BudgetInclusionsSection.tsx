@@ -45,9 +45,9 @@ export function BudgetInclusionsSection() {
           fill
           loading="lazy"
           sizes="100vw"
-          className="object-cover opacity-[0.22] img-brand-grade"
+          className="object-cover opacity-[0.34] img-brand-grade"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-inverse/85 via-inverse/50 to-inverse/85" />
+        <div className="absolute inset-0 bg-gradient-to-b from-inverse/72 via-inverse/38 to-inverse/72" />
       </div>
 
       <div className="ed-shell relative z-10">

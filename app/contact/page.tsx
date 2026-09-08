@@ -21,7 +21,6 @@ import {
   generateBreadcrumbSchema,
   generateFAQSchema,
   generateLocalBusinessSchema,
-  generateSpeakableSchema,
   generateWebPageSchema,
 } from '@/lib/schema';
 import { EmailLink } from '@/components/EmailLink';
@@ -174,13 +173,13 @@ export default function ContactPage() {
       description:
         'Schedule a free in-home consultation or call our Treasure Valley design-build team.',
       url: '/contact',
+      speakable: true,
     }),
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'Contact', url: '/contact' },
     ]),
     generateFAQSchema(CONTACT_FAQS),
-    generateSpeakableSchema({ path: '/contact', name: 'Contact Boise Remodeling Co' }),
   ];
 
   return (

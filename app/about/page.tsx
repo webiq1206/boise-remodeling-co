@@ -14,7 +14,6 @@ import { buildPageMetadata } from '@/lib/page-metadata';
 import {
   generateBreadcrumbSchema,
   generateOrganizationSchema,
-  generateSpeakableSchema,
   generateWebPageSchema,
 } from '@/lib/schema';
 import { CITIES, TREASURE_VALLEY_CITIES } from '@/shared/contentData';
@@ -93,12 +92,12 @@ export default function AboutPage() {
       description:
         'Treasure Valley design-build remodeling company. Licensed, insured, and committed to clear communication.',
       url: '/about',
+      speakable: true,
     }),
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'About', url: '/about' },
     ]),
-    generateSpeakableSchema({ path: '/about', name: 'About Boise Remodeling Co' }),
   ];
 
   return (

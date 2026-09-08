@@ -20,7 +20,9 @@ for (const route of routes) {
     const vis = (el) => { const cs=getComputedStyle(el); const r=el.getBoundingClientRect(); return cs.display!=='none' && cs.visibility!=='hidden' && r.width>0 && r.height>0; };
     // Screen-reader-only text is clipped by design, and anything inside a
     // horizontal scroller is MEANT to sit past the right edge.
-    const scroller = (el) => { for (let a=el.parentElement; a; a=a.parentElement) { const o=getComputedStyle(a).overflowX; if (o==='auto'||o==='scroll') return true; } return false; };
+    // Scrollers are MEANT to run past the edge; overflow:hidden ancestors clip, so a decorative shape
+    // tucked behind a card's edge is not painted past the viewport either.
+    const scroller = (el) => { for (let a=el.parentElement; a && a!==document.body; a=a.parentElement) { const o=getComputedStyle(a).overflowX; if (o==='auto'||o==='scroll'||o==='hidden'||o==='clip') return true; } return false; };
     const ignored = (el) => { if (el.closest('.sr-only, [aria-hidden="true"]')) return true; const cs=getComputedStyle(el); if (cs.position==='absolute' && cs.clip && cs.clip.startsWith('rect(0')) return true; return scroller(el); };
     const label = (el) => el.tagName.toLowerCase() + (el.id?'#'+el.id:'') + '.' + String(el.className||'').split(' ').filter(Boolean).slice(0,3).join('.') + (el.textContent?` "${el.textContent.trim().slice(0,28)}"`:'');
     // 1. anything painted past the right edge of the viewport

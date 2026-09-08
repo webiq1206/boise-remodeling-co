@@ -18,6 +18,7 @@ import {
 } from "@/shared/blogImages";
 import { getBlogOgImage } from "@/shared/blogOgImages";
 import { getBaseUrl } from "@/lib/seo";
+import { fitDescription } from '@/lib/page-metadata';
 
 export async function generateStaticParams() {
   return BLOG_POSTS.map((post) => ({
@@ -43,8 +44,8 @@ export async function generateMetadata({
   const rawTitle = post.seoTitle || post.title;
   const title = generateSafePageTitle(stripBrandSuffix(rawTitle));
   const description =
-    post.metaDescription ||
-    (post.excerpt.length > 160 ? post.excerpt.substring(0, 157) + "..." : post.excerpt);
+    fitDescription(post.metaDescription ||
+    (post.excerpt.length > 160 ? post.excerpt.substring(0, 157) + "..." : post.excerpt));
   const heroPath = getBlogHeroImage(post.slug, post.heroImage);
   const imageUrl = getAbsoluteImageUrl(heroPath, getBaseUrl());
   const imageAlt = getBlogImageAlt(post.slug);

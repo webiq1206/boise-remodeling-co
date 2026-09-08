@@ -1,49 +1,54 @@
 # Boise Remodeling Co - Full Reference
 
-> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, and ADUs in Boise, Idaho and the Treasure Valley. One accountable team handles design, estimating, permits, and construction under a single contract.
+> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. Serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell. Phone (208) 477-1169.
 
 ## About
 
-Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley since 2020. Design-build means design, permitting, and construction are delivered by one team under one contract, which removes the handoffs between a separate designer and general contractor and keeps each project on a single coordinated schedule. Every project includes a written scope before construction, clear allowances for selections, proactive communication throughout the build, and a workmanship guarantee at completion.
+Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means design direction, estimating, permitting and construction are delivered by one team under one contract, which removes the handoff between a designer and a general contractor and keeps the drawings and the budget on the same schedule. Every project includes a written scope before construction, a dedicated project manager, a written progress update every Friday, and a workmanship guarantee at completion.
 
-- Business type: Design-build remodeling contractor (residential)
+- Business type: Residential design-build remodeling contractor
 - Founded: 2020
-- Service model: Single accountable team for design, permits, and construction
+- Parent company: P5 Home Co (https://p5homeco.com)
+- Service model: One accountable team for design, permits, and construction
 - Contact: https://boiseremodeling.co/contact
-- Project estimator: https://boiseremodeling.co/#calculator
+- Remodel estimator: https://boiseremodeling.co/estimate
 
 ## Service area
 
-We serve the following Treasure Valley cities across Ada and Canyon County:
+We remodel homes in the following Treasure Valley cities across Ada and Canyon County:
 
 - Ada County: Boise, Meridian, Eagle, Kuna, Star
-- Canyon County: Nampa, Caldwell, Middleton
+- Canyon County: Nampa, Middleton, Caldwell
 
-Permit paths differ between Ada County and Canyon County; we coordinate submissions, fees, and inspections as part of the design-build contract.
+Permit paths, fees, and inspection sequencing differ between Ada County and Canyon County, and again between incorporated city limits and county jurisdiction. Permits are handled in-house as part of the design-build contract.
 
 ## Services
 
-- Kitchen Remodel: /services/kitchen-remodel
-- Bathroom Remodel: /services/bathroom-remodel
-- Whole-Home Remodel: /services/whole-home-remodel
-- Room Addition: /services/room-addition
-- ADU / Guest House: /services/adu
+- Kitchen Remodel: /services/kitchen-remodel - Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild.
+- Bathroom Remodel: /services/bathroom-remodel - Spa-quality bathroom transformations designed around how you actually live.
+- Whole-Home Remodel: /services/whole-home-remodel - Cohesive whole-home renovations with a single project manager start to finish.
+- Room Addition: /services/room-addition - Thoughtfully designed additions that feel like they were always part of your home.
+- ADU / Guest House: /services/adu - Detached or attached accessory dwelling units designed to maximize your property value.
+- Basement Remodeling: /services/basement-remodel - Finished basements and lower-level living space, from egress and framing to a fully finished suite.
+- Outdoor Living & Decks: /services/outdoor-living - Decks, covered patios, and outdoor kitchens that extend your living space into the yard.
+- Aging-in-Place Remodeling: /services/aging-in-place - Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.
 
-Each service has a dedicated page per city at /services/{service-slug}/{city-slug} for boise, meridian, eagle, nampa, kuna, star, middleton, and caldwell. City service-area hubs live at /areas/{city-slug}.
+Each service has a dedicated page per city at /services/{service-slug}/{city-slug} for boise, meridian, eagle, nampa, kuna, star, middleton, caldwell. City service-area hubs live at /areas/{city-slug}.
 
 ## Authoritative guides (https://boiseremodeling.co/guides)
 
 Pillar guides (own the head terms):
 
+- Boise Remodeling Cost Guide (2026 Planning Ranges): /guides/boise-remodeling-cost-guide
 - Treasure Valley Remodeling Guide: /guides/treasure-valley-remodeling-guide
-- Boise Remodeling Cost Guide (2026 planning ranges): /guides/boise-remodeling-cost-guide
+- Boise ADU Guide: Rules, Costs & Building a Second Unit: /guides/boise-adu-guide
 - Boise Kitchen Remodeling Guide: /guides/boise-kitchen-remodeling-guide
 - Boise Bathroom Remodeling Guide: /guides/boise-bathroom-remodeling-guide
 - Boise Home Addition Guide: /guides/boise-home-addition-guide
 - Whole Home Remodeling Guide: /guides/whole-home-remodeling-guide
-- Choose a Remodeling Contractor Boise: /guides/choose-remodeling-contractor-boise
+- How to Choose a Remodeling Contractor in Boise: /guides/choose-remodeling-contractor-boise
 - Boise Remodeling Process Guide: /guides/boise-remodeling-process-guide
-- Best Remodeling ROI Boise: /guides/best-remodeling-roi-boise
+- Best Remodeling Projects for ROI in Boise: /guides/best-remodeling-roi-boise
 - Outdoor Living Remodeling Guide: /guides/outdoor-living-remodeling-guide
 
 City guides:
@@ -68,39 +73,43 @@ Neighborhood guides:
 
 ## Blog category hubs (long-tail questions support the pillars)
 
-- Remodeling costs: /blog/category/remodeling-costs
-- Kitchen remodeling: /blog/category/kitchen-remodeling
-- Bathroom remodeling: /blog/category/bathroom-remodeling
-- Home additions: /blog/category/home-additions
-- Whole-home remodeling: /blog/category/whole-home-remodeling
-- Contractor selection: /blog/category/contractor-selection
-- Remodeling process: /blog/category/remodeling-process
-- ROI & home value: /blog/category/remodeling-roi
-- Outdoor living: /blog/category/outdoor-living
+- Boise Remodeling Costs: /blog/category/remodeling-costs
+- Kitchen Remodeling: /blog/category/kitchen-remodeling
+- Bathroom Remodeling: /blog/category/bathroom-remodeling
+- Home Additions: /blog/category/home-additions
+- Whole Home Remodeling: /blog/category/whole-home-remodeling
+- Contractor Selection: /blog/category/contractor-selection
+- Remodeling Process: /blog/category/remodeling-process
+- ROI & Home Value: /blog/category/remodeling-roi
+- Outdoor Living: /blog/category/outdoor-living
+- Treasure Valley Locations: /blog/category/treasure-valley-locations
+
+75 articles across these hubs. Index: /blog
 
 ## Planning resources
 
-- Remodel planning resources (free PDFs and visual guides): /resources
+- Remodeling planning resources (free PDFs and visual guides): /resources
 - Ada vs Canyon County permit flow (visual guide): /resources/ada-canyon-permit-flow
 
 ## Common questions
 
-- How long does a remodel take? Most projects run several weeks of design and permitting followed by weeks to months of construction, depending on scope and whether layout or structural changes trigger plan review.
-- Do I need permits? Cosmetic updates often do not, but layout, structural, plumbing, or electrical changes require permits through Ada or Canyon County.
-- How do I keep a remodel on budget? Define scope in writing, lock selections before construction, hold a 10-15% contingency for concealed conditions in older homes, and compare bids only when allowances and permits match.
+- How much does a remodel cost in Boise? It depends on the room, the scope (refresh versus full gut and layout change) and the finish level far more than on square footage. The estimator gives a planning range in about a minute; the cost guide at /guides/boise-remodeling-cost-guide explains what moves the number.
+- How long does a remodel take? Design and selections typically run three to eight weeks, permitting one to four depending on jurisdiction, and construction from two to three weeks for a bathroom to several months for a whole-home renovation or addition.
+- Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of the design-build contract, including the inspections that go with them.
+- Can I live in the house during the remodel? Usually, for kitchens, bathrooms and single rooms, with dust barriers and a daily cleanup routine. Whole-home projects sometimes phase the work so part of the house stays livable.
+- What is an RE-10? The Idaho inspection response form a buyer uses to request repairs before closing. We review the report, price the requested items in writing, complete the approved work and document it for the transaction file: /re-10-repairs-boise
 
 ## Key pages
 
 - Home: https://boiseremodeling.co/
 - About: https://boiseremodeling.co/about
+- Services: https://boiseremodeling.co/services
 - Service areas: https://boiseremodeling.co/areas
-- Projects & reviews: https://boiseremodeling.co/testimonials
+- Remodel estimator: https://boiseremodeling.co/estimate
+- Before and after: https://boiseremodeling.co/testimonials
 - Blog: https://boiseremodeling.co/blog
 - Guides: https://boiseremodeling.co/guides
+- Resources: https://boiseremodeling.co/resources
 - Contact: https://boiseremodeling.co/contact
 
-Last updated: 2026-06-05. Full sitemap: https://boiseremodeling.co/sitemap.xml
-
-## RE-10 / Inspection Repairs
-
-Boise Remodeling Co completes RE-10 and home inspection repairs for real estate agents, buyers and sellers across Boise and the Treasure Valley. An RE-10 is the Idaho inspection response form: after a home inspection the buyer requests specific repairs before closing. We review the RE-10 and inspection report, provide a written scope and pricing, coordinate access, complete the approved work across multiple trades, and supply photo documentation, invoices and receipts for the transaction file. Structural, foundation, mould and asbestos abatement, main electrical service, sewer and septic, HVAC replacement, gas lines and full roof replacement are coordinated to licensed specialists rather than performed in house. Details: https://boiseremodeling.co/re-10-repairs-boise
+Last updated: 2026-09-08. Full sitemap: https://boiseremodeling.co/sitemap.xml
