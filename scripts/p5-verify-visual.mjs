@@ -18,6 +18,20 @@ try {
    try {
     const response=await page.goto('http://127.0.0.1:5000'+route,{waitUntil:'networkidle'});
     check(response.status()<400,route+' status '+response.status());
+    if (route === '/') {
+      const menu = page.getByTestId('button-mobile-menu-open');
+      if (width < 1280) {
+        check(await menu.isVisible(), 'Compact navigation must remain visible below 1280px');
+        await menu.click();
+        check(await page.getByTestId('mobile-nav-drawer').isVisible(), 'Navigation drawer did not open');
+        await page.keyboard.press('Escape');
+        await page.getByTestId('mobile-nav-drawer').waitFor({state:'hidden'});
+      } else {
+        const phone = await page.getByTestId('link-phone-desktop').boundingBox();
+        check(phone && phone.height <= 24, 'Desktop phone number wraps');
+      }
+    }
+
     await page.evaluate(async()=>{await document.fonts.ready; for(let y=0;y<document.documentElement.scrollHeight;y+=650){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,70));}});
     await page.evaluate(async()=>{
       const images=[...document.images].filter(i=>i.getClientRects().length);
