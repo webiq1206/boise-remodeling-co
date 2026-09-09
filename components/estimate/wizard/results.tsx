@@ -311,7 +311,7 @@ export function StickyResultActions({
       className={
         inFrame
           ? "pt-1"
-          : "sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
+          : "sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/12 bg-inverse px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
       }
       data-testid="result-sticky-actions"
     >

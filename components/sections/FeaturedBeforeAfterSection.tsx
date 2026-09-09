@@ -2,7 +2,7 @@ import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
-import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
+import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import type { GalleryProject } from "@/shared/galleryData";
 
 interface FeaturedBeforeAfterSectionProps {
@@ -10,14 +10,11 @@ interface FeaturedBeforeAfterSectionProps {
   title?: React.ReactNode;
 }
 
-/**
- * Single featured before/after slider for service hub pages (Phase 3 proof).
- */
 export function FeaturedBeforeAfterSection({
   project,
   title = (
     <>
-      See the <em className="brc-accent">transformation</em>
+      See the <em className="brc-accent">possibilities</em>
     </>
   ),
 }: FeaturedBeforeAfterSectionProps) {
@@ -25,14 +22,14 @@ export function FeaturedBeforeAfterSection({
     <Section divider>
       <div className="container px-4 max-w-5xl">
         <SectionHeader
-          eyebrow="Project proof"
+          eyebrow="Design inspiration"
           title={title}
-          description="Drag the slider to compare the same space before and after our design-build work."
+          description="Explore a design direction for your own home. Final layouts and materials are tailored to your property."
           className="mb-8 max-w-3xl"
         />
         <Reveal>
           <MarketingCard className="overflow-hidden p-0">
-            <BeforeAfterSlider
+            <ProjectInspirationImage
               beforeSrc={project.beforeImageUrl}
               afterSrc={project.afterImageUrl}
               beforeAlt={`Before: ${project.title}`}

@@ -1,0 +1,47 @@
+name: P5 final build and browser verification
+on:
+  push:
+    branches: [codex/p5-final-verification]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --no-audit --no-fund
+      - name: Add temporary component fixture
+        run: |
+          mkdir -p app/p5-audit-fixture
+          cat > app/p5-audit-fixture/page.tsx <<'FIXTURE'
+          import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
+          export default function AuditFixture() {
+            return <main className="container py-12"><h1>Component verification</h1><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div></main>;
+          }
+          FIXTURE
+          printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="gray"/></svg>' > public/p5-audit-before.svg
+          printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="tan"/></svg>' > public/p5-audit-after.svg
+      - name: Production build and repository gates
+        run: npm run build
+      - name: Start and verify production server
+        env:
+          P5_PARENT: "0"
+        run: |
+          npx next start -p 5000 > /tmp/p5-server.log 2>&1 &
+          node -e 'const u="http://127.0.0.1:5000";let n=0;const t=setInterval(async()=>{try{await fetch(u);clearInterval(t)}catch{if(++n>60){clearInterval(t);process.exit(1)}}},1000)'
+          node scripts/p5-verify-visual.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-final-verification
+          path: |
+            p5-verification
+            /tmp/p5-server.log
+          retention-days: 7

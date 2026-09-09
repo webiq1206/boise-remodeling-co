@@ -607,3 +607,15 @@ main > div:first-of-type > section:first-of-type:not(.pt-0):not(.fixed),
 main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.fixed):not([data-testid="estimate-app-frame"]) {
   padding-top: var(--ed-hero-top);
 }
+
+/* Keep four-card sections balanced at desktop widths. */
+@media (min-width: 1024px) {
+  .ed-cards-3:has(> :nth-child(4):last-child) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .ed-cards-3:has(> :nth-child(4):last-child) > :nth-child(n) {
+    grid-column: auto;
+  }
+}
+
+.ed-split > *, .ed-panel > *, .ed-matrix > *, .ed-cards-3 > * { min-width: 0; }

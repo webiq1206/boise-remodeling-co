@@ -19,21 +19,21 @@ import { GALLERY_IMAGES } from '@/shared/siteImages';
 export const metadata = buildPageMetadata({
   kind: 'about',
   path: '/testimonials',
-  titleOverride: 'Our Work',
+  titleOverride: 'Remodeling Inspiration',
   descriptionOverride:
-    'Treasure Valley remodeling transformations by Boise Remodeling Co: kitchen, bathroom, whole-home, and addition projects with before-and-after comparisons.',
+    'Kitchen, bathroom, whole-home, and addition design inspiration for Treasure Valley homeowners. Representative imagery, not completed customer projects.',
 });
 
 export default function TestimonialsPage() {
   const schemas = [
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: 'Projects & Reviews', url: '/testimonials' },
+      { name: 'Remodeling Inspiration', url: '/testimonials' },
     ]),
     generateCollectionPageSchema({
-      title: 'Our Work',
+      title: 'Remodeling Inspiration',
       description:
-        'Treasure Valley remodeling transformations from Boise Remodeling Co: kitchen, bath, whole-home, and addition projects.',
+        'Representative remodeling design inspiration for kitchens, bathrooms, whole homes, and additions.',
       url: '/testimonials',
       items: GALLERY_PROJECTS.map((p) => ({
         name: p.title,
@@ -48,22 +48,22 @@ export default function TestimonialsPage() {
 
       <PageHeroBand
         imageSrc={GALLERY_IMAGES.kitchen.after}
-        imageAlt="After: modern kitchen remodel in Boise Idaho"
+        imageAlt="Representative modern kitchen design inspiration"
         scrim={0.75}
       >
         <Breadcrumbs
           items={[
             { name: 'Home', href: '/' },
-            { name: 'Our Work' },
+            { name: 'Remodeling Inspiration' },
           ]}
         />
-        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Before &amp; after</p>
+        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Design inspiration</p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
-          Our <em className="brc-accent">work</em> across the Treasure Valley
+          Imagine the <em className="brc-accent">possibilities</em> for your home
         </h1>
         <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-8">
-          Explore recent design-build transformations. Drag any slider to compare the before and after,
-          then picture the same clarity and craftsmanship in your home.
+          Explore representative design ideas for your next remodel. These images are inspiration,
+          not photographs of specific completed customer projects.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap [&>*]:w-full sm:[&>*]:w-auto">
           <EstimateCTA variant="brand">
@@ -73,7 +73,7 @@ export default function TestimonialsPage() {
         </div>
       </PageHeroBand>
 
-      <ProjectGallerySection showViewAll={false} />
+      <ProjectGallerySection limit={GALLERY_PROJECTS.length} showViewAll={false} />
 
       <EstimatePromptBand
         eyebrow="Planning your project"

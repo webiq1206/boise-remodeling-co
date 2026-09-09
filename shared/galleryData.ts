@@ -9,6 +9,7 @@ export interface GalleryProject {
   description: string;
 }
 
+// Representative generated design assets. No verified same-property before/after pairs.
 export const GALLERY_PROJECTS: GalleryProject[] = [
   {
     serviceType: "kitchen-remodel",
@@ -17,7 +18,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.kitchen.after,
     title: "Modern Kitchen Transformation",
     description:
-      "Full kitchen remodel with custom cabinets, quartz countertops, and new layout in Boise",
+      "Kitchen design inspiration exploring cabinetry, work surfaces, storage, and lighting.",
   },
   {
     serviceType: "bathroom-remodel",
@@ -26,7 +27,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.bathroom.after,
     title: "Primary Bathroom Renovation",
     description:
-      "Luxury primary bathroom remodel with walk-in shower, freestanding tub, and heated floors in Meridian",
+      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
   },
   {
     serviceType: "whole-home-remodel",
@@ -35,7 +36,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.wholeHome.after,
     title: "Whole-Home Remodel",
     description:
-      "Complete interior renovation of a 1990s Eagle home with open floor plan, new kitchen, and three updated bathrooms",
+      "Whole-home design inspiration exploring coordinated finishes and connected living spaces.",
   },
   {
     serviceType: "room-addition",
@@ -44,7 +45,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.addition.after,
     title: "Master Suite Addition",
     description:
-      "600 sq ft master suite addition with ensuite bath and walk-in closet in Nampa",
+      "Addition design inspiration. A buildable layout depends on the existing home, site, and engineering.",
   },
   {
     serviceType: "basement-finish",
@@ -53,7 +54,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.basement.after,
     title: "Basement Finish",
     description:
-      "Unfinished basement transformed into a family room, home office, and full bath in Boise",
+      "Basement design inspiration exploring comfortable living space, finishes, and lighting.",
   },
   {
     serviceType: "outdoor-living",
@@ -62,7 +63,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.outdoor.after,
     title: "Outdoor Living Transformation",
     description:
-      "Plain concrete patio converted to a covered outdoor kitchen and dining space in Boise",
+      "Outdoor living inspiration exploring seating, shelter, and materials for time outside.",
   },
   {
     serviceType: "adu",
@@ -71,7 +72,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.aduBoise.after,
     title: "Detached ADU Build",
     description:
-      "Side-yard garage area replaced with a detached ADU including kitchenette and private entry in Boise",
+      "Representative remodeling design inspiration, tailored to your home during design.",
   },
   {
     serviceType: "aging-in-place",
@@ -80,7 +81,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.agingBoise.after,
     title: "Accessible Primary Bath",
     description:
-      "Standard tub and narrow doorway converted to a curbless shower, grab bars, and widened door in Boise",
+      "Accessible-home design inspiration. Clearances and safety features require a property-specific assessment.",
   },
   {
     serviceType: "kitchen-remodel",
@@ -89,7 +90,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.kitchenMeridian.after,
     title: "Meridian Kitchen Refresh",
     description:
-      "2000s builder-grade kitchen updated with new layout, island seating, and quartz surfaces in Meridian",
+      "Kitchen design inspiration exploring cabinetry, work surfaces, storage, and lighting.",
   },
   {
     serviceType: "kitchen-remodel",
@@ -98,7 +99,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.kitchenEagle.after,
     title: "Eagle Foothills Kitchen",
     description:
-      "Dated kitchen with foothills views transformed with custom walnut cabinetry and waterfall island in Eagle",
+      "Kitchen design inspiration exploring cabinetry, work surfaces, storage, and lighting.",
   },
   {
     serviceType: "bathroom-remodel",
@@ -107,7 +108,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.hallBathBoise.after,
     title: "Hall Bath Shower Conversion",
     description:
-      "Pedestal sink and tub combo replaced with a walk-in shower and floating vanity in a Boise hall bath",
+      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
   },
   {
     serviceType: "bathroom-remodel",
@@ -116,7 +117,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.bathroomNampa.after,
     title: "Nampa Primary Bath Remodel",
     description:
-      "Corner tub layout converted to a walk-in shower and double vanity in a Nampa primary bathroom",
+      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
   },
   {
     serviceType: "whole-home-remodel",
@@ -125,7 +126,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.wholeHomeMeridian.after,
     title: "Meridian Open Main Floor",
     description:
-      "Fragmented main floor opened into a connected kitchen, dining, and living space in Meridian",
+      "Whole-home design inspiration exploring coordinated finishes and connected living spaces.",
   },
   {
     serviceType: "room-addition",
@@ -134,7 +135,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.additionEagle.after,
     title: "Eagle Rear Addition",
     description:
-      "Rear elevation expanded with a new gable roof line and master suite addition in Eagle",
+      "Addition design inspiration. A buildable layout depends on the existing home, site, and engineering.",
   },
   {
     serviceType: "room-addition",
@@ -143,7 +144,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.additionMeridian.after,
     title: "Meridian Sunroom Bump-Out",
     description:
-      "Side-yard bump-out added a bright sunroom and expanded family dining space in Meridian",
+      "Addition design inspiration. A buildable layout depends on the existing home, site, and engineering.",
   },
   {
     serviceType: "basement-finish",
@@ -152,7 +153,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.basementMeridian.after,
     title: "Meridian Basement Media Room",
     description:
-      "Unfinished storage space converted to a media room with wet bar and recessed lighting in Meridian",
+      "Basement design inspiration exploring comfortable living space, finishes, and lighting.",
   },
   {
     serviceType: "basement-finish",
@@ -161,7 +162,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.basementNampa.after,
     title: "Nampa Basement Finish",
     description:
-      "Partially finished basement completed with a full bath, bedroom, and family room in Nampa",
+      "Basement design inspiration exploring comfortable living space, finishes, and lighting.",
   },
   {
     serviceType: "outdoor-living",
@@ -170,7 +171,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.outdoorEagle.after,
     title: "Eagle Covered Patio",
     description:
-      "Existing deck expanded into a covered patio with stone fireplace and outdoor dining in Eagle",
+      "Outdoor living inspiration exploring seating, shelter, and materials for time outside.",
   },
   {
     serviceType: "outdoor-living",
@@ -179,7 +180,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.outdoorMeridian.after,
     title: "Meridian Outdoor Kitchen",
     description:
-      "Small concrete pad converted to an outdoor kitchen and pergola dining area in Meridian",
+      "Outdoor living inspiration exploring seating, shelter, and materials for time outside.",
   },
   {
     serviceType: "aging-in-place",
@@ -188,7 +189,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.agingMeridian.after,
     title: "Meridian Zero-Threshold Bath",
     description:
-      "Standard primary bath updated with a zero-threshold shower, seated bench, and lever handles in Meridian",
+      "Accessible-home design inspiration. Clearances and safety features require a property-specific assessment.",
   },
 ];
 
