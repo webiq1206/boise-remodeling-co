@@ -194,7 +194,7 @@ export function AssistantWidget() {
             trackEvent(ASSISTANT_EVENTS.opened, { page: pathname });
           }}
           aria-label="Chat with the estimating assistant"
-          className="fixed z-[90] bottom-20 right-4 md:bottom-6 md:right-6 flex h-13 w-13 items-center justify-center rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform p-3.5"
+          className="fixed z-[90] bottom-[calc(96px+env(safe-area-inset-bottom))] right-4 lg:bottom-6 lg:right-6 flex h-13 w-13 items-center justify-center rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform p-3.5"
         >
           <MessageCircle className="h-6 w-6" aria-hidden />
         </button>
@@ -205,7 +205,7 @@ export function AssistantWidget() {
           data-testid="assistant-panel"
           role="dialog"
           aria-label="Estimating assistant chat"
-          className="fixed z-[95] bottom-0 right-0 left-0 md:bottom-6 md:right-6 md:left-auto md:w-[400px] flex flex-col rounded-t-lg md:rounded-lg border border-border bg-background shadow-2xl max-h-[85vh] md:max-h-[600px] h-[70vh] md:h-[600px]"
+          className="fixed z-[150] bottom-0 right-0 left-0 md:bottom-6 md:right-6 md:left-auto md:w-[400px] flex flex-col rounded-t-lg md:rounded-lg border border-border bg-background shadow-2xl max-h-[85vh] md:max-h-[600px] h-[70vh] md:h-[600px]"
         >
           <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
             <div>

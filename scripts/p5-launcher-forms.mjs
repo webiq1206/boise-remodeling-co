@@ -17,8 +17,7 @@ for(const width of [320,390,430,768,1024,1440,1920]){
   const close=dialog.getByRole('button',{name:/close/i}).first();
   const b=await close.boundingBox();if(!b||b.width<44||b.height<44)throw new Error('Chat close target smaller than 44px');
   await close.click();
-  const form=page.locator('main form').first();
-  await form.locator('input').first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);
+  await page.getByTestId('input-name').filter({visible:true}).first().scrollIntoViewIfNeeded();await page.waitForTimeout(250);
   if(await launcher.isVisible())throw new Error('Assistant launcher overlaps visible form');
   await page.screenshot({path:'p5-verification/'+width+'-form-without-chat.jpg'});
   await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
