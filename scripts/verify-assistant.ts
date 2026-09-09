@@ -26,8 +26,24 @@ for (const key of [
   delete process.env[key];
 }
 // A syntactically-present key lets the route reach its validation layers;
-// any actual model call then fails auth and must be handled gracefully.
+// model authentication failure is simulated below, without a network call.
 process.env.ANTHROPIC_API_KEY = "sk-ant-test-not-a-real-key";
+
+// Keep the offline contract literal. Never depend on an external API rejecting
+// a dummy credential, and never send the assembled assistant prompt off-host.
+const originalFetch = globalThis.fetch;
+let modelAttempts = 0;
+globalThis.fetch = async (input) => {
+  const url = new URL(input instanceof Request ? input.url : String(input));
+  if (url.hostname !== "api.anthropic.com") {
+    throw new Error(`Unexpected network request in offline verification: ${url.hostname}`);
+  }
+  modelAttempts++;
+  return new Response(JSON.stringify({
+    type: "error",
+    error: { type: "authentication_error", message: "Simulated offline authentication failure" },
+  }), { status: 401, headers: { "content-type": "application/json" } });
+};
 
 let checks = 0;
 let failures = 0;
@@ -316,7 +332,7 @@ async function main(): Promise<void> {
     check(forgedBody.reset === true, "the rejection must tell the client to reset");
 
     // A well-formed request reaches the model call, which fails auth on the
-    // fake key; that must surface as a graceful 502/503, never a crash.
+    // simulated authentication failure; that must surface as a graceful 502/503.
     const orig = console.error;
     console.error = () => {};
     let reachedModel;
@@ -329,6 +345,7 @@ async function main(): Promise<void> {
       reachedModel.status === 502 || reachedModel.status === 503,
       `a failed model call must degrade gracefully, got ${reachedModel.status}`,
     );
+    check(modelAttempts > 0, "the valid request must exercise the simulated model failure");
     const degraded = await reachedModel.json();
     check(typeof degraded.message === "string" && degraded.message.length > 0, "the degraded response must carry a human message");
   }
@@ -340,7 +357,7 @@ async function main(): Promise<void> {
   console.log(`All assistant checks passed (${checks} checks: guard, knowledge, tools, prompt, route).`);
 }
 
-main().catch((err) => {
+main().finally(() => { globalThis.fetch = originalFetch; }).catch((err) => {
   console.error("verify-assistant crashed:", err);
   process.exit(1);
 });
