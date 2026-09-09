@@ -15,7 +15,7 @@ export function ProjectInspirationImage({ afterSrc, afterAlt, caption, aspectCla
         <Image src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes="(max-width: 768px) 100vw, 1200px" quality={80} className="object-cover" />
       </div>
       <figcaption className="bg-background p-4 text-sm leading-relaxed text-muted-foreground">
-        <p>Representative design imagery, not a photograph of a completed customer project.</p>
+        <p>Representative design imagery</p>
         {caption && <div className="mt-3 [&_*]:!text-foreground">{caption}</div>}
       </figcaption>
     </figure>

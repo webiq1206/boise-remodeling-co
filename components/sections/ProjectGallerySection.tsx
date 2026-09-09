@@ -74,7 +74,7 @@ export function ProjectGallerySection({
           <Reveal delay={120}>
             <div className="mt-[clamp(48px,6vw,88px)] flex items-end justify-between gap-6">
               <p className="ed-eyebrow !mb-0">More design ideas</p>
-              <p className="ed-small hidden sm:block">Scroll sideways</p>
+              <p className="ed-small">Swipe or scroll to explore</p>
             </div>
             <div
               className="ed-rail mt-6 [scrollbar-color:var(--ed-line)_transparent]"
