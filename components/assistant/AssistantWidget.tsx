@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useFormInView } from "@/hooks/use-form-in-view";
 import Link from "next/link";
 import { MessageCircle, Send, X } from "lucide-react";
 import { trackEvent } from "@/lib/analytics";
@@ -56,6 +57,7 @@ function readEstimatorContext(): { project?: string; finish?: string; sqft?: num
 
 export function AssistantWidget() {
   const pathname = usePathname();
+  const formInView = useFormInView(pathname);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [transcript, setTranscript] = useState<Transcript | null>(null);
@@ -183,7 +185,7 @@ export function AssistantWidget() {
 
   return (
     <>
-      {!open && (
+      {!open && !formInView && (
         <button
           type="button"
           data-testid="assistant-launcher"
@@ -214,7 +216,7 @@ export function AssistantWidget() {
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="rounded-sm p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               <X className="h-5 w-5" aria-hidden />
             </button>

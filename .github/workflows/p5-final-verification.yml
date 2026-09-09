@@ -1,7 +1,7 @@
 name: P5 final build and browser verification
 on:
   push:
-    branches: [codex/p5-caption-review]
+    branches: [codex/p5-form-launcher]
 permissions:
   contents: read
 jobs:
@@ -37,6 +37,7 @@ jobs:
           npx next start -p 5000 > /tmp/p5-server.log 2>&1 &
           node -e 'const u="http://127.0.0.1:5000";let n=0;const t=setInterval(async()=>{try{await fetch(u);clearInterval(t)}catch{if(++n>60){clearInterval(t);process.exit(1)}}},1000)'
           node scripts/p5-verify-visual.mjs
+          node scripts/p5-launcher-forms.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
