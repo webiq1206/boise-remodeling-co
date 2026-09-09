@@ -85,7 +85,7 @@ export default function AreaPage({ params }: { params: { city: string } }) {
     },
   ];
 
-  // Real before/after projects only - no seeded testimonials or star ratings
+  // Representative design imagery only, no seeded testimonials or star ratings
   // until genuine, verified reviews exist.
   const cityProjects = getGalleryProjectsForCity(city.slug);
   const proof: LandingProof | undefined =

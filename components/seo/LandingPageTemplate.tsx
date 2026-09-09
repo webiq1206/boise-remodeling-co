@@ -1,3 +1,4 @@
+import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Check, ChevronRight, Star } from 'lucide-react';
@@ -479,9 +480,9 @@ export function LandingPageTemplate({
         <Section surface="deep" spacing="xl" edge>
           <div className="ed-shell">
             <Reveal>
-              <p className="ed-eyebrow">Proof of work</p>
+              <p className="ed-eyebrow">Design inspiration</p>
               <h2 className="ed-h2 ed-statement-wide">
-                {proofHeading ?? (<>Recent <em className="not-italic" style={accent}>local work</em></>)}
+                Remodeling <em className="not-italic" style={accent}>possibilities</em>
               </h2>
             </Reveal>
 
@@ -490,16 +491,7 @@ export function LandingPageTemplate({
                 {proof.projects.map((project) => (
                   <Reveal key={project.title}>
                     <article className="flex h-full flex-col" style={{ border: '1px solid var(--ed-line)' }}>
-                      <div className="grid grid-cols-2">
-                        <div className="relative aspect-[4/3]">
-                          <Image src={project.beforeImageUrl} alt={`${project.title} - before`} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
-                          <span className="absolute bottom-2 left-2 bg-inverse/70 px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.18em] text-inverse-foreground">Before</span>
-                        </div>
-                        <div className="relative aspect-[4/3]">
-                          <Image src={project.afterImageUrl} alt={`${project.title} - after`} fill sizes="(max-width: 640px) 50vw, 25vw" className="object-cover" />
-                          <span className="absolute bottom-2 left-2 bg-accent px-2 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.18em]" style={{ color: "hsl(var(--accent-foreground))" }}>After</span>
-                        </div>
-                      </div>
+                      <ProjectInspirationImage afterSrc={project.afterImageUrl} afterAlt={project.title} />
                       <div className="p-6">
                         <h3 className="ed-h4">{project.title}</h3>
                         <p className="ed-body mt-2 text-[0.875rem]">{project.description}</p>

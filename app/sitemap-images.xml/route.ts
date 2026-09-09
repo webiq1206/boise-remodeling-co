@@ -48,18 +48,13 @@ export async function GET() {
     byPage.set(pageUrl, existing);
   };
 
-  // Before/after project work, declared on the service page that shows it.
+  // Representative inspiration, declared on the service page that shows it.
   for (const project of GALLERY_PROJECTS) {
     const pageUrl = `${baseUrl}/services/${project.serviceType}`;
     add(pageUrl, {
       loc: absolute(project.afterImageUrl, baseUrl),
-      title: `${project.title} (after)`,
-      caption: project.description,
-    });
-    add(pageUrl, {
-      loc: absolute(project.beforeImageUrl, baseUrl),
-      title: `${project.title} (before)`,
-      caption: project.description,
+      title: `${project.title} (design inspiration)`,
+      caption: `Representative design imagery. ${project.description}`,
     });
   }
 

@@ -964,3 +964,20 @@ body[data-hide-mobile-nav-bar="true"] [data-mobile-nav-bar] {
 @media (min-width: 768px) {
   :root { --app-header-h: 64px; }
 }
+
+/* Reveal animation is decorative: observer timing must never hide content. */
+.js .reveal-init {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+.js .reveal-init.reveal-visible {
+  animation: p5-content-arrive 500ms ease-out;
+}
+@keyframes p5-content-arrive {
+  from { opacity: .85; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .js .reveal-init.reveal-visible { animation: none; }
+}

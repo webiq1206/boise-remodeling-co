@@ -5,7 +5,7 @@ await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({headless:true});
 const widths=[320,390,430,768,1024,1440,1920];
 const parent=process.env.P5_PARENT==='1';
-const routes=parent?['/','/quote','/sitemap','/legal/terms','/legal/privacy','/legal/quickbooks-disconnect']:['/','/services','/about','/contact','/testimonials'];
+const routes=parent?['/','/quote','/sitemap','/legal/terms','/legal/privacy','/legal/quickbooks-disconnect']:['/','/services','/services/kitchen-remodel','/services/kitchen-remodel/boise','/areas/boise','/about','/contact','/testimonials'];
 const results=[];
 let failed=false;
 function check(ok,message){if(!ok)throw new Error(message);}
@@ -31,7 +31,12 @@ try {
     check(!errors.length,'Browser errors '+errors.join(','));
     await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
     await page.screenshot({path:`${out}/${width}-${route.replaceAll('/','_')||'home'}.jpg`,fullPage:true,type:'jpeg',quality:70});
-    results.push({width,route,ok:true,geometry});
+    const sticky = await page.evaluate(()=>[...document.querySelectorAll('body *')].filter(el=>{
+      const s=getComputedStyle(el),r=el.getBoundingClientRect();
+      return s.position==='fixed' && s.display!=='none' && r.width>innerWidth*.8 && r.height>30 && r.height<200 && Math.abs(r.bottom-innerHeight)<2;
+    }).map(el=>({background:getComputedStyle(el).backgroundColor,text:el.textContent?.trim().slice(0,80)})));
+    for(const bar of sticky)check(!['rgba(0, 0, 0, 0)','transparent'].includes(bar.background),'Transparent fixed bottom bar: '+bar.text);
+    results.push({width,route,ok:true,geometry,sticky});
    }catch(e){failed=true;results.push({width,route,ok:false,error:String(e)});}
    page.off('pageerror',handler);
   }
