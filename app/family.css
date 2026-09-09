@@ -59,11 +59,11 @@
    * from the CONTRAST between display and body, not from shrinking the body.
    */
   --ed-fs-lede: clamp(1.0625rem, 1.25vw, 1.3125rem);
-  --ed-fs-body: 0.9375rem;
-  --ed-fs-small: 0.8125rem;
-  --ed-fs-eyebrow: 0.6875rem;
+  --ed-fs-body: 1rem;
+  --ed-fs-small: 0.875rem;
+  --ed-fs-eyebrow: 0.75rem;
 
-  --ed-lh-display: 0.94;
+  --ed-lh-display: 1.04;
   --ed-lh-heading: 1.05;
   --ed-lh-body: 1.75;
   --ed-tracking-display: -0.042em;
@@ -221,14 +221,13 @@
 .ed-display,
 .ed-h2,
 .ed-h3 {
-  margin: 0;
   font-family: var(--font-cormorant, Georgia, serif);
   font-weight: 400;
   letter-spacing: var(--ed-tracking-display);
   text-wrap: balance;
 }
 .ed-display { font-size: var(--ed-fs-display); line-height: var(--ed-lh-display); }
-.ed-h2 { font-size: var(--ed-fs-h2); line-height: 0.98; }
+.ed-h2 { font-size: var(--ed-fs-h2); line-height: 1.05; }
 .ed-h2-sm { font-size: var(--ed-fs-h2-sm); line-height: 1.02; }
 .ed-h3 {
   font-size: var(--ed-fs-h3);
@@ -237,7 +236,6 @@
   line-height: var(--ed-lh-heading);
 }
 .ed-h4 {
-  margin: 0;
   font-family: var(--font-cormorant, Georgia, serif);
   font-size: var(--ed-fs-h4);
   font-weight: 600;
@@ -247,7 +245,6 @@
 
 /* The serif lede: one short paragraph that carries the weight of the heading. */
 .ed-lede {
-  margin: 0;
   font-family: var(--font-cormorant, Georgia, serif);
   font-size: var(--ed-fs-lede);
   font-weight: 500;
@@ -256,7 +253,6 @@
 }
 
 .ed-body {
-  margin: 0;
   max-width: 58ch;
   color: var(--ed-muted-ink);
   font-size: var(--ed-fs-body);
@@ -313,11 +309,11 @@
 /* Asymmetric split - the family's default two-column relationship. */
 .ed-split {
   display: grid;
-  grid-template-columns: 1.35fr 0.65fr;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
   gap: var(--ed-gutter);
   align-items: start;
 }
-.ed-split-even { grid-template-columns: 1fr 1fr; }
+.ed-split-even { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .ed-split-narrow { grid-template-columns: 0.9fr 1.1fr; }
 .ed-split-end { align-items: end; }
 .ed-split-center { align-items: center; }
@@ -537,7 +533,7 @@
    ========================================================================== */
 
 @media (max-width: 1100px) {
-  .ed-split, .ed-split-narrow { grid-template-columns: 1fr 1fr; }
+  .ed-split, .ed-split-narrow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* Set the track list directly: an inline --ed-cols on the element would
      otherwise beat this media query and keep four columns on a phone. */
   .ed-matrix { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -582,7 +578,7 @@
 /* Phones: a long button or link label wraps inside its control instead of
    running past the viewport edge. */
 @media (max-width: 560px) {
-  [class~="whitespace-nowrap"] {
+  :is(a, button)[class~="whitespace-nowrap"] {
     white-space: normal;
     height: auto;
     min-height: 44px;
@@ -606,4 +602,34 @@ main > section:first-of-type:not(.pt-0):not(.fixed),
 main > div:first-of-type > section:first-of-type:not(.pt-0):not(.fixed),
 main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.fixed):not([data-testid="estimate-app-frame"]) {
   padding-top: var(--ed-hero-top);
+}
+
+
+/* Low-specificity defaults let the spacing utilities at each call site work. */
+:where(.ed-display, .ed-h2, .ed-h3, .ed-h4, .ed-lede, .ed-body) { margin: 0; }
+.ed-split > *, .ed-panel > *, .ed-card, .ed-matrix > * { min-width: 0; }
+.ed-body, .ed-lede, .ed-small { overflow-wrap: break-word; }
+.ed-panel-caption { font-size: 0.75rem; }
+
+/* Comparison gestures belong to the image, with no competing sideways rail. */
+.ed-comparison-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+@media (min-width: 640px) {
+  .ed-comparison-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ed-comparison-grid > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .ed-cards-3:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ed-cards-3:has(> :nth-child(4):last-child) > :last-child { grid-column: auto; }
+}
+
+/* Solid contact surfaces stay readable over every light or dark section. */
+[data-mobile-nav-bar], [data-testid="mobile-estimate-bar"] {
+  background-color: hsl(var(--background));
+  opacity: 1;
+  isolation: isolate;
+}
+
+/* Footer links remain above the mobile contact bar. */
+@media (max-width: 1023px) {
+  footer.bg-inverse { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
 }

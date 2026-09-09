@@ -65,8 +65,8 @@ export function StickyEstimateBar({
     <div
       className={cn(
         isInline
-          ? "fixed left-0 right-0 pb-safe border-t bottom-0 z-[120] lg:hidden bg-background/97 backdrop-blur-md border-border"
-          : "sticky bottom-0 z-20 -mx-6 -mb-6 mt-4 border-t border-border bg-background/97 backdrop-blur-md pb-safe md:hidden"
+          ? "fixed left-0 right-0 pb-safe border-t bottom-0 z-[120] lg:hidden bg-background shadow-[0_-4px_20px_rgba(0,0,0,0.18)] border-border"
+          : "sticky bottom-0 z-20 -mx-6 -mb-6 mt-4 border-t border-border bg-background shadow-[0_-4px_20px_rgba(0,0,0,0.18)] pb-safe md:hidden"
       )}
       data-testid="mobile-estimate-bar"
     >

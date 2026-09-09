@@ -142,7 +142,7 @@ export function AppFrame({
       {/* FOOTER - pinned to the bottom edge, safe-area aware. */}
       {(footer || footerAccessory) && (
         <footer
-          className="ed-shell shrink-0 border-t border-inverse-foreground/12 bg-[hsl(var(--inverse))]/95 pb-safe pt-2 backdrop-blur-md"
+          className="ed-shell shrink-0 border-t border-inverse-foreground/12 bg-inverse pb-safe pt-2 shadow-[0_-4px_20px_rgba(0,0,0,0.18)]"
           data-testid="app-frame-footer"
         >
           <div className="mx-auto w-full max-w-3xl">

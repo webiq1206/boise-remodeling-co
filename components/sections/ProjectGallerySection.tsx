@@ -26,24 +26,10 @@ function ProjectMeta({ project, lead = false }: { project: GalleryProject; lead?
 interface ProjectGallerySectionProps {
   limit?: number;
   showViewAll?: boolean;
-  /** Service types to omit - e.g. one already shown in the featured section. */
   excludeServiceTypes?: string[];
 }
 
-/**
- * Our work.
- *
- * WAS six equal before/after cards in a three-column grid with 14px titles.
- * The slider - the one genuinely interactive, genuinely persuasive thing on
- * the page - was rendered at a third of the width and given a caption smaller
- * than the body copy.
- *
- * NOW one project leads at full scale, the heading beside it, so the slider is
- * large enough to actually be dragged and the transformation actually lands.
- * The rest run in a horizontal, scroll-snapping rail: a homeowner browses
- * sideways through the work the way they would flick through a portfolio,
- * and the section stays a single screen tall instead of three rows of cards.
- */
+/** A featured comparison followed by a responsive grid of comparisons. */
 export function ProjectGallerySection({
   limit = 6,
   showViewAll = true,
@@ -95,11 +81,10 @@ export function ProjectGallerySection({
           <Reveal delay={120}>
             <div className="mt-[clamp(48px,6vw,88px)] flex items-end justify-between gap-6">
               <p className="ed-eyebrow !mb-0">More projects</p>
-              <p className="ed-small hidden sm:block">Scroll sideways</p>
+              <p className="ed-small hidden sm:block">Drag each image to compare</p>
             </div>
             <div
-              className="ed-rail mt-6 [scrollbar-color:var(--ed-line)_transparent]"
-              style={{ ["--ed-rail-w" as string]: "31%" }}
+              className="ed-comparison-grid mt-6"
               aria-label="More before and after projects"
             >
               {rest.map((project) => (

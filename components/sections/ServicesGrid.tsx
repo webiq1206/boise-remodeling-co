@@ -8,27 +8,7 @@ import { servicePath } from "@/lib/seo-routes";
 import { CTA_SECONDARY } from "@/shared/ctaCopy";
 import { getServiceBackground } from "@/shared/serviceBackgrounds";
 
-/**
- * Services.
- *
- * WAS a two-column grid of equal cards: photo, a 16px service name, two lines of
- * copy, a link. Six of them, identical. It is the arrangement the redesign brief
- * singles out - nothing in it tells you which service matters, the type is too
- * small to skim, and it looks assembled rather than composed.
- *
- * NOW a lead panel plus an index. The first service gets a full-height image and
- * a display-size name; the rest become a bordered index whose rows carry the
- * name, the one-line description and the planning-from figure on a single
- * horizontal baseline, the name taking the accent on hover. A homeowner scanning for
- * "bathroom, and what does it start at" reads one column instead of six cards,
- * and the section still leads with a real photograph.
- *
- * Ground stays dark. The layout change is what fixes this section; the page is
- * deliberately dark-dominant and spends its one light band elsewhere.
- *
- * Deliberately no client JavaScript: the hover states are CSS, so this stays a
- * server component and the section costs nothing on the wire.
- */
+/** A lead service panel followed by relevant image-led service links. */
 export function ServicesGrid() {
   // Homepage shows the primary services; secondary ones (basement, outdoor,
   // aging-in-place) live on their own pages and the full /services hub.
@@ -57,7 +37,7 @@ export function ServicesGrid() {
           </Reveal>
         </div>
 
-        {/* LEAD SERVICE - the one large photograph in the section. */}
+        {/* Lead service. */}
         {lead && (
           <Reveal delay={80}>
             <a
@@ -99,15 +79,20 @@ export function ServicesGrid() {
           </Reveal>
         )}
 
-        {/* THE INDEX - everything else, on one scannable baseline. */}
+        {/* Related services with supporting imagery. */}
         <div className="ed-steps mt-[clamp(40px,5vw,72px)]">
           {rest.map((service, i) => (
             <Reveal key={service.slug} delay={i * 40}>
               <a
                 href={servicePath(service.slug)}
-                className="group grid items-baseline gap-x-8 gap-y-2 py-[clamp(20px,2.4vw,30px)] transition-colors md:grid-cols-[minmax(210px,0.9fr)_1.6fr_auto_28px]"
+                className="group grid items-center gap-5 py-6 transition-colors sm:grid-cols-[144px_minmax(0,1fr)] lg:grid-cols-[160px_minmax(150px,0.9fr)_minmax(0,1.5fr)_auto]"
                 style={{ borderBottom: "1px solid var(--ed-line)" }}
               >
+                <div className="relative aspect-[16/10] w-full overflow-hidden sm:row-span-3 lg:row-span-1">
+                  <Image src={getServiceBackground(service.slug)} alt={service.name}
+                    fill sizes="(max-width: 640px) 100vw, 160px" quality={75}
+                    className="object-cover transition-transform duration-300 group-hover:scale-105" />
+                </div>
                 <h3 className="ed-h3 transition-colors group-hover:[color:var(--ed-accent)]">
                   {service.name}
                 </h3>
@@ -121,16 +106,7 @@ export function ServicesGrid() {
                     {service.planningFrom}
                   </span>
                 </p>
-                <span className="hidden md:block">
-                  <svg
-                    className="ed-arrow transition-transform group-hover:translate-x-1"
-                    viewBox="0 0 22 15"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path d="M0 7.5h20M14 1.5l6 6-6 6" />
-                  </svg>
-                </span>
+
               </a>
             </Reveal>
           ))}

@@ -227,7 +227,7 @@ export function StickyStepNav({
          * while it owns the screen, so nothing collides.
          */
         className={cn(
-          "z-30 border-t border-inverse-foreground/12 bg-inverse/95 px-4 pt-3 pb-safe backdrop-blur-md sm:sticky sm:-mx-6 sm:mt-8 sm:px-6",
+          "z-30 border-t border-inverse-foreground/12 bg-inverse px-4 pt-3 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.18)] sm:sticky sm:-mx-6 sm:mt-8 sm:px-6",
           ownsScreen
             ? "fixed inset-x-0 bottom-0"
             /* Embedded on the homepage the site-wide Call/Text bar (54px,
