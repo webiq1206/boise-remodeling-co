@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useFormInView } from "@/hooks/use-form-in-view";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { Contact, Menu, MessageSquare, X, Phone } from "lucide-react";
@@ -42,6 +43,7 @@ function Logo() {
 
 export function Navigation() {
   const pathname = usePathname();
+  const formInView = useFormInView(pathname);
   // P5's header: transparent over the hero, gaining ground, blur and a hairline once scrolled.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -294,7 +296,7 @@ export function Navigation() {
       {!wizardOwnsBottom && (
       <div
         data-mobile-nav-bar=""
-        className="fixed left-0 right-0 bottom-0 z-[100] lg:hidden pb-safe border-t bg-background border-border"
+        className={cn("fixed left-0 right-0 bottom-0 z-[100] lg:hidden pb-safe border-t bg-background border-border", (formInView || mobileOpen) && "invisible pointer-events-none")}
       >
         <div className="grid grid-cols-3 divide-x divide-border">
           <a

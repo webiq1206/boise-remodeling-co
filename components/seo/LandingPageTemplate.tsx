@@ -417,12 +417,9 @@ export function LandingPageTemplate({
       {sections && sections.length > 0 && (
         <Section surface="dark" spacing="xl" edge>
           <div className="ed-shell">
-            <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.75fr_1.25fr]">
-              {/* The left column used to be empty: a prose measure on the right
-                  with nothing on the left read as copy pushed to one side. It
-                  now holds a sticky index of the sections, so the column has a
-                  job and long pages get jump links. */}
-              <aside className="lg:sticky lg:top-28 lg:self-start" aria-label="In this guide">
+            <div className="mx-auto grid max-w-3xl gap-10">
+              {/* Keep the guide index above centered copy at every width. */}
+              <aside aria-label="In this guide">
                 <Reveal>
                   <p className="ed-eyebrow">In this guide</p>
                   <ol className="m-0 list-none border-t p-0" style={line}>
