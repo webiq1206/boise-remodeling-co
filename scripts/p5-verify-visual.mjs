@@ -5,7 +5,7 @@ await fs.mkdir(out,{recursive:true});
 const browser=await chromium.launch({headless:true});
 const widths=[320,390,430,768,1024,1440,1920];
 const parent=process.env.P5_PARENT==='1';
-const routes=parent?['/','/quote','/sitemap','/legal/terms','/legal/privacy','/legal/quickbooks-disconnect']:['/','/services','/services/kitchen-remodel','/services/kitchen-remodel/boise','/areas/boise','/about','/contact','/testimonials'];
+const routes=parent?['/','/quote','/sitemap','/legal/terms','/legal/privacy','/legal/quickbooks-disconnect']:['/','/services','/services/kitchen-remodel','/services/kitchen-remodel/boise','/blog/kitchen-remodel-cost-boise','/blog/bathroom-remodel-cost-boise','/blog/whole-home-remodel-cost-boise','/blog/home-addition-cost-boise','/areas/boise','/about','/contact','/testimonials'];
 const results=[];
 let failed=false;
 function check(ok,message){if(!ok)throw new Error(message);}
@@ -25,9 +25,9 @@ try {
       await Promise.race([Promise.allSettled(images.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);
     });
     await page.waitForTimeout(900);
-    const geometry=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,broken:[...document.images].filter(i=>i.getClientRects().length&&(!i.complete||!i.naturalWidth)).map(i=>i.currentSrc||i.src)}));
+    const geometry=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,broken:[...document.images].filter(i=>i.getClientRects().length&&(!i.complete||!i.naturalWidth)).map(i=>({src:i.currentSrc||i.src,html:i.outerHTML}))}));
     check(geometry.scrollWidth<=geometry.width+1,'Horizontal overflow '+JSON.stringify(geometry));
-    check(!geometry.broken.length,'Broken images '+geometry.broken.join(','));
+    check(!geometry.broken.length,'Broken images '+JSON.stringify(geometry.broken));
     check(!errors.length,'Browser errors '+errors.join(','));
     await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
     await page.screenshot({path:`${out}/${width}-${route.replaceAll('/','_')||'home'}.jpg`,fullPage:true,type:'jpeg',quality:70});
