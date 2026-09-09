@@ -5,7 +5,11 @@ for(const width of [320,390,430,768,1024,1440,1920]){
  const page=await browser.newPage({viewport:{width,height:900}});const r={kind:'hub',width,passed:false};
  try{await page.goto('http://127.0.0.1:5000/blog/category/treasure-valley-locations');await expect(page).toHaveURL(/\/areas$/);
  await expect(page.locator('body')).not.toContainText('More articles in this topic are publishing soon');
- await expect(page.locator('h1')).toBeVisible();await page.screenshot({path:'p5-verification/hub-'+width+'.jpg',fullPage:true});r.passed=true;
+ await expect(page.locator('h1')).toBeVisible();await page.screenshot({path:'p5-verification/hub-'+width+'.jpg',fullPage:true});await page.goto('http://127.0.0.1:5000/p5-audit-fixture');
+ const points=page.locator('ul.ed-matrix');await points.scrollIntoViewIfNeeded();await page.waitForTimeout(850);
+ const rect=await points.boundingBox();const last=await points.locator(':scope > li').last().boundingBox();
+ if(width>=561&&width<=1100)expect(Math.abs(last.width-(rect.width-1))).toBeLessThan(2);
+ await points.screenshot({path:'p5-verification/estimate-points-'+width+'.jpg'});r.passed=true;
  }catch(e){r.error=e.message}results.push(r);await page.close();
 }
 for(const authenticated of [false,true]){

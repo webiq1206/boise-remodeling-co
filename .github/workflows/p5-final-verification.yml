@@ -21,10 +21,11 @@ jobs:
         run: |
           mkdir -p app/p5-audit-fixture
           cat > app/p5-audit-fixture/page.tsx <<'FIXTURE'
+          import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
           import { NotificationsBell } from "@/components/NotificationsBell";
           import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
           export default function AuditFixture() {
-            return <main className="container py-12"><h1>Component verification</h1><div id="notifications-fixture"><NotificationsBell /></div><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div></main>;
+            return <main className="container py-12"><h1>Component verification</h1><div id="notifications-fixture"><NotificationsBell /></div><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div><EstimatePromptBand title="Planning details" description="Three useful planning points." /></main>;
           }
           FIXTURE
           printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="gray"/></svg>' > public/p5-audit-before.svg

@@ -66,7 +66,7 @@ export function EstimatePromptBand({
               style={{ ["--ed-cols" as string]: Math.min(bullets.length, 3), ["--ed-cell-h" as string]: "0" }}
             >
               {bullets.map((b, i) => (
-                <li key={b} className="ed-body flex items-start gap-4 text-[0.875rem]">
+                <li key={b} style={{ maxWidth: "none" }} className="ed-body flex items-start gap-4 text-[0.875rem]">
                   <span className="ed-small shrink-0 pt-1" style={{ color: "var(--ed-accent)" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
