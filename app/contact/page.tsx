@@ -34,9 +34,8 @@ import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
 import { CONSULT_BULLETS, HERO_STATS } from '@/shared/siteContent';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
-import { AreaCard } from '@/components/marketing/AreaCard';
+import { areaPath } from '@/lib/seo-routes';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
-import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
 import { GRAIN_URL } from '@/lib/grain';
 
 
@@ -251,6 +250,31 @@ export default function ContactPage() {
           </div>
         </section>
 
+        {/* ─── Inline consultation form ─── */}
+        <Section id="consult" divider className="scroll-mt-24">
+          <div className="container px-4">
+            <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-12 items-start">
+              <div className="min-w-0 md:col-span-2">
+                <Reveal>
+                  <p className="ed-eyebrow">Request your visit</p>
+                  <h2 className="ed-h2 ed-statement-wide">
+                    Tell us about your{' '}
+                    <em className="brc-accent">home</em>.
+                  </h2>
+                  <p className="text-base leading-relaxed mb-8 text-muted-foreground">
+                    Send a few details and we will reach out within one business day to schedule
+                    your free 60 to 90 minute in-home visit - planning guidance, design direction,
+                    and no obligation.
+                  </p>
+                </Reveal>
+              </div>
+              <MarketingCard className="md:col-span-3" padding="lg">
+                <ConsultationForm />
+              </MarketingCard>
+            </div>
+          </div>
+        </Section>
+
         {/* ─── Contact channels ─── */}
         <Section variant="greige" divider>
           <div className="container px-4 max-w-5xl">
@@ -390,31 +414,6 @@ export default function ContactPage() {
           </div>
         </Section>
 
-        {/* ─── Inline consultation form ─── */}
-        <Section id="consult" divider className="scroll-mt-24">
-          <div className="container px-4">
-            <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-12 items-start">
-              <div className="min-w-0 md:col-span-2">
-                <Reveal>
-                  <p className="ed-eyebrow">Request your visit</p>
-                  <h2 className="ed-h2 ed-statement-wide">
-                    Tell us about your{' '}
-                    <em className="brc-accent">home</em>.
-                  </h2>
-                  <p className="text-base leading-relaxed mb-8 text-muted-foreground">
-                    Send a few details and we will reach out within one business day to schedule
-                    your free 60 to 90 minute in-home visit - planning guidance, design direction,
-                    and no obligation.
-                  </p>
-                </Reveal>
-              </div>
-              <MarketingCard className="md:col-span-3" padding="lg">
-                <ConsultationForm />
-              </MarketingCard>
-            </div>
-          </div>
-        </Section>
-
         {/* ─── Contact FAQ ─── */}
         <Section variant="greige" divider>
           <div className="container px-4 max-w-3xl">
@@ -470,13 +469,18 @@ export default function ContactPage() {
               description={`We serve homeowners in ${TREASURE_VALLEY_CITIES}, and surrounding communities.`}
               className="max-w-3xl"
             />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {CITIES.map((city, i) => (
-                <Reveal key={city.slug} delay={Math.min(i, 7) * 50}>
-                  <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />
-                </Reveal>
+            <nav aria-label="Service areas" className="grid grid-cols-2 lg:grid-cols-4 border-t border-l border-border">
+              {CITIES.map((city) => (
+                <Link
+                  key={city.slug}
+                  href={areaPath(city.slug)}
+                  className="flex min-h-14 items-center justify-between gap-3 border-b border-r border-border px-4 py-3 text-sm text-foreground transition-colors hover:bg-card focus-visible:bg-card"
+                >
+                  {city.name}
+                  <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />
+                </Link>
               ))}
-            </div>
+            </nav>
           </div>
         </Section>
 
