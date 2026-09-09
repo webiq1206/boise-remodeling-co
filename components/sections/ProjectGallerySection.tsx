@@ -20,7 +20,10 @@ function ProjectMeta({ project, lead = false }: { project: GalleryProject; lead?
 interface ProjectGallerySectionProps {
   limit?: number;
   showViewAll?: boolean;
-  export function ProjectGallerySection({
+  excludeServiceTypes?: string[];
+}
+
+export function ProjectGallerySection({
   limit = 6,
   showViewAll = true,
   excludeServiceTypes = [],

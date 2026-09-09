@@ -107,7 +107,11 @@ export function BeforeAfterSlider({
         draggingRef.current = false;
         pendingRef.current = false;
       }}
-      onLostPointerCapture={() => {
+      onLostPointerCapture={(e) => {
+        // Touch starts with implicit capture on the hit target. Its transfer
+        // to this container bubbles a lost event from the handle; that is not
+        // the end of our drag.
+        if (e.target !== e.currentTarget) return;
         activePointerRef.current = null;
         draggingRef.current = false;
         pendingRef.current = false;

@@ -19,8 +19,13 @@ try {
     const response=await page.goto('http://127.0.0.1:5000'+route,{waitUntil:'networkidle'});
     check(response.status()<400,route+' status '+response.status());
     await page.evaluate(async()=>{await document.fonts.ready; for(let y=0;y<document.documentElement.scrollHeight;y+=650){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,70));}});
-    await page.waitForTimeout(700);
-    const geometry=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,broken:[...document.images].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.currentSrc)}));
+    await page.evaluate(async()=>{
+      const images=[...document.images].filter(i=>i.getClientRects().length);
+      for(const image of images)image.loading='eager';
+      await Promise.race([Promise.allSettled(images.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);
+    });
+    await page.waitForTimeout(900);
+    const geometry=await page.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,broken:[...document.images].filter(i=>i.getClientRects().length&&(!i.complete||!i.naturalWidth)).map(i=>i.currentSrc||i.src)}));
     check(geometry.scrollWidth<=geometry.width+1,'Horizontal overflow '+JSON.stringify(geometry));
     check(!geometry.broken.length,'Broken images '+geometry.broken.join(','));
     check(!errors.length,'Browser errors '+errors.join(','));
@@ -48,7 +53,8 @@ try {
      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:box.x+box.width*.7,y}]});
      for(let i=0;i<=10;i++)await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:box.x+box.width*(.7-.04*i),y}]});
      await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-     check(Math.abs(Number(await slider.getAttribute('aria-valuenow'))-30)<3,'Touch drag');
+     await page.waitForTimeout(100);
+     check(Math.abs(Number(await slider.getAttribute('aria-valuenow'))-30)<3,'Touch drag: '+await slider.getAttribute('aria-valuenow'));
     }
     const grid=await page.locator('#four-cards').evaluate(el=>[...el.children].map(c=>({x:c.getBoundingClientRect().x,y:c.getBoundingClientRect().y})));
     if(width>=1024)check(grid[0].y===grid[1].y&&grid[2].y===grid[3].y&&grid[0].y!==grid[2].y,'Four-card grid is not 2 by 2');
