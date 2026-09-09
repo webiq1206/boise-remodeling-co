@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { Bell, Check, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Notification {
   id: string;
@@ -28,11 +29,13 @@ interface Notification {
 
 export function NotificationsBell() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
 
   const { data: notifications = [], isLoading } = useQuery<Notification[]>({
     queryKey: ["/api/notifications"],
+    enabled: isAuthenticated,
     queryFn: async () => {
       const res = await fetch("/api/notifications");
       if (!res.ok) return [];
@@ -65,6 +68,8 @@ export function NotificationsBell() {
       queryClient.invalidateQueries({ queryKey: ["/api/notifications"] });
     },
   });
+
+  if (!isAuthenticated) return null;
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

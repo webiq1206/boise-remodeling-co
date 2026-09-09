@@ -21,9 +21,10 @@ jobs:
         run: |
           mkdir -p app/p5-audit-fixture
           cat > app/p5-audit-fixture/page.tsx <<'FIXTURE'
+          import { NotificationsBell } from "@/components/NotificationsBell";
           import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
           export default function AuditFixture() {
-            return <main className="container py-12"><h1>Component verification</h1><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div></main>;
+            return <main className="container py-12"><h1>Component verification</h1><div id="notifications-fixture"><NotificationsBell /></div><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div></main>;
           }
           FIXTURE
           printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="gray"/></svg>' > public/p5-audit-before.svg
@@ -38,6 +39,7 @@ jobs:
           node -e 'const u="http://127.0.0.1:5000";let n=0;const t=setInterval(async()=>{try{await fetch(u);clearInterval(t)}catch{if(++n>60){clearInterval(t);process.exit(1)}}},1000)'
           node scripts/p5-verify-visual.mjs
           node scripts/p5-launcher-forms.mjs
+          node scripts/p5-hub-notification-check.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

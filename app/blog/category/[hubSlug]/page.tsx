@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { ArrowRight } from 'lucide-react';
 import { BLOG_POSTS } from '@/shared/blogContent';
 import {
@@ -9,7 +9,6 @@ import {
   getHubBySlug,
   guidePath,
   isCategoryHubIndexable,
-  CATEGORY_HUB_MIN_POSTS,
 } from '@/shared/contentHubs';
 import { buildCanonical, FEED_ALTERNATES } from '@/lib/page-metadata';
 import { getHubHeroImage, getBlogImageAlt, getAbsoluteImageUrl } from '@/shared/blogImages';
@@ -92,6 +91,10 @@ export default function BlogCategoryHubPage({
     (a, b) => (a.publishedAt < b.publishedAt ? 1 : -1),
   );
 
+  if (posts.length === 0) {
+    redirect(hub.hubSlug === 'treasure-valley-locations' ? '/areas' : '/blog');
+  }
+
   const hubHero = getHubHeroImage(params.hubSlug);
   const pillarSlug = hub.pillarSlug;
   const hubAlt = pillarSlug ? getBlogImageAlt(pillarSlug) : `${hub.title} articles`;
@@ -154,12 +157,6 @@ export default function BlogCategoryHubPage({
             Read the complete guide
             <ArrowRight className="ml-1 h-4 w-4" />
           </Link>
-
-          {posts.length < CATEGORY_HUB_MIN_POSTS && (
-            <p className="text-sm text-muted-foreground mb-8">
-              More articles in this topic are publishing soon.
-            </p>
-          )}
 
           <div className="ed-cards-3 gap-6">
             {posts.map((post) => (
