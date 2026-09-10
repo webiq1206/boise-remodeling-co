@@ -32,7 +32,7 @@ try {
     await page.goto(origin+route,{waitUntil:'domcontentloaded'});
     await page.evaluate(async()=>{await document.fonts.ready;for(let y=0;y<document.documentElement.scrollHeight;y+=600){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,80));}});
     await page.locator('article details:not([open]) > summary').evaluateAll(es=>es.forEach(e=>e.click()));
-    await page.evaluate(async()=>{const is=[...document.images].filter(i=>i.getClientRects().length);is.forEach(i=>i.loading='eager');await Promise.allSettled(is.map(i=>i.decode()));});
+    await page.evaluate(async()=>{const is=[...document.images].filter(i=>i.getClientRects().length);is.forEach(i=>i.loading='eager');await Promise.race([Promise.allSettled(is.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);});
     await page.waitForTimeout(700);
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal overflow');
     assert(await page.evaluate(()=>[...document.images].filter(i=>i.getClientRects().length).every(i=>i.complete&&i.naturalWidth>0)),'Broken image');
@@ -77,7 +77,7 @@ try {
      await page.keyboard.press('End');assert.equal(await slider.getAttribute('aria-valuenow'),'100');
      await page.keyboard.press('ArrowLeft');assert.equal(await slider.getAttribute('aria-valuenow'),'96');
      await page.keyboard.press('Home');for(let i=0;i<12;i++)await page.keyboard.press('ArrowRight');
-     await slider.locator('..').locator('img').evaluateAll(es=>Promise.all(es.map(i=>i.decode())));
+     await slider.locator('..').locator('img').evaluateAll(es=>Promise.race([Promise.all(es.map(i=>i.decode())),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Comparison image decoding timed out')),15000))]));
      assert(await slider.locator('..').locator('img').evaluateAll(es=>es.every(i=>i.naturalWidth>0&&i.complete)),'Both comparison images decode');
      await page.waitForTimeout(500);
      await page.screenshot({path:`${out}/${width}-kitchen-comparison.jpg`});
@@ -91,6 +91,8 @@ try {
   const rec={width,route:'component-fixture'};
   try{
    await page.goto(origin+'/p5-audit-fixture',{waitUntil:'domcontentloaded'});
+   // The temporary fixture exposes client readiness before keyboard assertions.
+   await page.locator('main[data-audit-ready="true"]').waitFor();
    const slider=page.getByTestId('handle-before-after'),container=page.getByTestId('slider-before-after');
    await container.scrollIntoViewIfNeeded();await slider.focus();
    await page.keyboard.press('Home');assert.equal(await slider.getAttribute('aria-valuenow'),'0');

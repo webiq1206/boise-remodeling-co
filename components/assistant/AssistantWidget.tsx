@@ -57,7 +57,7 @@ function readEstimatorContext(): { project?: string; finish?: string; sqft?: num
 
 export function AssistantWidget() {
   const pathname = usePathname();
-  const formInView = useFormInView(pathname);
+  const formInView = useFormInView(pathname, true);
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [transcript, setTranscript] = useState<Transcript | null>(null);
