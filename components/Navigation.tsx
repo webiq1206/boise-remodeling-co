@@ -55,7 +55,7 @@ export function Navigation() {
   /* Pages whose own wizard owns the bottom of a phone screen. Kept beside the
      route rather than inferred, so adding a wizard page is one line here. */
   const wizardOwnsBottom =
-    pathname === "/estimate" ||
+    (pathname === "/estimate" || pathname === "/estimate/p5-preview") ||
     (pathname?.startsWith("/re-10") ?? false) ||
     (pathname?.startsWith("/remodel-plans") ?? false);
   const [mobileOpen, setMobileOpen] = useState(false);
