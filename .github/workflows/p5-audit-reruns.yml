@@ -1,0 +1,42 @@
+name: P5 targeted route verification
+on:
+  push:
+    branches: [codex/p5-audit-card-review-20260910]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      P5_PARENT: "0"
+      P5_SHARD: "0"
+      P5_SHARDS: "1"
+      TZ: UTC
+      SESSION_SECRET: p5-visual-review-ephemeral-session-key-20260910
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --no-audit --no-fund
+      - name: Production build
+        run: npm run build
+      - name: Start production preview
+        run: |
+          npx next start -p 5000 > /tmp/p5-review-server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{const r=await fetch("http://127.0.0.1:5000");if(r.ok){clearInterval(t);return}}catch{}if(++n>90){clearInterval(t);process.exit(1)}},1000)'
+      - name: Retest selected routes at every audit width
+        run: timeout 12m node scripts/p5-visual-review.mjs > /tmp/p5-review-summary.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-route-reruns
+          path: |
+            p5-visual-review
+            /tmp/p5-review-summary.json
+            /tmp/p5-review-server.log
+          retention-days: 14

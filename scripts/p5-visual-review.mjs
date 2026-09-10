@@ -2,11 +2,10 @@ import { chromium } from '@playwright/test';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const routes=JSON.parse(await fs.readFile('scripts/p5-visual-routes.json','utf8'));
-// Includes the directly served, compressed process photograph.
 const out='p5-visual-review';
 await fs.mkdir(out,{recursive:true});
 const widths=[320,390,430,600,768,1024,1366,1440,1920];
-let browser=await chromium.launch();
+let browser;
 async function bounded(work, ms, label) {
  let timer;
  try { return await Promise.race([work(), new Promise((_, reject) => { timer=setTimeout(() => reject(new Error(label+' timed out after '+ms+'ms')), ms); })]); }
@@ -20,6 +19,8 @@ const shard=Number(process.env.P5_SHARD||0),shards=Number(process.env.P5_SHARDS|
 const selected=routes.filter((_,i)=>i%shards===shard);
 try {
  for(const width of widths){
+  for(const route of selected){
+   browser=await chromium.launch();
   const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<1024});
   const blockedWrites = new Set();
   // Audit reads must never create real inquiries or send messages.
@@ -28,7 +29,6 @@ try {
    if(!['GET','HEAD'].includes(route.request().method())){blockedWrites.add(route.request().url());return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Audit preview: submission is disabled.'})});}
    return route.continue();
   });
-  for(const route of selected){
    // Isolate each document so a previous route's aborted prefetch cannot leak into its console record.
    const page=await context.newPage();
    page.setDefaultTimeout(20000);page.setDefaultNavigationTimeout(45000);
@@ -91,11 +91,11 @@ try {
    records.push(rec);page.off('pageerror',onError);page.off('console',onConsole);
    await fs.writeFile(`${out}/records-${shard}.json`,JSON.stringify(records));
    await bounded(()=>page.close({runBeforeUnload:false}),5000,'page close').catch(()=>{});
-  }
   await bounded(()=>context.close(),5000,'context close').catch(()=>{});
   await bounded(()=>browser.close(),5000,'browser close').catch(()=>{});
-  browser=await chromium.launch();
+  }
  }
+ browser=await chromium.launch();
  const context=await browser.newContext();
  const failures=[];
  for(const path of links){try{const r=await context.request.get(origin+path,{timeout:20000});if(r.status()>=400)failures.push({path,status:r.status()});}catch(e){failures.push({path,error:String(e)});}}
@@ -103,4 +103,4 @@ try {
  await context.close();
  console.log(JSON.stringify({routes:selected.length,widths,checks:records.length,failed:records.filter(r=>!r.ok).map(({route,width,error})=>({route,width,error})),brokenLinks:failures},null,2));
  if(records.some(r=>!r.ok)||failures.length)process.exitCode=1;
-}finally{await bounded(()=>browser.close(),5000,'browser close').catch(()=>{});}
+}finally{await bounded(()=>browser?.close(),5000,'browser close').catch(()=>{});}
