@@ -28,3 +28,5 @@ tsconfig.tsbuildinfo
 
 # Estimator test outputs
 /p5-verification/
+
+!/scripts/test-p5-receipt.mts

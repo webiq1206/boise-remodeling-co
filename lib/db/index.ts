@@ -4,7 +4,7 @@ import * as schema from "@/shared/schema";
 
 const connectionString = process.env.DATABASE_URL;
 
-const sql = connectionString ? neon(connectionString) : null;
+const sql = connectionString ? neon(connectionString, { fetchOptions: { cache: "no-store" } }) : null;
 
 export const db = sql
   ? drizzle(sql, { schema })
