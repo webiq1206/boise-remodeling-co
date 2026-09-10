@@ -993,3 +993,24 @@ body[data-hide-mobile-nav-bar="true"] [data-mobile-nav-bar] {
 .article-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
 .article-table-scroll > table { display: table; }
 .article-table-scroll:focus-visible { outline: 2px solid hsl(var(--accent)); outline-offset: 3px; }
+
+/* Estimator navigation scrolls with the questions on phones and tablets. */
+@media (max-width: 1023px) {
+  [data-testid="wizard-action-bar"],
+  [data-wizard-action-bar],
+  [data-testid="wizard-sticky-nav"],
+  [data-testid="result-sticky-actions"],
+  [data-testid="wizard-mobile-bar"] {
+    position: static !important;
+    transform: none !important;
+    margin-top: 20px;
+  }
+  [data-testid="estimate-app-frame"] { overflow-y: auto; overscroll-behavior: contain; }
+  [data-testid="app-frame-body"] { flex: none; overflow: visible; min-height: auto; }
+  [data-testid="app-frame-body"] > div { min-height: 0; }
+  [data-testid="app-frame-footer"] { position: static; margin-top: 20px; }
+  [data-testid="guided-flow-fit"] { overflow-y: auto; overscroll-behavior: contain; }
+  [data-testid="guided-flow-fit"] > * { flex-shrink: 0; }
+  [data-guided-step-layout], [data-guided-step-body] { flex: none; overflow: visible; min-height: auto; }
+  [data-guided-step-body] > div { min-height: 0; }
+}
