@@ -12,18 +12,18 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8]
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     env:
       P5_PARENT: "0"
       TZ: UTC
       SESSION_SECRET: p5-visual-review-ephemeral-session-key-20260910
       P5_SHARD: ${{ matrix.shard }}
-      P5_SHARDS: 3
+      P5_SHARDS: 9
     steps:
       - uses: actions/checkout@v6
         with:
@@ -39,7 +39,7 @@ jobs:
           npx next start -p 5000 > /tmp/p5-review-server.log 2>&1 &
           node -e 'let n=0;const t=setInterval(async()=>{try{const r=await fetch("http://127.0.0.1:5000");if(r.ok){clearInterval(t);return}}catch{}if(++n>90){clearInterval(t);process.exit(1)}},1000)'
       - name: Capture every recorded public route at nine widths
-        run: node scripts/p5-visual-review.mjs > /tmp/p5-review-summary.json
+        run: timeout 30m node scripts/p5-visual-review.mjs > /tmp/p5-review-summary.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:

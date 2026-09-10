@@ -22,6 +22,7 @@ try {
    return route.continue();
   });
   const page=await context.newPage();
+  page.setDefaultTimeout(20000);page.setDefaultNavigationTimeout(45000);
   for(const route of selected){
    const errors=[],consoleErrors=[];
    const onError=e=>errors.push(e.message),onConsole=e=>{if(e.type()==='error'&&!(blockedWrites.has(e.location().url)&&e.text().includes('503')))consoleErrors.push(e.text());};
@@ -31,12 +32,12 @@ try {
     const response=await page.goto(origin+route,{waitUntil:'domcontentloaded',timeout:45000});
     assert(response&&response.status()<400,'HTTP '+response?.status());
     await page.locator('main').first().waitFor({state:'visible'});
-    await page.evaluate(async()=>{await document.fonts.ready;for(let y=0;y<document.documentElement.scrollHeight;y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
+    await page.evaluate(async()=>{await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,3000))]);for(let y=0;y<Math.min(document.documentElement.scrollHeight,80000);y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
     // Expand all article bodies so hidden lower sections also receive coverage.
     await page.locator('article details:not([open]) > summary').evaluateAll(els=>els.forEach(el=>el.click()));
     await page.evaluate(async()=>{const images=[...document.images].filter(i=>i.getClientRects().length);for(const i of images)i.loading='eager';await Promise.race([Promise.allSettled(images.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);});
     // Expanding article sections moves lower content. Scroll again to reveal it in the merged build.
-    await page.evaluate(async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
+    await page.evaluate(async()=>{for(let y=0;y<Math.min(document.documentElement.scrollHeight,80000);y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
     await page.waitForTimeout(250);
     const state=await page.evaluate(()=>({
      width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
@@ -73,7 +74,7 @@ try {
       assert(!wrapping.some(e=>e.text.includes('(208)')&&e.height>30),'Phone number wraps');
      }
     }
-   }catch(e){rec.ok=false;rec.error=String(e);try{await page.screenshot({path:`${out}/FAIL-${width}-${route.replaceAll('/','_')}.jpg`,fullPage:true,type:'jpeg',quality:60});}catch{}}
+   }catch(e){rec.ok=false;rec.error=String(e);try{await page.screenshot({path:`${out}/FAIL-${width}-${route.replaceAll('/','_')}.jpg`,fullPage:true,type:'jpeg',quality:60,timeout:20000});}catch{}}
    records.push(rec);page.off('pageerror',onError);page.off('console',onConsole);
    await fs.writeFile(`${out}/records-${shard}.json`,JSON.stringify(records));
   }
