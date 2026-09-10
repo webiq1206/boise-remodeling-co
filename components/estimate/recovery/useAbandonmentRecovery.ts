@@ -40,6 +40,12 @@ export function useAbandonmentRecovery({ armed, inactivitySeconds = 90, exitInte
 
   const fire = useCallback((why: ExitMethod, href?: string) => {
     if (firedRef.current || !armedRef.current || alreadyPrompted()) return false;
+    // Do not interrupt navigation, chat, or another active dialog with a second modal.
+    if (why !== "exit_control" && Array.from(document.querySelectorAll('[role="dialog"]')).some((dialog) => {
+      const rect = dialog.getBoundingClientRect();
+      const style = getComputedStyle(dialog);
+      return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
+    })) return false;
     firedRef.current = true;
     rememberPrompted();
     pendingHref.current = href ?? null;

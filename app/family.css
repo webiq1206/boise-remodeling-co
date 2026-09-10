@@ -660,3 +660,8 @@ main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.
   line-height: 1.5;
   letter-spacing: 0.08em;
 }
+
+/* Photographic bands need brighter body copy than solid dark sections. */
+.ed-photo-copy {
+  --ed-muted-ink: color-mix(in srgb, hsl(var(--inverse-foreground)) 86%, hsl(var(--inverse)));
+}

@@ -29,8 +29,8 @@ jobs:
         run: |
           mkdir -p app/p5-audit-fixture
           cat > app/p5-audit-fixture/page.tsx <<'FIXTURE'
-          import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
           "use client";
+          import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
           import { useEffect, useState } from "react";
           import { NotificationsBell } from "@/components/NotificationsBell";
           import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
