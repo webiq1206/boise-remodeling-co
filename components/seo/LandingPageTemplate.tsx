@@ -196,7 +196,7 @@ export function LandingPageTemplate({
           <Image src={heroImageUrl} alt="" fill className="object-cover opacity-[0.82] img-brand-grade" sizes="100vw" priority />
         )}
         <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/85 via-inverse/60 to-transparent" />
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/60 via-inverse/15 to-transparent" />
+        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/90 via-inverse/60 to-inverse/10" />
         <div className="absolute inset-x-0 top-0 h-44 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/30 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
@@ -208,7 +208,7 @@ export function LandingPageTemplate({
             <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>{eyebrow}</p>
           )}
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
-          <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">{overview}</p>
+          <p className="mt-8 max-w-[60ch] text-base md:text-lg leading-relaxed text-inverse-foreground/95">{overview}</p>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
             <EstimateCTA variant="brand">
               {CTA_PRIMARY} <ArrowRight className="h-4 w-4" aria-hidden="true" />

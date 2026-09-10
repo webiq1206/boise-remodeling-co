@@ -1,4 +1,5 @@
 "use client";
+import { ScopeEstimateOption } from "@/components/ScopeEstimateOption";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
@@ -1540,6 +1541,7 @@ export function EstimateCalculator({
   const projectGrid = (
     <div className="mb-6">
       {renderStepLabel("project", "Choose your project")}
+      <ScopeEstimateOption />
       <div
         className="grid grid-cols-2 sm:grid-cols-3 gap-2.5"
         role="radiogroup"
@@ -2068,7 +2070,7 @@ export function EstimateCalculator({
               change a selection above. */}
           {budgetAssessment && (
             <div className="border-t border-inverse-foreground/10 pt-4">
-              <div className="rounded-sm bg-inverse-foreground/[0.06] border border-inverse-foreground/12 p-4" data-testid="budget-assessment">
+              <div className="rounded-sm bg-inverse-foreground/[0.06] border border-inverse-foreground/[0.12] p-4" data-testid="budget-assessment">
                 <p className="text-body text-inverse-foreground leading-relaxed">
                   {budgetAssessment.headline}
                 </p>
@@ -2832,7 +2834,7 @@ export function EstimateCalculator({
           <p className="ed-body mt-2 mb-4 text-[0.875rem]">
             Make sure everything looks right. Tap Edit on any line to change it.
           </p>
-          <div className="border-t border-inverse-foreground/12">
+          <div className="border-t border-inverse-foreground/[0.12]">
             {reviewSections.map((s) => (
               <ReviewSection key={s.step} compact title={s.title} items={s.items} onEdit={() => goToForm(s.step, true)} testId={`review-${s.step}`} />
             ))}

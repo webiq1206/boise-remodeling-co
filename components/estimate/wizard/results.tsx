@@ -41,7 +41,7 @@ export function ReviewSection({
   if (compact) {
     return (
       <section
-        className="flex items-center justify-between gap-3 border-b border-inverse-foreground/12 py-1.5"
+        className="flex items-center justify-between gap-3 border-b border-inverse-foreground/[0.12] py-1.5"
         data-testid={testId}
       >
         <div className="min-w-0">
@@ -160,7 +160,7 @@ export function PriceHeadline({
             className={cn(
               "rounded-full px-2.5 py-0.5 text-label tracking-wide",
               chip.tone === "muted"
-                ? "bg-inverse-foreground/12 text-inverse-foreground/85"
+                ? "bg-inverse-foreground/[0.12] text-inverse-foreground/85"
                 : "bg-accent-legible/20 text-inverse-foreground",
             )}
           >
@@ -311,7 +311,7 @@ export function StickyResultActions({
       className={
         inFrame
           ? "pt-1"
-          : "sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/12 bg-inverse px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
+          : "sticky bottom-0 z-30 -mx-4 mt-8 border-t border-inverse-foreground/[0.12] bg-inverse px-4 pt-3 pb-safe backdrop-blur-md sm:-mx-6 sm:px-6"
       }
       data-testid="result-sticky-actions"
     >

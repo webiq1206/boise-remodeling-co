@@ -70,6 +70,13 @@ export function AppFrame({
     };
   }, []);
 
+  // On mobile the whole frame scrolls, including its actions.
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      document.querySelector('[data-testid="estimate-app-frame"]')?.scrollTo({top:0,behavior:"instant"});
+    }
+  }, [currentIndex, hideProgress]);
+
   const total = steps.length;
   const clamped = Math.min(Math.max(currentIndex, 0), Math.max(total - 1, 0));
   const current = steps[clamped];
@@ -142,7 +149,7 @@ export function AppFrame({
       {/* FOOTER - pinned to the bottom edge, safe-area aware. */}
       {(footer || footerAccessory) && (
         <footer
-          className="ed-shell shrink-0 border-t border-inverse-foreground/12 bg-inverse pb-safe pt-2 backdrop-blur-md"
+          className="ed-shell shrink-0 border-t border-inverse-foreground/[0.12] bg-inverse pb-safe pt-2 backdrop-blur-md"
           data-testid="app-frame-footer"
         >
           <div className="mx-auto w-full max-w-3xl">

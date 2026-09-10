@@ -93,6 +93,7 @@ export function ProjectGallerySection({
                     beforeAlt={`Before: ${project.title}`}
                     afterAlt={`After: ${project.title}`}
                     aspectClass="aspect-[4/3]"
+                    sizes="(max-width: 768px) 80vw, 33vw"
                   />
                   <div className="p-6">
                     <ProjectMeta project={project} />

@@ -32,7 +32,7 @@ export function BudgetInclusionsSection() {
       surface="deep"
       spacing="xl"
       edge
-      className="relative overflow-hidden"
+      className="ed-photo-copy relative overflow-hidden"
     >
       {/* Photographic ground behind the dark band. Previously the image sat at
           10% opacity under a flat 75% scrim AND a 90% gradient - effectively
@@ -47,7 +47,7 @@ export function BudgetInclusionsSection() {
           sizes="100vw"
           className="object-cover opacity-[0.34] img-brand-grade"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-inverse/72 via-inverse/38 to-inverse/72" />
+        <div className="absolute inset-0 bg-gradient-to-b from-inverse/[0.72] via-inverse/[0.38] to-inverse/[0.72]" />
       </div>
 
       <div className="ed-shell relative z-10">
@@ -81,7 +81,7 @@ export function BudgetInclusionsSection() {
                 <span className="ed-small" style={{ color: "var(--ed-accent)" }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="ed-h4 mt-auto pt-6 sm:pt-10">{point.title}</h3>
+                <h3 className="ed-h4 mt-8 sm:mt-10 sm:min-h-[2.8em]">{point.title}</h3>
                 <p className="ed-body mt-3 text-[0.875rem]">{point.body}</p>
               </div>
             ))}

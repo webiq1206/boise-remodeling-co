@@ -212,7 +212,7 @@ export function StickyStepNav({
           step content hides underneath it - which is how a "sticky footer"
           quietly eats the final form field. Desktop keeps the bar in flow and
           needs no spacer. */}
-      {ownsScreen ? <div aria-hidden="true" className="h-[104px] sm:hidden" /> : null}
+
       <div
         /**
          * FIXED ON MOBILE, STICKY ON DESKTOP, and the difference matters.
@@ -227,7 +227,7 @@ export function StickyStepNav({
          * while it owns the screen, so nothing collides.
          */
         className={cn(
-          "z-30 border-t border-inverse-foreground/12 bg-inverse px-4 pt-3 pb-safe backdrop-blur-md sm:sticky sm:-mx-6 sm:mt-8 sm:px-6",
+          "z-30 border-t border-inverse-foreground/[0.12] bg-inverse px-4 pt-3 pb-safe backdrop-blur-md sm:sticky sm:-mx-6 sm:mt-8 sm:px-6",
           ownsScreen
             ? "fixed inset-x-0 bottom-0"
             /* Embedded on the homepage the site-wide Call/Text bar (54px,
