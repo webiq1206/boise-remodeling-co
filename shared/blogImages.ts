@@ -95,8 +95,8 @@ export function getArticleInlineFigures(
       figures.push({
         afterSectionIndex: Math.floor(sectionCount / 2),
         src: hubHero,
-        alt: `Treasure Valley ${hubSlug.replace(/-/g, ' ')} remodeling project`,
-        caption: 'Project photography from a recent Treasure Valley remodel.',
+        alt: Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
+          ?? `Representative ${hubSlug.replace(/-/g, ' ')} imagery`,
       });
     }
   }
