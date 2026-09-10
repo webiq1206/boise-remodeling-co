@@ -21,6 +21,7 @@ const buttonVariants = cva(
         secondary: "border bg-secondary text-secondary-foreground border border-secondary-border ",
         // Add a transparent border so that when someone toggles a border on later, it doesn't shift layout/size.
         ghost: "border border-transparent",
+        link: "text-primary underline-offset-4 hover:underline",
         brand:
           "rounded-none bg-primary text-primary-foreground border border-primary-border min-h-[58px] px-8 text-[11px] font-bold uppercase tracking-[0.16em] gap-5",
         brandOutline:

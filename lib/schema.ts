@@ -520,7 +520,7 @@ function stripSchemaContext(schema: SchemaContext): Record<string, unknown> {
  */
 export function generateHomePageSchemaGraph(
   faqs: Array<{ question: string; answer: string }>,
-): SchemaContext {
+): { '@context': string; '@graph': Record<string, unknown>[] } {
   return {
     '@context': 'https://schema.org',
     '@graph': [

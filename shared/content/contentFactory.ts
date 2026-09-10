@@ -227,7 +227,7 @@ export interface LocationGuideConfig {
   citySlug: string;
   county: 'ada' | 'canyon';
   housingNote: string;
-  guideType: GuideType;
+  guideType: Extract<GuideType, "location" | "neighborhood">;
   seoTitle: string;
   metaDescription: string;
   excerpt: string;

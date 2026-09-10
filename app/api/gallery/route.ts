@@ -5,7 +5,7 @@ import { storage } from "@/server/storage";
 import { GALLERY_PROJECTS } from "@/shared/galleryData";
 
 export async function GET() {
-  if (isDbAvailable && db) {
+  if (isDbAvailable() && db) {
     try {
       const photos = await db.select().from(galleryPhotos).limit(50);
       if (photos.length > 0) {
