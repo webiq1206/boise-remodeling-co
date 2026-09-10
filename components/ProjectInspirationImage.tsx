@@ -30,7 +30,8 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
         />
       ) : (
       <div className={`relative overflow-hidden ${aspectClass}`}>
-        <Image src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} className="object-cover" />
+        {/* The gallery WebPs are already compressed (the largest is under 300 KB). Serve these static concepts directly to avoid stalled cold optimizer requests. */}
+        <Image src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} unoptimized={afterSrc.startsWith("/images/gallery/")} className="object-cover" />
       </div>
       )}
       <figcaption className="bg-background p-4 text-sm leading-relaxed text-muted-foreground">

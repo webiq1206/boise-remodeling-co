@@ -55,6 +55,8 @@ jobs:
       - name: Check assistant and form separation
         if: always() && steps.production_build.outcome == 'success'
         run: node scripts/p5-launcher-forms.mjs
+      - name: Verify mobile wizard navigation and scope intake
+        run: P5_PARENT=0 node scripts/p5-mobile-navigation.mjs
       - name: Verify preserved estimator workflow in the merged build
         run: node scripts/p5-estimator-browser.mjs
       - uses: actions/upload-artifact@v4
