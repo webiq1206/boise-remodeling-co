@@ -7,6 +7,7 @@ export function StatementBandSection() {
     <section className="relative h-48 md:h-64 overflow-hidden">
       <Image
         src={SITE_IMAGES.statementBand}
+        unoptimized // The 110 KB source is already compressed for this photographic band.
         alt="Warm open-concept great room and kitchen remodel in the Treasure Valley, Idaho"
         fill
         loading="lazy"
