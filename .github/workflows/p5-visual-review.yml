@@ -1,8 +1,7 @@
 name: P5 visual review and production verification
 on:
   push:
-    branches: [codex/p5-visual-review-20260910]
-    paths: [scripts/p5-visual-review.mjs, scripts/p5-visual-routes.json]
+    branches: [codex/p5-visual-review-20260910, codex/p5-visual-final-20260910]
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,6 +20,7 @@ jobs:
     env:
       P5_PARENT: "0"
       TZ: UTC
+      SESSION_SECRET: p5-visual-review-ephemeral-session-key-20260910
       P5_SHARD: ${{ matrix.shard }}
       P5_SHARDS: 3
     steps:
@@ -47,4 +47,17 @@ jobs:
             p5-visual-review
             /tmp/p5-review-server.log
             /tmp/p5-review-summary.json
+          retention-days: 14
+      - name: Upload compact diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-diagnostics-${{ matrix.shard }}
+          path: |
+            p5-visual-review/*.json
+            p5-component-review/*.json
+            p5-verification/*.json
+            /tmp/p5-review-summary.json
+            /tmp/p5-review-server.log
+            /tmp/p5-component-server.log
           retention-days: 14

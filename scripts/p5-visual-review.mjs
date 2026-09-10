@@ -15,16 +15,17 @@ const selected=routes.filter((_,i)=>i%shards===shard);
 try {
  for(const width of widths){
   const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<1024});
-  const blockedWrites = new Set();
   // Audit reads must never create real inquiries or send messages.
   await context.route('**/api/**',route=>{
-   if(!['GET','HEAD'].includes(route.request().method())){blockedWrites.add(route.request().url());return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Audit preview: submission is disabled.'})});}
+   // Isolate automatic analytics writes without creating artificial HTTP errors.
+   if(['/api/estimator-session','/api/meta-capi'].includes(new URL(route.request().url()).pathname))return route.fulfill({status:200,contentType:'application/json',body:'{"ok":true,"auditPreview":true}'});
+   if(!['GET','HEAD'].includes(route.request().method()))return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Audit preview: submission is disabled.'})});
    return route.continue();
   });
   const page=await context.newPage();
   for(const route of selected){
    const errors=[],consoleErrors=[];
-   const onError=e=>errors.push(e.message),onConsole=e=>{if(e.type()==='error'&&!(blockedWrites.has(e.location().url)&&e.text().includes('503')))consoleErrors.push(e.text());};
+   const onError=e=>errors.push(e.message),onConsole=e=>{if(e.type()==='error')consoleErrors.push(e.text());};
    page.on('pageerror',onError);page.on('console',onConsole);
    const rec={width,route};
    try{
@@ -35,6 +36,8 @@ try {
     // Expand all article bodies so hidden lower sections also receive coverage.
     await page.locator('article details:not([open]) > summary').evaluateAll(els=>els.forEach(el=>el.click()));
     await page.evaluate(async()=>{const images=[...document.images].filter(i=>i.getClientRects().length);for(const i of images)i.loading='eager';await Promise.race([Promise.allSettled(images.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);});
+    // Expanding article sections moves lower content. Scroll again to reveal it in the merged build.
+    await page.evaluate(async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
     await page.waitForTimeout(250);
     const state=await page.evaluate(()=>({
      width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
@@ -44,7 +47,7 @@ try {
      headings:[...document.querySelectorAll('main h1,main h2,main h3')].map(e=>({text:e.textContent,top:Math.round(e.getBoundingClientRect().top+scrollY)}))
     }));
     state.links.forEach(l=>{if(l.startsWith('/')&&!l.startsWith('//')&&!l.startsWith('/api/')&&!l.startsWith('/admin')&&!l.startsWith('/portal'))links.add(l.split('#')[0]);});delete state.links;
-    Object.assign(rec,state,{errors,consoleErrors,blockedWrites:[...blockedWrites]});
+    Object.assign(rec,state,{errors,consoleErrors});
     assert(state.scrollWidth<=width+1,'Document overflow '+state.scrollWidth);
     assert(!state.images.some(i=>!i.ok),'Broken visible image');
     assert.equal(errors.length,0,'Page exceptions');

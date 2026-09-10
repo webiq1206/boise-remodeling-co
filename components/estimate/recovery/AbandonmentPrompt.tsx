@@ -118,7 +118,7 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
               </a>
             </div>
 
-            <form onSubmit={submitCallback} noValidate className="mt-5 border-t border-inverse-foreground/12 pt-5" data-testid="recovery-callback-form">
+            <form onSubmit={submitCallback} noValidate className="mt-5 border-t border-inverse-foreground/[0.12] pt-5" data-testid="recovery-callback-form">
               <p className="mb-2 text-[0.6875rem] font-bold uppercase tracking-[0.14em] text-inverse-muted">Or request a callback</p>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
                 <label className="sr-only" htmlFor="recovery-phone">Your phone number</label>
