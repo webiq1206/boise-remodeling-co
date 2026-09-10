@@ -2,6 +2,7 @@ import { chromium } from '@playwright/test';
 import fs from 'node:fs/promises';
 import assert from 'node:assert/strict';
 const routes=JSON.parse(await fs.readFile('scripts/p5-visual-routes.json','utf8'));
+// Includes the directly served, compressed process photograph.
 const out='p5-visual-review';
 await fs.mkdir(out,{recursive:true});
 const widths=[320,390,430,600,768,1024,1366,1440,1920];
