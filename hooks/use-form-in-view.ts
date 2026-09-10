@@ -13,7 +13,7 @@ export function useFormInView(pathname: string | null, clearMobileHero = false) 
         const viewport = window.visualViewport;
         const top = viewport?.offsetTop ?? 0;
         const bottom = top + (viewport?.height ?? window.innerHeight) + 80;
-        const protectedContent = [...document.querySelectorAll("main form")];
+        const protectedContent = [...document.querySelectorAll("main form, [data-p5-estimator], #calculator, #re10-estimator, #plans-estimator")];
         if (clearMobileHero && window.innerWidth < 1024) {
           const hero = document.querySelector("main h1")?.closest("section, header");
           if (hero) protectedContent.push(hero);

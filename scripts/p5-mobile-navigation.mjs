@@ -22,6 +22,7 @@ try {
    await option.waitFor();await option.scrollIntoViewIfNeeded();
    assert.equal(await option.locator('a').getAttribute('href'),'/estimate/scope');
    if(width<1024&&!parent){
+    await page.waitForFunction(()=>[...document.querySelectorAll('[data-mobile-nav-bar], [data-assistant-launcher]')].every(e=>!e.getClientRects().length||getComputedStyle(e).visibility==='hidden'||getComputedStyle(e).display==='none'),{},{timeout:5000});
     const states=await page.locator('[data-testid="wizard-action-bar"], [data-wizard-action-bar], [data-testid="wizard-sticky-nav"], [data-testid="wizard-mobile-bar"], [data-testid="app-frame-footer"]').evaluateAll(es=>es.filter(e=>e.getClientRects().length).map(e=>({position:getComputedStyle(e).position,transform:getComputedStyle(e).transform})));
     assert.ok(states.length,'Expected estimator navigation');
     assert.ok(states.every(s=>!['sticky','fixed'].includes(s.position)&&s.transform==='none'),JSON.stringify(states));
