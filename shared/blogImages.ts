@@ -70,6 +70,19 @@ export interface ArticleInlineFigurePlacement {
  * Editorial inline figures for long articles - inserted after key H2 sections
  * to break up text-heavy content (Phase 4).
  */
+const INLINE_HUB_ALTS: Record<string, string> = {
+  "remodeling-costs": "Representative living room renovation concept",
+  "kitchen-remodeling": "Representative remodeled kitchen with coordinated cabinetry and counters",
+  "bathroom-remodeling": "Representative remodeled bathroom design",
+  "home-additions": "Representative room addition design",
+  "whole-home-remodeling": "Representative open-plan living area and kitchen",
+  "contractor-selection": "Remodeling plans, paint colors and finish samples arranged for a design discussion",
+  "remodeling-process": "Existing living room before a design refresh",
+  "remodeling-roi": "Representative kitchen with updated cabinetry",
+  "outdoor-living": "Existing backyard illustrating an outdoor planning starting point",
+  "treasure-valley-locations": "Representative Boise-area home exterior"
+};
+
 export function getArticleInlineFigures(
   slug: string,
   sectionCount: number,
@@ -79,15 +92,9 @@ export function getArticleInlineFigures(
 
   const entry = BLOG_IMAGE_REGISTRY[slug];
   const primarySrc = entry?.hero ?? DEFAULT_BLOG_IMAGE;
-  const primaryAlt = entry?.alt ?? getBlogImageAlt(slug);
 
-  const figures: ArticleInlineFigurePlacement[] = [
-    {
-      afterSectionIndex: 1,
-      src: primarySrc,
-      alt: primaryAlt,
-    },
-  ];
+  // The article hero already establishes the setting. Avoid repeating it in the body.
+  const figures: ArticleInlineFigurePlacement[] = [];
 
   if (sectionCount >= 6 && hubSlug) {
     const hubHero = getHubHeroImage(hubSlug);
@@ -96,7 +103,7 @@ export function getArticleInlineFigures(
         afterSectionIndex: Math.floor(sectionCount / 2),
         src: hubHero,
         alt: `Treasure Valley ${hubSlug.replace(/-/g, ' ')} remodeling project`,
-        caption: 'Project photography from a recent Treasure Valley remodel.',
+        caption: 'Representative design imagery, not a completed customer project.',
       });
     }
   }

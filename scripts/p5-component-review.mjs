@@ -43,6 +43,7 @@ try {
      if(width<1440){
       await menu.click();const dialog=page.getByRole('dialog').filter({visible:true}).first();await dialog.waitFor();
       const close=dialog.getByRole('button',{name:/close/i}).first();const rect=await close.boundingBox();assert(rect&&rect.width>=44&&rect.height>=44,'Menu close target');
+      await page.waitForTimeout(450);
       await page.screenshot({path:`${out}/${width}-menu.jpg`});
       await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
       await menu.click();await dialog.waitFor();await page.setViewportSize({width:1440,height:900});await dialog.waitFor({state:'hidden'});
@@ -67,6 +68,9 @@ try {
       assert(!style.background.startsWith('rgba')&&!['transparent',''].includes(style.background),'Sticky CTA must be opaque');
       const boxes=await sticky.locator('a,button').evaluateAll(es=>es.filter(e=>e.getClientRects().length).map(e=>({w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height})));
       assert(boxes.every(b=>b.w>=44&&b.h>=44),'Sticky tap target');
+      const barBox=await sticky.boundingBox();
+      const footerBottom=await page.locator('footer a').evaluateAll(es=>Math.max(...es.filter(e=>e.getClientRects().length).map(e=>e.getBoundingClientRect().bottom)));
+      assert(footerBottom<=barBox.y-8,'Last footer links must clear the sticky CTA');
       rec.sticky=style;
      }
      await page.screenshot({path:`${out}/${width}-footer-cta.jpg`});
@@ -81,6 +85,9 @@ try {
      assert(await slider.locator('..').locator('img').evaluateAll(es=>es.every(i=>i.naturalWidth>0&&i.complete)),'Both comparison images decode');
      await page.waitForTimeout(500);
      await page.screenshot({path:`${out}/${width}-kitchen-comparison.jpg`});
+     const originalLabel=await slider.locator('..').getByText('Original',{exact:true}).boundingBox();
+     const refreshLabel=await slider.locator('..').getByText('Refresh',{exact:true}).boundingBox();
+     assert(originalLabel.x+originalLabel.width+4<=refreshLabel.x,'Comparison labels must remain separate');
      const imgs=await slider.locator('..').locator('img').evaluateAll(es=>es.map(i=>({w:i.getBoundingClientRect().width,h:i.getBoundingClientRect().height,nw:i.naturalWidth,nh:i.naturalHeight})));
      assert(imgs.length===2&&imgs.every(i=>Math.abs(i.w/i.h-1.5)<.01),'Comparison aspect ratio');
     }

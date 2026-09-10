@@ -22,8 +22,8 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
           afterSrc={afterSrc}
           beforeAlt="Representative kitchen before the design refresh, with oak cabinets and the original appliance layout"
           afterAlt="Design concept for the same kitchen, with white shaker cabinets, quartz counters and oak flooring"
-          beforeLabel="Original concept"
-          afterLabel="Refresh concept"
+          beforeLabel="Original"
+          afterLabel="Refresh"
           aspectClass="aspect-[3/2]"
         />
       ) : (
