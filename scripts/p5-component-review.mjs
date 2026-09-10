@@ -63,6 +63,13 @@ try {
      assert(await page.locator('h2.ed-h2').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=30),'Section typography must override element resets');
      assert.equal(await page.locator('dl.ed-hero-facts').count(),1,'Single facts group');
     }
+    const sidebar=page.locator('[data-article-sidebar-cta]').first();
+    if(await sidebar.count()){
+     const clipped=await sidebar.evaluate(card=>[...card.querySelectorAll('a,button')].filter(a=>a.getClientRects().length).some(a=>{const c=card.getBoundingClientRect(),b=a.getBoundingClientRect();return b.left<c.left||b.right>c.right||b.height<44||a.scrollWidth>a.clientWidth+1;}));
+     assert(!clipped,'Sidebar actions must fit and have 44px targets');
+     await sidebar.scrollIntoViewIfNeeded();await page.waitForTimeout(250);
+     await page.screenshot({path:`${out}/${width}-article-sidebar.jpg`});
+    }
     if(route.startsWith('/guides/')){
      const related=page.getByRole('heading',{name:'Related resources',exact:true});
      if(await related.count()){await related.scrollIntoViewIfNeeded();await page.waitForTimeout(350);await page.screenshot({path:`${out}/${width}-related-resources.jpg`});}
