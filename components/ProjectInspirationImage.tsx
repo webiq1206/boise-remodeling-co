@@ -30,7 +30,9 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
         />
       ) : (
       <div className={`relative overflow-hidden ${aspectClass}`}>
-        <Image src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} className="object-cover" />
+        {/* These local WebP assets are already compressed. Serve them directly
+            so gallery loading does not depend on an on-demand encoding job. */}
+        <Image unoptimized={afterSrc.startsWith("/images/") && afterSrc.endsWith(".webp")} src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} className="object-cover" />
       </div>
       )}
       <figcaption className="bg-background p-4 text-sm leading-relaxed text-muted-foreground">

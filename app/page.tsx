@@ -124,6 +124,7 @@ export default function HomePage() {
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <Image
             src={SITE_IMAGES.consultBg}
+            unoptimized
             alt=""
             fill
             loading="lazy"
