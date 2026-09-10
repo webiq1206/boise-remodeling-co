@@ -396,6 +396,7 @@ html :where(.ed-small) {
   .ed-cards-3 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .ed-cards-3 > * { grid-column: span 2; }
   .ed-cards-3 > :last-child:nth-child(odd) { grid-column: 2 / span 2; }
+  .ed-cards-3 > :only-child:nth-child(n) { grid-column: 1 / -1; }
 }
 @media (min-width: 1024px) {
   .ed-cards-3 { grid-template-columns: repeat(6, minmax(0, 1fr)); }
@@ -405,7 +406,7 @@ html :where(.ed-small) {
   .ed-cards-3 > :last-child:nth-child(3n + 1) { grid-column: 3 / span 2; }
   /* A single card takes two thirds of the row, centred, instead of one small
      card beside empty space. */
-  .ed-cards-3 > :only-child { grid-column: 2 / span 4; }
+  .ed-cards-3 > :only-child:nth-child(n) { grid-column: 2 / span 4; }
 }
 
 /* Full-bleed image + content panel, 57/43, reversible. */

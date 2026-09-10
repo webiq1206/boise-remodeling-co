@@ -113,6 +113,8 @@ try {
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(100);
     assert(Math.abs(Number(await slider.getAttribute('aria-valuenow'))-30)<3,'Touch drag');
    }
+   const single=await page.locator('#single-card').evaluate(e=>({outer:e.getBoundingClientRect().width,card:e.firstElementChild.getBoundingClientRect().width}));
+   assert(single.card/single.outer>=(width>=1024?.60:.95),'Single card must use the available row');
    const grid=await page.locator('#four-cards').evaluate(e=>[...e.children].map(c=>({x:c.getBoundingClientRect().x,y:c.getBoundingClientRect().y})));
    if(width>=1024)assert(grid[0].y===grid[1].y&&grid[2].y===grid[3].y&&grid[0].y!==grid[2].y,'Four cards must form two balanced rows');
    await page.screenshot({path:`${out}/${width}-slider-fixture.jpg`,fullPage:true});rec.ok=true;
