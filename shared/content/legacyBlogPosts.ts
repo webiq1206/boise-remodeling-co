@@ -11,7 +11,7 @@ function buildLegacyPost(
     category: string;
     tags: string[];
     publishedAt: string;
-    relatedLinks: Array<{ url: string }>;
+    relatedLinks: Array<{ url: string; anchor?: string }>;
     faqs: Array<{ question: string; answer: string }>;
     takeaways: string[];
     extraSections?: Parameters<typeof buildClusterArticleSections>[0]['extraSections'];

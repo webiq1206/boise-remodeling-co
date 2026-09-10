@@ -176,7 +176,7 @@ export function AssistantWidget() {
      for the same reason; the launcher follows the same rule and comes back
      everywhere else. */
   const wizardOwnsBottom =
-    pathname === "/estimate" ||
+    (pathname === "/estimate" || pathname === "/estimate/p5-preview") ||
     pathname.startsWith("/re-10") ||
     pathname.startsWith("/remodel-plans");
   if (wizardOwnsBottom && !open) return null;

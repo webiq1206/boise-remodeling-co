@@ -21,6 +21,7 @@ jobs:
     env:
       P5_PARENT: "0"
       TZ: UTC
+      SESSION_SECRET: p5-visual-review-ephemeral-session-key-20260910
       P5_SHARD: ${{ matrix.shard }}
       P5_SHARDS: 3
     steps:

@@ -255,6 +255,7 @@ export default function AdminProjectDetailPage() {
             {assignments.map(
               (a: {
                 id: string;
+                subcontractorId: string;
                 subcontractor: { firstName?: string; lastName?: string; email?: string; company?: string };
                 status: string;
               }) => (
@@ -272,7 +273,7 @@ export default function AdminProjectDetailPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => createContractMutation.mutate(
-                          (a as { subcontractorId: string }).subcontractorId
+                          a.subcontractorId
                         )}
                       >
                         Send Contract
