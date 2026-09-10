@@ -57,6 +57,10 @@ try {
      assert(await page.locator('h2.ed-h2').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=30),'Section typography must override element resets');
      assert.equal(await page.locator('dl.ed-hero-facts').count(),1,'Single facts group');
     }
+    if(route.startsWith('/guides/')){
+     const related=page.getByRole('heading',{name:'Related resources',exact:true});
+     if(await related.count()){await related.scrollIntoViewIfNeeded();await page.waitForTimeout(350);await page.screenshot({path:`${out}/${width}-related-resources.jpg`});}
+    }
     if(route==='/contact'){
      const form=page.getByTestId('input-name').filter({visible:true}).first();
      await form.scrollIntoViewIfNeeded();await form.focus();await page.waitForTimeout(400);
