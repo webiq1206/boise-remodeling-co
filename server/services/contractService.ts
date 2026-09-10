@@ -85,7 +85,7 @@ export async function buildMergeData(
       : approvedOrders
           .map(
             (c) =>
-              `#${c.number}: ${c.title} (${c.amountDelta >= 0 ? "+" : ""}$${c.amountDelta})`
+              `#${c.number}: ${c.title} (${Number(c.amountDelta) >= 0 ? "+" : ""}$${c.amountDelta})`
           )
           .join("; ");
 

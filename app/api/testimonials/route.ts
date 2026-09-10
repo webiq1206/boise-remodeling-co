@@ -5,7 +5,7 @@ import { storage } from "@/server/storage";
 import { TESTIMONIALS } from "@/shared/testimonialsData";
 
 export async function GET() {
-  if (isDbAvailable && db) {
+  if (isDbAvailable() && db) {
     try {
       const dbTestimonials = await db.select().from(testimonials).limit(50);
       if (dbTestimonials.length > 0) {

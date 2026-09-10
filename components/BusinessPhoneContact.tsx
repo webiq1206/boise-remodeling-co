@@ -5,6 +5,7 @@ import { SaveContactLink } from "@/components/SaveContactLink";
 
 interface BusinessPhoneLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   /** Apply display num typography (large tabular phone). */
+  "data-testid"?: string;
   display?: boolean;
   showIcon?: boolean;
   iconClassName?: string;
@@ -47,6 +48,7 @@ interface BusinessPhoneContactProps {
   layout?: "stack" | "inline" | "compact";
   /** Use span wrapper so phone + save can live inside a paragraph. */
   inline?: boolean;
+  "data-testid"?: string;
   display?: boolean;
   showPhoneIcon?: boolean;
   showSaveIcon?: boolean;
