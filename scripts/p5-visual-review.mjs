@@ -17,6 +17,8 @@ try {
   const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<1024});
   // Audit reads must never create real inquiries or send messages.
   await context.route('**/api/**',route=>{
+   // Isolate automatic analytics writes without creating artificial HTTP errors.
+   if(['/api/estimator-session','/api/meta-capi'].includes(new URL(route.request().url()).pathname))return route.fulfill({status:200,contentType:'application/json',body:'{"ok":true,"auditPreview":true}'});
    if(!['GET','HEAD'].includes(route.request().method()))return route.fulfill({status:503,contentType:'application/json',body:JSON.stringify({error:'Audit preview: submission is disabled.'})});
    return route.continue();
   });

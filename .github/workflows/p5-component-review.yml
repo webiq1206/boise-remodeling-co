@@ -30,10 +30,14 @@ jobs:
           mkdir -p app/p5-audit-fixture
           cat > app/p5-audit-fixture/page.tsx <<'FIXTURE'
           import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
+          "use client";
+          import { useEffect, useState } from "react";
           import { NotificationsBell } from "@/components/NotificationsBell";
           import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
           export default function AuditFixture() {
-            return <main className="container py-12"><h1>Component verification</h1><div id="notifications-fixture"><NotificationsBell /></div><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div><EstimatePromptBand title="Planning details" description="Three useful planning points." /></main>;
+            const [ready, setReady] = useState(false);
+            useEffect(() => setReady(true), []);
+            return <main data-audit-ready={ready} className="container py-12"><h1>Component verification</h1><div id="notifications-fixture"><NotificationsBell /></div><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div><EstimatePromptBand title="Planning details" description="Three useful planning points." /></main>;
           }
           FIXTURE
           printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="gray"/></svg>' > public/p5-audit-before.svg
@@ -56,5 +60,18 @@ jobs:
           path: |
             p5-component-review
             p5-verification
+            /tmp/p5-component-server.log
+          retention-days: 14
+      - name: Upload compact diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-diagnostics-components
+          path: |
+            p5-visual-review/*.json
+            p5-component-review/*.json
+            p5-verification/*.json
+            /tmp/p5-review-summary.json
+            /tmp/p5-review-server.log
             /tmp/p5-component-server.log
           retention-days: 14

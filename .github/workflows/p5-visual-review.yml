@@ -47,3 +47,16 @@ jobs:
             /tmp/p5-review-server.log
             /tmp/p5-review-summary.json
           retention-days: 14
+      - name: Upload compact diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-diagnostics-${{ matrix.shard }}
+          path: |
+            p5-visual-review/*.json
+            p5-component-review/*.json
+            p5-verification/*.json
+            /tmp/p5-review-summary.json
+            /tmp/p5-review-server.log
+            /tmp/p5-component-server.log
+          retention-days: 14
