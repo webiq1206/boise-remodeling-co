@@ -1,0 +1,63 @@
+name: P5 responsive components and visual review
+on:
+  push:
+    branches: [codex/p5-visual-review-20260910, codex/p5-merge-all-20260910]
+    paths-ignore: [docs/**]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: p5-components-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      TZ: UTC
+      P5_SITE: remodeling
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --no-audit --no-fund
+      - name: Add temporary component fixture
+        run: |
+          mkdir -p app/p5-audit-fixture
+          cat > app/p5-audit-fixture/page.tsx <<'FIXTURE'
+          "use client";
+          import { useEffect, useState } from "react";
+          import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
+          import { NotificationsBell } from "@/components/NotificationsBell";
+          import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
+          export default function AuditFixture() {
+            const [ready, setReady] = useState(false);
+            useEffect(() => setReady(true), []);
+            return <main data-audit-ready={ready} className="container py-12"><h1>Component verification</h1><div id="notifications-fixture"><NotificationsBell /></div><BeforeAfterSlider beforeSrc="/p5-audit-before.svg" afterSrc="/p5-audit-after.svg" beforeAlt="Test rectangle before" afterAlt="Test rectangle after" /><div id="four-cards" className="ed-cards-3 mt-12">{[1,2,3,4].map(n=><article key={n} className="p-8 border">Card {n}</article>)}</div><EstimatePromptBand title="Planning details" description="Three useful planning points." /></main>;
+          }
+          FIXTURE
+          printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="gray"/></svg>' > public/p5-audit-before.svg
+          printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="tan"/></svg>' > public/p5-audit-after.svg
+      - name: Production build and repository gates
+        run: npm run build
+      - name: Start the production server
+        run: |
+          npx next start -p 5000 > /tmp/p5-component-server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{const r=await fetch("http://127.0.0.1:5000");if(r.ok){clearInterval(t);return}}catch{}if(++n>90){clearInterval(t);process.exit(1)}},1000)'
+      - name: Check all shared components at nine widths
+        run: node scripts/p5-component-review.mjs
+      - name: Check assistant and form separation
+        run: node scripts/p5-launcher-forms.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-component-review
+          path: |
+            p5-component-review
+            p5-verification
+            /tmp/p5-component-server.log
+          retention-days: 14

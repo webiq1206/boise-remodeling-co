@@ -45,7 +45,7 @@ function buildFooterGroups(): { title: string; links: FooterLink[] }[] {
     },
     {
       title: "Company",
-      links: [{ label: "About", href: "/about" }, { label: "Our Work", href: "/testimonials" }, { label: "Why Choose Us", href: "/#why-choose-us" }, { label: "How We Build", href: "/#how-we-build" }, { label: "RE-10 Repairs", href: "/re-10-repairs-boise" }, { label: "Estimate From Plans", href: "/remodel-plans-boise" }, { label: "Contact", href: "/contact" }],
+      links: [{ label: "About", href: "/about" }, { label: "Design Ideas", href: "/testimonials" }, { label: "Why Choose Us", href: "/#why-choose-us" }, { label: "How We Build", href: "/#how-we-build" }, { label: "RE-10 Repairs", href: "/re-10-repairs-boise" }, { label: "Estimate From Plans", href: "/remodel-plans-boise" }, { label: "Contact", href: "/contact" }],
     },
     {
       title: "Resources",
