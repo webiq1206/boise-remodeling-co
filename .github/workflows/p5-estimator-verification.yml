@@ -23,7 +23,9 @@ jobs:
       - name: Financial policy regression tests
         run: node --import tsx --test tests/p5-pricing.test.ts
       - name: Isolated persistence, delivery failure and PDF checks
-        run: node --import tsx scripts/test-p5-workflow.mts
+        run: |
+          node --import tsx scripts/test-p5-workflow.mts
+          node --import tsx scripts/test-p5-receipt.mts
       - name: TypeScript verification
         run: npx tsc --noEmit
       - name: Production build and existing repository gates
