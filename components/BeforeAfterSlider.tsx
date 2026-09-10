@@ -9,6 +9,8 @@ interface BeforeAfterSliderProps {
   afterSrc: string;
   beforeAlt: string;
   afterAlt: string;
+  beforeLabel?: string;
+  afterLabel?: string;
   caption?: React.ReactNode;
   className?: string;
   aspectClass?: string;
@@ -20,6 +22,8 @@ export function BeforeAfterSlider({
   afterSrc,
   beforeAlt,
   afterAlt,
+  beforeLabel = "Before",
+  afterLabel = "After",
   caption,
   className = "",
   aspectClass = "aspect-[4/3]",
@@ -152,10 +156,10 @@ export function BeforeAfterSlider({
 
       {/* Corner labels */}
       <div className="absolute top-3 left-3 md:top-4 md:left-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none">
-        Before
+        {beforeLabel}
       </div>
       <div className="absolute top-3 right-3 md:top-4 md:right-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none">
-        After
+        {afterLabel}
       </div>
 
       {/* Divider line + drag handle */}

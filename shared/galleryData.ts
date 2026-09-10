@@ -9,16 +9,17 @@ export interface GalleryProject {
   description: string;
 }
 
-// Representative generated design assets. No verified same-property before/after pairs.
+// Representative generated design assets. Only the first kitchen has a reviewed
+// same-camera finish comparison. These are not completed customer projects.
 export const GALLERY_PROJECTS: GalleryProject[] = [
   {
     serviceType: "kitchen-remodel",
     city: "boise",
     beforeImageUrl: GALLERY_IMAGES.kitchen.before,
     afterImageUrl: GALLERY_IMAGES.kitchen.after,
-    title: "Modern Kitchen Transformation",
+    title: "A Kitchen Refresh Within the Existing Layout",
     description:
-      "Kitchen design inspiration exploring cabinetry, work surfaces, storage, and lighting.",
+      "Compare warm oak cabinetry with a white shaker finish, quartz work surfaces, updated appliances and oak flooring. The window, doorway and working layout stay in place.",
   },
   {
     serviceType: "bathroom-remodel",
