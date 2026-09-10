@@ -34,13 +34,16 @@ try {
     await page.goto(origin+route,{waitUntil:'domcontentloaded'});
     await page.evaluate(async()=>{await document.fonts.ready;for(let y=0;y<document.documentElement.scrollHeight;y+=600){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,80));}});
     await page.locator('article details:not([open]) > summary').evaluateAll(es=>es.forEach(e=>e.click()));
-    await page.evaluate(async()=>{const is=[...document.images].filter(i=>i.getClientRects().length);is.forEach(i=>i.loading='eager');await Promise.allSettled(is.map(i=>i.decode()));});
+    await page.evaluate(async()=>{const is=[...document.images].filter(i=>i.getClientRects().length);is.forEach(i=>i.loading='eager');await Promise.race([Promise.allSettled(is.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);});
+    await page.evaluate(async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
+    // Scrolling can mount new carousel images after the first decode pass.
+    await page.evaluate(async()=>{const images=[...document.images].filter(i=>i.getClientRects().length);images.forEach(i=>i.loading='eager');await Promise.race([Promise.allSettled(images.map(i=>i.decode())),new Promise(r=>setTimeout(r,15000))]);});
     await page.waitForTimeout(700);
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal overflow');
+    const unloadedImages=await page.evaluate(()=>[...document.images].filter(i=>i.getClientRects().length&&(!i.complete||!i.naturalWidth)).map(i=>({src:i.currentSrc||i.src,loading:i.loading,complete:i.complete,rect:i.getBoundingClientRect().toJSON()})));
+    assert.equal(unloadedImages.length,0,'Unloaded images: '+JSON.stringify(unloadedImages));
     const missingGradients=await page.evaluate(()=>[...document.querySelectorAll('[class*="bg-gradient-to-"]')].filter(e=>e.getClientRects().length&&getComputedStyle(e).backgroundImage==='none').map(e=>e.className));
     assert.equal(missingGradients.length,0,'Missing gradient overlays: '+JSON.stringify(missingGradients));
-    const brokenImages=await page.evaluate(()=>[...document.images].filter(i=>i.getClientRects().length&&(!i.complete||!i.naturalWidth)).map(i=>({src:i.currentSrc||i.src,complete:i.complete})));
-    assert.equal(brokenImages.length,0,'Broken images: '+JSON.stringify(brokenImages));
     await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
     await page.screenshot({path:`${out}/${width}-${route.replaceAll('/','_')}.jpg`,fullPage:true,type:'jpeg',quality:72});
     if(route==='/'){
@@ -48,6 +51,7 @@ try {
      if(width<1440){
       await menu.click();const dialog=page.getByRole('dialog').filter({visible:true}).first();await dialog.waitFor();
       const close=dialog.getByRole('button',{name:/close/i}).first();const rect=await close.boundingBox();assert(rect&&rect.width>=44&&rect.height>=44,'Menu close target');
+      await page.waitForTimeout(450);
       await page.screenshot({path:`${out}/${width}-menu.jpg`});
       await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
       await menu.click();await dialog.waitFor();await page.setViewportSize({width:1440,height:900});await dialog.waitFor({state:'hidden'});
@@ -72,6 +76,9 @@ try {
       assert(!style.background.startsWith('rgba')&&!['transparent',''].includes(style.background),'Sticky CTA must be opaque');
       const boxes=await sticky.locator('a,button').evaluateAll(es=>es.filter(e=>e.getClientRects().length).map(e=>({w:e.getBoundingClientRect().width,h:e.getBoundingClientRect().height})));
       assert(boxes.every(b=>b.w>=44&&b.h>=44),'Sticky tap target');
+      const barBox=await sticky.boundingBox();
+      const footerBottom=await page.locator('footer a').evaluateAll(es=>Math.max(...es.filter(e=>e.getClientRects().length).map(e=>e.getBoundingClientRect().bottom)));
+      assert(footerBottom<=barBox.y-8,'Last footer links must clear the sticky CTA');
       rec.sticky=style;
      }
      await page.screenshot({path:`${out}/${width}-footer-cta.jpg`});
@@ -86,6 +93,9 @@ try {
      assert(await slider.locator('..').locator('img').evaluateAll(es=>es.every(i=>i.naturalWidth>0&&i.complete)),'Both comparison images decode');
      await page.waitForTimeout(500);
      await page.screenshot({path:`${out}/${width}-kitchen-comparison.jpg`});
+     const originalLabel=await slider.locator('..').getByText('Original concept',{exact:true}).boundingBox();
+     const refreshLabel=await slider.locator('..').getByText('Refresh concept',{exact:true}).boundingBox();
+     assert(originalLabel.x+originalLabel.width+4<=refreshLabel.x,'Comparison labels must remain separate');
      const imgs=await slider.locator('..').locator('img').evaluateAll(es=>es.map(i=>({w:i.getBoundingClientRect().width,h:i.getBoundingClientRect().height,nw:i.naturalWidth,nh:i.naturalHeight})));
      assert(imgs.length===2&&imgs.every(i=>Math.abs(i.w/i.h-1.5)<.01),'Comparison aspect ratio');
     }

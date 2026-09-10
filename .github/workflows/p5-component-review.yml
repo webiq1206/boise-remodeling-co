@@ -1,7 +1,7 @@
 name: P5 responsive components and visual review
 on:
   push:
-    branches: [codex/p5-visual-review-20260910, codex/p5-visual-final-20260910]
+    branches: [codex/p5-visual-review-20260910, codex/p5-visual-final-20260910, codex/p5-complete-main-20260910]
     paths-ignore: [docs/**]
   workflow_dispatch:
 permissions:
@@ -16,6 +16,7 @@ jobs:
     container: mcr.microsoft.com/playwright:v1.60.0-noble
     env:
       TZ: UTC
+      SESSION_SECRET: p5-visual-review-ephemeral-session-key-20260910
       P5_SITE: remodeling
     steps:
       - uses: actions/checkout@v6
@@ -43,6 +44,7 @@ jobs:
           printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="gray"/></svg>' > public/p5-audit-before.svg
           printf '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="tan"/></svg>' > public/p5-audit-after.svg
       - name: Production build and repository gates
+        id: production_build
         run: npm run build
       - name: Start the production server
         run: |
@@ -51,8 +53,10 @@ jobs:
       - name: Check all shared components at nine widths
         run: node scripts/p5-component-review.mjs
       - name: Check assistant and form separation
-        if: always()
+        if: always() && steps.production_build.outcome == 'success'
         run: node scripts/p5-launcher-forms.mjs
+      - name: Verify preserved estimator workflow in the merged build
+        run: node scripts/p5-estimator-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

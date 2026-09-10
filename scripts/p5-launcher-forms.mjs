@@ -15,6 +15,7 @@ for(const width of [320,390,430,600,768,1024,1366,1440,1920]){
   await page.locator('#address-info').waitFor({state:'visible'});
   await addressInfo.click();
   await page.locator('#address-info').waitFor({state:'hidden'});
+  await page.waitForTimeout(700);
   const launcher=page.locator('[data-testid="button-assistant-open"],[data-testid="assistant-launcher"]');
   await page.locator('footer').scrollIntoViewIfNeeded();
   await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));

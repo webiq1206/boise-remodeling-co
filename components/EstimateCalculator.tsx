@@ -1,4 +1,5 @@
 "use client";
+import { ScopeEstimateOption } from "@/components/ScopeEstimateOption";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as SliderPrimitive from "@radix-ui/react-slider";
@@ -1540,6 +1541,7 @@ export function EstimateCalculator({
   const projectGrid = (
     <div className="mb-6">
       {renderStepLabel("project", "Choose your project")}
+      <ScopeEstimateOption />
       <div
         className="grid grid-cols-2 sm:grid-cols-3 gap-2.5"
         role="radiogroup"

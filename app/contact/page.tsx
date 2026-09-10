@@ -256,7 +256,7 @@ export default function ContactPage() {
                   </p>
                 </Reveal>
               </div>
-              <MarketingCard className="md:col-span-3" padding="lg">
+              <MarketingCard className="md:col-span-3 p-4 sm:p-7 md:p-10" padding="lg">
                 <ConsultationForm />
               </MarketingCard>
             </div>

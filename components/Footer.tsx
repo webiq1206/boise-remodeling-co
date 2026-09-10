@@ -102,7 +102,7 @@ export function Footer() {
   const groups = buildFooterGroups();
 
   return (
-    <footer className="bg-inverse text-inverse-foreground">
+    <footer className="bg-inverse text-inverse-foreground pb-[calc(96px+env(safe-area-inset-bottom))] lg:pb-0">
       <div className="container px-4 py-16 md:py-20">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.35fr_repeat(3,1fr)] lg:gap-0 lg:divide-x lg:divide-inverse-foreground/10 [&>*]:lg:px-8 [&>*:first-child]:lg:pl-0 [&>*:last-child]:lg:pr-0">
           <div className="pb-2 lg:pb-0">

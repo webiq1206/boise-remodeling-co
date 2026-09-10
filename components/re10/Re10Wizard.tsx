@@ -1,4 +1,5 @@
 "use client";
+import { ScopeEstimateOption } from "@/components/ScopeEstimateOption";
 
 import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
@@ -704,6 +705,8 @@ export function Re10Wizard() {
         ) : null}
 
         <WizardError message={error} />
+
+        {step === "upload" && <ScopeEstimateOption />}
 
         {/* ------------------------------------------------------- 1. upload */}
         {step === "upload" ? (

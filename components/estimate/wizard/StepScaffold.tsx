@@ -212,7 +212,7 @@ export function StickyStepNav({
           step content hides underneath it - which is how a "sticky footer"
           quietly eats the final form field. Desktop keeps the bar in flow and
           needs no spacer. */}
-      {ownsScreen ? <div aria-hidden="true" className="h-[104px] sm:hidden" /> : null}
+
       <div
         /**
          * FIXED ON MOBILE, STICKY ON DESKTOP, and the difference matters.

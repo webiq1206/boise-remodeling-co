@@ -70,6 +70,13 @@ export function AppFrame({
     };
   }, []);
 
+  // On mobile the whole frame scrolls, including its actions.
+  useEffect(() => {
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      document.querySelector('[data-testid="estimate-app-frame"]')?.scrollTo({top:0,behavior:"instant"});
+    }
+  }, [currentIndex, hideProgress]);
+
   const total = steps.length;
   const clamped = Math.min(Math.max(currentIndex, 0), Math.max(total - 1, 0));
   const current = steps[clamped];
