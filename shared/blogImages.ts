@@ -102,7 +102,8 @@ export function getArticleInlineFigures(
       figures.push({
         afterSectionIndex: Math.floor(sectionCount / 2),
         src: hubHero,
-        alt: `Treasure Valley ${hubSlug.replace(/-/g, ' ')} remodeling project`,
+        alt: Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
+          ?? INLINE_HUB_ALTS[hubSlug] ?? `Representative ${hubSlug.replace(/-/g, ' ')} imagery`,
         caption: 'Representative design imagery, not a completed customer project.',
       });
     }

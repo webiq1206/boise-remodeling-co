@@ -52,6 +52,9 @@ try {
       await menu.click();const dialog=page.getByRole('dialog').filter({visible:true}).first();await dialog.waitFor();
       const close=dialog.getByRole('button',{name:/close/i}).first();const rect=await close.boundingBox();assert(rect&&rect.width>=44&&rect.height>=44,'Menu close target');
       await page.waitForTimeout(450);
+      const brand=await dialog.locator('img').first().boundingBox();
+      assert(brand&&brand.height<=30,'Menu wordmark must fit the 60px header');
+      assert(brand.x+brand.width<=rect.x-8,'Menu wordmark must clear the close button');
       await page.screenshot({path:`${out}/${width}-menu.jpg`});
       await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
       await menu.click();await dialog.waitFor();await page.setViewportSize({width:1440,height:900});await dialog.waitFor({state:'hidden'});
@@ -93,8 +96,8 @@ try {
      assert(await slider.locator('..').locator('img').evaluateAll(es=>es.every(i=>i.naturalWidth>0&&i.complete)),'Both comparison images decode');
      await page.waitForTimeout(500);
      await page.screenshot({path:`${out}/${width}-kitchen-comparison.jpg`});
-     const originalLabel=await slider.locator('..').getByText('Original',{exact:true}).boundingBox();
-     const refreshLabel=await slider.locator('..').getByText('Refresh',{exact:true}).boundingBox();
+     const originalLabel=await slider.locator('..').getByText('Original concept',{exact:true}).boundingBox();
+     const refreshLabel=await slider.locator('..').getByText('Refresh concept',{exact:true}).boundingBox();
      assert(originalLabel.x+originalLabel.width+4<=refreshLabel.x,'Comparison labels must remain separate');
      const imgs=await slider.locator('..').locator('img').evaluateAll(es=>es.map(i=>({w:i.getBoundingClientRect().width,h:i.getBoundingClientRect().height,nw:i.naturalWidth,nh:i.naturalHeight})));
      assert(imgs.length===2&&imgs.every(i=>Math.abs(i.w/i.h-1.5)<.01),'Comparison aspect ratio');
@@ -123,6 +126,8 @@ try {
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await page.waitForTimeout(100);
     assert(Math.abs(Number(await slider.getAttribute('aria-valuenow'))-30)<3,'Touch drag');
    }
+   const single=await page.locator('#single-card').evaluate(e=>({outer:e.getBoundingClientRect().width,card:e.firstElementChild.getBoundingClientRect().width}));
+   assert(single.card/single.outer>=(width>=1024?.60:.95),'Single card must use the available row');
    const grid=await page.locator('#four-cards').evaluate(e=>[...e.children].map(c=>({x:c.getBoundingClientRect().x,y:c.getBoundingClientRect().y})));
    if(width>=1024)assert(grid[0].y===grid[1].y&&grid[2].y===grid[3].y&&grid[0].y!==grid[2].y,'Four cards must form two balanced rows');
    await page.screenshot({path:`${out}/${width}-slider-fixture.jpg`,fullPage:true});rec.ok=true;

@@ -183,7 +183,7 @@ export function Navigation() {
                   </Dialog.Description>
 
                   {/* Header row */}
-                  <div className="flex items-center justify-between gap-3 px-4 h-[60px] border-b border-border/40 shrink-0 [&_img]:max-w-[65vw] [&_img]:h-auto">
+                  <div className="flex items-center justify-between gap-3 px-4 h-[60px] border-b border-border/40 shrink-0 [&_img]:max-w-[65vw] [&_img]:object-contain [&_img]:object-left">
                     <Logo />
                     <Dialog.Close asChild>
                       <Button

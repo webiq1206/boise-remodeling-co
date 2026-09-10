@@ -657,7 +657,7 @@ export function getCityServiceFaqs(service: ServiceSEOContent, city: CityData): 
           },
         ]
       : []),
-    ...service.faqs.slice(0, 2),
+    ...service.faqs.filter((faq) => !costSentence || !/^how much\b/i.test(faq.question)).slice(0, 2),
     {
       question: `Do you offer ${service.name.toLowerCase()} in ${city.name}?`,
       answer: `Yes. We regularly serve ${city.name} and surrounding ${county} neighborhoods with ${service.name.toLowerCase()} projects.`,

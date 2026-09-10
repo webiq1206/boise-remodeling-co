@@ -155,10 +155,10 @@ export function BeforeAfterSlider({
       </div>
 
       {/* Corner labels */}
-      <div className="absolute top-3 left-3 md:top-4 md:left-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none">
+      <div className="absolute top-3 left-3 md:top-4 md:left-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none max-w-[43%] whitespace-normal break-words text-center">
         {beforeLabel}
       </div>
-      <div className="absolute top-3 right-3 md:top-4 md:right-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none">
+      <div className="absolute top-3 right-3 md:top-4 md:right-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none max-w-[43%] whitespace-normal break-words text-center">
         {afterLabel}
       </div>
 
