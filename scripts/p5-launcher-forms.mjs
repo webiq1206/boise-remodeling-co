@@ -13,6 +13,10 @@ for(const width of [320,390,430,600,768,1024,1366,1440,1920]){
    if(await page.locator('[data-assistant-launcher]').isVisible())throw new Error('Assistant launcher overlaps mobile hero');
   }
   await page.goto('http://127.0.0.1:5000/contact',{waitUntil:'domcontentloaded'});
+  // Allow the client router's initial scroll restoration to finish before testing scroll-driven visibility.
+  await page.waitForLoadState('load');
+  await page.evaluate(()=>document.fonts.ready);
+  await page.waitForTimeout(700);
   const launcher=page.locator('[data-testid="button-assistant-open"],[data-testid="assistant-launcher"]');
   await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
   await launcher.waitFor({state:'visible'});
