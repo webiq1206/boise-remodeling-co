@@ -52,6 +52,9 @@ try {
       await menu.click();const dialog=page.getByRole('dialog').filter({visible:true}).first();await dialog.waitFor();
       const close=dialog.getByRole('button',{name:/close/i}).first();const rect=await close.boundingBox();assert(rect&&rect.width>=44&&rect.height>=44,'Menu close target');
       await page.waitForTimeout(450);
+      const brand=await dialog.locator('img').first().boundingBox();
+      assert(brand&&brand.height<=30,'Menu wordmark must fit the 60px header');
+      assert(brand.x+brand.width<=rect.x-8,'Menu wordmark must clear the close button');
       await page.screenshot({path:`${out}/${width}-menu.jpg`});
       await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
       await menu.click();await dialog.waitFor();await page.setViewportSize({width:1440,height:900});await dialog.waitFor({state:'hidden'});
