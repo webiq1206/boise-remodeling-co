@@ -68,14 +68,14 @@ export function ValueOverheadSection() {
               <div className="relative aspect-[4/5] overflow-hidden">
                 <Image
                   src={SITE_IMAGES.value}
-                  alt="Custom cabinetry being leveled and a quartz countertop set during a Boise kitchen remodel, with white-oak flooring staged for installation"
+                  alt="Representative kitchen installation with cabinet doors, tools and protected flooring"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover img-brand-grade"
                 />
               </div>
               <figcaption className="ed-small mt-4 border-t pt-4" style={{ borderColor: "var(--ed-line)" }}>
-                Kitchen install, Meridian
+                Kitchen installation · Representative imagery
               </figcaption>
             </figure>
           </Reveal>

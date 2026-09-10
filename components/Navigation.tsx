@@ -16,7 +16,7 @@ import { isPortalPath } from "@/lib/portalRoutes";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
-  { label: "Our Work", href: "/testimonials" },
+  { label: "Design Ideas", href: "/testimonials" },
   { label: "Areas", href: "/areas" },
   { label: "About", href: "/about" },
   { label: "Guides", href: "/guides" },
@@ -59,6 +59,13 @@ export function Navigation() {
     (pathname?.startsWith("/re-10") ?? false) ||
     (pathname?.startsWith("/remodel-plans") ?? false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1440px)");
+    const closeOnDesktop = () => { if (desktop.matches) setMobileOpen(false); };
+    closeOnDesktop();
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
   const isActivePath = (href: string) =>
     href === "/" ? pathname === "/" : Boolean(pathname?.startsWith(href));
   const isPortal = isPortalPath(pathname);
@@ -78,13 +85,13 @@ export function Navigation() {
       <header
         className={cn(
           "fixed top-0 z-[100] w-full transition-[background-color,border-color] duration-300",
-          scrolled ? "bg-background/95 backdrop-blur border-b border-border" : "bg-transparent border-b border-transparent",
+          scrolled ? "bg-background/95 backdrop-blur border-b border-border" : "bg-background/95 backdrop-blur border-b border-border",
         )}
       >
         <nav className="container flex h-[60px] items-center justify-between gap-4 px-4 md:px-6">
           <Logo />
 
-          <div className="hidden xl:flex items-center gap-0">
+          <div className="hidden min-[1440px]:flex items-center gap-0">
             {NAV_LINKS.map((link) => {
               const active = isActivePath(link.href);
               return (
@@ -93,7 +100,7 @@ export function Navigation() {
                   href={link.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "relative px-4 py-2 text-body-sm font-normal transition-colors rounded-sm hover-elevate",
+                    "relative whitespace-nowrap px-3 py-2 text-body-sm font-normal transition-colors rounded-sm hover-elevate",
                     active ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                   )}
                 >
@@ -106,10 +113,10 @@ export function Navigation() {
             })}
           </div>
 
-          <div className="hidden xl:flex items-center gap-3">
+          <div className="hidden min-[1440px]:flex shrink-0 items-center gap-3">
               <a
                 href={SITE_CONFIG.phoneHref}
-                className="flex items-center gap-2 text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-2 whitespace-nowrap text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
                 data-testid="link-phone-desktop"
               >
                 <span className="relative flex h-2 w-2">
@@ -124,7 +131,7 @@ export function Navigation() {
             <div className="flex items-center" aria-label="More ways to reach us">
               <a
                 href={SITE_CONFIG.phoneSmsHref}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 aria-label="Text us"
                 title="Text us"
                 data-testid="link-text-desktop"
@@ -132,7 +139,7 @@ export function Navigation() {
                 <MessageSquare className="h-[18px] w-[18px]" strokeWidth={1.5} aria-hidden />
               </a>
               <SaveContactLink
-                className="inline-flex h-10 w-10 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-muted-foreground transition-colors hover:bg-foreground/5 hover:text-foreground"
                 aria-label="Save to contacts"
                 title="Save to contacts"
               >
@@ -146,7 +153,7 @@ export function Navigation() {
 
           {/* Mobile menu - Radix Dialog gives focus trap, Escape, scroll-lock,
               inert background, and auto aria-expanded/aria-controls on the trigger. */}
-          <div className="flex xl:hidden items-center gap-2">
+          <div className="flex min-[1440px]:hidden items-center gap-2">
             <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
               <Dialog.Trigger asChild>
                 {/* The shared icon size is 36px, which suits dense admin
@@ -164,9 +171,9 @@ export function Navigation() {
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-[190] bg-background/80 backdrop-blur-sm xl:hidden" />
+                <Dialog.Overlay className="fixed inset-0 z-[190] bg-background/80 backdrop-blur-sm min-[1440px]:hidden" />
                 <Dialog.Content
-                  className="fixed inset-0 z-[200] bg-background flex flex-col xl:hidden focus:outline-none"
+                  className="fixed inset-0 z-[200] bg-background flex flex-col min-[1440px]:hidden focus:outline-none"
                   data-testid="mobile-nav-drawer"
                 >
                   <Dialog.Title className="sr-only">Navigation menu</Dialog.Title>

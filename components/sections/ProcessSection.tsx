@@ -24,7 +24,7 @@ export function ProcessSection() {
         <div className="ed-panel-media">
           <Image
             src={SITE_IMAGES.processInProgress}
-            alt="Kitchen remodel in progress with cabinets being installed by the Boise Remodeling Co team"
+            alt="Representative cabinet installation with a worker wearing Boise Remodeling Co branding"
             fill
             loading="lazy"
             sizes="(max-width: 820px) 100vw, 43vw"
@@ -34,7 +34,7 @@ export function ProcessSection() {
             className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat", opacity: 0.028 }}
           />
-          <p className="ed-panel-caption">In progress · Boise kitchen</p>
+          <p className="ed-panel-caption">Cabinet installation · Representative imagery</p>
         </div>
 
         <div className="ed-panel-body">

@@ -221,7 +221,6 @@
 .ed-display,
 .ed-h2,
 .ed-h3 {
-  margin: 0;
   font-family: var(--font-cormorant, Georgia, serif);
   font-weight: 400;
   letter-spacing: var(--ed-tracking-display);
@@ -237,7 +236,6 @@
   line-height: var(--ed-lh-heading);
 }
 .ed-h4 {
-  margin: 0;
   font-family: var(--font-cormorant, Georgia, serif);
   font-size: var(--ed-fs-h4);
   font-weight: 600;
@@ -245,9 +243,11 @@
   line-height: 1.2;
 }
 
+/* Spacing is a default. Page-level mt/mb utilities must win. */
+:where(.ed-display, .ed-h2, .ed-h3, .ed-h4, .ed-lede, .ed-body) { margin: 0; }
+
 /* The serif lede: one short paragraph that carries the weight of the heading. */
 .ed-lede {
-  margin: 0;
   font-family: var(--font-cormorant, Georgia, serif);
   font-size: var(--ed-fs-lede);
   font-weight: 500;
@@ -256,14 +256,13 @@
 }
 
 .ed-body {
-  margin: 0;
   max-width: 58ch;
   color: var(--ed-muted-ink);
   font-size: var(--ed-fs-body);
   line-height: var(--ed-lh-body);
   text-wrap: pretty;
 }
-.ed-body + .ed-body { margin-top: 1.1em; }
+:where(.ed-body + .ed-body) { margin-top: 1.1em; }
 .ed-small {
   color: var(--ed-muted-ink);
   font-size: var(--ed-fs-small);
@@ -619,3 +618,44 @@ main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.
 }
 
 .ed-split > *, .ed-panel > *, .ed-matrix > *, .ed-cards-3 > * { min-width: 0; }
+
+/* Keep the photograph visible beside the hero copy. */
+.ed-hero-copy { width: min(100%, 700px); }
+.ed-hero-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 620px;
+  margin: 32px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid rgb(255 255 255 / 0.35);
+  color: hsl(var(--inverse-foreground));
+}
+.ed-hero-facts > div { min-width: 0; }
+.ed-hero-facts dt {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.ed-hero-facts dd {
+  margin: 0 0 6px;
+  font-family: var(--font-cormorant, Georgia, serif);
+  font-size: clamp(1.375rem, 2.2vw, 2rem);
+  line-height: 1.1;
+}
+@media (max-width: 560px) {
+  .ed-hero-facts { gap: 12px; margin-top: 24px; }
+}
+/* A dark caption remains readable over any scene. */
+.ed-panel-caption {
+  width: fit-content;
+  max-width: calc(100% - 56px);
+  padding: 8px 12px;
+  background: rgb(20 25 23 / 0.9);
+  color: #fff;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  letter-spacing: 0.08em;
+}
