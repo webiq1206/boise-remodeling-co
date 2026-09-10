@@ -61,8 +61,8 @@ const SERVICE_IMAGE_SETS: Record<string, LandingImageSet> = {
   },
   adu: {
     hero: "/images/services/adu.webp",
-    breather: GALLERY_IMAGES.addition.after,
-    process: SITE_IMAGES.processInProgress,
+    breather: GALLERY_IMAGES.aduBoise.after,
+    process: SITE_IMAGES.process,
   },
   "basement-remodel": {
     hero: "/images/services/basement-remodel.webp",

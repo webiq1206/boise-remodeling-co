@@ -96,7 +96,7 @@ const SERVICE_GALLERY_AFTER: Record<string, string> = {
   "bathroom-remodel": GALLERY_IMAGES.bathroom.after,
   "whole-home-remodel": GALLERY_IMAGES.wholeHome.after,
   "room-addition": GALLERY_IMAGES.addition.after,
-  adu: GALLERY_IMAGES.basement.after,
+  adu: GALLERY_IMAGES.aduBoise.after,
 };
 
 /**
