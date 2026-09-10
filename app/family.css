@@ -59,7 +59,7 @@
    * from the CONTRAST between display and body, not from shrinking the body.
    */
   --ed-fs-lede: clamp(1.0625rem, 1.25vw, 1.3125rem);
-  --ed-fs-body: 0.9375rem;
+  --ed-fs-body: 1rem;
   --ed-fs-small: 0.8125rem;
   --ed-fs-eyebrow: 0.6875rem;
 
@@ -197,7 +197,7 @@
  * then tracked-out uppercase. It tells a skimming reader what KIND of section
  * they have landed on before they read a word of the heading.
  */
-.ed-eyebrow {
+:where(.ed-eyebrow) {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -209,33 +209,34 @@
   line-height: 1.2;
   text-transform: uppercase;
 }
-.ed-eyebrow::before {
+:where(.ed-eyebrow)::before {
   flex: 0 0 auto;
   width: 28px;
   height: 1px;
   background: currentColor;
   content: "";
 }
-.ed-eyebrow-accent { color: var(--ed-accent); }
+:where(.ed-eyebrow-accent) { color: var(--ed-accent); }
 
-.ed-display,
-.ed-h2,
-.ed-h3 {
+:where(.ed-display),
+:where(.ed-h2),
+:where(.ed-h2-sm),
+:where(.ed-h3) {
   font-family: var(--font-cormorant, Georgia, serif);
   font-weight: 400;
   letter-spacing: var(--ed-tracking-display);
   text-wrap: balance;
 }
-.ed-display { font-size: var(--ed-fs-display); line-height: var(--ed-lh-display); }
-.ed-h2 { font-size: var(--ed-fs-h2); line-height: 0.98; }
-.ed-h2-sm { font-size: var(--ed-fs-h2-sm); line-height: 1.02; }
-.ed-h3 {
+:where(.ed-display) { font-size: var(--ed-fs-display); line-height: var(--ed-lh-display); }
+:where(.ed-h2) { font-size: var(--ed-fs-h2); line-height: 0.98; }
+:where(.ed-h2-sm) { font-size: var(--ed-fs-h2-sm); line-height: 1.02; }
+:where(.ed-h3) {
   font-size: var(--ed-fs-h3);
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: var(--ed-lh-heading);
 }
-.ed-h4 {
+:where(.ed-h4) {
   font-family: var(--font-cormorant, Georgia, serif);
   font-size: var(--ed-fs-h4);
   font-weight: 600;
@@ -247,7 +248,7 @@
 :where(.ed-display, .ed-h2, .ed-h3, .ed-h4, .ed-lede, .ed-body) { margin: 0; }
 
 /* The serif lede: one short paragraph that carries the weight of the heading. */
-.ed-lede {
+:where(.ed-lede) {
   font-family: var(--font-cormorant, Georgia, serif);
   font-size: var(--ed-fs-lede);
   font-weight: 500;
@@ -255,7 +256,7 @@
   text-wrap: pretty;
 }
 
-.ed-body {
+:where(.ed-body) {
   max-width: 58ch;
   color: var(--ed-muted-ink);
   font-size: var(--ed-fs-body);
@@ -263,7 +264,7 @@
   text-wrap: pretty;
 }
 :where(.ed-body + .ed-body) { margin-top: 1.1em; }
-.ed-small {
+:where(.ed-small) {
   color: var(--ed-muted-ink);
   font-size: var(--ed-fs-small);
   line-height: 1.6;

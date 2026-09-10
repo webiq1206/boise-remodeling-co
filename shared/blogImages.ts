@@ -24,7 +24,7 @@ export function getBlogImageForSlug(
 }
 
 export function getBlogImageAlt(slug: string): string {
-  return BLOG_IMAGE_REGISTRY[slug]?.alt ?? 'Boise Remodeling Co project photography';
+  return BLOG_IMAGE_REGISTRY[slug]?.alt ?? 'Representative remodeling design imagery';
 }
 
 export function getBlogHeroImage(

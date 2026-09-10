@@ -44,7 +44,7 @@ function Logo() {
 export function Navigation() {
   const pathname = usePathname();
   const formInView = useFormInView(pathname);
-  // P5's header: transparent over the hero, gaining ground, blur and a hairline once scrolled.
+  // Solid contrast over every hero; a shadow separates the header while scrolling.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -85,7 +85,8 @@ export function Navigation() {
       <header
         className={cn(
           "fixed top-0 z-[100] w-full transition-[background-color,border-color] duration-300",
-          scrolled ? "bg-background/95 backdrop-blur border-b border-border" : "bg-background/95 backdrop-blur border-b border-border",
+          "bg-background/95 backdrop-blur border-b border-border",
+          scrolled && "shadow-sm",
         )}
       >
         <nav className="container flex h-[60px] items-center justify-between gap-4 px-4 md:px-6">

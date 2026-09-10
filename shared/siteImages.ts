@@ -1,5 +1,5 @@
 /**
- * Marketing image paths. These point at project photography in
+ * Marketing image paths. These point at representative design imagery in
  * `public/images/`. Replace with your own photos using the same filenames
  * (or update the paths here) - .jpg or .webp also work.
  */
@@ -37,7 +37,7 @@ export const SITE_IMAGES = {
 export const GALLERY_IMAGES = {
   kitchen: {
     before: "/images/gallery/gallery-kitchen-before.webp",
-    after: "/images/gallery/gallery-kitchen-after.webp",
+    after: "/images/gallery/kitchen-refresh-design-after.webp",
   },
   bathroom: {
     before: "/images/gallery/gallery-bathroom-before.webp",

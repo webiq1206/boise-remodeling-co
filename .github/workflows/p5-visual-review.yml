@@ -2,6 +2,8 @@ name: P5 visual review and production verification
 on:
   push:
     branches: [codex/p5-visual-review-20260910]
+    paths: [scripts/p5-visual-review.mjs, scripts/p5-visual-routes.json]
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

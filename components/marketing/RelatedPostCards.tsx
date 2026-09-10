@@ -4,7 +4,6 @@ import { getManifestLinks } from "@/lib/internal-links";
 import { getBlogImageAlt, getBlogThumbnail } from "@/shared/blogImages";
 import { BLOG_POSTS } from "@/shared/blogContent";
 import { GUIDE_PAGES } from "@/shared/guideContent";
-import { getCityServiceImage } from "@/shared/cityServiceImages";
 
 interface RelatedPostCardsProps {
   path: string;
@@ -40,10 +39,7 @@ function imageForUrl(url: string): { src: string; alt: string } | null {
     }
   }
 
-  const csImage = getCityServiceImage(url);
-  if (csImage) {
-    return { src: csImage, alt: "Boise Remodeling Co project photography" };
-  }
+  // Location links use text cards instead of repeating one service image.
 
   return null;
 }
@@ -63,7 +59,7 @@ export function RelatedPostCards({
         {links.map((link) => {
           const image = imageForUrl(link.url);
           return (
-            <Link key={link.url} href={link.url} className="block group">
+            <Link key={link.url} href={link.url} className="block group" aria-label={link.anchor}>
               <article className="ed-card ed-card-link h-full overflow-hidden p-0">
                 {image && (
                   <div className="relative aspect-[16/9]">
