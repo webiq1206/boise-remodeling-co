@@ -26,7 +26,7 @@ function ExploreFurther({ serviceSlug }: { serviceSlug?: string }) {
   const guide = serviceSlug ? SERVICE_GUIDE[serviceSlug] : undefined;
   const links: { href: string; label: string }[] = [
     guide ?? { href: '/guides/treasure-valley-remodeling-guide', label: 'Treasure Valley Remodeling Guide' },
-    { href: '/testimonials', label: 'See recent projects & homeowner reviews' },
+    { href: '/testimonials', label: 'Explore remodeling design ideas' },
     { href: '/resources', label: 'Free remodel planning worksheets' },
     { href: '/guides/boise-remodeling-cost-guide', label: 'Boise Remodeling Cost Guide' },
   ];
