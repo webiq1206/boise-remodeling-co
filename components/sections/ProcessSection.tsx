@@ -27,6 +27,7 @@ export function ProcessSection() {
             alt="Representative cabinet installation with a worker wearing Boise Remodeling Co branding"
             fill
             loading="lazy"
+            unoptimized // The reviewed 91 KB WebP is already sized for this panel.
             sizes="(max-width: 820px) 100vw, 43vw"
             className="object-cover img-brand-grade"
           />

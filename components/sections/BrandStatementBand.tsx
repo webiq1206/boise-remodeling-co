@@ -18,6 +18,7 @@ export function BrandStatementBand() {
     >
       <Image
         src={SITE_IMAGES.statementBand}
+        unoptimized // The 110 KB source is already compressed for this photographic band.
         alt=""
         aria-hidden="true"
         fill

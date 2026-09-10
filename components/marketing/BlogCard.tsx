@@ -17,6 +17,7 @@ export function BlogCard({ post, featured = false, formatDate }: BlogCardProps) 
   const thumbnail = getBlogThumbnail(post.slug, post.thumbnail);
   const alt = getBlogImageAlt(post.slug);
   const href = `/blog/${post.slug}`;
+  const hasSummary = post.excerpt.trim().toLowerCase() !== post.title.trim().toLowerCase();
 
   if (featured) {
     return (
@@ -43,10 +44,10 @@ export function BlogCard({ post, featured = false, formatDate }: BlogCardProps) 
           <h2 className="font-serif text-2xl md:text-3xl tracking-tight text-foreground mb-3">
             {post.title}
           </h2>
-          <p className="text-muted-foreground leading-relaxed line-clamp-2 max-w-2xl">
+          {hasSummary && <p className="text-muted-foreground leading-relaxed line-clamp-2 max-w-2xl">
             {post.excerpt}
-          </p>
-          <TextLink href={href} className="mt-4 relative z-10" showArrow>
+          </p>}
+          <TextLink href={href} className="mt-auto pt-4 relative z-10" showArrow>
             Read article
           </TextLink>
         </div>
@@ -77,8 +78,8 @@ export function BlogCard({ post, featured = false, formatDate }: BlogCardProps) 
         <h3 className="text-lg font-serif tracking-tight text-foreground line-clamp-2 mb-2">
           {post.title}
         </h3>
-        <p className="text-sm text-muted-foreground line-clamp-3 flex-1">{post.excerpt}</p>
-        <TextLink href={href} className="mt-4 relative z-10" showArrow>
+        {hasSummary && <p className="text-sm text-muted-foreground line-clamp-3 flex-1">{post.excerpt}</p>}
+        <TextLink href={href} className="mt-auto pt-4 relative z-10" showArrow>
           Read article
         </TextLink>
       </div>

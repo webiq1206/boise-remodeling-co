@@ -15,10 +15,13 @@ const nextConfig = {
     instrumentationHook: true,
   },
   images: {
-    // The site's project imagery is already compressed WebP. Serve those
-    // assets directly to avoid stalled on-demand image encoding jobs while
-    // retaining Next Image layout sizing and native lazy loading.
-    unoptimized: true,
+    // Optimization runs on the standalone Node server (output: 'standalone'),
+    // so the optimizer stays enabled for responsive sizes (better LCP/CLS).
+    //
+    // AVIF is deliberately OFF. Encoding AVIF is many times more CPU-expensive
+    // than WebP, and on the small Replit instance that made every uncached
+    // image slow to first paint. Every source in public/images is already WebP,
+    // so WebP output is close to a passthrough and AVIF bought almost nothing.
     formats: ['image/webp'],
     // Next defaults to 8 device widths x 8 image widths, so a single photo can
     // spawn a large matrix of on-demand encodes and cache misses. These trimmed
