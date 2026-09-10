@@ -30,7 +30,8 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
         />
       ) : (
       <div className={`relative overflow-hidden ${aspectClass}`}>
-        <Image src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} className="object-cover" />
+        {/* The addition image is already a 1536px WebP; avoid re-encoding this reviewed static asset. */}
+        <Image src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} unoptimized={afterSrc === "/images/gallery/gallery-addition-after.webp"} className="object-cover" />
       </div>
       )}
       <figcaption className="bg-background p-4 text-sm leading-relaxed text-muted-foreground">
