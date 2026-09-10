@@ -27,8 +27,9 @@ try {
    page.on('pageerror',onError);page.on('console',onConsole);
    const rec={width,route};
    try{
-    const response=await page.goto(origin+route,{waitUntil:'networkidle',timeout:45000});
+    const response=await page.goto(origin+route,{waitUntil:'domcontentloaded',timeout:45000});
     assert(response&&response.status()<400,'HTTP '+response?.status());
+    await page.locator('main').first().waitFor({state:'visible'});
     await page.evaluate(async()=>{await document.fonts.ready;for(let y=0;y<document.documentElement.scrollHeight;y+=750){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,35));}});
     // Expand all article bodies so hidden lower sections also receive coverage.
     await page.locator('article details:not([open]) > summary').evaluateAll(els=>els.forEach(el=>el.click()));

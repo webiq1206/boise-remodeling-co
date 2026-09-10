@@ -163,7 +163,7 @@ export function Navigation() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-11 w-11"
+                  className="h-11 w-11 shrink-0"
                   aria-label="Open navigation menu"
                   data-testid="button-mobile-menu-open"
                 >
@@ -183,13 +183,13 @@ export function Navigation() {
                   </Dialog.Description>
 
                   {/* Header row */}
-                  <div className="flex items-center justify-between px-6 h-[60px] border-b border-border/40 shrink-0">
+                  <div className="flex items-center justify-between gap-3 px-4 h-[60px] border-b border-border/40 shrink-0 [&_img]:max-w-[65vw] [&_img]:h-auto">
                     <Logo />
                     <Dialog.Close asChild>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-11 w-11"
+                        className="h-11 w-11 shrink-0"
                         aria-label="Close navigation menu"
                         data-testid="button-mobile-menu-close"
                       >

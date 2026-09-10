@@ -10,7 +10,7 @@ const records=[];
 const origin='http://127.0.0.1:5000';
 const cabinet=process.env.P5_SITE==='cabinet';
 const remodeling=process.env.P5_SITE==='remodeling';
-const selected=[...new Set(['/', '/contact','/about','/testimonials',
+const selected=[...new Set(['/', '/contact','/about','/testimonials',...(routes.includes('/services')?['/services']:[]),
  routes.find(r=>/^\/(services|cabinets)\/[^/]+$/.test(r)),
  routes.find(r=>/^\/services\/[^/]+\/[^/]+$/.test(r)),
  routes.find(r=>/^\/guides\/[^/]+$/.test(r)),
@@ -29,7 +29,7 @@ try {
   for(const route of selected){
    const rec={width,route};
    try{
-    await page.goto(origin+route,{waitUntil:'networkidle'});
+    await page.goto(origin+route,{waitUntil:'domcontentloaded'});
     await page.evaluate(async()=>{await document.fonts.ready;for(let y=0;y<document.documentElement.scrollHeight;y+=600){window.scrollTo({top:y,behavior:'instant'});await new Promise(r=>setTimeout(r,80));}});
     await page.locator('article details:not([open]) > summary').evaluateAll(es=>es.forEach(e=>e.click()));
     await page.evaluate(async()=>{const is=[...document.images].filter(i=>i.getClientRects().length);is.forEach(i=>i.loading='eager');await Promise.allSettled(is.map(i=>i.decode()));});
@@ -46,10 +46,12 @@ try {
       await page.screenshot({path:`${out}/${width}-menu.jpg`});
       await page.keyboard.press('Escape');await dialog.waitFor({state:'hidden'});
       await menu.click();await dialog.waitFor();await page.setViewportSize({width:1440,height:900});await dialog.waitFor({state:'hidden'});
-      assert(await page.evaluate(()=>getComputedStyle(document.body).overflow!=='hidden'),'Resize leaves scroll locked');
+      await page.waitForFunction(()=>getComputedStyle(document.body).overflow!=='hidden',{},{timeout:2000});
       await page.setViewportSize({width,height:900});
      } else assert(!(await menu.isVisible()),'Desktop menu breakpoint');
      assert.equal(await page.locator('h1.ed-display').evaluate(e=>getComputedStyle(e).marginBottom),'32px','Hero spacing');
+     assert(await page.locator('h1.ed-display').evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=32),'Display typography must override element resets');
+     assert(await page.locator('h2.ed-h2').first().evaluate(e=>parseFloat(getComputedStyle(e).fontSize)>=30),'Section typography must override element resets');
      assert.equal(await page.locator('dl.ed-hero-facts').count(),1,'Single facts group');
     }
     if(route==='/contact'){
@@ -75,6 +77,9 @@ try {
      await page.keyboard.press('End');assert.equal(await slider.getAttribute('aria-valuenow'),'100');
      await page.keyboard.press('ArrowLeft');assert.equal(await slider.getAttribute('aria-valuenow'),'96');
      await page.keyboard.press('Home');for(let i=0;i<12;i++)await page.keyboard.press('ArrowRight');
+     await slider.locator('..').locator('img').evaluateAll(es=>Promise.all(es.map(i=>i.decode())));
+     assert(await slider.locator('..').locator('img').evaluateAll(es=>es.every(i=>i.naturalWidth>0&&i.complete)),'Both comparison images decode');
+     await page.waitForTimeout(500);
      await page.screenshot({path:`${out}/${width}-kitchen-comparison.jpg`});
      const imgs=await slider.locator('..').locator('img').evaluateAll(es=>es.map(i=>({w:i.getBoundingClientRect().width,h:i.getBoundingClientRect().height,nw:i.naturalWidth,nh:i.naturalHeight})));
      assert(imgs.length===2&&imgs.every(i=>Math.abs(i.w/i.h-1.5)<.01),'Comparison aspect ratio');
@@ -85,7 +90,7 @@ try {
   }
   const rec={width,route:'component-fixture'};
   try{
-   await page.goto(origin+'/p5-audit-fixture',{waitUntil:'networkidle'});
+   await page.goto(origin+'/p5-audit-fixture',{waitUntil:'domcontentloaded'});
    const slider=page.getByTestId('handle-before-after'),container=page.getByTestId('slider-before-after');
    await container.scrollIntoViewIfNeeded();await slider.focus();
    await page.keyboard.press('Home');assert.equal(await slider.getAttribute('aria-valuenow'),'0');

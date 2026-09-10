@@ -2,12 +2,12 @@ import { chromium } from '@playwright/test';
 import fs from 'node:fs/promises';
 const browser=await chromium.launch(); const results=[];
 await fs.mkdir('p5-verification',{recursive:true});
-for(const width of [320,390,430,768,1024,1440,1920]){
+for(const width of [320,390,430,600,768,1024,1366,1440,1920]){
  const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<768});
  await context.route('**/api/assistant/chat',r=>r.fulfill({contentType:'application/json',body:'{"available":true}'}));
  const page=await context.newPage(); page.setDefaultTimeout(10000);
  try{
-  await page.goto('http://127.0.0.1:5000/contact',{waitUntil:'networkidle'});
+  await page.goto('http://127.0.0.1:5000/contact',{waitUntil:'domcontentloaded'});
   const launcher=page.locator('[data-testid="button-assistant-open"],[data-testid="assistant-launcher"]');
   await page.evaluate(()=>window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'}));
   await launcher.waitFor({state:'visible'});
