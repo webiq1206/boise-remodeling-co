@@ -18,7 +18,7 @@
 
 import { NextResponse } from "next/server";
 import { COST_CATALOG_VERSION } from "@/shared/costCatalog";
-import { readUnitCostOverrides } from "@/app/api/admin/pricing/route";
+import { readUnitCostOverrides } from "@/lib/unitCostOverrides";
 
 export const dynamic = "force-dynamic";
 

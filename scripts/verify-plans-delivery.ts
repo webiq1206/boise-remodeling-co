@@ -303,7 +303,7 @@ check(
 
 /* The wizard has to actually fire them. A named constant nothing references is
    a funnel that reports zero forever. */
-const wizard = fs.readFileSync("components/plans/PlansWizard.tsx", "utf8");
+const wizard = fs.readFileSync("lib/p5/progress.ts", "utf8");
 for (const key of Object.keys(PLAN_EVENTS)) {
   check(
     wizard.includes(`PLAN_EVENTS.${key}`) || key === "consultationRequested",

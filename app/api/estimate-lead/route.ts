@@ -34,7 +34,7 @@ import {
   InquiryRejectedError,
   recordDeliveryStatus,
 } from "@/server/services/inquiryAcceptance";
-import { readUnitCostOverrides } from "@/app/api/admin/pricing/route";
+import { readUnitCostOverrides } from "@/lib/unitCostOverrides";
 import type { PropertyProfile } from "@/shared/propertyProfile";
 import { HOUSE_NUMBER_REGEX } from "@/shared/addressValidation";
 import {
