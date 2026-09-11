@@ -6,4 +6,3 @@
 - [Next build seed concurrency](next-build-seed-concurrency.md) — startup content seeds can run in parallel build workers; unique inserts must be database-conflict-safe.
 - [Publish schema parity](publish-schema-parity.md) — runtime-created production tables must also exist in development and the declared schema to avoid destructive publish diffs.
 - [Database transport fidelity](database-transport.md) — HTTP proxy can omit successful RETURNING rows; validate real driver results, not only isolated SQL fixtures.
-- [Pricing provider compatibility](pricing-provider-compatibility.md) — integrated OpenAI needs JSON in input; completed web searches may omit required source metadata.
