@@ -307,25 +307,19 @@ export function Navigation() {
         data-mobile-nav-bar=""
         className={cn("fixed left-0 right-0 bottom-0 z-[100] lg:hidden pb-safe border-t bg-background border-border", (formInView || mobileOpen) && "invisible pointer-events-none")}
       >
-        <div className="grid grid-cols-3 divide-x divide-border">
+        <div className="flex items-stretch gap-2 p-2">
           <a
             href={SITE_CONFIG.phoneHref}
-            className="flex items-center justify-center gap-2 py-4 text-sm font-normal text-foreground"
+            className="flex min-h-14 w-14 shrink-0 items-center justify-center rounded-sm border border-border text-foreground hover-elevate active-elevate-2"
+            aria-label={`Call ${SITE_CONFIG.phone}`}
             data-testid="button-call-mobile"
           >
-            Call
-          </a>
-          <a
-            href={SITE_CONFIG.phoneSmsHref}
-            className="flex items-center justify-center gap-2 py-4 text-sm font-normal text-foreground"
-            data-testid="button-text-mobile"
-          >
-            Text
+            <Phone className="h-5 w-5" strokeWidth={1.5} />
           </a>
           <NavEstimateButton
-            asLink
+            variant="brand"
             surface="mobile-sticky"
-            className="flex items-center justify-center gap-2 py-4 text-sm font-normal text-foreground"
+            className="min-h-14 flex-1 text-base"
             data-testid="button-begin-conversation-mobile"
           >
             {CTA_QUOTE}
