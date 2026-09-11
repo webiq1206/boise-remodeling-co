@@ -50,6 +50,12 @@ NODE_OPTIONS = "--max-old-space-size=1536"
 NEXT_PUBLIC_GA_MEASUREMENT_ID = "G-NGE449QF9Y"
 NEXT_PUBLIC_META_PIXEL_ID = "2461987544292871"
 
+[userenv.development]
+P5_OBJECT_STORAGE_ENABLED = "true"
+
+[userenv.production]
+P5_OBJECT_STORAGE_ENABLED = "true"
+
 [postMerge]
 path = "scripts/post-merge.sh"
 timeoutMs = 120000
