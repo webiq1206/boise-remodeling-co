@@ -433,18 +433,6 @@ html :where(.ed-small) {
   justify-content: center;
   padding: clamp(40px, 5vw, 88px);
 }
-.ed-panel-caption {
-  position: absolute;
-  z-index: 2;
-  right: 28px;
-  bottom: 22px;
-  left: 28px;
-  color: rgb(255 255 255 / 0.72);
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
 
 /* Horizontal rail: a scroll-snapping row for galleries and testimonials. */
 .ed-rail {
@@ -650,18 +638,6 @@ main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.
 @media (max-width: 560px) {
   .ed-hero-facts { gap: 12px; margin-top: 24px; }
 }
-/* A dark caption remains readable over any scene. */
-.ed-panel-caption {
-  width: fit-content;
-  max-width: calc(100% - 56px);
-  padding: 8px 12px;
-  background: rgb(20 25 23 / 0.9);
-  color: #fff;
-  font-size: 0.6875rem;
-  line-height: 1.5;
-  letter-spacing: 0.08em;
-}
-
 /* Photographic bands need brighter body copy than solid dark sections. */
 .ed-photo-copy {
   --ed-muted-ink: color-mix(in srgb, hsl(var(--inverse-foreground)) 86%, hsl(var(--inverse)));

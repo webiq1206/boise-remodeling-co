@@ -52,6 +52,7 @@
     "verify:disclosure": "tsx scripts/verify-disclosure.ts",
     "check:re10-extraction": "tsx --env-file-if-exists=.env.local scripts/check-re10-extraction.ts",
     "check:large-documents": "tsx --env-file-if-exists=.env.local scripts/check-large-documents.ts",
+    "check:p5-extraction": "tsx --env-file-if-exists=.env.local scripts/check-p5-scope-extraction.ts",
     "verify:contrast": "node scripts/verify-contrast.mjs"
   },
   "dependencies": {

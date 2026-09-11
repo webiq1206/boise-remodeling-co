@@ -35,12 +35,11 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
         <Image unoptimized={afterSrc.startsWith("/images/") && afterSrc.endsWith(".webp")} src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} className="object-cover" />
       </div>
       )}
-      <figcaption className="bg-background p-4 text-sm leading-relaxed text-muted-foreground">
-        <p>{isReviewedComparison
-          ? "Illustrative design comparison. Generated imagery shows a finish refresh in the same room, not a completed customer project. Drag the divider or use the arrow keys to compare."
-          : "Representative design imagery"}</p>
-        {caption && <div className="mt-3 [&_*]:!text-foreground">{caption}</div>}
-      </figcaption>
+      {caption && (
+        <figcaption className="bg-background p-4 text-sm leading-relaxed text-muted-foreground">
+          <div className="[&_*]:!text-foreground">{caption}</div>
+        </figcaption>
+      )}
     </figure>
   );
 }
