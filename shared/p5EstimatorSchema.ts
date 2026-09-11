@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, uuid, text, integer, jsonb, timestamp, unique, foreignKey, index } from "drizzle-orm/pg-core";
+import { primaryKey, pgTable, uuid, text, integer, jsonb, timestamp, unique, foreignKey, index } from "drizzle-orm/pg-core";
 
 // Keep these declarations aligned with the existing estimator storage schema.
 export const p5EstimatorDrafts = pgTable("p5_estimator_drafts", {
@@ -59,3 +59,6 @@ export const p5EstimatorPolicy = pgTable("p5_estimator_policy", {
   updatedBy: text("updated_by").notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+export const p5EstimatorWork = pgTable("p5_estimator_work", {
+ draftId: uuid("draft_id").notNull(),workKey:text("work_key").notNull(),payload:jsonb("payload").notNull().default({}),leaseToken:text("lease_token"),leaseUntil:timestamp("lease_until",{withTimezone:true}),updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+},table=>[primaryKey({name:"p5_estimator_work_pkey",columns:[table.draftId,table.workKey]}),foreignKey({name:"p5_estimator_work_draft_id_fkey",columns:[table.draftId],foreignColumns:[p5EstimatorDrafts.id]})]);
