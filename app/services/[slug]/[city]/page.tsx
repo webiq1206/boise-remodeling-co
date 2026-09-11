@@ -30,11 +30,12 @@ export function generateStaticParams() {
   return getAllCityServiceParams();
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { slug: string; city: string };
-}) {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ slug: string; city: string }>;
+  }
+) {
+  const params = await props.params;
   const service = getServiceBySlug(params.slug);
   const city = getCityBySlug(params.city);
   if (!service || !city) return {};
@@ -49,11 +50,12 @@ export async function generateMetadata({
   });
 }
 
-export default function CityServicePage({
-  params,
-}: {
-  params: { slug: string; city: string };
-}) {
+export default async function CityServicePage(
+  props: {
+    params: Promise<{ slug: string; city: string }>;
+  }
+) {
+  const params = await props.params;
   const service = getServiceBySlug(params.slug);
   const city = getCityBySlug(params.city);
   const content = SERVICE_SEO_CONTENT[params.slug];

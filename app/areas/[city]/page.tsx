@@ -20,11 +20,12 @@ export function generateStaticParams() {
   return CITY_SLUGS.map((city) => ({ city }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { city: string };
-}) {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ city: string }>;
+  }
+) {
+  const params = await props.params;
   const cityData = getCityBySlug(params.city);
   if (!cityData) return {};
   return buildPageMetadata({
@@ -35,7 +36,8 @@ export async function generateMetadata({
   });
 }
 
-export default function AreaPage({ params }: { params: { city: string } }) {
+export default async function AreaPage(props: { params: Promise<{ city: string }> }) {
+  const params = await props.params;
   const city = getCityBySlug(params.city);
   if (!city) notFound();
 

@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readLocalFile } from "@/lib/storage/blob";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { key: string[] } }
-) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ key: string[] }> }) {
+  const params = await props.params;
   try {
     const key = params.key.map(decodeURIComponent).join("/");
     const buffer = await readLocalFile(key);

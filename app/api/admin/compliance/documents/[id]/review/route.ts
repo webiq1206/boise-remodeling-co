@@ -3,10 +3,8 @@ import { getSession, getUserFromDb } from "@/lib/auth";
 import { reviewComplianceDocument } from "@/server/services/complianceService";
 import { storage } from "@/server/storage";
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session.userId) {

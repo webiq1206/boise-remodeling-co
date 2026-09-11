@@ -10,10 +10,8 @@ import { db } from "@/lib/db";
 import { projectAssignments } from "@shared/schema";
 import { and, eq, sql } from "drizzle-orm";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(_request: NextRequest, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session.userId) {

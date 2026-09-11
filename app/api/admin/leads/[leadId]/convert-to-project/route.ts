@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession, getUserFromDb } from "@/lib/auth";
 import { convertLeadToProject } from "@/server/services/projectService";
 
-export async function POST(
-  _request: NextRequest,
-  { params }: { params: { leadId: string } }
-) {
+export async function POST(_request: NextRequest, props: { params: Promise<{ leadId: string }> }) {
+  const params = await props.params;
   try {
     const session = await getSession();
     if (!session.userId) {

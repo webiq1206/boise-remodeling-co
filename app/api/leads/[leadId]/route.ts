@@ -36,7 +36,8 @@ const patchSchema = z
   })
   .strict();
 
-export async function PATCH(request: Request, { params }: { params: { leadId: string } }) {
+export async function PATCH(request: Request, props: { params: Promise<{ leadId: string }> }) {
+  const params = await props.params;
   const session = await getSession();
   if (!session.userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const user = await getUserFromDb(session.userId);

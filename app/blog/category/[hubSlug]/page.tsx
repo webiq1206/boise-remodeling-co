@@ -31,11 +31,12 @@ export async function generateStaticParams() {
   return CONTENT_HUBS.map((hub) => ({ hubSlug: hub.hubSlug }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { hubSlug: string };
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: {
+    params: Promise<{ hubSlug: string }>;
+  }
+): Promise<Metadata> {
+  const params = await props.params;
   const hub = getHubBySlug(params.hubSlug);
   if (!hub) return { title: 'Not Found' };
 
@@ -79,11 +80,12 @@ export async function generateMetadata({
   };
 }
 
-export default function BlogCategoryHubPage({
-  params,
-}: {
-  params: { hubSlug: string };
-}) {
+export default async function BlogCategoryHubPage(
+  props: {
+    params: Promise<{ hubSlug: string }>;
+  }
+) {
+  const params = await props.params;
   const hub = getHubBySlug(params.hubSlug);
   if (!hub) notFound();
 
