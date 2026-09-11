@@ -39,7 +39,7 @@ import {
   InquiryRejectedError,
   recordDeliveryStatus,
 } from "@/server/services/inquiryAcceptance";
-import { readUnitCostOverrides } from "@/app/api/admin/pricing/route";
+import { readUnitCostOverrides } from "@/lib/unitCostOverrides";
 import {
   buildCrmIntakeFields,
   buildLeadPropertyRecord,
