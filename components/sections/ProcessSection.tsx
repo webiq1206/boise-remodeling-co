@@ -35,7 +35,6 @@ export function ProcessSection() {
             className="pointer-events-none absolute inset-0"
             style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat", opacity: 0.028 }}
           />
-          <p className="ed-panel-caption">Cabinet installation · Representative imagery</p>
         </div>
 
         <div className="ed-panel-body">

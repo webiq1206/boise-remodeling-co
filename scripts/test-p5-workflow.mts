@@ -14,6 +14,9 @@ import {ESTIMATOR_BRAND as brand} from '../lib/p5/brand.ts';
 // All contacts, prices and forecasts in this script are synthetic test fixtures.
 // Production modules are copied without changing their logic. Only database and
 // external transport boundaries are replaced inside an isolated temporary folder.
+// Pricing/workflow verification is offline; never let ambient provider secrets
+// change which code path this fixture exercises.
+for (const key of ['AI_INTEGRATIONS_OPENAI_API_KEY','AI_INTEGRATIONS_OPENAI_BASE_URL','OPENAI_API_KEY','ANTHROPIC_API_KEY']) delete process.env[key];
 const root=process.cwd();
 await mkdir('p5-verification',{recursive:true});
 const now=new Date();

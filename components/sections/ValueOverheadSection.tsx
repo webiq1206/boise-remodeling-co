@@ -74,9 +74,6 @@ export function ValueOverheadSection() {
                   className="object-cover img-brand-grade"
                 />
               </div>
-              <figcaption className="ed-small mt-4 border-t pt-4" style={{ borderColor: "var(--ed-line)" }}>
-                Kitchen installation · Representative imagery
-              </figcaption>
             </figure>
           </Reveal>
         </div>
