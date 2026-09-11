@@ -11,6 +11,8 @@ const service=brand.services.includes('bathroom')?'bathroom':brand.services.incl
 const fullAnswers={service,taskList:'Complete the specified work. Repair three interior doors.',...(service.startsWith('cabinet-')?{cabinetRoom:'kitchen',cabinetBaseLf:'20',cabinetUpperLf:'0'}:service==='handyman'?{}:{sqft:'80',materials:'Porcelain tile',demolition:'Remove old finishes'})};
 const result={status:'preliminary',range:{low:1000,high:1800},categoryRanges:[{category:'Carpentry',low:1000,high:1800}],lineItems:[{id:'repair',category:'Carpentry',description:'Repair three interior doors',quantity:3,unit:'EA',low:1000,high:1800,unitLow:1000/3,unitHigh:600}],summary:'Synthetic fixture scope.',includedCategories:[],allowances:[],assumptions:[],exclusions:[],factors:[],nextStep:'Schedule a scope review.',message:'Synthetic planning range.',disclaimer:'This is not a bid, quote, offer or guaranteed price.'};
 async function mock(context,{interruptions=false,scenario='full'}={}){
+ // Keep synthetic estimator sessions out of production analytics and isolate third-party network failures.
+ await context.route(/^https:\/\/([a-z0-9-]+\.)*clarity\.ms\//, route=>route.fulfill({status:200,contentType:'application/javascript',body:''}));
  const state={saved:null,nullReceipt:interruptions,failUpload:interruptions,submissions:0,postSubmissionSaves:0,scopeCalls:0};
  await context.addInitScript(()=>{window.SpeechRecognition=class{start(){this.onresult?.({resultIndex:0,results:[Object.assign([{transcript:'Repair three interior doors.'}],{isFinal:true})]});this.onend?.();}stop(){this.onend?.();}};});
  await context.route('**/api/p5-estimator/**',async route=>{
