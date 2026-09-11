@@ -5,3 +5,4 @@
 - [Lead conversion identity](lead-conversion-identity.md) — gate, consultation, retries and ad platforms share one durable inquiry ID; storage decides whether a lead is new.
 - [Next build seed concurrency](next-build-seed-concurrency.md) — startup content seeds can run in parallel build workers; unique inserts must be database-conflict-safe.
 - [Publish schema parity](publish-schema-parity.md) — runtime-created production tables must also exist in development and the declared schema to avoid destructive publish diffs.
+- [Database transport fidelity](database-transport.md) — HTTP proxy can omit successful RETURNING rows; validate real driver results, not only isolated SQL fixtures.
