@@ -24,6 +24,8 @@ export const p5EstimatorFiles = pgTable("p5_estimator_files", {
   sizeBytes: integer("size_bytes").notNull(),
   sha256: text("sha256").notNull(),
   dataBase64: text("data_base64").notNull(),
+  storageBucket: text("storage_bucket"),
+  storageKey: text("storage_key"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, (table) => [
   foreignKey({ name: "p5_estimator_files_draft_id_fkey", columns: [table.draftId], foreignColumns: [p5EstimatorDrafts.id] }),
