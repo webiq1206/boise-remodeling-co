@@ -3,10 +3,10 @@ import { getAdminRecipientEmails,formatFromAddress } from "../../server/services
 import { ESTIMATOR_BRAND as brand } from "./brand";
 export async function adminRecipients(){return [...new Set(await getAdminRecipientEmails(brand.email))];}
 export const EMAIL_SUPPORTS_IDEMPOTENCY=true;
-export async function sendEmail(input:{to:string;subject:string;text:string;attachments:{filename:string;content:Buffer}[];key:string}){
+export async function sendEmail(input:{to:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer}[];key:string}){
   const {client,fromEmail}=await getUncachableEmailClient();
   const sender=client.emails as unknown as {send:(body:unknown,options:unknown)=>Promise<any>};
-  const result=await sender.send({from:formatFromAddress(fromEmail),to:input.to,replyTo:brand.email,subject:input.subject,text:input.text,attachments:input.attachments},{idempotencyKey:input.key});
+  const result=await sender.send({from:formatFromAddress(fromEmail),to:input.to,replyTo:brand.email,subject:input.subject,text:input.text,html:input.html,attachments:input.attachments},{idempotencyKey:input.key});
   if(result?.error)throw new Error("Email provider rejected delivery");
   const id=result?.data?.id||result?.id;
   if(!id||id==="noop"||result?.skipped)throw new Error("Email delivery is not configured");
