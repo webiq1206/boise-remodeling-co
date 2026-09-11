@@ -1,4 +1,9 @@
 #!/bin/bash
+# Standalone builds do not execute next.config.js at runtime. Set these before
+# Node loads ws so database connections use its portable JavaScript codecs.
+export WS_NO_BUFFER_UTIL=1
+export WS_NO_UTF_8_VALIDATE=1
+
 # THE SERVER STARTS FIRST. INDEXNOW RUNS BEHIND IT.
 #
 # This used to be the other way round:
