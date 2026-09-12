@@ -8,7 +8,7 @@ import { analyzeScope } from "./extraction.ts";
 import { prepareAnalysisFiles,verifyUpload } from "./documents";
 import { SCOPE_BATCH_LIMIT,SCOPE_TEXT_LIMIT,SCOPE_FILE_COUNT,SCOPE_UPLOAD_HELP,SCOPE_FIELDS } from "./scope.ts";
 import { draftCredentials,readDraft,readUploads,saveUpload,saveDraft,DraftError } from "./store";
-import {answersForReplacedScope,normalizeScopeText,scopeFingerprint,scopeTextChanged,sourceSnapshot,sourceSnapshotsEqual} from "./scopeReplacement.ts";
+import {answersForEditedScope,normalizeScopeText,scopeFingerprint,scopeTextChanged,sourceSnapshot,sourceSnapshotsEqual} from "./scopeReplacement.ts";
 import { failed,json,limitedBody,protectRequest } from "./http";
 import { ESTIMATOR_BRAND } from "./brand";
 
@@ -35,6 +35,7 @@ export async function postScope(request:Request){
     const bytes=await limitedBody(request,24*1024*1024);
     const form=await new Response(bytes as BodyInit,{headers:{"Content-Type":request.headers.get("content-type")||""}}).formData();
     const text=normalizeScopeText(String(form.get("text")??draft.text));if(text.length>SCOPE_TEXT_LIMIT)throw new DraftError("Upload this scope as a document so every section can be processed.");
+    if(form.get("scopeFingerprint")!==null&&form.get("scopeFingerprint")!==scopeFingerprint(text))throw new DraftError("The project source fingerprint does not match its text. Refresh before continuing.",409);
     // Validate the caller's snapshot before reading, storing or replacing
     // anything. Legacy clients may upload only when they send the same source
     // text; a missing revision must never authorize a source rewrite.
@@ -65,7 +66,7 @@ export async function postScope(request:Request){
     // analysis boundary so a direct/replayed analysis request cannot reuse
     // an extraction or wizard decision from another source text.
     if(sourceChanged){
-      const resetAnswers=answersForReplacedScope(draft.answers,draft.extraction,draft.wizard?.resolutions||{},draft.analyzedAnswers);
+      const resetAnswers=answersForEditedScope(draft.answers,draft.extraction,draft.wizard?.resolutions||{},draft.analyzedAnswers);
       const resetWizard={skipped:[],resolutions:{},sourceVersion:undefined,instructionAnswers:[]};
       const reset=await saveDraft(id,key,ESTIMATOR_BRAND.id,{text,answers:resetAnswers,extraction:null,reviewed:null,contact:draft.contact,wizard:resetWizard,analyzedFingerprint:undefined,analyzedAnswers:undefined},draft.revision);
       draft=reset;analysisDraft=reset;

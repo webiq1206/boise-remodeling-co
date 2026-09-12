@@ -5,7 +5,7 @@ import {costQuestionFields} from "./questionPolicy";
 import { ESTIMATOR_BRAND } from "./brand";
 import { draftCredentials, readDraft, saveDraft, DraftError } from "./store";
 import { SCOPE_FIELDS, SCOPE_TEXT_LIMIT, validateAnswer, validateExtraction, type ScopeAnswers, type ReviewedScope } from "./scope.ts";
-import {answersForReplacedScope,normalizeScopeText,scopeFingerprint,scopeTextChanged} from './scopeReplacement.ts';
+import {answersForEditedScope,answersForReplacedScope,normalizeScopeText,scopeFingerprint,scopeTextChanged} from './scopeReplacement.ts';
 import { failed,json,limitedBody,protectRequest } from "./http";
 
 function stable(value:unknown):string{return JSON.stringify(value,(key,item)=>item&&typeof item==="object"&&!Array.isArray(item)?Object.fromEntries(Object.entries(item).sort(([a],[b])=>a.localeCompare(b))):item);}
@@ -64,6 +64,7 @@ export async function putDraft(request:Request){
     if(typeof raw.text!=="string"||raw.text.length>SCOPE_TEXT_LIMIT||!Number.isInteger(raw.revision)||raw.revision<0)throw new DraftError("Invalid draft.");
     const existing=await readDraft(id,key);
     const incomingText=normalizeScopeText(raw.text);
+    if(raw.scopeFingerprint!==undefined&&raw.scopeFingerprint!==scopeFingerprint(incomingText))throw new DraftError("The project source fingerprint does not match its text. Refresh before continuing.",409);
     const analyzedMismatch=Boolean(existing?.analyzedFingerprint&&existing.extraction&&existing.analyzedFingerprint!==scopeFingerprint(incomingText));
     const sourceChanged=Boolean(existing&&(scopeTextChanged(existing.text,incomingText)||analyzedMismatch));
     const explicitReplacement=raw.scopeReplacement===true||raw.replaceScope===true||raw.scopeReplacement?.mode==="replace";
@@ -90,9 +91,12 @@ export async function putDraft(request:Request){
     // Provider extraction is immutable to public clients. Corrections live in answers.
     let extraction=existing?.extraction||null;
     if(replacing){
-      // A changed source may keep the existing upload set, but it must never
-      // inherit extraction facts, conflict decisions or clarification history.
-      answers=answersForReplacedScope(answers,existing?.extraction||null,existing?.wizard?.resolutions||{},existing?.analyzedAnswers);
+      // A changed source invalidates old analysis, but ordinary edits still
+      // retain independently authored answers. Only an explicit replacement
+      // requests the stronger blank-answer behavior.
+      answers=explicitReplacement
+        ? answersForReplacedScope(answers,existing?.extraction||null,existing?.wizard?.resolutions||{},existing?.analyzedAnswers)
+        : answersForEditedScope(answers,existing?.extraction||null,existing?.wizard?.resolutions||{},existing?.analyzedAnswers);
       extraction=null;
       wizard={skipped:[],resolutions:{},sourceVersion:undefined,instructionAnswers:[]};
       skipped=[];

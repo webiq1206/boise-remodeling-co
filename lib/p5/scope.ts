@@ -1,5 +1,7 @@
 import {mergeInstructions,validateInstructions,type ScopeInstructions} from './instructions.ts';
 import {readPageRecords,readTakeoffs,reconcileTakeoffs,combineCoverage} from './documentLedger.ts';
+import type {RetainedClarificationProvenance,RetainedLaborCoverage} from './retainedClarification.ts';
+import {aggregateLaborFacts} from './laborFacts.ts';
 /** Public scope vocabulary. No internal prices or financial policy belongs here. */
 export const SCOPE_FIELDS = {
   estimatingInstructions: {label: "Custom estimating instructions", kind: "text"},
@@ -58,7 +60,23 @@ export type ScopeField = keyof typeof SCOPE_FIELDS;
 export type ScopeAnswers = Partial<Record<ScopeField, string>>;
 export interface ExtractedFact { field: ScopeField; value: string; confidence: number; source: string; evidence: string; basis?: "stated" | "calculated" | "visual" | "inferred" }
 export interface ScopeConflict { field: ScopeField; values: string[]; explanation: string }
-export interface ScopeExtraction { summary: string; facts: ExtractedFact[]; conflicts: ScopeConflict[]; missingInformation: string[]; reviewNotes: string[]; clarifications?: {field:ScopeField;question:string;reason:string}[]; instructions?:ScopeInstructions; documentCoverage?:import('./documentLedger.ts').DocumentCoverage; takeoffs?:import('./documentLedger.ts').Takeoff[] }
+export interface ScopeExtraction {
+  summary: string;
+  facts: ExtractedFact[];
+  conflicts: ScopeConflict[];
+  missingInformation: string[];
+  reviewNotes: string[];
+  clarifications?: {field:ScopeField;question:string;reason:string}[];
+  instructions?:ScopeInstructions;
+  documentCoverage?:import('./documentLedger.ts').DocumentCoverage;
+  takeoffs?:import('./documentLedger.ts').Takeoff[];
+  /** Source-only alternatives retained for archival review, never active pricing. */
+  clarificationProvenance?:RetainedClarificationProvenance;
+  /** Backward-compatible alias carrying the same retained metadata. */
+  sourceHistory?:RetainedClarificationProvenance;
+  /** Component hours are billable; their total is a non-additive audit summary. */
+  laborCoverage?:RetainedLaborCoverage;
+}
 export interface ScopeUpload { id: string; name: string; type: string; size: number; sha256: string; status: "stored" | "failed" }
 export interface ReviewedScope {
   text: string; answers: ScopeAnswers; extraction: ScopeExtraction | null; uploads: ScopeUpload[];
@@ -91,9 +109,36 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
   if (!raw || typeof raw !== "object") throw new Error("Invalid scope analysis");
   const r = raw as Record<string, unknown>;
   const strings = (value: unknown, max: number) => { if (!Array.isArray(value) || value.length > max || value.some(x => typeof x !== "string" || x.length > 4000)) throw new Error("Invalid analysis notes");return value as string[]; };
+  const retainedMetadata=(value:unknown,name:string):RetainedClarificationProvenance|undefined=>{
+    if(value===undefined)return undefined;
+    if(!value||typeof value!=="object"||Array.isArray(value))throw new Error(`Invalid ${name}`);
+    const metadata=value as Record<string,unknown>;
+    if(metadata.version!=="p5-retained-clarification-v1"||!Array.isArray(metadata.clarifications)||metadata.clarifications.length>100)throw new Error(`Invalid ${name}`);
+    let serialized:string;
+    try{serialized=JSON.stringify(value);}catch{throw new Error(`Invalid ${name}`);}
+    if(serialized.length>500000)throw new Error(`Invalid ${name}`);
+    return value as RetainedClarificationProvenance;
+  };
+  let clarificationProvenance=retainedMetadata(r.clarificationProvenance,"clarification provenance");
+  const sourceHistory=retainedMetadata(r.sourceHistory,"source history");
+  let laborCoverage:RetainedLaborCoverage|undefined;
+  if(r.laborCoverage!==undefined){
+    const coverage=r.laborCoverage as RetainedLaborCoverage;
+    if(!coverage||coverage.basis!=='retained-document-clarification'||coverage.nonAdditiveSummary!==true
+      ||!Number.isFinite(coverage.totalHours)||coverage.totalHours<=0
+      ||!Array.isArray(coverage.components)||!coverage.components.length||coverage.components.length>100
+      ||coverage.components.some(c=>!c||typeof c.id!=='string'||!c.id||c.id.length>200
+        ||typeof c.description!=='string'||c.description.length>4000||!Number.isFinite(c.hours)||c.hours<=0)
+      ||new Set(coverage.components.map(c=>c.id)).size!==coverage.components.length
+      ||Math.abs(coverage.components.reduce((sum,c)=>sum+c.hours,0)-coverage.totalHours)>0.000001){
+      throw new Error('Invalid non-additive labor coverage');
+    }
+    laborCoverage={...coverage,components:coverage.components.map(c=>({...c}))};
+  }
   if (typeof r.summary !== "string" || r.summary.length > 8000 || !Array.isArray(r.facts) || r.facts.length > 150 || !Array.isArray(r.conflicts) || r.conflicts.length > 50) throw new Error("Invalid scope analysis");
   const unreadValues: string[] = [];
-  const facts = r.facts.flatMap((item: unknown): ExtractedFact[] => {
+  const takeoffs=r.takeoffs?readTakeoffs(r.takeoffs):undefined;
+  const factsBeforeLaborAggregation = r.facts.flatMap((item: unknown): ExtractedFact[] => {
     if (!item || typeof item !== "object") throw new Error("Invalid fact");
     const f = item as Record<string, unknown>;
     if (typeof f.field === "string" && Object.hasOwn(SCOPE_FIELDS,f.field) && SCOPE_FIELDS[f.field as ScopeField].kind === "number" && typeof f.value === "string" && validateAnswer(f.field as ScopeField,f.value)) {
@@ -105,13 +150,28 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
     if(invalid)throw new Error(`Invalid extracted fact (${knownField?f.field:'unknown field'}: ${invalid})`);
     // The validation above narrows these at runtime. Never include the supplied
     // value, source text or evidence in an error log.
-    const fact=f as typeof f & {field:ScopeField;value:string;confidence:number};
+    const fact=f as typeof f & {field:ScopeField;value:string;confidence:number;evidence:string};
     if (f.basis !== undefined && !["stated", "calculated", "visual", "inferred"].includes(String(f.basis))) throw new Error("Invalid fact basis");
     // A model's confidence is not evidence that an assumption was supplied by the user.
     let confidence = fact.confidence;
     if (f.basis === "inferred") confidence = Math.min(confidence, .2);
     if (f.basis === "visual") confidence = Math.min(confidence, SCOPE_FIELDS[f.field as ScopeField].kind === "number" ? 0 : .6);
     const value=SCOPE_FIELDS[f.field as ScopeField].kind === "number" ? String(Number(fact.value.replaceAll(",", ""))) : fact.value.trim();
+    // Keep an interpretation available for review, but do not let a
+    // measurement named for a different assembly become a pricing answer.
+    // Zero remains valid when the source explicitly says the component is
+    // absent; an undocumented component is held instead of normalized to
+    // zero. NUMERIC_EVIDENCE is declared below and is available when this
+    // function is called after module initialization.
+    const numericEvidence=NUMERIC_EVIDENCE[f.field as ScopeField];
+    const assemblyMeasurement=f.field==="cabinetBaseLf"||f.field==="cabinetUpperLf"||f.field==="cabinetTallLf";
+    const explicitAbsence=value==="0"&&/\b(?:no|none|zero|without)\b.{0,30}\b(?:base|lower|upper|wall|tall|pantry|cabinet)\b/i.test(fact.evidence);
+    if(assemblyMeasurement&&
+      (numericEvidence&&!numericEvidence.test(fact.evidence)&&!explicitAbsence||
+       value==="0"&&UNDOCUMENTED_QUANTITY.test(fact.evidence))){
+      unreadValues.push(`Confirm ${SCOPE_FIELDS[f.field as ScopeField].label.toLowerCase()} from an explicit measurement before pricing.`);
+      return [];
+    }
     return [{ ...f, value, confidence } as unknown as ExtractedFact];
   });
   const conflicts = r.conflicts.map((item: unknown): ScopeConflict => {
@@ -122,6 +182,33 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
     const values=[...new Set(strings(c.values,10).filter(v=>v.trim()&&!validateAnswer(field,v)).map(v=>SCOPE_FIELDS[field].kind === "number" ? String(Number(v.replaceAll(",", ""))) : v.trim()))];
     return { field, values, explanation: c.explanation };
   });
+  const laborAggregation=aggregateLaborFacts(factsBeforeLaborAggregation,takeoffs,laborCoverage);
+  const facts=laborAggregation.facts;
+  conflicts.push(...laborAggregation.conflicts);
+  unreadValues.push(...laborAggregation.missingInformation);
+  let validatedSourceHistory=sourceHistory;
+  if(laborAggregation.replacedCanonicalFacts){
+    const priorFacts=Array.isArray((sourceHistory as unknown as Record<string,unknown>|undefined)?.laborFacts)
+      ? (sourceHistory as unknown as Record<string,unknown>).laborFacts as ExtractedFact[]
+      : [];
+    const laborFacts=[...priorFacts,...laborAggregation.originalFacts];
+    const seenLaborFacts=new Set<string>();
+    const retainedLaborFacts=laborFacts.filter(fact=>{
+      const key=JSON.stringify([fact.field,fact.value,fact.source,fact.evidence]);
+      if(seenLaborFacts.has(key))return false;
+      seenLaborFacts.add(key);return true;
+    });
+    validatedSourceHistory={
+      ...(sourceHistory||{version:'p5-retained-clarification-v1',clarifications:[]}),
+      laborFacts:retainedLaborFacts,
+    } as RetainedClarificationProvenance;
+    if(clarificationProvenance){
+      clarificationProvenance={
+        ...clarificationProvenance,
+        laborFacts:retainedLaborFacts,
+      } as RetainedClarificationProvenance;
+    }
+  }
   // Independent conflict detection: never let a model overwrite two different measurements.
   for (const field of Object.keys(SCOPE_FIELDS) as ScopeField[]) {
     const values = [...new Set(facts.filter(f => f.field === field && f.confidence >= .4).map(f => f.value.trim()))];
@@ -131,8 +218,26 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
     if(!q||!Object.hasOwn(SCOPE_FIELDS,q.field)||typeof q.question!=="string"||q.question.length>500||typeof q.reason!=="string"||q.reason.length>1000)throw new Error("Invalid clarification");
     return {field:q.field as ScopeField,question:q.question,reason:q.reason};
   }):[];
-  const pages=r.pages?readPageRecords(r.pages):[];
-  return { summary: r.summary, facts, conflicts,clarifications, ...(r.instructions?{instructions:validateInstructions(r.instructions)}:{}), ...(r.pages?{documentCoverage:{pages,expectedPages:pages.length,complete:pages.every(p=>p.status==='read')}}:{}),...(r.takeoffs?{takeoffs:readTakeoffs(r.takeoffs)}:{}), missingInformation: [...strings(r.missingInformation, 50),...unreadValues], reviewNotes: strings(r.reviewNotes, 50) };
+  const savedCoverage=r.documentCoverage as ScopeExtraction['documentCoverage']|undefined;
+  const hasPages=r.pages!==undefined||savedCoverage!==undefined;
+  const pages=hasPages?readPageRecords(r.pages??savedCoverage?.pages):[];
+  const expectedPages=savedCoverage?.expectedPages??pages.length;
+  if(!Number.isSafeInteger(expectedPages)||expectedPages<pages.length||expectedPages>10000)throw new Error('Invalid document page coverage');
+  if(laborCoverage&&laborCoverage.components.some(component=>{
+    const row=takeoffs?.find(item=>item.id===component.id);
+    return !row||!/^(?:h|hr|hrs|hour|hours)$/i.test(row.unit)||row.quantity!==component.hours;
+  }))throw new Error('Labor coverage does not match its active component takeoffs');
+  return {
+    summary: r.summary, facts, conflicts,clarifications,
+    ...(r.instructions?{instructions:validateInstructions(r.instructions)}:{}),
+    ...(hasPages?{documentCoverage:{pages,expectedPages,complete:savedCoverage?.complete!==false&&pages.length===expectedPages&&pages.every(p=>p.status==='read')}}:{}),
+    ...(takeoffs?{takeoffs}:{}),
+    ...(clarificationProvenance?{clarificationProvenance}:{}),
+    ...(validatedSourceHistory?{sourceHistory:validatedSourceHistory}:{}),
+    ...(laborCoverage?{laborCoverage}:{}),
+    missingInformation: [...strings(r.missingInformation, 50),...unreadValues],
+    reviewNotes: strings(r.reviewNotes, 50)
+  };
 }
 const IMAGE_SOURCE = /\.(?:jpe?g|png|webp|gif|heic|heif)(?:\b|[),])/i;
 const EXPLICIT_URGENCY = /\b(?:standard|normal timing|not urgent|priority|prioritized|emergency|urgent|rush|asap|same[- ]day|immediately)\b/i;
@@ -143,7 +248,9 @@ const NUMERIC_EVIDENCE:Partial<Record<ScopeField,RegExp>>={
   length:/\b(?:length|long)\b/i,width:/\b(?:width|wide)\b/i,rooms:/\brooms?\b/i,bathrooms:/\bbathrooms?\b/i,stories:/\b(?:stories|story)\b/i,
   cabinetBaseLf:/\b(?:base|lower)\b.{0,40}\b(?:linear feet|linear foot|lf)\b|\b(?:linear feet|linear foot|lf)\b.{0,40}\b(?:base|lower)\b/i,
   cabinetUpperLf:/\b(?:upper|wall)\b.{0,40}\b(?:linear feet|linear foot|lf)\b|\b(?:linear feet|linear foot|lf)\b.{0,40}\b(?:upper|wall)\b/i,
+  cabinetTallLf:/\b(?:tall|pantry)\b.{0,40}\b(?:linear feet|linear foot|lf|run)\b|\b(?:linear feet|linear foot|lf|run)\b.{0,40}\b(?:tall|pantry)\b/i,
 };
+const UNDOCUMENTED_QUANTITY=/\b(?:unknown|not\s+(?:known|documented|specified|provided|measured|shown)|undocumented|unmeasured|tbd|n\/?a)\b/i;
 /** Keep model interpretation available for review without turning it into a pricing input. */
 export function protectPricingFacts(extraction: ScopeExtraction): ScopeExtraction {
   const facts: ExtractedFact[] = [];
@@ -163,7 +270,8 @@ export function protectPricingFacts(extraction: ScopeExtraction): ScopeExtractio
       continue;
     }
     const numericEvidence=NUMERIC_EVIDENCE[fact.field];
-    if(numericEvidence&&(!numericEvidence.test(fact.evidence)||DERIVED_MEASUREMENT.test(fact.evidence))){
+    const explicitAbsence=fact.value.trim()==='0'&&/\b(?:no|none|zero|without)\b.{0,30}\b(?:base|lower|upper|wall|tall|pantry|cabinet)\b/i.test(fact.evidence);
+    if(numericEvidence&&(!numericEvidence.test(fact.evidence)&&!explicitAbsence||DERIVED_MEASUREMENT.test(fact.evidence))){
       heldDerivedMeasurement=true;
       reviewNotes.push(`Unconfirmed derived measurement - ${SCOPE_FIELDS[fact.field].label}: ${fact.value}. The source evidence does not explicitly label this measurement, so it is not a pricing fact.`);
       continue;
@@ -207,6 +315,15 @@ export function mergeScopeFacts(current: ScopeAnswers, extraction: ScopeExtracti
 /** Merge page reads without losing distinct measurements or additive trade scope. */
 export function combineScopeExtractions(parts:ScopeExtraction[]):ScopeExtraction {
   const merged:ScopeExtraction={summary:[...new Set(parts.map(p=>p.summary).filter(Boolean))].join("\n"),facts:[],conflicts:parts.flatMap(p=>p.conflicts),missingInformation:[...new Set(parts.flatMap(p=>p.missingInformation))],reviewNotes:[...new Set(parts.flatMap(p=>p.reviewNotes))]};
+  let clarificationProvenance=parts.find(p=>p.clarificationProvenance)?.clarificationProvenance;
+  const sourceHistory=parts.find(p=>p.sourceHistory)?.sourceHistory;
+  if(clarificationProvenance)merged.clarificationProvenance=clarificationProvenance;
+  if(sourceHistory)merged.sourceHistory=sourceHistory;
+  const laborCoverages=parts.flatMap(p=>p.laborCoverage?[p.laborCoverage]:[]);
+  if(laborCoverages.length){
+    if(laborCoverages.every(c=>JSON.stringify(c)===JSON.stringify(laborCoverages[0])))merged.laborCoverage=laborCoverages[0];
+    else merged.missingInformation.push('Retained labor summaries differ; confirm the complete labor scope.');
+  }
   if(parts.some(p=>p.instructions))merged.instructions=mergeInstructions(parts.flatMap(p=>p.instructions?[p.instructions]:[]));
   const coverage=parts.flatMap(p=>p.documentCoverage?[p.documentCoverage]:[]);
   if(coverage.length)merged.documentCoverage=combineCoverage(coverage);
@@ -218,6 +335,35 @@ export function combineScopeExtractions(parts:ScopeExtraction[]):ScopeExtraction
     const key=JSON.stringify([fact.field,fact.value.trim(),fact.source,fact.evidence]);
     if(!seen.has(key)){seen.add(key);merged.facts.push(fact);}
   }
+  const laborAggregation=aggregateLaborFacts(merged.facts,merged.takeoffs,merged.laborCoverage);
+  merged.facts=laborAggregation.facts;
+  merged.conflicts.push(...laborAggregation.conflicts);
+  merged.missingInformation.push(...laborAggregation.missingInformation);
+  if(laborAggregation.replacedCanonicalFacts){
+    const historicalFacts=parts.flatMap(part=>{
+      const history=part.sourceHistory as unknown as Record<string,unknown>|undefined;
+      return Array.isArray(history?.laborFacts)?history.laborFacts as ExtractedFact[]:[];
+    });
+    const priorSource=sourceHistory as unknown as Record<string,unknown>|undefined;
+    const priorFacts=Array.isArray(priorSource?.laborFacts)?priorSource.laborFacts as ExtractedFact[]:[];
+    const allLaborFacts=[...priorFacts,...historicalFacts,...laborAggregation.originalFacts];
+    const seenLaborFacts=new Set<string>();
+    const retainedLaborFacts=allLaborFacts.filter(fact=>{
+      const key=JSON.stringify([fact.field,fact.value,fact.source,fact.evidence]);
+      if(seenLaborFacts.has(key))return false;
+      seenLaborFacts.add(key);return true;
+    });
+    const laborHistory={
+      ...(sourceHistory||{version:'p5-retained-clarification-v1',clarifications:[]}),
+      laborFacts:retainedLaborFacts,
+    } as RetainedClarificationProvenance;
+    merged.sourceHistory=laborHistory;
+    if(clarificationProvenance)clarificationProvenance={
+      ...clarificationProvenance,
+      laborFacts:retainedLaborFacts,
+    } as RetainedClarificationProvenance;
+  }
+  if(clarificationProvenance)merged.clarificationProvenance=clarificationProvenance;
   for(const field of Object.keys(SCOPE_FIELDS) as ScopeField[]){
     const values=[...new Set(merged.facts.filter(f=>f.field===field&&f.confidence>=.4).map(f=>f.value.trim()))];
     if(values.length>1&&SCOPE_FIELDS[field].kind!=="text"&&!merged.conflicts.some(c=>c.field===field))merged.conflicts.push({field,values,explanation:"Different document pages state different values. Confirm the intended project information."});

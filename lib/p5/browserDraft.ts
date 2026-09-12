@@ -1,5 +1,5 @@
 import {SCOPE_FIELDS,validateAnswer,type ScopeAnswers,type ScopeExtraction,type ScopeConflict,type ScopeField,type ScopeUpload} from './scope.ts';
-export interface BrowserDraft {pendingReply?:{id:string;answer:string};namespace?:string;sourceImageUrl?:string;projectSource?:{id:string;answers:ScopeAnswers;imageUrl?:string};id:string;key:string;revision:number;text:string;answers:ScopeAnswers;extraction:ScopeExtraction|null;contact:{name:string;email:string;phone:string};step:number;updatedAt:number;conflicts?:ScopeConflict[];uploads?:ScopeUpload[];wizard?:{skipped:ScopeField[];resolutions:ScopeAnswers;sourceVersion?:string;instructionAnswers?:import('./clarifications').InstructionAnswer[]} ;analysisWarning?:string;analyzedText?:string;analyzedAnswers?:string;analyzedFingerprint?:string;scopeFingerprint?:string;dirty?:boolean;pricedFields?:ScopeField[]}
+export interface BrowserDraft {pendingReply?:{id:string;answer:string};namespace?:string;sourceImageUrl?:string;/** Set when an explicit replacement must not reattach route-provided design data. */sourceDetached?:boolean;projectSource?:{id:string;answers:ScopeAnswers;imageUrl?:string};id:string;key:string;revision:number;text:string;answers:ScopeAnswers;extraction:ScopeExtraction|null;contact:{name:string;email:string;phone:string};step:number;updatedAt:number;conflicts?:ScopeConflict[];uploads?:ScopeUpload[];wizard?:{skipped:ScopeField[];resolutions:ScopeAnswers;sourceVersion?:string;instructionAnswers?:import('./clarifications').InstructionAnswer[]} ;analysisWarning?:string;analyzedText?:string;analyzedAnswers?:string;analyzedFingerprint?:string;scopeFingerprint?:string;dirty?:boolean;pricedFields?:ScopeField[]}
 const storageKey='p5-project-draft-v2';
 export const BROWSER_DRAFT_RECOVERY_KEY=`${storageKey}:recovery-v1`;
 
@@ -78,5 +78,9 @@ export function restoreBrowserDraft(recovery:string|BrowserDraftRecovery):Browse
 export function replaceBrowserDraft(current:BrowserDraft,defaultService=''): {draft:BrowserDraft;recovery:BrowserDraftRecovery|null}{
   const recovery=archiveBrowserDraft(current);
   if(!recovery)throw new Error('Your original project could not be archived. The new project was not started; your saved project is still here.');
-  return {draft:{...newBrowserDraft(defaultService),namespace:current.namespace},recovery};
+  // A deliberate replacement is a blank project, not a new instance of the
+  // current route's defaults. In particular, do not resurrect a bathroom
+  // service or a design source when the component mounts again.
+  void defaultService;
+  return {draft:{...newBrowserDraft(''),namespace:current.namespace,sourceDetached:true},recovery};
 }

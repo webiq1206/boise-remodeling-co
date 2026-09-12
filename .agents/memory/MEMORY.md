@@ -1,7 +1,7 @@
 - [Email provider decision](email-provider.md) — sends via Resend not Gmail; Gmail couldn't send from the boiseremodeling.co alias; always check Resend's `{data,error}`.
 - [Em-dash build guard](em-dash-guard.md) — prebuild fails on U+2014 in code/content; use hyphens; markdown & .json deliberately out of scope.
 - [Address field validation](address-field-validation.md) — never store raw geocoder formattedAddress in the regex-validated form field; always run buildCleanAddress first.
-- [Two pricing engines](two-pricing-engines.md) — the quoted range comes from the line-item engine in shared/costs, not estimateEngine; new pricing inputs must be wired there or they silently do nothing.
+- [Pricing-path boundaries](two-pricing-engines.md) — legacy calculators and P5 use different pricing paths; identify the active endpoint before applying a pricing fix.
 - [Lead conversion identity](lead-conversion-identity.md) — gate, consultation, retries and ad platforms share one durable inquiry ID; storage decides whether a lead is new.
 - [Next build seed concurrency](next-build-seed-concurrency.md) — startup content seeds can run in parallel build workers; unique inserts must be database-conflict-safe.
 - [Publish schema parity](publish-schema-parity.md) — runtime-created production tables must also exist in development and the declared schema to avoid destructive publish diffs.
