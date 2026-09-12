@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {priceCompleteScope,marketResolution,requestPricing,type PricingRequest} from '../lib/p5/scopePricing.ts';
+import {priceCompleteScope,marketResolution,catalogResolution,requestPricing,type PricingRequest} from '../lib/p5/scopePricing.ts';
 import {priceReviewedScope} from '../lib/p5/costBook.ts';
 import {createPlanningConfiguration,PLANNING_MODEL_VERSION,type PlanningCatalog} from '../lib/p5/planningBooks.ts';
 import type {ReviewedScope} from '../lib/p5/scope.ts';
@@ -55,6 +55,22 @@ test('Sourced averages add missing costs, retain sources, and preserve financial
  assert.ok((r.customer.range?.low||0)>(base.customer.range?.low||0));
  assert.ok(JSON.stringify(r.internal.scopePricing).includes(urls[0]));
  assert.ok(!JSON.stringify(r.customer).includes('unitCost'));
+});
+test('Complete-scope mapper and audit receive active scope without retained alternatives',async()=>{
+ const history={version:'p5-retained-clarification-v1',clarifications:[],unselected:'Unselected quartz top'};
+ const archived={...scope,extraction:{summary:'Selected cabinet scope',facts:[],conflicts:[],missingInformation:[],reviewNotes:[],clarificationProvenance:history,sourceHistory:history}} as ReviewedScope;
+ const seen:unknown[]=[];
+ const queue:unknown[]=[
+  {tasks:[{id:'cabinets',description:'Cabinet supply',evidence:'ten feet'}],issues:[]},
+  {tasks:[task],issues:[]},
+  {coveredTaskIds:['cabinets'],issues:[]},
+ ];
+ const request:PricingRequest=async(_instructions,input)=>{seen.push(input);return {value:queue.shift(),sourceUrls:urls};};
+ const result=await priceCompleteScope(archived,config,request,now);
+ assert.ok(result.customer.range);
+ assert.ok(seen.length>=3);
+ assert.ok(!JSON.stringify(seen).includes('Unselected quartz top'));
+ assert.ok(seen.every(payload=>!JSON.stringify(payload).includes('clarificationProvenance')&&!JSON.stringify(payload).includes('sourceHistory')));
 });
 test('Regional unit-cost benchmarks reject incompatible units, responsibility and supplier offers',()=>{
  const priced=marketResolution(researched,urls,[extra],now).rules[0];assert.equal(priced.unitCost,20);assert.equal(priced.quantity.fixed,10);
@@ -244,4 +260,56 @@ test('Preliminary regional benchmark verification notes persist without becoming
  const research={...researched,notes:[note]};
  const r=await priceCompleteScope(scope,config,replies([{tasks:[task,extra],issues:[]},research,{coveredTaskIds:['cabinets','overlay'],issues:[],notes:[note]}]),now);
  assert.ok(r.customer.range);assert.ok(r.customer.assumptions.includes(note));assert.equal(r.internal.scopePricing.issues.length,0);
+});
+
+test('Mapped labor cannot change a confirmed hour quantity',()=>{
+ const mapping={tasks:[{id:'drywall',description:'Drywall repair labor',evidence:'The reviewed scope states 14 labor hours.',existingLineIds:[],additions:[{code:'REF-GENERAL-HOUR',quantity:10,quantityEvidence:'Ten labor hours'}],researchDescription:'',issues:[]}],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ const result=catalogResolution(mapping as any,config,[],now,scope);
+ assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/does not match the explicit quantity/i.test(issue)));
+});
+
+test('Distinct trade labor remains additive while partial-hour unknowns stay unpriced',()=>{
+ const mapping={tasks:[
+  {id:'excavation',description:'Driveway excavation labor',evidence:'16 labor hours',existingLineIds:[],additions:[{code:'REF-GENERAL-HOUR',quantity:16,quantityEvidence:'16 labor hours'}],researchDescription:'',issues:[]},
+  {id:'concrete',description:'Driveway concrete labor',evidence:'24 labor hours',existingLineIds:[],additions:[{code:'REF-GENERAL-HOUR',quantity:24,quantityEvidence:'24 labor hours'}],researchDescription:'',issues:[]},
+  {id:'unknown',description:'Concrete finishing labor',evidence:'Partial labor hours remain unknown',existingLineIds:[],additions:[{code:'REF-GENERAL-HOUR',quantity:10,quantityEvidence:'10 labor hours'}],researchDescription:'',issues:[]},
+ ],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ const result=catalogResolution(mapping as any,config,[],now,scope);
+ assert.deepEqual(result.rules.map(rule=>rule.quantity.fixed),[16,24]);
+ assert.equal(result.rules.reduce((sum,rule)=>sum+(rule.quantity.fixed||0),0),40);
+ assert.ok(result.issues.some(issue=>/remains unmeasured/i.test(issue)));
+});
+
+test('Unselected alternatives never become billable mapping rules',()=>{
+ const mapping={tasks:[{id:'optional',description:'Optional alternate island package',evidence:'Alternative not selected by owner; 10 LF',existingLineIds:[],additions:[{code:'03-15-02-M',quantity:10,quantityEvidence:'10 LF'}],researchDescription:'',issues:[]}],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ const result=catalogResolution(mapping as any,config,[],now,scope);
+ assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/not billable/i.test(issue)));
+});
+
+test('Component-scoped exclusion does not reject included painting',()=>{
+ const mapping={tasks:[{id:'paint',description:'Interior painting',evidence:'Painting is included. Appliances are excluded.',existingLineIds:[],additions:[{code:'03-14-01-M',quantity:100,quantityEvidence:'100 LF for painting'}],researchDescription:'',issues:[]}],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ const result=catalogResolution(mapping as any,config,[],now,scope);
+ assert.equal(result.rules.length,1);assert.equal(result.issues.length,0);
+});
+
+test('Known component keeps a positive line while unknown sibling remains incomplete',()=>{
+ const mapping={tasks:[{id:'mixed',description:'Painting and cabinet labor',evidence:'Painting labor is 14 hours; cabinet labor hours are unknown.',existingLineIds:[],additions:[{code:'REF-GENERAL-HOUR',quantity:14,quantityEvidence:'14 labor hours for painting'}],researchDescription:'',issues:[]}],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ const result=catalogResolution(mapping as any,config,[],now,scope);
+ assert.equal(result.rules.length,1);assert.ok(result.issues.some(issue=>/quantity remains unmeasured/i.test(issue)));
+});
+
+test('Repair does not erase a non-price blocker when it adds a positive rule',async()=>{
+ const bad={id:'labor',description:'Drywall labor',evidence:'14 labor hours',existingLineIds:[],additions:[{code:'REF-GENERAL-HOUR',quantity:10,quantityEvidence:'10 labor hours'}],researchDescription:'',issues:[]};
+ const good={...bad,additions:[{code:'REF-GENERAL-HOUR',quantity:14,quantityEvidence:'Corrected 14 labor hours'}]};
+ const queue:unknown[]=[
+  {tasks:[{id:'labor',description:bad.description,evidence:bad.evidence}],issues:[]},
+  {tasks:[bad],issues:[]},
+  {coveredTaskIds:['labor'],issues:[]},
+  {tasks:[good],issues:[]},
+  {coveredTaskIds:['labor'],issues:[]},
+ ];
+ const request:PricingRequest=async()=>({value:queue.shift(),sourceUrls:urls});
+ const result=await priceCompleteScope({...scope,answers:{...scope.answers,service:'handyman'}},config,request,now);
+ assert.equal(result.customer.range,null);
+ assert.ok(result.internal.scopePricing.issues.some(issue=>/does not match the explicit quantity/i.test(issue)));
 });

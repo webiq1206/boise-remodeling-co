@@ -5,7 +5,7 @@ import {suggestedTrade} from './trades.ts';
 import {priceReviewedScope,type CostRule,type EstimatorConfiguration,type ScopePriceResolution} from './costBook.ts';
 import type {ReviewedScope} from './scope.ts';
 import {hasRestrictedScope,INSTRUCTION_POLICY} from './instructions.ts';
-import {pricingSourceParts} from './pricingSources.ts';
+import {activePricingSource,pricingSourceParts} from './pricingSources.ts';
 
 // This module runs only on the server at submission. No client-supplied mapping
 // or rate can authorize a price. The approved catalog is never mutated here.
@@ -123,17 +123,34 @@ export const requestPricing:PricingRequest=async(instructions,input,search,remai
 function existingLines(priced:ReturnType<typeof priceReviewedScope>){
   return 'lines' in priced.internal?priced.internal.lines:[];
 }
-export function catalogResolution(mapping:Mapping,configuration:EstimatorConfiguration,existing:ReturnType<typeof existingLines>,now:Date):ScopePriceResolution{
+export function catalogResolution(mapping:Mapping,configuration:EstimatorConfiguration,existing:ReturnType<typeof existingLines>,now:Date,scope?:ReviewedScope):ScopePriceResolution{
   const result:ScopePriceResolution={rules:[],assumptions:[...(mapping.notes||[])],issues:[...mapping.issues],removeLineIds:mapping.replacements.map(r=>r.lineId),removeExclusions:mapping.removeExclusions.map(e=>e.text)};
   for(const r of mapping.replacements)if(!existing.some(l=>l.id===r.lineId))throw new Error('Unknown replacement line');
   const ids=new Set<string>();
   for(const t of mapping.tasks){
     if(ids.has(t.id))throw new Error('Duplicate scope task');ids.add(t.id);
+    // Historical alternatives can be present in a plan set or prior estimate,
+    // but they are not selected scope. Holding the task is safer than silently
+    // billing it; the final audit then has a visible reason to resolve.
+    if(taskIsUnselected(t)){
+      result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);
+      continue;
+    }
     result.issues.push(...t.issues.map(i=>`${t.description}: ${i}`));
-    for(const id of t.existingLineIds)if(result.removeLineIds?.includes(id)||!existing.some(l=>l.id===id&&l.quantity*l.unitCost>0))result.issues.push(`${t.description}: invalid existing price reference.`);
+    const unresolved=unresolvedQuantityIssue(t);
+    const hasAllowance=t.additions.some(a=>/^ALLOWANCE\s*:/i.test(a.quantityEvidence)&&Boolean(a.quantityRange));
+    if(unresolved&&!hasAllowance)result.issues.push(unresolved);
+    for(const id of t.existingLineIds){
+      const line=existing.find(l=>l.id===id);
+      if(result.removeLineIds?.includes(id)||!line||line.quantity*line.unitCost<=0)result.issues.push(`${t.description}: invalid existing price reference.`);
+      else result.issues.push(...existingQuantityIssues(t,line,scope,mapping.tasks.length));
+    }
     for(const a of t.additions){
       const rate=configuration.planningCatalog?.rates.find(r=>r.code===a.code);
       const regional=configuration.regionalRates?.find(r=>r.id===a.code);
+      const rateUnit=rate?.unit||regional?.unit||'';
+      const quantityFindings=quantityIssues(t,a,rateUnit,scope,mapping.tasks.length,rate?.description||regional?.description||a.code);
+      if(quantityFindings.length){result.issues.push(...quantityFindings);continue;}
       if(!rate&&regional){
         if(Date.parse(regional.evidence.validUntil)<now.getTime()){result.issues.push(`${t.description}: regional rate needs current evidence.`);continue;}
         result.rules.push({...regional,scopeTaskId:t.id,id:`scope-${result.rules.length+1}`,description:t.description,quantity:{fixed:a.quantity,factor:1},allowance:true,quantityRange:a.quantityRange||undefined,building:a.building,floor:a.floor});
@@ -150,14 +167,139 @@ export function catalogResolution(mapping:Mapping,configuration:EstimatorConfigu
 
 export const unitKey=(unit:string)=>{
   const key=unit.toLowerCase().replace(/[.²]/g,m=>m==='²'?'2':'').replace(/[-_]/g,' ').replace(/\s+/g,' ').trim().replace(/^(?:per |\/)/,'').trim();
-  const aliases:Record<string,string>={'sf':'sf','sq ft':'sf','sqft':'sf','square foot':'sf','square feet':'sf','ft2':'sf','lf':'lf','lin ft':'lf','linear ft':'lf','lineal foot':'lf','lineal feet':'lf','linear foot':'lf','linear feet':'lf','ea':'each','each':'each','hr':'hour','hrs':'hour','hour':'hour','hours':'hour','cy':'cy','cubic yard':'cy','cubic yards':'cy'};
+  const aliases:Record<string,string>={'sf':'sf','sq ft':'sf','sqft':'sf','square foot':'sf','square feet':'sf','ft2':'sf','lf':'lf','lin ft':'lf','linear ft':'lf','lineal foot':'lf','lineal feet':'lf','linear foot':'lf','linear feet':'lf','ea':'each','each':'each','unit':'each','units':'each','hr':'hour','hrs':'hour','h':'hour','hour':'hour','hours':'hour','cy':'cy','cubic yard':'cy','cubic yards':'cy'};
   return aliases[key]||key;
 };
-export function marketResolution(raw:unknown,urls:string[],tasks:Mapping['tasks'],now:Date,offset=0,location=''):ScopePriceResolution{
+
+type QuantityClaim={quantity:number;unit:string};
+const NUMBER_WORDS:Record<string,number>={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20};
+const UNKNOWN_QUANTITY=/\b(?:unknown|not\s+(?:known|documented|specified|provided|measured|shown)|undocumented|unmeasured|tbd|to\s+be\s+determined|n\/?a)\b/i;
+const UNSELECTED_SCOPE=/\b(?:alternate|alternative|optional|not\s+selected|not\s+included|excluded|by\s+others|previous(?:ly)?\s+proposed|discarded)\b/i;
+const INCLUDED_SCOPE=/\b(?:included|selected|requested|approved|retain(?:ed)?|keep|kept|yes)\b/i;
+const TASK_STATUS_SCOPE=/\b(?:alternate|alternative|optional|not\s+selected|not\s+included|by\s+others|previous(?:ly)?\s+proposed|discarded)\b/i;
+const COMPONENT_STOP_WORDS=new Set(['a','an','and','are','be','by','for','in','installation','install','labor','labour','material','materials','of','on','package','requested','scope','the','work']);
+const componentTerms=(description:string)=>description.toLowerCase().match(/[a-z][a-z-]{2,}/g)?.filter(term=>!COMPONENT_STOP_WORDS.has(term))||[];
+const clauseHasComponent=(clause:string,terms:string[])=>terms.some(term=>{
+  const stem=term.replace(/(?:ing|ed|es|s)$/,'');
+  return new RegExp(`\\b(?:${term}|${stem})\\b`,'i').test(clause);
+});
+/**
+ * Status is scoped to a mapped component. "Appliances are excluded; painting
+ * is included" must not suppress a painting task merely because the evidence
+ * contains the word excluded. A bare "alternate/not selected" status still
+ * applies to the task when no component is named.
+ */
+function taskIsUnselected(task:Mapping['tasks'][number]){
+  const description=task.description.trim();
+  if(UNSELECTED_SCOPE.test(description))return true;
+  const terms=componentTerms(description);
+  const clauses=task.evidence.split(/[.;\n]+|\s*,\s*/).map(clause=>clause.trim()).filter(Boolean);
+  const statusClauses=clauses.filter(clause=>UNSELECTED_SCOPE.test(clause));
+  const componentStatuses=statusClauses.filter(clause=>clauseHasComponent(clause,terms));
+  if(componentStatuses.some(clause=>UNSELECTED_SCOPE.test(clause)&&!INCLUDED_SCOPE.test(clause)))return true;
+  if(componentStatuses.some(clause=>INCLUDED_SCOPE.test(clause)))return false;
+  // Generic alternate/not-selected language refers to the task itself. A
+  // component-specific "excluded" clause without a task term does not.
+  return statusClauses.some(clause=>TASK_STATUS_SCOPE.test(clause))||(statusClauses.length>0&&!terms.length);
+}
+function unresolvedQuantityIssue(task:Mapping['tasks'][number]){
+  return UNKNOWN_QUANTITY.test(`${task.description} ${task.evidence}`)?`${task.description}: quantity remains unmeasured; do not publish a confirmed quantity.`:null;
+}
+/**
+ * Read quantities only from the short task evidence supplied to the mapper.
+ * This is a negative defense, not an estimator: it never creates a quantity.
+ * Its job is to stop a mapper from changing a reviewed 14 HR fact into an
+ * arbitrary 10 HR addition, or from turning an unresolved quantity into a
+ * confirmed line.
+ */
+function quantityClaims(textValue:string):QuantityClaim[]{
+  const textValueWithWords=textValue.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\b/gi,(word)=>String(NUMBER_WORDS[word.toLowerCase()]));
+  const claims:QuantityClaim[]=[];
+  const add=(quantity:number,unit:string)=>{if(Number.isFinite(quantity)&&quantity>0)claims.push({quantity,unit:unitKey(unit)});};
+  const pattern=/(?:^|[^\d.])(\d+(?:\.\d+)?)\s*(?:(?:labor|labour)\s*)?(hours?|hrs?|hr|h|feet?|ft|linear\s+feet?|lineal\s+feet?|lf|square\s+feet?|square\s+foot|sq\.?\s*ft|sf|cubic\s+yards?|cubic\s+yard|cy|each|units?|fixtures?|doors?|windows?|toilets?|faucets?|lights?)(?=$|[^\w])/gi;
+  for(const match of textValueWithWords.matchAll(pattern)){
+    const unit=match[2].toLowerCase();
+    add(Number(match[1]),/\bhours?\b|\bhrs?\b|\bhr\b|\bh\b/.test(unit)?'hour':/\b(?:square|sq|sf)\b/.test(unit)?'sf':/\b(?:cubic|cy)\b/.test(unit)?'cy':/\b(?:linear|lineal|lf|feet?|ft)\b/.test(unit)?'lf':unit);
+  }
+  return claims;
+}
+function isCorrectionEvidence(value:string){
+  return /\b(?:correct(?:ed|ion)?|revis(?:ed|ion)|replacement|adjust(?:ed|ment)|supersed(?:ed|es))\b/i.test(value);
+}
+function knownScopeClaims(scope:ReviewedScope|undefined,task:Mapping['tasks'][number]):QuantityClaim[]{
+  if(!scope)return [];
+  const taskText=`${task.description} ${task.evidence}`.toLowerCase();
+  const claims:QuantityClaim[]=[];
+  const addAnswer=(field:keyof ReviewedScope['answers'],unit:string,terms:RegExp)=>{
+    const value=scope.answers[field];if(value?.trim()&&terms.test(taskText)){const quantity=Number(value.replaceAll(',',''));if(Number.isFinite(quantity)&&quantity>0)claims.push({quantity,unit:unitKey(unit)});}
+  };
+  addAnswer('laborHours','hour',/\b(?:labor|labour|hour|hr)\b/);
+  addAnswer('cabinetBaseLf','lf',/\b(?:base|lower)\s+cabinet|\bcabinet\s+(?:base|lower)|\bcabinet\s+run\b/);
+  addAnswer('cabinetUpperLf','lf',/\b(?:upper|wall)\s+cabinet|\bcabinet\s+(?:upper|wall)/);
+  addAnswer('cabinetTallLf','lf',/\b(?:tall|pantry)\s+cabinet/);
+  addAnswer('flooringSqft','sf',/\bfloor(?:ing)?\b/);
+  addAnswer('tileSqft','sf',/\btile\b/);
+  addAnswer('countertopSqft','sf',/\bcountertop|bench\s+top|worktop\b/);
+  addAnswer('demolitionSqft','sf',/\bdemolition|tear.?out\b/);
+  addAnswer('trimLf','lf',/\btrim|baseboard\b/);
+  addAnswer('sqft','sf',/\b(?:drywall|paint(?:ing)?|floor(?:ing)?|tile|project\s+area)\b/);
+  return claims;
+}
+function quantityIssues(task:Mapping['tasks'][number],addition:{quantity:number;quantityEvidence:string;quantityRange?:{low:number;high:number}|null},unit:string,scope:ReviewedScope|undefined,taskCount:number,componentDescription=''){
+  const taskText=`${task.description} ${task.evidence}`;
+  const evidence=addition.quantityEvidence.trim();
+  const claims=[...quantityClaims(taskText),...(taskCount===1?knownScopeClaims(scope,task):[])];
+  const unknown=UNKNOWN_QUANTITY.test(taskText);
+  const allowance=/^ALLOWANCE\s*:/i.test(evidence);
+  const issues:string[]=[];
+  const matching=matchingClaims(claims,unit);
+  // An unknown sibling component must not suppress a positive line for the
+  // component that has an explicit reviewed quantity. The task-level issue is
+  // still retained by catalogResolution, so the incomplete scope stays held.
+  if(unknown&&!allowance&&!matching.length)issues.push(`${task.description}: quantity remains unmeasured; do not publish a confirmed ${unit} quantity.`);
+  if(unknown&&allowance&&!addition.quantityEvidence.match(/ALLOWANCE\s*:/i))issues.push(`${task.description}: unresolved quantity allowances must be labeled.`);
+  if(unknown&&allowance&&!addition.quantityRange)issues.push(`${task.description}: an allowance for an unresolved quantity needs a positive quantity range.`);
+  if(matching.length&&(!matching.some(claim=>Math.abs(claim.quantity-addition.quantity)<0.0001)||matching.length>1)&&!isCorrectionEvidence(evidence)){
+    issues.push(`${task.description}: mapped ${addition.quantity} ${unit} does not match the explicit quantity in the reviewed scope.`);
+  }
+  // A bench/counter top can share LF units with cabinetry but is not evidence
+  // of a base run. Keep this semantic distinction even when the number agrees.
+  if(/\b(?:bench\s*top|countertop|worktop)\b/i.test(task.evidence)&&
+    /\b(?:base|lower)\s+cabinet|\bcabinet\s+run\b/i.test(`${task.description} ${task.evidence} ${componentDescription}`)&&
+    !/\b(?:base|lower)\s+cabinet|\bcabinet\s+run\b/i.test(task.evidence)){
+    issues.push(`${task.description}: a bench/counter top measurement cannot establish base cabinet length.`);
+  }
+  return [...new Set(issues)];
+}
+function matchingClaims(claims:QuantityClaim[],unit:string){
+  return [...new Map(claims.filter(claim=>unitKey(claim.unit)===unitKey(unit)).map(claim=>[`${claim.quantity}:${unitKey(claim.unit)}`,claim])).values()];
+}
+function existingQuantityIssues(task:Mapping['tasks'][number],line:{quantity:number;unit:string},scope:ReviewedScope|undefined,taskCount:number){
+  const taskText=`${task.description} ${task.evidence}`;
+  const claims=[...quantityClaims(taskText),...(taskCount===1?knownScopeClaims(scope,task):[])].filter(claim=>unitKey(claim.unit)===unitKey(line.unit));
+  if(claims.length&&!claims.some(claim=>Math.abs(claim.quantity-line.quantity)<0.0001)){
+    return [`${task.description}: existing priced ${line.quantity} ${line.unit} does not match the explicit quantity in the reviewed scope.`];
+  }
+  if(UNKNOWN_QUANTITY.test(taskText)&&!claims.length){
+    return [`${task.description}: an unmeasured quantity cannot be covered by an existing confirmed line.`];
+  }
+  return [];
+}
+
+export function marketResolution(raw:unknown,urls:string[],tasks:Mapping['tasks'],now:Date,offset=0,location='',scope?:ReviewedScope):ScopePriceResolution{
   const market=marketSchema.parse(raw);const result:ScopePriceResolution={rules:[],assumptions:[...market.notes],issues:[...market.issues]};
   for(const r of market.rates){
     const t=tasks.find(t=>t.id===r.taskId&&t.researchDescription);
     if(!t)throw new Error('Unknown researched scope task');
+    if(taskIsUnselected(t)){
+      result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);
+      continue;
+    }
+    const unresolved=unresolvedQuantityIssue(t);
+    const hasAllowance=/^ALLOWANCE\s*:/i.test(r.quantityEvidence)&&Boolean(r.quantityRange);
+    if(unresolved&&!hasAllowance)result.issues.push(unresolved);
+    const quantityFindings=quantityIssues(t,{quantity:r.quantity,quantityEvidence:r.quantityEvidence,quantityRange:r.quantityRange},r.unit,scope,tasks.length,r.description);
+    if(quantityFindings.length){result.issues.push(...quantityFindings);continue;}
     const hosts=new Set<string>();
     for(const s of r.sources){
       const u=new URL(s.url);const date=Date.parse(s.publishedAt);
@@ -185,14 +327,20 @@ export function marketResolution(raw:unknown,urls:string[],tasks:Mapping['tasks'
 }
 
 export async function priceCompleteScope(scope:ReviewedScope,configuration:EstimatorConfiguration,request:PricingRequest=requestPricing,now=new Date()){
-  const replaceBase=hasRestrictedScope(scope.answers,scope.extraction?.instructions);
+  // Retained clarification alternatives are archival provenance, not active
+  // scope. Every mapper/audit payload below must use the projected extraction
+  // so an old option cannot be priced as if the customer selected it.
+  const pricingSource=activePricingSource(scope);
+  const pricingExtraction=pricingSource.extraction;
+  const pricingScope={...scope,answers:pricingSource.answers,extraction:pricingExtraction};
+  const replaceBase=hasRestrictedScope(scope.answers,pricingExtraction?.instructions);
   const resolution:ScopePriceResolution={rules:[],assumptions:[],issues:[],replaceBase};
   const base=priceReviewedScope(scope,configuration,now,replaceBase?resolution:undefined);
   const deadline=Date.now()+255000;
-  const original={text:scope.text,answers:scope.answers,extraction:scope.extraction};
-  const sourceParts=pricingSourceParts(scope);
+  const original=pricingSource;
+  const sourceParts=pricingSourceParts(pricingScope);
   const taskSources=new Map<string,number>();
-  const auditTrail:{version:string;scopeHash:string;tasks:unknown[];adjustments:unknown;research:unknown;verification:unknown;issues:string[]}={version:'complete-scope-v3',scopeHash:createHash('sha256').update(JSON.stringify({scope,configuration})).digest('hex'),tasks:[],adjustments:null,research:null,verification:null,issues:[]};
+  const auditTrail:{version:string;scopeHash:string;tasks:unknown[];adjustments:unknown;research:unknown;verification:unknown;issues:string[]}={version:'complete-scope-v3',scopeHash:createHash('sha256').update(JSON.stringify({scope:pricingScope,configuration})).digest('hex'),tasks:[],adjustments:null,research:null,verification:null,issues:[]};
   try{
     const lines=existingLines(base);
     const inventory:z.infer<typeof inventorySchema>={tasks:[],issues:[],notes:[]};
@@ -218,7 +366,7 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
     mapping.replacements=mapping.replacements.filter((r,i,all)=>all.findIndex(v=>v.lineId===r.lineId)===i);
     mapping.removeExclusions=mapping.removeExclusions.filter((r,i,all)=>all.findIndex(v=>v.text===r.text)===i);
     auditTrail.tasks=mapping.tasks;
-    const catalog=catalogResolution(mapping,configuration,lines,now);
+    const catalog=catalogResolution(mapping,configuration,lines,now,scope);
     if(mapping.removeExclusions.some(e=>!base.customer.exclusions.some(value=>value===e.text)))throw new Error('Unknown default exclusion');
     resolution.removeLineIds=catalog.removeLineIds;resolution.removeExclusions=catalog.removeExclusions;
     auditTrail.adjustments={replacements:mapping.replacements,removeExclusions:mapping.removeExclusions};
@@ -239,7 +387,7 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
       }
       research.push(researched);
       let market:ScopePriceResolution;
-      try{market=marketResolution(researched.value,researched.sourceUrls,gapBatch,now,marketOffset,scope.answers.location||'Boise / Treasure Valley, Idaho');}
+      try{market=marketResolution(researched.value,researched.sourceUrls,gapBatch,now,marketOffset,scope.answers.location||'Boise / Treasure Valley, Idaho',scope);}
       catch(error){resolution.issues.push(`Research evidence rejected for ${gapBatch.map(t=>t.description).join('; ')}: ${error instanceof Error?error.message:'invalid source'}. No rate from this rejected batch was applied; obtain corrected evidence.`);continue;}
       marketSchema.parse(researched.value).issues.forEach(issue=>modelIssues.add(issue));
       marketOffset+=market.rules.length;
@@ -278,21 +426,35 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
         fixes.tasks.push(...batch.tasks.map(t=>({...t,...taskBatch.find(x=>x.id===t.id)!,existingLineIds:t.existingLineIds,additions:t.additions,researchDescription:t.researchDescription,issues:t.issues})));
         fixes.issues.push(...batch.issues);fixes.notes.push(...batch.notes);fixes.replacements.push(...batch.replacements);fixes.removeExclusions.push(...batch.removeExclusions);
       }
-      const repaired=catalogResolution(fixes,configuration,pricedComponents,now);
+      const repaired=catalogResolution(fixes,configuration,pricedComponents,now,scope);
       if(fixes.removeExclusions.some(e=>!beforeRepair.customer.exclusions.some(value=>value===e.text)))throw new Error('Unknown repair exclusion');
       resolution.rules=resolution.rules.filter(r=>!repaired.removeLineIds?.includes(r.id));
       resolution.rules.push(...repaired.rules.map(r=>({...r,id:`repair-${r.id}`})));
       resolution.removeLineIds=[...new Set([...(resolution.removeLineIds||[]),...(repaired.removeLineIds||[])])];
       resolution.removeExclusions=[...new Set([...(resolution.removeExclusions||[]),...(repaired.removeExclusions||[])])];
       resolution.assumptions.push(...repaired.assumptions);
-      resolution.issues=[...inventory.issues,...repaired.issues];
+      // Repair is additive. A repair response may add findings, but it
+      // cannot erase a genuine issue already attached to the staged
+      // resolution (for example an unresolved quantity or rejected source).
+      // The one intentional exception is a task-scoped "no supported price"
+      // finding that this repair actually replaces with a positive rule.
+      // Keep inventory findings as well; the final audit can still resolve a
+      // specific issue through its existing evidence-backed path.
+      const repairedTaskIds=new Set(repaired.rules.filter(rule=>rule.scopeTaskId&&rule.quantity.fixed!==undefined&&rule.quantity.fixed>0).map(rule=>rule.scopeTaskId));
+      const repairedDescriptions=new Set(fixes.tasks.filter(task=>repairedTaskIds.has(task.id)).map(task=>task.description));
+      // A positive repair resolves only the exact no-price placeholder that
+      // it replaces. Quantity mismatches, unknown components, audit failures
+      // and other blockers remain attached to the repaired scope.
+      const repairedNoPriceIssues=new Set([...repairedDescriptions].map(description=>`${description}: no supported price.`));
+      const carriedIssues=resolution.issues.filter(issue=>!repairedNoPriceIssues.has(issue));
+      resolution.issues=[...new Set([...carriedIssues,...inventory.issues,...repaired.issues])];
       [...fixes.issues,...fixes.tasks.flatMap(t=>t.issues.map(issue=>`${t.description}: ${issue}`))].forEach(issue=>modelIssues.add(issue));
       mapping.tasks=fixes.tasks;
       const repairGaps=fixes.tasks.filter(t=>t.researchDescription);
       for(const t of repairGaps){
         let reply=await request(RESEARCH,{date:now.toISOString(),region:scope.answers.location||'Boise / Treasure Valley, Idaho',tasks:[{id:t.id,description:t.researchDescription,quantityEvidence:t.evidence,alreadyCovered:t.existingLineIds.map(id=>pricedComponents.find(l=>l.id===id)).filter(Boolean)}],priorIssues},true,deadline-Date.now());
         if(!marketSchema.safeParse(reply.value).success){const normalized=await request(normalizeResearch,{report:reply.sourceReport||JSON.stringify(reply.value),sourceUrls:reply.sourceUrls,requested:{tasks:[t]}},false,deadline-Date.now());reply={...reply,value:normalized.value};}
-        research.push(reply);const market=marketResolution(reply.value,reply.sourceUrls,[t],now,marketOffset,scope.answers.location||'Boise / Treasure Valley, Idaho');marketOffset+=market.rules.length;
+        research.push(reply);const market=marketResolution(reply.value,reply.sourceUrls,[t],now,marketOffset,scope.answers.location||'Boise / Treasure Valley, Idaho',scope);marketOffset+=market.rules.length;
         marketSchema.parse(reply.value).issues.forEach(issue=>modelIssues.add(issue));
         resolution.rules.push(...market.rules);resolution.assumptions.push(...market.assumptions);resolution.issues.push(...market.issues);
       }
@@ -308,12 +470,23 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
     auditTrail.verification=audit;
     const ids=new Set(mapping.tasks.map(t=>t.id));
     if(audit.coveredTaskIds.some(id=>!ids.has(id)))throw new Error('Unknown audited task');
-    resolution.issues.push(...audit.issues,...(scope.extraction?.instructions?.questions||[]));
+    resolution.issues.push(...audit.issues,...(pricingExtraction?.instructions?.questions||[]));
     for(const t of mapping.tasks)if(!t.existingLineIds.some(id=>(lines.some(l=>l.id===id)||resolution.rules.some(r=>r.id===id))&&!resolution.removeLineIds?.includes(id))&&!resolution.rules.some(r=>r.scopeTaskId===t.id))resolution.issues.push(`${t.description}: no positive priced component or allowance was produced.`);
     const allLines=[...lines.filter(l=>!resolution.removeLineIds?.includes(l.id)),...resolution.rules];
-    if(scope.extraction?.instructions?.laborOnly&&allLines.some(l=>l.category!=='field-labor'))resolution.issues.push('The labor-only instruction conflicts with a non-labor priced component.');
-    if(scope.extraction?.instructions?.materialsOnly&&allLines.some(l=>l.category!=='materials'))resolution.issues.push('The materials-only instruction conflicts with a non-material priced component.');
-    if(scope.extraction?.instructions?.separateBuildings&&allLines.some(l=>!l.building))resolution.issues.push('Assign every priced component to a building before presenting separate building prices.');
+    const confirmedHours=Number(scope.answers.laborHours);
+    const laborLines=allLines.filter(line=>line.category==='field-labor');
+    const hourlyLines=laborLines.filter(line=>/^(?:h|hr|hrs|hour|hours)$/i.test(line.unit));
+    const pricedHours=hourlyLines.reduce((sum,line)=>sum+(typeof line.quantity==='number'?line.quantity:line.quantity.fixed||0),0);
+    // A task inventory can repeat a summary as another task. An audit claiming
+    // coverage is not permission to bill both the components and their total.
+    if(Number.isFinite(confirmedHours)&&confirmedHours>0&&hourlyLines.length
+      &&(pricedHours>confirmedHours+0.000001
+        ||hourlyLines.length===laborLines.length&&Math.abs(pricedHours-confirmedHours)>0.000001)){
+      resolution.issues.push(`Priced hourly labor (${pricedHours}) does not reconcile with the confirmed ${confirmedHours} hours. Do not add summary totals to their components.`);
+    }
+    if(pricingExtraction?.instructions?.laborOnly&&allLines.some(l=>l.category!=='field-labor'))resolution.issues.push('The labor-only instruction conflicts with a non-labor priced component.');
+    if(pricingExtraction?.instructions?.materialsOnly&&allLines.some(l=>l.category!=='materials'))resolution.issues.push('The materials-only instruction conflicts with a non-material priced component.');
+    if(pricingExtraction?.instructions?.separateBuildings&&allLines.some(l=>!l.building))resolution.issues.push('Assign every priced component to a building before presenting separate building prices.');
     for(const t of mapping.tasks)if(!audit.coveredTaskIds.includes(t.id))resolution.issues.push(`${t.description}: full pricing coverage has not been verified.`);
   }catch(error){
     if(error instanceof PricingPending)throw error;
@@ -324,5 +497,5 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
   resolution.completeScopeVerified=Boolean(auditTrail.verification)&&resolution.issues.length===0;
   resolution.issues=[...new Set(resolution.issues)];auditTrail.issues=resolution.issues;
   const priced=priceReviewedScope(scope,configuration,now,resolution);
-  return {...priced,customer:{...priced.customer,instructions:scope.extraction?.instructions,documentCoverage:scope.extraction?.documentCoverage,verificationItems:[...resolution.assumptions.filter(a=>/allowance|preliminary|confirm/i.test(a)),...resolution.issues],scopeTasks:(auditTrail.tasks as {description:string}[]).map(t=>({description:t.description,category:suggestedTrade(t.description)}))},internal:{...priced.internal,scopePricing:auditTrail}};
+  return {...priced,customer:{...priced.customer,instructions:pricingExtraction?.instructions,documentCoverage:pricingExtraction?.documentCoverage,verificationItems:[...resolution.assumptions.filter(a=>/allowance|preliminary|confirm/i.test(a)),...resolution.issues],scopeTasks:(auditTrail.tasks as {description:string}[]).map(t=>({description:t.description,category:suggestedTrade(t.description)}))},internal:{...priced.internal,scopePricing:auditTrail}};
 }

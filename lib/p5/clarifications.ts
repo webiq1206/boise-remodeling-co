@@ -1,5 +1,6 @@
 import type {ScopeAnswers,ScopeExtraction} from './scope.ts';
 import type {ScopeInstructions} from './instructions.ts';
+import {isBenchTopClarificationQuestion,retainedBenchTopChoices,retainedChoiceValue} from './retainedClarification.ts';
 
 export interface InstructionAnswer {id:string;question:string;answer:string}
 export interface InstructionPrompt {id:string;question:string;detail?:string;values?:string[]}
@@ -23,7 +24,13 @@ export function instructionPrompts(extraction:ScopeExtraction|null,answers:Scope
       const question=full.length<=240?full:'What should we include for this part of your project?';
       const values=/labor.only/i.test(full)&&/materials.only/i.test(full)?['Labor only','Materials only','Labor and materials']:
         /include or exclude|include.*or.*exclude/i.test(full)?['Include it','Exclude it']:undefined;
-      result.push({id,question,...(question!==full?{detail:full}:{}),values});
+       // A retained-document choice card is built from extraction evidence,
+       // not from the wording of the question.  In particular, do not
+       // hard-code material options into a generic "bench top" question.
+       const retainedValues=isBenchTopClarificationQuestion(full)
+         ?(extraction?retainedBenchTopChoices(extraction):[]).map(retainedChoiceValue)
+         :undefined;
+       result.push({id,question,...(question!==full?{detail:full}:{}),values:retainedValues?.length?retainedValues:values});
     }
   }
   return result;
@@ -69,9 +76,9 @@ export function removeInstructionPrompt(instructions:ScopeInstructions,id:string
 }
 
 /** Answers remain scope data for the pricing audit, with original pages intact. */
-export function clarificationContext(extraction:ScopeExtraction,question:string,answer:string){
+export function clarificationContext(extraction:ScopeExtraction,question:string,answer:string,answers:ScopeAnswers={}){
   return JSON.stringify({
-    task:'Resolve only this answered scope question using the answer below. Return the complete updated instructions, preserving every unrelated inclusion, exclusion, responsibility, building and floor. Remove this question when answered. Never ask it again because a page was not reuploaded. This is a clarification of a document review already completed. Do not produce page records, takeoffs, or unreadable-file notes. If the answer is insufficient, return one short, specific follow-up explaining the missing decision.',
-    previousInstructions:extraction.instructions,question,answer,
+    task:'Resolve only this answered scope question using the answer below. Return the complete updated instructions and any directly changed structured facts, preserving every unrelated inclusion, exclusion, responsibility, building and floor. Remove this question when answered. Never ask it again because a page was not reuploaded. This is a clarification of a document review already completed. Do not reread or recreate pages or takeoffs, and do not return unreadable-file notes. If the answer is insufficient, return one short, specific follow-up explaining the missing decision. A fact update must be supported by the typed answer; retain source-backed facts that the answer did not change.',
+    previousInstructions:extraction.instructions,previousFacts:extraction.facts,previousAnswers:answers,question,answer,
   });
 }

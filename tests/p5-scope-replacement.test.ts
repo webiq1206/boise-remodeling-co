@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {answersForReplacedScope,analyzedScopeMatches,displayScopeText,normalizeScopeText,replaceAnalyzedScope,scopeFingerprint} from '../lib/p5/scopeReplacement.ts';
+import {answersForEditedScope,answersForReplacedScope,analyzedScopeMatches,displayScopeText,normalizeScopeText,refreshAnalyzedScope,replaceAnalyzedScope,scopeFingerprint} from '../lib/p5/scopeReplacement.ts';
 import {archiveBrowserDraft,listBrowserDraftRecoveries,replaceBrowserDraft,restoreBrowserDraft,type BrowserDraft} from '../lib/p5/browserDraft.ts';
 
 const extraction=()=>({
@@ -90,13 +90,58 @@ test('explicit new project archives the browser draft and keeps it restorable',(
     assert.deepEqual(restoreBrowserDraft(original.id),original);
     const replacement=replaceBrowserDraft(original,'bathroom');
     assert.notEqual(replacement.draft.id,original.id);
-    assert.deepEqual(replacement.draft.answers,{service:'bathroom'});
+    assert.deepEqual(replacement.draft.answers,{});
     assert.deepEqual(replacement.draft.uploads,[]);
+    assert.equal(replacement.draft.sourceDetached,true);
     assert.equal(restoreBrowserDraft(original.id)?.answers.service,'kitchen');
   }finally{
     if(previous===undefined)delete (globalThis as any).localStorage;
     else Object.defineProperty(globalThis,'localStorage',{configurable:true,value:previous});
   }
+});
+
+test('ordinary additive edits retain independent answers but remove stale analyzed facts',()=>{
+  const previous={...extraction(),facts:extraction().facts.map(f=>f.field==='sqft'?{...f,value:'80',evidence:'80 square feet'}:f)};
+  const current={service:'bathroom' as const,sqft:'80',taskList:'Replace the flooring',location:'Boise',estimatingInstructions:'Exclude painting; include appliances'};
+  const answers=answersForEditedScope(current,previous,{},JSON.stringify([['estimatingInstructions',current.estimatingInstructions]]));
+  assert.deepEqual(answers,{service:'bathroom',location:'Boise'});
+  const refreshed=refreshAnalyzedScope({
+    text:'Old bathroom scope',
+    answers:current,
+    extraction:previous,
+    conflicts:previous.conflicts,
+    wizard:{skipped:[],resolutions:{}},
+    analyzedAnswers:JSON.stringify([['estimatingInstructions',current.estimatingInstructions]]),
+    contact:{name:'',email:'',phone:''},
+    step:2,
+  },'Add painting to the living room.');
+  assert.deepEqual(refreshed.answers,{service:'bathroom',location:'Boise'});
+  assert.equal(refreshed.extraction,null);
+  assert.equal(refreshed.step,0);
+});
+
+test('ordinary edits retain typed clarification choices and quantities',()=>{
+  const clarification={version:'p5-retained-clarification-v1',clarifications:[{applied:{laborHours:14},selected:{option:2,key:'quartz',label:'quartz',laborHours:14}}]};
+  const previous={
+    ...extraction(),
+    facts:[
+      {field:'materials' as const,value:'quartz bench top',confidence:1,source:'Typed clarification',evidence:'Selected quartz'},
+      {field:'laborHours' as const,value:'14',confidence:1,source:'Typed clarification',evidence:'Typed clarification: 14 labor hours.'},
+    ],
+    clarificationProvenance:clarification,
+    sourceHistory:clarification,
+  } as any;
+  const instructions='Question: Which bench top should we use?\nAnswer: Option 2: quartz (+14h)';
+  const answers={
+    materials:'quartz bench top',
+    laborHours:'14',
+    estimatingInstructions:instructions,
+    taskList:'quartz bench top; 14 labor hours',
+  };
+  assert.deepEqual(
+    answersForEditedScope(answers,previous,{},JSON.stringify(Object.entries(answers))),
+    answers,
+  );
 });
 
 test('explicit replacement fails closed when recovery cannot be written',()=>{
