@@ -1,5 +1,7 @@
 import {PDFDocument} from 'pdf-lib';
 import {createCanvas} from '@napi-rs/canvas';
+import {createRequire} from 'node:module';
+import path from 'node:path';
 import type {AnalysisFile} from './extraction';
 
 /** Render every region of a large drawing at 216 DPI, using bounded canvases.
@@ -8,7 +10,8 @@ import type {AnalysisFile} from './extraction';
  */
 export async function* drawingDetails(file:AnalysisFile,pageNumber:number):AsyncGenerator<AnalysisFile>{
   const {getDocument}=await import('pdfjs-dist/legacy/build/pdf.mjs');
-  const task=getDocument({data:new Uint8Array(file.data),useSystemFonts:true});
+  const assets=path.dirname(createRequire(path.join(process.cwd(),'package.json')).resolve('pdfjs-dist/package.json'));
+  const task=getDocument({data:new Uint8Array(file.data),useSystemFonts:true,standardFontDataUrl:path.join(assets,'standard_fonts/'),cMapUrl:path.join(assets,'cmaps/'),cMapPacked:true,wasmUrl:path.join(assets,'wasm/')});
   const document=await task.promise;
   try{
     const page=await document.getPage(pageNumber),viewport=page.getViewport({scale:3});

@@ -1,11 +1,6 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs" && process.env.NODE_ENV === "production") {
-    const {ensureSchema}=await import('./lib/p5/store');
-    const {startEstimatorWorker}=await import('./lib/p5/backgroundJobs');
-    if(process.env.DATABASE_URL){
-      try{await ensureSchema();startEstimatorWorker();}
-      catch{console.error('[p5-worker] Startup database unavailable. The next estimator request will retry initialization.');}
-    }
+    void import('./lib/p5/backgroundJobs').then(m=>m.bootEstimatorWorker()).catch(()=>console.error('[p5-worker] Startup deferred; estimator requests can resume saved work.'));
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) return;
 

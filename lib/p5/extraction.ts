@@ -2,7 +2,7 @@ import {ESTIMATOR_BRAND} from "./brand.ts";
 import { SCOPE_FIELDS, SCOPE_BATCH_LIMIT, SCOPE_TEXT_LIMIT, validateExtraction, combineScopeExtractions, type ScopeAnswers, type ScopeExtraction } from "./scope.ts";
 import { PDFDocument } from "pdf-lib";
 import {INSTRUCTION_POLICY} from './instructions.ts';
-import {coverageFor} from './documentLedger.ts';
+import {coverageFor,combineCoverage} from './documentLedger.ts';
 
 export interface AnalysisFile { name: string; type: string; data: Buffer; pages?:{source:string;page:number}[];nextPage?:number;preparationError?:string }
 export interface AnalysisResult { extraction: ScopeExtraction; provider: string; model: string; analyzedAt: string }
@@ -183,17 +183,16 @@ export async function analyzeScope(text:string,files:AnalysisFile[],previous:Sco
   for(const file of files){
     if(file.type!=="application/pdf"){if(["text/plain","text/csv","application/json"].includes(file.type)&&file.data.toString("utf8").length>120000)throw new Error(`${file.name}: text exceeds the automatic review limit. Supply the relevant sections or request manual review.`);units.push([file]);continue;}
     let source;try{source=await PDFDocument.load(file.data);}catch{throw new Error(`Unreadable or encrypted PDF: ${file.name}. Supply an unlocked copy.`);}
-    if(!source.getPageCount()||source.getPageCount()>250)throw new Error("Use PDFs with 1 to 250 pages.");
+    if(!source.getPageCount()||source.getPageCount()>2000)throw new Error("Use PDFs with 1 to 2,000 pages.");
     // Keep adjacent scope sections together so one page cannot mistake another
     // page's specifications for missing information. Bound large plan sets.
-    const pageCount=source.getPageCount();totalPages+=pageCount;if(totalPages>300)throw new Error("The combined documents exceed 300 pages. Send the relevant project sheets.");
+    const pageCount=source.getPageCount();totalPages+=pageCount;
     for(let start=0;start<pageCount;start+=8){
       const end=Math.min(start+8,pageCount);const part=await PDFDocument.create();
       for(const copied of await part.copyPages(source,Array.from({length:end-start},(_,i)=>start+i)))part.addPage(copied);
-      units.push([{...file,name:pageCount<=8?file.name:`${file.name} (pages ${start+1} to ${end} of ${pageCount}; other pages processed separately)`,data:Buffer.from(await part.save())}]);
+      units.push([{...file,name:pageCount<=8?file.name:`${file.name} (pages ${start+1} to ${end} of ${pageCount}; other pages processed separately)`,pages:Array.from({length:end-start},(_,i)=>({source:file.name,page:start+i+1})),data:Buffer.from(await part.save())}]);
     }
   }
-  if(units.length>300)throw new Error("The combined documents exceed 300 pages. Send the relevant project sheets.");
   if(!units.length)return analyzeBatch(text,[],previous,request,120000,deadline);
   const parts:ScopeExtraction[]=new Array(units.length);let position=0;let last:AnalysisResult|undefined;let lastError:unknown;
   const failed:string[]=[];
@@ -210,5 +209,7 @@ export async function analyzeScope(text:string,files:AnalysisFile[],previous:Sco
   }));
   if(!last)throw publicProviderError(lastError);
   const extraction=combineScopeExtractions(parts.filter(Boolean));extraction.reviewNotes.push(...failed);
+  const expected=units.flatMap(unit=>unit.flatMap(file=>file.pages||[]));
+  if(expected.length)extraction.documentCoverage=combineCoverage(parts.filter(Boolean).flatMap(part=>part.documentCoverage?[part.documentCoverage]:[]),expected);
   return {...last,extraction,analyzedAt:new Date().toISOString()};
 }

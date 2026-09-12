@@ -7,6 +7,14 @@ export const readable=(s:string)=>s.replace(/([a-z])([A-Z])/g,'$1 $2').replace(/
 export const scopeBullets=(s:string)=>s.split(/\n+|(?<=[.!?])\s+(?=[A-Z])/).map(x=>x.trim().replace(/^[•*]\s*/, '')).filter(Boolean);
 const overview=new Set(['service','location','address','sqft','garageSqft','coveredOutdoorSqft','rooms','bathrooms','stories','schedule','urgency','complexity','finish']);
 const categories:Record<string,string>={site:'Site & utilities',utilities:'Site & utilities',access:'Site & utilities',demolition:'Demolition',structural:'Structure',mechanical:'Heating & Cooling',plumbing:'Plumbing',electrical:'Electrical',appliances:'Appliances',permits:'Permits & design',engineering:'Permits & design',materials:'Materials & finishes',fixtures:'Fixtures & finishes',allowances:'Allowances & selections',exclusions:'Excluded work',ownerSupplied:'Owner responsibilities',alternates:'Alternates'};
+function itemPriceText(item:any){
+ const quantity=`${Number(item.quantity).toLocaleString('en-US')} ${item.unit}${item.quantityRange?` modeled allowance (${item.quantityRange.low.toLocaleString('en-US')} to ${item.quantityRange.high.toLocaleString('en-US')} ${item.unit} to verify)`:''}`;
+ const total=`${money(item.low)} to ${money(item.high)} total`;
+ // A one-package price is already its unit price. Avoid repeating it.
+ if(item.quantity===1&&!item.quantityRange)return `${quantity} • ${total}`;
+ const unit=`${Number(item.unitLow).toLocaleString('en-US',{style:'currency',currency:'USD'})} to ${Number(item.unitHigh).toLocaleString('en-US',{style:'currency',currency:'USD'})} / ${item.unit}${item.quantityRange?' at the modeled quantity':''}`;
+ return `${quantity}\n${total}\n${unit}`;
+}
 export function summarySections(summary:string):EstimateSection[]{
  const groups=new Map<string,[string,string][]>(); const original:string[]=[];
  let active:[string,string]|undefined;
@@ -44,7 +52,7 @@ export function estimateSections(result:any):EstimateSection[]{
   const range=result.categoryRanges?.find((x:any)=>x.category===category);
   return {title:category,text:range?`${money(range.low)} to ${money(range.high)}`:undefined,
    bullets:[...new Set<string>(tasks.filter(x=>(x.category||suggestedTrade(x.description))===category).map(x=>x.description))],
-   rows:lines.filter(x=>x.category===category).map(x=>[[x.building,x.floor?`Floor ${x.floor}`:'',x.description].filter(Boolean).join(' / '),`${Number(x.quantity).toLocaleString('en-US')} ${x.unit}${x.quantityRange?` modeled allowance (${x.quantityRange.low.toLocaleString('en-US')} to ${x.quantityRange.high.toLocaleString('en-US')} ${x.unit} to verify)`:''}\n${money(x.low)} to ${money(x.high)} total\n${Number(x.unitLow).toLocaleString('en-US',{style:'currency',currency:'USD'})} to ${Number(x.unitHigh).toLocaleString('en-US',{style:'currency',currency:'USD'})} / ${x.unit}${x.quantityRange?' at the modeled quantity':''}`])};
+   rows:lines.filter(x=>x.category===category).map(x=>[[x.building,x.floor?`Floor ${x.floor}`:'',x.description].filter(Boolean).join(' / '),itemPriceText(x)])};
  });
  if(breakdown.length){
   sections.splice(sections[0]?.title==='Project at a glance'?1:0,0,{title:result.range?'Included scope by category':'Requested scope by category',text:result.range?'Category and item ranges are parts of the overall range, not additional charges. Where several tasks share an assembly, its price is shown once.':'Scope details are organized below. Pricing coverage still requires review.'});

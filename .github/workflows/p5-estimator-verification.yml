@@ -25,6 +25,7 @@ jobs:
       - name: Isolated persistence, delivery failure and PDF checks
         run: |
           node --import tsx scripts/test-p5-pricing-work.mts
+          node --import tsx scripts/test-p5-background.mts
           node --import tsx scripts/test-p5-workflow.mts
           node --import tsx scripts/test-p5-receipt.mts
           node --import tsx scripts/test-p5-upload.mts

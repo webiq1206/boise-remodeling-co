@@ -9,6 +9,11 @@ import type {ProcessingStatus} from './processingStatus';
 type Input={kind:'analysis';draft:Draft;text:string;answers:ScopeAnswers}|{kind:'pricing';draft:Draft;configuration:EstimatorConfiguration};
 type Job={input:Input;state:'queued'|'running'|'complete'|'failed';progress:string;attempts:number;result?:any;retryAt?:number;retryUnits?:boolean;createdAt:string;processing?:ProcessingStatus};
 const runtime=globalThis as typeof globalThis & {p5JobTimer?:ReturnType<typeof setInterval>;p5JobsRunning?:boolean};
+export async function bootEstimatorWorker(){
+  if(!process.env.DATABASE_URL||process.env.NEXT_PHASE==='phase-production-build')return;
+  try{await (await import('./store')).ensureSchema();startEstimatorWorker();}
+  catch{console.error('[p5-worker] Startup database unavailable. The next estimator request will retry initialization.');}
+}
 /** Durable inputs/results live in SQL. Timers only wake work; a process restart
  * never loses the queue. Neither worker kind creates delivery/CRM records.
  */

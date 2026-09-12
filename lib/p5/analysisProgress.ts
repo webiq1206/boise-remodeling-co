@@ -1,4 +1,4 @@
-import {combineCoverage,type DocumentCoverage} from './documentLedger';
+import {combineCoverage,type DocumentCoverage} from './documentLedger.ts';
 
 export interface ProgressUnit {
   pages?:{source:string;page:number}[];
