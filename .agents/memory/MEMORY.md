@@ -7,3 +7,4 @@
 - [Publish schema parity](publish-schema-parity.md) — runtime-created production tables must also exist in development and the declared schema to avoid destructive publish diffs.
 - [Database transport fidelity](database-transport.md) — HTTP proxy can omit successful RETURNING rows; validate real driver results, not only isolated SQL fixtures.
 - [Pricing provider compatibility](pricing-provider-compatibility.md) — integrated OpenAI needs JSON in input; completed web searches may omit required source metadata.
+- [Imported Git history](imported-git-history.md) — compare complete trees before replaying local commits; restored upstream code can appear unique by ancestry.
