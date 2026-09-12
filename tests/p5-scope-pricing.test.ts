@@ -16,7 +16,9 @@ const task={id:'cabinets',description:'Cabinet supply',evidence:'ten feet',exist
 const extra={id:'overlay',description:'Protective overlay',evidence:'ten feet',existingLineIds:[],additions:[],researchDescription:'Protective cabinet overlay',issues:[]};
 const source=(url:string,low:number,high:number)=>({url,low,high,publishedAt:'2026-09-01',region:'Idaho',excerpt:`Material price ${low} to ${high} dollars per linear foot.`});
 const urls=['https://supplier-a.example/pricing','https://supplier-b.example/pricing'];
-const researched={rates:[{taskId:'overlay',description:'Protective overlay',unit:'LF',quantity:10,quantityEvidence:'Ten feet requested',basis:'material-purchase',includes:'overlay material',excludes:'',sources:[source(urls[0],10,20),source(urls[1],20,30)]}],issues:[]};
+const adjustmentEvidence={url:urls[0],publishedAt:'',dateBasis:'retrieved' as const,region:'Synthetic test region',excerpt:'Synthetic fixture price includes tax and pickup with no additional freight charge.'};
+const purchaseAdjustments={taxRate:0,freightPerUnit:0,taxOnFreight:false,taxEvidence:adjustmentEvidence,freightEvidence:adjustmentEvidence};
+const researched={rates:[{taskId:'overlay',description:'Protective overlay',unit:'LF',quantity:10,quantityEvidence:'Ten feet requested',basis:'material-purchase',includes:'overlay material',excludes:'',landedCost:purchaseAdjustments,sources:[source(urls[0],10,20),source(urls[1],20,30)]}],issues:[]};
 const replies=(values:unknown[]):PricingRequest=>{const first=values[0] as {tasks:typeof task[]};const queue=[{tasks:first.tasks.map(({id,description,evidence})=>({id,description,evidence})),issues:[]},...values];return async()=>({value:queue.shift(),sourceUrls:urls});};
 test('Provider failure cannot publish the otherwise available partial range',async()=>{
  assert.ok(base.customer.range);
@@ -53,6 +55,20 @@ test('Sourced averages add missing costs, retain sources, and preserve financial
  assert.ok((r.customer.range?.low||0)>(base.customer.range?.low||0));
  assert.ok(JSON.stringify(r.internal.scopePricing).includes(urls[0]));
  assert.ok(!JSON.stringify(r.customer).includes('unitCost'));
+});
+test('Product tax and freight are added as costs, never averaged as competing prices',()=>{
+ const quote={...researched,rates:[{...researched.rates[0],unit:'each',quantity:1,sources:[{...source(urls[0],449.99,449.99),sourceType:'supplier',dateBasis:'retrieved',publishedAt:''}],landedCost:{...purchaseAdjustments,taxRate:0.06}}]};
+ const priced=marketResolution(quote,urls,[extra],now).rules[0];
+ assert.equal(priced.unitCost,476.9894);assert.ok(Math.abs(priced.unitCostRange!.low-476.9894)<1e-8);
+ const shipped=structuredClone(quote);shipped.rates[0].landedCost.freightPerUnit=20;shipped.rates[0].landedCost.taxOnFreight=true;
+ assert.equal(marketResolution(shipped,urls,[extra],now).rules[0].unitCost,498.1894);
+ assert.throws(()=>marketResolution({...quote,rates:[{...quote.rates[0],landedCost:null}]},urls,[extra],now),/requires sourced tax/);
+ const unsupported=structuredClone(quote);unsupported.rates[0].landedCost.taxEvidence.url='https://invented.example/tax';
+ assert.throws(()=>marketResolution(unsupported,urls,[extra],now),/Unsupported purchase adjustment/);
+});
+test('An incomplete scope price is not misreported as a missing quantity',()=>{
+ const r=priceReviewedScope(scope,config,now,{replaceBase:true,rules:[],assumptions:[],issues:['Supplier research could not complete.']});
+ assert.deepEqual(r.internal.pricingWarnings,['scope-pricing-incomplete']);assert.ok(!r.customer.message.includes('missing quantities'));assert.equal(r.customer.range,null);
 });
 test('Uncited, stale, duplicate-source, reversed and selling-price evidence is rejected',()=>{
  assert.throws(()=>marketResolution(researched,[],[extra],now));
@@ -97,6 +113,19 @@ test('Anthropic-only configuration supports JSON and real tool-source extraction
    return Response.json({stop_reason:'end_turn',content:[{type:'text',text:'Opening supplier evidence.'},{type:'web_fetch_tool_result',content:{type:'web_fetch_result',url:urls[0],content:{type:'document',source:{type:'text',data:'Synthetic product price.'}}}},{type:'text',text:JSON.stringify(researched)}]});
   };
   const fetched=await requestPricing('JSON',{},true,1000);assert.deepEqual(fetched.sourceUrls,[urls[0]]);assert.deepEqual(fetched.value,researched);
+  let pausedCalls=0;
+  const pausedContent=[{type:'web_search_tool_result',content:urls.map(url=>({type:'web_search_result',url}))}];
+  globalThis.fetch=async(_url,init)=>{
+   pausedCalls++;const body=JSON.parse(String(init?.body));
+   if(pausedCalls===1)return Response.json({stop_reason:'pause_turn',content:pausedContent});
+   assert.deepEqual(body.messages[1],{role:'assistant',content:pausedContent});assert.ok(body.tools.some((t:any)=>t.name==='web_fetch'));
+   return Response.json({stop_reason:'end_turn',content:[{type:'text',text:JSON.stringify(researched)}]});
+  };
+  const resumed=await requestPricing('JSON',{},true,5000);assert.equal(pausedCalls,2);assert.deepEqual(resumed.sourceUrls,urls);assert.deepEqual(resumed.value,researched);
+  pausedCalls=0;globalThis.fetch=async()=>{pausedCalls++;return Response.json({stop_reason:'pause_turn',content:pausedContent});};
+  await assert.rejects(()=>requestPricing('JSON',{},true,5000),/pricing-check-incomplete:pause_turn/);assert.equal(pausedCalls,3);
+  globalThis.fetch=async()=>Response.json({stop_reason:'max_tokens',content:[{type:'text',text:'{"rates":['}]});
+  await assert.rejects(()=>requestPricing('JSON',{},true,5000),/pricing-check-incomplete:max_tokens/);
   let calls=0;
   globalThis.fetch=async(_url,init)=>{
    calls++;const body=JSON.parse(String(init?.body));
