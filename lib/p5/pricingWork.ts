@@ -4,8 +4,10 @@ import {priceCompleteScope,requestPricing,type PricingReply,type PricingRequest}
 import {PricingPending} from './pricingProgress';
 import type {ReviewedScope} from './scope';
 import type {EstimatorConfiguration} from './costBook';
+import {readRegionalRates,saveRegionalRates} from './regionalRates';
 
 export async function priceSavedScope(id:string,scope:ReviewedScope,configuration:EstimatorConfiguration){
+ configuration={...configuration,regionalRates:await readRegionalRates(scope.answers.location||'')};
  const signature={pricingDate:new Date().toISOString().slice(0,10),text:scope.text,answers:scope.answers,extraction:scope.extraction,uploads:scope.uploads,uncertainFields:scope.uncertainFields,configuration};
  const workKey='pricing-v3-'+createHash('sha256').update(JSON.stringify(signature)).digest('hex');
  const claimed=await claimWork(id,workKey,{replies:[]},290);
@@ -24,5 +26,5 @@ export async function priceSavedScope(id:string,scope:ReviewedScope,configuratio
   performed=true;
   return reply;
  };
- try{return await priceCompleteScope(scope,configuration,staged);}finally{await releaseWork(id,workKey,claimed.token);}
+ try{const priced=await priceCompleteScope(scope,configuration,staged);if(priced.customer.range&&'costBookSnapshot' in priced.internal)await saveRegionalRates(id,scope.answers.location||'',priced.internal.costBookSnapshot?.rules||[]);return priced;}finally{await releaseWork(id,workKey,claimed.token);}
 }

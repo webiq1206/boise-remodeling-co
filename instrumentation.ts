@@ -1,5 +1,8 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME === "nodejs" && process.env.NODE_ENV === "production") {
+    const {ensureSchema}=await import('./lib/p5/store');
+    const {startEstimatorWorker}=await import('./lib/p5/backgroundJobs');
+    if(process.env.DATABASE_URL){await ensureSchema();startEstimatorWorker();}
     const dbUrl = process.env.DATABASE_URL;
     if (!dbUrl) return;
 

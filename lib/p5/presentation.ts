@@ -27,6 +27,17 @@ export function summarySections(summary:string):EstimateSection[]{
 export function estimateSections(result:any):EstimateSection[]{
  const sections=summarySections(result.summary||'');
  const lines:any[]=result.lineItems||[], tasks:any[]=result.scopeTasks||[];
+ const instructions=result.instructions;
+ if(instructions){
+  sections.unshift({title:'Requested estimating scope',bullets:[...instructions.inclusions.map((x:string)=>`Include: ${x}`),...instructions.exclusions.map((x:string)=>`Exclude: ${x}`),...instructions.responsibilities,...instructions.floors.map((x:string)=>`Floor: ${x}`),...instructions.buildings.map((x:string)=>`Building: ${x}`),...(instructions.laborOnly?['Labor only; materials are not charged.']:[]),...(instructions.materialsOnly?['Materials only; labor is not charged.']:[])]});
+  if(instructions.questions.length)sections.push({title:'Scope questions requiring clarification',bullets:instructions.questions});
+ }
+ if(result.documentCoverage){const c=result.documentCoverage;sections.push({title:'Document review coverage',text:`${c.pages.filter((p:any)=>p.status==='read').length} of ${c.expectedPages} pages fully read. ${c.complete?'Every page has a completed review record.':'Analysis is incomplete; review the exceptions below.'}`,bullets:c.pages.filter((p:any)=>p.status!=='read').map((p:any)=>`${p.source}, page ${p.page}${p.sheet?` (${p.sheet})`:''}: ${p.status}. ${p.notes.join(' ')}`)});}
+ const buildings=[...new Set<string>(lines.map(l=>l.building).filter(Boolean))];
+ if(buildings.length)sections.push({title:'Separate building prices',rows:buildings.map(b=>[b,`${money(lines.filter(l=>l.building===b).reduce((n,l)=>n+l.low,0))} to ${money(lines.filter(l=>l.building===b).reduce((n,l)=>n+l.high,0))}`]),text:'Building totals are included in, not added to, the overall estimate.'});
+ const estimated=lines.filter(l=>l.pricingStatus==='estimated-allowance');
+ if(estimated.length)sections.push({title:'Included preliminary allowances',bullets:estimated.map(l=>`${[l.building,l.floor,l.description].filter(Boolean).join(' / ')}: ${money(l.low)} to ${money(l.high)} included. ${l.verification}${l.rateLocation?` Cost location: ${l.rateLocation}.`:''}${l.rateDate?` Researched: ${l.rateDate.slice(0,10)}.`:''}`)});
+ if(result.verificationItems?.length)sections.push({title:'Items to verify before a firm proposal',bullets:[...new Set<string>(result.verificationItems)]});
  const categories=[...new Set<string>([...(result.includedCategories||[]),...lines.map(x=>x.category),...tasks.map(x=>x.category||suggestedTrade(x.description))])];
  const breakdown:EstimateSection[]=categories.map(category=>{
   const range=result.categoryRanges?.find((x:any)=>x.category===category);

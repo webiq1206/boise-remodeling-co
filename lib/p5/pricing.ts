@@ -41,6 +41,7 @@ export const DEFAULT_FINANCE: FinancePolicy = {
 /** Backward-compatible import name. The overhead policy is now approved. */
 export const UNCONFIGURED_FINANCE = DEFAULT_FINANCE;
 export interface CostEvidence {
+  provenance?:{status:'estimated'|'verified';location:string;retrievedAt:string;assumptions:string[];sources:{url:string;date:string;region:string;low:number;high:number}[]};
   basis: "written-quote" | "payroll" | "market-replacement" | "approved-cost-book" | "planning-assumption" | "owner-estimating-schedule" | "sourced-market-average";
   reference: string;
   verifiedAt: string;
@@ -55,6 +56,10 @@ export interface LandedMaterial {
   waste: number; storage: number; handling: number;
 }
 export interface DirectCostLine {
+  allowance?:boolean;
+  building?:string;
+  floor?:string;
+  unitCostRange?:{low:number;high:number};
   /** A modeled cost budget is not an observed invoice or payroll record. */
   estimatingBasis?:'owner-average-cost'|'historical-cost-budget'|'sourced-market-average';
   trade?: TradeCategory;
@@ -236,6 +241,13 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   // The low endpoint cannot cut known direct costs below the approved floor.
   const lowFloor = priceFromRiskAdjustedCost(riskAdjustedDirectCost, allocations.total, Math.min(matrix.floor, margin));
   const planningRange = { low: Math.ceil(Math.max(lowFloor, contractPrice * (1 - width)) / step) * step, high: Math.ceil(contractPrice * (1 + width) / step) * step };
+  // Extend observed direct-cost bounds before applying the same policy once.
+  const sourceHigh=lines.reduce((total,line)=>{
+    const range=line.unitCostRange;
+    if(range){finite(range.low,'Source cost low',true);finite(range.high,'Source cost high',true);if(range.low>line.unitCost||range.high<line.unitCost)throw new Error('The source range must contain the unit cost');}
+    return total+line.quantity*(range?.high??line.unitCost);
+  },0);
+  planningRange.high=Math.max(planningRange.high,Math.ceil(priceFromRiskAdjustedCost(sourceHigh*(1+contingencyRate),allocations.total,margin)/step)*step);
   if (input.missingInformation.length) warn("missing-project-information", "Resolve the recorded missing project information before a firm proposal.");
   if (contractPrice < 100 || contractPrice > 10000000) warn("unusual-total", "The result is outside the broad project review limits. Verify quantities and units.", "block");
   if (input.benchmark) {
@@ -270,7 +282,7 @@ export function customerEstimate(estimate: P5Estimate, summary: string) {
   const weights=estimate.lines.map(line=>line.cost);
   const lows=apportionAmount(estimate.planningRange.low,weights), increases=apportionAmount(estimate.planningRange.high-estimate.planningRange.low,weights);
   const highs=lows.map((low,i)=>low+increases[i]);
-  const lineItems=estimate.publishable?estimate.lines.map((line,i)=>({id:line.id,category:tradeForLine(line),description:line.description,quantity:line.quantity,unit:line.unit,low:lows[i],high:highs[i],unitLow:lows[i]/line.quantity,unitHigh:highs[i]/line.quantity})):[];
+  const lineItems=estimate.publishable?estimate.lines.map((line,i)=>({id:line.id,category:tradeForLine(line),description:line.description,quantity:line.quantity,unit:line.unit,low:lows[i],high:highs[i],unitLow:lows[i]/line.quantity,unitHigh:highs[i]/line.quantity,...(line.building?{building:line.building}:{}),...(line.floor?{floor:line.floor}:{}),...(line.allowance||line.estimatingBasis==='sourced-market-average'?{pricingStatus:'estimated-allowance',verification:'Confirm quantities, selections and current supplier/trade pricing before a firm proposal.'}:{}),...(line.evidence.provenance?{rateLocation:line.evidence.provenance.location,rateDate:line.evidence.provenance.retrievedAt,rateSources:line.evidence.provenance.sources.map(s=>s.url)}:{})})):[];
   return {
     status: estimate.publishable ? "planning-range" as const : "review-required" as const,
     range: estimate.publishable ? estimate.planningRange : null,

@@ -9,6 +9,7 @@ import {readStoredBytes,ESTIMATOR_BUCKETS} from './objectStorage';
 import {ESTIMATOR_BRAND} from './brand';
 import {claimWork,writeWork,releaseWork} from './workStore';
 import {type Draft,DraftError} from './store';
+import {isInstructionFile,mergeInstructions} from './instructions';
 
 const UNIT_BYTES=16*1024*1024;
 export async function* analysisSegments(file:AnalysisFile):AsyncGenerator<AnalysisFile>{
@@ -24,7 +25,7 @@ export async function* analysisSegments(file:AnalysisFile):AsyncGenerator<Analys
         if(pages===1)throw new Error(`Page ${start+1} contains more image data than automatic reading supports. Export that sheet as an optimized PDF or clear image.`);
         pages=Math.max(1,Math.floor(pages/2));
       }
-      yield {...file,name:count<=8?file.name:`${file.name} (pages ${start+1} to ${start+pages} of ${count})`,data};start+=pages;
+      yield {...file,name:count<=8?file.name:`${file.name} (pages ${start+1} to ${start+pages} of ${count})`,pages:Array.from({length:pages},(_,i)=>({source:file.name,page:start+i+1})),data};start+=pages;
     }
   }else if(['text/plain','text/csv','application/json'].includes(file.type)){
     const text=file.data.toString('utf8');
@@ -34,18 +35,30 @@ export async function* analysisSegments(file:AnalysisFile):AsyncGenerator<Analys
     yield file;
   }
 }
-type Unit={name:string;type:string;object:string;result?:AnalysisResult;attempts?:number;error?:string};
-type Job={prepared:number;units:Unit[];notes:string[];textDone?:AnalysisResult};
+type Unit={name:string;type:string;object:string;pages?:AnalysisFile['pages'];result?:AnalysisResult;attempts?:number;error?:string};
+type Job={prepared:number;units:Unit[];notes:string[];textDone?:AnalysisResult;textPrepared?:boolean};
 /** Each request checkpoints work before returning. Reloading resumes the same source fingerprint. */
 export async function advanceAnalysis(draft:Draft,text:string,answers:ScopeAnswers,request=fetch,retryFailed=false){
   const version=createHash('sha256').update(JSON.stringify([text,answers,draft.uploads.map(f=>[f.id,f.sha256])])).digest('hex');
-  const workKey=`analysis:v2:${version}`,bucketId=ESTIMATOR_BUCKETS[ESTIMATOR_BRAND.domain],client=new Client({bucketId});
-  const lease=await claimWork(draft.id,workKey,{prepared:0,units:[],notes:[]},180);
+  const workKey=`analysis:v3:${version}`,bucketId=ESTIMATOR_BUCKETS[ESTIMATOR_BRAND.domain],client=new Client({bucketId});
+  const lease=await claimWork(draft.id,workKey,{prepared:0,units:[],notes:[]},300);
   if(!lease)return {pending:true as const,progress:'Your document review is already running. Saved progress will appear shortly.'};
   const job=lease.payload as Job;
-  if(retryFailed)for(const unit of job.units)if(!unit.result){unit.attempts=0;delete unit.error;}
+  if(retryFailed)for(const unit of job.units)if(!unit.result||unit.result.extraction.documentCoverage?.complete===false){unit.attempts=0;delete unit.error;delete unit.result;}
   const checkpoint=()=>writeWork(draft.id,workKey,lease.token,job);
   try{
+    if(!job.textPrepared){
+      // Long typed instructions are read in full before plan sections. No silent
+      // clipping to fit one provider request, and no instruction-count cap.
+      const sources=[{name:'ESTIMATING-INSTRUCTIONS--Typed estimating instructions.txt',value:answers.estimatingInstructions||''},{name:'ESTIMATING-INSTRUCTIONS--Typed project scope.txt',value:text}];
+      for(const source of sources.filter(s=>s.value.length>48000))for(let start=0;start<source.value.length;start+=48000){
+        const object=`analysis/${ESTIMATOR_BRAND.domain}/${draft.id}/${version}/${job.units.length}`;
+        const stored=await client.uploadFromBytes(object,Buffer.from(source.value.slice(start,start+48000)),{compress:false});
+        if(!stored.ok)throw new DraftError('Instruction preparation was interrupted. Retry to resume.',503);
+        job.units.push({name:`${source.name} (section ${Math.floor(start/48000)+1})`,type:'text/plain',object});
+      }
+      job.textPrepared=true;await checkpoint();
+    }
     if(job.prepared<draft.uploads.length){
       const upload=draft.uploads[job.prepared];
       const [row]=await query('SELECT name,mime_type,data_base64,storage_bucket,storage_key,sha256,size_bytes FROM p5_estimator_files WHERE draft_id=$1 AND id=$2',[draft.id,upload.id]);
@@ -58,25 +71,30 @@ export async function advanceAnalysis(draft:Draft,text:string,answers:ScopeAnswe
             const object=`analysis/${ESTIMATOR_BRAND.domain}/${draft.id}/${version}/${job.units.length}`;
             const saved=await client.uploadFromBytes(object,segment.data,{compress:false});
             if(!saved.ok)throw new DraftError('Document preparation was interrupted. Retry to resume.',503);
-            job.units.push({name:segment.name,type:segment.type,object});
+            job.units.push({name:segment.name,type:segment.type,object,pages:segment.pages});
           }
         }catch(error){if(error instanceof DraftError)throw error;job.notes.push(`${file.name}: ${error instanceof Error?error.message:'Could not read this file.'} Review the original before pricing.`);}
       }
       job.prepared++;await checkpoint();
       return {pending:true as const,progress:`Prepared ${job.prepared} of ${draft.uploads.length} files. ${job.units.length} document sections ready to read.`};
     }
-    const pending=job.units.filter(u=>!u.result&&(u.attempts||0)<2).slice(0,3);
+    const instructionUnits=job.units.filter(u=>isInstructionFile(u.name));
+    const instructionPending=instructionUnits.some(u=>!u.result&&(u.attempts||0)<2);
+    const pending=(instructionPending?instructionUnits:job.units).filter(u=>!u.result&&(u.attempts||0)<2).slice(0,3);
     if(pending.length){
       await Promise.all(pending.map(async unit=>{
         const saved=await client.downloadAsBytes(unit.object);
         if(!saved.ok)throw new DraftError('A prepared document section could not be read. Retry to resume.',503);
         unit.attempts=(unit.attempts||0)+1;
-        try{unit.result=await analyzeBatch(text,[{name:unit.name,type:unit.type,data:saved.value[0]}],answers,request,120000);delete unit.error;}
+        const context={...answers};if((context.estimatingInstructions?.length||0)>48000)delete context.estimatingInstructions;
+        if(instructionUnits.some(u=>u.result?.extraction.instructions))context.estimatingInstructions=[context.estimatingInstructions,JSON.stringify(mergeInstructions(instructionUnits.flatMap(u=>u.result?.extraction.instructions?[u.result.extraction.instructions]:[])))].filter(Boolean).join('\n');
+        try{unit.result=await analyzeBatch(text.length>48000?'The complete typed scope is processed in saved sections; use the interpreted scope instructions.':text,[{name:unit.name,type:unit.type,data:saved.value[0],pages:unit.pages}],context,request,120000);delete unit.error;}
         catch{unit.error=`${unit.name}: automatic reading could not finish. Review this section before pricing.`;}
       }));
       await checkpoint();
       const read=job.units.filter(u=>u.result).length;
-      return {pending:true as const,progress:`Read ${read} of ${job.units.length} document sections. Matching measurements and project details.`};
+      const pages=job.units.flatMap(u=>u.pages||[]).length,readPages=job.units.reduce((n,u)=>n+(u.result?.extraction.documentCoverage?.pages.filter(p=>p.status==='read').length||0),0);
+      return {pending:true as const,progress:`Read ${readPages} of ${pages} pages; ${read} of ${job.units.length} sections processed. Cross-referencing drawings, schedules and scope. Saved progress resumes after interruptions.`};
     }
     if(!job.units.some(u=>u.result)&&!job.textDone){
       job.textDone=await analyzeBatch(text,[],answers,request,120000);await checkpoint();
@@ -84,6 +102,8 @@ export async function advanceAnalysis(draft:Draft,text:string,answers:ScopeAnswe
     const results=job.units.flatMap(u=>u.result?[u.result]:[]);if(job.textDone)results.push(job.textDone);
     const last=results[results.length-1];
     const extraction:ScopeExtraction=combineScopeExtractions(results.map(r=>r.extraction));
+    const unprocessed=job.units.filter(u=>!u.result).flatMap(u=>(u.pages||[]).map(p=>({...p,sheet:'',revision:'',status:'unreadable' as const,notes:[u.error||'Page analysis did not finish.']})));
+    if(unprocessed.length){const c=extraction.documentCoverage||{pages:[],expectedPages:0,complete:false};extraction.documentCoverage={pages:[...c.pages,...unprocessed],expectedPages:c.expectedPages+unprocessed.length,complete:false};}
     extraction.reviewNotes.push(...job.notes,...job.units.filter(u=>!u.result).map(u=>u.error||`${u.name}: unread section requires review before pricing.`));
     return {pending:false as const,version,analysis:{...last,extraction,analyzedAt:new Date().toISOString()}};
   }finally{await releaseWork(draft.id,workKey,lease.token);}
