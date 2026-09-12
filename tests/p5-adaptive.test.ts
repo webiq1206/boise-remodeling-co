@@ -57,6 +57,21 @@ test('model confidence cannot promote inferred or unscaled visual details into p
  assert.equal(questions.some(q=>q.field==='urgency'),false);
  assert.equal(questions.find(q=>q.field==='sqft')?.values,undefined);
 });
+test('reconciliation does not accept a high-confidence inferred fact or one side of an unlisted conflict',()=>{
+ const inferred=extracted({service:'bathroom',sqft:'80',materials:'Porcelain',demolition:'Remove tile'});
+ inferred.facts=inferred.facts.map(f=>f.field==='sqft'?{...f,basis:'inferred' as const}:{...f});
+ const held=reconcileScope({},inferred);
+ assert.equal(held.answers.sqft,undefined);
+ assert.equal(scopeQuestions(held.answers,inferred).find(q=>q.field==='sqft')?.values,undefined);
+
+ const duplicate=extracted({service:'bathroom',materials:'Porcelain',demolition:'Remove tile'});
+ duplicate.facts.push({field:'sqft',value:'80',confidence:.99,source:'scope.pdf',evidence:'80 square feet',basis:'stated'});
+ duplicate.facts.push({field:'sqft',value:'100',confidence:.99,source:'scope.pdf',evidence:'100 square feet',basis:'stated'});
+ const conflicted=reconcileScope({},duplicate);
+ assert.equal(conflicted.answers.sqft,undefined);
+ assert.equal(conflicted.conflicts.filter(c=>c.field==='sqft').length,1);
+ assert.equal(scopeQuestions(conflicted.answers,duplicate,conflicted.conflicts)[0].field,'sqft');
+});
 test('explicit calculated measurements retain their evidence and skip repeat questions',()=>{
  const raw=extracted({service:'bathroom',sqft:'80',materials:'Porcelain tile',demolition:'Remove old fixtures'});
  raw.facts=raw.facts.map(f=>({...f,basis:f.field==='sqft'?'calculated':'stated'}));

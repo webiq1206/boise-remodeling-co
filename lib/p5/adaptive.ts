@@ -26,8 +26,20 @@ export function deriveScopeAnswers(input:ScopeAnswers){
   }
   return answers;
 }
+/** A source fact may suppress a question only after local validation, with
+ * enough confidence to price it and without an unresolved field conflict.
+ * validateExtraction normally performs the same evidence/basis gating before
+ * this function is reached; keeping the guard here protects direct callers. */
+function isValidatedSuppliedFact(fact:ScopeExtraction['facts'][number],conflicts:ScopeConflict[]){
+  return Number.isFinite(fact.confidence)&&fact.confidence>=.85
+    &&Boolean(fact.value?.trim())
+    &&fact.basis!=='visual'&&fact.basis!=='inferred'
+    &&!validateAnswer(fact.field,fact.value)
+    &&!conflicts.some(conflict=>conflict.field===fact.field);
+}
 export function reconcileScope(current:ScopeAnswers,extraction:ScopeExtraction,resolutions:ScopeAnswers={}){
-  const normalized={...extraction,facts:extraction.facts.map(f=>({...f,value:current[f.field]&&sameAnswer(f.field,current[f.field]!,f.value)?current[f.field]!:f.value})),conflicts:extraction.conflicts.filter(c=>!resolutions[c.field]||!sameAnswer(c.field,resolutions[c.field]!,current[c.field]||''))};
+  const unresolvedConflicts=extraction.conflicts.filter(c=>!resolutions[c.field]||!sameAnswer(c.field,resolutions[c.field]!,current[c.field]||''));
+  const normalized={...extraction,facts:extraction.facts.filter(f=>isValidatedSuppliedFact(f,unresolvedConflicts)).map(f=>({...f,value:current[f.field]&&sameAnswer(f.field,current[f.field]!,f.value)?current[f.field]!:f.value})),conflicts:unresolvedConflicts};
   const resolvedFacts=normalized.facts.filter(f=>!resolutions[f.field]||!sameAnswer(f.field,resolutions[f.field]!,current[f.field]||''));
   const merged=mergeScopeFacts(current,{...normalized,facts:resolvedFacts});
   const answers=deriveScopeAnswers(merged.answers);
@@ -36,6 +48,10 @@ export function reconcileScope(current:ScopeAnswers,extraction:ScopeExtraction,r
     const calculated=deriveScopeAnswers({...current,sqft:''}).sqft;
     if(calculated&&!sameAnswer('sqft',current.sqft,calculated)&&!resolutions.sqft)conflicts.push({field:'sqft',values:[current.sqft,calculated],explanation:'The stated area differs from length multiplied by width. Which area is being estimated?'});
   }
+  // mergeScopeFacts detects duplicate high-confidence values while merging.
+  // Do not leave its first value in answers when no visitor answer exists:
+  // that would make a conflict look resolved on the next question pass.
+  for(const conflict of conflicts)if(!current[conflict.field]?.trim())delete answers[conflict.field];
   return {answers,conflicts};
 }
 const remodels=['kitchen','bathroom','whole-home'];
