@@ -5,7 +5,8 @@ process.env.WS_NO_UTF_8_VALIDATE = '1';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  outputFileTracingIncludes: { "/api/p5-estimator/*": ["./node_modules/heic-convert/**/*", "./node_modules/heic-decode/**/*", "./node_modules/libheif-js/**/*", "./node_modules/jpeg-js/**/*", "./node_modules/pngjs/**/*"] },
+  serverExternalPackages:['pdfjs-dist','@napi-rs/canvas'],
+  outputFileTracingIncludes: { "/api/p5-estimator/*": ["./node_modules/heic-convert/**/*", "./node_modules/heic-decode/**/*", "./node_modules/libheif-js/**/*", "./node_modules/jpeg-js/**/*", "./node_modules/pngjs/**/*", "./node_modules/pdfjs-dist/**/*", "./node_modules/@napi-rs/canvas*/**/*"] },
   typescript: {
     ignoreBuildErrors: true,
   },
