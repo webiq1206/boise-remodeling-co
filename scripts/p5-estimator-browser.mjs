@@ -41,6 +41,7 @@ async function mock(context,{interruptions=false,scenario='full'}={}){
    return send({draft:state.saved,analysis:{extraction},conflicts:merged.conflicts,pricedFields:[],warning:scenario==='unavailable'?'Your files are saved, but automatic reading could not finish. Retry or add the key details.':''});
   }
   if(endpoint==='submit'){
+   state.pricingPolls++;
    if(scenario==='progress'&&state.pricingStage!=='done'){const phase=state.pricingStage;return send({pending:true,message:'Checking the requested scope.',processing:{phase,message:phase==='mapping'?'Matching the trim package to established rates.':'Checking published cost evidence for the trim package.',currentItems:['First-floor trim package'],updatedAt:new Date().toISOString()},retryAfterMs:2000},202);}
    const duplicate=state.saved?.status==='submitted';if(!duplicate)state.submissions++;
    state.saved={...state.saved,status:'submitted'};return send({accepted:!duplicate,duplicate,result,delivery:[{channel:'customer',status:'retry'},{channel:'admin',status:'sent'},{channel:'crm',status:'needs-review'}]});
@@ -114,8 +115,17 @@ for(const width of [320,390,1440]){
   progressState.readStage=2;
   await page.getByText('16 of 256 original pages read',{exact:true}).waitFor();
   progressState.finishReading=true;
-  await est.getByLabel('Your name',{exact:true}).fill('Synthetic Test');await est.getByLabel('Email',{exact:true}).fill('customer@example.invalid');
+  await est.getByLabel('Your name',{exact:true}).waitFor();
+  assert.equal(await est.getByRole('button',{name:'Download your project summary',exact:true}).count(),0,'No PDF before contact capture');
+  assert.equal(await est.getByText('Schedule a scope review.',{exact:true}).count(),0,'No estimate result before contact capture');
   await est.getByRole('checkbox').check();await est.getByRole('button',{name:'Get my estimate',exact:true}).click();
+  await est.getByRole('alert').filter({hasText:'Enter your name and a valid email address.'}).waitFor();
+  assert.equal(progressState.pricingPolls,0);assert.equal(progressState.submissions,0,'Contact is required before an estimate can be revealed');
+  await est.getByLabel('Your name',{exact:true}).fill('Synthetic Test');await est.getByLabel('Email',{exact:true}).fill('customer@example.invalid');
+  await est.getByRole('checkbox').check();
+  assert.equal(await est.getByLabel('Your name',{exact:true}).inputValue(),'Synthetic Test','Contact name must survive adjacent field edits');
+  assert.equal(await est.getByLabel('Email',{exact:true}).inputValue(),'customer@example.invalid','Contact email must survive adjacent field edits');
+  await est.getByRole('button',{name:'Get my estimate',exact:true}).click();
   await page.getByRole('heading',{name:'Matching your scope to the cost book',exact:true}).waitFor();
   assert.equal(await page.getByRole('progressbar',{name:'Original pages fully read'}).count(),0,'Document progress must not become a fabricated pricing percentage');
   progressState.pricingStage='research';
