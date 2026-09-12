@@ -41,7 +41,7 @@ export async function postScope(request:Request){
       if(checkpointed){
         const background=form.get('background')==='true';
         const job=background?await queuedJob({kind:'analysis',draft,text,answers:visitorAnswers},form.get('retry')==='true'):null;
-        if(job&&job.state!=='complete')return json({pending:job.state!=='failed',progress:job.progress,...(job.state==='failed'?{error:job.progress}:{})},job.state==='failed'?503:200);
+        if(job&&job.state!=='complete')return json({pending:job.state!=='failed',progress:job.progress,processing:job.processing,...(job.state==='failed'?{error:job.progress}:{})},job.state==='failed'?503:200);
         const step=job?job.result:await advanceAnalysis(draft,text,visitorAnswers,fetch,form.get("retry")==="true");
         if(step.pending)return json(step);
         analysis=step.analysis;

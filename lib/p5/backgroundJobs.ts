@@ -4,21 +4,35 @@ import {claimWork,writeWork,releaseWork} from './workStore';
 import type {Draft} from './store';
 import type {ScopeAnswers} from './scope';
 import type {EstimatorConfiguration} from './costBook';
+import type {ProcessingStatus} from './processingStatus';
 
 type Input={kind:'analysis';draft:Draft;text:string;answers:ScopeAnswers}|{kind:'pricing';draft:Draft;configuration:EstimatorConfiguration};
-type Job={input:Input;state:'queued'|'running'|'complete'|'failed';progress:string;attempts:number;result?:any;retryAt?:number};
+type Job={input:Input;state:'queued'|'running'|'complete'|'failed';progress:string;attempts:number;result?:any;retryAt?:number;retryUnits?:boolean;createdAt:string;processing?:ProcessingStatus};
 const runtime=globalThis as typeof globalThis & {p5JobTimer?:ReturnType<typeof setInterval>;p5JobsRunning?:boolean};
 /** Durable inputs/results live in SQL. Timers only wake work; a process restart
  * never loses the queue. Neither worker kind creates delivery/CRM records.
  */
 export async function queuedJob(input:Input,retry=false){
   const key='background-v1-'+createHash('sha256').update(JSON.stringify(input.kind==='analysis'?{kind:input.kind,id:input.draft.id,text:input.text,answers:input.answers,uploads:input.draft.uploads}:{kind:input.kind,id:input.draft.id,reviewed:input.draft.reviewed,configuration:input.configuration,date:new Date().toISOString().slice(0,10)})).digest('hex');
-  const initial:Job={input,state:'queued',progress:input.kind==='analysis'?'Your complete document set is queued for analysis.':'Your scope is queued for pricing.',attempts:0};
+  const initial:Job={input,state:'queued',progress:input.kind==='analysis'?'Your complete document set is queued for analysis.':'Your scope is queued for pricing.',attempts:0,createdAt:new Date().toISOString()};
   await query('INSERT INTO p5_estimator_work(draft_id,work_key,payload) VALUES($1,$2,$3::jsonb) ON CONFLICT DO NOTHING',[input.draft.id,key,JSON.stringify(initial)]);
-  if(retry)await query("UPDATE p5_estimator_work SET payload=jsonb_set(jsonb_set(payload,'{state}','\"queued\"'),'{attempts}','0'),lease_until=NULL,lease_token=NULL WHERE draft_id=$1 AND work_key=$2 AND payload->>'state'='failed'",[input.draft.id,key]);
+  if(retry){
+    const lease=await claimWork(input.draft.id,key,initial,30);
+    if(lease){const previous=lease.payload as Job;try{
+      if(previous.state==='failed'||previous.state==='complete'&&input.kind==='analysis'&&previous.result?.analysis?.extraction?.reviewNotes?.length){previous.state='queued';previous.attempts=0;previous.retryAt=0;previous.retryUnits=true;delete previous.result;}
+      await writeWork(input.draft.id,key,lease.token,previous);
+    }finally{await releaseWork(input.draft.id,key,lease.token);}}
+  }
   const [row]=await query('SELECT payload FROM p5_estimator_work WHERE draft_id=$1 AND work_key=$2',[input.draft.id,key]);
   startEstimatorWorker();void drainEstimatorJobs();
-  return row.payload as Job;
+  const job=row.payload as Job;
+  if(job.state==='running'){
+    const workKey=input.kind==='analysis'?(await import('./analysisWork')).analysisWorkKey(input.draft,input.text,input.answers):(await import('./pricingWork')).pricingWorkKey(input.draft.reviewed!,input.configuration,new Date(job.createdAt));
+    const [detail]=await query("SELECT payload->'processing' AS processing FROM p5_estimator_work WHERE draft_id=$1 AND work_key=$2",[input.draft.id,workKey]);
+    if(detail?.processing){job.processing={...detail.processing,startedAt:job.createdAt};job.progress=job.processing!.message;}
+  }
+  if(job.state==='failed'||job.retryAt&&job.retryAt>Date.now())job.processing={phase:'retrying',message:job.progress,startedAt:job.createdAt,updatedAt:new Date().toISOString()};
+  return job;
 }
 export function startEstimatorWorker(){
   if(runtime.p5JobTimer||!process.env.DATABASE_URL)return;
@@ -39,13 +53,13 @@ export async function drainEstimatorJobs(){
         job.state='running';await writeWork(row.draft_id,row.work_key,lease.token,job);
         if(job.input.kind==='analysis'){
           const {advanceAnalysis}=await import('./analysisWork');
-          const step=await advanceAnalysis(job.input.draft,job.input.text,job.input.answers);
-          if(step.pending){job.progress=step.progress;more=true;}
+          const step=await advanceAnalysis(job.input.draft,job.input.text,job.input.answers,fetch,job.retryUnits);job.retryUnits=false;
+          if(step.pending){job.progress=step.progress;job.retryAt=Date.now()+(step.retryAfterMs||0);more=true;}
           else{job.result=step;job.state='complete';job.progress='Document processing finished. Review the page coverage and any unreadable content.';}
         }else{
           const {priceSavedScope}=await import('./pricingWork');
           const {PricingPending}=await import('./pricingProgress');
-          try{job.result=await priceSavedScope(job.input.draft.id,job.input.draft.reviewed!,job.input.configuration);job.state='complete';job.progress='Pricing calculation saved.';}
+          try{job.result=await priceSavedScope(job.input.draft.id,job.input.draft.reviewed!,job.input.configuration,new Date(job.createdAt));job.state='complete';job.progress='Pricing calculation saved.';}
           catch(error){if(!(error instanceof PricingPending))throw error;if(!error.retryAfterMs)throw error;job.progress=error.message;job.retryAt=Date.now()+error.retryAfterMs;more=true;}
         }
         job.attempts=0;

@@ -54,3 +54,15 @@ export function coverageFor(expected:{source:string;page:number}[],reported:Page
   });
   return {pages,expectedPages:expected.length,complete:pages.length===expected.length&&pages.every(p=>p.status==='read')};
 }
+/** Multiple detail-tile batches must ALL be read before one physical page is read. */
+export function combineCoverage(parts:DocumentCoverage[],expected?:{source:string;page:number}[]):DocumentCoverage{
+  const grouped=new Map<string,PageRecord[]>();
+  for(const p of parts.flatMap(c=>c.pages)){const key=JSON.stringify([p.source,p.page]);grouped.set(key,[...(grouped.get(key)||[]),p]);}
+  const wanted=expected||[...grouped.values()].map(p=>({source:p[0].source,page:p[0].page}));
+  const pages=wanted.map(p=>{
+    const rows=grouped.get(JSON.stringify([p.source,p.page]))||[];
+    if(!rows.length)return {...p,sheet:'',revision:'',status:'unreadable' as const,notes:['This page was not processed. Review or retry it before relying on the takeoff.']};
+    return {...rows[0],status:rows.every(r=>r.status==='read')?'read' as const:rows.some(r=>r.status==='read'||r.status==='partial')?'partial' as const:'unreadable' as const,notes:[...new Set(rows.flatMap(r=>r.notes))]};
+  });
+  return {pages,expectedPages:wanted.length,complete:pages.every(p=>p.status==='read')};
+}

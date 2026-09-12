@@ -4,7 +4,7 @@ import { PDFDocument } from "pdf-lib";
 import {INSTRUCTION_POLICY} from './instructions.ts';
 import {coverageFor} from './documentLedger.ts';
 
-export interface AnalysisFile { name: string; type: string; data: Buffer; pages?:{source:string;page:number}[] }
+export interface AnalysisFile { name: string; type: string; data: Buffer; pages?:{source:string;page:number}[];nextPage?:number;preparationError?:string }
 export interface AnalysisResult { extraction: ScopeExtraction; provider: string; model: string; analyzedAt: string }
 type RequestFunction = typeof fetch;
 type ProviderKind = "OpenAI" | "Anthropic";

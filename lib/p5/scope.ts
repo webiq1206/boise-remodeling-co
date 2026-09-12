@@ -1,5 +1,5 @@
 import {mergeInstructions,validateInstructions,type ScopeInstructions} from './instructions.ts';
-import {readPageRecords,readTakeoffs,reconcileTakeoffs} from './documentLedger.ts';
+import {readPageRecords,readTakeoffs,reconcileTakeoffs,combineCoverage} from './documentLedger.ts';
 /** Public scope vocabulary. No internal prices or financial policy belongs here. */
 export const SCOPE_FIELDS = {
   estimatingInstructions: {label: "Custom estimating instructions", kind: "text"},
@@ -204,7 +204,7 @@ export function combineScopeExtractions(parts:ScopeExtraction[]):ScopeExtraction
   const merged:ScopeExtraction={summary:[...new Set(parts.map(p=>p.summary).filter(Boolean))].join("\n"),facts:[],conflicts:parts.flatMap(p=>p.conflicts),missingInformation:[...new Set(parts.flatMap(p=>p.missingInformation))],reviewNotes:[...new Set(parts.flatMap(p=>p.reviewNotes))]};
   if(parts.some(p=>p.instructions))merged.instructions=mergeInstructions(parts.flatMap(p=>p.instructions?[p.instructions]:[]));
   const coverage=parts.flatMap(p=>p.documentCoverage?[p.documentCoverage]:[]);
-  if(coverage.length)merged.documentCoverage={pages:coverage.flatMap(c=>c.pages),expectedPages:coverage.reduce((n,c)=>n+c.expectedPages,0),complete:coverage.every(c=>c.complete)};
+  if(coverage.length)merged.documentCoverage=combineCoverage(coverage);
   const takeoffs=reconcileTakeoffs(parts.flatMap(p=>p.takeoffs||[]));
   if(takeoffs.items.length){merged.takeoffs=takeoffs.items;merged.missingInformation.push(...takeoffs.issues);}
   merged.clarifications=parts.flatMap(p=>p.clarifications||[]).filter((q,i,a)=>a.findIndex(v=>v.field===q.field)===i);

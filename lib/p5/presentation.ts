@@ -36,6 +36,7 @@ export function estimateSections(result:any):EstimateSection[]{
  const buildings=[...new Set<string>(lines.map(l=>l.building).filter(Boolean))];
  if(buildings.length)sections.push({title:'Separate building prices',rows:buildings.map(b=>[b,`${money(lines.filter(l=>l.building===b).reduce((n,l)=>n+l.low,0))} to ${money(lines.filter(l=>l.building===b).reduce((n,l)=>n+l.high,0))}`]),text:'Building totals are included in, not added to, the overall estimate.'});
  const estimated=lines.filter(l=>l.pricingStatus==='estimated-allowance');
+ if(lines.some(l=>l.pricingStatus==='owner-planning-rate'))sections.push({title:'Pricing basis',text:'Owner planning rates provide the foundation for this preliminary range. They are not current supplier quotes; verify local availability, selections and trade pricing before a firm proposal.'});
  if(estimated.length)sections.push({title:'Included preliminary allowances',bullets:estimated.map(l=>`${[l.building,l.floor,l.description].filter(Boolean).join(' / ')}: ${money(l.low)} to ${money(l.high)} included. ${l.verification}${l.rateLocation?` Cost location: ${l.rateLocation}.`:''}${l.rateDate?` Researched: ${l.rateDate.slice(0,10)}.`:''}`)});
  if(result.verificationItems?.length)sections.push({title:'Items to verify before a firm proposal',bullets:[...new Set<string>(result.verificationItems)]});
  const categories=[...new Set<string>([...(result.includedCategories||[]),...lines.map(x=>x.category),...tasks.map(x=>x.category||suggestedTrade(x.description))])];
@@ -43,7 +44,7 @@ export function estimateSections(result:any):EstimateSection[]{
   const range=result.categoryRanges?.find((x:any)=>x.category===category);
   return {title:category,text:range?`${money(range.low)} to ${money(range.high)}`:undefined,
    bullets:[...new Set<string>(tasks.filter(x=>(x.category||suggestedTrade(x.description))===category).map(x=>x.description))],
-   rows:lines.filter(x=>x.category===category).map(x=>[x.description,`${Number(x.quantity).toLocaleString('en-US')} ${x.unit} • ${money(x.low)} to ${money(x.high)} total • ${Number(x.unitLow).toLocaleString('en-US',{style:'currency',currency:'USD'})} to ${Number(x.unitHigh).toLocaleString('en-US',{style:'currency',currency:'USD'})} / ${x.unit}`])};
+   rows:lines.filter(x=>x.category===category).map(x=>[[x.building,x.floor?`Floor ${x.floor}`:'',x.description].filter(Boolean).join(' / '),`${Number(x.quantity).toLocaleString('en-US')} ${x.unit}${x.quantityRange?` modeled allowance (${x.quantityRange.low.toLocaleString('en-US')} to ${x.quantityRange.high.toLocaleString('en-US')} ${x.unit} to verify)`:''}\n${money(x.low)} to ${money(x.high)} total\n${Number(x.unitLow).toLocaleString('en-US',{style:'currency',currency:'USD'})} to ${Number(x.unitHigh).toLocaleString('en-US',{style:'currency',currency:'USD'})} / ${x.unit}${x.quantityRange?' at the modeled quantity':''}`])};
  });
  if(breakdown.length){
   sections.splice(sections[0]?.title==='Project at a glance'?1:0,0,{title:result.range?'Included scope by category':'Requested scope by category',text:result.range?'Category and item ranges are parts of the overall range, not additional charges. Where several tasks share an assembly, its price is shown once.':'Scope details are organized below. Pricing coverage still requires review.'});

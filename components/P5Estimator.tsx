@@ -1,6 +1,8 @@
 "use client";
 import {completeSubmission} from '@/lib/p5/submitProgress';
 import P5EstimateDetails from './P5EstimateDetails';
+import P5ProcessingStatus from './P5ProcessingStatus';
+import type {ProcessingStatus} from '@/lib/p5/processingStatus';
 import {useEffect,useId,useRef,useState} from 'react';
 import {ESTIMATOR_BRAND as brand} from '@/lib/p5/brand';
 import {SCOPE_FIELDS,SCOPE_TEXT_LIMIT,SCOPE_FILE_LIMIT,SCOPE_BATCH_LIMIT,SCOPE_FILE_COUNT,SCOPE_UPLOAD_HELP,type ScopeField,type ScopeAnswers,type ScopeUpload} from '@/lib/p5/scope';
@@ -24,6 +26,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
   const [files,setFiles]=useState<File[]>([]);const filesRef=useRef<File[]>([]);
   const [busy,setBusy]=useState('');const busyRef=useRef(false);const [error,setError]=useState('');const [warning,setWarning]=useState('');const [status,setStatus]=useState('');
   const [uploadPercent,setUploadPercent]=useState<number|null>(null);const [preparingFiles,setPreparingFiles]=useState(false);
+  const [processing,setProcessing]=useState<ProcessingStatus|null>(null);
   const started=useRef(false);
   const [listening,setListening]=useState(false);const [speechAvailable,setSpeechAvailable]=useState(false);const recognition=useRef<Recognition|null>(null);
   const [result,setResult]=useState<any>(null);const [delivery,setDelivery]=useState<any[]>([]);const [confirmed,setConfirmed]=useState(false);
@@ -84,8 +87,8 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
     return()=>clearTimeout(timer);
   },[draft?.text,JSON.stringify(draft?.answers),JSON.stringify(draft?.contact),busy,Boolean(result)]);
   async function run(label:string,operation:()=>Promise<void>){
-    if(busyRef.current)return;busyRef.current=true;setBusy(label);setError('');recognition.current?.stop();
-    try{await serialized(operation);}catch(e){setError(e instanceof TypeError?'The connection was interrupted. Your saved details are intact. Keep this tab open and retry.':e instanceof Error?e.message:'This step could not finish. Your work is still here.');}finally{busyRef.current=false;setBusy('');setUploadPercent(null);}
+    if(busyRef.current)return;busyRef.current=true;setBusy(label);setProcessing(null);setError('');recognition.current?.stop();
+    try{await serialized(operation);}catch(e){setError(e instanceof TypeError?'The connection was interrupted. Your saved details are intact. Keep this tab open and retry.':e instanceof Error?e.message:'This step could not finish. Your work is still here.');}finally{busyRef.current=false;setBusy('');setUploadPercent(null);setProcessing(null);}
   }
   async function ensureSourcePhoto(){
     const url=projectSource?.imageUrl;if(!url||current.current?.sourceImageUrl===url)return;
@@ -119,7 +122,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
     do{
     const response=await fetch('/api/p5-estimator/scope',{method:'POST',headers:draftHeaders(d),body:form,signal:AbortSignal.timeout(200000)});data=await response.json();form.set('retry','false');
     if(!response.ok)throw new Error(data.error||'Your files could not be processed. They are still here. Please retry.');
-    if(data.pending){setBusy(data.progress||'Reading your project...');await new Promise(r=>setTimeout(r,5000));}
+    if(data.pending){setBusy(data.progress||'Reading your project...');setProcessing(data.processing||null);await new Promise(r=>setTimeout(r,2000));}
     }while(data.pending);
     const saved=requireDraftReceipt(data);
     const next={...current.current!,...saved,key:d.key,step:1,updatedAt:Date.now(),dirty:false,conflicts:data.conflicts||[],pricedFields:data.pricedFields||[],analysisWarning:data.warning||"",sourceImageUrl:projectSource?.imageUrl,analyzedText:d.text,analyzedAnswers:textAnswers(saved.answers)} as BrowserDraft;
@@ -166,7 +169,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
     if(questions(d).length){showQuestions(d);return;}
     for(const [key,value]of Object.entries(d.answers)){const issue=validateScopeAnswer(key as ScopeField,value!);if(issue){setEditField(key as ScopeField);setError(`${SCOPE_FIELDS[key as ScopeField].label}: ${issue}`);return;}}
     if(d.contact.name.trim().length<2||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.contact.email)){setError('Enter your name and a valid email address.');return;}
-    await run('Preparing your estimate...',async()=>{trackScopeEvent('contactSubmitted',d.answers.service);const saved=await save(true);let retry=true;const data=await completeSubmission(()=>{const shouldRetry=retry;retry=false;return fetch('/api/p5-estimator/submit',{method:'POST',headers:{...draftHeaders(current.current!),'Content-Type':'application/json'},body:JSON.stringify({revision:saved.revision,background:true,retry:shouldRetry})});},message=>setBusy(message));setResult(data.result);setDelivery(data.delivery||[]);if(data.result?.range)trackScopeEvent('estimateGenerated',d.answers.service);if(data.delivery?.some((v:any)=>v.channel==='customer'&&v.status==='sent'))trackScopeEvent('estimateEmailed',d.answers.service);setStatus('');focus();});
+    await run('Preparing your estimate...',async()=>{trackScopeEvent('contactSubmitted',d.answers.service);const saved=await save(true);let retry=true;const data=await completeSubmission(()=>{const shouldRetry=retry;retry=false;return fetch('/api/p5-estimator/submit',{method:'POST',headers:{...draftHeaders(current.current!),'Content-Type':'application/json'},body:JSON.stringify({revision:saved.revision,background:true,retry:shouldRetry})});},(message,detail)=>{setBusy(message);setProcessing(detail||null);});setResult(data.result);setDelivery(data.delivery||[]);if(data.result?.range)trackScopeEvent('estimateGenerated',d.answers.service);if(data.delivery?.some((v:any)=>v.channel==='customer'&&v.status==='sent'))trackScopeEvent('estimateEmailed',d.answers.service);setStatus('');focus();});
   }
   const field=(key:ScopeField)=>{const definition=SCOPE_FIELDS[key];const value=draft?.answers[key]||'';const fieldId=`${id}-${key}`;
     return <div key={key} className={styles.field}><label htmlFor={fieldId}>{definition.label}</label>{definition.kind==='choice'?<select id={fieldId} value={value} onChange={e=>answer(key,e.target.value)}><option value="">Choose an answer</option>{definition.options.filter(v=>key!=='service'||(brand.services as readonly string[]).includes(v)).map(v=><option key={v} value={v}>{key==='cabinetRoom'?v.replaceAll('-',' '):labels[v]||v.replaceAll('-',' ')}</option>)}</select>:definition.kind==='number'?<input id={fieldId} inputMode="decimal" value={value} onChange={e=>answer(key,e.target.value)} placeholder="Approximate is fine"/>:<textarea id={fieldId} rows={3} value={value} onChange={e=>answer(key,e.target.value)} />}</div>;};
@@ -199,6 +202,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
         <details open={inputOpen} onToggle={e=>setInputOpen(e.currentTarget.open)}><summary>Add or edit project information</summary>{projectInput}<button type="button" onClick={begin}>Update project</button></details>
         {warning&&<div className={styles.notice}><p>{warning}</p><button type="button" onClick={()=>run('Reading your saved documents...',analyze)}>Retry document reading</button></div>}
         {draft.step===2&&<>
+          {draft.extraction?.instructions&&<P5EstimateDetails result={{instructions:draft.extraction.instructions,documentCoverage:draft.extraction.documentCoverage}}/>}
           {scopeAssumptions(draft.answers,draft.wizard?.skipped).length>0&&<details><summary>Assumptions and details to confirm</summary><ul>{scopeAssumptions(draft.answers,draft.wizard?.skipped).map(note=><li key={note}>{note}</li>)}</ul></details>}
           <label className={styles.check}><input type="checkbox" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/><span>These details reflect my project. I understand this is a preliminary estimate, subject to confirmed scope, selections and site conditions.</span></label>
           <div className={styles.actions}><button className={styles.primary} type="submit">Get my estimate</button></div>
@@ -206,6 +210,6 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
         <button className={styles.back} type="button" onClick={()=>{change({step:0});setError('');focus();}}>Back to my project</button>
       </>}
     </fieldset></form>}
-    {(busy||preparingFiles)&&<div className={styles.loadingOverlay}><div className={styles.loadingCard} role="status" aria-live="polite"><span className={styles.spinner} aria-hidden="true"/><h2>{preparingFiles?'Preparing your files...':busy}</h2>{uploadPercent!==null?<><progress max={100} value={uploadPercent} aria-label="File upload progress"/><p>{uploadPercent}% transferred. Waiting for confirmation before marking files saved.</p></>:<p>{preparingFiles?'Checking that every selected file can be read.':busy.includes('Reading')?'Finding project details, measurements and specifications. Large documents take longer.':'Please keep this tab open. Your project details stay with this estimate.'}</p>}</div></div>}{error&&<p className={styles.error} role="alert">{error}</p>}{status&&!busy&&!preparingFiles&&<p className={styles.hint} role="status">{status}</p>}
+    {(busy||preparingFiles)&&<P5ProcessingStatus message={preparingFiles?'Preparing your files...':busy} processing={preparingFiles?null:processing} uploadPercent={uploadPercent}/>}{error&&<p className={styles.error} role="alert">{error}</p>}{status&&!busy&&!preparingFiles&&<p className={styles.hint} role="status">{status}</p>}
   </div>;
 }

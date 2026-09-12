@@ -25,7 +25,7 @@ export async function postSubmission(request:Request){
     const [policy]=await query("SELECT payload FROM p5_estimator_policy WHERE id='current'");
     const configuration=(policy?.payload||EMPTY_CONFIGURATION) as EstimatorConfiguration;
     const job=body.background===true?await queuedJob({kind:'pricing',draft,configuration},body.retry===true):null;
-    if(job&&job.state!=='complete')return json({pending:job.state!=='failed',message:job.progress,retryAfterMs:5000,...(job.state==='failed'?{error:job.progress}:{})},job.state==='failed'?503:202);
+    if(job&&job.state!=='complete')return json({pending:job.state!=='failed',message:job.progress,processing:job.processing,retryAfterMs:2000,...(job.state==='failed'?{error:job.progress}:{})},job.state==='failed'?503:202);
     const priced=job?job.result:await priceSavedScope(id,draft.reviewed,configuration);
     if(!priced.customer.range){
       // Keep incomplete pricing available to the authenticated admin, but do
