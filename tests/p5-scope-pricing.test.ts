@@ -14,7 +14,7 @@ const base=priceReviewedScope(scope,config,now);
 const ids=(base.internal as any).lines.map((l:any)=>l.id);
 const task={id:'cabinets',description:'Cabinet supply',evidence:'ten feet',existingLineIds:ids,additions:[],researchDescription:'',issues:[]};
 const extra={id:'overlay',description:'Protective overlay',evidence:'ten feet',existingLineIds:[],additions:[],researchDescription:'Protective cabinet overlay',issues:[]};
-const source=(url:string,low:number,high:number)=>({url,low,high,publishedAt:'2026-09-01',region:'Idaho',excerpt:`Material price ${low} to ${high} dollars per linear foot.`});
+const source=(url:string,low:number,high:number)=>({url,low,high,unit:'LF',costBasis:'material-purchase',sourceType:'regional-guide',dateBasis:'published',publishedAt:'2026-09-01',region:'Idaho',excerpt:`Material price ${low} to ${high} dollars per linear foot.`});
 const urls=['https://supplier-a.example/pricing','https://supplier-b.example/pricing'];
 const adjustmentEvidence={url:urls[0],publishedAt:'',dateBasis:'retrieved' as const,region:'Synthetic test region',excerpt:'Synthetic fixture price includes tax and pickup with no additional freight charge.'};
 const purchaseAdjustments={taxRate:0,freightPerUnit:0,taxOnFreight:false,taxEvidence:adjustmentEvidence,freightEvidence:adjustmentEvidence};
@@ -56,15 +56,13 @@ test('Sourced averages add missing costs, retain sources, and preserve financial
  assert.ok(JSON.stringify(r.internal.scopePricing).includes(urls[0]));
  assert.ok(!JSON.stringify(r.customer).includes('unitCost'));
 });
-test('Product tax and freight are added as costs, never averaged as competing prices',()=>{
- const quote={...researched,rates:[{...researched.rates[0],unit:'each',quantity:1,sources:[{...source(urls[0],449.99,449.99),sourceType:'supplier',dateBasis:'retrieved',publishedAt:''}],landedCost:{...purchaseAdjustments,taxRate:0.06}}]};
- const priced=marketResolution(quote,urls,[extra],now).rules[0];
- assert.equal(priced.unitCost,476.9894);assert.ok(Math.abs(priced.unitCostRange!.low-476.9894)<1e-8);
- const shipped=structuredClone(quote);shipped.rates[0].landedCost.freightPerUnit=20;shipped.rates[0].landedCost.taxOnFreight=true;
- assert.equal(marketResolution(shipped,urls,[extra],now).rules[0].unitCost,498.1894);
- assert.throws(()=>marketResolution({...quote,rates:[{...quote.rates[0],landedCost:null}]},urls,[extra],now),/requires sourced tax/);
- const unsupported=structuredClone(quote);unsupported.rates[0].landedCost.taxEvidence.url='https://invented.example/tax';
- assert.throws(()=>marketResolution(unsupported,urls,[extra],now),/Unsupported purchase adjustment/);
+test('Regional unit-cost benchmarks reject incompatible units, responsibility and supplier offers',()=>{
+ const priced=marketResolution(researched,urls,[extra],now).rules[0];assert.equal(priced.unitCost,20);assert.equal(priced.quantity.fixed,10);
+ const aliases=structuredClone(researched);aliases.rates[0].sources[0].unit='linear feet';assert.equal(marketResolution(aliases,urls,[extra],now).rules[0].unitCost,20);
+ for(const change of [{unit:'hour'},{costBasis:'subcontractor-installed'},{sourceType:'supplier'}]){
+  const wrong=structuredClone(researched);Object.assign(wrong.rates[0].sources[0],change);assert.throws(()=>marketResolution(wrong,urls,[extra],now));
+ }
+ const noCheckout={...researched,rates:[{...researched.rates[0],landedCost:null}]};assert.equal(marketResolution(noCheckout,urls,[extra],now).rules[0].unitCost,20);
 });
 test('An incomplete scope price is not misreported as a missing quantity',()=>{
  const r=priceReviewedScope(scope,config,now,{replaceBase:true,rules:[],assumptions:[],issues:['Supplier research could not complete.']});
@@ -233,10 +231,10 @@ test('Separate building prices require every component to be assigned to a build
  const missing=tasks.map(t=>({...t,additions:t.additions.map(a=>({...a,building:undefined}))}));
  const held=await priceCompleteScope(restricted,config,replies([{tasks:missing,issues:[]},{coveredTaskIds:['Main','ADU'],issues:[]}]),now);assert.equal(held.customer.range,null);
 });
-test('An undated actual supplier offering records retrieval date without inventing a publication date',()=>{
- const single={...researched,rates:[{...researched.rates[0],sources:[{...source(urls[0],10,20),publishedAt:'',dateBasis:'retrieved',sourceType:'supplier'}]}]};
- const rate=marketResolution(single,urls,[extra],now,0,'Boise').rules[0];
+test('Undated independent guide averages retain retrieval date and freshness limitations',()=>{
+ const guides={...researched,rates:[{...researched.rates[0],sources:researched.rates[0].sources.map(s=>({...s,publishedAt:'',dateBasis:'retrieved',sourceType:'national-guide',region:'United States'}))}]};
+ const result=marketResolution(guides,urls,[extra],now,0,'Boise'),rate=result.rules[0];
  assert.equal(rate.evidence.provenance?.status,'estimated');assert.equal(rate.evidence.provenance?.location,'Boise');
  assert.equal(rate.evidence.provenance?.sources[0].date,'2026-09-11');assert.equal(rate.evidence.provenance?.sources[0].dateBasis,'retrieved');
- assert.match(rate.evidence.reference,/retrieved 2026-09-11/);
+ assert.match(rate.evidence.reference,/retrieved 2026-09-11/);assert.match(result.assumptions[0],/United States.*national-guide/);assert.match(result.assumptions[0],/freshness requires verification/);
 });
