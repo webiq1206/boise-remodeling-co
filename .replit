@@ -7,7 +7,7 @@ channel = "stable-24_05"
 packages = ["imagemagick", "libwebp"]
 
 [deployment]
-deploymentTarget = "autoscale"
+deploymentTarget = "vm"
 build = ["bash", "build.sh"]
 run = ["bash", "start.sh"]
 
