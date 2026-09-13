@@ -1,3 +1,4 @@
+import {atomicInstructionQuestions,textBenchTopChoices} from './atomicQuestions.ts';
 import type {ScopeAnswers,ScopeExtraction} from './scope.ts';
 import type {ScopeInstructions} from './instructions.ts';
 import {isBenchTopClarificationQuestion,retainedBenchTopChoices,retainedChoiceValue} from './retainedClarification.ts';
@@ -15,7 +16,7 @@ const normalizeQuestionPart=(part:string)=>part.replace(/\s+/g,' ').trim();
 export function instructionPrompts(extraction:ScopeExtraction|null,answers:ScopeAnswers):InstructionPrompt[]{
   const result:InstructionPrompt[]=[];
   for(const raw of extraction?.instructions?.questions||[]){
-    for(const part of questionParts(raw)){
+    for(const part of questionParts(raw).flatMap(part=>atomicInstructionQuestions(part,answers,extraction?.conflicts))){
       const full=normalizeQuestionPart(part);if(!full)continue;
       // Filter each question separately so a legacy paragraph cannot lose a real scope decision.
       if(serviceQuestion(full))continue;
@@ -30,7 +31,7 @@ export function instructionPrompts(extraction:ScopeExtraction|null,answers:Scope
        const retainedValues=isBenchTopClarificationQuestion(full)
          ?(extraction?retainedBenchTopChoices(extraction):[]).map(retainedChoiceValue)
          :undefined;
-       result.push({id,question,...(question!==full?{detail:full}:{}),values:retainedValues?.length?retainedValues:values});
+       result.push({id,question,...(question!==full?{detail:full}:{}),values:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
     }
   }
   return result;
