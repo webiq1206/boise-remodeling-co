@@ -78,7 +78,7 @@ try{
   await est.getByRole('checkbox').check();
   const pricingStart=Date.now();await est.getByRole('button',{name:'Get my estimate',exact:true}).click();note('get my estimate clicked');
   let priced='';
-  for(let i=0;i<600;i++){
+  for(let i=0;i<Number(opt('pricing-limit','1800'));i++){
     if(await est.getByRole('heading',{name:'Your project summary',exact:true}).count()){priced='result';break;}
     if(await est.getByRole('button',{name:'Keep going',exact:true}).count()){note('paused card shown during pricing; continuing');await est.getByRole('button',{name:'Keep going',exact:true}).click();}
     if(await est.getByRole('region',{name:'Project question'}).count()){priced='question';break;}
