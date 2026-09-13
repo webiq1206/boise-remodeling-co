@@ -26,6 +26,10 @@ const log=[];const t0=Date.now();const note=(m,extra={})=>{const entry={t:+((Dat
 const browser=await chromium.launch();
 const context=await browser.newContext({viewport:{width,height},hasTouch:width<768});
 const page=await context.newPage();page.setDefaultTimeout(120000);
+// Log every estimator API reply whose server message changes, so a stalled
+// stage is visible from the outside without server access.
+let lastApi='';
+page.on('response',async response=>{const url=response.url();if(!url.includes('/api/p5-estimator/'))return;try{const data=await response.json();const p=data.processing||{};const line=JSON.stringify({status:response.status(),pending:data.pending,message:data.message||data.error||'',phase:p.phase,detail:p.message,pages:p.pagesChecked,stage:p.stage});if(line!==lastApi){lastApi=line;note('api '+url.split('/api/p5-estimator/')[1].split('?')[0],JSON.parse(line));}}catch{}});
 const shot=async name=>{const file=path.join(out,`${label}-${name}.png`);await page.screenshot({path:file,fullPage:true}).catch(()=>{});return file;};
 const settled=async()=>{await page.waitForFunction(()=>!document.querySelector('[data-p5-estimator][aria-busy=true]'),null,{timeout:180000});};
 const result={base,route,label,scope,files,answers,contact:{...contact},timings:{},questions:[],errors:[],status:'incomplete'};
