@@ -1,6 +1,6 @@
 import { getUncachableEmailClient } from "../../server/services/emailTransport";
 import { getAdminRecipientEmails,formatFromAddress } from "../../server/services/emailLayout";
-import { ESTIMATOR_BRAND as brand } from "./brand";
+import { ESTIMATOR_BRAND as brand } from "./brand.ts";
 export async function adminRecipients(){return [...new Set(await getAdminRecipientEmails(brand.email))];}
 export const EMAIL_SUPPORTS_IDEMPOTENCY=true;
 export async function sendEmail(input:{to:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer}[];key:string}){
