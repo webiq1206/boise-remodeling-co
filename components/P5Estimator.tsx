@@ -1,4 +1,5 @@
 "use client";
+import {CLIENT_BUDGET_MS,PROCESSING_PAUSED,ProcessingDeadlineError,remainingBudget,withinDeadline,fetchWithinDeadline} from '@/lib/p5/processingBudget';
 import {completeSubmission} from '@/lib/p5/submitProgress';
 import P5EstimateDetails from './P5EstimateDetails';
 import P5ProcessingStatus from './P5ProcessingStatus';
@@ -56,10 +57,10 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
     loadCachedFiles(d.id).then(f=>{if(mounted.current&&current.current?.id===d.id){filesRef.current=f;setFiles(f);}}).catch(()=>setStatus('File recovery is unavailable. Keep this page open while uploading.'));
     if(d.revision>0)fetch('/api/p5-estimator/draft',{headers:draftHeaders(d),cache:'no-store'}).then(r=>r.ok?r.json():null).then(async data=>{
       if(!mounted.current||!data?.draft||current.current?.id!==d.id)return;
-      const saved=requireDraftReceipt(data);
+      checkOperation();const saved=requireDraftReceipt(data);
        if(saved.status==='submitted'){
          if(!sourceSnapshotsEqual(sourceSnapshot(d),sourceSnapshot(current.current as BrowserDraft)))return;
-        const response=await fetch('/api/p5-estimator/submit',{method:'POST',headers:{...draftHeaders(d),'Content-Type':'application/json'},body:JSON.stringify({revision:saved.revision})});const value=await response.json();
+        const response=await operationFetch('/api/p5-estimator/submit',{method:'POST',headers:{...draftHeaders(d),'Content-Type':'application/json'},body:JSON.stringify({revision:saved.revision})});const value=await response.json();
         if(value.result&&mounted.current){setResult(value.result);setDelivery(value.delivery||[]);}return;
       }
       // Never overwrite edits made while recovery was in flight or unsaved offline work.
@@ -116,12 +117,17 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
     sync();document.addEventListener('focusin',onFocusIn);document.addEventListener('focusout',onFocusOut);window.addEventListener('resize',sync);window.visualViewport?.addEventListener('resize',sync);window.visualViewport?.addEventListener('scroll',sync);
     return()=>{cancelRefloat();document.removeEventListener('focusin',onFocusIn);document.removeEventListener('focusout',onFocusOut);window.removeEventListener('resize',sync);window.visualViewport?.removeEventListener('resize',sync);window.visualViewport?.removeEventListener('scroll',sync);};
   },[]);
+  const operationBudget=useRef<{deadline:number;controller:AbortController}|null>(null);
+  const operationFetch:typeof fetch=(input,init)=>{const budget=operationBudget.current;return fetchWithinDeadline(fetch,input,{...init,...(budget?{signal:budget.controller.signal}:{})},budget?.deadline||Date.now()+CLIENT_BUDGET_MS);};
+  const checkOperation=()=>{const budget=operationBudget.current;if(budget){if(budget.controller.signal.aborted)throw new ProcessingDeadlineError();remainingBudget(budget.deadline);}};
   const serialized=<T,>(operation:()=>Promise<T>):Promise<T>=>{const task=queue.current.catch(()=>undefined).then(operation);queue.current=task;return task;};
   async function save(reviewed=false,clarification?:{id:string;answer:string}){
+    const initiated=operationBudget.current;
     const d=current.current;if(!d)throw new Error('Your project is still loading.');
      const requestSource=sourceSnapshot(d);
-     const response=await fetch('/api/p5-estimator/draft',{method:'PUT',headers:{...draftHeaders(d),'Content-Type':'application/json'},body:JSON.stringify({text:d.text,answers:d.answers,contact:d.contact,revision:d.revision,wizard:d.wizard,reviewed,clarification,scopeFingerprint:scopeFingerprint(d.text)})});
-    const data=await response.json();if(!response.ok)throw new Error(data.error||'Your project could not be saved. Please retry.');const saved=requireDraftReceipt(data);
+     const response=await operationFetch('/api/p5-estimator/draft',{method:'PUT',headers:{...draftHeaders(d),'Content-Type':'application/json'},body:JSON.stringify({text:d.text,answers:d.answers,contact:d.contact,revision:d.revision,wizard:d.wizard,reviewed,clarification,scopeFingerprint:scopeFingerprint(d.text)})});
+    const data=await response.json();if(!response.ok)throw new Error(data.error||'Your project could not be saved. Please retry.');checkOperation();const saved=requireDraftReceipt(data);
+    if(initiated&&initiated!==operationBudget.current)throw new ProcessingDeadlineError();
     if(current.current?.id!==d.id)return saved;
      // A response for an older source may still be valid on the server, but
      // it must not put its extraction back into the newer local project.
@@ -137,13 +143,14 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
   },[draft?.text,JSON.stringify(draft?.answers),JSON.stringify(draft?.contact),busy,Boolean(result)]);
   async function run(label:string,operation:()=>Promise<void>){
     if(busyRef.current)return;busyRef.current=true;setBusy(label);setProcessing(null);setError('');
-    try{await serialized(operation);}catch(e){setError(e instanceof TypeError?'The connection was interrupted. Your saved details are intact. Keep this tab open and retry.':e instanceof Error?e.message:'This step could not finish. Your work is still here.');}finally{busyRef.current=false;setBusy('');setUploadPercent(null);setProcessing(null);}
+    const budget={deadline:Date.now()+CLIENT_BUDGET_MS,controller:new AbortController()};operationBudget.current=budget;
+    try{await withinDeadline(()=>serialized(async()=>{checkOperation();await withinDeadline(operation,budget.deadline);checkOperation();}),budget.deadline);}catch(e){setError(budget.controller.signal.aborted&&Date.now()<budget.deadline?'Your progress is saved. You can edit your project or continue the check.':e instanceof ProcessingDeadlineError?PROCESSING_PAUSED:e instanceof TypeError?'The connection was interrupted. Your saved details are intact. Keep this tab open and retry.':e instanceof Error?e.message:'This step could not finish. Your work is still here.');}finally{budget.controller.abort();if(operationBudget.current===budget)operationBudget.current=null;busyRef.current=false;setBusy('');setUploadPercent(null);setProcessing(null);}
   }
   async function ensureSourcePhoto(){
      const url=projectSource&&!current.current?.sourceDetached?projectSource.imageUrl:undefined;if(!url||current.current?.sourceImageUrl===url)return;
     const parsed=new URL(url,window.location.origin);
     if(parsed.origin!==window.location.origin&&!url.startsWith('data:image/')&&!url.startsWith('blob:'))throw new Error('The design photo cannot be imported from this address. Please add it using Add files.');
-    const response=await fetch(url,{signal:AbortSignal.timeout(30000)});if(!response.ok)throw new Error('Your design photo could not be read. Please retry or add the photo using Add files.');
+    const response=await operationFetch(url,{signal:AbortSignal.timeout(30000)});if(!response.ok)throw new Error('Your design photo could not be read. Please retry or add the photo using Add files.');
     const blob=await response.blob();const ext:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/heic':'heic','image/heif':'heif'};
     if(!ext[blob.type]||blob.size>SCOPE_FILE_LIMIT)throw new Error('Use Add files to provide a supported design photo up to 250 MB.');
     const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
@@ -154,6 +161,8 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
     }
   }
   async function analyze(){
+    const initiated=operationBudget.current;
+    const checkAnalysis=()=>{if(initiated&&initiated!==operationBudget.current)throw new ProcessingDeadlineError();checkOperation();};
     await ensureSourcePhoto();
     setBusy('Saving your project...');await save();const d=current.current!;const pending=[...filesRef.current];
      const expectedSource=sourceSnapshot(d);
@@ -164,26 +173,27 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
       setBusy('Uploading your files...');setUploadPercent(0);
       const large=pending.some(f=>f.size>10*1024*1024)||pending.reduce((n,f)=>n+f.size,0)>22*1024*1024;
       let uploaded:unknown;
-      if(large)uploaded=await transferLargeFiles(pending,draftHeaders(d),setUploadPercent);
-      else{const upload=new FormData();upload.set('analyze','false');for(const f of pending)upload.append('files',new Blob([await f.arrayBuffer()],{type:f.type}),f.name);uploaded=await transferProjectFiles(upload,draftHeaders(d),setUploadPercent);}
-      const receipt=requireDraftReceipt(uploaded);
+      if(large)uploaded=await transferLargeFiles(pending,draftHeaders(d),setUploadPercent,operationFetch);
+      else{const upload=new FormData();upload.set('analyze','false');for(const f of pending)upload.append('files',new Blob([await f.arrayBuffer()],{type:f.type}),f.name);uploaded=await transferProjectFiles(upload,draftHeaders(d),setUploadPercent,operationBudget.current?.controller.signal,operationBudget.current?.deadline);}
+      checkOperation();const receipt=requireDraftReceipt(uploaded);
        if(!sourceSnapshotsEqual(sourceSnapshot(d),sourceSnapshot(receipt as BrowserDraft)))throw new Error('Your project changed while files were uploading. Your files are retained. Refresh before continuing so newer details are not overwritten.');
        requireCurrentSource();
       for(const f of pending){const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await f.arrayBuffer()))).map(b=>b.toString(16).padStart(2,'0')).join('');if(!receipt.uploads.some(stored=>stored.sha256===digest))throw new Error(`${f.name}: upload was not confirmed. Please retry.`);}
       apply({...current.current!,uploads:receipt.uploads,revision:receipt.revision});filesRef.current=[];setFiles([]);await clearCachedFiles(d.id).catch(()=>undefined);setUploadPercent(null);setStatus('Files uploaded and saved.');
     }
-     setBusy('Reading your documents and project details...');const form=new FormData();form.set('text',d.text);form.set('scopeFingerprint',scopeFingerprint(d.text));form.set('revision',String(current.current!.revision));form.set('resumable','true');form.set('background','true');form.set('retry',d.analysisWarning?'true':'false');
+     setBusy('Reading your documents and project details...');const form=new FormData();form.set('text',d.text);form.set('scopeFingerprint',scopeFingerprint(d.text));form.set('revision',String(current.current!.revision));form.set('resumable','true');form.set('background','true');form.set('retry','true');
     let data:any;
     do{
      requireCurrentSource();
-    const response=await fetch('/api/p5-estimator/scope',{method:'POST',headers:draftHeaders(d),body:form,signal:AbortSignal.timeout(200000)});data=await response.json();form.set('retry','false');
+    const response=await operationFetch('/api/p5-estimator/scope',{method:'POST',headers:draftHeaders(d),body:form,signal:AbortSignal.timeout(200000)});data=await response.json();form.set('retry','false');
     if(!response.ok)throw new Error(data.error||'Your files could not be processed. They are still here. Please retry.');
      requireCurrentSource();
      if(data.pending){if(Number.isInteger(data.draftRevision)){apply({...current.current!,revision:data.draftRevision});form.set('revision',String(data.draftRevision));}setBusy(data.progress||'Reading your project...');if(data.processing)setProcessing(data.processing);await new Promise(r=>setTimeout(r,1000));}
     }while(data.pending);
-    const saved=requireDraftReceipt(data);
+    checkOperation();const saved=requireDraftReceipt(data);
      requireCurrentSource();
-     const next={...current.current!,...saved,key:d.key,step:1,updatedAt:Date.now(),dirty:false,conflicts:data.conflicts||[],pricedFields:data.pricedFields||[],analysisWarning:data.warning||"",sourceImageUrl:current.current?.sourceDetached?undefined:projectSource?.imageUrl,analyzedText:d.text,analyzedAnswers:textAnswers(saved.answers)} as BrowserDraft;
+     checkAnalysis();
+    const next={...current.current!,...saved,key:d.key,step:1,updatedAt:Date.now(),dirty:false,conflicts:data.conflicts||[],pricedFields:data.pricedFields||[],analysisWarning:data.warning||"",sourceImageUrl:current.current?.sourceDetached?undefined:projectSource?.imageUrl,analyzedText:d.text,analyzedAnswers:textAnswers(saved.answers)} as BrowserDraft;
     apply(next);setWarning(data.warning||'');if(pending.length)trackScopeEvent(d.uploads?.length?'additionalDocuments':'documentUploaded',saved.answers.service);trackScopeEvent(data.warning?'analysisFailed':'analysisCompleted',saved.answers.service);filesRef.current=[];setFiles([]);
     try{await clearCachedFiles(d.id);}catch{setStatus('Files are uploaded. Local file cleanup will retry later.');}
     setStatus(data.warning?'Files uploaded. Some details still need review.':'Project details saved. We will only ask about what is missing.');showQuestions(next);
@@ -217,7 +227,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
       if(skip){if(active.field==='service'||active.conflict)return;const d=current.current;change({wizard:{...d.wizard,resolutions:d.wizard?.resolutions||{},skipped:[...new Set([...(d.wizard?.skipped||[]),active.field])]}});}}
     await run('Saving your answer...',async()=>{await save();const saved=current.current!;apply({...saved,analyzedAnswers:textAnswers(saved.answers)});showQuestions(current.current!);});
   }
-  async function downloadPdf(){await run('Preparing your PDF...',async()=>{const response=await fetch('/api/p5-estimator/pdf',{headers:draftHeaders(current.current!)});if(!response.ok)throw new Error('The PDF could not be downloaded. Your submission is saved; please retry.');const url=URL.createObjectURL(await response.blob());const link=document.createElement('a');link.href=url;link.download=`${brand.id}-project-summary.pdf`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});}
+  async function downloadPdf(){await run('Preparing your PDF...',async()=>{const response=await operationFetch('/api/p5-estimator/pdf',{headers:draftHeaders(current.current!)});if(!response.ok)throw new Error('The PDF could not be downloaded. Your submission is saved; please retry.');const url=URL.createObjectURL(await response.blob());const link=document.createElement('a');link.href=url;link.download=`${brand.id}-project-summary.pdf`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});}
   const focusCorrection=(element:HTMLElement|null)=>requestAnimationFrame(()=>{if(!element)return;element.focus();element.scrollIntoView({block:'center',behavior:'smooth'});});
   async function submit(event:React.FormEvent){
     event.preventDefault();if(draft?.step!==2){await begin();return;}
@@ -253,7 +263,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
       if(!next)throw new Error('This saved project could not be restored. Your current project is unchanged.');
       const pending=recovery?await loadCachedFiles(next.id):[];
       if(recovery&&next.revision>0){
-        const response=await fetch('/api/p5-estimator/draft',{headers:draftHeaders(next),cache:'no-store'});
+        const response=await operationFetch('/api/p5-estimator/draft',{headers:draftHeaders(next),cache:'no-store'});
         if(!response.ok)throw new Error('The saved project could not be checked. Keep this page open and retry.');
         const saved=requireDraftReceipt(await response.json());
         if(saved.status==='submitted')throw new Error('This project was already submitted and cannot be edited. Its recovery is retained; start a replacement project instead.');
@@ -280,9 +290,9 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
    if(!draft)return <div ref={estimatorRef} className={styles.root} role="status">Loading your project...</div>;
    const attachedProjectSource=projectSource&&!draft.sourceDetached?projectSource:undefined;
    const projectInput=<>
-    <div className={styles.field}><label htmlFor={`${id}-scope`}>Tell us about your project</label><textarea id={`${id}-scope`} rows={6} value={displayScopeText(draft.text,draft.answers.estimatingInstructions)} onChange={e=>changeProjectText(e.target.value)} placeholder={`${scopeExample}\nInclude any notes, instructions, inclusions or exclusions.`}/><p className={styles.hint}>Type everything here, or use your keyboard’s dictation. Include what to price, what to leave out and who supplies materials.</p></div>
-    <div className={styles.inputTools} data-dragging={dragging} onDragEnter={e=>{e.preventDefault();setDragging(true);}} onDragOver={e=>e.preventDefault()} onDragLeave={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node|null))setDragging(false);}} onDrop={e=>{e.preventDefault();setDragging(false);void addFiles(e.dataTransfer.files);}}><label className={styles.attach} htmlFor={`${id}-files`}><span aria-hidden="true">↑</span><span><strong>Upload project files</strong><small>Scopes, blueprints, plans, notes, photos and more</small></span><input id={`${id}-files`} type="file" accept={accept} multiple aria-label="Upload project files" onChange={e=>{const input=e.currentTarget;const selected=Array.from(input.files||[]);void addFiles(selected).then(()=>{input.value='';});}}/></label></div>
-    <p className={styles.hint}>Choose files or drag them here. PDFs, images, Word, spreadsheets and text. {SCOPE_UPLOAD_HELP}</p>
+    <div className={styles.field}><label htmlFor={`${id}-scope`}>Project details</label><textarea id={`${id}-scope`} rows={5} value={displayScopeText(draft.text,draft.answers.estimatingInstructions)} onChange={e=>changeProjectText(e.target.value)} placeholder={`${scopeExample}\nInclude any notes, instructions, inclusions or exclusions.`}/><p className={styles.hint}>Include dimensions, what to include or exclude, and who supplies materials.</p></div>
+    <div className={styles.inputTools} data-dragging={dragging} onDragEnter={e=>{e.preventDefault();setDragging(true);}} onDragOver={e=>e.preventDefault()} onDragLeave={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node|null))setDragging(false);}} onDrop={e=>{e.preventDefault();setDragging(false);void addFiles(e.dataTransfer.files);}}><label className={styles.attach} htmlFor={`${id}-files`}><span aria-hidden="true">↑</span><span><strong>Upload project files</strong><small>Plans, photos, notes or an existing scope</small></span><input id={`${id}-files`} type="file" accept={accept} multiple aria-label="Upload project files" onChange={e=>{const input=e.currentTarget;const selected=Array.from(input.files||[]);void addFiles(selected).then(()=>{input.value='';});}}/></label></div>
+    <div className={styles.hint}>PDFs, photos, Word, spreadsheets and text.<details><summary>File types and limits</summary>{SCOPE_UPLOAD_HELP}</details></div>
      {!attachedProjectSource&&<><p className={styles.hint}>Editing the text refreshes your project answers. Attached files stay included. To replace the entire scope and files, start a replacement project.</p><button type="button" onClick={()=>void switchProject()}>Replace this project</button>
       {recoveries.length>0&&<details><summary>Saved project recovery ({recoveries.length})</summary><ul>{recoveries.map(recovery=><li key={recovery.key}><button type="button" onClick={()=>void switchProject(recovery)}>Restore {recovery.draft.text.slice(0,65)||'untitled project'}</button><details><summary>View saved details</summary><p style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere'}}>{displayScopeText(recovery.draft.text,recovery.draft.answers.estimatingInstructions)}</p><dl>{Object.entries(recovery.draft.answers).filter(([key])=>key!=='estimatingInstructions').map(([key,value])=><div key={key}><dt>{SCOPE_FIELDS[key as ScopeField]?.label||key}</dt><dd>{value}</dd></div>)}</dl>{recovery.draft.uploads?.map(file=><p key={file.id}>{file.name}</p>)}</details></li>)}</ul></details>}</>}
     {Boolean(files.length||draft.uploads?.length)&&<ul className={styles.files}>{draft.uploads?.map(f=><li key={f.id}><span>{f.name}</span><span className={styles.hint}>Uploaded</span></li>)}{files.map((f,i)=><li key={`${f.name}-${i}`}><span>{f.name}<small>Ready to upload</small></span><button type="button" aria-label={`Remove ${f.name}`} onClick={async()=>{const next=filesRef.current.filter((_,index)=>i!==index);filesRef.current=next;setFiles(next);try{await cacheFiles(draft.id,next);}catch{setStatus('File removed from this session. Local storage could not be updated.');}}}>Remove</button></li>)}</ul>}
@@ -291,8 +301,8 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
   const review=<details className={styles.known} open={knownOpen}><summary onClick={e=>{e.preventDefault();setKnownOpen(v=>!v);}}>{known.length?`${known.length} project details saved`:'Project details'}</summary><dl>{known.map(k=><div key={k}><dt>{SCOPE_FIELDS[k].label}</dt><dd>{labels[draft.answers[k]!]||draft.answers[k]} <button type="button" aria-label={`Edit ${SCOPE_FIELDS[k].label}`} onClick={()=>setEditField(k)}>Edit</button></dd></div>)}</dl>{editField&&<div>{field(editField)}<button type="button" onClick={()=>{const issue=validateScopeAnswer(editField,draft.answers[editField]||'');if(issue){setError(issue);return;}setEditField('');}}>Done</button></div>}</details>;
    const formClassName=[styles.formBody,floatingSubmit?styles.hasFloatingAction:'',floatingSubmit&&error?styles.hasSubmitError:''].filter(Boolean).join(' ');const submitErrorId=`${id}-submit-error`;
    return <div ref={estimatorRef} role="region" aria-label="Project estimator" className={styles.root} data-p5-estimator aria-busy={Boolean(busy)} style={{'--p5-accent':brand.accent} as React.CSSProperties}>
-     <div className={styles.intro}><p className={styles.eyebrow}>{brand.name} · Project estimator</p><Heading ref={heading} tabIndex={-1}>{result?'Your project summary':draft.step===0?(attachedProjectSource?'Your design is ready to estimate':'What would you like to do?'):draft.step===1?'A little more about your project':'Your project is ready to review'}</Heading><p>{result?'Review your estimate and the next step below.':draft.step===0?(attachedProjectSource?'Your design selections are included. Add anything else, then continue.':'Tell us or show us. We’ll ask only for the details we still need.'):draft.step===1?'We’ve saved what you provided. Let’s fill in the remaining details.':'Check your details and tell us where to send your estimate.'}</p></div>
-    {!result&&<ol className={styles.progress} aria-label="Estimator progress">{['Your project','A few details','Your estimate'].map((label,index)=><li key={label} aria-current={draft.step===index?'step':undefined}><span>{index+1}. {label}</span></li>)}</ol>}
+     <div className={styles.intro}><p className={styles.eyebrow}>{brand.name} · Project estimator</p><Heading ref={heading} tabIndex={-1}>{result?'Your project summary':draft.step===0?(attachedProjectSource?'Your design is ready to estimate':'Start your estimate'):draft.step===1?'Let’s fill in one detail':'Review your project'}</Heading><p>{result?'Review your estimate and the next step below.':draft.step===0?(attachedProjectSource?'Your design selections are included. Add anything else, then continue.':'Describe your project or add files. We’ll ask for any missing details.'):draft.step===1?'We’ve saved what you provided. Let’s fill in the remaining details.':'Check your details and tell us where to send your estimate.'}</p></div>
+    {!result&&<ol className={styles.progress} aria-label="Estimator progress">{['Project','Details','Estimate'].map((label,index)=><li key={label} aria-current={draft.step===index?'step':undefined}><span>{index+1}. {label}</span></li>)}</ol>}
      {result?<div className={styles.result}>
       <h2>{result.range?`${result.range.low.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0})} to ${result.range.high.toLocaleString("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0})}`:"Your scope is ready for pricing review"}</h2>
       <p>{result.message}</p><P5EstimateDetails result={result}/>
@@ -302,7 +312,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
        <button type="button" onClick={()=>void switchProject()}>Start another project</button>
      </div>:<form onSubmit={submit} noValidate className={keyboardOpen?styles.keyboardOpen:undefined}><fieldset disabled={Boolean(busy)||preparingFiles} className={formClassName}>
        {draft.step===0?<>{attachedProjectSource&&review}{projectInput}<div className={styles.actions}><button className={styles.primary} type="button" onClick={begin}>Continue <span aria-hidden="true">→</span></button></div><p className={styles.hint}>Add what you know, or continue and we’ll help with the rest.</p></>:<>
-        {draft.step===1&&active?<section key={active.instructionId||active.field} className={styles.question} aria-label="Project question"><p className={styles.eyebrow}>One detail at a time</p><h2>{active.label}</h2><p className={styles.questionReason}>{active.reason}</p>{active.detail&&<details><summary>Question context</summary><p>{active.detail}</p></details>}{active.values?.length?<div className={styles.choices} role="group" aria-label="Suggested answers">{active.values.map(value=><button type="button" key={value} onClick={()=>active.instructionId?reply(value):answer(active.field,value)} aria-pressed={(active.instructionId?clarificationReply:draft.answers[active.field])===value}>{labels[value]||value.replaceAll('-',' ')}</button>)}</div>:null}{active.instructionId?<div className={styles.field}><label htmlFor={`${id}-reply`}>Your answer</label><textarea id={`${id}-reply`} rows={3} value={clarificationReply} onChange={e=>reply(e.target.value)} placeholder="Choose an option above or type your answer."/></div>:active.values?.length?<details><summary>Use a different answer</summary>{field(active.field)}</details>:field(active.field)}<div className={styles.actions}><button className={styles.primary} type="button" onClick={()=>advance()}>Continue <span aria-hidden="true">→</span></button>{active.field!=='service'&&!active.conflict&&!active.instructionId&&<button type="button" onClick={()=>advance(true)}>Not sure yet</button>}</div></section>:<>
+        {draft.step===1&&active?<section key={active.instructionId||active.field} className={styles.question} aria-label="Project question"><p className={styles.eyebrow}>{active.label}</p><h2>{active.reason}</h2>{active.detail&&<details><summary>Question context</summary><p>{active.detail}</p></details>}{active.values?.length?<div className={styles.choices} role="group" aria-label="Suggested answers">{active.values.map(value=><button type="button" key={value} onClick={()=>active.instructionId?reply(value):answer(active.field,value)} aria-pressed={(active.instructionId?clarificationReply:draft.answers[active.field])===value}>{labels[value]||value.replaceAll('-',' ')}</button>)}</div>:null}{active.instructionId?<div className={styles.field}><label htmlFor={`${id}-reply`}>Your answer</label><textarea id={`${id}-reply`} rows={3} value={clarificationReply} onChange={e=>reply(e.target.value)} placeholder="Choose an option above or type your answer."/></div>:active.values?.length?<details><summary>Use a different answer</summary>{field(active.field)}</details>:field(active.field)}<div className={styles.actions}><button className={styles.primary} type="button" onClick={()=>advance()}>Continue <span aria-hidden="true">→</span></button>{active.field!=='service'&&!active.conflict&&!active.instructionId&&<button type="button" onClick={()=>advance(true)}>Not sure yet</button>}</div></section>:<>
           <p className={styles.hint}>Your name and email are required to view your estimate. Phone is optional.</p>
           <div className={styles.fields}>{([['name','Your name','text'],['email','Email','email'],['phone','Phone (optional)','tel']] as const).map(([key,label,type])=><label className={styles.field} key={key} htmlFor={`${id}-contact-${key}`}><span>{label}</span><input id={`${id}-contact-${key}`} ref={key==='name'?contactNameRef:key==='email'?contactEmailRef:undefined} type={type} autoComplete={key} required={key!=='phone'} aria-invalid={validationTarget==='contact'&&key!=='phone'?true:undefined} aria-describedby={validationTarget==='contact'&&key!=='phone'?submitErrorId:undefined} value={draft.contact[key]} onChange={e=>changeContact(key,e.target.value)} maxLength={key==='name'?120:key==='email'?200:40}/></label>)}</div>
         </>}
@@ -318,6 +328,6 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource}:{de
         <button className={styles.back} type="button" onClick={()=>{change({step:0});setError('');focus();}}>Back to my project</button>
       </>}
     </fieldset></form>}
-     {(busy||preparingFiles)&&<P5ProcessingStatus message={preparingFiles?'Preparing your files...':busy} processing={preparingFiles?null:processing} uploadPercent={uploadPercent}/>}{error&&!(draft.step===2&&!result)&&<p className={styles.error} role="alert">{error}</p>}{status&&!busy&&!preparingFiles&&<p className={styles.hint} role="status">{status}</p>}
+     {(busy||preparingFiles)&&<P5ProcessingStatus message={preparingFiles?'Preparing your files...':busy} processing={preparingFiles?null:processing} uploadPercent={uploadPercent} onPause={busy?()=>operationBudget.current?.controller.abort(new ProcessingDeadlineError()):undefined}/>}{error&&!(draft.step===2&&!result)&&<p className={styles.error} role="alert">{error}</p>}{status&&!busy&&!preparingFiles&&<p className={styles.hint} role="status">{status}</p>}
   </div>;
 }
