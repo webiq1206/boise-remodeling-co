@@ -62,6 +62,7 @@ export interface ExtractedFact { field: ScopeField; value: string; confidence: n
 export interface ScopeConflict { field: ScopeField; values: string[]; explanation: string }
 export interface ScopeExtraction {
   summary: string;
+  sourceText?:string;
   facts: ExtractedFact[];
   conflicts: ScopeConflict[];
   missingInformation: string[];
@@ -332,6 +333,8 @@ export function combineScopeExtractions(parts:ScopeExtraction[]):ScopeExtraction
     if(laborCoverages.every(c=>JSON.stringify(c)===JSON.stringify(laborCoverages[0])))merged.laborCoverage=laborCoverages[0];
     else merged.missingInformation.push('Retained labor summaries differ; confirm the complete labor scope.');
   }
+  const sourceTexts=parts.map(part=>part.sourceText).filter((text):text is string=>Boolean(text));
+  if(sourceTexts.length)merged.sourceText=sourceTexts.join("\n\n");
   if(parts.some(p=>p.instructions))merged.instructions=mergeInstructions(parts.flatMap(p=>p.instructions?[p.instructions]:[]));
   const coverage=parts.flatMap(p=>p.documentCoverage?[p.documentCoverage]:[]);
   if(coverage.length)merged.documentCoverage=combineCoverage(coverage);
