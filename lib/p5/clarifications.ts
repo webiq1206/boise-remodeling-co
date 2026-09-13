@@ -1,10 +1,10 @@
-import {atomicInstructionQuestions,textBenchTopChoices} from './atomicQuestions.ts';
-import type {ScopeAnswers,ScopeExtraction} from './scope.ts';
+import {atomicInstructionQuestions,textBenchTopChoices,cabinetQuestionField} from './atomicQuestions.ts';
+import type {ScopeAnswers,ScopeExtraction,ScopeField} from './scope.ts';
 import type {ScopeInstructions} from './instructions.ts';
 import {isBenchTopClarificationQuestion,retainedBenchTopChoices,retainedChoiceValue} from './retainedClarification.ts';
 
 export interface InstructionAnswer {id:string;question:string;answer:string}
-export interface InstructionPrompt {id:string;question:string;detail?:string;values?:string[]}
+export interface InstructionPrompt {id:string;question:string;detail?:string;values?:string[];field?:ScopeField}
 export const questionKey=(text:string)=>text.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
 const serviceQuestion=(text:string)=>/which .*services|what .*remodel.*service|company.s scope|typical .*services|offered.*services|services.*offered|residential remodel|boise .*estimate|requested subset/i.test(text);
 const RESPONSIBILITY_CHOICES=['Labor only','Materials only','Labor and materials'] as const;
@@ -20,6 +20,8 @@ export function instructionPrompts(extraction:ScopeExtraction|null,answers:Scope
       const full=normalizeQuestionPart(part);if(!full)continue;
       // Filter each question separately so a legacy paragraph cannot lose a real scope decision.
       if(serviceQuestion(full))continue;
+      const field=cabinetQuestionField(full);
+      if(field&&answers[field]?.trim()&&!extraction?.conflicts.some(conflict=>conflict.field===field))continue;
       const id=questionKey(full);
       if(result.some(q=>q.id===id))continue;
       const question=full.length<=240?full:'What should we include for this part of your project?';
@@ -31,7 +33,7 @@ export function instructionPrompts(extraction:ScopeExtraction|null,answers:Scope
        const retainedValues=isBenchTopClarificationQuestion(full)
          ?(extraction?retainedBenchTopChoices(extraction):[]).map(retainedChoiceValue)
          :undefined;
-       result.push({id,question,...(question!==full?{detail:full}:{}),values:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
+       result.push({id,question,...(field?{field}:{}),...(question!==full?{detail:full}:{}),values:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
     }
   }
   return result;
