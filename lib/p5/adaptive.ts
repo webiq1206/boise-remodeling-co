@@ -80,6 +80,19 @@ const detailQuestions:Partial<Record<ScopeField,string>>={
  bathrooms:'How many bathrooms are included?',
  stories:'How many stories are included?',
 };
+/** Everyday wording for one missing detail. Shared by the question flow and the missing-detail links shown after Get my estimate. */
+export function questionReason(field:ScopeField,answers:ScopeAnswers):string{
+  const service=answers.service||"";
+  if(field==="service")return "What would you like help with?";
+  if(field==="taskList")return "What work should be included? A short list with quantities is enough.";
+  if(field==="sqft")return builds.includes(service)?"About how many square feet of living space are included? Keep garage and outdoor areas separate.":"About how large is the area being worked on?";
+  if(field==="finish")return "What finish level would you like?";
+  return detailQuestions[field]||`What should we use for ${SCOPE_FIELDS[field].label.toLowerCase()}?`;
+}
+export function questionForField(field:ScopeField,answers:ScopeAnswers):ScopeQuestion{
+  const definition=SCOPE_FIELDS[field];
+  return {field,label:definition.label,reason:questionReason(field,answers),...(definition.kind==="choice"?{values:definition.options.filter(v=>field!=="service"||(ESTIMATOR_BRAND.services as readonly string[]).includes(v))}:{})};
+}
 export function scopeQuestions(input:ScopeAnswers,extraction:ScopeExtraction|null,conflicts:ScopeConflict[]=[],skipped:ScopeField[]=[],pricedFields:ScopeField[]=[]):ScopeQuestion[]{
   const answers=deriveScopeAnswers(input);
   const relevant=new Set<ScopeField>(['service',...materialScopeFields(answers,pricedFields),...pricedFields]);

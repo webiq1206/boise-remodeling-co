@@ -2,7 +2,7 @@ import {ProcessingDeadlineError,PROCESSING_PAUSED} from './processingBudget.ts';
 import {applyCabinetIntent} from "./projectIntent";
 import {advanceAnalysis} from "./analysisWork";
 import {queuedJob} from './backgroundJobs';
-import {reconcileScope,scopeQuestionsForBrand as scopeQuestions} from "./adaptive";
+import {manualScopeAnswers,reconcileScope,scopeQuestionsForBrand as scopeQuestions} from "./adaptive";
 import {costQuestionFields} from "./questionPolicy";
 import {createHash} from "node:crypto";
 import { analyzeScope } from "./extraction.ts";
@@ -77,7 +77,10 @@ export async function postScope(request:Request){
     const stored=checkpointed?[]:await readUploads(id,key);if(stored.reduce((n,f)=>n+f.data.length,0)>SCOPE_BATCH_LIMIT)throw new DraftError(SCOPE_UPLOAD_HELP,413);
     const version=createHash("sha256").update(JSON.stringify([text,analysisDraft.uploads.map(f=>f.sha256)])).digest("hex");
     const resolutions=analysisDraft.wizard?.sourceVersion===version?analysisDraft.wizard.resolutions:{};
-    const visitorAnswers=applyCabinetIntent(text,ESTIMATOR_BRAND.services,analysisDraft.answers).answers;
+    // Only visitor-authored answers shape the read. Facts the previous read
+    // derived from these same documents are re-derived, so a retry after a
+    // partial read keeps the same work key and never re-bills finished pages.
+    const visitorAnswers=applyCabinetIntent(text,ESTIMATOR_BRAND.services,manualScopeAnswers(analysisDraft.answers,analysisDraft.extraction,analysisDraft.wizard?.resolutions||{})).answers;
     let analysis=null;let warning="";
     try{
       if(checkpointed){

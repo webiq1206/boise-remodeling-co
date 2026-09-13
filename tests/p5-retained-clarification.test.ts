@@ -17,12 +17,12 @@ function extraction():ScopeExtraction{
     conflicts:[],reviewNotes:[],missingInformation:[],
     instructions:{...emptyInstructions(),questions:[question]},
     takeoffs:[
-      ...[
+      ...([
         ['butcher block',5],
         ['matching painted MDF/wood',4],
         ['laminate',2],
         ['quartz',5],
-      ].map(([description,quantity],index)=>({id:`top-${index}`,description:`${description} bench top`,building:'Main',floor:'1',component:'bench top option',quantity,unit:'HR',basis:'stated' as const,evidence:source,sources:[{source:'cabinet.pdf',page:2,sheet:'A1',revision:'1'}],supersedes:[],issues:[]})),
+      ] as [string,number][]).map(([description,quantity],index)=>({id:`top-${index}`,description:`${description} bench top`,building:'Main',floor:'1',component:'bench top option',quantity,unit:'HR',basis:'stated' as const,evidence:source,sources:[{source:'cabinet.pdf',page:2,sheet:'A1',revision:'1'}],supersedes:[],issues:[]})),
       {id:'cabinet-units',description:'Cabinet units',building:'Main',floor:'1',component:'cabinet',quantity:1,unit:'EA',basis:'stated',evidence:'One cabinet unit on the schedule.',sources:[{source:'cabinet.pdf',page:2,sheet:'A1',revision:'1'}],supersedes:[],issues:[]},
       {id:'hardware',description:'Knobs/pulls',building:'Main',floor:'1',component:'hardware',quantity:5,unit:'EA',basis:'stated',evidence:'Five knobs/pulls on the hardware schedule.',sources:[{source:'cabinet.pdf',page:2,sheet:'A1',revision:'1'}],supersedes:[],issues:[]},
     ],
@@ -84,6 +84,7 @@ test('retained clarification recovers component hours archived by labor aggregat
   e.sourceHistory={version:'p5-retained-clarification-v1',clarifications:[],laborFacts} as any;
   const prompt=instructionPrompts(e,{})[0];
   const result=applyRetainedBenchTopAnswer(e,{},prompt.detail||prompt.question,'Option 2: matching painted MDF/wood bench top.');
+  if(result.status!=='resolved')throw new Error('expected a resolved bench top answer');
   assert.equal(result.answers.laborHours,'14');
   assert.deepEqual((result.extraction as any).laborCoverage.components.map((component:any)=>component.hours),[2,8,4]);
 });

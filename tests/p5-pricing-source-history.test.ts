@@ -21,7 +21,7 @@ test('retained alternatives stay recoverable but are not another pricing source'
   const projected=activePricingSource(scope);
   assert.equal(projected.answers.laborHours,'14');
   assert.deepEqual(projected.extraction?.takeoffs,extraction.takeoffs);
-  assert.deepEqual(projected.extraction?.pages,extraction.pages);
+  assert.deepEqual((projected.extraction as any)?.pages,(extraction as any).pages);
   assert.deepEqual(projected.extraction?.documentCoverage,extraction.documentCoverage);
   assert.ok(!JSON.stringify(pricingSourceParts(scope)).includes('Unselected quartz top'));
   assert.equal(JSON.stringify(scope),before,'projection must not mutate retained evidence');

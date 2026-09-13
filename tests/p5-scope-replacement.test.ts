@@ -45,7 +45,7 @@ test('replacing analyzed text removes old derived facts and wizard state but ret
   assert.equal(replaced.analyzedAnswers,undefined);
   assert.deepEqual(replaced.pricedFields,[]);
   assert.equal(replaced.step,0);
-  assert.equal(replaced.dirty,true);
+  assert.equal((replaced as {dirty?:boolean}).dirty,true);
 });
 
 test('server-side source replacement does not retain old visitor answers',()=>{

@@ -93,7 +93,7 @@ export async function advanceAnalysis(draft:Draft,text:string,answers:ScopeAnswe
     if(waiting.length&&!pending.length)return {pending:true as const,progress:'The document reader is temporarily busy. Completed pages are saved; retrying shortly.',retryAfterMs:Math.max(1000,Math.min(...waiting.map(u=>u.retryAt||Date.now()))-Date.now())};
     if(pending.length){
       // Keep slots busy as individual pages finish. A slow page does not hold up the next one.
-      const deadline=Math.min(absoluteDeadline,Date.now()+25_000);let position=0;
+      const deadline=Math.min(absoluteDeadline,Date.now()+45_000);let position=0;
       await Promise.all(Array.from({length:Math.min(pending.length,job.concurrency||analysisConcurrency())},async()=>{
         while(position<pending.length&&Date.now()<deadline&&!(job.cooldownUntil&&job.cooldownUntil>Date.now())){
         const unit=pending[position++];unit.active=true;await checkpoint();
