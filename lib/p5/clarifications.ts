@@ -33,7 +33,7 @@ export function instructionPrompts(extraction:ScopeExtraction|null,answers:Scope
        const retainedValues=isBenchTopClarificationQuestion(full)
          ?(extraction?retainedBenchTopChoices(extraction):[]).map(retainedChoiceValue)
          :undefined;
-       result.push({id,question,...(field?{field}:{}),...(question!==full?{detail:full}:{}),values:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
+       result.push({id,question,...(field?{field}:{}),...(question!==full?{detail:full}:{}),values:/^Who should install the /i.test(full)?['Include installation in this estimate','Owner handles installation']:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
     }
   }
   return result;
