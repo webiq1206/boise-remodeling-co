@@ -173,6 +173,12 @@ with `typedAlternatives.ts`).
   Research now receives every covered component (existing lines and catalog
   additions) and both research prompts price only the remainder.
 - The no-range log also names the blocking pricing issues.
+- Every P5 database statement is bounded in time (lib/p5/databaseTimeout.ts,
+  30 s, P5_DB_STATEMENT_TIMEOUT_MS). boiseconstruction.co logged
+  "Connection terminated unexpectedly" from its database during a pricing
+  pass and a plan-set submission then produced no response for 15 minutes; a
+  stalled statement now fails the request honestly, the saved progress is
+  kept and the next attempt resumes.
 
 ## Verification
 
