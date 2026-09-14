@@ -18,6 +18,7 @@ import {transferProjectFiles} from '@/lib/p5/uploadTransfer';
 import {fieldCategory} from '@/lib/p5/presentation';
 import styles from './P5Estimator.module.css';
 import {reportProgress,trackScopeEvent} from '@/lib/p5/progress';
+import {trackGoogleAdsLeadConversion} from '@/lib/googleAdsConversion';
 import {displayScopeText,refreshAnalyzedScope,scopeFingerprint,scopeTextChanged,sourceSnapshot,sourceSnapshotsEqual} from '@/lib/p5/scopeReplacement';
 import {ESTIMATOR_VERSION} from '@/lib/p5/version';
 
@@ -406,7 +407,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
         if(details?.pricingReviewRequired){setMissingFields(parseMissing(details.missingFields));setVerificationItems(parseItems(details.verificationItems));throw new Error(details.error||'A few more details are needed before pricing.');}
         throw failure;
       }
-      checkSubmission();setResult(data.result);setDelivery(data.delivery||[]);if(data.result?.range)trackScopeEvent('estimateGenerated',d.answers.service);if(data.delivery?.some((v:any)=>v.channel==='customer'&&v.status==='sent'))trackScopeEvent('estimateEmailed',d.answers.service);setStatus('');
+      checkSubmission();setResult(data.result);setDelivery(data.delivery||[]);trackGoogleAdsLeadConversion({service:d.answers.service},`estimator:${d.id}`);if(data.result?.range)trackScopeEvent('estimateGenerated',d.answers.service);if(data.delivery?.some((v:any)=>v.channel==='customer'&&v.status==='sent'))trackScopeEvent('estimateEmailed',d.answers.service);setStatus('');
     },'pricing');
   }
   const continuePaused=()=>{const kind=paused?.kind;setPaused(null);resuming.current=true;if(kind==='pricing'){const form=document.getElementById(`${id}-form`) as HTMLFormElement|null;if(form)form.requestSubmit();else void begin();}else void begin();};

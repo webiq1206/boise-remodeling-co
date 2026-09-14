@@ -1,6 +1,7 @@
 "use client";
 
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
+import { googleAdsLeadParams } from "@/lib/googleAdsConversion";
 
 const INQUIRY_ID_KEY = "brc_inquiry_id";
 const INQUIRY_STARTED_KEY = "brc_inquiry_started_at";
@@ -108,10 +109,8 @@ export function trackAcceptedInquiry(
     inquiry_id: response.inquiryId,
     event_id: response.inquiryId,
   });
-  trackEvent("conversion", {
-    send_to: "AW-18354188204/LE2vCPXstO8cEKzf-q9E",
-    transaction_id: response.inquiryId,
-  });
+  // Per-lead value for ROAS reporting (lib/googleAdsConversion.ts); no PII.
+  trackEvent("conversion", googleAdsLeadParams({ projectType }, response.inquiryId));
   trackMetaEvent(
     "Lead",
     { content_name: projectType, content_category: "project_inquiry" },
