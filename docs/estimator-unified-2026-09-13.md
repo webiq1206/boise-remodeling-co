@@ -143,6 +143,21 @@ with `typedAlternatives.ts`).
   11.6 s, pricing 11.4 s, range $2,825 to $3,700 with categories, quantities,
   unit rates and planning-rate labels.
 
+### Document review notes and missing-field links (2026-09-13, fifth pass)
+
+- Live document reads on boiseremodeling.co and boisecabinet.co finished in
+  17.3 s and 10.9 s but ended unpriced: every document review note, including
+  the note that a takeoff record was dropped, blocked the customer range. A
+  note now blocks only when a document, section or page could not be read at
+  all (blockingReviewNote in lib/p5/costBook.ts); other notes travel with the
+  range as items to confirm.
+- Missing-quantity notes from the planning books ("Missing quantity: sqft")
+  had no trailing text and never matched the missing-field parser, so the 422
+  offered no link back to the unanswered question. missingNoteField parses
+  every wording and unknown field names are ignored.
+- The no-range log line names the blocking warning codes and the missing
+  notes so a live host explains an unpriced result.
+
 ## Verification
 
 - `tests/p5-estimator-flow.test.ts` covers missing-field links, category
