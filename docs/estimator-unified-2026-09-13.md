@@ -173,6 +173,19 @@ with `typedAlternatives.ts`).
   Research now receives every covered component (existing lines and catalog
   additions) and both research prompts price only the remainder.
 - The no-range log also names the blocking pricing issues.
+- A plan-set page whose high-resolution detail tiles cannot be rendered on
+  the host (boiseconstruction.co reported "The path argument must be of type
+  string. Received type number" for all ten sheets, while the same renderer
+  works locally) is now supplied whole as its original page so the sheet is
+  still read; only a page too large for one request is reported as
+  unprepared, and the cause is logged with its stack for the host.
+- When a file could not be read, "Get my estimate" re-ran the document read
+  on every click and showed nothing else (p5homeco.com, where the only
+  configured provider had no credit, sat that way for 15 minutes in a live
+  test). The click now names the unread file and offers the retry, so the
+  visitor can retry, remove the file or price the rest.
+- A document that already lists the work with quantities no longer prompts
+  for the task list again.
 - Every P5 database statement is bounded in time (lib/p5/databaseTimeout.ts,
   30 s, P5_DB_STATEMENT_TIMEOUT_MS). boiseconstruction.co logged
   "Connection terminated unexpectedly" from its database during a pricing

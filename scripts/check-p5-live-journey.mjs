@@ -76,7 +76,7 @@ try{
   result.review={summary:await est.locator('dl').first().innerText().catch(()=>''),details:await est.locator('details summary').allInnerTexts().catch(()=>[])};
   await est.getByLabel('Your name',{exact:true}).fill(contact.name);await est.getByLabel('Email',{exact:true}).fill(contact.email);if(contact.phone)await est.getByLabel('Phone (optional)',{exact:true}).fill(contact.phone);
   await est.getByRole('checkbox').check();
-  const pricingStart=Date.now();await est.getByRole('button',{name:'Get my estimate',exact:true}).click();note('get my estimate clicked');
+  const pricingStart=Date.now();await est.getByRole('button',{name:'Get my estimate',exact:true}).click();note('get my estimate clicked');await page.waitForTimeout(3000);await shot('04b-after-estimate-click');
   let priced='';
   for(let i=0;i<Number(opt('pricing-limit','1800'));i++){
     if(await est.getByRole('heading',{name:'Your project summary',exact:true}).count()){priced='result';break;}
