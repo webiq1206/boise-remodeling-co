@@ -49,7 +49,7 @@ git fetch origin && (git pull --ff-only origin main || git rebase origin/main)
 | boiseremodeling.co | Walden Addition PDF | 15 s | 71 s | honest hold (allowance review); links now offered when a planning-book quantity is missing |
 | boiseconstruction.co | Timber and Love plan set (10 sheets) | 21.7 s | 114 s | all sheets read after the rendering fallback (16 details, 41 scope items, 2,670 sq ft living, 736 sq ft garage); pricing ended as an honest hold "complete scope pricing could not be verified" |
 | p5homeco.com | Kitchen Renovation Estimate PDF | 16.5 s | 3 s | the read fails on the host (only an Anthropic key, and the Anthropic account has no credit); the estimate click now says so in 3 s instead of re-reading silently for 15 minutes |
-| boisecabinet.co | Jeff cabinet proposal PDF | 10.9 s (r6) | 51 s (r6) | read works; result on the current build pending |
+| boisecabinet.co | Jeff cabinet proposal PDF | 12.5 s | 65 s | read works (build 12ec9fd6); honest hold naming the cabinet allowance items to confirm |
 
 Earlier today on the same builds: p5homeco.com typed handyman scope priced in
 11 s, boiseremodeling.co bathroom priced $33,300 to $46,800 in 136 s before
