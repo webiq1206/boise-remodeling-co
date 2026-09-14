@@ -158,6 +158,22 @@ with `typedAlternatives.ts`).
 - The no-range log line names the blocking warning codes and the missing
   notes so a live host explains an unpriced result.
 
+### Delivery on an autoscale host and research double counts (2026-09-13, sixth pass)
+
+- Emails and the CRM record were queued by the submitting request and
+  handed to a callback that runs after the response. An autoscale host gives
+  a request no CPU after it responds, so the outbox stayed pending and no
+  test email ever arrived. Delivery now runs inside the submitting request
+  for up to 25 s (P5_DELIVERY_WAIT_MS), a repeat submit for a submitted
+  draft drains what is left, and the result view checks every 6 s (up to 10
+  times) until every channel reads sent or needs-review.
+- A task the mapper priced from catalog additions (tile, plumbing) was also
+  sent to research, which priced the whole task again: the bathroom result
+  carried a 9.7k to 8.3k shower lump beside its tile and plumbing lines.
+  Research now receives every covered component (existing lines and catalog
+  additions) and both research prompts price only the remainder.
+- The no-range log also names the blocking pricing issues.
+
 ## Verification
 
 - `tests/p5-estimator-flow.test.ts` covers missing-field links, category

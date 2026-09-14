@@ -92,6 +92,7 @@ try{
     for(const d of await est.locator('details').all()){try{await d.evaluate(el=>{el.open=true;});}catch{}}
     const categories=await est.locator('details').evaluateAll(list=>list.map(d=>({title:d.querySelector('summary')?.innerText.replace(/\s+/g,' ').trim(),items:[...d.querySelectorAll('li')].map(li=>li.innerText.replace(/\s+/g,' ').trim()).slice(0,40)})));
     result.result={range,categories,delivery:(await est.locator('p[role=status]').first().innerText().catch(()=>''))};
+    await page.waitForTimeout(30000);result.result.deliveryLater=(await est.locator('p[role=status]').first().innerText().catch(()=>''));note('delivery status after 30s',{text:result.result.deliveryLater});
     result.status='priced';await shot('06-result-expanded');
   }else if(priced==='question'){result.status='needs-more-information';}
   else result.status='error';
