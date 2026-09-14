@@ -46,20 +46,12 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={open === "estimate"} onOpenChange={(v) => !v && close()}>
-        <DialogContent className="max-w-4xl w-[95vw] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="font-sans font-light text-xl text-foreground">
-              Get your planning range
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Three quick choices, an instant range. Nothing is pre-selected or submitted
-              until you say so.
-            </DialogDescription>
-          </DialogHeader>
-          <EstimateCalculator inModal onBookVisit={() => setOpen("consult")} />
-        </DialogContent>
-      </Dialog>
+      {/* The estimator is its own full-screen experience beneath the site
+          header (not a dialog inside a dialog): it owns the screen with its
+          own scroll area and bottom-anchored input, and Exit returns here. */}
+      {open === "estimate" && (
+        <EstimateCalculator inModal sectionId="estimate-modal" onExit={close} onBookVisit={() => setOpen("consult")} />
+      )}
     </ModalsContext.Provider>
   );
 }

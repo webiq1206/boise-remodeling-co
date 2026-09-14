@@ -1014,3 +1014,13 @@ body[data-hide-mobile-nav-bar="true"] [data-mobile-nav-bar] {
   [data-guided-step-layout], [data-guided-step-body] { flex: none; overflow: visible; min-height: auto; }
   [data-guided-step-body] > div { min-height: 0; }
 }
+
+/* While the conversational estimator owns the screen (full-screen frame), the
+   global mobile Call/Text bar and the assistant launcher step aside so no
+   competing controls cover its input or final action. */
+body[data-p5-estimator-active="true"] [data-mobile-nav-bar],
+body[data-p5-estimator-active="true"] .brc-assistant-launcher,
+body[data-p5-estimator-active="true"] [data-assistant-launcher],
+body[data-p5-estimator-active="true"] [data-testid="assistant-launcher"] {
+  display: none !important;
+}

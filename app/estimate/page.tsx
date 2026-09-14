@@ -57,12 +57,10 @@ export default function EstimatePage() {
     <>
       <JsonLd data={schemas} />
 
-      {/* ONE SCREEN. The estimator is the page: it mounts as a fixed app frame
-          beneath the site header and owns everything below it - the H1, the
-          step rail, the question and Back/Continue - so nothing here scrolls.
-          The hero and the "what happens next" band that used to sit around it
-          put the first choice 558px down a phone screen; that copy lives on
-          /contact and the service pages, where reading is the point. */}
+      {/* ONE SCREEN. The estimator is the page: the conversational app frame
+          mounts beneath the site header and owns everything below it, with its
+          own scroll area and a bottom-anchored input, so nothing here scrolls
+          into unrelated content. */}
       <EstimateCalculator fitViewport />
     </>
   );
