@@ -19,15 +19,13 @@ export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorCo
   if(!Object.hasOwn(SERVICE_MATRIX,service))throw new Error("Choose a valid project type.");
   let book=configuration.costBooks.find(book=>book.service===service);
   const summary=scopeText(scope);
-  const explicitExclusions=[...new Set([
-    ...(scope.extraction?.instructions?.exclusions||[]),
-    ...(scope.answers.exclusions?[scope.answers.exclusions]:[]),
-  ].filter(Boolean))];
+  const explicitExclusions=[...new Set([...(scope.extraction?.instructions?.exclusions||[]),...(scope.answers.exclusions?[scope.answers.exclusions]:[])].filter(Boolean))];
   const revision=createHash("sha256").update(JSON.stringify({policyVersion:POLICY_VERSION,scope,configuration,resolution})).digest("hex");
   if(!book)return {
     internal:{revision,scope,missingInformation:["A current, approved direct-cost book is required for this service."],pricingWarnings:["cost-book-missing"],financeSnapshot:configuration.finance},
     customer:{status:"review-required",range:null,summary,includedCategories:[],categoryRanges:[],lineItems:[],allowances:[],assumptions:[],exclusions:explicitExclusions,factors:[],nextStep:SERVICE_MATRIX[service].method,message:"We have your project details. A specialist needs to confirm current costs before we can provide a reliable planning range.",disclaimer:"Preliminary project information only. This is not a bid, quote, offer or guaranteed price."},
   };
+  const preliminaryModel=book.mode==='owner-planning';
   const missingInformation=[...(scope.extraction?.missingInformation||[])];
   if(resolution?.replaceBase)book={...book,rules:[],exclusions:[],assumptions:[],coverage:COST_CATEGORIES.map(category=>({category,status:'not-applicable' as const,reason:'Only the explicitly requested scope is priced; see itemized scope.'}))};
   else if(book.mode==='owner-planning'){
@@ -42,10 +40,7 @@ export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorCo
   for(const rule of book.rules){
     if(rule.when){
       const answer=scope.answers[rule.when.field];
-      if(!answer?.trim()){
-        missingInformation.push(`Missing cost condition: ${rule.when.field} for ${rule.description}`);
-        continue;
-      }
+      if(!answer?.trim()){missingInformation.push(`Missing cost condition: ${rule.when.field} for ${rule.description}`);continue;}
       if(answer!==rule.when.equals)continue;
     }
     const value=rule.quantity.field?scope.answers[rule.quantity.field]:undefined;
@@ -56,34 +51,37 @@ export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorCo
     const {when,quantity:quantityRule,...cost}=rule;
     lines.push({...cost,quantity,quantitySource:rule.quantity.field?`Reviewed ${rule.quantity.field}: ${value}; quantity factor ${rule.quantity.factor}`:`Approved fixed scope: ${book.verifiedScope}; ${rule.description}`});
   }
-  if(!lines.length)return {internal:{revision,scope,missingInformation,pricingWarnings:[resolution?.issues.length?'scope-pricing-incomplete':'quantities-missing'],costBookSnapshot:book},customer:{status:'review-required',range:null,summary,includedCategories:[],categoryRanges:[],lineItems:[],allowances:[],assumptions:book.assumptions,exclusions:[...new Set([...book.exclusions,...explicitExclusions])],factors:[],nextStep:SERVICE_MATRIX[service].method,message:resolution?.issues.length?'Your scope is saved. Pricing is not complete yet. Review the items requiring verification or retry pricing research.': 'We have your scope. Confirm the missing quantities to calculate the planning range.',disclaimer:'Preliminary project information only. This is not a bid, quote, offer or guaranteed price.'}};
+  if(!lines.length)return {internal:{revision,scope,missingInformation,pricingWarnings:[resolution?.issues.length?'scope-pricing-incomplete':'quantities-missing'],costBookSnapshot:book},customer:{status:'review-required',range:null,summary,includedCategories:[],categoryRanges:[],lineItems:[],allowances:[],assumptions:book.assumptions,exclusions:[...new Set([...book.exclusions,...explicitExclusions])],factors:[],nextStep:SERVICE_MATRIX[service].method,message:resolution?.issues.length?'Your scope is saved. Pricing is not complete yet. Review the items requiring verification or retry pricing research.':'We have your scope. Confirm the missing quantities to calculate the planning range.',disclaimer:'Preliminary project information only. This is not a bid, quote, offer or guaranteed price.'}};
   const risks:RiskFactor[]=[];
   if(!scope.answers.utilities&&["new-construction","addition","adu"].includes(service))risks.push("unknown-utilities");
   if(!scope.answers.site&&["new-construction","addition","adu"].includes(service))risks.push("soil-slope");
   if(scope.extraction?.reviewNotes.length)risks.push("incomplete-plans");
-  // An estimate priced from allowance rates is a preliminary model, whoever's
-  // book it came from. Published cost research times out on slow sources and
-  // the engine substitutes a labeled regional planning average; the resulting
-  // lines then failed every "before a firm proposal" guard - landed cost,
-  // loaded labor, planning-average-only - because those downgrade to review
-  // only for a preliminary purpose, and the purpose was set from the book's
-  // mode alone. The visitor got "a complete price range is required" and no
-  // estimate. Declaring the purpose from the evidence actually used keeps each
-  // line flagged for review, and the range carries its preliminary disclaimer.
   const allowancePriced=lines.some(line=>line.evidence?.basis==='regional-planning-average'||line.evidence?.basis==='sourced-market-average');
-  const input:PricingInput={service,revision,scopeSummary:summary,lines,coverage:book.coverage,risks,estimatePurpose:book.mode==='owner-planning'||allowancePriced?'preliminary':undefined,
+  const preliminaryPurpose=preliminaryModel||allowancePriced;
+  const input:PricingInput={service,revision,scopeSummary:summary,lines,coverage:book.coverage,risks,estimatePurpose:preliminaryPurpose?'preliminary':undefined,
     locationProvided:Boolean(scope.answers.location||scope.answers.address),urgency:scope.answers.urgency as PricingInput["urgency"],complexity:scope.answers.complexity as PricingInput["complexity"],
     uncertainty:missingInformation.length||scope.extraction?.reviewNotes.length?"high":"medium",
-    assumptions:[...book.assumptions,...scopeAssumptions(scope.answers,scope.uncertainFields),...(scope.extraction?.reviewNotes||[]).filter(note=>!blockingReviewNote(note)).map(note=>/^to confirm:/i.test(note)?note:`To confirm: ${note}`)],exclusions:[...new Set([...book.exclusions,...explicitExclusions])],
+    assumptions:[...book.assumptions,...scopeAssumptions(scope.answers,scope.uncertainFields),...(scope.extraction?.reviewNotes||[]).filter(note=>!blockingReviewNote(note)).map(note=>/^to confirm:/i.test(note)?note:`To confirm: ${note}`),...(preliminaryModel&&resolution?.issues.length?resolution.issues.map(issue=>`To confirm: ${issue}`):[])],exclusions:[...new Set([...book.exclusions,...explicitExclusions])],
     missingInformation,allowances:[],
   };
   const estimate=calculateP5Estimate(input,configuration.finance,[],now);
-  if(resolution?.issues.length){estimate.publishable=false;estimate.warnings.push({code:'scope-pricing-incomplete',severity:'block',message:'Every requested task must have supported pricing before a total can be shown.'});}
-  if(missingInformation.some(x=>x.startsWith('Missing cost rate:')||x.includes('catalog quarterly review'))){estimate.publishable=false;estimate.warnings.push({code:'planning-catalog-incomplete',severity:'block',message:'The planning catalog needs the recorded missing rate or scheduled review.'});}
+  if(resolution?.issues.length){
+    if(preliminaryModel)estimate.warnings.push({code:'scope-pricing-preliminary',severity:'review',message:'The planning range includes preliminary assumptions for items that still require final scope or cost verification.'});
+    else{estimate.publishable=false;estimate.warnings.push({code:'scope-pricing-incomplete',severity:'block',message:'Every requested task must have supported pricing before a total can be shown.'});}
+  }
+  if(missingInformation.some(x=>x.startsWith('Missing cost rate:')||x.includes('catalog quarterly review'))){
+    if(preliminaryModel)estimate.warnings.push({code:'planning-catalog-review',severity:'review',message:'One or more catalog items require current verification before a firm proposal.'});
+    else{estimate.publishable=false;estimate.warnings.push({code:'planning-catalog-incomplete',severity:'block',message:'The planning catalog needs the recorded missing rate or scheduled review.'});}
+  }
   if(scope.uploads.length&&!scope.extraction){estimate.publishable=false;estimate.warnings.push({code:"uploads-unreviewed",severity:"block",message:"Supporting uploads have not been analyzed. Review them before publishing a price."});}
   if(scope.extraction?.reviewNotes.some(blockingReviewNote)){estimate.publishable=false;estimate.warnings.push({code:"scope-review-required",severity:"block",message:"Resolve document and scope review notes, including unsupported uploads, before publishing a price."});}
-  // A dropped high-cost quantity cannot quietly become an exclusion.
-  if(missingInformation.some(x=>x.startsWith("Missing quantity:")||x.startsWith("Missing cost condition:"))){estimate.publishable=false;estimate.warnings.push({code:"quantity-missing",severity:"block",message:"One or more cost-book quantities or scope conditions are missing."});}
-  if(scope.answers.allowances&&!resolution?.completeScopeVerified){estimate.publishable=false;estimate.warnings.push({code:"allowance-review-required",severity:"block",message:"Convert the submitted allowances into itemized, linked cost allowances before publishing a price."});}
+  if(missingInformation.some(x=>x.startsWith("Missing quantity:")||x.startsWith("Missing cost condition:"))){
+    if(preliminaryModel)estimate.warnings.push({code:"quantity-preliminary",severity:"review",message:"One or more quantities use the available planning scope and must be confirmed before a firm proposal."});
+    else{estimate.publishable=false;estimate.warnings.push({code:"quantity-missing",severity:"block",message:"One or more cost-book quantities or scope conditions are missing."});}
+  }
+  if(scope.answers.allowances&&!resolution?.completeScopeVerified){
+    if(preliminaryModel)estimate.warnings.push({code:"allowance-preliminary",severity:"review",message:"Submitted allowances are carried as preliminary planning assumptions and require confirmation before a firm proposal."});
+    else{estimate.publishable=false;estimate.warnings.push({code:"allowance-review-required",severity:"block",message:"Convert the submitted allowances into itemized, linked cost allowances before publishing a price."});}
+  }
   return {internal:{...estimate,scope,costBookSnapshot:book},customer:customerEstimate(estimate,summary)};
 }
