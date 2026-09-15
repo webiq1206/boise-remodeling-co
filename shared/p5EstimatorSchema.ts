@@ -150,3 +150,17 @@ export const p5EstimatorDeliveryReviews = pgTable("p5_estimator_delivery_reviews
   evidence: text("evidence").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, table => [foreignKey({ name: "p5_estimator_delivery_reviews_delivery_id_fkey", columns: [table.deliveryId], foreignColumns: [p5EstimatorOutbox.id] })]);
+
+/** Audit trail of pricing-policy imports, written by
+ * scripts/import-p5-planning-books.mts: the payload before an import and the
+ * payload applied, with who applied it. Created at runtime like the rest, so
+ * drizzle-kit proposed DROP TABLE "p5_estimator_policy_imports" against the
+ * row recording a real planning-book import. It records what a price policy
+ * was before it changed, which is exactly the thing not to lose. */
+export const p5EstimatorPolicyImports = pgTable("p5_estimator_policy_imports", {
+  id: text("id").primaryKey(),
+  priorPayload: jsonb("prior_payload"),
+  importedPayload: jsonb("imported_payload").notNull(),
+  actor: text("actor").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
