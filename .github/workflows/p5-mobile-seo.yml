@@ -20,7 +20,7 @@ jobs:
         if: github.repository != 'webiq1206/boise-remodeling-co'
         with:
           repository: webiq1206/boise-remodeling-co
-          ref: 96cfc9dd2098bb7862ccf3e603690a46577db0c5
+          ref: 21e293f534d8ddfd11094d966b369dfc2dab5a8d
           path: .p5-seo-source
           persist-credentials: false
           sparse-checkout: |
@@ -57,12 +57,30 @@ jobs:
           set -o pipefail
           npm run build 2>&1 | tee p5-mobile-seo-verification/build.log
       - run: npx playwright install --with-deps chromium
-      - name: Verify rendered metadata, mobile hero and CTA behavior
+      - name: Verify rendered metadata and mobile actions
         run: |
           npx next start -p 5000 > p5-mobile-seo-verification/server.log 2>&1 &
           node -e 'let n=0;const t=setInterval(async()=>{try{const r=await fetch("http://127.0.0.1:5000/");if(r.ok){clearInterval(t)}}catch{}if(++n>60){clearInterval(t);process.exit(1)}},1000)'
           node scripts/verify-p5-mobile-seo.mjs
-      - name: Commit only verified source and generated brand assets
+      - name: Verify handoff UI using an isolated saved draft
+        run: |
+          node --import tsx --input-type=module <<'JS'
+          import {chromium} from '@playwright/test';import assert from 'node:assert/strict';import {writeFile} from 'node:fs/promises';import {ESTIMATOR_BRAND as brand} from './lib/p5/brand.ts';
+          const service=brand.id==='construction'?'kitchen':brand.id==='remodeling'?'new-construction':brand.id==='handyman'?'cabinet-install':brand.id==='cabinet'?'handyman':null;
+          if(service){
+            const dest=service==='kitchen'?'https://boiseremodeling.co':service==='new-construction'?'https://boiseconstruction.co':service==='handyman'?'https://boisehandyman.co':'https://boisecabinet.co';
+            const browser=await chromium.launch();try{const ctx=await browser.newContext({viewport:{width:390,height:844}});
+              await ctx.addInitScript(({service})=>localStorage.setItem('p5-project-draft-v2',JSON.stringify({id:'11111111-1111-4111-8111-111111111111',key:'a'.repeat(64),revision:0,text:'Isolated browser handoff fixture',answers:{service,taskList:'Complete project'},extraction:null,contact:{name:'',email:'',phone:''},step:1,updatedAt:Date.now(),wizard:{skipped:[],resolutions:{}},uploads:[]})),{service});
+              const page=await ctx.newPage();await page.goto('http://127.0.0.1:5000/estimate/p5-preview');
+              await page.locator('[aria-label="Project question"]').waitFor();
+              const links=page.locator(`[data-p5-estimator] a[href="${dest}"]`);assert.ok(await links.count()>0,'Missing actual handoff link');
+              assert.equal(await page.getByRole('button',{name:'Send answer',exact:true}).count(),0,'Handoff must not ask for another answer');
+              await page.screenshot({path:'p5-mobile-seo-verification/handoff-390.png'});
+              await writeFile('p5-mobile-seo-verification/handoff.json',JSON.stringify({brand:brand.id,service,destination:dest,linkPresent:true,answerComposerAbsent:true,scope:'Isolated UI fixture only, not a live provider test'}));
+            }finally{await browser.close();}
+          }
+          JS
+      - name: Commit only verified source and brand assets
         run: |
           git diff --check
           git config user.name 'P5 Verified Updates'
@@ -74,11 +92,11 @@ jobs:
           execFileSync('git',['add','-f','--',...new Set(paths)]);
           JS
           if ! git diff --cached --quiet; then
-            git commit -m 'Apply verified hero-triggered mobile actions and branded page metadata'
+            git commit -m 'Apply verified mobile actions, brand metadata and estimator handoff controls'
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
           git rev-parse HEAD > p5-mobile-seo-verification/tested-commit.txt
-      - name: Retain approved preview assets
+      - name: Retain preview assets
         if: always()
         run: |
           mkdir -p p5-mobile-seo-verification
