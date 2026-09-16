@@ -1,0 +1,18 @@
+{
+  "main_source_commit": "722956c740711ad9b58187b4071950d45d66fb2a",
+  "route_checks": 1863,
+  "route_count": 207,
+  "route_failures": 0,
+  "route_workflow_runs": [
+    "34520728076",
+    "34523180743",
+    "34523866330"
+  ],
+  "component_checks": 99,
+  "component_workflow_run": 34522963936,
+  "production_build": "passed at documented tested revisions",
+  "route_evidence": "p5-route-verification-2026-09-10.csv",
+  "interaction_evidence": "p5-interaction-verification-2026-09-10.json",
+  "manual_review": "Selected templates and changed sections; exhaustive per-section approval incomplete",
+  "deployment": "Requires pull and republish"
+}
