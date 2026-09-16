@@ -10,7 +10,7 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 22
     strategy:
       fail-fast: false
       matrix:
@@ -35,54 +35,27 @@ jobs:
           persist-credentials: false
       - uses: actions/checkout@v6
         with:
-          ref: 57cb24b50c7d31df9c86953372f23fd6a2c79b93
+          ref: 053310544fe0b1753f341d60de37b6066897a800
           path: .qa-source
           persist-credentials: false
           sparse-checkout: |
             scripts/p5-live-finalization.mjs
-            scripts/p5-live-seo-audit.py
+            scripts/p5-live-followthrough.mjs
           sparse-checkout-cone-mode: false
-      - name: Copy reviewed QA scripts
+      - name: Copy controlled live QA scripts
         run: |
           cp .qa-source/scripts/p5-live-finalization.mjs scripts/p5-live-finalization.mjs
-          cp .qa-source/scripts/p5-live-seo-audit.py scripts/p5-live-seo-audit.py
+          cp .qa-source/scripts/p5-live-followthrough.mjs scripts/p5-live-followthrough.mjs
           mkdir -p p5-live-finalization/${P5_QA_SITE}
           git rev-parse HEAD > p5-live-finalization/${P5_QA_SITE}/repository-commit.txt
-      - name: Retain relevant source for focused repairs
-        run: |
-          python3 - <<'PY'
-          import tarfile, pathlib, os
-          roots=['app','components','hooks','lib','shared','public/brand','public/favicon','public/favicons','public/logos','public/og','src']
-          out=pathlib.Path('p5-live-finalization')/os.environ['P5_QA_SITE']/'source.tgz'
-          with tarfile.open(out,'w:gz') as tar:
-            for root in roots:
-              if not pathlib.Path(root).exists():continue
-              for p in pathlib.Path(root).rglob('*'):
-                if p.is_file() and p.stat().st_size<6000000 and (p.suffix in ['.tsx','.ts','.css','.json','.svg','.png','.webp','.ico']):tar.add(p,arcname=str(p))
-            for name in ['package.json','package-lock.json','tsconfig.json','next.config.mjs','next.config.ts','next.config.js','.gitignore']:
-              if pathlib.Path(name).exists():tar.add(name)
-          PY
-      - uses: actions/upload-artifact@v4
-        with:
-          name: p5-source-${{ matrix.site }}
-          path: p5-live-finalization/${{ matrix.site }}/source.tgz
-          retention-days: 7
-      - name: Public sitemap metadata audit
-        run: python3 scripts/p5-live-seo-audit.py
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: p5-seo-${{ matrix.site }}
-          path: p5-live-finalization/${{ matrix.site }}/seo.json
-          retention-days: 14
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npx playwright install --with-deps chromium
-      - name: Live browser journeys through actual providers
-        run: node scripts/p5-live-finalization.mjs
+      - name: Actual uploaded PDF through terminal pricing and download
+        run: node scripts/p5-live-followthrough.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
