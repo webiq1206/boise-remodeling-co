@@ -61,11 +61,11 @@ const catchMarker='    // Preserve the lead, but never expose a partial total on
 if(pricing.includes(catchMarker)&&!pricing.includes('[p5-pricing] scope verification failure')){pricing=pricing.replace(catchMarker,"    console.error('[p5-pricing] scope verification failure', {name:error instanceof Error?error.name:'UnknownError',message:error instanceof Error?error.message:'Invalid pricing response'});\n"+catchMarker);put('lib/p5/scopePricing.ts',pricing);}
 // A supported numeric allowance is valid. An unpriced item relabeled as an assumption is not.
 let cost=read('lib/p5/costBook.ts');
-for(const [code,condition] of [
- ['scope-pricing-preliminary',/if\(preliminaryModel\)estimate\.warnings\.push\(\{code:'scope-pricing-preliminary'[^\n]+\n\s*else\{([^\n]+)\}/],
- ['planning-catalog-review',/if\(preliminaryModel\)estimate\.warnings\.push\(\{code:'planning-catalog-review'[^\n]+\n\s*else\{([^\n]+)\}/],
- ['quantity-preliminary',/if\(preliminaryModel\)estimate\.warnings\.push\(\{code:"quantity-preliminary"[^\n]+\n\s*else\{([^\n]+)\}/],
- ['allowance-preliminary',/if\(preliminaryModel\)estimate\.warnings\.push\(\{code:"allowance-preliminary"[^\n]+\n\s*else\{([^\n]+)\}/],
-]){if(cost.includes(code)){if(!condition.test(cost))throw new Error(`Inspect changed pricing safeguard: ${code}`);cost=cost.replace(condition,'$1');}}
+for(const code of ['scope-pricing-preliminary','planning-catalog-review','quantity-preliminary','allowance-preliminary']){
+ if(!cost.includes(code))continue;
+ const pattern=new RegExp(`if\\(preliminaryModel\\)estimate\\.warnings\\.push\\(\\{code:['\"]${code}['\"][^{}]*\\}\\);\\s*else\\{(estimate\\.publishable=false;estimate\\.warnings\\.push\\(\\{[^{}]*\\}\\);)\\}`);
+ if(!pattern.test(cost))throw new Error(`Inspect changed pricing safeguard: ${code}`);
+ cost=cost.replace(pattern,'$1');
+}
 put('lib/p5/costBook.ts',cost);
 console.log('Integrated project-specific question policy, server gates, chat presentation and pricing safeguards.');
