@@ -1,0 +1,104 @@
+name: P5 dynamic question release verification
+on:
+  workflow_call:
+  push:
+    branches: [fix/p5-dynamic-questions-20260915]
+permissions:
+  contents: write
+concurrency:
+  group: p5-dynamic-questions-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        with:
+          repository: webiq1206/boise-remodeling-co
+          ref: 85901023596d6d50d4d1cb7fff7cad72da53be87
+          path: .p5-shared-release
+          persist-credentials: false
+      - name: Copy reviewed shared implementation
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        run: |
+          for file in lib/p5/dynamicQuestions.ts lib/p5/adaptive.ts tests/p5-dynamic-questions.test.ts scripts/integrate-p5-dynamic-questions.mjs; do
+            mkdir -p "$(dirname "$file")"
+            cp ".p5-shared-release/$file" "$file"
+          done
+          rm -rf .p5-shared-release
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Integrate and commit exact tested source to this repair branch
+        run: |
+          node scripts/integrate-p5-dynamic-questions.mjs
+          git diff --check
+          git config user.name 'P5 Estimator Verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/p5/dynamicQuestions.ts lib/p5/adaptive.ts lib/p5/clarifications.ts lib/p5/draftEndpoint.ts lib/p5/scopePricing.ts lib/p5/costBook.ts components/P5Estimator.tsx components/P5EstimateDetails.tsx components/P5Estimator.module.css tests/p5-dynamic-questions.test.ts scripts/integrate-p5-dynamic-questions.mjs
+          if ! git diff --cached --quiet; then
+            git commit -m 'Integrate dynamic scope questions and compact chat controls'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          git rev-parse HEAD | tee /tmp/p5-tested-commit.txt
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Dynamic questions and pricing regression tests
+        run: |
+          set -o pipefail
+          node --import tsx --test tests/p5-dynamic-questions.test.ts tests/p5-estimator-flow.test.ts tests/p5-pricing.test.ts tests/p5-scope-pricing.test.ts tests/p5-accuracy-integration.test.ts 2>&1 | tee /tmp/p5-question-tests.log
+      - name: Production build and existing repository gates
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee /tmp/p5-build.log
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Responsive homepage and estimator entry checks
+        run: |
+          npx next start -p 5000 > /tmp/p5-server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{await fetch("http://127.0.0.1:5000");clearInterval(t)}catch{if(++n>60){clearInterval(t);process.exit(1)}}},1000)'
+          node --input-type=module <<'JS'
+          import {chromium} from '@playwright/test';
+          import {mkdir,writeFile} from 'node:fs/promises';
+          import assert from 'node:assert/strict';
+          await mkdir('p5-question-verification',{recursive:true});
+          const browser=await chromium.launch();const results=[];
+          try {
+            for(const [width,height] of [[320,740],[390,844],[768,1024],[1024,768],[1440,900]]){
+              const context=await browser.newContext({viewport:{width,height},hasTouch:width<1024});
+              const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+              await page.goto('http://127.0.0.1:5000/',{waitUntil:'domcontentloaded'});
+              await page.waitForTimeout(3000);
+              const home=await page.evaluate(()=>({scrollY,overflow:document.documentElement.scrollWidth>innerWidth+1,text:document.body.innerText.slice(0,500)}));
+              assert.ok(home.scrollY<=1,`Homepage auto-scrolled ${home.scrollY}px at ${width}px`);
+              assert.equal(home.overflow,false,`Homepage horizontal overflow at ${width}px`);
+              assert.ok(!/application error|internal server error/i.test(home.text));
+              await page.screenshot({path:`p5-question-verification/home-${width}.png`});
+              await page.goto('http://127.0.0.1:5000/estimate/p5-preview',{waitUntil:'domcontentloaded'});
+              await page.locator('[data-p5-estimator]').first().waitFor();
+              await page.waitForTimeout(1000);
+              assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,`Estimator overflow at ${width}px`);
+              await page.screenshot({path:`p5-question-verification/estimator-${width}.png`});
+              assert.deepEqual(errors,[],`Browser runtime errors at ${width}px`);
+              results.push({width,height,homepageTop:true,horizontalOverflow:false,runtimeErrors:errors,scope:'Entry UI only; no live AI or delivery mocks claimed as production tests'});
+              await context.close();
+            }
+          } finally {await writeFile('p5-question-verification/results.json',JSON.stringify(results,null,2));await browser.close();}
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-dynamic-question-verification
+          path: |
+            p5-question-verification
+            /tmp/p5-tested-commit.txt
+            /tmp/p5-question-tests.log
+            /tmp/p5-build.log
+            /tmp/p5-server.log
+          retention-days: 14
