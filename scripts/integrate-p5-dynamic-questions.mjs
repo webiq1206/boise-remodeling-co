@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 const read=p=>fs.readFileSync(p,'utf8');
 const put=(p,s)=>{fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,s);};
-const replace=(p,from,to,{optional=false}={})=>{let s=read(p);if(s.includes(to))return;if(!s.includes(from)){if(optional)return;throw new Error(`Expected integration point is missing: ${p}: ${from.slice(0,90)}`);}put(p,s.replace(from,to));};
+const replace=(p,from,to)=>{let s=read(p);if(s.includes(to))return;if(!s.includes(from))throw new Error(`Expected integration point missing: ${p}: ${from.slice(0,90)}`);put(p,s.replace(from,to));};
 replace('lib/p5/clarifications.ts',"import {atomicInstructionQuestions","import {questionContext,scopePromptApplies} from './dynamicQuestions.ts';\nimport {atomicInstructionQuestions");
 replace('lib/p5/clarifications.ts','  return result;\n}\n\n/** Only the three exact responsibility choices','  return result.filter(q=>scopePromptApplies(q.field,q.detail||q.question,questionContext(answers,extraction)));\n}\n\n/** Only the three exact responsibility choices');
 replace('components/P5Estimator.tsx',"const questions=(d:BrowserDraft)=>scopeQuestions(d.answers,d.extraction,d.conflicts||[],d.wizard?.skipped||[],d.pricedFields||[]);","const questions=(d:BrowserDraft)=>scopeQuestions(d.answers,d.extraction,d.conflicts||[],d.wizard?.skipped||[],d.pricedFields||[],d.text);");
@@ -12,22 +12,25 @@ endpoint=endpoint.replace('scopeQuestions(answers,extraction,conflicts,skipped,p
 const gate='      const unresolved=extraction?reconcileScope(answers,extraction,resolutions).conflicts:[];';
 const gateEnd='      reviewed={text:incomingText,answers,extraction,uncertainFields:skipped,';
 const start=endpoint.indexOf(gate),end=endpoint.indexOf(gateEnd,start);
-if(start<0||end<0)throw new Error('The draft review gate changed; inspect before integration.');
+if(start<0||end<0)throw new Error('Draft review gate changed; inspect before integration.');
 endpoint=endpoint.slice(0,start)+`      const unresolved=extraction?reconcileScope(answers,extraction,resolutions).conflicts:[];
       const dependencies=await costQuestionFields(answers);
       const remaining=scopeQuestions(answers,extraction,unresolved,skipped,dependencies,incomingText);
       if(remaining.length)throw new DraftError(remaining[0].handoff?'Use the matching company estimator for this project.':\`Answer the remaining \${remaining[0].label.toLowerCase()} question before continuing.\`);
 `+endpoint.slice(end);
 put('lib/p5/draftEndpoint.ts',endpoint);
-// An embedded estimator must not scroll or focus the webpage during hydration.
 let ui=read('components/P5Estimator.tsx');
-ui=ui.replace("const thread=threadRef.current;if(!el)return;","const thread=threadRef.current;if(!el||!frameActive)return;");
-ui=ui.replace("const thread=threadRef.current;if(!el)return;","const thread=threadRef.current;if(!el||!frameActive)return;");
+ui=ui.replaceAll("const thread=threadRef.current;if(!el)return;","const thread=threadRef.current;if(!el||!frameActive)return;");
 ui=ui.replace("if(!draft||!stageKey||working||stageKey===lastStage.current)return;","if(!frameActive||!draft||!stageKey||working||stageKey===lastStage.current)return;");
 ui=ui.replace("},[stageKey,working,Boolean(draft)]);","},[stageKey,working,Boolean(draft),frameActive]);");
 ui=ui.replace("open={group.title==='Project at a glance'||group.fields.includes(editField as ScopeField)}","open={group.fields.includes(editField as ScopeField)||undefined}");
-const pdfCard=`    <div className={styles.card} aria-label="Estimate PDF attachment"><div className={styles.cardHead}><h3>Your estimate PDF</h3><span className={styles.badge}>PDF</span></div><p className={styles.hint}>Includes your price range, scope, exclusions and planning assumptions.</p><div className={styles.actions}><button type="button" className={styles.secondary} onClick={downloadPdf} disabled={locked}>Download estimate PDF</button></div></div>\n`;
-if(!ui.includes('aria-label="Estimate PDF attachment"')){const target='    <P5EstimateDetails result={result}/>';if(!ui.includes(target))throw new Error('Result detail integration point changed.');ui=ui.replace(target,pdfCard+'    <P5EstimateDetails result={result} openFirst={false}/>');}
+ui=ui.replace('open={!draft.answers.finish}','open={false}');
+const pdfCard='<div className={styles.card} aria-label="Estimate PDF attachment"><div className={styles.cardHead}><h3>Your estimate PDF</h3><span className={styles.badge}>PDF</span></div><p className={styles.hint}>Includes your price range, scope, exclusions and planning assumptions.</p><div className={styles.actions}><button type="button" className={styles.secondary} onClick={downloadPdf} disabled={locked}>Download estimate PDF</button></div></div>';
+if(!ui.includes('aria-label="Estimate PDF attachment"')){
+ const target=/<P5EstimateDetails result=\{result\}(?: openFirst=\{false\})?\s*\/>/;
+ if(!target.test(ui))throw new Error('Result detail integration point changed.');
+ ui=ui.replace(target,pdfCard+'<P5EstimateDetails result={result} openFirst={false}/>');
+}
 ui=ui.replace('`${brand.id}-project-summary.pdf`','`${brand.id}-estimate.pdf`');
 const finishStart=ui.indexOf("    {finishServices.includes(draft.answers.service||'')&&<div className={styles.card}>");
 if(finishStart>=0){
