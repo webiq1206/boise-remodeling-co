@@ -25,9 +25,10 @@ function Section({section,open}:{section:EstimateSection;open?:boolean}){
  * what is included (by category, with subtotals and itemized lines), what is
  * excluded, what is carried as an allowance, and what still needs confirming.
  * Each group has its own labeled heading so excluded work never reads as work
- * covered by the estimate.
+ * covered by the estimate. Detail groups start collapsed so the result stays
+ * readable on a phone while every item remains one tap away.
  */
-export default function P5EstimateDetails({result,openFirst=true,showGlance=true}:{result:any;openFirst?:boolean;showGlance?:boolean}){
+export default function P5EstimateDetails({result,openFirst=false,showGlance=true}:{result:any;openFirst?:boolean;showGlance?:boolean}){
  const sections=estimateSections(result);
  const grouped=groupSections(sections);
  const breakdown=categoryBreakdown(result);
@@ -37,7 +38,7 @@ export default function P5EstimateDetails({result,openFirst=true,showGlance=true
   {showGlance&&grouped.glance&&<Section section={grouped.glance} open={openFirst}/>}
   {grouped.brief&&<Section section={grouped.brief}/>}
   {(grouped.included.length>0||hasCategories)&&<p className={styles.sectionLabel}>{priced?'What is included':'Requested work'}</p>}
-  {grouped.included.map((s,i)=><Section key={s.title+i} section={s} open={i===0&&!hasCategories}/>)}
+  {grouped.included.map((s,i)=><Section key={s.title+i} section={s}/>)}
   {hasCategories&&<>
    {grouped.categoriesIntro?.text&&<p className={styles.hint} style={{marginBottom:10}}>{grouped.categoriesIntro.text}</p>}
    {breakdown.map(group=><details key={group.category} className={styles.accordion} data-kind="included">
@@ -54,7 +55,7 @@ export default function P5EstimateDetails({result,openFirst=true,showGlance=true
     </div>
    </details>)}
   </>}
-  {grouped.excluded.length>0&&<><p className={styles.sectionLabel}>Not included</p>{grouped.excluded.map((s,i)=><Section key={s.title+i} section={s} open={i===0}/>)}</>}
+  {grouped.excluded.length>0&&<><p className={styles.sectionLabel}>Not included</p>{grouped.excluded.map((s,i)=><Section key={s.title+i} section={s}/>)}</>}
   {grouped.allowances.length>0&&<><p className={styles.sectionLabel}>Allowances</p>{grouped.allowances.map((s,i)=><Section key={s.title+i} section={s}/>)}</>}
   {grouped.assumptions.length>0&&<><p className={styles.sectionLabel}>Assumptions and items to confirm</p>{grouped.assumptions.map((s,i)=><Section key={s.title+i} section={s}/>)}</>}
   {grouped.info.length>0&&<><p className={styles.sectionLabel}>Supporting details</p>{grouped.info.map((s,i)=><Section key={s.title+i} section={s}/>)}</>}
