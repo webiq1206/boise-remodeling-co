@@ -1,0 +1,90 @@
+name: P5 mobile CTA and SEO verification
+on:
+  workflow_call:
+  push:
+    branches: [fix/p5-mobile-seo-20260916]
+permissions:
+  contents: write
+concurrency:
+  group: p5-mobile-seo-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        with:
+          repository: webiq1206/boise-remodeling-co
+          ref: 610b068b3194fc1e9332bd7e84d2a8e9bd69b002
+          path: .p5-seo-source
+          persist-credentials: false
+          sparse-checkout: |
+            hooks/use-mobile-action-visibility.ts
+            lib/brand-page-metadata.ts
+            scripts/integrate-p5-mobile-seo.mjs
+            scripts/verify-p5-mobile-seo.mjs
+            tests/p5-brand-page-metadata.test.ts
+          sparse-checkout-cone-mode: false
+      - name: Copy reviewed shared source
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        run: |
+          for file in hooks/use-mobile-action-visibility.ts lib/brand-page-metadata.ts scripts/integrate-p5-mobile-seo.mjs scripts/verify-p5-mobile-seo.mjs tests/p5-brand-page-metadata.test.ts; do
+            mkdir -p "$(dirname "$file")"
+            cp ".p5-seo-source/$file" "$file"
+          done
+          rm -rf .p5-seo-source
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Integrate brand-aware changes
+        run: node scripts/integrate-p5-mobile-seo.mjs
+      - name: Check new code types and metadata regression tests
+        run: |
+          npx tsc --noEmit --skipLibCheck --target ES2022 --module esnext --moduleResolution bundler --jsx react-jsx --esModuleInterop hooks/use-mobile-action-visibility.ts lib/brand-page-metadata.ts
+          node --import tsx --test tests/p5-brand-page-metadata.test.ts
+      - name: Existing estimator tests
+        run: node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts > p5-mobile-seo-verification/estimator-tests.log
+      - name: Production build and repository gates
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee p5-mobile-seo-verification/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Verify rendered metadata, mobile hero and CTA behavior
+        run: |
+          npx next start -p 5000 > p5-mobile-seo-verification/server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{const r=await fetch("http://127.0.0.1:5000/");if(r.ok){clearInterval(t)}}catch{}if(++n>60){clearInterval(t);process.exit(1)}},1000)'
+          node scripts/verify-p5-mobile-seo.mjs
+      - name: Commit only verified source and generated brand assets
+        run: |
+          git diff --check
+          git config user.name 'P5 Verified Updates'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';import {execFileSync} from 'node:child_process';
+          const v=JSON.parse(fs.readFileSync('p5-mobile-seo-verification/implementation.json','utf8'));
+          const paths=[...v.changed,...v.wrapped,...v.generatedImages,'hooks/use-mobile-action-visibility.ts','lib/brand-page-metadata.ts','scripts/integrate-p5-mobile-seo.mjs','scripts/verify-p5-mobile-seo.mjs','tests/p5-brand-page-metadata.test.ts'];
+          execFileSync('git',['add','-f','--',...new Set(paths)]);
+          JS
+          if ! git diff --cached --quiet; then
+            git commit -m 'Apply verified hero-triggered mobile actions and branded page metadata'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          git rev-parse HEAD > p5-mobile-seo-verification/tested-commit.txt
+      - name: Retain approved preview assets
+        if: always()
+        run: |
+          mkdir -p p5-mobile-seo-verification
+          cp public/brand/page-preview.png public/brand/search-icon-96.png p5-mobile-seo-verification/ || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-mobile-seo-verification
+          path: p5-mobile-seo-verification
+          retention-days: 14
