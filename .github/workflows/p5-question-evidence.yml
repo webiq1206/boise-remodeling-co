@@ -1,0 +1,105 @@
+name: P5 question evidence verification
+on:
+  workflow_call:
+    inputs:
+      source_ref:
+        type: string
+        required: false
+        default: e8d95fe8e555d508728706de82745db6763588b8
+  push:
+    branches: [fix/p5-question-evidence-20260916]
+permissions:
+  contents: write
+concurrency:
+  group: p5-question-evidence-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        with:
+          repository: webiq1206/boise-remodeling-co
+          ref: ${{ inputs.source_ref }}
+          path: .p5-evidence-source
+          persist-credentials: false
+          sparse-checkout: scripts/refine-p5-question-evidence.mjs
+          sparse-checkout-cone-mode: false
+      - name: Copy exact reviewed refinement script
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        run: |
+          cp .p5-evidence-source/scripts/refine-p5-question-evidence.mjs scripts/refine-p5-question-evidence.mjs
+          rm -rf .p5-evidence-source
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Apply exact question corrections on repair branch
+        run: |
+          node scripts/refine-p5-question-evidence.mjs
+          git diff --check
+          git config user.name 'P5 Estimator Verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/p5/dynamicQuestions.ts lib/p5/adaptive.ts tests/p5-dynamic-questions.test.ts
+          if test -f tests/p5-adaptive.test.ts; then git add tests/p5-adaptive.test.ts; fi
+          git add -f scripts/refine-p5-question-evidence.mjs
+          if ! git diff --cached --quiet; then
+            git commit -m 'Preserve source-backed questions and remove redundant room follow-ups'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          mkdir -p p5-evidence-verification
+          git rev-parse HEAD > p5-evidence-verification/tested-commit.txt
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: All estimator regression tests
+        run: |
+          set -o pipefail
+          node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts 2>&1 | tee p5-evidence-verification/tests.log
+      - name: Production build including repository prebuild checks
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee p5-evidence-verification/build.log
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify responsive entry and homepage scroll
+        run: |
+          npx next start -p 5000 > p5-evidence-verification/server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{await fetch("http://127.0.0.1:5000");clearInterval(t)}catch{if(++n>60){clearInterval(t);process.exit(1)}}},1000)'
+          node --input-type=module <<'JS'
+          import {chromium} from '@playwright/test';
+          import {writeFile} from 'node:fs/promises';
+          import assert from 'node:assert/strict';
+          const browser=await chromium.launch();const results=[];
+          try {
+            for(const [width,height] of [[320,740],[390,844],[768,1024],[1024,768],[1440,900]]){
+              const context=await browser.newContext({viewport:{width,height},hasTouch:width<1024});
+              const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+              await page.goto('http://127.0.0.1:5000/',{waitUntil:'domcontentloaded'});await page.waitForTimeout(2000);
+              assert.ok(await page.evaluate(()=>scrollY<=1),'Homepage automatically scrolled');
+              await page.screenshot({path:`p5-evidence-verification/home-${width}.png`});
+              await page.goto('http://127.0.0.1:5000/estimate/p5-preview',{waitUntil:'domcontentloaded'});
+              await page.locator('[data-p5-estimator]').first().waitFor();
+              assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Estimator overflow');
+              assert.deepEqual(errors,[],'Browser runtime errors');
+              await page.screenshot({path:`p5-evidence-verification/estimator-${width}.png`});
+              results.push({width,height,homepageTop:true,entryPassed:true,scope:'Chromium emulation, entry only, not live AI or email delivery'});
+              await context.close();
+            }
+          } finally {await writeFile('p5-evidence-verification/browser.json',JSON.stringify(results,null,2));await browser.close();}
+          JS
+      - name: Retain exact source used by the regression tests
+        if: always()
+        run: |
+          mkdir -p p5-evidence-verification
+          tar -czf p5-evidence-verification/test-source.tgz lib/p5 tests/p5-*.test.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-question-evidence-verification
+          path: p5-evidence-verification
+          retention-days: 14
