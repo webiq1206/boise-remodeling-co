@@ -66,22 +66,18 @@ export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorCo
   };
   const estimate=calculateP5Estimate(input,configuration.finance,[],now);
   if(resolution?.issues.length){
-    if(preliminaryModel)estimate.warnings.push({code:'scope-pricing-preliminary',severity:'review',message:'The planning range includes preliminary assumptions for items that still require final scope or cost verification.'});
-    else{estimate.publishable=false;estimate.warnings.push({code:'scope-pricing-incomplete',severity:'block',message:'Every requested task must have supported pricing before a total can be shown.'});}
+    estimate.publishable=false;estimate.warnings.push({code:'scope-pricing-incomplete',severity:'block',message:'Every requested task must have supported pricing before a total can be shown.'});
   }
   if(missingInformation.some(x=>x.startsWith('Missing cost rate:')||x.includes('catalog quarterly review'))){
-    if(preliminaryModel)estimate.warnings.push({code:'planning-catalog-review',severity:'review',message:'One or more catalog items require current verification before a firm proposal.'});
-    else{estimate.publishable=false;estimate.warnings.push({code:'planning-catalog-incomplete',severity:'block',message:'The planning catalog needs the recorded missing rate or scheduled review.'});}
+    estimate.publishable=false;estimate.warnings.push({code:'planning-catalog-incomplete',severity:'block',message:'The planning catalog needs the recorded missing rate or scheduled review.'});
   }
   if(scope.uploads.length&&!scope.extraction){estimate.publishable=false;estimate.warnings.push({code:"uploads-unreviewed",severity:"block",message:"Supporting uploads have not been analyzed. Review them before publishing a price."});}
   if(scope.extraction?.reviewNotes.some(blockingReviewNote)){estimate.publishable=false;estimate.warnings.push({code:"scope-review-required",severity:"block",message:"Resolve document and scope review notes, including unsupported uploads, before publishing a price."});}
   if(missingInformation.some(x=>x.startsWith("Missing quantity:")||x.startsWith("Missing cost condition:"))){
-    if(preliminaryModel)estimate.warnings.push({code:"quantity-preliminary",severity:"review",message:"One or more quantities use the available planning scope and must be confirmed before a firm proposal."});
-    else{estimate.publishable=false;estimate.warnings.push({code:"quantity-missing",severity:"block",message:"One or more cost-book quantities or scope conditions are missing."});}
+    estimate.publishable=false;estimate.warnings.push({code:"quantity-missing",severity:"block",message:"One or more cost-book quantities or scope conditions are missing."});
   }
   if(scope.answers.allowances&&!resolution?.completeScopeVerified){
-    if(preliminaryModel)estimate.warnings.push({code:"allowance-preliminary",severity:"review",message:"Submitted allowances are carried as preliminary planning assumptions and require confirmation before a firm proposal."});
-    else{estimate.publishable=false;estimate.warnings.push({code:"allowance-review-required",severity:"block",message:"Convert the submitted allowances into itemized, linked cost allowances before publishing a price."});}
+    estimate.publishable=false;estimate.warnings.push({code:"allowance-review-required",severity:"block",message:"Convert the submitted allowances into itemized, linked cost allowances before publishing a price."});
   }
   return {internal:{...estimate,scope,costBookSnapshot:book},customer:customerEstimate(estimate,summary)};
 }
