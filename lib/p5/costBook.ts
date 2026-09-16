@@ -61,7 +61,7 @@ export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorCo
   const input:PricingInput={service,revision,scopeSummary:summary,lines,coverage:book.coverage,risks,estimatePurpose:preliminaryPurpose?'preliminary':undefined,
     locationProvided:Boolean(scope.answers.location||scope.answers.address),urgency:scope.answers.urgency as PricingInput["urgency"],complexity:scope.answers.complexity as PricingInput["complexity"],
     uncertainty:missingInformation.length||scope.extraction?.reviewNotes.length?"high":"medium",
-    assumptions:[...book.assumptions,...scopeAssumptions(scope.answers,scope.uncertainFields),...(scope.extraction?.reviewNotes||[]).filter(note=>!blockingReviewNote(note)).map(note=>/^to confirm:/i.test(note)?note:`To confirm: ${note}`),...(preliminaryModel&&resolution?.issues.length?resolution.issues.map(issue=>`To confirm: ${issue}`):[])],exclusions:[...new Set([...book.exclusions,...explicitExclusions])],
+    assumptions:[...book.assumptions,...scopeAssumptions(scope.answers,scope.uncertainFields,scope.extraction,scope.text),...(scope.extraction?.reviewNotes||[]).filter(note=>!blockingReviewNote(note)).map(note=>/^to confirm:/i.test(note)?note:`To confirm: ${note}`),...(preliminaryModel&&resolution?.issues.length?resolution.issues.map(issue=>`To confirm: ${issue}`):[])],exclusions:[...new Set([...book.exclusions,...explicitExclusions])],
     missingInformation,allowances:[],
   };
   const estimate=calculateP5Estimate(input,configuration.finance,[],now);
