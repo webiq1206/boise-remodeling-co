@@ -13,7 +13,7 @@ test('root layout keeps the existing title template and site verification',()=>{
  const result=withBrandPageMetadata(source,'__layout__');assert.deepEqual(result.title,source.title);assert.deepEqual(result.verification,source.verification);assert.equal(result.manifest,source.manifest);assert.ok(result.icons);
 });
 test('core descriptions are complete sentences rather than clipped fragments',()=>{
- const result=withBrandPageMetadata({title:'Contact',alternates:{canonical:'/contact'}},'/contact');
+ const result=withBrandPageMetadata({title:'Home',alternates:{canonical:'/'}},'/');
  assert.ok(result.description?.endsWith('.'));assert.ok(!/\b(?:and|with|under|the|one|line-item)\.$/i.test(result.description||''));
 });
 test('distinct document descriptions remain distinct',()=>{
