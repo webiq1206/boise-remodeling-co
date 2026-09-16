@@ -68,9 +68,7 @@ export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorCo
   if(resolution?.issues.length){
     estimate.publishable=false;estimate.warnings.push({code:'scope-pricing-incomplete',severity:'block',message:'Every requested task must have supported pricing before a total can be shown.'});
   }
-  if(missingInformation.some(x=>x.startsWith('Missing cost rate:')||x.includes('catalog quarterly review'))){
-    estimate.publishable=false;estimate.warnings.push({code:'planning-catalog-incomplete',severity:'block',message:'The planning catalog needs the recorded missing rate or scheduled review.'});
-  }
+  const missingRate=missingInformation.some(x=>x.startsWith('Missing cost rate:'));const catalogReviewDue=missingInformation.some(x=>x.includes('catalog quarterly review'));if(missingRate||(catalogReviewDue&&!preliminaryModel)){estimate.publishable=false;estimate.warnings.push({code:'planning-catalog-incomplete',severity:'block',message:'The planning catalog needs the recorded missing rate or scheduled review.'});}else if(catalogReviewDue){/* Under the preliminary planning model a catalog past its quarterly review is disclosed with its date, not a reason to withhold the range. */estimate.warnings.push({code:'planning-catalog-review-due',severity:'review',message:`The owner planning catalog is past its quarterly review (imported ${String(configuration.planningCatalog?.importedAt||'').slice(0,10)||'earlier'}); its rates are disclosed as preliminary.`});}
   if(scope.uploads.length&&!scope.extraction){estimate.publishable=false;estimate.warnings.push({code:"uploads-unreviewed",severity:"block",message:"Supporting uploads have not been analyzed. Review them before publishing a price."});}
   if(scope.extraction?.reviewNotes.some(blockingReviewNote)){estimate.publishable=false;estimate.warnings.push({code:"scope-review-required",severity:"block",message:"Resolve document and scope review notes, including unsupported uploads, before publishing a price."});}
   if(missingInformation.some(x=>x.startsWith("Missing quantity:")||x.startsWith("Missing cost condition:"))){
