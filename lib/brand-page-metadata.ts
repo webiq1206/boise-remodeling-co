@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {ESTIMATOR_BRAND as brand} from './p5/brand';
+import {ESTIMATOR_BRAND as brand} from './p5/brand.ts';
 
 /** Branded sharing previews are the owner's preference. Product/article schema
  * retains its real subject image. Neither favicon nor preview display is guaranteed. */
