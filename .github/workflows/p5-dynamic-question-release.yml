@@ -20,7 +20,7 @@ jobs:
         if: github.repository != 'webiq1206/boise-remodeling-co'
         with:
           repository: webiq1206/boise-remodeling-co
-          ref: 24e6296613f3b0e5faa09a24999ec901b0357dcf
+          ref: 85901023596d6d50d4d1cb7fff7cad72da53be87
           path: .p5-shared-release
           persist-credentials: false
       - name: Copy reviewed shared implementation
