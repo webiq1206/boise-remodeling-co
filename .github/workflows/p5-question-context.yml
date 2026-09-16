@@ -1,0 +1,105 @@
+name: P5 question context verification
+on:
+  workflow_call:
+  push:
+    branches: [fix/p5-question-context-20260916]
+permissions:
+  contents: write
+concurrency:
+  group: p5-question-context-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        with:
+          repository: webiq1206/boise-remodeling-co
+          ref: cc10d06f9bb048b85a97cf36e3a3f74bb72db73b
+          path: .p5-context-source
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/fix-p5-question-context.mjs
+            scripts/fix-p5-project-classification.mjs
+            tests/p5-question-context.test.ts
+          sparse-checkout-cone-mode: false
+      - name: Copy pinned repairs and regression cases
+        if: github.repository != 'webiq1206/boise-remodeling-co'
+        run: |
+          cp .p5-context-source/scripts/fix-p5-question-context.mjs scripts/fix-p5-question-context.mjs
+          cp .p5-context-source/scripts/fix-p5-project-classification.mjs scripts/fix-p5-project-classification.mjs
+          cp .p5-context-source/tests/p5-question-context.test.ts tests/p5-question-context.test.ts
+          rm -rf .p5-context-source
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Apply guarded source edits
+        run: |
+          node scripts/fix-p5-question-context.mjs
+          node scripts/fix-p5-project-classification.mjs
+          git diff --check
+          mkdir -p p5-context-verification
+          git rev-parse HEAD > p5-context-verification/base-commit.txt
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: All estimator regression tests
+        run: |
+          set -o pipefail
+          node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts 2>&1 | tee p5-context-verification/tests.log
+      - name: Full production build and existing repository checks
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee p5-context-verification/build.log
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Responsive homepage and estimator entry verification
+        run: |
+          npx next start -p 5000 > p5-context-verification/server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{await fetch("http://127.0.0.1:5000");clearInterval(t)}catch{if(++n>60){clearInterval(t);process.exit(1)}}},1000)'
+          node --input-type=module <<'JS'
+          import {chromium} from '@playwright/test';
+          import {writeFile} from 'node:fs/promises';
+          import assert from 'node:assert/strict';
+          const browser=await chromium.launch();const results=[];
+          try{
+            for(const [width,height] of [[320,740],[390,844],[768,1024],[1024,768],[1440,900]]){
+              const context=await browser.newContext({viewport:{width,height},hasTouch:width<1024});
+              const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
+              await page.goto('http://127.0.0.1:5000/',{waitUntil:'domcontentloaded'});
+              await page.waitForTimeout(2000);
+              assert.ok(await page.evaluate(()=>scrollY<=1),'Homepage automatically scrolled');
+              await page.screenshot({path:`p5-context-verification/home-${width}.png`});
+              await page.goto('http://127.0.0.1:5000/estimate/p5-preview',{waitUntil:'domcontentloaded'});
+              const root=page.locator('[data-p5-estimator][data-version]').first();await root.waitFor();
+              assert.equal(await root.getAttribute('data-version'),'2026-09-16.1-question-context');
+              assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'Horizontal estimator overflow');
+              assert.deepEqual(errors,[],'Browser runtime errors');
+              await page.screenshot({path:`p5-context-verification/estimator-${width}.png`});
+              results.push({width,height,homepageTop:true,entryPassed:true,version:'2026-09-16.1-question-context',scope:'Chromium emulation, entry UI only. Not production extraction, pricing or delivery.'});
+              await context.close();
+            }
+          }finally{await writeFile('p5-context-verification/browser.json',JSON.stringify(results,null,2));await browser.close();}
+          JS
+      - name: Commit verified source to repair branch
+        run: |
+          git config user.name 'P5 Estimator Verification'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add lib/p5/adaptive.ts lib/p5/clarifications.ts lib/p5/clarificationAnswer.ts lib/p5/draftEndpoint.ts lib/p5/dynamicQuestions.ts lib/p5/extraction.ts lib/p5/version.ts tests/p5-question-context.test.ts
+          git add -f scripts/fix-p5-question-context.mjs scripts/fix-p5-project-classification.mjs
+          if ! git diff --cached --quiet; then
+            git commit -m 'Fix project classification, repeat-question persistence and shared relevance checks'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+          git rev-parse HEAD > p5-context-verification/tested-commit.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p5-question-context-verification
+          path: p5-context-verification
+          retention-days: 14
