@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { GUIDE_PAGES, getGuideBySlug } from '@/shared/guideContent';
@@ -30,7 +31,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const params = await props.params;
   const guide = getGuideBySlug(params.slug);
-  if (!guide) return { title: 'Guide Not Found' };
+  if (!guide) return withBrandPageMetadata(await ({ title: 'Guide Not Found' }), "/guides/[slug]");
 
   const rawTitle = guide.seoTitle || guide.title;
   const title = generateSafePageTitle(stripBrandSuffix(rawTitle));
@@ -41,7 +42,7 @@ export async function generateMetadata(
   const imageUrl = getAbsoluteImageUrl(heroPath, getBaseUrl());
   const imageAlt = getBlogImageAlt(guide.slug);
 
-  return {
+  return withBrandPageMetadata(await ({
     title,
     description,
     alternates: { canonical: buildCanonical(guidePath(guide.slug)), types: FEED_ALTERNATES },
@@ -59,7 +60,7 @@ export async function generateMetadata(
       description,
       images: [imageUrl],
     },
-  };
+  }), "/guides/[slug]");
 }
 
 function formatDate(dateString: string): string {

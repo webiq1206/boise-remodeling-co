@@ -6,6 +6,7 @@ import {useEffect,useState} from 'react';
 export function useMobileActionVisibility(pathname:string|null){
   const [state,setState]=useState<{path:string|null;visible:boolean}>({path:null,visible:false});
   useEffect(()=>{
+    const viewport=window.visualViewport;
     let frame=0,hero:Element|null=null;
     const visibleElement=(element:Element)=>{const rect=element.getBoundingClientRect();const style=getComputedStyle(element);return rect.width>0&&rect.height>0&&style.display!=='none'&&style.visibility!=='hidden'&&style.opacity!=='0';};
     const findHero=()=>{

@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -33,13 +34,13 @@ function GuideCardStats({ guide }: { guide: GuidePageData }) {
   );
 }
 
-export const metadata: Metadata = buildPageMetadata({
+export const metadata: Metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'blog',
   path: '/guides',
   titleOverride: 'Remodeling Guides | Boise Remodeling Co',
   descriptionOverride:
     'Definitive Treasure Valley remodeling guides: costs, kitchens, baths, additions, contractor selection, ROI, outdoor living, and local city resources.',
-});
+})), "/guides");
 
 const PILLAR_TYPES = new Set(['hub-pillar', 'master']);
 

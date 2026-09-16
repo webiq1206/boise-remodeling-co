@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Check, Phone, MessageSquare, AlertTriangle } from "lucide-react";
@@ -49,7 +50,7 @@ const TITLE = "RE-10 and Inspection Repairs in Boise";
 const DESCRIPTION =
   fitDescription("RE-10 repairs completed before closing. We handle inspection repair lists for agents, buyers and sellers across Boise and the Treasure Valley. Send yours.");
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: TITLE_WITH_BRAND },
   description: DESCRIPTION,
   alternates: { canonical: buildCanonical(PATH) },
@@ -66,7 +67,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ["/images/og-default.png"],
   },
-};
+}), "/re-10-repairs-boise");
 
 export default function Re10RepairsPage() {
   const schemas = [

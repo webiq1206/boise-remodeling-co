@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,7 +27,7 @@ const TITLE = 'Remodeling Services | Treasure Valley';
 const DESCRIPTION =
   fitDescription('Design-build remodeling in Boise, Meridian, Eagle, Nampa and the Treasure Valley. Kitchen, bathroom, whole-home, addition, and ADU projects under one accountable team.');
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: `${TITLE} | Boise Remodeling Co` },
   description: DESCRIPTION,
   alternates: { canonical: buildCanonical('/services'), types: FEED_ALTERNATES },
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ['/images/og-default.png'],
   },
-};
+}), "/services");
 
 export default function ServicesIndexPage() {
   const base = getBaseUrl().replace(/\/$/, '');

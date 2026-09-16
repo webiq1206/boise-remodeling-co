@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BLOG_POSTS } from "@/shared/blogContent";
@@ -35,7 +36,7 @@ export async function generateMetadata(
   const post = BLOG_POSTS.find((p) => p.slug === params.slug);
 
   if (!post) {
-    return { title: "Post Not Found" };
+    return withBrandPageMetadata(await ({ title: "Post Not Found" }), "/blog/[slug]");
   }
 
   // Strip any brand the author baked into seoTitle, then enforce the budget so
@@ -56,7 +57,7 @@ export async function generateMetadata(
   const ogCard = getBlogOgImage(post.slug);
   const shareImageUrl = ogCard ? getAbsoluteImageUrl(ogCard, getBaseUrl()) : imageUrl;
 
-  return {
+  return withBrandPageMetadata(await ({
     title,
     description,
     alternates: {
@@ -77,7 +78,7 @@ export async function generateMetadata(
       description,
       images: [shareImageUrl],
     },
-  };
+  }), "/blog/[slug]");
 }
 
 function formatDate(dateString: string): string {

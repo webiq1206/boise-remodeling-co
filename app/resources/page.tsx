@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Download, FileText, Workflow } from 'lucide-react';
@@ -11,13 +12,13 @@ import {
   generateCollectionPageSchema,
 } from '@/lib/schema';
 
-export const metadata: Metadata = buildPageMetadata({
+export const metadata: Metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'blog',
   path: '/resources',
   titleOverride: 'Remodel Planning Resources | Boise Remodeling Co',
   descriptionOverride:
     'Free PDF worksheets and visual guides for Treasure Valley remodeling: budget worksheet, kitchen & bath checklist, Ada vs Canyon permits.',
-});
+})), "/resources");
 
 export default function ResourcesIndexPage() {
   const pdfs = ALL_RESOURCES_LIST.filter((r) => r.kind === 'pdf');

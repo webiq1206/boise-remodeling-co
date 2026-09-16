@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from "next";
 import Link from "next/link";
 import { SITE_CONFIG } from "@/shared/siteConfig";
@@ -8,7 +9,7 @@ import { getSiteUrlGroups } from "@/lib/siteUrls";
 const SITEMAP_CANONICAL = buildCanonical("/sitemap");
 const DESCRIPTION = `Every page on the ${SITE_CONFIG.name} website in one place: services, service areas, guides, and articles.`;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: "Site Map",
   description: DESCRIPTION,
   alternates: { canonical: SITEMAP_CANONICAL, types: FEED_ALTERNATES },
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
     images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: SITE_CONFIG.name }],
   },
   twitter: { card: "summary_large_image", title: `Site Map | ${SITE_CONFIG.name}`, description: DESCRIPTION },
-};
+}), "/sitemap");
 
 /**
  * The HTML sitemap. Unlike sitemap.xml, which is a hint, this is a real page of

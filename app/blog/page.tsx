@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -14,10 +15,10 @@ import {
   generateCollectionPageSchema,
 } from "@/lib/schema";
 
-export const metadata: Metadata = buildPageMetadata({
+export const metadata: Metadata = withBrandPageMetadata((buildPageMetadata({
   kind: "blog",
   path: "/blog",
-});
+})), "/blog");
 
 export default function BlogPage() {
   const schemas = [

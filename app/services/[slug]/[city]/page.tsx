@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { LandingPageTemplate } from '@/components/seo/LandingPageTemplate';
@@ -39,7 +40,7 @@ export async function generateMetadata(
   const service = getServiceBySlug(params.slug);
   const city = getCityBySlug(params.city);
   if (!service || !city) return {};
-  return buildPageMetadata({
+  return withBrandPageMetadata(await (buildPageMetadata({
     kind: 'city-service',
     serviceName: service.name,
     serviceSlug: service.slug,
@@ -47,7 +48,7 @@ export async function generateMetadata(
     citySlug: city.slug,
     path: cityServicePath(service.slug, city.slug),
     noindex: isCityServiceNoindex(service.slug, city.slug),
-  });
+  })), "/services/[slug]/[city]");
 }
 
 export default async function CityServicePage(
