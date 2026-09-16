@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const file='scripts/p5-live-finalization.mjs';let code=fs.readFileSync(file,'utf8');
+code=code.replace("await root.waitFor({timeout:25000});r.version=await root.getAttribute('data-version');","await root.waitFor({timeout:25000});await root.locator('textarea').first().waitFor();await page.waitForFunction(()=>Boolean(document.querySelector('[data-p5-estimator][data-version]')),{},{timeout:20000});r.version=await root.getAttribute('data-version');");
+code=code.replace('Date.now()+270000','Date.now()+900000');
+code=code.replace("const routes=await audit();report.routes=routes;","const routes=[];report.routes=routes;report.followThrough='Wait for terminal result, up to 15 minutes after submission. No live provider mocks.';");
+code=code.replace("if(re10)await flow(","if(false&&re10)await flow(").replace("if(key==='remodeling')await flow(","if(false&&key==='remodeling')await flow(").replace("if(key==='construction')await flow(","if(false&&key==='construction')await flow(");
+code=code.replace("if(d.result)terminal=d;","if(d.result)terminal=d;if(d.error)console.log(JSON.stringify({site:key,endpoint,status:response.status(),error:d.error}));");
+code=code.replace("const stop=Date.now()+900000;while(Date.now()<stop){await sleep(2000);if(terminal)break;", "const stop=Date.now()+900000;while(Date.now()<stop){await sleep(2000);if(terminal)break;");
+code=code.replace("r.finalStage=await root.getAttribute('data-step');r.finalText=await root.innerText();", "r.finalStage=await root.getAttribute('data-step');r.finalText=await root.innerText();r.completed=Boolean(r.result?.range&&r.pdf?.pages);");
+fs.writeFileSync('scripts/.p5-live-followthrough-runtime.mjs',code);
+await import('./.p5-live-followthrough-runtime.mjs');
