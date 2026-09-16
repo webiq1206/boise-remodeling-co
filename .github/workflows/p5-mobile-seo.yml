@@ -20,20 +20,21 @@ jobs:
         if: github.repository != 'webiq1206/boise-remodeling-co'
         with:
           repository: webiq1206/boise-remodeling-co
-          ref: 610b068b3194fc1e9332bd7e84d2a8e9bd69b002
+          ref: 96cfc9dd2098bb7862ccf3e603690a46577db0c5
           path: .p5-seo-source
           persist-credentials: false
           sparse-checkout: |
             hooks/use-mobile-action-visibility.ts
             lib/brand-page-metadata.ts
             scripts/integrate-p5-mobile-seo.mjs
+            scripts/integrate-p5-mobile-seo-compatible.mjs
             scripts/verify-p5-mobile-seo.mjs
             tests/p5-brand-page-metadata.test.ts
           sparse-checkout-cone-mode: false
       - name: Copy reviewed shared source
         if: github.repository != 'webiq1206/boise-remodeling-co'
         run: |
-          for file in hooks/use-mobile-action-visibility.ts lib/brand-page-metadata.ts scripts/integrate-p5-mobile-seo.mjs scripts/verify-p5-mobile-seo.mjs tests/p5-brand-page-metadata.test.ts; do
+          for file in hooks/use-mobile-action-visibility.ts lib/brand-page-metadata.ts scripts/integrate-p5-mobile-seo.mjs scripts/integrate-p5-mobile-seo-compatible.mjs scripts/verify-p5-mobile-seo.mjs tests/p5-brand-page-metadata.test.ts; do
             mkdir -p "$(dirname "$file")"
             cp ".p5-seo-source/$file" "$file"
           done
@@ -44,10 +45,10 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - name: Integrate brand-aware changes
-        run: node scripts/integrate-p5-mobile-seo.mjs
+        run: node scripts/integrate-p5-mobile-seo-compatible.mjs
       - name: Check new code types and metadata regression tests
         run: |
-          npx tsc --noEmit --skipLibCheck --target ES2022 --module esnext --moduleResolution bundler --jsx react-jsx --esModuleInterop hooks/use-mobile-action-visibility.ts lib/brand-page-metadata.ts
+          npx tsc --noEmit --allowImportingTsExtensions --skipLibCheck --target ES2022 --module esnext --moduleResolution bundler --jsx react-jsx --esModuleInterop hooks/use-mobile-action-visibility.ts lib/brand-page-metadata.ts
           node --import tsx --test tests/p5-brand-page-metadata.test.ts
       - name: Existing estimator tests
         run: node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts > p5-mobile-seo-verification/estimator-tests.log
@@ -69,7 +70,7 @@ jobs:
           node --input-type=module <<'JS'
           import fs from 'node:fs';import {execFileSync} from 'node:child_process';
           const v=JSON.parse(fs.readFileSync('p5-mobile-seo-verification/implementation.json','utf8'));
-          const paths=[...v.changed,...v.wrapped,...v.generatedImages,'hooks/use-mobile-action-visibility.ts','lib/brand-page-metadata.ts','scripts/integrate-p5-mobile-seo.mjs','scripts/verify-p5-mobile-seo.mjs','tests/p5-brand-page-metadata.test.ts'];
+          const paths=[...v.changed,...v.wrapped,...v.generatedImages,'hooks/use-mobile-action-visibility.ts','lib/brand-page-metadata.ts','scripts/integrate-p5-mobile-seo.mjs','scripts/integrate-p5-mobile-seo-compatible.mjs','scripts/verify-p5-mobile-seo.mjs','tests/p5-brand-page-metadata.test.ts'];
           execFileSync('git',['add','-f','--',...new Set(paths)]);
           JS
           if ! git diff --cached --quiet; then
