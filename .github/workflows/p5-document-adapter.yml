@@ -43,7 +43,10 @@ jobs:
           set -o pipefail
           npm run build 2>&1 | tee document-adapter-verification/build.log
       - name: Confirm maintained source remains unchanged
-        run: git diff --exit-code
+        run: |
+          # Existing prebuild scripts regenerate these assets, including PDF timestamps.
+          # Keep every maintained source file protected against test-time mutation.
+          git diff --exit-code -- . ':(exclude)public/downloads/*.pdf'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
