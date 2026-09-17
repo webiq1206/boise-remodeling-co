@@ -1,0 +1,14 @@
+name: P5 document adapter verification
+on:
+  push:
+    branches: [feat/shared-document-service-20260917]
+permissions:
+  contents: write
+concurrency:
+  group: p5-document-adapter-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    uses: webiq1206/p5-home-co/.github/workflows/p5-document-adapter.yml@8fed9868dcf0fa0a054c93b8d06d055a6f5932b1
+    with:
+      source_ref: 8fed9868dcf0fa0a054c93b8d06d055a6f5932b1
