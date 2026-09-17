@@ -1,14 +1,52 @@
 name: P5 document adapter verification
 on:
   push:
-    branches: [feat/shared-document-service-20260917]
+    branches: [main, fix/shared-document-service-hardening-20260917]
+    paths: ['lib/p5/**', 'scripts/*document*', 'tests/p5-*.test.ts', '.github/workflows/p5-document-adapter.yml']
+  pull_request:
+    paths: ['lib/p5/**', 'scripts/*document*', 'tests/p5-*.test.ts', '.github/workflows/p5-document-adapter.yml']
+  workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 concurrency:
   group: p5-document-adapter-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   verify:
-    uses: webiq1206/p5-home-co/.github/workflows/p5-document-adapter.yml@8fed9868dcf0fa0a054c93b8d06d055a6f5932b1
-    with:
-      source_ref: 2e69b2d1dfd47468146ce1a9af69f61296bc7e22
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Record exact source under test
+        run: |
+          mkdir -p document-adapter-verification
+          git rev-parse HEAD > document-adapter-verification/tested-commit.txt
+      - name: Saved-file, source coverage, duplicate-upload and retry regression
+        run: |
+          set -o pipefail
+          node --import tsx scripts/test-p5-document-adapter.mts 2>&1 | tee document-adapter-verification/adapter-integration.log
+      - name: Existing estimator regressions
+        run: |
+          set -o pipefail
+          node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts 2>&1 | tee document-adapter-verification/estimator-tests.log
+      - name: Production build with remote mode disabled
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee document-adapter-verification/build.log
+      - name: Confirm maintained source remains unchanged
+        run: git diff --exit-code
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: document-adapter-verification
+          path: document-adapter-verification
+          retention-days: 14
