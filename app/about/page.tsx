@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { ArrowRight, Check, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -64,10 +65,10 @@ function HeroBreadcrumbs() {
   );
 }
 
-export const metadata = buildPageMetadata({
+export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'about',
   path: '/about',
-});
+})), "/about");
 
 export default function AboutPage() {
   const schemas = [

@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { ArrowRight } from "lucide-react";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Section } from "@/components/marketing/Section";
@@ -20,13 +21,13 @@ import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { SITE_IMAGES } from "@/shared/siteImages";
 
-export const metadata = buildPageMetadata({
+export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: "about",
   path: "/areas",
   titleOverride: "Treasure Valley Service Areas",
   descriptionOverride:
     "Design-build remodeling across the Treasure Valley: Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho.",
-});
+})), "/areas");
 
 export default function AreasHubPage() {
   const schemas = [

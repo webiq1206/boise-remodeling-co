@@ -9,7 +9,7 @@ test('resolve unsupported company scope before unrelated technical questions',()
  const questions=scopeQuestionsForBrand({service:unsupported,taskList:'Complete project retained'},null);
  assert.equal(questions.length,1);assert.equal(questions[0].field,'service');
  if(questions[0].handoff){
-  const destinations:Record<string,string>={handyman:'https://boisehandyman.co','cabinet-product':'https://boisecabinet.co','cabinet-install':'https://boisecabinet.co','new-construction':'https://boiseconstruction.co',kitchen:'https://boiseremodeling.co',bathroom:'https://boiseremodeling.co','whole-home':'https://boiseremodeling.co'};
+  const destinations:Record<string,string>={handyman:'https://boisehandyman.co/estimate','cabinet-product':'https://boisecabinet.co/estimate','cabinet-install':'https://boisecabinet.co/estimate','new-construction':'https://boiseconstruction.co/estimate',kitchen:'https://boiseremodeling.co/estimate',bathroom:'https://boiseremodeling.co/estimate','whole-home':'https://boiseremodeling.co/estimate'};
   assert.equal(questions[0].handoff.url,destinations[unsupported]);
   assert.equal(questions[0].values,undefined,'a handoff must not force a different project type');
  }else assert.deepEqual(questions[0].values,[...ESTIMATOR_BRAND.services]);
@@ -21,12 +21,12 @@ test('brand scope keeps the existing dynamic questions for supported work',()=>{
 test('new builds on Remodeling route directly to Construction',()=>{
  if((ESTIMATOR_BRAND.id as string)!=='remodeling')return;
  const questions=scopeQuestionsForBrand({service:'new-construction',taskList:'Complete new home',sqft:'2400'},null);
- assert.equal(questions.length,1);assert.equal(questions[0].handoff?.url,'https://boiseconstruction.co');
+ assert.equal(questions.length,1);assert.equal(questions[0].handoff?.url,'https://boiseconstruction.co/estimate');
 });
 test('remodels on Construction route directly to Remodeling',()=>{
  if((ESTIMATOR_BRAND.id as string)!=='construction')return;
  for(const service of ['kitchen','bathroom','whole-home']){
   const questions=scopeQuestionsForBrand({service,taskList:'Remodel existing space'},null);
-  assert.equal(questions.length,1);assert.equal(questions[0].handoff?.url,'https://boiseremodeling.co');
+  assert.equal(questions.length,1);assert.equal(questions[0].handoff?.url,'https://boiseremodeling.co/estimate');
  }
 });

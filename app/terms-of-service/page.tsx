@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from "next";
 import { ObfuscatedEmail } from "@/components/ObfuscatedEmail";
 import { BusinessPhoneLink } from "@/components/BusinessPhoneContact";
@@ -6,7 +7,7 @@ import { SITE_CONFIG } from "@/shared/siteConfig";
 import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
 import { buildCanonical, FEED_ALTERNATES } from "@/lib/page-metadata";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: "Terms of Service",
   description: "Terms of service for Boise Remodeling Co. Your rights when using our remodeling and renovation services across Boise and the Treasure Valley.",
   alternates: {
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
     title: "Terms of Service | Boise Remodeling Co",
     description: "Your rights when using Boise Remodeling Co remodeling and renovation services in Idaho's Treasure Valley.",
   },
-};
+}), "/terms-of-service");
 
 export default function TermsOfServicePage() {
   const breadcrumbSchema = generateBreadcrumbSchema([

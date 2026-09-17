@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {useMobileActionVisibility} from "@/hooks/use-mobile-action-visibility";
 import { useFormInView } from "@/hooks/use-form-in-view";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ function Logo() {
         alt="Boise Remodeling Co"
         width={263}
         height={26}
-        className="h-[26px] w-auto"
+        className="h-[26px] w-auto max-w-[calc(100vw-92px)] object-contain object-left"
       />
     </Link>
   );
@@ -44,18 +45,7 @@ function Logo() {
 export function Navigation() {
   const pathname = usePathname();
   const formInView = useFormInView(pathname);
-  // Hide the sticky bar until the hero scrolls out of view, so it never
-  // competes with the hero's own call to action. Pages with no hero (no
-  // sentinel) keep the bar from first paint.
-  const [pastHero, setPastHero] = useState(true);
-  useEffect(() => {
-    const sentinel = document.getElementById("hero-sentinel");
-    if (!sentinel || typeof IntersectionObserver === "undefined") { setPastHero(true); return; }
-    setPastHero(false);
-    const ob = new IntersectionObserver(([entry]) => setPastHero(!entry.isIntersecting && entry.boundingClientRect.top < 0), { threshold: 0 });
-    ob.observe(sentinel);
-    return () => ob.disconnect();
-  }, [pathname]);
+  const pastHero=useMobileActionVisibility(pathname);
   // Solid contrast over every hero; a shadow separates the header while scrolling.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -322,11 +312,11 @@ export function Navigation() {
         <div className="flex items-stretch gap-2 p-2">
           <a
             href={SITE_CONFIG.phoneHref}
-            className="flex min-h-14 w-14 shrink-0 items-center justify-center rounded-sm border border-border text-foreground hover-elevate active-elevate-2"
+            className="flex min-h-14 w-[76px] shrink-0 flex-col gap-1 items-center justify-center rounded-sm border border-border text-foreground hover-elevate active-elevate-2"
             aria-label={`Call ${SITE_CONFIG.phone}`}
             data-testid="button-call-mobile"
           >
-            <Phone className="h-5 w-5" strokeWidth={1.5} />
+            <Phone className="h-5 w-5" strokeWidth={1.5} /><span className="text-xs font-medium">Call</span>
           </a>
           <NavEstimateButton
             variant="brand"

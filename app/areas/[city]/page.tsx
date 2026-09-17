@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { LandingPageTemplate } from '@/components/seo/LandingPageTemplate';
@@ -28,12 +29,12 @@ export async function generateMetadata(
   const params = await props.params;
   const cityData = getCityBySlug(params.city);
   if (!cityData) return {};
-  return buildPageMetadata({
+  return withBrandPageMetadata(await (buildPageMetadata({
     kind: 'area',
     cityName: cityData.name,
     citySlug: cityData.slug,
     path: areaPath(cityData.slug),
-  });
+  })), "/areas/[city]");
 }
 
 export default async function AreaPage(props: { params: Promise<{ city: string }> }) {

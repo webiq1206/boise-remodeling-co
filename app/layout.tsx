@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { Navigation } from '@/components/Navigation'
@@ -34,7 +35,7 @@ const cormorant = localFont({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: {
     default: 'Boise Remodeling Co | Treasure Valley Design-Build',
     template: '%s | Boise Remodeling Co',
@@ -90,7 +91,7 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-}
+}), "__layout__")
 
 export const viewport: Viewport = {
   themeColor: '#1C1F1E',

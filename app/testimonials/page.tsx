@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { ArrowRight } from 'lucide-react';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Section } from '@/components/marketing/Section';
@@ -16,13 +17,13 @@ import {
 import { GALLERY_PROJECTS } from '@/shared/galleryData';
 import { GALLERY_IMAGES } from '@/shared/siteImages';
 
-export const metadata = buildPageMetadata({
+export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'about',
   path: '/testimonials',
   titleOverride: 'Remodeling Inspiration',
   descriptionOverride:
     'Kitchen, bathroom, whole-home, and addition design inspiration for Treasure Valley homeowners. Representative imagery, not completed customer projects.',
-});
+})), "/testimonials");
 
 export default function TestimonialsPage() {
   const schemas = [

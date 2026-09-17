@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Phone, Check, X } from "lucide-react";
@@ -43,7 +44,7 @@ const TITLE = "Remodel Estimate From Your Plans, Boise";
 const DESCRIPTION =
   "Upload your floor plans and get a remodeling budget built from your own drawings, not a guess at your square footage. Boise and the Treasure Valley. Free.";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: TITLE_WITH_BRAND },
   description: DESCRIPTION,
   alternates: { canonical: buildCanonical(PATH) },
@@ -60,7 +61,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ["/images/og-default.png"],
   },
-};
+}), "/remodel-plans-boise");
 
 export default function RemodelPlansPage() {
   const schemas = [

@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { ArrowRight, Check, ChevronRight, Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -144,10 +145,10 @@ function ContactChannel({
   return inner;
 }
 
-export const metadata = buildPageMetadata({
+export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'contact',
   path: '/contact',
-});
+})), "/contact");
 
 export default function ContactPage() {
   const schemas = [

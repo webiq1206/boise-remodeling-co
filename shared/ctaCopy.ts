@@ -6,7 +6,7 @@
 export const CTA_PRIMARY = "Get an estimate";
 export const CTA_PRIMARY_SHORT = "Get an estimate";
 export const CTA_SECONDARY = "Schedule a free visit";
-export const CTA_QUOTE = "Get an estimate";
+export const CTA_QUOTE = "Get an Estimate";
 
 /** Consultation form: a single, explicit send (no separate review step). */
 export const CTA_FORM_SEND = "Schedule my free visit";
