@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
@@ -30,12 +31,12 @@ export async function generateMetadata(
   const params = await props.params;
   const service = getServiceBySlug(params.slug);
   if (!service) return {};
-  return buildPageMetadata({
+  return withBrandPageMetadata(await (buildPageMetadata({
     kind: 'service',
     serviceName: service.name,
     serviceSlug: service.slug,
     path: servicePath(service.slug),
-  });
+  })), "/services/[slug]");
 }
 
 export default async function ServicePage(props: { params: Promise<{ slug: string }> }) {

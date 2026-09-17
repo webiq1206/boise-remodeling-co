@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -21,7 +22,7 @@ const TITLE = "Remodel Cost Estimator";
 const DESCRIPTION =
   fitDescription("Get an instant planning range for kitchen, bathroom, whole-home, addition, ADU, and basement remodels in Boise, Meridian, Eagle, Nampa, and the Treasure Valley. Free, no obligation.");
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: `${TITLE} | Boise Remodeling Co` },
   description: DESCRIPTION,
   alternates: { canonical: buildCanonical("/estimate") },
@@ -38,7 +39,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ["/images/og-default.png"],
   },
-};
+}), "/estimate");
 
 export default function EstimatePage() {
   const schemas = [

@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowLeft, ArrowRight, Download } from 'lucide-react';
@@ -16,12 +17,12 @@ import {
 const PERMIT_FLOW_DESCRIPTION =
   fitDescription('Visual guide to remodeling permits in Ada and Canyon County - jurisdiction, review steps, and inspections for Treasure Valley homeowners.');
 
-export const metadata: Metadata = buildPageMetadata({
+export const metadata: Metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'blog',
   path: '/resources/ada-canyon-permit-flow',
   titleOverride: 'Ada vs Canyon County Permit Flow | Boise Remodeling Co',
   descriptionOverride: PERMIT_FLOW_DESCRIPTION,
-});
+})), "/resources/ada-canyon-permit-flow");
 
 export default function AdaCanyonPermitFlowPage() {
   const schemas = [

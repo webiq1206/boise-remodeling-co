@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/components/marketing/Section";
@@ -8,10 +9,10 @@ import { Hairline } from "@/components/marketing/Hairline";
 import { TextLink } from "@/components/marketing/TextLink";
 import { BlogEndCta } from "@/components/marketing/BlogEndCta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: "Style Guide (Internal)",
   robots: { index: false, follow: false },
-};
+}), "/style-guide");
 
 export default function StyleGuidePage() {
   return (

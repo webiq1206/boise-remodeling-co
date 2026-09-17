@@ -1,3 +1,4 @@
+import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata } from "next";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -38,7 +39,7 @@ const EstimateCalculator = dynamic(
   },
 );
 
-export const metadata: Metadata = {
+export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: "Remodeling Contractor in Boise, ID | Boise Remodeling Co" },
   description:
     fitDescription("Design-build remodeling for Boise, Meridian, Eagle, Nampa & the Treasure Valley. Clear expectations and budget guidance. Schedule a free in-home consultation."),
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
     siteName: "Boise Remodeling Co",
     images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "Boise Remodeling Co" }],
   },
-};
+}), "/");
 
 export default function HomePage() {
   return (
