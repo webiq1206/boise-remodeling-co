@@ -1024,3 +1024,12 @@ body[data-p5-estimator-active="true"] [data-assistant-launcher],
 body[data-p5-estimator-active="true"] [data-testid="assistant-launcher"] {
   display: none !important;
 }
+
+/* ─── Mobile swipe rows ───
+   On phones a card grid becomes a horizontal, snap-aligned row that shows the
+   edge of the next card as the cue to swipe. No autoplay, no controls; from the
+   small breakpoint up the utility yields to the grid classes on the element. */
+.brc-swipe { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; margin-inline: calc(-1 * var(--brc-swipe-bleed, 1rem)); padding-inline: var(--brc-swipe-bleed, 1rem); scroll-padding-inline: var(--brc-swipe-bleed, 1rem); }
+.brc-swipe::-webkit-scrollbar { display: none; }
+.brc-swipe > * { flex: 0 0 82%; scroll-snap-align: start; }
+@media (min-width: 640px) { .brc-swipe { display: grid; overflow: visible; margin-inline: 0; padding-inline: 0; scroll-snap-type: none; } .brc-swipe > * { flex: initial; } }

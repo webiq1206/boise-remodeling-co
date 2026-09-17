@@ -74,7 +74,7 @@ export function TestimonialsSection({ limit = 4, showViewAll = true }: Testimoni
         )}
 
         {rest.length > 0 && (
-          <div className="grid sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <div className="brc-swipe sm:grid-cols-2 gap-4 max-w-4xl mx-auto">
             {rest.map((item, i) => (
               <Reveal key={item.customerName} delay={i * 60}>
                 <MarketingCard className="h-full">

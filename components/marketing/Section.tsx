@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -38,6 +41,8 @@ const surfaceClasses: Record<SectionSurface, string> = {
 };
 
 export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
+  /** Gentle once-only reveal as the section enters view. Off for anything that must paint immediately. */
+  reveal?: boolean;
   variant?: SectionVariant;
   /** Family ground. Takes precedence over `variant` when supplied. */
   surface?: SectionSurface;
@@ -52,6 +57,7 @@ export interface SectionProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export function Section({
+  reveal = true,
   variant = "canvas",
   surface,
   divider = false,
@@ -61,8 +67,20 @@ export function Section({
   children,
   ...props
 }: SectionProps) {
+    const ref = useRef<HTMLElement>(null);
+  const [shown, setShown] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!reveal || !el) return;
+    // Reduced motion, or a section already scrolled past (a page opened at an anchor), shows at once.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || el.getBoundingClientRect().bottom < 0) { setShown(true); return; }
+    const obs = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { setShown(true); obs.disconnect(); } }, { threshold: [0, 0.08], rootMargin: "0px 0px -6% 0px" });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [reveal]);
   return (
     <section
+      ref={ref}
       className={cn(
         surface ? surfaceClasses[surface] : variantClasses[variant],
         spacing === "default" && "section-y",
@@ -71,6 +89,8 @@ export function Section({
         spacing === "xl" && "ed-section-lg",
         divider && "section-divider",
         edge && "ed-edge-top",
+        reveal && "reveal-init",
+        reveal && shown && "reveal-visible",
         className
       )}
       {...props}

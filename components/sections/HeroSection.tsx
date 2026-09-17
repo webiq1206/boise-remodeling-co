@@ -12,6 +12,8 @@ export function HeroSection() {
   return (
     <>
       <section className="relative min-h-[85vh] md:min-h-screen flex items-center overflow-hidden bg-inverse">
+      {/* Marks the hero's foot so the sticky mobile bar waits until the hero has scrolled away. */}
+      <div id="hero-sentinel" className="absolute bottom-0 left-0 h-px w-full" aria-hidden="true" />
         <Image
           src={SITE_IMAGES.hero}
           alt="Representative open kitchen with a dark island, brass fixtures and a connected living room"
