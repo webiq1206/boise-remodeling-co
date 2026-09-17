@@ -11,4 +11,4 @@ jobs:
   verify:
     uses: webiq1206/p5-home-co/.github/workflows/p5-document-adapter.yml@8fed9868dcf0fa0a054c93b8d06d055a6f5932b1
     with:
-      source_ref: 8fed9868dcf0fa0a054c93b8d06d055a6f5932b1
+      source_ref: 2e69b2d1dfd47468146ce1a9af69f61296bc7e22
