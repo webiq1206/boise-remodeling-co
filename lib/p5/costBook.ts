@@ -4,7 +4,8 @@ import { calculateP5Estimate,customerEstimate,DEFAULT_FINANCE,POLICY_VERSION,COS
 import { scopeText,blockingReviewNote,type ReviewedScope,type ScopeField } from "./scope.ts";
 export { blockingReviewNote };
 import {materializePlanningBook,type PlanningCatalog} from './planningBooks.ts';
-export interface CostRule extends Omit<DirectCostLine,"quantity"|"quantitySource"> {
+export interface UnitRateContext {currency:'USD';basis:'material-purchase'|'trade-labor'|'subcontractor-installed';includes:string;excludes:string;assumptions:string[]}
+export interface CostRule extends Omit<DirectCostLine,"quantity"|"quantitySource"> {unitRateContext?:UnitRateContext;
   scopeTaskId?:string;
   quantity: { field?: ScopeField; factor: number; fixed?: number };
   when?: {field:ScopeField;equals:string};
