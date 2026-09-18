@@ -38,6 +38,10 @@ jobs:
         run: |
           set -o pipefail
           node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts 2>&1 | tee document-adapter-verification/estimator-tests.log
+      - name: Saved pricing timeout recovery
+        run: node --import tsx scripts/test-p5-pricing-recovery.mts
+      - name: TypeScript verification
+        run: npx tsc --noEmit
       - name: Production build with remote mode disabled
         run: |
           set -o pipefail
