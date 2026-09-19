@@ -640,6 +640,7 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
         }
         const accepted=marketSchema.parse(researched.value);
         const market=marketResolution(accepted,researched.sourceUrls,gapBatch,now,offset,region,scope);
+        if(gapBatch.some(task=>!market.rules.some(rule=>rule.scopeTaskId===task.id&&rule.unitCost>0)))throw new Error('Published research did not price every requested task');
         // The audit needs the accepted observations, not every URL visited by
         // the search tool or its raw narrative. In the failed bathroom
         // checkpoint, one accepted three-rate reply retained more than one

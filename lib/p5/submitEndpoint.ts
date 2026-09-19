@@ -4,7 +4,7 @@ import { draftCredentials,readDraft,DraftError,requireEstimateContact } from "./
 import { EMPTY_CONFIGURATION,type EstimatorConfiguration } from "./costBook.ts";
 import {priceSavedScope} from "./pricingWork.ts";
 import {queuedJob} from './backgroundJobs.ts';
-import {missingScopeFields} from "./missingFields.ts";
+import {missingScopeFields,customerPricingQuestions} from "./missingFields.ts";
 import {PricingPending,isPricingPending} from './pricingProgress.ts';
 import { enqueueSubmission,deliveryStatus,processOutbox } from "./outbox.ts";
 import { protectRequest,json,failed,limitedBody } from "./http.ts";
@@ -53,10 +53,10 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
       // Three different situations used to share one headline. A visitor with
       // questions to answer gets them; one whose scope is being finished by a
       // person is told exactly that and asked for nothing.
-      const handoff=!labels.length&&items.every(item=>item===HANDOFF_ISSUE);
+      const handoff=!labels.length&&!items.length;
       const detail=labels.length?'Please confirm the details below.':handoff?'':items.length?'The items below still need confirmation before a complete range can be released.':'Some scope items still need verified quantities or cost evidence.';
       const error=handoff?HANDOFF_ISSUE:`Your project is saved and remains editable. ${detail} A complete price range is required before the estimate can be finalized and emailed.`;
-      return json({pricingReviewRequired:true,needsCustomerInput:labels.length>0,handoff,missingFields,verificationItems:handoff?[]:items.slice(0,8),error},422);
+      return json({pricingReviewRequired:true,needsCustomerInput:labels.length>0||items.length>0,handoff,missingFields,verificationItems:handoff?[]:items.slice(0,8),error},422);
     }
     const record={draftId:id,revision:draft.revision,brand:brand.name,estimator:"p5-policy",contact:draft.contact,scope:draft.reviewed,...priced};
     const accepted=await enqueueSubmission(id,draft.revision,record);
