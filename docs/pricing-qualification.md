@@ -1,6 +1,6 @@
 # Pricing qualification: spending and captured delivery
 
-This harness does **not** change application pricing semantics, document processing, or the original document budgets: **$1 per short document and $3 per plans document**. Its separate aggregate allowance never increases those ceilings. All amounts below are integer micro-USD: `$1 = 1,000,000`.
+This harness does **not** change application pricing semantics or document processing. Its **$1 per short document and $3 per plans document** limits are assistant-created QA safeguards, not user-imposed budgets or customer-pricing gates. They remain unchanged. Actual authorization comes from the user's scope and allocation, recorded in the allowance. All amounts below are integer micro-USD: `$1 = 1,000,000`.
 
 ## Documented allowance required
 
@@ -38,6 +38,22 @@ The live runner requires both its existing explicit opt-in and a local JSON file
 `input`, `output`, `cached`, and `cacheWrite` are micro-USD **per million tokens**; `search` is micro-USD per search request. These example numbers are not provider prices. Bounds authorize neither unbounded tools nor additional billing dimensions. Requested and returned model identities must exactly match the approved model; aliases resolving to another snapshot freeze settlement.
 
 The source identity covers all source/data files under `lib`, `shared`, and `server`; the runner, capture harness, allowance module, ledger CLI and synthetic tests; package manifest/lockfile and TypeScript configuration; current estimator PDF fonts/logo; and Node version. This intentionally broad identity also invalidates on unrelated shared edits. The approved pricing configuration is read-only and separately fingerprinted in qualification reports. Recompute identity after all concurrent source edits are complete.
+
+Optional `documentIds` restricts a grant to named fixture identities, such as
+`["pricing-mapping"]`. `accountingBasis` is `exact` by default; use `upper-bound`
+when rates deliberately conservatively account for documented billing
+uncertainty. Such ledger amounts are budget ceilings, not provider invoices.
+Reservations use actual serialized request UTF-8 bytes plus padding, bounded by
+the approved input ceiling, and the full requested output-token limit.
+
+HTTPS endpoints remain supported. The only HTTP exception is the exact Replit
+managed loopback Responses endpoint, and only when it matches the currently
+configured integration base and an integrated credential is present. Credentials,
+query strings, fragments and other HTTP hosts/paths remain prohibited.
+The QA runner explicitly requests `service_tier: "default"` and retains
+redacted response model/tier/usage receipts. Normal customer requests are unchanged:
+application routes do not import this allowance helper or require its environment
+flags.
 
 ## No-charge commands
 

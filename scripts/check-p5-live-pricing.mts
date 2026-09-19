@@ -22,6 +22,7 @@ async function main(){
  const artifactRoot=`${allowanceRoot}/${Date.now()}-${randomUUID()}`;
  const qualification=new PricingQualification(allowanceFile,`${allowanceRoot}.sqlite`,sourceSha256);
  const originalFetch=globalThis.fetch;
+ const providerReceipts:unknown[]=[];
  try{
  qualification.assertClear();
  const {query}=await import('../lib/p5/database');
@@ -33,7 +34,32 @@ async function main(){
  const selected=process.env.P5_LIVE_PRICING_SCENARIO||'both';assert.ok(['both','mapping','missing'].includes(selected));
   await mkdir(artifactRoot,{recursive:true});
  for(const scenario of ['mapping','missing'].filter(s=>selected==='both'||s===selected)){
-   globalThis.fetch=qualification.guardedFetch({documentId:`pricing-${scenario}`,kind:'short'},originalFetch);
+   const capturedTransport:typeof fetch=async(input,init)=>{
+    const response=await originalFetch(input,init);
+    let metadata:any=null;
+    try{metadata=await response.clone().json();}catch{/* The guard freezes unparseable replies. */}
+    // Capture only billing/identity evidence, never keys, headers, raw errors
+    // or provider content. Keep mismatched identities visible for reconciliation.
+    providerReceipts.push({scenario,httpStatus:response.status,
+     model:typeof metadata?.model==='string'?metadata.model:null,
+     serviceTier:typeof metadata?.service_tier==='string'?metadata.service_tier:null,
+     status:typeof metadata?.status==='string'?metadata.status:null,
+     usage:metadata?.usage&&typeof metadata.usage==='object'?metadata.usage:null});
+    await writeFile(`${artifactRoot}/provider-receipts.json`,JSON.stringify(providerReceipts,null,2));
+    return response;
+   };
+   const guarded=qualification.guardedFetch({documentId:`pricing-${scenario}`,kind:'short'},capturedTransport);
+   // QA-only: request standard processing explicitly, before the guard computes
+   // the durable request identity and reservation. Customer pricing is unchanged.
+   globalThis.fetch=(input,init)=>{
+    const endpoint=typeof input==='string'?input:input instanceof URL?input.href:input.url;
+    if(endpoint.endsWith('/responses')&&typeof init?.body==='string'){
+     const body=JSON.parse(init.body);
+     if(body.service_tier===undefined)body.service_tier='default';
+     return guarded(input,{...init,body:JSON.stringify(body)});
+    }
+    return guarded(input,init);
+   };
   const missing=scenario==='missing';
   const text=missing?'Supply 100 linear feet of standard paint-grade wood crown moulding for kitchen cabinets in Boise, Idaho. Materials only; owner installs it. Price the moulding by linear foot using a preliminary average material cost for the area.':cabinet?'Install 20 linear feet of owner-supplied, assembled paint-grade Shaker base cabinets on the first floor of Building Alpha. Installation labor only, including normal leveling, fastening and adjustment.':'Fit and fasten 100 linear feet of paint-grade interior base moulding on the first floor of Building Alpha. Baseboard installation labor only. Owner supplies all materials.';
   const instructions=missing?'Price only the 100 linear feet of crown moulding material. Exclude installation, painting, cabinet casework and all other work. Use sourced regional average material costs per linear foot, or a clearly labeled broader benchmark. Do not shop suppliers or require an exact SKU.':'Price only the specified first-floor installation labor in Building Alpha. Owner supplies all materials. Exclude all plumbing, electrical and second-floor work. Do not charge owner-supplied materials.';
@@ -50,7 +76,7 @@ async function main(){
   reports.push({scenario,scope,elapsedMs:Math.round(performance.now()-start),stages,result,passed:Boolean(result.customer.range)&&lines.length>0&&lines.every((line:any)=>line.quantity>0&&line.cost>0)&&issues.length===0});
   await writeFile(`${artifactRoot}/live-pricing-${scenario}-report.json`,JSON.stringify(reports.at(-1),null,2));
   qualification.assertClear();
-  if(reports.at(-1).passed)await capturePricingDelivery(result,scope,`${artifactRoot}/${scenario}`);
+  if(reports.at(-1).passed)await capturePricingDelivery(result,scope,`${artifactRoot}/${scenario}`,originalFetch);
  }
  globalThis.fetch=originalFetch;
  const [after]=await query("SELECT payload FROM p5_estimator_policy WHERE id='current'");

@@ -6,12 +6,22 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {digest} from './pricingQualification.ts';
 
+export function isolatedCaptureFetch(assetFetch:typeof fetch):typeof fetch {
+  return async(input,init)=>{
+    const endpoint=typeof input==='string'?input:input instanceof URL?input.href:input.url;
+    let url:URL;try{url=new URL(endpoint);}catch{throw new Error('capture:asset-url-invalid');}
+    if(url.protocol!=='file:' && url.protocol!=='data:')throw new Error('capture:network-fetch-denied');
+    return assetFetch(input,init);
+  };
+}
+
 /** Exercise the unchanged outbox against a private in-memory DB and capture-only
  * delivery adapter. No application DB, SMTP, email API or CRM module is loaded. */
-export async function capturePricingDelivery(result:any,scope:any,artifacts:string) {
+export async function capturePricingDelivery(result:any,scope:any,artifacts:string,assetFetch:typeof fetch=globalThis.fetch) {
   const cache=path.resolve('node_modules/.cache');await mkdir(cache,{recursive:true});
   const runtime=await mkdtemp(path.join(cache,'pricing-delivery-'));
-  let db:any;
+  let db:any;const enclosingFetch=globalThis.fetch;
+  globalThis.fetch=isolatedCaptureFetch(assetFetch);
   try {
     await cp('lib/p5',runtime,{recursive:true});
     await writeFile(path.join(runtime,'database.ts'),`import {PGlite} from '@electric-sql/pglite';export const database=new PGlite();export async function query(s:string,v:unknown[]=[]){return (await database.query(s,v)).rows as any[];}`);
@@ -51,5 +61,8 @@ export async function capturePricingDelivery(result:any,scope:any,artifacts:stri
       customerPdfSha256:digest(await readFile(pdfPath)),priceConsistency:true};
     await writeFile(path.join(artifacts,'delivery.json'),JSON.stringify(manifest,null,2));
     return manifest;
-  } finally {if(db)await db.database.close();await rm(runtime,{recursive:true,force:true});}
+  } finally {
+    try {if(db)await db.database.close();await rm(runtime,{recursive:true,force:true});}
+    finally {globalThis.fetch=enclosingFetch;}
+  }
 }

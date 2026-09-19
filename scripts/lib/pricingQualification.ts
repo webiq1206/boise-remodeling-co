@@ -36,7 +36,8 @@ export function pricingSourceIdentity() {
 type Rates = {input:number; output:number; cached:number; cacheWrite:number; search:number};
 export type PricingAllowance = {
   version:1; id:string; approvedBy:string; approvalEvidence:string; expiresAt:string;
-  totalMicros:number; sourceSha256:string;
+  totalMicros:number; sourceSha256:string; documentIds?:string[];
+  accountingBasis?:'exact'|'upper-bound';
   models:Array<{endpoint:string; model:string; rateEvidence:string; rates:Rates;
     maxInputTokens:number; maxOutputTokens:number; maxSearchCalls:number}>;
 };
@@ -44,6 +45,15 @@ type Context = {documentId:string; kind:keyof typeof DOCUMENT_LIMITS};
 const fail = (code:string):never => {throw new Error(`qualification:${code}`);};
 const integer = (v:unknown):v is number => Number.isSafeInteger(v) && Number(v)>=0;
 const text = (v:unknown):v is string => typeof v==='string' && v.trim().length>0;
+const MANAGED_OPENAI_RESPONSES='http://localhost:1106/modelfarm/openai/responses';
+function managedOpenAIEndpointAllowed(endpoint:string) {
+  if(endpoint!==MANAGED_OPENAI_RESPONSES || !text(process.env.AI_INTEGRATIONS_OPENAI_API_KEY))return false;
+  let base:URL;
+  try {base=new URL(process.env.AI_INTEGRATIONS_OPENAI_BASE_URL||'');} catch {return false;}
+  if(base.username || base.password || base.search || base.hash)return false;
+  const normalized=`${base.origin}${base.pathname.replace(/\/+$/,'')}/responses`;
+  return normalized===MANAGED_OPENAI_RESPONSES;
+}
 export function readAllowance(file:string|undefined,allowExpired=false):PricingAllowance {
   if(!file) return fail('documented-allowance-required');
   let a:PricingAllowance;
@@ -52,9 +62,15 @@ export function readAllowance(file:string|undefined,allowExpired=false):PricingA
     !Number.isFinite(Date.parse(a.expiresAt)) || (!allowExpired&&Date.parse(a.expiresAt)<=Date.now()) ||
     !integer(a.totalMicros) || a.totalMicros===0 || !/^[a-f0-9]{64}$/.test(a.sourceSha256) ||
     !Array.isArray(a.models) || !a.models.length) return fail('allowance-invalid-or-expired');
+  if(a.documentIds!==undefined && (!Array.isArray(a.documentIds) || !a.documentIds.length ||
+    !a.documentIds.every(text) || new Set(a.documentIds).size!==a.documentIds.length))
+    return fail('allowance-document-ids-invalid');
+  if(a.accountingBasis!==undefined && a.accountingBasis!=='exact' && a.accountingBasis!=='upper-bound')
+    return fail('allowance-accounting-basis-invalid');
   for(const m of a.models) {
     let u:URL;try{u=new URL(m.endpoint);}catch{return fail('endpoint-invalid');}
-    if(u.protocol!=='https:' || u.username || u.password || u.search || u.hash ||
+    if((u.protocol!=='https:' && !managedOpenAIEndpointAllowed(m.endpoint)) ||
+      u.username || u.password || u.search || u.hash ||
       !text(m.model) || !text(m.rateEvidence) ||
       !m.rates || !['input','output','cached','cacheWrite','search'].every(k=>integer(m.rates[k as keyof Rates])) ||
       !integer(m.maxInputTokens) || !integer(m.maxOutputTokens) || !integer(m.maxSearchCalls) ||
@@ -98,6 +114,7 @@ export class PricingQualification {
   }
   report() {
     return {allowanceId:this.allowance.id,sourceSha256:this.allowance.sourceSha256,
+      accountingBasis:this.allowance.accountingBasis??'exact',
       limits:DOCUMENT_LIMITS,calls:this.db.prepare('SELECT * FROM calls ORDER BY created,id').all()};
   }
   assertClear() {
@@ -129,6 +146,8 @@ export class PricingQualification {
       if(this.mode!=='execute')fail('review-mode-cannot-spend');
       // Deny every unrecognized network destination, including delivery/CRM.
       if(!text(context.documentId)||!(context.kind in DOCUMENT_LIMITS))fail('document-identity-required');
+      if(this.allowance.documentIds && !this.allowance.documentIds.includes(context.documentId))
+        fail('document-not-approved');
       const endpoint=typeof input==='string'?input:input instanceof URL?input.href:input.url;
       let body:any;
       try {body=JSON.parse(typeof init?.body==='string'?init.body:'');}catch{return fail('json-request-required');}
@@ -154,7 +173,7 @@ export class PricingQualification {
       const inputBound=Buffer.byteLength(serialized)+1024;
       if(!integer(output)||output===0||output>p.maxOutputTokens||inputBound>p.maxInputTokens||searches>p.maxSearchCalls)
         fail('request-exceeds-approved-bounds');
-      const reserved=cost({...p.rates,input:Math.max(p.rates.input,p.rates.cached,p.rates.cacheWrite)},p.maxInputTokens,output,0,0,searches);
+      const reserved=cost({...p.rates,input:Math.max(p.rates.input,p.rates.cached,p.rates.cacheWrite)},inputBound,output,0,0,searches);
       if(!reserved)fail('positive-reservation-required');
       const id=digest(JSON.stringify({document:context.documentId,kind:context.kind,endpoint,body}));
       this.transaction(()=>{

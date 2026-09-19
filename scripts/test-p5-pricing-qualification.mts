@@ -4,7 +4,7 @@ import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {PricingQualification,digest,DOCUMENT_LIMITS,type PricingAllowance} from './lib/pricingQualification.ts';
-import {capturePricingDelivery} from './lib/capturedPricingDelivery.ts';
+import {capturePricingDelivery,isolatedCaptureFetch} from './lib/capturedPricingDelivery.ts';
 import {calculateP5Estimate,customerEstimate,COST_CATEGORIES} from '../lib/p5/pricing.ts';
 
 // All providers below are local callbacks. No credentials, environment mutation,
@@ -36,6 +36,10 @@ try {
   let q=open('settlement');
   await q.guardedFetch({documentId:'short',kind:'short'},success)(endpoint,request('first'));
   assert.equal((q.report().calls[0] as any).actual,135);
+  const requestInputBound=Buffer.byteLength(request('first').body)+1024;
+  assert.equal((q.report().calls[0] as any).reserved,Math.ceil(requestInputBound*1.25)+200);
+  assert.ok((q.report().calls[0] as any).reserved<Math.ceil(allowance.models[0].maxInputTokens*1.25)+200);
+  assert.equal(q.report().accountingBasis,'exact');
   q.close();q=open('settlement');
   await assert.rejects(q.guardedFetch({documentId:'short',kind:'short'},success)(endpoint,request('first')),/duplicate/);
   assert.equal(calls,1);checks++;q.close();
@@ -88,12 +92,76 @@ try {
   await assert.rejects(q.guardedFetch({documentId:'denied',kind:'short'},success)('https://crm.example.invalid',request('denied')),/unapproved/);
   await assert.rejects(q.guardedFetch({documentId:'denied',kind:'short'},success)(endpoint,{...request('tools'),body:JSON.stringify({model:'exact-test-model',max_output_tokens:100,tools:[{type:'web_search'}]})}),/unbounded/);
   assert.equal(q.report().calls.length,0);q.close();checks++;
+  const historicalFile=path.join(dir,'historical-allowance.json');
+  await writeFile(historicalFile,JSON.stringify(allowance));
+  const historical=new PricingQualification(historicalFile,path.join(dir,'historical.sqlite'),source);
+  assert.equal(historical.report().accountingBasis,'exact');historical.close();
+  await writeFile(historicalFile,JSON.stringify({...allowance,accountingBasis:'upper-bound',documentIds:['pricing-mapping']}));
+  const bounded=new PricingQualification(historicalFile,path.join(dir,'bounded.sqlite'),source);
+  assert.equal(bounded.report().accountingBasis,'upper-bound');
+  await assert.rejects(bounded.guardedFetch({documentId:'other',kind:'short'},success)(endpoint,request('wrong-document')),/document-not-approved/);
+  assert.equal(bounded.report().calls.length,0);bounded.close();
+  for(const invalid of [
+    {...allowance,documentIds:[]},
+    {...allowance,documentIds:['pricing-mapping','pricing-mapping']},
+    {...allowance,documentIds:['']},
+    {...allowance,accountingBasis:'estimate'},
+  ]){
+    await writeFile(historicalFile,JSON.stringify(invalid));
+    assert.throws(()=>new PricingQualification(historicalFile,path.join(dir,`invalid-${checks++}.sqlite`),source),/allowance-(?:document-ids|accounting-basis)-invalid/);
+  }
+  checks++;
+
+  const managedEndpoint='http://localhost:1106/modelfarm/openai/responses';
+  const managedAllowance={...allowance,models:[{...allowance.models[0],endpoint:managedEndpoint}]};
+  const managedFile=path.join(dir,'managed-allowance.json');
+  await writeFile(managedFile,JSON.stringify(managedAllowance));
+  const oldManagedBase=process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+  const oldManagedKey=process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+  try {
+    delete process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+    delete process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+    assert.throws(()=>new PricingQualification(managedFile,path.join(dir,'managed-unconfigured.sqlite'),source),/model-allowance-invalid/);
+    process.env.AI_INTEGRATIONS_OPENAI_BASE_URL='http://localhost:1106/modelfarm/openai/';
+    assert.throws(()=>new PricingQualification(managedFile,path.join(dir,'managed-no-key.sqlite'),source),/model-allowance-invalid/);
+    process.env.AI_INTEGRATIONS_OPENAI_API_KEY='integrated-test-key-not-used';
+    const managed=new PricingQualification(managedFile,path.join(dir,'managed.sqlite'),source);
+    assert.equal(managed.report().calls.length,0);managed.close();
+    for(const deniedEndpoint of [
+      'http://localhost:1106/modelfarm/openai/other',
+      'http://user:pass@localhost:1106/modelfarm/openai/responses',
+      'http://localhost:1106/modelfarm/openai/responses?query=1',
+      'http://localhost:1106/modelfarm/openai/responses#fragment',
+      'http://example.invalid/modelfarm/openai/responses',
+    ]){
+      await writeFile(managedFile,JSON.stringify({...managedAllowance,
+        models:[{...managedAllowance.models[0],endpoint:deniedEndpoint}]}));
+      assert.throws(()=>new PricingQualification(managedFile,path.join(dir,`managed-endpoint-denied-${checks++}.sqlite`),source),/model-allowance-invalid/);
+    }
+    await writeFile(managedFile,JSON.stringify(managedAllowance));
+    for(const base of [
+      'http://localhost:1106/modelfarm/other',
+      'http://user:pass@localhost:1106/modelfarm/openai',
+      'http://localhost:1106/modelfarm/openai?query=1',
+      'http://localhost:1106/modelfarm/openai#fragment',
+      'http://example.invalid/modelfarm/openai',
+    ]){
+      process.env.AI_INTEGRATIONS_OPENAI_BASE_URL=base;
+      assert.throws(()=>new PricingQualification(managedFile,path.join(dir,`managed-denied-${checks++}.sqlite`),source),/model-allowance-invalid/);
+    }
+  } finally {
+    if(oldManagedBase===undefined)delete process.env.AI_INTEGRATIONS_OPENAI_BASE_URL;
+    else process.env.AI_INTEGRATIONS_OPENAI_BASE_URL=oldManagedBase;
+    if(oldManagedKey===undefined)delete process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
+    else process.env.AI_INTEGRATIONS_OPENAI_API_KEY=oldManagedKey;
+  }
+  checks++;
   await writeFile(allowanceFile,JSON.stringify({...allowance,totalMicros:1}));
   q=open('low-allowance');
   await assert.rejects(q.guardedFetch({documentId:'short',kind:'short'},success)(endpoint,request('budget')),/insufficient/);
   assert.equal(q.report().calls.length,0);q.close();checks++;
   await writeFile(allowanceFile,JSON.stringify({...allowance,totalMicros:10_000_000,
-    models:[{...allowance.models[0],rates:{...allowance.models[0].rates,input:200_000_000}}]}));
+    models:[{...allowance.models[0],rates:{...allowance.models[0].rates,input:1_000_000_000}}]}));
   q=open('document-cap');
   await assert.rejects(q.guardedFetch({documentId:'short',kind:'short'},success)(endpoint,request('document-cap')),/insufficient/);
   await q.guardedFetch({documentId:'plans',kind:'plans'},success)(endpoint,request('document-cap'));
@@ -109,7 +177,34 @@ try {
     risks:[],assumptions:[],exclusions:['Owner appliances'],missingInformation:[],allowances:[]};
   const internal=calculateP5Estimate(pricing,{annualOverhead:420000,annualRevenue:6000000,forecastSource:'SYNTHETIC ONLY',reviewedAt:today,approvedBy:['Fixture']},[]);
   const customer=customerEstimate(internal,pricing.scopeSummary);
-  const manifest=await capturePricingDelivery({internal,customer},{text:pricing.scopeSummary,answers:{service:'kitchen'}},path.join(dir,'captured'));
+  const nativeFetch=globalThis.fetch;
+  let guardCalls=0,assetCalls=0,httpCalls=0;
+  const pricingGuard:typeof fetch=async(input,init)=>{
+    guardCalls++;
+    try {JSON.parse(typeof init?.body==='string'?init.body:'');}
+    catch {throw new Error('qualification:json-request-required');}
+    throw new Error(`qualification:unapproved-provider-request:${String(input)}`);
+  };
+  await assert.rejects(pricingGuard('data:application/octet-stream;base64,AA=='),/json-request-required/);
+  const localAssetFetch:typeof fetch=(input,init)=>{
+    const endpoint=typeof input==='string'?input:input instanceof URL?input.href:input.url;
+    const protocol=new URL(endpoint).protocol;
+    if(protocol==='http:'||protocol==='https:')httpCalls++;
+    assert.ok(protocol==='file:'||protocol==='data:');
+    assetCalls++;return nativeFetch(input,init);
+  };
+  const isolated=isolatedCaptureFetch(localAssetFetch);
+  assert.equal((await isolated('data:application/octet-stream;base64,AA==')).status,200);
+  await assert.rejects(isolated('https://provider.example.invalid/asset.wasm'),/network-fetch-denied/);
+  assert.equal(assetCalls,1);assert.equal(httpCalls,0);
+  guardCalls=0;assetCalls=0;globalThis.fetch=pricingGuard;
+  let manifest:any;
+  try {
+    manifest=await capturePricingDelivery({internal,customer},
+      {text:pricing.scopeSummary,answers:{service:'kitchen'}},path.join(dir,'captured'),localAssetFetch);
+    assert.equal(globalThis.fetch,pricingGuard);
+  } finally {globalThis.fetch=nativeFetch;}
+  assert.equal(guardCalls,0);assert.equal(httpCalls,0);
   assert.equal(manifest.priceConsistency,true);assert.equal(manifest.externalSends,0);checks++;
   assert.ok((await readFile(path.join(dir,'captured','customer.pdf'))).length>0);
   console.log(JSON.stringify({passed:true,checks,providerNetworkCalls:0,businessWrites:0,externalSends:0}));
