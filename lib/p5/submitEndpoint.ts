@@ -9,6 +9,7 @@ import {PricingPending,isPricingPending} from './pricingProgress.ts';
 import { enqueueSubmission,deliveryStatus,processOutbox } from "./outbox.ts";
 import { protectRequest,json,failed,limitedBody } from "./http.ts";
 import { ESTIMATOR_BRAND as brand } from "./brand.ts";
+import {customerPresentation} from './presentation.ts';
 
 const DELIVERY_WAIT_MS=Number(process.env.P5_DELIVERY_WAIT_MS||25_000);
 export async function postSubmission(request:Request,schedule?:(task:()=>Promise<void>)=>void){
@@ -20,7 +21,7 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
       const [row]=await query("SELECT customer_estimate FROM p5_estimator_drafts WHERE id=$1",[id]);
       // A status check after submission drives any delivery still queued; an autoscale host has no CPU between requests.
       await processOutbox({draftId:id,limit:12}).catch(()=>undefined);
-      return json({accepted:false,duplicate:true,id,result:row.customer_estimate,delivery:await deliveryStatus(id)});
+       return json({accepted:false,duplicate:true,id,result:customerPresentation(row.customer_estimate),delivery:await deliveryStatus(id)});
     }
     const body=JSON.parse(new TextDecoder().decode(await limitedBody(request,4000)));
     if(body.revision!==draft.revision)throw new DraftError("Save the latest scope before submitting.",409);
@@ -33,6 +34,7 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
     if(job&&job.state==='failed'){console.error(`[p5-pricing] handoff for draft ${id}: ${job.progress}`);return json({pricingReviewRequired:true,needsCustomerInput:false,handoff:true,missingFields:[],verificationItems:[],error:HANDOFF_ISSUE},422);}
     if(job&&job.state!=='complete')return json({pending:true,message:job.progress,processing:job.processing,retryAfterMs:2000},202);
     const priced=job?job.result:await priceSavedScope(id,draft.reviewed,configuration);
+    const publicCustomer=customerPresentation(priced.customer);
     if(!priced.customer.range){
       // Keep incomplete pricing available to the authenticated admin, but do
       // not submit it or create customer-email/CRM delivery records.
@@ -41,7 +43,7 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
       const missing=('missingInformation' in priced.internal?priced.internal.missingInformation:[])||[];
       const missingFields=missingScopeFields(missing);
       const labels=missingFields.map(item=>item.label);
-      const items=((priced.customer as {verificationItems?:string[]}).verificationItems||[]).filter(item=>typeof item==='string'&&item.trim());
+      const items=((publicCustomer as {verificationItems?:string[]}).verificationItems||[]).filter(item=>typeof item==='string'&&item.trim());
       // The reasons are logged so a live host explains an unpriced result, and the first few are shown so the visitor knows what to confirm.
       const blocks=(('warnings' in priced.internal?priced.internal.warnings:[])||[]).filter((w:{severity?:string})=>w.severity==='block').map((w:{code:string})=>w.code);
       console.error(`[p5-pricing] no range for draft ${id}: blocks=${blocks.join(',')||'none'}; missing=${missing.slice(0,6).join(' | ')||'none'}; items=${items.slice(0,4).join(' | ')||'none'}; issues=${(((priced.internal as {scopePricing?:{issues?:string[]}}).scopePricing?.issues)||[]).slice(0,6).join(' | ')||'none'}`);
@@ -67,6 +69,6 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
     const started=deliver();
     await Promise.race([started,new Promise<void>(resolve=>setTimeout(resolve,DELIVERY_WAIT_MS))]);
     if(schedule)schedule(()=>started);
-    return json({accepted,duplicate:!accepted,id,result:priced.customer,delivery:await deliveryStatus(id)});
+     return json({accepted,duplicate:!accepted,id,result:publicCustomer,delivery:await deliveryStatus(id)});
   }catch(error){if(isPricingPending(error))return error.retryAfterMs===0?json({error:error.message},503):json({pending:true,message:error.message,retryAfterMs:error.retryAfterMs},202);return failed(error);}
 }

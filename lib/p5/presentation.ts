@@ -16,6 +16,82 @@ export const FIELD_CATEGORY_TITLES:Record<string,string>={site:'Site & utilities
 const FIELD_SECTION_KIND:Record<string,SectionKind>={'Excluded work':'excluded','Allowances & selections':'allowance','Owner responsibilities':'info','Alternates':'info'};
 /** Section titles used by consumers that group by kind; kept in one place. */
 export const SECTION_TITLES={included:'Included work',excluded:'Excluded work',responsibilities:'Responsibilities',buildings:'Buildings and floors',questions:'Scope questions requiring clarification',coverage:'Document review coverage',buildingPrices:'Separate building prices',pricingBasis:'Pricing basis',allowances:'Included preliminary allowances',verify:'Items to verify before a firm proposal',categoriesIntro:'Included scope by category',requestedIntro:'Requested scope by category'} as const;
+const PRIVATE_PRICING_TEXT=/\b(?:direct (?:project |labor |material )?(?:unit[- ]?)?(?:rate|cost|price)|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|(?:actual|net|loaded|landed) (?:unit[- ]?)?cost|unit[- ]cost|owner[- ]average cost|owner[- ]approved estimating schedule|cost[- ]book|risk[- ]adjusted (?:direct )?cost|overhead|profit|margin|allocations?|markup|divisor|reconciliation|pricing formula|calculation trace|cost ceiling|salary|payroll burden)\b|(?:\+|÷|\/)\s*(?:overhead|profit|margin|contingency)|\bdivid(?:e|ed|ing)\s+by\b|\bpercent(?:age)?\s+of\s+(?:cost|revenue)\b/i;
+/**
+ * Repair prose produced by older pricing runs before it reaches any customer
+ * presenter. Generated verification notes sometimes combine useful scope with
+ * a private cost clause, so remove the clause rather than discarding the whole
+ * sentence.
+ */
+export function publicPricingText(value:unknown):string{
+ const text=typeof value==='string'?value.trim():'';
+ if(!text)return '';
+ const repairSentence=(sentence:string):string[]=>{
+  let safe=sentence
+   .replace(/\s*\([^)]*(?:\b(?:direct (?:project |labor |material )?(?:unit[- ]?)?(?:rate|cost|price)|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|unit[- ]cost|overhead|profit|margin|allocation|markup|divisor|salary|payroll burden)\b)[^)]*\)/gi,'')
+   .replace(/:\s*(?:mapped to|catalog(?:ued)? as)\s+[^.]+/gi,'');
+  if(!PRIVATE_PRICING_TEXT.test(safe)){
+   safe=safe.replace(/\s+/g,' ').replace(/\s+([,.;:])/g,'$1').trim();
+   return safe?[safe]:[];
+  }
+  const clauses=safe.split(/(?<=[,;])\s+|\s+(?=(?:and|but)\s+)/i).flatMap(clause=>{
+   let part=clause.trim().replace(/[,;]\s*$/,'');
+   if(!PRIVATE_PRICING_TEXT.test(part))return part?[part]:[];
+   // Retain the useful scope before a private basis/rate appended to it.
+   const introduced=part.match(/^(.+?)\s+(?:at|using|from|based on|with)\s+.+$/i);
+   if(introduced&&!PRIVATE_PRICING_TEXT.test(introduced[1])&&!/^(?:the )?(?:rate|cost|price|pricing|formula|calculation)\b/i.test(introduced[1].trim()))return [introduced[1].trim()];
+   // A private evidence sentence may also state a useful limitation. Keep that
+   // limitation rather than treating the whole sentence as disposable.
+   const limitation=part.match(/\b((?:(?:the )?(?:source|evidence|rate) date|effective date)[^.;]*(?:not stated|not supplied|unknown|unavailable|expired|out of date)[^.;]*)/i);
+   return limitation?[limitation[1].trim()]:[];
+  });
+  safe=clauses.join(', ').replace(/\s+/g,' ').replace(/\s+([,.;:])/g,'$1').replace(/[,;:]\s*$/,'').trim();
+  if(!safe)return [];
+  if(/[.!?]$/.test(sentence)&&!/[.!?]$/.test(safe))safe+='.';
+  return [safe];
+ };
+ return text.split('\n').map(line=>scopeBullets(line).flatMap(repairSentence).filter(Boolean).join(' ')).filter(Boolean).join('\n');
+}
+const publicTextList=(value:unknown):string[]=>Array.isArray(value)?value.map(publicPricingText).filter(Boolean):[];
+/**
+ * Allowlisted customer projection used for current and previously persisted
+ * results. Unknown/private fields never cross this presentation boundary.
+ */
+export function customerPresentation(result:any):any{
+ const source=result&&typeof result==='object'?result:{};
+ const range=source.range&&Number.isFinite(source.range.low)&&Number.isFinite(source.range.high)?{low:Number(source.range.low),high:Number(source.range.high)}:null;
+ const categoryRanges=Array.isArray(source.categoryRanges)?source.categoryRanges.filter((x:any)=>x&&typeof x.category==='string'&&Number.isFinite(x.low)&&Number.isFinite(x.high)).map((x:any)=>({category:publicPricingText(x.category),low:Number(x.low),high:Number(x.high)})).filter((x:any)=>x.category):[];
+ const lineItems=Array.isArray(source.lineItems)?source.lineItems.map((x:any)=>({
+  id:String(x?.id||''),category:publicPricingText(x?.category),description:publicPricingText(x?.description),
+  quantity:Number(x?.quantity),unit:String(x?.unit||''),low:Number(x?.low),high:Number(x?.high),unitLow:Number(x?.unitLow),unitHigh:Number(x?.unitHigh),
+  ...(x?.building?{building:publicPricingText(x.building)}:{}),...(x?.floor?{floor:publicPricingText(x.floor)}:{}),
+  ...(x?.quantityRange&&Number.isFinite(x.quantityRange.low)&&Number.isFinite(x.quantityRange.high)?{quantityRange:{low:Number(x.quantityRange.low),high:Number(x.quantityRange.high)}}:{}),
+  ...(x?.pricingStatus?{pricingStatus:String(x.pricingStatus)}:{}),...(publicPricingText(x?.verification)?{verification:publicPricingText(x.verification)}:{}),
+  ...(publicPricingText(x?.rateLocation)?{rateLocation:publicPricingText(x.rateLocation)}:{}),...(x?.rateDate?{rateDate:String(x.rateDate).slice(0,10)}:{})
+ })).filter((x:any)=>x.id&&x.category&&x.description&&Number.isFinite(x.quantity)&&Number.isFinite(x.low)&&Number.isFinite(x.high)):[];
+ const allowances=Array.isArray(source.allowances)?source.allowances.map((x:any)=>typeof x==='string'?publicPricingText(x):{
+  description:publicPricingText(x?.description),...(x?.amount!=null&&Number.isFinite(Number(x.amount))?{amount:Number(x.amount)}:{}),includes:publicTextList(x?.includes),
+  taxIncluded:Boolean(x?.taxIncluded),freightIncluded:Boolean(x?.freightIncluded),deliveryIncluded:Boolean(x?.deliveryIncluded),installationIncluded:Boolean(x?.installationIncluded),wasteIncluded:Boolean(x?.wasteIncluded),
+  selectionDeadline:String(x?.selectionDeadline||''),adjustment:publicPricingText(x?.adjustment)
+ }).filter((x:any)=>typeof x==='string'?Boolean(x):Boolean(x.description)):[];
+ const instructions=source.instructions&&typeof source.instructions==='object'?{
+  inclusions:publicTextList(source.instructions.inclusions),exclusions:publicTextList(source.instructions.exclusions),responsibilities:publicTextList(source.instructions.responsibilities),
+  floors:publicTextList(source.instructions.floors),buildings:publicTextList(source.instructions.buildings),questions:publicTextList(source.instructions.questions),
+  laborOnly:Boolean(source.instructions.laborOnly),materialsOnly:Boolean(source.instructions.materialsOnly)
+ }:undefined;
+ const documentCoverage=source.documentCoverage&&typeof source.documentCoverage==='object'?{
+  expectedPages:Number(source.documentCoverage.expectedPages)||0,complete:Boolean(source.documentCoverage.complete),
+  pages:Array.isArray(source.documentCoverage.pages)?source.documentCoverage.pages.map((p:any)=>({source:publicPricingText(p?.source),page:Number(p?.page)||0,...(p?.sheet?{sheet:publicPricingText(p.sheet)}:{}),status:String(p?.status||''),notes:publicTextList(p?.notes)})):[]
+ }:undefined;
+ return {
+  status:String(source.status||''),range,summary:publicPricingText(source.summary),includedCategories:publicTextList(source.includedCategories),categoryRanges,lineItems,allowances,
+  assumptions:publicTextList(source.assumptions),exclusions:publicTextList(source.exclusions),factors:publicTextList(source.factors),
+  nextStep:publicPricingText(source.nextStep),message:publicPricingText(source.message),disclaimer:publicPricingText(source.disclaimer),
+  verificationItems:publicTextList(source.verificationItems),
+  scopeTasks:Array.isArray(source.scopeTasks)?source.scopeTasks.map((x:any)=>({description:publicPricingText(x?.description),category:publicPricingText(x?.category)})).filter((x:any)=>x.description):[],
+  ...(instructions?{instructions}:{}),...(documentCoverage?{documentCoverage}:{})
+ };
+}
 function itemPriceText(item:any){
  const quantity=`${Number(item.quantity).toLocaleString('en-US')} ${item.unit}${item.quantityRange?` modeled allowance (${item.quantityRange.low.toLocaleString('en-US')} to ${item.quantityRange.high.toLocaleString('en-US')} ${item.unit} to verify)`:''}`;
  const total=`${money(item.low)} to ${money(item.high)} total`;
@@ -68,6 +144,7 @@ function uniqueCustomerSections(sections:EstimateSection[]):EstimateSection[]{
  }).filter(s=>s.text||s.bullets?.length||s.rows?.length);
 }
 export function estimateSections(result:any):EstimateSection[]{
+ result=customerPresentation(result);
  const sections=summarySections(result.summary||'');
  const lines:any[]=result.lineItems||[], tasks:any[]=result.scopeTasks||[];
  const suppliedInstructions=result.instructions;
@@ -159,6 +236,7 @@ export interface CategoryLine {id:string;label:string;quantity:number;unit:strin
 export interface CategoryBreakdown {category:string;low?:number;high?:number;tasks:string[];items:CategoryLine[]}
 /** Structured category accordions for the customer result. Same data as estimateSections, without prose. */
 export function categoryBreakdown(result:any):CategoryBreakdown[]{
+  result=customerPresentation(result);
  const lines:any[]=result?.lineItems||[],tasks:any[]=result?.scopeTasks||[];
  const categories=[...new Set<string>([...(result?.includedCategories||[]),...lines.map(x=>x.category),...tasks.map(x=>x.category||suggestedTrade(x.description))])];
  return categories.map(category=>{

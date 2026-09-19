@@ -218,12 +218,17 @@ export function catalogResolution(mapping:Mapping,configuration:EstimatorConfigu
     for(const id of t.existingLineIds){
       const line=existing.find(l=>l.id===id);
       if(result.removeLineIds?.includes(id)||!line||line.quantity*line.unitCost<=0)result.issues.push(`${t.description}: invalid existing price reference.`);
+      else if(ownerSuppliesMaterial(t)&&['materials','subcontractors'].includes(line.category))result.issues.push(`${t.description}: owner-supplied material cannot be charged through a contractor material or supply-and-install package.`);
       else result.issues.push(...existingQuantityIssues(t,line,scope,mapping.tasks.length));
     }
     for(const a of t.additions){
       const rate=configuration.planningCatalog?.rates.find(r=>r.code===a.code);
       const regional=configuration.regionalRates?.find(r=>r.id===a.code);
       const rateUnit=rate?.unit||regional?.unit||'';
+      if(ownerSuppliesMaterial(t)&&(rate?.type==='Material'||rate?.type==='Subcontractor'||regional?.category==='materials'||regional?.category==='subcontractors')){
+        result.issues.push(`${t.description}: owner-supplied material cannot be charged through a contractor material or supply-and-install package.`);
+        continue;
+      }
       const quantityFindings=quantityIssues(t,a,rateUnit,scope,mapping.tasks.length,rate?.description||regional?.description||a.code,rate?.type==='Material'||regional?.category==='materials');
       if(quantityFindings.length){result.issues.push(...quantityFindings);continue;}
       if(!rate&&regional){
@@ -246,7 +251,8 @@ const UNKNOWN_QUANTITY=/\b(?:unknown|not\s+(?:known|documented|specified|provide
 const UNSELECTED_SCOPE=/\b(?:alternate|alternative|optional|not\s+selected|not\s+included|excluded|by\s+others|previous(?:ly)?\s+proposed|discarded)\b/i;
 const INCLUDED_SCOPE=/\b(?:included|selected|requested|approved|retain(?:ed)?|keep|kept|yes)\b/i;
 const TASK_STATUS_SCOPE=/\b(?:alternate|alternative|optional|not\s+selected|not\s+included|by\s+others|previous(?:ly)?\s+proposed|discarded)\b/i;
-const COMPONENT_STOP_WORDS=new Set(['a','an','and','are','be','by','for','in','installation','install','labor','labour','material','materials','of','on','package','requested','scope','the','work']);
+const OWNER_SUPPLIED=/\b(?:(?:owner|homeowner|customer|client)[ -]?(?:suppl(?:y|ies|ied)|provid(?:e|es|ed)|furnish(?:es|ed)?)|(?:supplied|provided|furnished) by (?:the )?(?:owner|homeowner|customer|client))\b/i;
+const COMPONENT_STOP_WORDS=new Set(['a','an','alternate','alternative','and','are','be','by','for','in','installation','install','labor','labour','material','materials','of','on','optional','package','requested','scope','the','work']);
 const componentTerms=(description:string)=>description.toLowerCase().match(/[a-z][a-z-]{2,}/g)?.filter(term=>!COMPONENT_STOP_WORDS.has(term))||[];
 const clauseHasComponent=(clause:string,terms:string[])=>terms.some(term=>{
   const stem=term.replace(/(?:ing|ed|es|s)$/,'');
@@ -260,19 +266,25 @@ const clauseHasComponent=(clause:string,terms:string[])=>terms.some(term=>{
  */
 function taskIsUnselected(task:Mapping['tasks'][number]){
   const description=task.description.trim();
-  if(UNSELECTED_SCOPE.test(description))return true;
   const terms=componentTerms(description);
-  const clauses=task.evidence.split(/[.;\n]+|\s*,\s*/).map(clause=>clause.trim()).filter(Boolean);
+  // "Alternate" identifies a choice; it does not by itself say which choice
+  // won. Evaluate the description together with component-scoped evidence so
+  // "tub alternate selected; shower alternate not selected" keeps only tub.
+  const clauses=`${description}. ${task.evidence}`.split(/[.;\n]+|\s*,\s*/).map(clause=>clause.trim()).filter(Boolean);
   const statusClauses=clauses.filter(clause=>UNSELECTED_SCOPE.test(clause));
   const componentStatuses=statusClauses.filter(clause=>clauseHasComponent(clause,terms));
-  if(componentStatuses.some(clause=>UNSELECTED_SCOPE.test(clause)&&!INCLUDED_SCOPE.test(clause)))return true;
-  if(componentStatuses.some(clause=>INCLUDED_SCOPE.test(clause)))return false;
+  const included=(clause:string)=>INCLUDED_SCOPE.test(clause)&&!/\bnot\s+(?:selected|included)\b/i.test(clause);
+  if(componentStatuses.some(included))return false;
+  if(componentStatuses.some(clause=>UNSELECTED_SCOPE.test(clause)&&!included(clause)))return true;
   // Generic alternate/not-selected language refers to the task itself. A
   // component-specific "excluded" clause without a task term does not.
   return statusClauses.some(clause=>TASK_STATUS_SCOPE.test(clause))||(statusClauses.length>0&&!terms.length);
 }
 function unresolvedQuantityIssue(task:Mapping['tasks'][number]){
   return UNKNOWN_QUANTITY.test(`${task.description} ${task.evidence}`)?`${task.description}: quantity remains unmeasured; do not publish a confirmed quantity.`:null;
+}
+function ownerSuppliesMaterial(task:Mapping['tasks'][number]){
+  return OWNER_SUPPLIED.test(`${task.description} ${task.evidence}`);
 }
 /**
  * Read quantities only from the short task evidence supplied to the mapper.
@@ -380,6 +392,10 @@ export function marketResolution(raw:unknown,urls:string[],tasks:Mapping['tasks'
       result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);
       continue;
     }
+    if(ownerSuppliesMaterial(t)&&r.basis!=='trade-labor'){
+      result.issues.push(`${t.description}: owner-supplied material permits a labor-only rate, not a material or supply-and-install package.`);
+      continue;
+    }
     const unresolved=unresolvedQuantityIssue(t);
     const hasAllowance=/^ALLOWANCE\s*:/i.test(r.quantityEvidence)&&Boolean(r.quantityRange);
     if(unresolved&&!hasAllowance)result.issues.push(unresolved);
@@ -418,6 +434,7 @@ export function planningResolution(raw:unknown,tasks:Mapping['tasks'],now:Date,o
     const t=tasks.find(t=>t.id===r.taskId&&t.researchDescription);
     if(!t)throw new Error('Unknown planning scope task');
     if(taskIsUnselected(t)){result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);continue;}
+    if(ownerSuppliesMaterial(t)&&r.basis!=='trade-labor'){result.issues.push(`${t.description}: owner-supplied material permits a labor-only rate, not a material or supply-and-install package.`);continue;}
     const unresolved=unresolvedQuantityIssue(t);
     const hasAllowance=/^ALLOWANCE\s*:/i.test(r.quantityEvidence)&&Boolean(r.quantityRange);
     if(unresolved&&!hasAllowance)result.issues.push(unresolved);
@@ -578,18 +595,33 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
           const normalized=await request(normalizeResearch,{requested:{tasks:gapBatch.map(t=>({id:t.id,description:t.researchDescription,quantityEvidence:t.evidence}))},report:researched.sourceReport||JSON.stringify(researched.value),sourceUrls:researched.sourceUrls},false,deadline-Date.now());
           researched={...researched,value:marketSchema.parse(normalized.value)};
         }
-        replies.push(researched);
-        const market=marketResolution(researched.value,researched.sourceUrls,gapBatch,now,offset,region,scope);
-        return {replies,resolution:market,modelIssues:marketSchema.parse(researched.value).issues};
+        const accepted=marketSchema.parse(researched.value);
+        const market=marketResolution(accepted,researched.sourceUrls,gapBatch,now,offset,region,scope);
+        // The audit needs the accepted observations, not every URL visited by
+        // the search tool or its raw narrative. In the failed bathroom
+        // checkpoint, one accepted three-rate reply retained more than one
+        // hundred unrelated search URLs and replayed all of them into every
+        // verification attempt. Keep only evidence actually used by a rate.
+        const usedUrls=[...new Set(accepted.rates.flatMap(rate=>[
+          ...rate.sources.map(source=>source.url),
+          ...(rate.landedCost?[rate.landedCost.taxEvidence.url,rate.landedCost.freightEvidence.url]:[]),
+        ]))];
+        replies.push({value:accepted,sourceUrls:usedUrls});
+        return {replies,resolution:market,modelIssues:accepted.issues};
       }catch(error){
         if(isPricingPending(error)||isProcessingDeadline(error))throw error;
-        researchFailure=isPricingStageTimeout(error)?'published cost research did not finish within its time allowance':error instanceof Error?error.message:'invalid source';
+        // Only an unavailable/timed-out search may take the explicitly
+        // preliminary planning path. A malformed schema, incompatible unit or
+        // rejected citation is a concrete evidence failure and stays blocking.
+        if(!isPricingStageTimeout(error))throw error;
+        researchFailure='published cost research did not finish within its time allowance';
       }
       const planned=await request(PLANNING_AVERAGE,{date:now.toISOString().slice(0,10),region,tasks:tasksInput,...(priorIssues?{priorIssues}:{})},false,deadline-Date.now());
-      replies.push(planned);
-      const planning=planningResolution(planned.value,gapBatch,now,offset,region,scope);
+      const accepted=planningSchema.parse(planned.value);
+      replies.push({value:accepted,sourceUrls:[]});
+      const planning=planningResolution(accepted,gapBatch,now,offset,region,scope);
       planning.assumptions.unshift(`Published cost research was not used for ${gapBatch.map(t=>t.description).join('; ')} (${researchFailure}). A regional planning average allowance is included instead; it is not verified local pricing.`);
-      return {replies,resolution:planning,modelIssues:planningSchema.parse(planned.value).issues};
+      return {replies,resolution:planning,modelIssues:accepted.issues};
     };
     const mergeGapResults=(results:Awaited<ReturnType<typeof priceGapBatch>>[])=>{
       for(const priced of results){research.push(...priced.replies);priced.modelIssues.forEach(issue=>modelIssues.add(issue));resolution.rules.push(...priced.resolution.rules);resolution.assumptions.push(...priced.resolution.assumptions);resolution.issues.push(...priced.resolution.issues);}

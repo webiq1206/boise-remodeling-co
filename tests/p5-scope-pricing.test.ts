@@ -218,6 +218,41 @@ test('Valid JSON research with incompatible field types gets a saved constrained
  },now);
  assert.equal(formatting,1);assert.ok(result.customer.range);assert.ok(JSON.stringify(result.internal.scopePricing.research).includes(urls[0]));
 });
+test('Verification receives accepted research evidence without raw reports or unrelated search URLs',async()=>{
+  let calls=0;let auditInput:any;
+  const taxUrl='https://tax-evidence.example/rate',freightUrl='https://freight-evidence.example/charge';
+  const taxEvidence={...adjustmentEvidence,url:taxUrl},freightEvidence={...adjustmentEvidence,url:freightUrl};
+  const acceptedResearch={...researched,rates:researched.rates.map(rate=>({...rate,landedCost:{taxRate:.06,freightPerUnit:4,taxOnFreight:false,taxEvidence,freightEvidence}}))};
+  const noisyUrls=[...urls,taxUrl,freightUrl,...Array.from({length:120},(_,i)=>`https://noise-${i}.example/unrelated`)];
+  const request:PricingRequest=async(_instructions,input,search)=>{
+    calls++;const data=input as any;
+    if(calls===1)return {value:{tasks:[task,extra].map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
+    if(data.taskBatch)return {value:{tasks:[task,extra],issues:[]},sourceUrls:[]};
+    if(search)return {value:acceptedResearch,sourceUrls:noisyUrls,sourceReport:'RAW SEARCH NARRATIVE MUST NOT REACH VERIFICATION'};
+    auditInput=data;
+    return {value:{coveredTaskIds:['cabinets','overlay'],issues:[]},sourceUrls:[]};
+  };
+  const result=await priceCompleteScope(scope,config,request,now);
+  assert.ok(result.customer.range);
+  const serialized=JSON.stringify(auditInput.research);
+  assert.ok([urls[0],urls[1],taxUrl,freightUrl].every(url=>serialized.includes(url)),'accepted rate and landed-cost sources remain auditable');
+  assert.ok(!serialized.includes('noise-')&&!serialized.includes('RAW SEARCH NARRATIVE'),'unused search material is not replayed');
+});
+test('Malformed researched evidence blocks instead of becoming an invented planning value',async()=>{
+  let calls=0;let planningCalls=0;
+  const request:PricingRequest=async(instructions,input,search)=>{
+    calls++;const data=input as any;
+    if(calls===1)return {value:{tasks:[task,extra].map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
+    if(data.taskBatch)return {value:{tasks:[task,extra],issues:[]},sourceUrls:[]};
+    if(search)return {value:{...researched,rates:[{...researched.rates[0],includes:['overlay material']}]},sourceUrls:urls};
+    if(instructions.startsWith('Convert the supplied research report'))return {value:{rates:[{taskId:'overlay'}],issues:[],notes:[]},sourceUrls:[]};
+    planningCalls++;return {value:{rates:[],issues:[],notes:[]},sourceUrls:[]};
+  };
+  const result=await priceCompleteScope(scope,config,request,now);
+  assert.equal(result.customer.range,null);
+  assert.equal(planningCalls,0,'invalid evidence is not replaced by an unsupported model value');
+  assert.ok(result.internal.scopePricing.issues.some((issue:string)=>/ZodError|pricing did not complete/i.test(issue)));
+});
 
 test('An audit finding is repaired with a labeled quantity allowance, then audited again',async()=>{
  const unresolved={...extra,researchDescription:''};
@@ -290,6 +325,44 @@ test('Unselected alternatives never become billable mapping rules',()=>{
  const mapping={tasks:[{id:'optional',description:'Optional alternate island package',evidence:'Alternative not selected by owner; 10 LF',existingLineIds:[],additions:[{code:'03-15-02-M',quantity:10,quantityEvidence:'10 LF'}],researchDescription:'',issues:[]}],issues:[],notes:[],replacements:[],removeExclusions:[]};
  const result=catalogResolution(mapping as any,config,[],now,scope);
  assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/not billable/i.test(issue)));
+});
+test('Mutually exclusive alternates bill only the explicitly selected scope',()=>{
+  const selected={...extra,id:'tub',description:'Alcove tub alternate',evidence:'Tub alternate selected; walk-in shower alternate not selected.',researchDescription:'',additions:[{code:'03-15-02-M',quantity:1,quantityEvidence:'One selected tub alternate'}]};
+  const unselected={...extra,id:'shower',description:'Walk-in shower alternate',evidence:'Tub alternate selected; walk-in shower alternate not selected.',researchDescription:'',additions:[{code:'03-15-02-M',quantity:1,quantityEvidence:'One shower alternate'}]};
+  const result=catalogResolution({tasks:[selected,unselected],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
+  assert.deepEqual(result.rules.map(rule=>rule.scopeTaskId),['tub']);
+  assert.ok(result.issues.some(issue=>/Walk-in shower.*not billable/i.test(issue)));
+});
+test('Owner-supplied material permits installation labor but rejects material cost',()=>{
+  const supplied={...extra,id:'tile',description:'Install owner-supplied bathroom tile',evidence:'Homeowner supplies 99 SF of porcelain tile; contractor installs 99 SF.',researchDescription:'',additions:[
+    {code:'03-16-01-M',quantity:99,quantityEvidence:'99 SF owner-supplied tile'},
+    {code:'03-16-01-L',quantity:99,quantityEvidence:'99 SF tile installation'},
+  ]};
+  const result=catalogResolution({tasks:[supplied],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
+  assert.deepEqual(result.rules.map(rule=>rule.scopeTaskId),['tile']);
+  assert.equal(result.rules[0].category,'field-labor');
+  assert.ok(result.issues.some(issue=>/owner-supplied material cannot be charged/i.test(issue)));
+});
+test('Owner-provided and homeowner-furnished variants reject installed packages',()=>{
+  for(const evidence of ['Tile is owner-provided.','Tile is provided by owner.','Tile is furnished by the homeowner.']){
+    const supplied={...extra,id:'tile',description:'Bathroom tile',evidence,researchDescription:'',additions:[{code:'03-16-01-M',quantity:99,quantityEvidence:'99 SF tile'}]};
+    const result=catalogResolution({tasks:[supplied],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
+    assert.equal(result.rules.length,0,evidence);assert.ok(result.issues.some(issue=>/owner-supplied material cannot be charged/i.test(issue)),evidence);
+    const installed=marketResolution({...researched,rates:[{...researched.rates[0],taskId:'tile',basis:'subcontractor-installed',sources:researched.rates[0].sources.map(source=>({...source,costBasis:'subcontractor-installed'}))}]},urls,[{...supplied,researchDescription:'Install tile'}],now);
+    assert.equal(installed.rules.length,0,evidence);assert.ok(installed.issues.some(issue=>/labor-only rate/i.test(issue)),evidence);
+  }
+});
+test('A bare unresolved alternate remains a blocking nonbillable finding',()=>{
+  const unresolved={...extra,id:'alternate',description:'Optional shower alternate',evidence:'Alternate pricing requested; no selection is recorded.',researchDescription:'',additions:[{code:'03-16-01-M',quantity:80,quantityEvidence:'80 SF'}]};
+  const result=catalogResolution({tasks:[unresolved],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
+  assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/not billable/i.test(issue)));
+  assert.equal(advisoryIssue(result.issues[0]),false);
+});
+test('Ambiguous package units cannot become confirmed area without a labeled allowance',()=>{
+  const ambiguous={...extra,id:'tile',description:'Owner-supplied bathroom tile installation',evidence:'Homeowner supplies 10 boxes; coverage per box is unknown.',researchDescription:'',additions:[{code:'03-16-01-L',quantity:120,quantityEvidence:'120 SF assumed installation area'}]};
+  const result=catalogResolution({tasks:[ambiguous],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
+  assert.equal(result.rules.length,0);
+  assert.ok(result.issues.some(issue=>/quantity remains unmeasured/i.test(issue)));
 });
 
 test('Component-scoped exclusion does not reject included painting',()=>{
