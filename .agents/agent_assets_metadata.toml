@@ -1,5 +1,4 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "1XrLrtVQFj5k3alau-7wf"
@@ -342,3 +341,17 @@ id = "z5bSbsoCLzFeXdzg9JwYY"
 uri = "file://public/images/city-service/adu__caldwell.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "tJLrvaRUnrAjCksjY67ao"
+uri = "file://p5-verification/pricing-qualification/0c45743d4aa180074804ccb2d6d07d178df6353c719c185813102f0b80a9d0f7/1789830300212-0b0c5b15-ed5c-41c2-8718-a253c7d0f0b8/mapping-verified/customer.pdf"
+type = "pdf"
+title = "Qualified mapping: captured customer PDF"
+description = "Synthetic 100-LF labor-only scope. Live planning range $335–$435. Captured locally; no customer delivery."
+logical_id = "dd1a0894-3047-47da-85dd-1a2841e81957"
+content_hash = "sha256:850be602e311d3c18191b45e5251ed935a86d5ce7a351806083fc8dd23369285"
+size = 35569
+mtime_ms = 1789830519428
+storage_uri = "gcs://replit-rams-assets-kirk/rams/assets/repl:01a121fb-0516-4a6b-91c7-6b8c72963385/dd1a0894-3047-47da-85dd-1a2841e81957/a83a852b-6e23-4771-82a9-dc852e0c04e1"
+storage_version_token = "1789830723489495"
+content_type = "application/pdf"
