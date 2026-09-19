@@ -16,3 +16,7 @@ commit chain, compare uploaded tree and commit hashes with local objects, and
 use a non-forced reference update. Stop on any hash mismatch or upstream change.
 Never expose credentials, rewrite unrelated history, or infer deployment from
 successful repository synchronization.
+
+Preserve the raw commit message, including its final newline, when recreating
+an existing commit through the Git-data API. Trimming that newline produced a
+different commit hash despite identical tree, parents, author and timestamps.
