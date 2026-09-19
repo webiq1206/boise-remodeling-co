@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { checkedEmailSender } from '../../lib/emailDelivery';
 import { PLATFORM_EMAIL } from './emailLayout';
 
 /**
@@ -88,8 +89,10 @@ export async function getUncachableEmailClient(): Promise<{
 }> {
   try {
     const apiKey = await getResendApiKey();
+    const client = new Resend(apiKey);
+    client.emails.send = checkedEmailSender(client.emails.send.bind(client.emails), 'boiseremodeling.co');
     return {
-      client: new Resend(apiKey) as unknown as EmailClient,
+      client: client as unknown as EmailClient,
       fromEmail: PLATFORM_EMAIL,
     };
   } catch (error) {
@@ -104,7 +107,7 @@ export async function getUncachableEmailClient(): Promise<{
         client: {
           __noop: true,
           emails: {
-            send: async () => ({ data: { id: 'noop' }, error: null }),
+            send: async () => { throw new Error('Email delivery is not configured'); },
           },
         },
         fromEmail: PLATFORM_EMAIL,

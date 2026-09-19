@@ -19,6 +19,11 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
 
+if (process.env.BACKLINK_SEND_ENABLED === "true") {
+  console.error("Legacy backlink dispatch is paused. Use the supported outreach workflow with suppression and unsubscribe handling.");
+  process.exit(1);
+}
+
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const QUEUE = join(ROOT, "outreach/queue.json");
 const queue = existsSync(QUEUE) ? JSON.parse(readFileSync(QUEUE, "utf8")) : [];
