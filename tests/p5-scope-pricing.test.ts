@@ -7,8 +7,8 @@ import {createPlanningConfiguration,PLANNING_MODEL_VERSION,type PlanningCatalog}
 import type {ReviewedScope} from '../lib/p5/scope.ts';
 import {emptyInstructions} from '../lib/p5/instructions.ts';
 const date='2026-09-11T00:00:00.000Z',now=new Date(date);
-const codes=['03-17-01-M','03-17-01-L','03-19-02-M','03-15-02-M','03-15-02-L','03-16-01-M','03-16-01-L','03-14-01-M','03-14-01-L','03-04-01','03-04-02','03-04-03','03-05-02-M','03-05-02-L','REF-GENERAL-HOUR','REF-PLUMBING-HOUR','REF-ELECTRICAL-HOUR'];
-const catalog:PlanningCatalog={version:PLANNING_MODEL_VERSION,source:'Synthetic fixture',authorizedBy:'Test only',importedAt:date,rates:codes.map(code=>({code,description:'Synthetic work',type:code.endsWith('-M')?'Material':'Labor',unit:code.includes('HOUR')?'HR':'LF',amount:100,source:'Synthetic fixture',basis:'owner-average-cost'}))};
+const codes=['03-17-01-M','03-17-01-L','03-19-02-M','03-15-02-M','03-15-02-L','03-16-01-M','03-16-01-L','03-14-01-M','03-14-01-L','03-04-01','03-04-02','03-04-03','03-05-02-M','03-05-02-L','TEST-DOOR-M','TEST-DOOR-L','REF-GENERAL-HOUR','REF-PLUMBING-HOUR','REF-ELECTRICAL-HOUR'];
+const catalog:PlanningCatalog={version:PLANNING_MODEL_VERSION,source:'Synthetic fixture',authorizedBy:'Test only',importedAt:date,rates:codes.map(code=>({code,description:code.includes('DOOR')?'Door':code.includes('03-16')?'Tile':'Synthetic work',type:code.endsWith('-M')?'Material':'Labor',unit:code.includes('HOUR')?'HR':code.includes('DOOR')?'EA':code.includes('03-16')?'SF':'LF',amount:100,source:'Synthetic fixture',basis:'owner-average-cost'}))};
 const config=createPlanningConfiguration(catalog);
 const scope:ReviewedScope={text:'Supply ten feet of cabinetry and a specialty protective overlay.',answers:{service:'cabinet-product',cabinetBaseLf:'10',cabinetUpperLf:'0',cabinetTallLf:'0',location:'Boise'},extraction:null,uploads:[],reviewedAt:date,corrections:[]};
 const base=priceReviewedScope(scope,config,now);
@@ -324,14 +324,14 @@ test('Distinct trade labor remains additive while partial-hour unknowns stay unp
 test('Unselected alternatives never become billable mapping rules',()=>{
  const mapping={tasks:[{id:'optional',description:'Optional alternate island package',evidence:'Alternative not selected by owner; 10 LF',existingLineIds:[],additions:[{code:'03-15-02-M',quantity:10,quantityEvidence:'10 LF'}],researchDescription:'',issues:[]}],issues:[],notes:[],replacements:[],removeExclusions:[]};
  const result=catalogResolution(mapping as any,config,[],now,scope);
- assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/not billable/i.test(issue)));
+  assert.equal(result.rules.length,0);assert.ok(result.assumptions.some(issue=>/not billable/i.test(issue)));
 });
 test('Mutually exclusive alternates bill only the explicitly selected scope',()=>{
   const selected={...extra,id:'tub',description:'Alcove tub alternate',evidence:'Tub alternate selected; walk-in shower alternate not selected.',researchDescription:'',additions:[{code:'03-15-02-M',quantity:1,quantityEvidence:'One selected tub alternate'}]};
   const unselected={...extra,id:'shower',description:'Walk-in shower alternate',evidence:'Tub alternate selected; walk-in shower alternate not selected.',researchDescription:'',additions:[{code:'03-15-02-M',quantity:1,quantityEvidence:'One shower alternate'}]};
   const result=catalogResolution({tasks:[selected,unselected],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
   assert.deepEqual(result.rules.map(rule=>rule.scopeTaskId),['tub']);
-  assert.ok(result.issues.some(issue=>/Walk-in shower.*not billable/i.test(issue)));
+  assert.ok(result.assumptions.some(issue=>/Walk-in shower.*not billable/i.test(issue)));
 });
 test('Owner-supplied material permits installation labor but rejects material cost',()=>{
   const supplied={...extra,id:'tile',description:'Install owner-supplied bathroom tile',evidence:'Homeowner supplies 99 SF of porcelain tile; contractor installs 99 SF.',researchDescription:'',additions:[
@@ -342,6 +342,54 @@ test('Owner-supplied material permits installation labor but rejects material co
   assert.deepEqual(result.rules.map(rule=>rule.scopeTaskId),['tile']);
   assert.equal(result.rules[0].category,'field-labor');
   assert.ok(result.issues.some(issue=>/owner-supplied material cannot be charged/i.test(issue)));
+  const sibling={...extra,id:'mixed-components',description:'Door and window materials',evidence:'Owner supplies one door; contractor supplies one window.',researchDescription:'',additions:[{code:'TEST-DOOR-M',quantity:1,quantityEvidence:'One door.'}]};
+  const componentScoped=catalogResolution({tasks:[sibling],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
+  assert.equal(componentScoped.rules.length,0,'a contractor-supplied sibling with the same EA quantity cannot authorize the owner-supplied door');
+  assert.ok(componentScoped.issues.some(issue=>/owner-supplied material cannot be charged/i.test(issue)));
+});
+test('Complete pricing bills one contractor-supplied door and installation of all four',async()=>{
+  const doorScope:ReviewedScope={...scope,text:'Supply one and install four doors. Owner supplies three of the four doors; contractor supplies one door and installs all four.',answers:{service:'handyman',location:'Boise'}};
+  const doors={...extra,id:'doors',description:'Door supply and installation',evidence:doorScope.text,researchDescription:'',additions:[
+    {code:'TEST-DOOR-M',quantity:1,quantityEvidence:'Contractor supplies one door.'},
+    {code:'TEST-DOOR-L',quantity:4,quantityEvidence:'Contractor installs all four doors.'},
+  ]};
+  const priced=await priceCompleteScope(doorScope,config,replies([{tasks:[doors],issues:[]},{coveredTaskIds:['doors'],issues:[]}]),now);
+  assert.ok(priced.customer.range,'the mixed-responsibility scope is complete');
+  const lines=(priced.internal as any).lines.filter((line:any)=>line.id.startsWith('scope-'));
+  assert.deepEqual(lines.map((line:any)=>[line.category,line.quantity,line.unit]),[['materials',1,'EA'],['field-labor',4,'EA']]);
+
+  const overcharged={...doors,additions:[{...doors.additions[0],quantity:4,quantityEvidence:'Charge all four supplied doors.'},doors.additions[1]]};
+  const blocked=await priceCompleteScope(doorScope,config,replies([{tasks:[overcharged],issues:[]},{coveredTaskIds:['doors'],issues:[]},{tasks:[overcharged],issues:[]},{coveredTaskIds:['doors'],issues:[]}]),now);
+  assert.equal(blocked.customer.range,null,'the three owner-supplied doors cannot be charged');
+  assert.ok(blocked.internal.scopePricing.issues.some(issue=>/owner-supplied material|does not match the explicit quantity/i.test(issue)));
+});
+test('Complete pricing retains an unselected alternate for audit without charging it',async()=>{
+  const alternateScope:ReviewedScope={...scope,text:'Tile tub alternate selected; Tile shower alternate not selected. Selected tile area is 80 SF.',answers:{service:'handyman',location:'Boise'}};
+  const evidence=alternateScope.text;
+  const tub={...extra,id:'tile-tub',description:'Tile tub alternate',evidence,researchDescription:'',additions:[{code:'03-16-01-M',quantity:80,quantityEvidence:'Selected tub tile area is 80 SF.'}]};
+  const shower={...extra,id:'tile-shower',description:'Tile shower alternate',evidence,researchDescription:'',additions:[{code:'03-16-01-M',quantity:80,quantityEvidence:'Shared tile match is 80 SF.'}]};
+  const priced=await priceCompleteScope(alternateScope,config,replies([{tasks:[tub,shower],issues:[]},{coveredTaskIds:['tile-tub','tile-shower'],issues:[]}]),now);
+  assert.ok(priced.customer.range,'an explicitly excluded sibling does not poison complete pricing');
+  const lines=(priced.internal as any).lines.filter((line:any)=>line.id.startsWith('scope-'));
+  assert.equal(lines.length,1);assert.equal(lines[0].scopeTaskId,'tile-tub');assert.equal(lines[0].quantity,80);
+
+  const conflict={...tub,evidence:'Tile tub alternate selected; Tile tub alternate not selected. Selected tile area is 80 SF.'};
+  const held=await priceCompleteScope(alternateScope,config,replies([{tasks:[conflict,shower],issues:[]},{coveredTaskIds:['tile-tub','tile-shower'],issues:[]},{tasks:[conflict,shower],issues:[]},{coveredTaskIds:['tile-tub','tile-shower'],issues:[]}]),now);
+  assert.equal(held.customer.range,null,'conflicting selection evidence must block');
+  assert.ok(held.internal.scopePricing.issues.some(issue=>/selection is ambiguous or conflicting/i.test(issue)));
+});
+test('Complete pricing permits fully owner-supplied doors with installation only',async()=>{
+  const suppliedScope:ReviewedScope={...scope,text:'Owner supplies four doors; contractor installs four doors.',answers:{service:'handyman',location:'Boise'}};
+  const doors={...extra,id:'owner-doors',description:'Install owner-supplied doors',evidence:suppliedScope.text,researchDescription:'',additions:[
+    {code:'TEST-DOOR-L',quantity:4,quantityEvidence:'Contractor installs four doors.'},
+  ]};
+  const priced=await priceCompleteScope(suppliedScope,config,replies([{tasks:[doors],issues:[]},{coveredTaskIds:['owner-doors'],issues:[]}]),now);
+  assert.ok(priced.customer.range);
+  assert.deepEqual((priced.internal as any).lines.map((line:any)=>[line.category,line.quantity,line.unit]),[['field-labor',4,'EA']]);
+  const overcharged={...doors,additions:[...doors.additions,{code:'TEST-DOOR-M',quantity:4,quantityEvidence:'Four doors.'}]};
+  const blocked=await priceCompleteScope(suppliedScope,config,replies([{tasks:[overcharged],issues:[]},{coveredTaskIds:['owner-doors'],issues:[]},{tasks:[overcharged],issues:[]},{coveredTaskIds:['owner-doors'],issues:[]}]),now);
+  assert.equal(blocked.customer.range,null);
+  assert.ok(blocked.internal.scopePricing.issues.some(issue=>/owner-supplied material/i.test(issue)));
 });
 test('Owner-provided and homeowner-furnished variants reject installed packages',()=>{
   for(const evidence of ['Tile is owner-provided.','Tile is provided by owner.','Tile is furnished by the homeowner.']){
@@ -355,7 +403,7 @@ test('Owner-provided and homeowner-furnished variants reject installed packages'
 test('A bare unresolved alternate remains a blocking nonbillable finding',()=>{
   const unresolved={...extra,id:'alternate',description:'Optional shower alternate',evidence:'Alternate pricing requested; no selection is recorded.',researchDescription:'',additions:[{code:'03-16-01-M',quantity:80,quantityEvidence:'80 SF'}]};
   const result=catalogResolution({tasks:[unresolved],issues:[],notes:[],replacements:[],removeExclusions:[]},config,[],now,scope);
-  assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/not billable/i.test(issue)));
+  assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/selection is ambiguous/i.test(issue)));
   assert.equal(advisoryIssue(result.issues[0]),false);
 });
 test('Ambiguous package units cannot become confirmed area without a labeled allowance',()=>{

@@ -10,7 +10,7 @@ function syntheticRecord(repeat=150) {
   const customerAssumptions=Array.from({length:repeat},(_,i)=>`Customer assumption ${i}: field condition will be verified.`);
   const lines=Array.from({length:repeat},(_,i)=>({category:"carpentry",description:`Complete scope item ${i} without reducing specified work.`,quantity:1,unitCost:125,directCost:125,quantitySource:`Long source narrative ${i} duplicated by scope pricing.`,evidence:{basis:"owner-estimating-schedule",reference:`Long cost-book source reference ${i}.`}}));
   return {
-    brand:{name:"Example Remodeler",domain:"example.test"},estimator:"p5-policy",draftId:"draft-redacted-001",revision:3,
+    brand:{name:"Example Remodeler",domain:"example.test"},estimator:"p5-policy",draftId:"00000000-0000-4000-8000-000000000001",revision:3,
     contact:{name:"Redacted Homeowner",email:"redacted@example.test",phone:"000-000-0000"},
     scope:{text:"Complete structurally equivalent synthetic remodel scope.",answers:{service:"addition",address:"REDACTED",location:"Boise"},uploads:[],extraction:{facts:[]}},
     internal:{lines,assumptions,exclusions:["Internal hazardous-material exclusion."],allowances:[{name:"Internal tile allowance",amount:4500}],costBookSnapshot:{entries:lines},financeSnapshot:{policy:assumptions},scopePricing:{evidence:assumptions},warnings:[]},
@@ -69,13 +69,68 @@ test("bounded CRM payload passes the actual schema and extracted receiver handle
   assert.equal(JSON.stringify(original),originalJson,"durable source record is not mutated");
 });
 
-test("fails explicitly instead of truncating essential internal priced lines",()=>{
-  const record=syntheticRecord(1100);
-  assert.throws(()=>buildCrmPayload(record,"idempotency-redacted","example.test"),/exceeds safe limit/);
+test("uses an explicit bounded authenticated-reference envelope when the legitimate compact estimate exceeds 90KB",async()=>{
+  const record=syntheticRecord(300);
+  const originalJson=JSON.stringify(record);
+  const payload:any=buildCrmPayload(record,"idempotency-redacted","example.test");
+  assert.ok(Buffer.byteLength(originalJson)>CRM_PAYLOAD_LIMIT_BYTES);
+  assert.ok(crmPayloadBytes(payload)<=CRM_PAYLOAD_LIMIT_BYTES);
+  assert.equal(payload.estimate.mode,"authenticated-reference");
+  assert.equal(payload.estimate.referenceMode,true);
+  assert.equal(payload.estimate.id,record.draftId);
+  assert.equal(payload.estimate.revision,record.revision);
+  assert.deepEqual(payload.estimate.sourceIdentity,{domain:"example.test",externalLeadId:"idempotency-redacted",inquiryId:record.draftId});
+  assert.ok(payload.estimate.manifest.reason.includes("above the 90000-byte sender bound"));
+  assert.deepEqual(payload.estimate.sellingRange,record.customer.range);
+  assert.deepEqual(payload.estimate.lead,{fullName:record.contact.name,email:record.contact.email,phone:record.contact.phone,source:"example.test"});
+  assert.equal(payload.estimate.scope,undefined,"oversized scope is referenced, not partially copied");
+  assert.equal(payload.estimate.internal,undefined,"oversized internal detail is referenced, not partially copied");
+  assert.equal(payload.estimate.customer,undefined,"oversized customer detail is referenced, not partially copied");
+  assert.match(payload.estimate.manifest.label,/REFERENCE_MODE/);
+  assert.deepEqual(payload.estimate.manifest.omittedPaths,["estimate.scope","estimate.internal","estimate.customer"]);
+  assert.match(payload.estimate.manifest.omittedContent,/unchanged durable draft and outbox record/);
+  assert.match(payload.estimateSummary,/REFERENCE MODE/);
+  assert.equal(payload.projectScope,payload.estimate.project.summaryExcerpt);
+  assert.ok(!payload.estimateSummary.includes(record.scope.text),"reference summary does not conceal a copy of the full scope");
+  assert.equal(JSON.stringify(record),originalJson,"reference construction does not mutate the saved original");
+
+  const reference=new URL(payload.estimate.durableAdminRecord.url);
+  assert.equal(reference.origin,"https://example.test");
+  assert.equal(reference.pathname,"/admin/p5-estimators");
+  assert.equal(reference.searchParams.get("id"),record.draftId);
+  assert.equal(reference.searchParams.get("revision"),String(record.revision));
+  assert.equal(payload.estimate.durableAdminRecord.access,"authenticated administrator");
+  assert.match(payload.estimate.durableAdminRecord.note,/grants no public access/);
+
+  const parsed=receiverParse(JSON.stringify(payload));
+  assert.equal(parsed.status,200);
+  let persisted:any;
+  const storage={getExternalApiKey:async()=>"offline-key",createLead:async(input:any)=>(persisted=input,{id:"offline-reference-lead"})};
+  const accepted=await extractedReceiverHandler(parsed.body,storage);
+  assert.equal(accepted.status,201);
+  const storedEstimate=JSON.parse(persisted.sourcePayload).estimate;
+  assert.equal(storedEstimate.mode,"authenticated-reference");
+  assert.deepEqual(storedEstimate.sourceIdentity,payload.estimate.sourceIdentity);
+  assert.equal(storedEstimate.durableAdminRecord.url,reference.toString());
+});
+
+test("authenticated admin deep link uses the existing GET id contract",()=>{
+  const page=readFileSync("app/admin/p5-estimators/page.tsx","utf8");
+  const endpoint=readFileSync("lib/p5/adminEndpoint.ts","utf8");
+  assert.match(page,/new URLSearchParams\(window\.location\.search\)/);
+  assert.match(page,/inspect\(requestedDraft/);
+  assert.match(page,/encodeURIComponent\(id\)/);
+  assert.match(page,/Invalid estimate reference/);
+  assert.match(endpoint,/await requireEstimatorAdmin\(\)/);
+  assert.match(endpoint,/searchParams\.get\("id"\)/);
+  assert.match(endpoint,/searchParams\.get\("revision"\)/);
+  assert.match(endpoint,/p5_estimator_history WHERE draft_id=\$1 AND revision=\$2/);
+  assert.match(endpoint,/WHERE id=\$1/);
 });
 
 test("rejects untrusted configured domain metadata",()=>{
   assert.throws(()=>buildCrmPayload(syntheticRecord(2),"key","https://example.test/path"),/valid hostname/);
+  assert.throws(()=>buildCrmPayload({...syntheticRecord(2),draftId:"not-a-saved-draft"},"key","example.test"),/draftId must identify a saved estimate/);
 });
 
 test("bounds CRM responses and exposes only allowlisted diagnostic classes",async()=>{

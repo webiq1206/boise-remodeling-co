@@ -92,6 +92,53 @@ test('saved pricing result keeps public scope and selling prices while customer 
  assert.match(adminText,/owner-average cost/i);
 });
 
+test('ordinary overhead-door scope and every priced line survive page, email, and PDF presentation',async()=>{
+ const garage={
+  summary:'Repair the overhead garage door and its opener.',
+  includedCategories:['Garage Doors'],
+  range:{low:1500,high:1800},
+  categoryRanges:[{category:'Garage Doors',low:1500,high:1800}],
+  lineItems:[
+   {id:'door',category:'Garage Doors',description:'Repair overhead garage door',quantity:1,unit:'EA',low:1200,high:1400,unitLow:1200,unitHigh:1400},
+   {id:'opener',category:'Garage Doors',description:'Repair garage door opener',quantity:1,unit:'EA',low:300,high:400,unitLow:300,unitHigh:400},
+  ],
+  assumptions:[],exclusions:[],allowances:[],factors:[],message:'Review your estimate.',nextStep:'Consultation',disclaimer:'Preliminary only.',
+ };
+ assert.equal(publicPricingText('Repair the overhead garage door and its opener.'),'Repair the overhead garage door and its opener.');
+ assert.equal(publicPricingText('Repair overhead wiring and follow the architect markup. Maintain a 1/8-inch margin around the door.'),'Repair overhead wiring and follow the architect markup. Maintain a 1/8-inch margin around the door.');
+ const page=JSON.stringify(estimateSections(garage));
+ const mail=estimateEmail('garage-regression',{customer:garage,contact:{name:'Garage Customer'}},false);
+ const pdf=(await pdfTextLayers(await customerPdf('garage-regression',garage))).join('\n');
+ for(const output of [page,mail.html,mail.text,pdf]){
+  assert.match(output,/Repair the overhead garage door and its opener\./);
+  assert.match(output,/Repair overhead garage door/);
+  assert.match(output,/\$1,200 to \$1,400 total/);
+ }
+});
+
+test('a fully private description is replaced safely without dropping its priced quantity or selling total',async()=>{
+ const privateDescription={
+  summary:'Garage improvements.',
+  includedCategories:['Garage Doors'],
+  range:{low:335,high:435},
+  categoryRanges:[{category:'Garage Doors',low:335,high:435}],
+  lineItems:[{id:'private-description',category:'Garage Doors',description:'Approved direct labor rate of $2.00/LF ($200.00 direct cost).',quantity:100,unit:'LF',low:335,high:435,unitLow:3.35,unitHigh:4.35}],
+  assumptions:[],exclusions:[],allowances:[],factors:[],message:'Review your estimate.',nextStep:'Consultation',disclaimer:'Preliminary only.',
+ };
+ const projected=customerPresentation(privateDescription);
+ assert.equal(projected.lineItems.length,1);
+ assert.equal(projected.lineItems[0].description,'Priced scope item - Garage Doors');
+ const page=JSON.stringify(estimateSections(privateDescription));
+ const mail=estimateEmail('private-description',{customer:privateDescription,contact:{name:'Garage Customer'}},false);
+ const pdf=(await pdfTextLayers(await customerPdf('private-description',privateDescription))).join('\n');
+ for(const output of [page,mail.html,mail.text,pdf]){
+  assert.match(output,/Priced scope item - Garage Doors/);
+  assert.match(output,/100 LF/);
+  assert.match(output,/\$335 to \$435 total/);
+  assert.doesNotMatch(output,/\$2\.00|200\.00 direct cost|direct labor rate/i);
+ }
+});
+
 test('public pricing repair removes adversarial finance clauses without losing mixed public facts',()=>{
  const mixed=[
   'Install 100 LF in 4 hours at the direct labor rate of $2.00/LF ($200.00 direct cost), excluding all second-floor work.',
@@ -112,4 +159,25 @@ test('public pricing repair removes adversarial finance clauses without losing m
  assert.match(repaired,/delivery, and installation by October 15/);
  assert.match(repaired,/Owner supplies materials/);
  assert.match(repaired,/plumbing and electrical are excluded/);
+});
+
+test('financial context identifies overhead, margin, allocation, and markup without treating the words themselves as private',()=>{
+ const financial=[
+  'Overhead: $72.',
+  'Overhead is 20%.',
+  '$72 overhead.',
+  '20% for overhead.',
+  'Margin of 40%.',
+  'Allocation is 12%.',
+  'Markup: $90.',
+ ].join('\n');
+ assert.equal(publicPricingText(financial),'');
+ const ordinary=[
+  'Repair the overhead garage door and its opener.',
+  'Repair overhead wiring.',
+  'Maintain a 1/8-inch margin around the door.',
+  'Follow the architect markup.',
+  'Confirm the room allocation with the architect.',
+ ].join('\n');
+ assert.equal(publicPricingText(ordinary),ordinary);
 });

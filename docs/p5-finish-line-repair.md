@@ -9,8 +9,13 @@
   and evidence limitations remain; administrative records and PDFs retain costs.
 - CRM requests preserve essential scope and distinct internal details while
   replacing duplicated policy/evidence snapshots with an explicit manifest and
-  authenticated durable-record reference. Requests above 90,000 UTF-8 bytes fail
-  explicitly. No delivery status is fabricated and CRM retries remain manual.
+  authenticated durable-record reference. A legitimate compact estimate above
+  90,000 UTF-8 bytes uses a bounded, explicitly labelled reference envelope with
+  exact lead/source/estimate identity, an honest summary excerpt and selling
+  range. Complete saved detail remains unchanged behind normal administrator
+  authentication, bound to the exact estimate revision. Only an oversized
+  minimal identity envelope fails explicitly. No delivery status is fabricated
+  and CRM retries remain manual.
   See `p5-crm-http413-repair.md` for receiver provenance and offline acceptance.
 - Verification receives accepted research observations and their actual citations,
   not the unrelated search URL collection and raw narrative found in the saved
@@ -21,6 +26,13 @@
   ambiguous package units, malformed research and stale retained takeoffs have
   offline regression coverage. Invalid research is blocked rather than replaced
   with a planning average. Timeout fallback remains explicitly preliminary.
+- Positive customer-output regressions preserve overhead garage doors and other
+  ordinary construction language while removing actual financial explanations.
+  Sanitization does not drop priced lines or their selling totals. Actual
+  pricing regressions preserve one contractor-supplied door plus four
+  installations when the owner supplies three doors, and charge only selected
+  tub tile when the shower alternative is explicitly unselected. Conflicting
+  alternative evidence blocks pricing.
 
 ## Offline verification
 
@@ -33,6 +45,7 @@ node --import tsx --test tests/p5-presentation.test.ts \
   tests/p5-crm-payload.test.ts tests/email-delivery.test.ts
 node --import tsx scripts/test-p5-runtime-acceptance.mjs
 node --import tsx scripts/test-p5-pricing-identity.mts
+node --test tests/p5-admin-reference.test.mjs
 DATABASE_URL='' NEXT_PHASE=phase-production-build npm run build
 ```
 
@@ -61,3 +74,10 @@ The CLI creates no public test endpoint, bypasses no authentication, and makes n
 direct database status changes. Offline receiver contract acceptance does not
 prove the deployed receiver version, inbox receipt or real CRM persistence.
 Publication and those external acceptance operations require separate review.
+
+The receiving dashboard is shared across brands and historically ignored the
+sender's external ID and idempotency header. Its email-only duplicate response
+is not evidence that this estimate was received. Wait for the tested keyed
+receiver identity/reconciliation contract and authenticated QA campaign-
+suppression mechanism before a live CRM acceptance test. A QA contact-name
+prefix is not that mechanism. Preserve all historical ambiguous delivery rows.

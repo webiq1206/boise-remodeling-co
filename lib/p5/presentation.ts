@@ -16,7 +16,7 @@ export const FIELD_CATEGORY_TITLES:Record<string,string>={site:'Site & utilities
 const FIELD_SECTION_KIND:Record<string,SectionKind>={'Excluded work':'excluded','Allowances & selections':'allowance','Owner responsibilities':'info','Alternates':'info'};
 /** Section titles used by consumers that group by kind; kept in one place. */
 export const SECTION_TITLES={included:'Included work',excluded:'Excluded work',responsibilities:'Responsibilities',buildings:'Buildings and floors',questions:'Scope questions requiring clarification',coverage:'Document review coverage',buildingPrices:'Separate building prices',pricingBasis:'Pricing basis',allowances:'Included preliminary allowances',verify:'Items to verify before a firm proposal',categoriesIntro:'Included scope by category',requestedIntro:'Requested scope by category'} as const;
-const PRIVATE_PRICING_TEXT=/\b(?:direct (?:project |labor |material )?(?:unit[- ]?)?(?:rate|cost|price)|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|(?:actual|net|loaded|landed) (?:unit[- ]?)?cost|unit[- ]cost|owner[- ]average cost|owner[- ]approved estimating schedule|cost[- ]book|risk[- ]adjusted (?:direct )?cost|overhead|profit|margin|allocations?|markup|divisor|reconciliation|pricing formula|calculation trace|cost ceiling|salary|payroll burden)\b|(?:\+|÷|\/)\s*(?:overhead|profit|margin|contingency)|\bdivid(?:e|ed|ing)\s+by\b|\bpercent(?:age)?\s+of\s+(?:cost|revenue)\b/i;
+const PRIVATE_PRICING_TEXT=/\b(?:direct (?:project |labor |material )?(?:unit[- ]?)?(?:rate|cost|price)|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|(?:actual|net|loaded|landed) (?:unit[- ]?)?cost|unit[- ]cost|owner[- ]average cost|owner[- ]approved estimating schedule|cost[- ]book|risk[- ]adjusted (?:direct )?cost|overhead (?:allocation|recovery|cost|expense|burden|rate|charge|percentage|factor)|profit|divisor|reconciliation|pricing formula|calculation trace|cost ceiling|salary|payroll burden)\b|\b(?:overhead|margin|allocations?|markup)\b\s*(?::|=|\bis\b|\bof\b)?\s*(?:\$[\d,.]+|\d+(?:\.\d+)?\s*%)|(?:\$[\d,.]+|\d+(?:\.\d+)?\s*%)\s*(?:(?:for|in|as)\s+)?\b(?:overhead|margin|allocations?|markup)\b|(?:\+|÷|\/)\s*(?:overhead|profit|margin|contingency)|\bdivid(?:e|ed|ing)\s+by\b|\bpercent(?:age)?\s+of\s+(?:cost|revenue)\b/i;
 /**
  * Repair prose produced by older pricing runs before it reaches any customer
  * presenter. Generated verification notes sometimes combine useful scope with
@@ -27,8 +27,8 @@ export function publicPricingText(value:unknown):string{
  const text=typeof value==='string'?value.trim():'';
  if(!text)return '';
  const repairSentence=(sentence:string):string[]=>{
-  let safe=sentence
-   .replace(/\s*\([^)]*(?:\b(?:direct (?:project |labor |material )?(?:unit[- ]?)?(?:rate|cost|price)|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|unit[- ]cost|overhead|profit|margin|allocation|markup|divisor|salary|payroll burden)\b)[^)]*\)/gi,'')
+   let safe=sentence
+    .replace(/\s*\(([^)]*)\)/g,(whole,body)=>PRIVATE_PRICING_TEXT.test(body)?'':whole)
    .replace(/:\s*(?:mapped to|catalog(?:ued)? as)\s+[^.]+/gi,'');
   if(!PRIVATE_PRICING_TEXT.test(safe)){
    safe=safe.replace(/\s+/g,' ').replace(/\s+([,.;:])/g,'$1').trim();
@@ -61,14 +61,18 @@ export function customerPresentation(result:any):any{
  const source=result&&typeof result==='object'?result:{};
  const range=source.range&&Number.isFinite(source.range.low)&&Number.isFinite(source.range.high)?{low:Number(source.range.low),high:Number(source.range.high)}:null;
  const categoryRanges=Array.isArray(source.categoryRanges)?source.categoryRanges.filter((x:any)=>x&&typeof x.category==='string'&&Number.isFinite(x.low)&&Number.isFinite(x.high)).map((x:any)=>({category:publicPricingText(x.category),low:Number(x.low),high:Number(x.high)})).filter((x:any)=>x.category):[];
- const lineItems=Array.isArray(source.lineItems)?source.lineItems.map((x:any)=>({
-  id:String(x?.id||''),category:publicPricingText(x?.category),description:publicPricingText(x?.description),
+  const lineItems=Array.isArray(source.lineItems)?source.lineItems.map((x:any,index:number)=>{
+   const category=publicPricingText(x?.category)||'Other scope';
+   const description=publicPricingText(x?.description)||`Priced scope item${category==='Other scope'?'':` - ${category}`}`;
+   return {
+   id:String(x?.id||`priced-line-${index+1}`),category,description,
   quantity:Number(x?.quantity),unit:String(x?.unit||''),low:Number(x?.low),high:Number(x?.high),unitLow:Number(x?.unitLow),unitHigh:Number(x?.unitHigh),
   ...(x?.building?{building:publicPricingText(x.building)}:{}),...(x?.floor?{floor:publicPricingText(x.floor)}:{}),
   ...(x?.quantityRange&&Number.isFinite(x.quantityRange.low)&&Number.isFinite(x.quantityRange.high)?{quantityRange:{low:Number(x.quantityRange.low),high:Number(x.quantityRange.high)}}:{}),
   ...(x?.pricingStatus?{pricingStatus:String(x.pricingStatus)}:{}),...(publicPricingText(x?.verification)?{verification:publicPricingText(x.verification)}:{}),
   ...(publicPricingText(x?.rateLocation)?{rateLocation:publicPricingText(x.rateLocation)}:{}),...(x?.rateDate?{rateDate:String(x.rateDate).slice(0,10)}:{})
- })).filter((x:any)=>x.id&&x.category&&x.description&&Number.isFinite(x.quantity)&&Number.isFinite(x.low)&&Number.isFinite(x.high)):[];
+   };
+  }).filter((x:any)=>Number.isFinite(x.quantity)&&Number.isFinite(x.low)&&Number.isFinite(x.high)):[];
  const allowances=Array.isArray(source.allowances)?source.allowances.map((x:any)=>typeof x==='string'?publicPricingText(x):{
   description:publicPricingText(x?.description),...(x?.amount!=null&&Number.isFinite(Number(x.amount))?{amount:Number(x.amount)}:{}),includes:publicTextList(x?.includes),
   taxIncluded:Boolean(x?.taxIncluded),freightIncluded:Boolean(x?.freightIncluded),deliveryIncluded:Boolean(x?.deliveryIncluded),installationIncluded:Boolean(x?.installationIncluded),wasteIncluded:Boolean(x?.wasteIncluded),

@@ -78,6 +78,97 @@ function trustedDomain(value: unknown) {
   return domain;
 }
 
+function adminDraftUrl(domain: string, draftId: string) {
+  const url = new URL(`https://${domain}/admin/p5-estimators`);
+  url.searchParams.set("id", draftId);
+  return url;
+}
+
+function revisionAdminDraftUrl(domain: string, draftId: string, revision: unknown) {
+  const url = adminDraftUrl(domain, draftId);
+  url.searchParams.set("revision", String(revision));
+  return url.toString();
+}
+
+function referencePayload(source: JsonRecord, fields: {
+  domain: string;
+  draftId: string;
+  fullName: string;
+  email: string;
+  service: string;
+  summary: string;
+  answers: JsonRecord;
+  range: JsonRecord;
+  key: string;
+  compactBytes: number;
+}) {
+  const summaryExcerpt = fields.summary.slice(0, 1_900);
+  const url = revisionAdminDraftUrl(fields.domain, fields.draftId, source.revision);
+  const omittedPaths = ["estimate.scope", "estimate.internal", "estimate.customer"];
+  return {
+    fullName: fields.fullName,
+    email: fields.email,
+    phone: source.contact.phone || undefined,
+    source: fields.domain,
+    // The pinned receiver currently strips this unknown field. It is retained
+    // only as sender identity for a future explicitly versioned contract.
+    externalLeadId: fields.key,
+    inquiryId: fields.draftId,
+    propertyAddress: fields.answers.address || undefined,
+    city: fields.answers.location || undefined,
+    projectTypes: [fields.service],
+    projectScope: summaryExcerpt,
+    estimate: {
+      schemaVersion: 1,
+      mode: "authenticated-reference",
+      referenceMode: true,
+      brand: source.brand,
+      estimator: source.estimator,
+      id: fields.draftId,
+      revision: source.revision,
+      sourceIdentity: {
+        domain: fields.domain,
+        externalLeadId: fields.key,
+        inquiryId: fields.draftId,
+      },
+      lead: {
+        fullName: fields.fullName,
+        email: fields.email,
+        phone: source.contact.phone || undefined,
+        source: fields.domain,
+      },
+      project: {
+        service: fields.service,
+        propertyAddress: fields.answers.address || undefined,
+        city: fields.answers.location || undefined,
+        summaryExcerpt,
+        summaryCharacters: fields.summary.length,
+        summaryComplete: summaryExcerpt.length === fields.summary.length,
+      },
+      sellingRange: {low: fields.range.low, high: fields.range.high},
+      durableAdminRecord: {
+        draftId: fields.draftId,
+        revision: source.revision,
+        url,
+        access: "authenticated administrator",
+        note: "Normal administrator authentication is required. This reference grants no public access.",
+      },
+      manifest: {
+        label: "REFERENCE_MODE_COMPACT_ESTIMATE_EXCEEDED_CRM_BOUND",
+        mode: "authenticated-reference",
+        reason: `The legitimate compact CRM estimate was ${fields.compactBytes} UTF-8 bytes, above the ${CRM_PAYLOAD_LIMIT_BYTES}-byte sender bound.`,
+        omittedPaths,
+        omittedContent: "Complete scope, customer presentation, internal pricing, and evidence remain in the unchanged durable draft and outbox record.",
+        summaryExcerpt: summaryExcerpt.length === fields.summary.length ? "complete" : "explicitly excerpted",
+      },
+    },
+    estimateSummary: `REFERENCE MODE: estimate ${fields.draftId}, revision ${source.revision}. ${summaryExcerpt} Selling range: $${fields.range.low} to $${fields.range.high}. Full unchanged detail requires normal administrator authentication at ${url}. Full estimate sections omitted from this bounded envelope: ${omittedPaths.join(", ")}.`,
+    estimateLow: fields.range.low,
+    estimateHigh: fields.range.high,
+    estimateRange: fields.range.low != null && fields.range.high != null ? `$${fields.range.low} to $${fields.range.high}` : undefined,
+  };
+}
+
 export function crmPayloadBytes(payload: unknown): number {
   return Buffer.byteLength(JSON.stringify(payload), "utf8");
 }
@@ -115,9 +206,11 @@ export function safeCrmContentClass(contentType: string|null) {
 
 /**
  * Produces a receiver-compatible copy while leaving the durable outbox record
- * untouched. Scope, customer presentation, and internal priced lines remain
- * complete. Only duplicated policy/evidence snapshots are represented by a
- * manifest and an authenticated link to the original record.
+ * untouched. When the complete useful copy fits, only duplicated
+ * policy/evidence snapshots are represented by a manifest. If that legitimate
+ * compact copy is still too large, a visibly labelled reference envelope is
+ * sent instead; it contains identity, source, revision, summary and selling
+ * range, and points administrators to the complete authenticated record.
  */
 export function buildCrmPayload(record: unknown, key: string, configuredDomain: string) {
   const source = requireRecord(record, "record");
@@ -127,6 +220,12 @@ export function buildCrmPayload(record: unknown, key: string, configuredDomain: 
   const customer = requireRecord(source.customer, "customer");
   const internal = requireRecord(source.internal, "internal");
   const draftId = requireString(source.draftId, "draftId");
+  if (!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(draftId)) {
+    throw new Error("CRM payload cannot be built: draftId must identify a saved estimate");
+  }
+  if (!Number.isSafeInteger(source.revision) || source.revision < 1) {
+    throw new Error("CRM payload cannot be built: revision is missing");
+  }
   const fullName = requireString(contact.name, "contact.name");
   const email = requireString(contact.email, "contact.email");
   const summary = requireString(customer.summary, "customer.summary");
@@ -137,7 +236,7 @@ export function buildCrmPayload(record: unknown, key: string, configuredDomain: 
 
   const domain = trustedDomain(configuredDomain);
   const {compact, omittedRedundantMetadata} = compactInternal(internal,scope);
-  const adminUrl = `https://${domain}/admin/p5-estimators`;
+  const adminUrl = revisionAdminDraftUrl(domain, draftId, source.revision);
   const range = requireRecord(customer.range, "customer.range");
   const estimate = {
     schemaVersion: 1,
@@ -177,7 +276,15 @@ export function buildCrmPayload(record: unknown, key: string, configuredDomain: 
     estimateRange: range.low != null && range.high != null ? `$${range.low} to $${range.high}` : undefined,
   };
   const bytes = crmPayloadBytes(payload);
-  if (bytes > CRM_PAYLOAD_LIMIT_BYTES) throw new CrmPayloadTooLargeError(bytes);
+  if (bytes > CRM_PAYLOAD_LIMIT_BYTES) {
+    const reference = referencePayload(source, {
+      domain, draftId, fullName, email, service, summary, answers, range, key,
+      compactBytes: bytes,
+    });
+    const referenceBytes = crmPayloadBytes(reference);
+    if (referenceBytes > CRM_PAYLOAD_LIMIT_BYTES) throw new CrmPayloadTooLargeError(referenceBytes);
+    return reference;
+  }
   return payload;
 }
 

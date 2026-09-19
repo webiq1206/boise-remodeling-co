@@ -12,3 +12,4 @@
 - [GitHub authentication boundary](github-auth-boundary.md) — a working GitHub connection need not authenticate shell Git; connector Git-data writes can preserve exact history.
 - [Local browser verification](local-browser-verification.md) — use Nix Chromium and the configured preview origin; localhost aliases can trigger legitimate origin rejection.
 - [Estimator source integrity](estimator-source-integrity.md) — upload receipts cannot authorize older scope; replacement answers and recoveries need independent safeguards.
+- [Customer scope preservation](customer-scope-preservation.md) — disclosure and scope guards need positive construction counterexamples alongside rejection tests.

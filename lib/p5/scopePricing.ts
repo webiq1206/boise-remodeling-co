@@ -207,8 +207,10 @@ export function catalogResolution(mapping:Mapping,configuration:EstimatorConfigu
     // Historical alternatives can be present in a plan set or prior estimate,
     // but they are not selected scope. Holding the task is safer than silently
     // billing it; the final audit then has a visible reason to resolve.
-    if(taskIsUnselected(t)){
-      result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);
+    const selection=taskSelectionStatus(t,mapping.tasks);
+    if(selection!=='billable'){
+      const finding=`${t.description}: ${selection==='ambiguous'?'alternative selection is ambiguous or conflicting':'unselected alternative or excluded work is not billable'}.`;
+      if(selection==='ambiguous')result.issues.push(finding);else result.assumptions.push(finding);
       continue;
     }
     result.issues.push(...t.issues.map(i=>`${t.description}: ${i}`));
@@ -218,14 +220,14 @@ export function catalogResolution(mapping:Mapping,configuration:EstimatorConfigu
     for(const id of t.existingLineIds){
       const line=existing.find(l=>l.id===id);
       if(result.removeLineIds?.includes(id)||!line||line.quantity*line.unitCost<=0)result.issues.push(`${t.description}: invalid existing price reference.`);
-      else if(ownerSuppliesMaterial(t)&&['materials','subcontractors'].includes(line.category))result.issues.push(`${t.description}: owner-supplied material cannot be charged through a contractor material or supply-and-install package.`);
+      else if(['materials','subcontractors'].includes(line.category)&&ownerSuppliesMaterial(t,line.quantity,line.unit,line.description))result.issues.push(`${t.description}: owner-supplied material cannot be charged through a contractor material or supply-and-install package.`);
       else result.issues.push(...existingQuantityIssues(t,line,scope,mapping.tasks.length));
     }
     for(const a of t.additions){
       const rate=configuration.planningCatalog?.rates.find(r=>r.code===a.code);
       const regional=configuration.regionalRates?.find(r=>r.id===a.code);
       const rateUnit=rate?.unit||regional?.unit||'';
-      if(ownerSuppliesMaterial(t)&&(rate?.type==='Material'||rate?.type==='Subcontractor'||regional?.category==='materials'||regional?.category==='subcontractors')){
+      if((rate?.type==='Material'||rate?.type==='Subcontractor'||regional?.category==='materials'||regional?.category==='subcontractors')&&ownerSuppliesMaterial(t,a.quantity,rateUnit,rate?.description||regional?.description||a.code)){
         result.issues.push(`${t.description}: owner-supplied material cannot be charged through a contractor material or supply-and-install package.`);
         continue;
       }
@@ -264,27 +266,63 @@ const clauseHasComponent=(clause:string,terms:string[])=>terms.some(term=>{
  * contains the word excluded. A bare "alternate/not selected" status still
  * applies to the task when no component is named.
  */
-function taskIsUnselected(task:Mapping['tasks'][number]){
+function taskSelectionStatus(task:Mapping['tasks'][number],tasks:Mapping['tasks']):'billable'|'unselected'|'ambiguous'{
   const description=task.description.trim();
-  const terms=componentTerms(description);
-  // "Alternate" identifies a choice; it does not by itself say which choice
-  // won. Evaluate the description together with component-scoped evidence so
-  // "tub alternate selected; shower alternate not selected" keeps only tub.
-  const clauses=`${description}. ${task.evidence}`.split(/[.;\n]+|\s*,\s*/).map(clause=>clause.trim()).filter(Boolean);
-  const statusClauses=clauses.filter(clause=>UNSELECTED_SCOPE.test(clause));
-  const componentStatuses=statusClauses.filter(clause=>clauseHasComponent(clause,terms));
+  const allTerms=componentTerms(description);
+  const siblingTerms=new Set(tasks.filter(other=>other!==task).flatMap(other=>componentTerms(other.description)));
+  // Prefer terms unique to this task. Shared words such as "tile" or "door"
+  // cannot identify which mutually-exclusive component a status clause names.
+  const terms=allTerms.filter(term=>!siblingTerms.has(term));
+  const identityTerms=terms.length?terms:allTerms;
+  const evidenceClauses=task.evidence.split(/[.;\n]+|\s*,\s*/).map(clause=>clause.trim()).filter(Boolean);
+  const statusClauses=evidenceClauses.filter(clause=>UNSELECTED_SCOPE.test(clause)&&clauseHasComponent(clause,identityTerms));
   const included=(clause:string)=>INCLUDED_SCOPE.test(clause)&&!/\bnot\s+(?:selected|included)\b/i.test(clause);
-  if(componentStatuses.some(included))return false;
-  if(componentStatuses.some(clause=>UNSELECTED_SCOPE.test(clause)&&!included(clause)))return true;
-  // Generic alternate/not-selected language refers to the task itself. A
-  // component-specific "excluded" clause without a task term does not.
-  return statusClauses.some(clause=>TASK_STATUS_SCOPE.test(clause))||(statusClauses.length>0&&!terms.length);
+  const positive=statusClauses.some(included);
+  const negative=statusClauses.some(clause=>!included(clause));
+  if(positive&&negative)return 'ambiguous';
+  if(positive)return 'billable';
+  if(negative)return 'unselected';
+  const knownTerms=[...new Set(tasks.flatMap(other=>componentTerms(other.description)))];
+  if(evidenceClauses.some(clause=>/\bnot\s+(?:selected|included)\b/i.test(clause)&&!clauseHasComponent(clause,knownTerms)))return 'unselected';
+  // A status in the task description itself is component-specific. An
+  // alternate without an explicit selection remains blocked, rather than
+  // allowing a model to choose it.
+  if(/\b(?:not\s+selected|not\s+included|excluded|by\s+others|discarded)\b/i.test(description))return 'unselected';
+  if(TASK_STATUS_SCOPE.test(description))return 'ambiguous';
+  return 'billable';
 }
 function unresolvedQuantityIssue(task:Mapping['tasks'][number]){
   return UNKNOWN_QUANTITY.test(`${task.description} ${task.evidence}`)?`${task.description}: quantity remains unmeasured; do not publish a confirmed quantity.`:null;
 }
-function ownerSuppliesMaterial(task:Mapping['tasks'][number]){
-  return OWNER_SUPPLIED.test(`${task.description} ${task.evidence}`);
+const semanticUnit=(value:string)=>/\b(?:doors?|windows?|fixtures?|toilets?|faucets?|lights?)\b/i.test(value)?'each':unitKey(value);
+function actionClaims(textValue:string,unit:string,action:'supply'|'install',excludeOwner=false):(QuantityClaim&{clause:string})[]{
+  const normalized=textValue.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\b/gi,word=>String(NUMBER_WORDS[word.toLowerCase()]));
+  const clauses=normalized.split(/[.;\n]+|\s*,\s*/).map(clause=>clause.trim()).filter(Boolean);
+  const verb=action==='supply'?'(?:suppl(?:y|ies|ied)|provid(?:e|es|ed)|furnish(?:es|ed)?|purchas(?:e|es|ed))':'install(?:s|ed|ation)?';
+  const result:(QuantityClaim&{clause:string})[]=[];
+  for(const clause of clauses){
+    if(excludeOwner&&OWNER_SUPPLIED.test(clause))continue;
+    const actor=excludeOwner?'(?:(?:contractor|builder|p5)\\s+)?':'';
+    const pattern=new RegExp(`\\b${actor}${verb}\\s+(\\d+(?:\\.\\d+)?)\\s*(hours?|hrs?|hr|feet?|ft|lf|square\\s+feet?|sq\\.?\\s*ft|sf|doors?|windows?|units?|fixtures?)?\\b`,'gi');
+    for(const match of clause.matchAll(pattern)){
+      const claimUnit=match[2]?semanticUnit(match[2]):unitKey(unit);
+      result.push({quantity:Number(match[1]),unit:claimUnit,clause});
+    }
+  }
+  return result;
+}
+function ownerSuppliesMaterial(task:Mapping['tasks'][number],quantity?:number,unit='',componentDescription=''){
+  const text=`${task.description}. ${task.evidence}`;
+  if(!OWNER_SUPPLIED.test(text))return false;
+  // Mixed responsibility is permitted only from an explicit contractor
+  // supply quantity for this component. This prevents a broad keyword
+  // exception from turning owner-furnished siblings into contractor charges.
+  if(quantity!==undefined){
+    const contractor=actionClaims(text,unit,'supply',true).filter(claim=>unitKey(claim.unit)===unitKey(unit));
+    const component=componentTerms(componentDescription);
+    if(component.length&&contractor.some(claim=>Math.abs(claim.quantity-quantity)<0.0001&&clauseHasComponent(claim.clause,component)))return false;
+  }
+  return true;
 }
 /**
  * Read quantities only from the short task evidence supplied to the mapper.
@@ -300,7 +338,7 @@ function quantityClaims(textValue:string):QuantityClaim[]{
   const pattern=/(?:^|[^\d.])(\d+(?:\.\d+)?)\s*(?:(?:labor|labour)\s*)?(hours?|hrs?|hr|h|feet?|ft|linear\s+feet?|lineal\s+feet?|lf|square\s+feet?|square\s+foot|sq\.?\s*ft|sf|cubic\s+yards?|cubic\s+yard|cy|each|units?|fixtures?|doors?|windows?|toilets?|faucets?|lights?)(?=$|[^\w])/gi;
   for(const match of textValueWithWords.matchAll(pattern)){
     const unit=match[2].toLowerCase();
-    add(Number(match[1]),/\bhours?\b|\bhrs?\b|\bhr\b|\bh\b/.test(unit)?'hour':/\b(?:square|sq|sf)\b/.test(unit)?'sf':/\b(?:cubic|cy)\b/.test(unit)?'cy':/\b(?:linear|lineal|lf|feet?|ft)\b/.test(unit)?'lf':unit);
+     add(Number(match[1]),/\bhours?\b|\bhrs?\b|\bhr\b|\bh\b/.test(unit)?'hour':/\b(?:square|sq|sf)\b/.test(unit)?'sf':/\b(?:cubic|cy)\b/.test(unit)?'cy':/\b(?:linear|lineal|lf|feet?|ft)\b/.test(unit)?'lf':/\b(?:doors?|windows?|fixtures?|toilets?|faucets?|lights?)\b/.test(unit)?'each':unit);
   }
   return claims;
 }
@@ -329,7 +367,9 @@ function knownScopeClaims(scope:ReviewedScope|undefined,task:Mapping['tasks'][nu
 function quantityIssues(task:Mapping['tasks'][number],addition:{quantity:number;quantityEvidence:string;quantityRange?:{low:number;high:number}|null},unit:string,scope:ReviewedScope|undefined,taskCount:number,componentDescription='',materialPurchase=false){
   const taskText=`${task.description} ${task.evidence}`;
   const evidence=addition.quantityEvidence.trim();
-  const claims=[...quantityClaims(taskText),...(taskCount===1?knownScopeClaims(scope,task):[])];
+  let claims=[...quantityClaims(taskText),...(taskCount===1?knownScopeClaims(scope,task):[])];
+  const actionSpecific=actionClaims(taskText,unit,materialPurchase?'supply':'install',materialPurchase);
+  if(actionSpecific.some(claim=>unitKey(claim.unit)===unitKey(unit)))claims=actionSpecific;
   const unknown=UNKNOWN_QUANTITY.test(taskText);
   const allowance=/^ALLOWANCE\s*:/i.test(evidence);
   const issues:string[]=[];
@@ -388,11 +428,13 @@ export function marketResolution(raw:unknown,urls:string[],tasks:Mapping['tasks'
   for(const r of market.rates){
     const t=tasks.find(t=>t.id===r.taskId&&t.researchDescription);
     if(!t)throw new Error('Unknown researched scope task');
-    if(taskIsUnselected(t)){
-      result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);
+    const selection=taskSelectionStatus(t,tasks);
+    if(selection!=='billable'){
+      const finding=`${t.description}: ${selection==='ambiguous'?'alternative selection is ambiguous or conflicting':'unselected alternative or excluded work is not billable'}.`;
+      if(selection==='ambiguous')result.issues.push(finding);else result.assumptions.push(finding);
       continue;
     }
-    if(ownerSuppliesMaterial(t)&&r.basis!=='trade-labor'){
+    if(r.basis!=='trade-labor'&&ownerSuppliesMaterial(t,r.quantity,r.unit,r.description)){
       result.issues.push(`${t.description}: owner-supplied material permits a labor-only rate, not a material or supply-and-install package.`);
       continue;
     }
@@ -433,8 +475,9 @@ export function planningResolution(raw:unknown,tasks:Mapping['tasks'],now:Date,o
   for(const r of planning.rates){
     const t=tasks.find(t=>t.id===r.taskId&&t.researchDescription);
     if(!t)throw new Error('Unknown planning scope task');
-    if(taskIsUnselected(t)){result.issues.push(`${t.description}: unselected alternative or excluded work is not billable.`);continue;}
-    if(ownerSuppliesMaterial(t)&&r.basis!=='trade-labor'){result.issues.push(`${t.description}: owner-supplied material permits a labor-only rate, not a material or supply-and-install package.`);continue;}
+    const selection=taskSelectionStatus(t,tasks);
+    if(selection!=='billable'){const finding=`${t.description}: ${selection==='ambiguous'?'alternative selection is ambiguous or conflicting':'unselected alternative or excluded work is not billable'}.`;if(selection==='ambiguous')result.issues.push(finding);else result.assumptions.push(finding);continue;}
+    if(r.basis!=='trade-labor'&&ownerSuppliesMaterial(t,r.quantity,r.unit,r.description)){result.issues.push(`${t.description}: owner-supplied material permits a labor-only rate, not a material or supply-and-install package.`);continue;}
     const unresolved=unresolvedQuantityIssue(t);
     const hasAllowance=/^ALLOWANCE\s*:/i.test(r.quantityEvidence)&&Boolean(r.quantityRange);
     if(unresolved&&!hasAllowance)result.issues.push(unresolved);
@@ -662,7 +705,8 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
     // running job, and does not count against the budget.
     const sinceStart=Date.now()-now.getTime();
     const repairBudgetLeft=!(sinceStart>REPAIR_BUDGET_MS&&sinceStart<6*60*60*1000);
-    const repairNeeded=blockingIssues.length||blockingAuditIssues.length||mapping.tasks.some(t=>!audit.coveredTaskIds.includes(t.id)&&!allowancePricedTask(t.id));
+    const billableTask=(t:Mapping['tasks'][number])=>taskSelectionStatus(t,mapping.tasks)==='billable';
+    const repairNeeded=blockingIssues.length||blockingAuditIssues.length||mapping.tasks.some(t=>billableTask(t)&&!audit.coveredTaskIds.includes(t.id)&&!allowancePricedTask(t.id));
     if(repairNeeded&&!repairBudgetLeft)auditTrail.issues.push('Repair round skipped: the pricing job exceeded its repair budget; unresolved scope findings remain blocking.');
     if(repairNeeded&&repairBudgetLeft){
       const priorIssues=[...resolution.issues,...audit.issues];
@@ -726,7 +770,7 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
     const ids=new Set(mapping.tasks.map(t=>t.id));
     if(audit.coveredTaskIds.some(id=>!ids.has(id)))throw new Error('Unknown audited task');
     resolution.issues.push(...audit.issues,...(pricingExtraction?.instructions?.questions||[]));
-    for(const t of mapping.tasks)if(!t.existingLineIds.some(id=>(lines.some(l=>l.id===id)||resolution.rules.some(r=>r.id===id))&&!resolution.removeLineIds?.includes(id))&&!resolution.rules.some(r=>r.scopeTaskId===t.id))resolution.issues.push(`${t.description}: no positive priced component or allowance was produced.`);
+    for(const t of mapping.tasks)if(billableTask(t)&&!t.existingLineIds.some(id=>(lines.some(l=>l.id===id)||resolution.rules.some(r=>r.id===id))&&!resolution.removeLineIds?.includes(id))&&!resolution.rules.some(r=>r.scopeTaskId===t.id))resolution.issues.push(`${t.description}: no positive priced component or allowance was produced.`);
     // Deterministic corrections come before the integrity checks: what the
     // code can prove wrong it fixes, and discloses; only judgement calls ride
     // along as items to confirm.

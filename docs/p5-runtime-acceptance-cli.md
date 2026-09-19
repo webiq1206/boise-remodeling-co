@@ -128,6 +128,13 @@ redirects so the session credential cannot be forwarded.
 
 ## Paid pricing and real delivery
 
+**Current coordination hold:** do not run live CRM acceptance until the shared
+receiver's keyed source/estimate identity contract and authenticated QA
+campaign-suppression mechanism have been tested and integrated. The CLI's
+approval flags and `[QA]` contact prefix are not that receiver mechanism.
+An email-only duplicate response with a lead ID cannot prove receipt of this
+estimate or brand. Preserve historical failed/ambiguous deliveries unchanged.
+
 Do not run this during ordinary development. After inspecting the exact
 revision, confirming the QA label and recipient, and obtaining separate
 authorization for cost and delivery:
