@@ -5,7 +5,7 @@ import {pathToFileURL} from 'node:url';
 import path from 'node:path';
 await mkdir('node_modules/.cache',{recursive:true});
 const dir=await mkdtemp(path.join(process.cwd(),'node_modules/.cache/p5-document-adapter-'));
-const names=['DATABASE_URL','P5_DOCUMENT_SERVICE_MODE','P5_DOCUMENT_SERVICE_URL','P5_DOCUMENT_SERVICE_KEY'];
+const names=['DATABASE_URL','P5_DOCUMENT_SERVICE_MODE','P5_DOCUMENT_SERVICE_URL','P5_DOCUMENT_SERVICE_KEY','P5_DOCUMENT_SERVICE_TENANT'];
 const previous=Object.fromEntries(names.map(n=>[n,process.env[n]]));
 let db:any;
 try{
@@ -17,6 +17,7 @@ try{
  await writeFile(path.join(dir,'database.ts'),`import {PGlite} from '@electric-sql/pglite';export const database=new PGlite();export async function query(s:string,v:unknown[]=[]){return (await database.query(s,v)).rows;}`);
  const mod=(n:string)=>import(pathToFileURL(path.join(dir,n+'.ts')).href);
  const store=await mod('store'),client=await mod('documentServiceClient'),brand=(await mod('brand')).ESTIMATOR_BRAND;
+ process.env.P5_DOCUMENT_SERVICE_TENANT=brand.domain;
  db=await mod('database');
  const id=randomUUID(),key=randomBytes(32).toString('hex');
  const draft=await store.saveDraft(id,key,brand.id,{text:'Controlled adapter fixture',answers:{service:'new-construction'},extraction:null,reviewed:null,contact:{name:'',email:'',phone:''}},0);
@@ -27,12 +28,13 @@ try{
  let stored=false,uploads=0,reviewCalls=0,partial=false,wrongSource=false,retryStatus=202,failed=false;const scopeBodies:string[]=[];
  const fakeRequest=async(input:any,init:any)=>{
   const url=new URL(String(input)),route=url.pathname.replace(/^\/api\/p5-documents/,'')+url.search,method=init.method;
-  assert.ok(url.pathname.startsWith('/api/p5-documents/v1/'));
+  assert.ok(url.pathname.startsWith('/api/p5-documents/v1/')||url.pathname==='/api/p5-documents/readyz');
   const headers=new Headers(init.headers),body=init.body?Buffer.from(init.body):Buffer.alloc(0);
   const signed=[method,route,brand.domain,headers.get('x-p5-time'),headers.get('x-p5-nonce'),createHash('sha256').update(body).digest('hex')].join('\n');
   assert.equal(headers.get('x-p5-signature'),createHmac('sha256',process.env.P5_DOCUMENT_SERVICE_KEY!).update(signed).digest('hex'));
   assert.equal(init.redirect,'error');
   const reply=(data:unknown,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json'}});
+  if(route==='/readyz')return reply({ready:true,providerConfigured:true,tenant:brand.domain,protocol:'v1',limits:{maxFileBytes:250*1024*1024,maxPages:250},capabilities:{pdf:true}});
   if(method==='GET'&&url.pathname.endsWith('/documents/'+documentId))return stored?reply({id:documentId,state:failed?'failed':'complete',progress:{checkedPages:1,totalPages:1},coverage:{complete:!partial,pages:[{page:1,status:partial?'partial':'read'}]}}):reply({error:'not-found'},404);
   if(method==='POST'&&url.pathname.endsWith('/retry'))return reply({error:'retry unavailable'},retryStatus);
   if(method==='POST'&&url.pathname.endsWith('/documents')){uploads++;stored=true;assert.deepEqual(body,bytes);return reply({id:documentId,state:'queued'},202);}
@@ -70,14 +72,16 @@ try{
  ['review page number is wrong', 'review', (v:any)=>({...v,result:{...v.result,pages:[{...v.result.pages[0],page:7}]}})],
  ['review result is absent', 'review', (v:any)=>({...v,result:null})],
  ['complete document page count is absent', 'document', (v:any)=>({...v,progress:{checkedPages:1}})],
+ ['queued document over 250 pages', 'document', (v:any)=>({...v,state:'queued',progress:{checkedPages:0,totalPages:251}})],
+ ['complete document over 250 pages', 'document', (v:any)=>({...v,progress:{checkedPages:251,totalPages:251}})],
  ] as const;
  for(const [name,target,change]of variants){
-  const wrapper=async(input:any,init:any)=>{const response=await fakeRequest(input,init);const route=new URL(String(input)).pathname;if((target==='document'&&init.method==='GET')||(target==='review'&&route.endsWith('/reviews'))){const value=await response.json();return Response.json(change(value));}return response;};
+  const wrapper=async(input:any,init:any)=>{const response=await fakeRequest(input,init);const route=new URL(String(input)).pathname;if((target==='document'&&init.method==='GET'&&route.includes('/documents/'))||(target==='review'&&route.endsWith('/reviews'))){const value=await response.json();return Response.json(change(value));}return response;};
   let rejected=false,error='';try{await client.advanceDocumentService(draft,draft.text,draft.answers,'hostile-'+name,wrapper,false,Date.now()+30000);}catch(e:any){rejected=true;error=e.message;}
   matrix.push({name,passed:rejected,error});
  }
  for(const code of [401,429,503]){
-  const wrapper=async()=>Response.json({error:'synthetic-service-response',retryAfterMs:1000},{status:code});
+  const wrapper=async(input:any,init:any)=>new URL(String(input)).pathname.endsWith('/readyz')?fakeRequest(input,init):Response.json({error:'synthetic-service-response',retryAfterMs:1000},{status:code});
   let result:any;try{result=await client.advanceDocumentService(draft,draft.text,draft.answers,'status-'+code,wrapper,false,Date.now()+30000);}catch(e:any){result={rejected:true};}
   matrix.push({name:'service status '+code,passed:code===401?result.rejected===true:result.pending===true});
  }

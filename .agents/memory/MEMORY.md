@@ -8,5 +8,6 @@
 - [Database transport fidelity](database-transport.md) — HTTP proxy can omit successful RETURNING rows; validate real driver results, not only isolated SQL fixtures.
 - [Pricing provider compatibility](pricing-provider-compatibility.md) — integrated OpenAI needs JSON in input; completed web searches may omit required source metadata.
 - [Imported Git history](imported-git-history.md) — compare complete trees before replaying local commits; restored upstream code can appear unique by ancestry.
+- [GitHub authentication boundary](github-auth-boundary.md) — a working GitHub connection need not authenticate shell Git; connector Git-data writes can preserve exact history.
 - [Local browser verification](local-browser-verification.md) — use Nix Chromium and the configured preview origin; localhost aliases can trigger legitimate origin rejection.
 - [Estimator source integrity](estimator-source-integrity.md) — upload receipts cannot authorize older scope; replacement answers and recoveries need independent safeguards.

@@ -3,7 +3,7 @@ import {ANALYSIS_PASS_MS,READ_ALLOWANCE_MS,READ_START_MARGIN_MS,remainingBudget,
 import {createHash} from 'node:crypto';
 import {PDFDocument} from 'pdf-lib';
 import {Client} from '@replit/object-storage';
-import {analyzeBatch,AnalysisBusyError,type AnalysisFile,type AnalysisResult} from './extraction.ts';
+import {analyzeBatch,AnalysisBusyError,retainScopeContext,type AnalysisFile,type AnalysisResult} from './extraction.ts';
 import {prepareAnalysisFiles} from './documents.ts';
 import {combineScopeExtractions,type ScopeAnswers,type ScopeExtraction} from './scope.ts';
 import {query} from './database.ts';
@@ -28,7 +28,7 @@ type Job={prepared:number;units:Unit[];notes:string[];textDone?:AnalysisResult;t
 export const MAX_READ_ATTEMPTS=Math.max(1,Number(process.env.P5_READ_ATTEMPTS||4));
 const pending=(u:Unit)=>!u.result&&(u.attempts||0)<MAX_READ_ATTEMPTS;
 export function analysisWorkKey(draft:Draft,text:string,answers:ScopeAnswers){
-  return `analysis:${process.env.P5_DOCUMENT_SERVICE_MODE==='remote'?'document-service-v1':'v8'}:${createHash('sha256').update(JSON.stringify([text,answers,draft.uploads.map(f=>[f.id,f.sha256])])).digest('hex')}`;
+  return `analysis:${process.env.P5_DOCUMENT_SERVICE_MODE==='remote'?'document-service-mixed-v2':'v8'}:${createHash('sha256').update(JSON.stringify([text,answers,draft.uploads.map(f=>[f.id,f.sha256])])).digest('hex')}`;
 }
 /** Page numbers as compact ranges: 1-4, 7, 9-10. */
 export function pageRanges(pages:number[]):string{
@@ -53,9 +53,22 @@ export function unreadNotes(units:Unit[]):string[]{
 }
 /** Each request checkpoints work before returning. Reloading resumes the same source fingerprint. */
 type DocumentAnalysisStep={pending:true;progress:string;retryAfterMs?:number}|{pending:false;version:string;analysis:AnalysisResult};
+/** Each physical source stays on its capable reader; failures never downgrade the entire batch. */
+export async function advanceMixedSources(draft:Draft,text:string,answers:ScopeAnswers,remote:(draft:Draft)=>Promise<DocumentAnalysisStep>,local:(draft:Draft)=>Promise<DocumentAnalysisStep>):Promise<DocumentAnalysisStep>{
+ const uploads=draft.uploads.map(upload=>({...upload,name:draft.uploads.filter(u=>u.name===upload.name).length>1?`${upload.name} [${upload.id.slice(0,8)}]`:upload.name}));
+ const pdfs=uploads.filter(u=>u.type==='application/pdf'),others=uploads.filter(u=>u.type!=='application/pdf');
+ const read=await remote({...draft,uploads:pdfs});
+ if(read.pending||!others.length)return read;
+ const additional=await local({...draft,uploads:others});
+ if(additional.pending)return additional;
+ const extraction=retainScopeContext(combineScopeExtractions([read.analysis.extraction,additional.analysis.extraction]),text,answers);
+ return {pending:false,version:createHash('sha256').update(JSON.stringify([text,answers,draft.uploads.map(f=>[f.id,f.sha256])])).digest('hex'),analysis:{extraction,provider:[read.analysis.provider,additional.analysis.provider].join(' + '),model:[read.analysis.model,additional.analysis.model].join(' + '),analyzedAt:new Date().toISOString()}};
+}
 export async function advanceAnalysis(draft:Draft,text:string,answers:ScopeAnswers,request=fetch,retryFailed=false,absoluteDeadline=Date.now()+ANALYSIS_PASS_MS):Promise<DocumentAnalysisStep>{
   remainingBudget(absoluteDeadline);
-  if(documentServiceEligible(draft.uploads))return advanceDocumentService(draft,text,answers,analysisWorkKey(draft,text,answers),request,retryFailed,absoluteDeadline);
+  if(documentServiceEligible(draft.uploads))return advanceMixedSources(draft,text,answers,
+    pdfDraft=>advanceDocumentService(pdfDraft,text,answers,analysisWorkKey(pdfDraft,text,answers),request,retryFailed,absoluteDeadline),
+    localDraft=>advanceAnalysis(localDraft,text,answers,request,retryFailed,absoluteDeadline));
   const version=createHash('sha256').update(JSON.stringify([text,answers,draft.uploads.map(f=>[f.id,f.sha256])])).digest('hex');
   const workKey=analysisWorkKey(draft,text,answers),bucketId=ESTIMATOR_BUCKETS[ESTIMATOR_BRAND.domain],client=new Client({bucketId});
   const lease=await claimWork(draft.id,workKey,{prepared:0,units:[],notes:[]},300);

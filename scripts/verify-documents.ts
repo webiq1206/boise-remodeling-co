@@ -476,7 +476,7 @@ async function main(): Promise<void> {
 
     /* The page ceiling has to be high enough for a real commercial set and
        stated in pages, because that is the unit a customer can reason about. */
-    check(MAX_PLAN_PAGES >= 200, `the page ceiling must be at least 200, is ${MAX_PLAN_PAGES}`);
+    check(MAX_PLAN_PAGES === 250, `the page ceiling must be 250, is ${MAX_PLAN_PAGES}`);
     check(
       PART_MAX_BYTES < MAX_REQUEST_UPLOAD_BYTES,
       "a part must always fit inside the per-request ceiling with room to spare",

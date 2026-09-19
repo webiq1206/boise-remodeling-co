@@ -3,6 +3,7 @@ import {createCanvas,type Canvas} from '@napi-rs/canvas';
 import {createRequire} from 'node:module';
 import path from 'node:path';
 import type {AnalysisFile} from './extraction.ts';
+import {SCOPE_PDF_PAGE_LIMIT} from './scope.ts';
 
 /** Exact pixel inspection only. Any nonwhite pixel, including a faint mark,
  * keeps the region for AI review. No content-detection threshold or sampling. */
@@ -20,6 +21,7 @@ export async function* drawingDetails(file:AnalysisFile,pageNumber:number,dataPa
   const assets=path.dirname(createRequire(path.join(process.cwd(),'package.json')).resolve('pdfjs-dist/package.json')).split(path.sep).join('/');
   const task=getDocument({data:new Uint8Array(file.data),useSystemFonts:true,standardFontDataUrl:`${assets}/standard_fonts/`,cMapUrl:`${assets}/cmaps/`,cMapPacked:true,wasmUrl:`${assets}/wasm/`});
   const document=await task.promise;
+  if(!document.numPages||document.numPages>SCOPE_PDF_PAGE_LIMIT){await task.destroy();throw new Error(`Use PDFs with 1 to ${SCOPE_PDF_PAGE_LIMIT} pages.`);}
   let full:Canvas|null=null;
   try{
     const page=await document.getPage(dataPageNumber),viewport=page.getViewport({scale:3});

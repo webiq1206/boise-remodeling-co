@@ -6,7 +6,7 @@ import {draftCredentials,readDraft,DraftError} from './store.ts';
 import {ESTIMATOR_BRAND} from './brand.ts';
 import {ESTIMATOR_BUCKETS,uploadObjectKey} from './objectStorage.ts';
 import {SCOPE_FILE_LIMIT,SCOPE_BATCH_LIMIT,SCOPE_FILE_COUNT,SCOPE_CHUNK_SIZE,SCOPE_UPLOAD_HELP} from './scope.ts';
-import {verifyUpload,checkOfficeArchiveRanges} from './documents.ts';
+import {verifyUpload,checkOfficeArchiveRanges,ACCEPT_SCOPE_FILES} from './documents.ts';
 import {protectRequest,limitedBody,failed,json} from './http.ts';
 import {claimWork,releaseWork} from './workStore.ts';
 
@@ -28,6 +28,8 @@ export async function postUpload(request:Request){
       try{input=JSON.parse(new TextDecoder().decode(body));}catch{throw new DraftError('The upload request is not valid JSON. Select the file again.');}
       if(!input||typeof input!=='object'||Array.isArray(input))throw new DraftError('Invalid upload request.');
       if(typeof input.name!=='string'||input.name.length>180||!Number.isInteger(input.size)||input.size<=0||input.size>SCOPE_FILE_LIMIT)throw new DraftError(SCOPE_UPLOAD_HELP,413);
+      const extension=input.name.split('.').pop()?.toLowerCase();
+      if(!extension||!ACCEPT_SCOPE_FILES.split(',').includes(`.${extension}`))throw new DraftError('Use a PDF, photo, Word document, spreadsheet or text file.',422);
       const gate=await claimWork(id,'upload-admission',{},30);
       if(!gate)throw new DraftError('Another file is being prepared. Please retry.',409);
       try{
@@ -117,7 +119,7 @@ export async function postUpload(request:Request){
         // Observe both so a lost chunk rejects instead of crashing or hanging the request.
         let timer:ReturnType<typeof setTimeout>|undefined;
         const sourceFailure=new Promise<never>((_,reject)=>{stream.once('error',reject);timer=setTimeout(()=>{stream.destroy(new Error('Upload finalization timed out. Retry to resume.'));},240000);});
-        try{await Promise.race([client.uploadFromStream(objectKey,stream,{compress:false}),sourceFailure]);}finally{clearTimeout(timer);}
+        try{await Promise.race([client.uploadFromStream(objectKey,stream,{compress:false}),sourceFailure]);}finally{clearTimeout(timer);stream.destroy();}
         const inserted=await query("WITH owned AS (SELECT d.id FROM p5_estimator_drafts d JOIN p5_estimator_work w ON w.draft_id=d.id WHERE d.id=$2 AND d.status='draft' AND w.work_key=$9 AND w.lease_token=$10 AND w.lease_until>now() FOR UPDATE OF d,w) INSERT INTO p5_estimator_files(id,draft_id,name,mime_type,size_bytes,sha256,data_base64,storage_bucket,storage_key) SELECT $1,owned.id,$3,$4,$5,$6,'',$7,$8 FROM owned ON CONFLICT(draft_id,sha256) DO NOTHING RETURNING storage_key",[randomUUID(),id,t.name,type,t.size,digest,bucketId,objectKey,workKey,gate.token]);
         referenced=inserted.length>0;
         if(!referenced){

@@ -1,13 +1,16 @@
 import {SCOPE_CHUNK_SIZE} from './scope.ts';
 import {requireDraftReceipt} from './browserDraft.ts';
+import {fileDigest} from './fileDigest.ts';
 const digest=async(data:ArrayBuffer)=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',data)),b=>b.toString(16).padStart(2,'0')).join('');
 /** Retry only unacknowledged segments. Receipts and checksums are verified before clearing local files. */
-export async function transferLargeFiles(files:File[],headers:Record<string,string>,progress:(percent:number)=>void,request=fetch){
+export async function transferLargeFiles(files:File[],headers:Record<string,string>,progress:(percent:number)=>void,request=fetch,signal?:AbortSignal){
   const total=files.reduce((n,f)=>n+f.size,0);let completed=0;let receipt:unknown;
   const send=async(url:string,body:BodyInit,contentType:string)=>{
     for(let attempt=0;attempt<3;attempt++){
+      signal?.throwIfAborted();
       try{
-        const response=await request(url,{method:'POST',headers:{...headers,'Content-Type':contentType},body,signal:AbortSignal.timeout(240000)});
+        const timeout=AbortSignal.timeout(240000);
+        const response=await request(url,{method:'POST',headers:{...headers,'Content-Type':contentType},body,signal:signal?AbortSignal.any([signal,timeout]):timeout});
         const data=await response.json();
         if(!response.ok){if([409,429,502,503,504].includes(response.status)&&attempt<2){await new Promise(r=>setTimeout(r,1000*(attempt+1)));continue;}throw new Error(data.error||'Your upload could not be confirmed. Retry to resume the saved segments.');}
         return data;
@@ -16,10 +19,12 @@ export async function transferLargeFiles(files:File[],headers:Record<string,stri
     throw new Error('Your upload connection was interrupted. Retry to resume.');
   };
   for(const file of files){
-    const hash=await digest(await file.arrayBuffer()),base=`/api/p5-estimator/upload?sha256=${hash}`;
+    const hash=await fileDigest(file,signal),base=`/api/p5-estimator/upload?sha256=${hash}`;
     const status=await send(`${base}&action=start`,JSON.stringify({name:file.name,size:file.size}),'application/json');
     if(status.chunkSize!==SCOPE_CHUNK_SIZE)throw new Error('The upload settings changed. Reload to continue.');
+    if(!status.chunks||typeof status.chunks!=='object'||Array.isArray(status.chunks)||typeof status.complete!=='boolean')throw new Error('The saved upload checkpoint could not be read. Your file is still on this device. Retry to resume.');
     if(!status.complete)for(let offset=0,index=0;offset<file.size;offset+=SCOPE_CHUNK_SIZE,index++){
+      signal?.throwIfAborted();
       const data=await file.slice(offset,offset+SCOPE_CHUNK_SIZE).arrayBuffer(),checksum=await digest(data);
       if(status.chunks[index]!==checksum){
         const ack=await send(`${base}&action=part&part=${index}&checksum=${checksum}`,new Uint8Array(data),'application/octet-stream');

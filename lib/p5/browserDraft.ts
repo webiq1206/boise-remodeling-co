@@ -38,11 +38,35 @@ export function withTimeout<T>(promise:Promise<T>,ms:number,message:string):Prom
   return new Promise<T>((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error(message)),ms);promise.then(value=>{clearTimeout(timer);resolve(value);},error=>{clearTimeout(timer);reject(error);});});
 }
 export async function cacheFiles(draftId:string,files:File[]){
+  // This portable-byte fallback is deliberately small. In particular, recovery
+  // and remove-file callers must not materialize an entire 1 GiB selection.
+  // Larger originals stay on the device; server chunk receipts allow reselection.
+  if(files.reduce((bytes,file)=>bytes+file.size,0)>22*1024*1024)throw new Error('Large files stay in this tab. Finish uploading or reselect the original files to resume saved segments.');
   // WebKit cannot reliably persist File/Blob backing stores. Store portable bytes.
   const records=await Promise.all(files.map(async file=>({id:`${draftId}:${file.name}:${file.size}:${file.lastModified}`,draftId,name:file.name,type:file.type,lastModified:file.lastModified,bytes:await file.arrayBuffer()})));
   const db=await fileDb();try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('files','readwrite');const store=tx.objectStore('files');const cursor=store.openCursor();cursor.onsuccess=()=>{const item=cursor.result;if(item){if(item.value.draftId===draftId)item.delete();item.continue();}else for(const record of records)store.put(record);};tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error);});}finally{db.close();}
 }
-export async function loadCachedFiles(draftId:string):Promise<File[]>{const db=await fileDb();try{return await new Promise<File[]>((resolve,reject)=>{const r=db.transaction('files','readonly').objectStore('files').getAll();r.onsuccess=()=>{try{resolve(r.result.filter(x=>x.draftId===draftId).map(x=>x.bytes instanceof ArrayBuffer?new File([x.bytes],x.name,{type:x.type,lastModified:x.lastModified}):x.file).filter((file):file is File=>file instanceof File));}catch(error){reject(error);}};r.onerror=()=>reject(r.error);});}finally{db.close();}}
+export async function loadCachedFiles(draftId:string):Promise<File[]>{
+  const db=await fileDb();
+  try{return await new Promise<File[]>((resolve,reject)=>{
+    const files:File[]=[];let bytes=0;
+    // Never getAll across every project's recovery history. Iterate and retain
+    // only this draft, leaving other recoveries untouched.
+    const r=db.transaction('files','readonly').objectStore('files').openCursor(IDBKeyRange.bound(`${draftId}:`,`${draftId}:\uffff`));
+    r.onsuccess=()=>{try{
+      const cursor=r.result;if(!cursor){resolve(files);return;}
+      const x=cursor.value;
+      if(x.draftId===draftId){
+        bytes+=x.bytes instanceof ArrayBuffer?x.bytes.byteLength:x.file?.size||0;
+        if(bytes>22*1024*1024)throw new Error('This recovery contains large files. Reselect the originals to resume saved upload segments; the recovery has not been removed.');
+        const file=x.bytes instanceof ArrayBuffer?new File([x.bytes],x.name,{type:x.type,lastModified:x.lastModified}):x.file;
+        if(file instanceof File)files.push(file);
+      }
+      cursor.continue();
+    }catch(error){reject(error);}};
+    r.onerror=()=>reject(r.error);
+  });}finally{db.close();}
+}
 export async function clearCachedFiles(draftId:string){await cacheFiles(draftId,[]);}
 
 /** Save a recoverable copy before starting an explicitly new project. */

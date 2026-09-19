@@ -16,6 +16,7 @@ import {mergeProjectSource,type ProjectSource} from '@/lib/p5/projectSource';
 import {resumeWizardDraft} from '@/lib/p5/wizardResume';
 import {snapshotProjectFile} from '@/lib/p5/fileSnapshot';
 import {transferLargeFiles} from '@/lib/p5/resumableTransfer';
+import {fileDigest} from '@/lib/p5/fileDigest';
 import {transferProjectFiles} from '@/lib/p5/uploadTransfer';
 import {fieldCategory} from '@/lib/p5/presentation';
 import styles from './P5Estimator.module.css';
@@ -246,8 +247,8 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     if(parsed.origin!==window.location.origin&&!url.startsWith('data:image/')&&!url.startsWith('blob:'))throw new Error('The design photo cannot be imported from this address. Please add it using Add files.');
     const response=await operationFetch(url,{signal:AbortSignal.timeout(30000)});if(!response.ok)throw new Error('Your design photo could not be read. Please retry or add the photo using Add files.');
     const blob=await response.blob();const ext:Record<string,string>={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif','image/heic':'heic','image/heif':'heif'};
-    if(!ext[blob.type]||blob.size>SCOPE_FILE_LIMIT)throw new Error('Use Add files to provide a supported design photo up to 250 MB.');
-    const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
+    if(!ext[blob.type]||blob.size>SCOPE_FILE_LIMIT)throw new Error('Use Add files to provide a supported design photo up to 250 MiB.');
+    const digest=(await fileDigest(blob,operationBudget.current?.controller.signal)).slice(0,16);
     const name=`design-photo-${digest}.${ext[blob.type]}`;
     if(!filesRef.current.some(f=>f.name===name)&&!current.current?.uploads?.some(f=>f.name===name)){
       await addFiles([new File([blob],name,{type:blob.type,lastModified:0})]);
@@ -267,12 +268,12 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
       setBusy('Uploading your files...');setUploadPercent(0);
       const large=pending.some(f=>f.size>10*1024*1024)||pending.reduce((n,f)=>n+f.size,0)>22*1024*1024;
       let uploaded:unknown;
-      if(large)uploaded=await transferLargeFiles(pending,draftHeaders(d),setUploadPercent,operationFetch);
+      if(large)uploaded=await transferLargeFiles(pending,draftHeaders(d),setUploadPercent,operationFetch,operationBudget.current?.controller.signal);
       else{const upload=new FormData();upload.set('analyze','false');for(const f of pending)upload.append('files',new Blob([await f.arrayBuffer()],{type:f.type}),f.name);uploaded=await transferProjectFiles(upload,draftHeaders(d),setUploadPercent,operationBudget.current?.controller.signal,operationBudget.current?.deadline);}
       checkOperation();const receipt=requireDraftReceipt(uploaded);
       if(!sourceSnapshotsEqual(sourceSnapshot(d),sourceSnapshot(receipt as BrowserDraft)))throw new Error('Your project changed while files were uploading. Your files are retained. Refresh before continuing so newer details are not overwritten.');
       requireCurrentSource();
-      for(const f of pending){const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await f.arrayBuffer()))).map(b=>b.toString(16).padStart(2,'0')).join('');if(!receipt.uploads.some(stored=>stored.sha256===digest))throw new Error(`${f.name}: upload was not confirmed. Please retry.`);}
+      for(const f of pending){const digest=await fileDigest(f,operationBudget.current?.controller.signal);if(!receipt.uploads.some(stored=>stored.sha256===digest&&stored.size===f.size))throw new Error(`${f.name}: upload was not confirmed. Please retry.`);}
       apply({...current.current!,uploads:receipt.uploads,revision:receipt.revision});filesRef.current=[];setFiles([]);await clearCachedFiles(d.id).catch(()=>undefined);setUploadPercent(null);setStatus('Files uploaded and saved.');
     }
     setBusy(analysisMessage(Boolean(current.current!.uploads?.length)));const form=new FormData();form.set('text',d.text);form.set('scopeFingerprint',scopeFingerprint(d.text));form.set('revision',String(current.current!.revision));form.set('resumable','true');form.set('background','true');form.set('retry',resuming.current?'false':'true');resuming.current=false;

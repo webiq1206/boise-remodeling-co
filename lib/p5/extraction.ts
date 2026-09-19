@@ -6,7 +6,7 @@ import {readSpecificationSource,specificationHint,unsupportedSpecifications,Unsu
 import {SERVER_BUDGET_MS,ANALYSIS_PASS_MS,READ_ALLOWANCE_MS,ProcessingDeadlineError,fetchWithinDeadline,withinDeadline,isProcessingDeadline} from './processingBudget.ts';
 import {recordEvent,describeError,type EstimatorEvent} from './events.ts';
 import {ESTIMATOR_BRAND} from "./brand.ts";
-import { SCOPE_FIELDS, SCOPE_BATCH_LIMIT, SCOPE_TEXT_LIMIT, validateExtraction, combineScopeExtractions, type ScopeAnswers, type ScopeExtraction } from "./scope.ts";
+import { SCOPE_FIELDS, SCOPE_BATCH_LIMIT, SCOPE_TEXT_LIMIT, SCOPE_PDF_PAGE_LIMIT, validateExtraction, combineScopeExtractions, type ScopeAnswers, type ScopeExtraction } from "./scope.ts";
 import { PDFDocument } from "pdf-lib";
 import {INSTRUCTION_POLICY} from './instructions.ts';
 import {coverageFor,combineCoverage} from './documentLedger.ts';
@@ -25,6 +25,12 @@ export function textLayerFiles(files:AnalysisFile[]):AnalysisFile[]{
 }
 const pdfWithTextLayer=(files:AnalysisFile[])=>files.some(file=>file.type==='application/pdf'&&Boolean(file.text));
 export interface AnalysisResult { extraction: ScopeExtraction; provider: string; model: string; analyzedAt: string }
+/** Shared-reader results receive the same explicit-scope safeguards as local reads. */
+export function retainScopeContext(extraction:ScopeExtraction,text:string,previous:ScopeAnswers):ScopeExtraction{
+ const selected=retainExplicitSelections(extraction,text,previous);
+ const completed=retainCompletedCabinetRemoval(selected,[extraction.sourceText,text].filter(Boolean).join('\n'));
+ return groundSourceResponsibilities(completed,extraction.sourceText,text,previous);
+}
 type RequestFunction = typeof fetch;
 type ProviderKind = "OpenAI" | "Anthropic";
 interface Provider { kind: ProviderKind; key: string; endpoint: string; model: string }
@@ -434,7 +440,7 @@ export async function analyzeScope(text:string,files:AnalysisFile[],previous:Sco
   for(const file of files){
     if(file.type!=="application/pdf"){if(["text/plain","text/csv","application/json"].includes(file.type)&&file.data.toString("utf8").length>120000)throw new Error(`${file.name}: text exceeds the automatic review limit. Supply the relevant sections or request manual review.`);units.push([file]);continue;}
     let source;try{source=await PDFDocument.load(file.data);}catch{throw new Error(`Unreadable or encrypted PDF: ${file.name}. Supply an unlocked copy.`);}
-    if(!source.getPageCount()||source.getPageCount()>2000)throw new Error("Use PDFs with 1 to 2,000 pages.");
+    if(!source.getPageCount()||source.getPageCount()>SCOPE_PDF_PAGE_LIMIT)throw new Error(`Use PDFs with 1 to ${SCOPE_PDF_PAGE_LIMIT} pages.`);
     // Keep adjacent scope sections together so one page cannot mistake another
     // page's specifications for missing information. Bound large plan sets.
     const pageCount=source.getPageCount();totalPages+=pageCount;

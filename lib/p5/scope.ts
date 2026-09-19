@@ -92,7 +92,8 @@ export const SCOPE_FILE_LIMIT = 250 * 1024 * 1024;
 export const SCOPE_BATCH_LIMIT = 1024 * 1024 * 1024;
 export const SCOPE_FILE_COUNT = 50;
 export const SCOPE_CHUNK_SIZE = 4 * 1024 * 1024;
-export const SCOPE_UPLOAD_HELP = "Up to 50 files, 250 MB each and 1 GB total. Large uploads resume after interruptions.";
+export const SCOPE_PDF_PAGE_LIMIT = 250;
+export const SCOPE_UPLOAD_HELP = "Up to 50 files, 250 MiB each and 1 GiB total; up to 250 pages per PDF. Large uploads resume after interruptions.";
 /** Map a model's wording for a choice field onto one of its options, or
  * null when no option is a clear match. Providers answer "Standard finishes"
  * or "premium" for a field whose options are refresh / mid-range / high-end /

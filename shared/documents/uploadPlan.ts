@@ -21,7 +21,7 @@
  */
 
 /** The most sheets we will read in one submission. */
-export const MAX_PLAN_PAGES = 200;
+export const MAX_PLAN_PAGES = 250;
 
 /**
  * Per-part budgets. Small parts are the whole point: they keep each request
