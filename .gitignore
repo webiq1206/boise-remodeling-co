@@ -33,3 +33,5 @@ tsconfig.tsbuildinfo
 
 # Maintained saved-pricing regression.
 !/scripts/test-p5-pricing-recovery.mts
+
+!/scripts/test-p5-pricing-identity.mts
