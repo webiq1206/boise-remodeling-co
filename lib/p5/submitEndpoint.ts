@@ -5,6 +5,7 @@ import { EMPTY_CONFIGURATION,type EstimatorConfiguration } from "./costBook.ts";
 import {priceSavedScope} from "./pricingWork.ts";
 import {queuedJob} from './backgroundJobs.ts';
 import {missingScopeFields,customerPricingQuestions} from "./missingFields.ts";
+import {pricingPreflight,PREFLIGHT_MESSAGE} from './pricingPreflight.ts';
 import {PricingPending,isPricingPending} from './pricingProgress.ts';
 import { enqueueSubmission,deliveryStatus,processOutbox } from "./outbox.ts";
 import { protectRequest,json,failed,limitedBody } from "./http.ts";
@@ -33,6 +34,9 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
     if(!draft.reviewed)throw new DraftError("Review and confirm the extracted scope before submitting.");
     const [policy]=await query("SELECT payload FROM p5_estimator_policy WHERE id='current'");
     const configuration=(policy?.payload||EMPTY_CONFIGURATION) as EstimatorConfiguration;
+    // Ask for a quantity the planning model cannot work without now, before any pricing work starts.
+    const needed=pricingPreflight(draft.reviewed,configuration);
+    if(needed.length)return json({pricingReviewRequired:true,needsCustomerInput:true,handoff:false,preflight:true,missingFields:needed,verificationItems:[],error:PREFLIGHT_MESSAGE},422);
     const job=body.background===true?await queuedJob({kind:'pricing',draft,configuration},body.retry===true):null;
     // A job that stopped after repeated failures is the handoff outcome: the project and contact are saved, a person completes the estimate, nothing further is needed from the visitor.
     if(job&&job.state==='failed'){console.error(`[p5-pricing] handoff for draft ${id}: ${job.progress}`);return json({pricingReviewRequired:true,needsCustomerInput:false,handoff:true,missingFields:[],verificationItems:[],error:HANDOFF_ISSUE},422);}

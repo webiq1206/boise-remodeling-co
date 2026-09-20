@@ -365,7 +365,8 @@ export function mergeScopeFacts(current: ScopeAnswers, extraction: ScopeExtracti
   const answers = { ...current }; const conflicts = [...extraction.conflicts];
   const textFields=new Set<ScopeField>();
   for (const fact of extraction.facts) {
-    if (fact.confidence < .85 || conflicts.some(c => c.field === fact.field)) continue;
+    // Callers pass only facts they have already accepted; the project type is accepted at a lower bar (see reconcileScope).
+    if (fact.confidence < (fact.field==='service'&&fact.basis==='stated'?.7:.85) || conflicts.some(c => c.field === fact.field)) continue;
     if(SCOPE_FIELDS[fact.field].kind==="text"){
       if(textFields.has(fact.field))continue;textFields.add(fact.field);
       const values=[...new Set([current[fact.field]?.trim(),...extraction.facts.filter(f=>f.field===fact.field&&f.confidence>=.85).map(f=>f.value.trim())].filter(Boolean))];

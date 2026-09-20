@@ -27,7 +27,7 @@ test('every entry point is the same single projection',()=>{
  assert.deepEqual(customerSafeValue({n:3,ok:true,none:null}),{n:3,ok:true,none:null});
 });
 test('prose redacts rate and margin variants, not scope quantities or nonfinancial percentages',()=>{
- const safe='Allow 10% waste; roof pitch 25%; install 100 LF and 2 per room. Not verified local pricing.';
+ const safe='Allow 10% waste; roof pitch 25%; install 100 LF and 2 per room. Final selection to be confirmed.';
  assert.equal(customerText(safe),safe);
  for(const privateText of ['2.00/LF','2.00 USD/each','USD 2.00/each','margin 20%','20% margin','overhead: 20%','profit at 25%','contingency rate 12%','cost basis 4.10','$2.00 - $3.00 / LF','$4 per hour']){
   const output=customerText(privateText);
@@ -53,7 +53,7 @@ test('spelled-out bare unit rates and extended cost arithmetic stay private',()=
 });
 test('generated evidence ranges and verbose financial ratios hide every cost bound',()=>{
  const evidence='Regional planning average: 20 to 30 USD/SF. Allow 10% waste; not verified local pricing.';
- assert.equal(customerText(evidence),'Regional planning average. Allow 10% waste; not verified local pricing.');
+ assert.equal(customerText(evidence),'Budget allowance. Allow 10% waste; final selection to be confirmed.');
  assert.equal(customerText('2.50 to 3.75 USD/LF; confirm quantities.'),'confirm quantities.');
  assert.equal(customerText('operating profit target is 20%; overhead allocation of 0.2; allow 10% waste.'),'allow 10% waste.');
 });
@@ -76,7 +76,7 @@ test('historical projection hides costs without changing selling arithmetic, sco
  assert.equal(result.lineItems[0].quantity,100);
  assert.equal(result.lineItems[0].unitLow,3.5);
  assert.match(text,/Preliminary allowance, not a supplier quote/);
- assert.match(text,/not verified local pricing/);
+ assert.match(text,/final selection to be confirmed/i);
  assert.match(text,/Painting excluded/);
  assert.equal(JSON.stringify(oldResult),before);
  assert.deepEqual(projectCustomerEstimate(result),result);

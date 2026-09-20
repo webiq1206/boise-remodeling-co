@@ -240,7 +240,7 @@ for(const width of [320,390,1440]){
   await page.getByRole('heading',{name:'Pricing your project',exact:true}).waitFor();
   assert.equal(await page.getByRole('progressbar',{name:'Original pages checked'}).count(),0,'Document progress must not become a fabricated pricing percentage');
   progressState.pricingStage='research';
-  await page.getByRole('heading',{name:'Researching missing local rates',exact:true}).waitFor();await overflow(page);await capture(page,`${width}-live-pricing`);
+  await page.getByRole('heading',{name:'Preparing your estimate',exact:true}).waitFor();await overflow(page);await capture(page,`${width}-live-pricing`);
   progressState.pricingStage='done';
   await est.getByText('Synthetic planning range.',{exact:true}).waitFor();results.push({width,scenario:'live-progress',passed:true});
  }catch(error){results.push({width,scenario:'live-progress',passed:false,error:String(error)});await capture(page,`${width}-progress-failure`).catch(()=>{});}await context.close();

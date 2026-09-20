@@ -1,7 +1,7 @@
 import {advanceMixedDocumentAnalysis,assertAnalysisMigrationSafe,assertCompleteSourceCoverage,partitionDocumentServiceUploads,readSavedSource,SOURCE_COVERAGE_REQUIRED,type DocumentAnalysisStep} from './documentServiceClient.ts';
 import {ANALYSIS_PASS_MS,READ_ALLOWANCE_MS,READ_START_MARGIN_MS,remainingBudget,ProcessingDeadlineError,isProcessingDeadline} from './processingBudget.ts';
 import {createHash} from 'node:crypto';
-import {PDFDocument} from 'pdf-lib';
+import {openablePdf,PdfAccessError} from './pdfAccess.ts';
 import {Client} from '@replit/object-storage';
 import {analyzeBatch,AnalysisBusyError,retainScopeContext,type AnalysisFile,type AnalysisResult} from './extraction.ts';
 import {prepareAnalysisFiles} from './documents.ts';
@@ -171,12 +171,12 @@ async function advanceLocalAnalysis(draft:Draft,text:string,answers:ScopeAnswers
       const preparing=Date.now();let fileFailed=false;
       if(file.type==='application/pdf'){
         try{
-          const pdf=await PDFDocument.load(file.data),count=pdf.getPageCount();
+          const count=(await openablePdf(file.name,file.data)).pages;
           const prior=(job.expected||[]).filter(p=>p.source!==file.name);
           if(!count||count>SCOPE_MAX_PAGES||prior.length+count>SCOPE_MAX_PAGES)throw new DraftError(`Source review is limited to ${SCOPE_MAX_PAGES} pages total. Split this project into separate estimates.`,422);
           job.expected=[...prior,...Array.from({length:count},(_,i)=>({source:file.name,page:i+1}))];
         }
-        catch(error){if(error instanceof DraftError)throw error;const message=`${file.name}: unreadable or encrypted PDF. No pages can be claimed as analyzed.`;job.notes.push(message);prepareFailed(file.name);job.units.push({name:file.name,type:file.type,object:'',uploadId:upload.id,error:message,lastCode:'preparation',attempts:MAX_READ_ATTEMPTS});event('prepare','failed',{file:file.name,code:'unreadable-pdf',message:error instanceof Error?error.message:String(error),durationMs:Date.now()-preparing});job.prepared++;await checkpoint();return {pending:true as const,progress:`Saved an unreadable-file exception for ${file.name}. Continuing remaining files.`};}
+        catch(error){if(error instanceof DraftError)throw error;const message=error instanceof PdfAccessError?error.message:`${file.name}: could not be read. No pages can be claimed as analyzed. Upload it again or export a fresh copy.`;job.notes.push(message);prepareFailed(file.name);job.units.push({name:file.name,type:file.type,object:'',uploadId:upload.id,error:message,lastCode:'preparation',attempts:MAX_READ_ATTEMPTS});event('prepare','failed',{file:file.name,code:error instanceof PdfAccessError?error.code:'unreadable-pdf',message:error instanceof Error?error.message:String(error),durationMs:Date.now()-preparing});job.prepared++;await checkpoint();return {pending:true as const,progress:`Saved an unreadable-file exception for ${file.name}. Continuing remaining files.`};}
       }
       const {readable,manualReview}=await prepareAnalysisFiles([file]);job.notes.push(...manualReview);
       for(const note of manualReview)event('prepare','failed',{file:file.name,code:'manual-review',message:note,durationMs:Date.now()-preparing});

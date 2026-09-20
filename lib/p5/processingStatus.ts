@@ -25,8 +25,8 @@ export interface ProcessingStatus {
 }
 export const processingTitles:Record<ProcessingStatus['phase'],string>={
   queued:'Getting your estimate started',preparing:'Preparing your documents',instructions:'Reading your estimating instructions',
-  reading:'Reading your documents', 'cross-referencing':'Checking your scope and quantities',inventory:'Organizing the requested scope',
-  mapping:'Pricing your project',research:'Researching missing local rates',verification:'Checking scope and pricing coverage',retrying:'Recovering an interrupted step',
+  reading:'Reading your documents', 'cross-referencing':'Checking quantities',inventory:'Organizing the requested scope',
+  mapping:'Preparing your estimate',research:'Preparing your estimate',verification:'Checking your estimate',retrying:'Recovering an interrupted step',
 };
 export function analysisMessage(hasAttachments:boolean,event:'start'|'busy'|'error'|'retry'='start'){
   if(event==='busy')return hasAttachments?'Your document review is already running. Saved progress will appear shortly.':'Your scope review is already running. Saved progress will appear shortly.';
@@ -57,7 +57,7 @@ export function processingPresentation(message:string,processing:ProcessingStatu
 export function pricingActivity(instructions:string,input:unknown,search:boolean):ProcessingStatus{
   const data=input as {taskBatch?:{description:string}[];tasks?:{description:string}[];repairInstruction?:string};
   const phase=search?'research':instructions.startsWith('Inventory')?'inventory':instructions.startsWith('You are a construction estimator')?'mapping':instructions.startsWith('Convert the supplied research')?'research':'verification';
-  const message=phase==='inventory'?'Identifying the included work, exclusions and item-level quantities.':phase==='mapping'?(data.repairInstruction?'Resolving findings from the coverage check.':'Pricing the quantities, materials and labor in your scope.'):phase==='research'?'Checking published cost evidence for items that need a supported allowance.':'Checking for missing items, duplicate counts, scope restrictions and pricing assumptions.';
+  const message=phase==='inventory'?'Identifying the included work, exclusions and item-level quantities.':phase==='mapping'?(data.repairInstruction?'Checking your estimate against your project details.':'Pricing the quantities, materials and labor in your scope.'):phase==='research'?'Working out budget allowances for the items that need one.':'Checking for missing items, duplicate counts and your exclusions.';
   return {phase,message,updatedAt:new Date().toISOString(),currentItems:(data.taskBatch||(search?data.tasks:[])||[]).map(t=>t.description).filter(Boolean).slice(0,3)};
 }
 export function elapsedLabel(seconds:number){

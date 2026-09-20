@@ -3,7 +3,7 @@ import styles from './P5Estimator.module.css';
 
 type Kind='included'|'excluded'|'allowance'|'assumption'|'';
 const badgeKind=(kind?:SectionKind):Kind=>kind==='included'||kind==='category'?'included':kind==='excluded'?'excluded':kind==='allowance'?'allowance':kind==='assumption'?'assumption':'';
-const STATUS_LABEL:Record<string,string>={'verified-cost':'Verified cost','owner-planning-rate':'Planning rate','estimated-allowance':'Allowance'};
+const STATUS_LABEL:Record<string,string>={'verified-cost':'Included','owner-planning-rate':'Planning price','estimated-allowance':'Budget allowance'};
 const range=(low?:number,high?:number)=>low!==undefined&&high!==undefined?`${money(low)} to ${money(high)}`:'';
 const unitPrice=(n:number)=>n.toLocaleString('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
 
@@ -49,7 +49,7 @@ export default function P5EstimateDetails({result,openFirst=false,showGlance=tru
       <strong>{item.label}</strong>
       <span className={styles.qty}>{item.quantity.toLocaleString('en-US')} {item.unit}{item.quantityRange?` (modeled: ${item.quantityRange.low.toLocaleString('en-US')} to ${item.quantityRange.high.toLocaleString('en-US')} ${item.unit} to verify)`:''}{(item.quantity!==1||item.quantityRange)&&item.unitLow!==undefined&&item.unitHigh!==undefined?` · ${unitPrice(item.unitLow)} to ${unitPrice(item.unitHigh)} per ${item.unit}`:''}</span>
       <span className={styles.total}>{range(item.low,item.high)}</span>
-      <span className={styles.note}><span className={styles.badge} data-kind={item.status==='estimated-allowance'?'allowance':item.status==='owner-planning-rate'?'assumption':'included'}>{STATUS_LABEL[item.status]||item.status}</span>{item.verification?` ${item.verification}`:''}{item.rateLocation?` Cost location: ${item.rateLocation}.`:''}{item.rateDate?` Researched ${item.rateDate}.`:''}</span>
+      <span className={styles.note}><span className={styles.badge} data-kind={item.status==='estimated-allowance'?'allowance':item.status==='owner-planning-rate'?'assumption':'included'}>{STATUS_LABEL[item.status]||item.status}</span>{item.verification?` ${item.verification}`:''}</span>
      </li>)}</ul>}
      {priced&&group.low!==undefined&&group.items.length>1&&<div className={styles.subtotal}><span>{group.category} subtotal</span><span>{range(group.low,group.high)}</span></div>}
     </div>

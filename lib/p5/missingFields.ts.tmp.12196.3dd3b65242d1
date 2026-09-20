@@ -19,14 +19,9 @@ export function missingNoteField(note:string):ScopeField|null{
  * vocabulary and in the order the questions are asked. */
 export function missingScopeFields(missing:string[]):MissingScopeField[]{
   const wanted=new Set(missing.map(missingNoteField).filter((field):field is ScopeField=>Boolean(field)));
-  // Vocabulary order, except that tall cabinets follow base and upper runs,
-  // the way a person is asked about a kitchen.
-  const keys=Object.keys(SCOPE_FIELDS) as ScopeField[];
-  const position=(field:ScopeField)=>field==='cabinetTallLf'?keys.indexOf('cabinetUpperLf')+.5:keys.indexOf(field);
   return (Object.entries(SCOPE_FIELDS) as [ScopeField,{label:string}][])
     .filter(([key])=>wanted.has(key))
-    .map(([field,definition])=>({field,label:definition.label}))
-    .sort((a,b)=>position(a.field)-position(b.field));
+    .map(([field,definition])=>({field,label:definition.label}));
 }
 
 /** Pricing diagnostics belong in the staff record. Only explicit customer

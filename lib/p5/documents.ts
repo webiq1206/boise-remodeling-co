@@ -2,7 +2,7 @@ import {prepareImages} from "./imagePreparation.ts";
 import ExcelJS from "exceljs";
 import mammoth from "mammoth";
 import {inflateRawSync} from "node:zlib";
-import {PDFDocument} from "pdf-lib";
+import {openablePdf} from "./pdfAccess.ts";
 import type { AnalysisFile } from "./extraction.ts";
 import { SCOPE_FILE_LIMIT,SCOPE_MAX_PAGES } from "./scope.ts";
 const TYPES: Record<string,string> = {
@@ -34,9 +34,9 @@ export function verifyUpload(name: string, data: Buffer): AnalysisFile {
 }
 /** Enforce the customer-facing PDF boundary before any provider work begins. */
 export async function verifyPdfPageLimit(name:string,data:Buffer){
-  let pages:number;
-  try{pages=(await PDFDocument.load(data)).getPageCount();}
-  catch{throw new Error(`Unreadable or encrypted PDF: ${name}. Supply an unlocked copy.`);}
+  // A permission-restricted PDF that opens without a password is accepted;
+  // only a real password or a damaged file is refused, each with its own message.
+  const pages=(await openablePdf(name,data)).pages;
   if(!pages)throw new Error(`${name}: PDF must contain at least one page.`);
   if(pages>SCOPE_MAX_PAGES)throw new Error(`${name}: plans may contain at most ${SCOPE_MAX_PAGES} pages.`);
   return pages;
@@ -97,8 +97,8 @@ export async function prepareAnalysisFiles(files:AnalysisFile[]) {
   for(const file of files){
     try{
     if(file.type==="application/pdf"){
-      const document=await PDFDocument.load(file.data);
-      if(!document.getPageCount()||document.getPageCount()>SCOPE_MAX_PAGES)throw new Error(`Use PDFs with 1 to ${SCOPE_MAX_PAGES} pages.`);
+      const pageCount=(await openablePdf(file.name,file.data)).pages;
+      if(!pageCount||pageCount>SCOPE_MAX_PAGES)throw new Error(`Use PDFs with 1 to ${SCOPE_MAX_PAGES} pages.`);
       readable.push(file);
     }else if(["image/heic","image/heif","image/tiff","image/avif"].includes(file.type)||(file.type.startsWith("image/")&&file.data.length>16*1024*1024)){readable.push(...await prepareImages(file));
     }else if(file.type==="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){

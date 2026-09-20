@@ -1,3 +1,4 @@
+import {plainCustomerLine,customerSentence} from './customerCopy.ts';
 /**
  * The one customer boundary for every brand. The estimator page, customer
  * email, customer PDF, public API responses and the customer copy inside the
@@ -79,7 +80,7 @@ export function publicPricingText(value:unknown):string{
   if(/[.!?]$/.test(sentence)&&!/[.!?]$/.test(safe))safe+='.';
   return [safe];
  };
- return text.split('\n').map(line=>scopeBullets(line).flatMap(repairSentence).filter(Boolean).join(' ')).filter(Boolean).join('\n');
+ return text.split('\n').map(line=>scopeBullets(plainCustomerLine(line)).flatMap(repairSentence).flatMap(sentence=>{const safe=customerSentence(sentence);return safe?[safe]:[];}).join(' ')).filter(Boolean).join('\n');
 }
 const publicTextList=(value:unknown):string[]=>Array.isArray(value)?value.map(publicPricingText).filter(Boolean):[];
 const finiteRange=(r:any)=>r&&Number.isFinite(r.low)&&Number.isFinite(r.high)?{low:Number(r.low),high:Number(r.high)}:null;
