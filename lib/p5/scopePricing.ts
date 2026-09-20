@@ -1,4 +1,5 @@
 import {unitKey,reusableUnitRate} from './unitRates.ts';
+class MissingResearchRateError extends Error {}
 export {unitKey} from './unitRates.ts';
 import {retainedScopeInventory} from './scopeInventory.ts';
 import {SERVER_BUDGET_MS,ProcessingDeadlineError,fetchWithinDeadline,isProcessingDeadline} from './processingBudget.ts';
@@ -640,7 +641,7 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
         }
         const accepted=marketSchema.parse(researched.value);
         const market=marketResolution(accepted,researched.sourceUrls,gapBatch,now,offset,region,scope);
-        if(gapBatch.some(task=>!market.rules.some(rule=>rule.scopeTaskId===task.id&&rule.unitCost>0)))throw new Error('Published research did not price every requested task');
+        if(gapBatch.some(task=>!market.rules.some(rule=>rule.scopeTaskId===task.id&&rule.unitCost>0)))throw new MissingResearchRateError('Published research did not price every requested task');
         // The audit needs the accepted observations, not every URL visited by
         // the search tool or its raw narrative. In the failed bathroom
         // checkpoint, one accepted three-rate reply retained more than one
@@ -654,11 +655,11 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
         return {replies,resolution:market,modelIssues:accepted.issues};
       }catch(error){
         if(isPricingPending(error)||isProcessingDeadline(error))throw error;
-        // Only an unavailable/timed-out search may take the explicitly
-        // preliminary planning path. A malformed schema, incompatible unit or
+        // An unavailable search or a valid response with missing rates may take
+        // the preliminary planning path. A malformed schema, incompatible unit or
         // rejected citation is a concrete evidence failure and stays blocking.
-        if(!isPricingStageTimeout(error))throw error;
-        researchFailure='published cost research did not finish within its time allowance';
+        if(!isPricingStageTimeout(error)&&!(error instanceof MissingResearchRateError))throw error;
+        researchFailure=error instanceof MissingResearchRateError?error.message:'published cost research did not finish within its time allowance';
       }
       const planned=await request(PLANNING_AVERAGE,{date:now.toISOString().slice(0,10),region,tasks:tasksInput,...(priorIssues?{priorIssues}:{})},false,deadline-Date.now());
       const accepted=planningSchema.parse(planned.value);

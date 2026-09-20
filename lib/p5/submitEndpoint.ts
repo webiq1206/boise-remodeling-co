@@ -43,7 +43,7 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
       const missing=('missingInformation' in priced.internal?priced.internal.missingInformation:[])||[];
       const missingFields=missingScopeFields(missing);
       const labels=missingFields.map(item=>item.label);
-      const items=((publicCustomer as {verificationItems?:string[]}).verificationItems||[]).filter(item=>typeof item==='string'&&item.trim());
+      const items=customerPricingQuestions(missing);
       // The reasons are logged so a live host explains an unpriced result, and the first few are shown so the visitor knows what to confirm.
       const blocks=(('warnings' in priced.internal?priced.internal.warnings:[])||[]).filter((w:{severity?:string})=>w.severity==='block').map((w:{code:string})=>w.code);
       console.error(`[p5-pricing] no range for draft ${id}: blocks=${blocks.join(',')||'none'}; missing=${missing.slice(0,6).join(' | ')||'none'}; items=${items.slice(0,4).join(' | ')||'none'}; issues=${(((priced.internal as {scopePricing?:{issues?:string[]}}).scopePricing?.issues)||[]).slice(0,6).join(' | ')||'none'}`);
