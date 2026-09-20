@@ -68,6 +68,10 @@ function syncTo(target){
   const retired=previous.filter(file=>!files.includes(file)&&existsSync(path.join(target,file)));
   for(const file of retired){console.log('  retired',file);if(!dry)rmSync(path.join(target,file));}
   writeManifest(target,files);
+  // A shared file the target's .gitignore hides exists on this disk only: the
+  // brand's deploy would then fail the shared-engine check for a missing file.
+  let ignored=[];try{ignored=execSync('git check-ignore --stdin',{cwd:target,input:files.join('\n'),stdio:['pipe','pipe','ignore']}).toString().split(/\r?\n/).filter(Boolean);}catch{}
+  if(ignored.length){console.error(`${path.basename(target)}: ${ignored.length} shared files are git-ignored there and would never deploy:\n  ${ignored.join('\n  ')}`);process.exitCode=1;}
   console.log(`${path.basename(target)}: ${copied} copied, ${same} already identical, ${retired.length} retired, ${files.length} shared files`);
 }
 
