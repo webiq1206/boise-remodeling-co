@@ -13,6 +13,15 @@ neonConfig.webSocketConstructor = ws;
 
 const pool = connectionString ? new Pool({ connectionString }) : null;
 
+// pg-pool emits 'error' on the POOL when a connection sitting idle in it dies,
+// which is what happens whenever Neon autosuspends the database. Node treats an
+// unhandled 'error' event as an uncaught exception, so without this listener a
+// routine idle drop takes the whole server down. The pool discards the dead
+// client itself; this only has to keep the process alive.
+pool?.on("error", (err) => {
+  console.error("[db] idle connection error (pool recovers, request retried):", err.message);
+});
+
 export const db = pool
   ? drizzle(pool, { schema })
   : null;
