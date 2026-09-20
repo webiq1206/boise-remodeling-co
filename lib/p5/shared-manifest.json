@@ -1,7 +1,7 @@
 {
  "source": "boise-remodeling-co",
- "commit": "f9c6464e6b9113aa9816fdb6229eb65566253000",
- "generatedAt": "2026-09-20T16:24:53.404Z",
+ "commit": "7f2103daa4bae10042e70525a5b2c455b52969f4",
+ "generatedAt": "2026-09-20T16:27:19.816Z",
  "note": "Shared estimator files. Edit them in boise-remodeling-co and run scripts/p5-sync.mjs; never edit them in one brand.",
  "files": {
   "app/admin/p5-estimators/page.tsx": "80b9e20e4144c34a9f78033ab1b84e2555e42c44e670050b9e0fcbffa477512e",
