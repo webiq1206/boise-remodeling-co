@@ -6,6 +6,8 @@ import {priceReviewedScope} from '../lib/p5/costBook.ts';
 import {createPlanningConfiguration,PLANNING_MODEL_VERSION,type PlanningCatalog} from '../lib/p5/planningBooks.ts';
 import type {ReviewedScope} from '../lib/p5/scope.ts';
 import {emptyInstructions} from '../lib/p5/instructions.ts';
+// The brand that records provider charges (P5 Home Co) keeps them in memory during tests; other brands ignore this.
+process.env.P5_PRICING_LEDGER_TEST_MODE||='memory';
 const date='2026-09-11T00:00:00.000Z',now=new Date(date);
 const codes=['03-17-01-M','03-17-01-L','03-19-02-M','03-15-02-M','03-15-02-L','03-16-01-M','03-16-01-L','03-14-01-M','03-14-01-L','03-04-01','03-04-02','03-04-03','03-05-02-M','03-05-02-L','TEST-DOOR-M','TEST-DOOR-L','REF-GENERAL-HOUR','REF-PLUMBING-HOUR','REF-ELECTRICAL-HOUR'];
 const catalog:PlanningCatalog={version:PLANNING_MODEL_VERSION,source:'Synthetic fixture',authorizedBy:'Test only',importedAt:date,rates:codes.map(code=>({code,description:code.includes('DOOR')?'Door':code.includes('03-16')?'Tile':'Synthetic work',type:code.endsWith('-M')?'Material':'Labor',unit:code.includes('HOUR')?'HR':code.includes('DOOR')?'EA':code.includes('03-16')?'SF':'LF',amount:100,source:'Synthetic fixture',basis:'owner-average-cost'}))};
@@ -543,7 +545,7 @@ test('An audit that faults a planning allowance for being uncited cannot withhol
  };
  const r=await priceCompleteScope(scope,config,request,now);
  assert.ok(r.customer.range,'the range is released with the planning allowance disclosed');
- assert.ok(r.customer.assumptions.some((a:string)=>/priced by a preliminary allowance/.test(a)),'the uncovered task is disclosed as allowance-priced');
+ assert.ok(r.customer.assumptions.some((a:string)=>/Budget allowance; final selection to be confirmed/.test(a)),'the uncovered task is disclosed as allowance-priced');
  assert.ok(r.customer.assumptions.some((a:string)=>/uncited general estimating knowledge/.test(a)),'the audit note travels as an item to confirm');
  assert.ok((r.internal as any).scopePricing.issues.some((i:string)=>/uncited general estimating knowledge/.test(i)),'the audit note stays in the audit trail for staff');
  assert.equal(calls,5,'inventory, mapping, research (timed out), planning and one audit: no repair round for a planning-basis note');
@@ -611,7 +613,9 @@ test('Past the research window a gap goes straight to the planning average witho
   const r=await priceCompleteScope(scope,config,request,startedAt);return {r,searches};};
  const fresh=await run(new Date(Date.now()-1000));assert.equal(fresh.searches,1,'a fresh job attempts published research');assert.ok(fresh.r.customer.range);
  const late=await run(new Date(Date.now()-4*60*1000));assert.equal(late.searches,0,'an old job does not start another search');assert.ok(late.r.customer.range,'the planning average releases the range');
- assert.ok(late.r.customer.assumptions.some((a:string)=>/passed its research window/.test(a)),'the reason is disclosed');
+ assert.ok(late.r.customer.assumptions.some((a:string)=>/Budget allowance; final selection to be confirmed/.test(a)),'the allowance is disclosed to the customer in plain words');
+ assert.doesNotMatch(JSON.stringify(late.r.customer),/research window|published cost research/i,'the internal cause stays out of customer output');
+ assert.match(JSON.stringify(late.r.internal),/passed its research window/,'the cause is kept in the staff record');
 });
 test('Advisory-only issues release the range without a repair round',async()=>{
  const tasks=Array.from({length:12},(_,i)=>({...task,id:`task-${i}`,description:`Assembly component ${i}`}));
@@ -671,7 +675,7 @@ test('Empty completed research uses an audited planning allowance instead of lea
   return {value:{tasks:tasks.map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};};
  const result=await priceCompleteScope(scope,config,request,now);
  assert.equal(planned,1);assert.equal(audited,1);assert.ok(result.customer.range);
- assert.ok(result.customer.verificationItems.some((note:string)=>/planning average/i.test(note)));
+ assert.ok(result.customer.verificationItems.some((note:string)=>/budget allowance/i.test(note)));
 });
 test('Unsupported market and planning output units remain visibly unpriced',()=>{
   const market=structuredClone(researched);market.rates[0].unit='project';market.rates[0].sources.forEach(s=>s.unit='project');

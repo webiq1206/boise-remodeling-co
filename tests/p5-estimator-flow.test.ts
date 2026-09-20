@@ -9,6 +9,8 @@ import {BACKGROUND_JOB_LIMIT_MS,CLIENT_BUDGET_MS,PRICING_PASS_MS} from '../lib/p
 import {createPlanningConfiguration,PLANNING_MODEL_VERSION,type PlanningCatalog} from '../lib/p5/planningBooks.ts';
 import type {ReviewedScope} from '../lib/p5/scope.ts';
 import {estimatorTheme} from '../lib/p5/theme.ts';
+// The brand that records provider charges (P5 Home Co) keeps them in memory during tests; other brands ignore this.
+process.env.P5_PRICING_LEDGER_TEST_MODE||='memory';
 
 test('missing cost-book quantities become answerable fields, review-only items do not',()=>{
   const fields=missingScopeFields(['Missing quantity: tileSqft for Tile installation','Missing cost condition: structural for Beam work','Missing cost rate: 03-01-01 needs review','Missing quantity: Drywall has a zero quantity; confirm exclusion']);
@@ -34,7 +36,8 @@ test('review details group by presentation category',()=>{
 
 test('category breakdown carries subtotals, quantities, unit prices and pricing status',()=>{
   const result={includedCategories:['Plumbing'],range:{low:100,high:200},categoryRanges:[{category:'Plumbing',low:100,high:200}],lineItems:[{id:'p',category:'Plumbing',description:'Fixture installation',quantity:2,unit:'EA',low:100,high:200,unitLow:50,unitHigh:100,pricingStatus:'estimated-allowance',verification:'Confirm selections.'}],scopeTasks:[{description:'Install two fixtures',category:'Plumbing'},{description:'Paint the walls'}]};
-  const groups=categoryBreakdown(result);
+  // Unit prices are asserted explicitly; one brand hides them from customers by default.
+  const groups=categoryBreakdown(result,true,false);
   assert.deepEqual(groups.map(g=>g.category),['Plumbing','Painting']);
   assert.equal(groups[0].low,100);assert.equal(groups[0].items[0].unitHigh,100);assert.equal(groups[0].items[0].status,'estimated-allowance');
   assert.deepEqual(groups[1].tasks,['Paint the walls']);assert.equal(groups[1].items.length,0);
@@ -97,8 +100,9 @@ test('a slow or unavailable web search falls back to a labeled planning average 
   const line=(r.internal as any).lines.find((l:any)=>l.id==='planning-1');
   assert.ok(line);assert.equal(line.evidence.basis,'regional-planning-average');
   const item=r.customer.lineItems.find((l:any)=>l.id==='planning-1') as any;
-  assert.equal(item.pricingStatus,'estimated-allowance');assert.match(item.verification,/not verified local pricing/);
-  assert.ok(r.customer.assumptions.some((a:string)=>a.includes('Published cost research was not used')));
+  assert.equal(item.pricingStatus,'estimated-allowance');assert.match(item.verification,/Budget allowance; final selection to be confirmed/);
+  assert.ok(r.customer.assumptions.some((a:string)=>a.includes('Budget allowance; final selection to be confirmed.')));
+  assert.doesNotMatch(JSON.stringify(r.customer),/published cost research|planning average|local pricing/i);
   assert.ok((r.internal as any).warnings.some((w:any)=>w.code==='planning-average-preliminary'&&w.severity==='review'));
   assert.ok(!JSON.stringify(r.customer).includes('unitCost'));
 });

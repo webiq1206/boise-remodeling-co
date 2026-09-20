@@ -80,7 +80,9 @@ export function publicPricingText(value:unknown):string{
   if(/[.!?]$/.test(sentence)&&!/[.!?]$/.test(safe))safe+='.';
   return [safe];
  };
- return text.split('\n').map(line=>scopeBullets(plainCustomerLine(line)).flatMap(repairSentence).flatMap(sentence=>{const safe=customerSentence(sentence);return safe?[safe]:[];}).join(' ')).filter(Boolean).join('\n');
+ // Removing a private figure can leave its connector behind ("allowance based on; confirm ...").
+ const mend=(line:string)=>line.replace(/\s+(?:based on|at|using|from|with|of)\s*(?=[,;:.!?]|$)/gi,'').replace(/\s*[;,:]\s*(?=[.!?]?$)/,'').replace(/\s+([,;:.!?])/g,'$1').trim();
+ return text.split('\n').map(line=>mend(scopeBullets(plainCustomerLine(line)).flatMap(repairSentence).flatMap(sentence=>{const safe=customerSentence(sentence);return safe?[safe]:[];}).join(' '))).filter(Boolean).join('\n');
 }
 const publicTextList=(value:unknown):string[]=>Array.isArray(value)?value.map(publicPricingText).filter(Boolean):[];
 const finiteRange=(r:any)=>r&&Number.isFinite(r.low)&&Number.isFinite(r.high)?{low:Number(r.low),high:Number(r.high)}:null;

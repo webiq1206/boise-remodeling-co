@@ -14,7 +14,8 @@ export const CRM_PROJECTION_VERSION='p5-crm-v2';
  * opens ?id=&revision= deep links; the other sender sites reference the
  * authenticated API route until their admin page accepts the same link.
  */
-export const BRAND_CRM_ADMIN_PATH:CrmAdminPath=(brand.id as string)==='remodeling'?CRM_ADMIN_PAGE_PATH:CRM_ADMIN_API_PATH;
+// Every brand ships the same staff page, which opens the referenced estimate and revision from its link.
+export const BRAND_CRM_ADMIN_PATH:CrmAdminPath=CRM_ADMIN_PAGE_PATH;
 export interface BrandCrmPayload{payload:any;body:string;bytes:number}
 /**
  * Brand form: fills brand identity, sends the customer copy through the one

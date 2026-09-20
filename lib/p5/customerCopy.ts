@@ -43,6 +43,7 @@ export function plainCustomerLine(line:string):string{
     return `${item}${quantityLabel(amount,unit)}: ${BUDGET_ALLOWANCE_NOTE}${kept?' '+kept:''}`;
   });
   text=text.replace(/^(.+?): reused (?:provisional planning|published benchmark) allowance, ([\d.,]+) ([^\s.]+)\.[\s\S]*$/,(_,item,amount,unit)=>`${item}${quantityLabel(amount,unit)}: ${BUDGET_ALLOWANCE_NOTE}`);
+  text=text.replace(/^(.+?): priced by a preliminary allowance pending published research;[\s\S]*$/,(_,item)=>`${item}: ${BUDGET_ALLOWANCE_NOTE}`);
   text=text.replace(/Regional planning average, not verified local pricing\.\s*Confirm current local rates, quantities and selections before a firm proposal\.?/gi,BUDGET_ALLOWANCE_NOTE);
   text=text.replace(/(^|[.!?]\s+)Not verified local (?:pricing|quotes)\.?/g,'$1Final selection to be confirmed.').replace(/\s*Confirm current local rates[^.]*\./gi,'').replace(/\bregional planning averages?(?: allowances?)?/gi,'budget allowance').replace(/\bplanning average allowances?/gi,'budget allowance')
     .replace(/[;,]?\s*(?:it is |this is )?not verified local (?:pricing|quotes)/gi,'; final selection to be confirmed').replace(/\bretry pricing research\b/gi,'try again').replace(/[ \t]+/g,' ').trim();

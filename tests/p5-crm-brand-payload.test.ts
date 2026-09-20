@@ -52,7 +52,8 @@ test('the brand form sends the customer copy through the one customer projection
 
 test('the administrator reference is an allowlisted authenticated route for the exact revision',()=>{
  const source={...record(),brand:brand.name,estimator:'p5-policy'};
- const expected=(brand.id as string)==='remodeling'?CRM_ADMIN_PAGE_PATH:CRM_ADMIN_API_PATH;
+ // Every brand ships the staff page that opens a referenced estimate and revision.
+ const expected=CRM_ADMIN_PAGE_PATH;
  assert.equal(BRAND_CRM_ADMIN_PATH,expected);
  for(const payload of [buildCrmPayload(source,'k',brand.domain) as any,buildBrandCrmPayload(source,'k').payload]){
   const url=new URL(payload.estimate.durableAdminRecord.url);
