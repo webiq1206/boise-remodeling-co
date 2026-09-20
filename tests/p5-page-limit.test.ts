@@ -5,7 +5,7 @@ import {prepareAnalysisFiles} from '../lib/p5/documents.ts';
 import {analysisSegments} from '../lib/p5/analysisSegments.ts';
 import {drawingDetails} from '../lib/p5/planRendering.ts';
 import {validateRemotePageCount} from '../lib/p5/documentServiceClient.ts';
-import {SCOPE_PDF_PAGE_LIMIT,SCOPE_UPLOAD_HELP} from '../lib/p5/scope.ts';
+import {SCOPE_MAX_PAGES,SCOPE_PAGE_LIMIT,SCOPE_PDF_PAGE_LIMIT,SCOPE_PLAN_PAGE_LIMIT,SCOPE_PLAN_PAGE_TARGET,SCOPE_UPLOAD_HELP} from '../lib/p5/scope.ts';
 import {MAX_PLAN_PAGES,PART_MAX_BYTES,PART_MAX_PAGES} from '../shared/documents/uploadPlan.ts';
 import {splitForUpload} from '../lib/planSplitter.ts';
 
@@ -16,7 +16,10 @@ async function fixture(count:number){
 }
 const boundary=Promise.all([fixture(250),fixture(251)]);
 test('browser/local/remote page ceiling is 250 without raising buffered part budgets',()=>{
- assert.equal(SCOPE_PDF_PAGE_LIMIT,250);assert.equal(MAX_PLAN_PAGES,250);
+ assert.equal(SCOPE_MAX_PAGES,250);assert.equal(MAX_PLAN_PAGES,250);
+ // One canonical limit; every historical brand name is an alias that cannot drift.
+ for(const alias of [SCOPE_PAGE_LIMIT,SCOPE_PDF_PAGE_LIMIT,SCOPE_PLAN_PAGE_LIMIT,SCOPE_PLAN_PAGE_TARGET])assert.equal(alias,SCOPE_MAX_PAGES);
+ assert.match(SCOPE_UPLOAD_HELP,/250 MiB each and 1 GiB total/);assert.doesNotMatch(SCOPE_UPLOAD_HELP,/\d\s?[MG]B\b/);
  assert.equal(PART_MAX_BYTES,6*1024*1024);assert.equal(PART_MAX_PAGES,8);
  assert.match(SCOPE_UPLOAD_HELP,/250 pages per PDF/);
  assert.doesNotThrow(()=>validateRemotePageCount(250));

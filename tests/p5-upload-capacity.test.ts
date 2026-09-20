@@ -25,7 +25,9 @@ test('size and cancellation checks run before reading file data',async()=>{
   await assert.rejects(fileDigest(fake),/250 MiB/);
   const controller=new AbortController();controller.abort();
   await assert.rejects(fileDigest(new Blob(['abc']),controller.signal),{name:'AbortError'});
-  await assert.rejects(cacheFiles('synthetic',[fake as File]),/Large files stay/);
+  await assert.rejects(cacheFiles('synthetic',[fake as File]),/250 MiB each/);
+  const budgeted={size:23*1024*1024,slice(){throw new Error('Must not read');},arrayBuffer(){throw new Error('Must not read');}} as unknown as File;
+  await assert.rejects(cacheFiles('synthetic',[budgeted]),/Large files stay/);
 });
 test('resumed transfer skips acknowledged chunks and verifies durable receipt',async()=>{
   const file=new File(['synthetic scope'],'scope.txt');const hash=await fileDigest(file);const actions:string[]=[];

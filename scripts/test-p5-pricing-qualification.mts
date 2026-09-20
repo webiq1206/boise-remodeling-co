@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,writeFile,rm,readFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {spawnSync} from 'node:child_process';
 import {PricingQualification,digest,DOCUMENT_LIMITS,type PricingAllowance} from './lib/pricingQualification.ts';
 import {capturePricingDelivery,isolatedCaptureFetch} from './lib/capturedPricingDelivery.ts';
@@ -65,7 +66,7 @@ try {
   release();await pending;checks++;other.close();q.close();
 
   const child=spawnSync(process.execPath,['--import','tsx','--input-type=module','-e',`
-    import {PricingQualification} from ${JSON.stringify(path.resolve('scripts/lib/pricingQualification.ts'))};
+    import {PricingQualification} from ${JSON.stringify(pathToFileURL(path.resolve('scripts/lib/pricingQualification.ts')).href)};
     const q=new PricingQualification(${JSON.stringify(allowanceFile)},${JSON.stringify(path.join(dir,'crash.sqlite'))},${JSON.stringify(source)});
     await q.guardedFetch({documentId:'crash',kind:'short'},async()=>{process.exit(17)})(${JSON.stringify(endpoint)},${JSON.stringify(request('crash'))});
   `],{encoding:'utf8'});

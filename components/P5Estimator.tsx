@@ -5,20 +5,20 @@ import P5EstimateDetails from './P5EstimateDetails';
 import P5ProcessingStatus from './P5ProcessingStatus';
 import {analysisMessage,type ProcessingStatus} from '@/lib/p5/processingStatus';
 import {customerChoiceLabel,selectCustomerAnswer,contextualCustomerAnswer,exactCustomerChoice,customerQuestionKey} from '@/lib/p5/customerAnswers';
-import {useEffect,useId,useLayoutEffect,useRef,useState} from 'react';
+import {useEffect,useId,useLayoutEffect,useMemo,useRef,useState} from 'react';
 import {ESTIMATOR_BRAND as brand} from '@/lib/p5/brand';
 import {estimatorTheme,estimatorThemeStyle} from '@/lib/p5/theme';
-import {SCOPE_FIELDS,SCOPE_FILE_LIMIT,SCOPE_BATCH_LIMIT,SCOPE_FILE_COUNT,SCOPE_UPLOAD_HELP,type ScopeField,type ScopeAnswers,type ScopeUpload} from '@/lib/p5/scope';
+import {SCOPE_FIELDS,SCOPE_FILE_LIMIT,SCOPE_MAX_PAGES,SCOPE_BATCH_LIMIT,SCOPE_FILE_COUNT,SCOPE_UPLOAD_HELP,type ScopeField,type ScopeAnswers,type ScopeUpload} from '@/lib/p5/scope';
 import {questionContext,scopeFieldApplies} from '@/lib/p5/dynamicQuestions';
 import {deriveScopeAnswers,finishOptionsForService,questionForField,scopeQuestionsForBrand as scopeQuestions,scopeAssumptions,validateScopeAnswer,type ScopeQuestion} from '@/lib/p5/adaptive';
-import {loadBrowserDraft,persistBrowserDraft,draftHeaders,cacheFiles,loadCachedFiles,clearCachedFiles,requireDraftReceipt,archiveBrowserDraft,listBrowserDraftRecoveries,replaceBrowserDraft,restoreBrowserDraft,type BrowserDraft,type BrowserDraftRecovery,type TranscriptEntry,readJson,withTimeout} from '@/lib/p5/browserDraft';
+import {loadBrowserDraft,persistBrowserDraft,draftHeaders,cacheFiles,loadCachedFiles,clearCachedFiles,requireDraftReceipt,archiveBrowserDraft,listBrowserDraftRecoveries,replaceBrowserDraft,restoreBrowserDraft,missingPendingFiles,DEVICE_CACHE_LIMIT,type BrowserDraft,type BrowserDraftRecovery,type TranscriptEntry,readJson,withTimeout} from '@/lib/p5/browserDraft';
 import {mergeProjectSource,type ProjectSource} from '@/lib/p5/projectSource';
 import {resumeWizardDraft} from '@/lib/p5/wizardResume';
 import {snapshotProjectFile} from '@/lib/p5/fileSnapshot';
 import {transferLargeFiles} from '@/lib/p5/resumableTransfer';
 import {fileDigest} from '@/lib/p5/fileDigest';
 import {transferProjectFiles} from '@/lib/p5/uploadTransfer';
-import {fieldCategory} from '@/lib/p5/presentation';
+import {customerPresentation,fieldCategory,HIDE_CUSTOMER_UNIT_RATES} from '@/lib/p5/presentation';
 import styles from './P5Estimator.module.css';
 import {reportProgress,trackScopeEvent} from '@/lib/p5/progress';
 import {trackGoogleAdsLeadConversion} from '@/lib/googleAdsConversion';
@@ -26,7 +26,7 @@ import {displayScopeText,refreshAnalyzedScope,scopeFingerprint,scopeTextChanged,
 import {ESTIMATOR_VERSION,estimatorRelease} from '@/lib/p5/version';
 
 const textAnswers=(a:ScopeAnswers)=>JSON.stringify(Object.entries(a).filter(([k,v])=>SCOPE_FIELDS[k as ScopeField].kind==='text'&&v?.trim()).sort(([a],[b])=>a.localeCompare(b)));
-const labels:Record<string,string>={handyman:'Home repairs',re10:'Inspection and RE-10 repairs','cabinet-product':'Cabinets, supply only','cabinet-install':'Cabinets with installation',kitchen:'Kitchen remodel',bathroom:'Bathroom remodel','whole-home':'Whole-home remodel',addition:'Home addition',adu:'ADU','new-construction':'New home','change-order':'Change order',rush:'Rush work',refresh:'Simple refresh','mid-range':'Standard finishes','high-end':'Premium finishes',luxury:'Custom luxury finishes',standard:'Standard',priority:'Priority',emergency:'Emergency',complex:'Complex',yes:'Yes',no:'No'};
+const labels:Record<string,string>={handyman:'Home repairs',re10:'Inspection and RE-10 repairs','cabinet-product':'Cabinets, supply only','cabinet-install':'Cabinet installation',kitchen:'Kitchen remodel',bathroom:'Bathroom remodel','whole-home':'Whole-home remodel',addition:'Home addition',adu:'ADU','new-construction':'New home','change-order':'Change order',rush:'Rush work',refresh:'Simple refresh','mid-range':'Standard finishes','high-end':'Premium finishes',luxury:'Custom luxury finishes',standard:'Standard',priority:'Priority',emergency:'Emergency',complex:'Complex',yes:'Yes',no:'No'};
 const readable=(field:ScopeField,value:string)=>field==='cabinetRoom'?value.replaceAll('-',' ').replace(/\b\w/g,letter=>letter.toUpperCase()):labels[value]||value.replaceAll('-',' ');
 const brandId=brand.id as string;
 const SUGGESTIONS:Record<string,string[]>={
@@ -60,7 +60,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const [draft,setDraft]=useState<BrowserDraft|null>(null);const current=useRef<BrowserDraft|null>(null);
   const [files,setFiles]=useState<File[]>([]);const filesRef=useRef<File[]>([]);const fileInput=useRef<HTMLInputElement|null>(null);const composerRef=useRef<HTMLTextAreaElement|null>(null);
   const [busy,setBusy]=useState('');const busyRef=useRef(false);const [error,setError]=useState('');const [warning,setWarning]=useState('');const [status,setStatus]=useState('');
-  const [uploadPercent,setUploadPercent]=useState<number|null>(null);const [preparingFiles,setPreparingFiles]=useState(false);const [dragging,setDragging]=useState(false);
+  const [uploadPercent,setUploadPercent]=useState<number|null>(null);const [preparingFiles,setPreparingFiles]=useState(true);const [dragging,setDragging]=useState(false);
   const [processing,setProcessing]=useState<ProcessingStatus|null>(null);const lastProcessing=useRef<ProcessingStatus|null>(null);
   const [paused,setPaused]=useState<Paused|null>(null);const resuming=useRef(false);
   const [missingFields,setMissingFields]=useState<MissingField[]>([]);const [verificationItems,setVerificationItems]=useState<string[]>([]);
@@ -68,7 +68,9 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const [reply,setReply]=useState('');
   const [editText,setEditText]=useState('');const [addingDetails,setAddingDetails]=useState(false);
   const [recoveries,setRecoveries]=useState<BrowserDraftRecovery[]>([]);
-  const [result,setResult]=useState<any>(null);const [delivery,setDelivery]=useState<any[]>([]);const deliveryChecks=useRef(0);const [confirmed,setConfirmed]=useState(false);
+  // Defense in depth: whatever a current or historical response carries, the page
+  // only ever renders the allowlisted customer projection of it.
+  const [rawResult,setResult]=useState<any>(null);const result=useMemo(()=>rawResult?customerPresentation(rawResult,{hideUnitRates:HIDE_CUSTOMER_UNIT_RATES}):null,[rawResult]);const [delivery,setDelivery]=useState<any[]>([]);const deliveryChecks=useRef(0);const [confirmed,setConfirmed]=useState(false);
   const [active,setActive]=useState<ScopeQuestion|null>(null);const [editField,setEditField]=useState<ScopeField|''>('');
   const [listening,setListening]=useState(false);const [speechAvailable,setSpeechAvailable]=useState(false);const recognition=useRef<Recognition|null>(null);
   const [expanded,setExpanded]=useState(false);const [topInset,setTopInset]=useState(0);const [bottomInset,setBottomInset]=useState(0);
@@ -108,7 +110,10 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   useEffect(()=>{
     mounted.current=true;const loaded=loadBrowserDraft(defaultService,projectSource?.id);const d=projectSource&&!loaded.sourceDetached?mergeProjectSource(loaded,projectSource):loaded;resume(d);setRecoveries(listBrowserDraftRecoveries(d.namespace));setWarning(d.analysisWarning||d.extraction?.reviewNotes.find(n=>n.startsWith("Your files are saved, but"))||"");
     setSpeechAvailable(Boolean((window as any).SpeechRecognition||(window as any).webkitSpeechRecognition));
-    loadCachedFiles(d.id).then(f=>{if(mounted.current&&current.current?.id===d.id){filesRef.current=f;setFiles(f);}}).catch(()=>setStatus('File recovery is unavailable. Keep this page open while uploading.'));
+    // The composer stays locked until device recovery settles, so a reload can
+    // never send a project while files chosen earlier are silently missing.
+    setPreparingFiles(true);
+    withTimeout(loadCachedFiles(d.id),15000,'File recovery did not respond. Reload or select your original files again before continuing.').then(f=>{if(mounted.current&&current.current?.id===d.id){filesRef.current=f;setFiles(f);requireRecoveredFiles();}}).catch(error=>{if(mounted.current&&current.current?.id===d.id)setError(error instanceof Error?error.message:'File recovery is unavailable. Select your original files again before continuing; your saved answers are retained.');}).finally(()=>{if(mounted.current&&current.current?.id===d.id)setPreparingFiles(false);});
     if(d.revision>0)fetch('/api/p5-estimator/draft',{headers:draftHeaders(d),cache:'no-store'}).then(r=>r.ok?r.text().then(b=>{try{return JSON.parse(b);}catch{return null;}}):null).then(async data=>{
       if(!mounted.current||!data?.draft||current.current?.id!==d.id)return;
       checkOperation();const saved=requireDraftReceipt(data);
@@ -156,6 +161,14 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     window.addEventListener('resize',measure);window.visualViewport?.addEventListener('resize',measure);window.visualViewport?.addEventListener('scroll',measure);
     return()=>{window.clearTimeout(later);window.removeEventListener('resize',measure);window.visualViewport?.removeEventListener('resize',measure);window.visualViewport?.removeEventListener('scroll',measure);html.style.overflow=previous.html;body.style.overflow=previous.body;delete body.dataset.p5EstimatorActive;if(layout==='embedded')rootRef.current?.scrollIntoView({block:'start'});};
   },[frameActive]);
+  // When the on-screen keyboard changes the inset, keep the focused field in view.
+  useEffect(()=>{
+    if(!frameActive||bottomInset<=0)return;
+    const focused=document.activeElement as HTMLElement|null;
+    if(!focused||!rootRef.current?.contains(focused))return;
+    const frame=requestAnimationFrame(()=>scrollThread(focused,'center'));
+    return()=>cancelAnimationFrame(frame);
+  },[bottomInset,frameActive]);
   const operationBudget=useRef<{deadline:number;controller:AbortController}|null>(null);
   const operationFetch:typeof fetch=(input,init)=>{const budget=operationBudget.current;return fetchWithinDeadline(fetch,input,{...init,...(budget?{signal:budget.controller.signal}:{})},budget?.deadline||Date.now()+CLIENT_BUDGET_MS);};
   const checkOperation=()=>{const budget=operationBudget.current;if(budget){if(budget.controller.signal.aborted)throw new ProcessingDeadlineError();remainingBudget(budget.deadline);}};
@@ -258,7 +271,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   async function analyze(){
     const initiated=operationBudget.current;
     const checkAnalysis=()=>{if(initiated&&initiated!==operationBudget.current)throw new ProcessingDeadlineError();checkOperation();};
-    await ensureSourcePhoto();
+    requireRecoveredFiles();await ensureSourcePhoto();
     const message=pendingUserMessage.current;pendingUserMessage.current=null;
     if(message&&(message.text.trim()||message.files.length))log(newEntry('user',message.text,{files:message.files,kind:'scope',caption:message.caption}));
     setBusy('Saving your project...');await save();const d=current.current!;const pending=[...filesRef.current];
@@ -274,7 +287,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
       if(!sourceSnapshotsEqual(sourceSnapshot(d),sourceSnapshot(receipt as BrowserDraft)))throw new Error('Your project changed while files were uploading. Your files are retained. Refresh before continuing so newer details are not overwritten.');
       requireCurrentSource();
       for(const f of pending){const digest=await fileDigest(f,operationBudget.current?.controller.signal);if(!receipt.uploads.some(stored=>stored.sha256===digest&&stored.size===f.size))throw new Error(`${f.name}: upload was not confirmed. Please retry.`);}
-      apply({...current.current!,uploads:receipt.uploads,revision:receipt.revision});filesRef.current=[];setFiles([]);await clearCachedFiles(d.id).catch(()=>undefined);setUploadPercent(null);setStatus('Files uploaded and saved.');
+      apply({...current.current!,uploads:receipt.uploads,revision:receipt.revision,pendingFiles:[]});filesRef.current=[];setFiles([]);await clearCachedFiles(d.id).catch(()=>undefined);setUploadPercent(null);setStatus('Files uploaded and saved.');
     }
     setBusy(analysisMessage(Boolean(current.current!.uploads?.length)));const form=new FormData();form.set('text',d.text);form.set('scopeFingerprint',scopeFingerprint(d.text));form.set('revision',String(current.current!.revision));form.set('resumable','true');form.set('background','true');form.set('retry',resuming.current?'false':'true');resuming.current=false;
     let data:any;let conflicts=0;
@@ -291,7 +304,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     apply(next);setWarning(data.warning||'');if(pending.length)trackScopeEvent(d.uploads?.length?'additionalDocuments':'documentUploaded',saved.answers.service);trackScopeEvent(data.warning?'analysisFailed':'analysisCompleted',saved.answers.service);filesRef.current=[];setFiles([]);
     if(next.uploads?.length)try{await clearCachedFiles(d.id);}catch{setStatus('Files are uploaded. Local file cleanup will retry later.');}
     const remaining=questions(next);const captured=Object.keys(next.answers).filter(k=>k!=='estimatingInstructions'&&next.answers[k as ScopeField]?.trim()).length;const read=next.uploads?.length||0;
-    const ack=[`Thanks. I read ${read?`${read} ${read===1?'file':'files'} and `:''}your description and saved ${captured} project ${captured===1?'detail':'details'}.`,data.warning?'Some files still need review; see the note below.':remaining.length?`I have ${remaining.length===1?'one quick question':`${remaining.length} quick questions`} before your estimate.`:'That is everything I need. Review your project below, then add where to send your estimate.'].join(' ');
+    const ack=[`Thanks. I read ${read?`${read} ${read===1?'file':'files'} and `:''}your description and saved ${captured} project ${captured===1?'detail':'details'}.`,data.warning?(read?'Some files still need review; see the note below.':'I could not finish reading your description; your text is saved. See the note below.'):remaining.length?`I have ${remaining.length===1?'one quick question':`${remaining.length} quick questions`} before your estimate.`:'That is everything I need. Review your project below, then add where to send your estimate.'].join(' ');
     log(newEntry('assistant',ack,{kind:'ack'}));setStatus('');showQuestions(current.current!);
   }
   const needsAnalysis=()=>{const d=current.current;return Boolean(d&&(d.analysisWarning||!d.sourceDetached&&projectSource?.imageUrl&&d.sourceImageUrl!==projectSource.imageUrl||filesRef.current.length||d.text.trim()&&d.text!==d.analyzedText||textAnswers(d.answers)!=='[]'&&textAnswers(d.answers)!==d.analyzedAnswers));};
@@ -302,7 +315,13 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     return()=>{cancelled=true;clearTimeout(timer);};
   },[result,delivery]);
   useEffect(()=>{const el=composerRef.current;if(!el)return;el.style.height='auto';el.style.height=Math.min(el.scrollHeight,220)+'px';},[draft?.text,draft?.answers.estimatingInstructions,draft?.step,reply,editText,addingDetails]);
+  /** Files chosen before a reload that this device could not give back. */
+  function requireRecoveredFiles(){
+    const missing=missingPendingFiles(current.current||{},filesRef.current);
+    if(missing.length)throw new Error(`Select the original files again before continuing: ${missing.map(f=>f.name).join(', ')}. Your answers and server upload progress are retained; matching uploaded segments will resume.`);
+  }
   const begin=()=>run('Reading your project...',async()=>{
+    requireRecoveredFiles();
     if(!current.current?.text.trim()&&!filesRef.current.length&&!current.current?.uploads?.length&&!Object.values(current.current?.answers||{}).some(v=>v?.trim())){pendingUserMessage.current=null;setError('Describe your project or add a file to continue.');return;}
     if(needsAnalysis()||(current.current?.uploads?.length&&!current.current.extraction))await analyze();else{pendingUserMessage.current=null;await save();showQuestions(current.current!);}
   },'analysis');
@@ -315,7 +334,10 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     let copied:File[];setPreparingFiles(true);
     try{copied=[];for(const file of next)copied.push(filesRef.current.includes(file)||file.size>10*1024*1024?file:await snapshotProjectFile(file));}catch(error){setPreparingFiles(false);setError(error instanceof Error?error.message:'The selected file could not be read. Please select it again.');return;}
     filesRef.current=copied;setFiles(copied);setError('');setConfirmed(false);
-    try{if(copied.reduce((n,f)=>n+f.size,0)>22*1024*1024)throw new Error('Large files stay in this tab until upload.');await withTimeout(cacheFiles(current.current.id,copied),6000,'Device storage did not respond.');setStatus('Files ready. Send your message to read them with your project details.');}catch{setStatus('Files are ready in this tab. Device storage is unavailable; keep this tab open until upload completes.');}finally{setPreparingFiles(false);}
+    apply({...current.current,pendingFiles:copied.map(({name,size})=>({name,size}))});
+    // cacheFiles owns the device budget: selections above it stay in this tab and
+    // pendingFiles names them, so a reload asks for the originals instead of losing them.
+    try{await withTimeout(cacheFiles(current.current.id,copied),60000,'Device storage did not respond.');requireRecoveredFiles();setStatus('Files saved on this device. Send your message to upload and read them with your project details.');}catch(error){const message=error instanceof Error?error.message:'';if(missingPendingFiles(current.current,copied).length)setError(message);setStatus(copied.reduce((n,f)=>n+f.size,0)>DEVICE_CACHE_LIMIT?'Files are ready in this tab. Large files stay in this tab until upload; keep it open, or after a reload reselect the original files to resume saved server segments.':`Files remain in this tab. Device storage may be full or unavailable. Keep this tab open until upload completes; after a reload, reselect the original files to resume saved server segments. ${message}`);}finally{setPreparingFiles(false);}
   }
   function speak(){
     if(listening){recognition.current?.stop();return;}
@@ -341,6 +363,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const focusCorrection=(element:HTMLElement|null)=>requestAnimationFrame(()=>{if(!element)return;element.focus({preventScroll:true});scrollThread(element,'center');});
   async function submit(event:React.FormEvent){
     event.preventDefault();if(busyRef.current)return;if(draft?.step!==2){await begin();return;}
+    try{requireRecoveredFiles();}catch(error){setError(error instanceof Error?error.message:'Reselect your original files before continuing.');return;}
     if(current.current?.analysisWarning&&!filesRef.current.length&&(current.current.text||'')===(current.current.analyzedText||'')){setError('Some of your files could not be read, so they cannot be priced yet. Use Retry document reading, or remove the file to price the rest of your project.');return;}
     if(needsAnalysis()){await begin();return;}
     const d=current.current!;
@@ -365,7 +388,11 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     if(busyRef.current||preparingFiles||!current.current)return;const d=current.current;
     if(!window.confirm(recovery?'Restore this saved project? Your current project will be kept in recovery.':'Start a new project with no previous answers or files? Your current project and files will be kept in recovery.'))return;
     await run('Preserving your project...',async()=>{
-      if(filesRef.current.length)await cacheFiles(d.id,filesRef.current);const archived=replaceBrowserDraft(d,'');let next=recovery?restoreBrowserDraft(recovery):archived.draft;if(!next)throw new Error('This saved project could not be restored. Your current project is unchanged.');const pending=recovery?await loadCachedFiles(next.id):[];
+      if(filesRef.current.length)await cacheFiles(d.id,filesRef.current);const archived=replaceBrowserDraft(d,'');let next=recovery?restoreBrowserDraft(recovery):archived.draft;if(!next)throw new Error('This saved project could not be restored. Your current project is unchanged.');
+      // Legacy design recoveries predate namespaced storage. The recovery list
+      // already identity-filters them; bind the restored copy to this route so
+      // the next autosave cannot leak it back into the generic estimator key.
+      next={...next,namespace:d.namespace};const pending=recovery?await loadCachedFiles(next.id):[];
       if(recovery&&next.revision>0){
         const response=await operationFetch('/api/p5-estimator/draft',{headers:draftHeaders(next),cache:'no-store'});if(!response.ok)throw new Error('The saved project could not be checked. Keep this page open and retry.');const saved=requireDraftReceipt(await readJson(response));if(saved.status==='submitted')throw new Error('This project was already submitted and cannot be edited. Its recovery is retained; start a new project instead.');
         if(scopeTextChanged(saved.text,next.text)){next={...refreshAnalyzedScope(next,next.text),revision:saved.revision,uploads:saved.uploads,dirty:true};}
@@ -414,7 +441,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const attachedProjectSource=projectSource&&!draft.sourceDetached?projectSource:undefined;
   const known=Object.keys(draft.answers).filter(k=>k!=='estimatingInstructions'&&draft.answers[k as ScopeField]?.trim()) as ScopeField[];
   const knownGroups=[...new Set(known.map(fieldCategory))].map(title=>({title,fields:known.filter(k=>fieldCategory(k)===title)}));
-  const uploadedCount=draft.uploads?.length||0;
+  const uploadedCount=draft.uploads?.length||0;const missingFiles=preparingFiles?[]:missingPendingFiles(draft,files);
   const contactReady=draft.contact.name.trim().length>=2&&EMAIL.test(draft.contact.email);
   const submitErrorId=`${id}-submit-error`;const formId=`${id}-form`;
   const transcript=draft.transcript||[];const hasProgress=transcript.length>0||draft.step>0||Boolean(result)||uploadedCount>0;
@@ -428,7 +455,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const field=(key:ScopeField)=>{const definition=SCOPE_FIELDS[key];const value=draft?.answers[key]||'';const fieldId=`${id}-${key}`;const options=definition.kind==='choice'?(key==='finish'?finishOptionsForService(draft?.answers.service):definition.options.filter(v=>key!=='service'||(brand.services as readonly string[]).includes(v))):[];return <div key={key} className={styles.field}><label htmlFor={fieldId}>{definition.label}</label>{definition.kind==='choice'?<select id={fieldId} value={value} onChange={e=>answer(key,e.target.value)}><option value="">Choose an answer</option>{options.map(v=><option key={v} value={v}>{readable(key,v)}</option>)}</select>:definition.kind==='number'?<input id={fieldId} inputMode="decimal" value={value} onChange={e=>answer(key,e.target.value)} placeholder="Approximate is fine"/>:<textarea id={fieldId} rows={3} value={value} onChange={e=>answer(key,e.target.value)} />}</div>;};
   const composer=<div className={styles.composer} data-dragging={dragging} onDragEnter={e=>{e.preventDefault();setDragging(true);}} onDragOver={e=>e.preventDefault()} onDragLeave={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node|null))setDragging(false);}} onDrop={e=>{e.preventDefault();setDragging(false);void addFiles(e.dataTransfer.files);}}>
     <label htmlFor={`${id}-scope`} className={styles.srOnly}>{composerMode==='answer'?'Your answer':'Tell us about your project'}</label>
-    {Boolean(files.length||(composerMode!=='answer'&&uploadedCount))&&<ul className={styles.chips} aria-label="Project files">{composerMode!=='answer'&&draft.uploads?.map(f=><li key={f.id} className={styles.chip}><FileGlyph/><span className={styles.chipText}><span>{f.name}</span><small>Saved</small></span></li>)}{files.map((f,i)=><li key={`${f.name}-${i}`} className={styles.chip}><FileGlyph/><span className={styles.chipText}><span>{f.name}</span><small>Ready</small></span><button type="button" className={styles.chipRemove} aria-label={`Remove ${f.name}`} onClick={async()=>{const next=filesRef.current.filter((_,index)=>i!==index);filesRef.current=next;setFiles(next);try{await cacheFiles(draft.id,next);}catch{setStatus('File removed from this session. Local storage could not be updated.');}}}><span aria-hidden="true">×</span></button></li>)}</ul>}
+    {Boolean(files.length||missingFiles.length||(composerMode!=='answer'&&uploadedCount))&&<ul className={styles.chips} aria-label="Project files">{composerMode!=='answer'&&draft.uploads?.map(f=><li key={f.id} className={styles.chip}><FileGlyph/><span className={styles.chipText}><span>{f.name}</span><small>Saved</small></span></li>)}{files.map((f,i)=><li key={`${f.name}-${i}`} className={styles.chip}><FileGlyph/><span className={styles.chipText}><span>{f.name}</span><small>Ready</small></span><button type="button" disabled={locked} className={styles.chipRemove} aria-label={`Remove ${f.name}`} onClick={async()=>{const next=filesRef.current.filter((_,index)=>i!==index);filesRef.current=next;setFiles(next);if(current.current)apply({...current.current,pendingFiles:(current.current.pendingFiles||[]).filter(file=>file.name!==f.name||file.size!==f.size)});try{await cacheFiles(draft.id,next);}catch{setStatus('File removed from this session. Local storage could not be updated.');}}}><span aria-hidden="true">×</span></button></li>)}{missingFiles.map((f,i)=><li key={`missing-${f.name}-${i}`} className={styles.chip} data-missing><FileGlyph/><span className={styles.chipText}><span>{f.name}</span><small>Select again</small></span><button type="button" disabled={locked} className={styles.chipRemove} aria-label={`Remove ${f.name}`} onClick={()=>{if(!current.current)return;apply({...current.current,pendingFiles:(current.current.pendingFiles||[]).filter(file=>file.name!==f.name||file.size!==f.size)});setError('');}}><span aria-hidden="true">×</span></button></li>)}</ul>}
     <textarea ref={composerRef} id={`${id}-scope`} className={styles.composerText} rows={composerMode==='answer'?1:2} value={composerValue} onChange={e=>setComposerValue(e.target.value)} onKeyDown={composerKey} disabled={locked} placeholder={composerMode==='answer'?'Type your answer':composerMode==='edit'?'Edit your project description or add details':composerPlaceholder}/>
     <div className={styles.composerBar}><div className={styles.composerTools}><button type="button" className={styles.iconBtn} aria-label="Attach files" title="Attach plans, photos, estimates or documents" disabled={locked} onClick={()=>fileInput.current?.click()}><AttachGlyph/></button><input ref={fileInput} id={`${id}-files`} className={styles.srOnly} type="file" accept={accept} multiple tabIndex={-1} aria-label="Upload project files" onChange={e=>{const input=e.currentTarget;const selected=Array.from(input.files||[]);void addFiles(selected).then(()=>{input.value='';});}}/>{speechAvailable&&<button type="button" className={styles.iconBtn} data-listening={listening} aria-pressed={listening} aria-label={listening?'Stop listening':'Talk instead'} title={listening?'Stop listening':'Talk instead'} disabled={locked} onClick={speak}><MicGlyph/></button>}<span className={styles.composerHint}>{dragging?'Drop files to add them':locked?'Working on your project':'Type, talk, or attach files'}</span></div><button type="button" className={styles.send} aria-label={composerMode==='answer'?'Send answer':'Continue'} title={composerMode==='answer'?'Send answer':'Continue'} onClick={()=>{sentMessageRef.current=true;send();}} disabled={!canSend}><span aria-hidden="true">↑</span></button></div>
   </div>;
@@ -456,15 +483,15 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const stepLabel=result?'Estimate ready':`Step ${draft.step+1} of 3 · ${STEP_LABELS[draft.step]}`;const showBack=!result&&!busy&&draft.step>0;const collapsedWithProgress=layout==='embedded'&&!expanded&&hasProgress;
   const dock=locked&&stage!==2&&stage!==3?<div className={styles.dockHint} role="status">Working on your project. Your progress is saved.</div>
     :stage===3?<div className={styles.dockBar}><a className={styles.primary} href={brand.consultationPath} onClick={()=>trackScopeEvent("onsiteRequested",draft.answers.service)}>Schedule a consultation</a><button type="button" className={styles.secondary} onClick={downloadPdf} disabled={locked}>Download PDF</button></div>
-    :stage===2?<>{addingDetails&&composer}{contactReady&&<div className={styles.dockBar}><button type="submit" form={formId} className={styles.primary} disabled={locked} aria-describedby={error?submitErrorId:undefined}>{busy?'Preparing your estimate…':'Get my estimate'}</button></div>}<div className={styles.dockRow}><span className={styles.dockHint}>{contactReady?(confirmed?'Your estimate opens right here and is emailed to you.':'Confirm your project details above, then get your estimate.'):'Add your name and email above to continue.'}</span><button type="button" className={styles.ghost} disabled={locked} onClick={()=>setAddingDetails(v=>!v)} aria-expanded={addingDetails}>{addingDetails?'Cancel editing':'Add or edit details'}</button></div></>
+    :stage===2?<>{addingDetails&&composer}<div className={styles.dockBar} data-final-action><button type="submit" form={formId} className={styles.primary} disabled={locked} aria-describedby={error?submitErrorId:undefined}>{busy?'Preparing your estimate…':'Get my estimate'}</button></div><div className={styles.dockRow}><span className={styles.dockHint}>{contactReady?(confirmed?'Your estimate opens right here and is emailed to you.':'Confirm your project details above, then get your estimate.'):'Add your name and email above to continue.'}</span><button type="button" className={styles.ghost} disabled={locked} onClick={()=>setAddingDetails(v=>!v)} aria-expanded={addingDetails}>{addingDetails?'Cancel editing':'Add or edit details'}</button></div></>
     :stage===1&&active?.handoff?<div className={styles.dockBar}><a className={styles.primary} href={active.handoff.url}>{active.handoff.label}</a></div>
-    :<>{composer}{stage===0&&<p className={styles.dockHint}>PDF, images, Word, spreadsheets and text. Instructions such as “price only the trim” or “exclude plumbing” are followed throughout.</p>}</>;
+    :<>{composer}{stage===0&&<p className={styles.dockHint}>PDFs up to {SCOPE_MAX_PAGES} pages, images, Word, spreadsheets and text. Up to 50 files, 250 MiB each and 1 GiB total. Instructions such as “price only the trim” or “exclude plumbing” are followed throughout.</p>}</>;
   return <div ref={rootRef} role="region" aria-label="Project estimator" className={styles.root} data-p5-estimator data-version={ESTIMATOR_VERSION} data-release={estimatorRelease().sha.slice(0,12)} data-theme={theme.mode} data-layout={layout} data-expanded={frameActive?'true':undefined} data-step={stage} aria-busy={Boolean(busy)} style={{...(estimatorThemeStyle(theme) as React.CSSProperties),'--p5-top':`${topInset}px`,'--p5-bottom':`${bottomInset}px`} as React.CSSProperties}>
     <form id={formId} className={styles.app} onSubmit={submit} noValidate>
       <div className={styles.topbar}>{showBack?<button type="button" className={styles.navBtn} onClick={back} aria-label="Back to the previous step"><BackGlyph/><span data-label>Back</span></button>:<span className={styles.navSpacer} aria-hidden="true"/>}<div className={styles.topCenter}><span className={styles.brandLine}><span data-brand>{brand.name} · </span>Project estimator</span><span className={styles.stepPill}>{stepLabel}</span></div>{frameActive?<button type="button" className={styles.navBtn} onClick={exit} aria-label={layout==='embedded'?'Exit full screen. Your progress is saved.':'Exit the estimator. Your progress is saved.'}><span data-label>Exit</span><CloseGlyph/></button>:<span className={styles.navSpacer} aria-hidden="true"/>}</div>
       {!result&&<div className={styles.rail} aria-hidden="true">{STEP_LABELS.map((label,index)=><span key={label} data-state={index===draft.step?'current':index<draft.step?'done':'upcoming'}/>)}</div>}
       <p className={styles.srOnly} aria-live="polite">{stepLabel}</p>
-      <div ref={threadRef} className={styles.thread}><div className={styles.threadInner}>{collapsedWithProgress?<Message role="assistant"><div className={styles.stageHeading}><Heading tabIndex={-1} className={styles.title}>{result?'Your estimate is ready':'Continue your estimate'}</Heading><p className={styles.lead}>{result?'Your planning range and project summary are saved on this device.':`Your project is saved on this device: ${known.length} ${known.length===1?'detail':'details'}${uploadedCount?` and ${uploadedCount} ${uploadedCount===1?'file':'files'}`:''}. ${stepLabel}.`}</p></div><div className={styles.actions}><button type="button" className={styles.primary} onClick={()=>setExpanded(true)}>{result?'Open my estimate':'Continue'} <span aria-hidden="true">→</span></button><button type="button" className={styles.ghost} onClick={()=>void switchProject()}>Start a new project</button></div></Message>:<>{intro}{history}{stage===0&&!busy&&!preparingFiles&&<>{pausedCard&&<Message role="assistant">{pausedCard}</Message>}{(warning||error)&&<Message role="assistant">{warningCard}{alertCard}</Message>}</>}{questionStage}{reviewStage}{resultStage}{processingStage}{paused&&stage!==0&&!busy&&<Message role="assistant">{pausedCard}</Message>}{status&&!busy&&!preparingFiles&&!error&&<p className={styles.status} role="status">{status}</p>}{hasProgress&&!result&&!busy&&<div className={styles.actions} style={{marginTop:0}}><button type="button" className={styles.ghost} onClick={()=>void switchProject()}>Start a different project</button></div>}</>}</div></div>
+      <div ref={threadRef} className={styles.thread} data-p5-thread><div className={styles.threadInner}>{collapsedWithProgress?<Message role="assistant"><div className={styles.stageHeading}><Heading tabIndex={-1} className={styles.title}>{result?'Your estimate is ready':'Continue your estimate'}</Heading><p className={styles.lead}>{result?'Your planning range and project summary are saved on this device.':`Your project is saved on this device: ${known.length} ${known.length===1?'detail':'details'}${uploadedCount?` and ${uploadedCount} ${uploadedCount===1?'file':'files'}`:''}. ${stepLabel}.`}</p></div><div className={styles.actions}><button type="button" className={styles.primary} onClick={()=>setExpanded(true)}>{result?'Open my estimate':'Continue'} <span aria-hidden="true">→</span></button><button type="button" className={styles.ghost} onClick={()=>void switchProject()}>Start a new project</button></div></Message>:<>{intro}{history}{stage===0&&!busy&&!preparingFiles&&<>{pausedCard&&<Message role="assistant">{pausedCard}</Message>}{(warning||error)&&<Message role="assistant">{warningCard}{alertCard}</Message>}</>}{questionStage}{reviewStage}{resultStage}{processingStage}{paused&&stage!==0&&!busy&&<Message role="assistant">{pausedCard}</Message>}{status&&!busy&&!preparingFiles&&!error&&<p className={styles.status} role="status">{status}</p>}{hasProgress&&!result&&!busy&&<div className={styles.actions} style={{marginTop:0}}><button type="button" className={styles.ghost} onClick={()=>void switchProject()}>Start a different project</button></div>}</>}</div></div>
       {!collapsedWithProgress&&<div className={styles.dock}><div className={styles.dockInner}>{dock}</div></div>}
     </form>
   </div>;

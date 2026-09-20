@@ -92,7 +92,17 @@ export const SCOPE_FILE_LIMIT = 250 * 1024 * 1024;
 export const SCOPE_BATCH_LIMIT = 1024 * 1024 * 1024;
 export const SCOPE_FILE_COUNT = 50;
 export const SCOPE_CHUNK_SIZE = 4 * 1024 * 1024;
-export const SCOPE_PDF_PAGE_LIMIT = 250;
+/** The public page limit is intentionally shared by upload admission, legacy
+ * segmentation and the hosted reader. Keep this a hard safety limit: larger
+ * plans must be split by the customer rather than silently sampled. The saved
+ * extraction parser keeps its own independent defensive ceiling. */
+export const SCOPE_MAX_PAGES = 250;
+/** Historical per-brand names for the same limit. They are aliases so every
+ * caller written against any brand's copy compiles and can never drift. */
+export const SCOPE_PAGE_LIMIT = SCOPE_MAX_PAGES;
+export const SCOPE_PDF_PAGE_LIMIT = SCOPE_MAX_PAGES;
+export const SCOPE_PLAN_PAGE_LIMIT = SCOPE_MAX_PAGES;
+export const SCOPE_PLAN_PAGE_TARGET = SCOPE_MAX_PAGES;
 export const SCOPE_UPLOAD_HELP = "Up to 50 files, 250 MiB each and 1 GiB total; up to 250 pages per PDF. Large uploads resume after interruptions.";
 /** Map a model's wording for a choice field onto one of its options, or
  * null when no option is a clear match. Providers answer "Standard finishes"

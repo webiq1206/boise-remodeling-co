@@ -1,7 +1,7 @@
 import {PricingStageTimeout} from '../lib/p5/pricingProgress.ts';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {priceCompleteScope,marketResolution,catalogResolution,requestPricing,advisoryIssue,type PricingRequest,HANDOFF_ISSUE} from '../lib/p5/scopePricing.ts';
+import {priceCompleteScope,marketResolution,planningResolution,catalogResolution,requestPricing,advisoryIssue,type PricingRequest,HANDOFF_ISSUE} from '../lib/p5/scopePricing.ts';
 import {priceReviewedScope} from '../lib/p5/costBook.ts';
 import {createPlanningConfiguration,PLANNING_MODEL_VERSION,type PlanningCatalog} from '../lib/p5/planningBooks.ts';
 import type {ReviewedScope} from '../lib/p5/scope.ts';
@@ -672,4 +672,40 @@ test('Empty completed research uses an audited planning allowance instead of lea
  const result=await priceCompleteScope(scope,config,request,now);
  assert.equal(planned,1);assert.equal(audited,1);assert.ok(result.customer.range);
  assert.ok(result.customer.verificationItems.some((note:string)=>/planning average/i.test(note)));
+});
+test('Unsupported market and planning output units remain visibly unpriced',()=>{
+  const market=structuredClone(researched);market.rates[0].unit='project';market.rates[0].sources.forEach(s=>s.unit='project');
+  const rejectedMarket=marketResolution(market,urls,[extra],now);
+  assert.equal(rejectedMarket.rules.length,0);assert.match(rejectedMarket.issues.join(' '),/unsupported pricing unit "project"/);
+  const planning={rates:[{taskId:'overlay',description:'Protective overlay allowance',unit:'bundle',quantity:1,quantityEvidence:'One requested scope package',basis:'material-purchase' as const,includes:'Overlay material',excludes:'Installation',low:100,high:200,confidence:'low' as const,rationale:'Synthetic unsupported-unit fixture.'}],issues:[]};
+  const rejectedPlanning=planningResolution(planning,[extra],now);
+  assert.equal(rejectedPlanning.rules.length,0);assert.match(rejectedPlanning.issues.join(' '),/unsupported pricing unit "bundle"/);
+});
+test('Production pricing does not require QA-only spending allowance variables',async()=>{
+ const names=['P5_LIVE_PRICING_ALLOWANCE_ID','P5_LIVE_PRICING_ALLOWANCE_USD','P5_LIVE_PRICING_RESERVE_USD'] as const;
+ const saved=Object.fromEntries(names.map(name=>[name,process.env[name]]));
+ for(const name of names)delete process.env[name];
+ try{
+  const result=await priceCompleteScope(scope,config,replies([{tasks:[task],issues:[]},{coveredTaskIds:[task.id],issues:[]}]),now);
+  assert.ok(result.customer.range);
+ }finally{for(const name of names){const value=saved[name];if(value===undefined)delete process.env[name];else process.env[name]=value;}}
+});
+test('Every customer projection leaving the cost book and scope pricing redacts private cost arithmetic',async()=>{
+ const leaking='$2.00/LF ($200.00 direct cost)';
+ const exclusions=`Painting excluded; ${leaking}`;
+ // The early review-required result quotes scope notes without passing through customerEstimate.
+ const unmeasured=priceReviewedScope({...scope,answers:{service:'cabinet-product',location:'Boise',exclusions}},config,now);
+ assert.equal(unmeasured.customer.range,null);
+ assert.ok(!JSON.stringify(unmeasured.customer).includes('direct cost'));
+ assert.ok(unmeasured.customer.exclusions.includes('Painting excluded'));
+ assert.equal(unmeasured.internal.scope.answers.exclusions,exclusions,'the internal record keeps the original note');
+ const leaky={...scope,answers:{...scope.answers,exclusions}};
+ const r=await priceCompleteScope(leaky,config,async()=>{throw new Error('offline');},now);
+ assert.ok(r.internal.scopePricing.issues.length);
+ assert.ok(!JSON.stringify(r.customer).includes('direct cost'));
+ assert.ok(!JSON.stringify(r.customer).includes('$2.00'));
+ assert.ok(r.customer.exclusions.includes('Painting excluded'));
+ const complete=await priceCompleteScope(scope,config,replies([{tasks:[task],issues:[]},{coveredTaskIds:[task.id],issues:[]}]),now);
+ assert.ok(complete.customer.range);
+ assert.deepEqual(complete.customer.range,(complete.internal as any).planningRange,'the customer boundary never changes the selling range');
 });

@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {summarySections,estimateSections,customerPresentation,publicPricingText,SECTION_TITLES} from '../lib/p5/presentation.ts';
 import {estimateEmail} from '../lib/p5/estimateEmail.ts';
 import {administrativePdf,customerPdf} from '../lib/p5/pdf.ts';
@@ -64,7 +65,11 @@ test('Placeholder building and floor labels neither create a per-building table 
  assert.ok(two.some(s=>s.title===SECTION_TITLES.buildingPrices),'two named buildings keep their totals');
 });
 
-test('saved pricing result keeps public scope and selling prices while customer page, email and PDF hide private costs',async()=>{
+// The saved live result is local verification evidence (p5-verification/ is
+// gitignored). Where it is absent the same boundary is held by the synthetic
+// historical result in p5-customer-privacy.test.ts.
+const SAVED_RESULT='p5-verification/pricing-qualification/0c45743d4aa180074804ccb2d6d07d178df6353c719c185813102f0b80a9d0f7/1789830300212-0b0c5b15-ed5c-41c2-8718-a253c7d0f0b8/live-pricing-mapping-report.json';
+test('saved pricing result keeps public scope and selling prices while customer page, email and PDF hide private costs',{skip:!existsSync(SAVED_RESULT)&&'saved live result is not present in this checkout'},async()=>{
  const path='p5-verification/pricing-qualification/0c45743d4aa180074804ccb2d6d07d178df6353c719c185813102f0b80a9d0f7/1789830300212-0b0c5b15-ed5c-41c2-8718-a253c7d0f0b8/live-pricing-mapping-report.json';
  const saved=JSON.parse(await readFile(path,'utf8')).result;
  const projected=customerPresentation(saved.customer);

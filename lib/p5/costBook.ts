@@ -1,6 +1,6 @@
 import {scopeAssumptions,deriveScopeAnswers} from "./adaptive.ts";
 import { createHash } from "node:crypto";
-import { calculateP5Estimate,customerEstimate,DEFAULT_FINANCE,POLICY_VERSION,COST_CATEGORIES,SERVICE_MATRIX,type FinancePolicy,type DirectCostLine,type ScopeCoverage,type PricingInput,type Service,type RiskFactor } from "./pricing.ts";
+import { calculateP5Estimate,customerEstimate,customerSafeProjection,DEFAULT_FINANCE,POLICY_VERSION,COST_CATEGORIES,SERVICE_MATRIX,type FinancePolicy,type DirectCostLine,type ScopeCoverage,type PricingInput,type Service,type RiskFactor } from "./pricing.ts";
 import { scopeText,blockingReviewNote,type ReviewedScope,type ScopeField } from "./scope.ts";
 export { blockingReviewNote };
 import {materializePlanningBook,type PlanningCatalog} from './planningBooks.ts';
@@ -14,7 +14,14 @@ export interface ServiceCostBook {service:Service;mode?:'owner-planning';rules:C
 export interface EstimatorConfiguration { finance:FinancePolicy;costBooks:ServiceCostBook[];planningCatalog?:PlanningCatalog;regionalRates?:CostRule[] }
 export const EMPTY_CONFIGURATION:EstimatorConfiguration={finance:DEFAULT_FINANCE,costBooks:[]};
 export interface ScopePriceResolution { rules:CostRule[]; assumptions:string[]; issues:string[];removeLineIds?:string[];removeExclusions?:string[];completeScopeVerified?:boolean;replaceBase?:boolean }
+/** Every customer projection leaving the cost book, including the early
+ * review-required results that quote book notes verbatim, passes the same
+ * customer-safe boundary. Internal records are returned unchanged. */
 export function priceReviewedScope(scope:ReviewedScope,configuration:EstimatorConfiguration,now=new Date(),resolution?:ScopePriceResolution) {
+  const priced=priceReviewedScopeInternal(scope,configuration,now,resolution);
+  return {...priced,customer:customerSafeProjection(priced.customer)};
+}
+function priceReviewedScopeInternal(scope:ReviewedScope,configuration:EstimatorConfiguration,now:Date,resolution?:ScopePriceResolution) {
   scope={...scope,answers:deriveScopeAnswers(scope.answers)};
   const service=scope.answers.service as Service;
   if(!Object.hasOwn(SERVICE_MATRIX,service))throw new Error("Choose a valid project type.");

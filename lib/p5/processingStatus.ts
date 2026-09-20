@@ -11,6 +11,9 @@ export interface ProcessingStatus {
   readSections?:number;
   totalSections?:number;
   currentItems?:string[];
+  /** File/section names that are saved but still need retry or review. */
+  failedItems?:string[];
+  remainingItems?:number;
   /** Stages finished in this pricing run. There is no honest total - the
    * number of research batches and repair rounds is not known in advance - so
    * this counts up rather than filling a bar. */
@@ -30,6 +33,14 @@ export function analysisMessage(hasAttachments:boolean,event:'start'|'busy'|'err
   if(event==='error')return hasAttachments?'Your files could not be processed. They are still here. Please retry.':'Your project details could not be processed. They are saved. Please retry.';
   if(event==='retry')return hasAttachments?'Reviewing your saved documents...':'Reviewing your saved project details...';
   return hasAttachments?'Reading your documents and project details...':'Understanding your project...';
+}
+export function analysisAcknowledgement(captured:number,attachments:number,warning:boolean,remaining:number){
+  const saved=`Thanks. I read ${attachments?`${attachments} ${attachments===1?'file':'files'} and `:''}your description and saved ${captured} project ${captured===1?'detail':'details'}.`;
+  const next=warning
+    ?attachments?'Some files still need review; see the note below.':'I could not finish reading your description; your text is saved. See the note below.'
+    :remaining?`I have ${remaining===1?'one quick question':`${remaining} quick questions`} before your estimate.`
+    :'That is everything I need. Review your project below, then add where to send your estimate.';
+  return `${saved} ${next}`;
 }
 /** Explicit input context prevents stale or legacy document labels on text-only work. */
 export function processingPresentation(message:string,processing:ProcessingStatus|null|undefined,uploadPercent:number|null,hasAttachments?:boolean){

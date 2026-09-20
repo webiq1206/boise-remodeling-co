@@ -4,7 +4,7 @@ import mammoth from "mammoth";
 import {inflateRawSync} from "node:zlib";
 import {PDFDocument} from "pdf-lib";
 import type { AnalysisFile } from "./extraction.ts";
-import { SCOPE_FILE_LIMIT,SCOPE_PDF_PAGE_LIMIT } from "./scope.ts";
+import { SCOPE_FILE_LIMIT,SCOPE_MAX_PAGES } from "./scope.ts";
 const TYPES: Record<string,string> = {
   pdf:"application/pdf",png:"image/png",jpg:"image/jpeg",jpeg:"image/jpeg",webp:"image/webp",gif:"image/gif",
   txt:"text/plain",csv:"text/csv",json:"application/json",
@@ -16,9 +16,12 @@ const TYPES: Record<string,string> = {
 export const ACCEPT_SCOPE_FILES = Object.keys(TYPES).map(ext=>`.${ext}`).join(",");
 export const DOCUMENT_TEXT_LIMIT=2*1024*1024;
 export const OFFICE_INPUT_LIMIT=16*1024*1024;
+export const uploadDisplayName=(name:string)=>name.replace(/[\u0000-\u001f/\\]/g,"_").slice(0,180)||"Uploaded file";
+export const emptyUploadMessage=(name:string)=>`${uploadDisplayName(name)} is empty.`;
 export function verifyUpload(name: string, data: Buffer): AnalysisFile {
-  if (!data.length || data.length > SCOPE_FILE_LIMIT) throw new Error("Files must be nonempty and no larger than 250 MiB each.");
-  const safeName=name.replace(/[\u0000-\u001f/\\]/g,"_").slice(0,180);
+  if (!data.length) throw new Error(emptyUploadMessage(name));
+  if (data.length > SCOPE_FILE_LIMIT) throw new Error("Files must be no larger than 250 MiB each.");
+  const safeName=uploadDisplayName(name);
   const extension=safeName.split(".").pop()?.toLowerCase()||"";const type=TYPES[extension];
   if(!type)throw new Error("Use a PDF, photo, Word document, spreadsheet or text file.");
   if(extension==="pdf" && !data.subarray(0,1024).includes(Buffer.from("%PDF-")))throw new Error("This file is not a readable PDF.");
@@ -28,6 +31,15 @@ export function verifyUpload(name: string, data: Buffer): AnalysisFile {
   if(extension==="gif" && !/^GIF8[79]a$/.test(data.subarray(0,6).toString()))throw new Error("This file is not a valid GIF.");
   if(["docx","xlsx","ods"].includes(extension))checkOfficeArchive(data);
   return {name:safeName,type,data};
+}
+/** Enforce the customer-facing PDF boundary before any provider work begins. */
+export async function verifyPdfPageLimit(name:string,data:Buffer){
+  let pages:number;
+  try{pages=(await PDFDocument.load(data)).getPageCount();}
+  catch{throw new Error(`Unreadable or encrypted PDF: ${name}. Supply an unlocked copy.`);}
+  if(!pages)throw new Error(`${name}: PDF must contain at least one page.`);
+  if(pages>SCOPE_MAX_PAGES)throw new Error(`${name}: plans may contain at most ${SCOPE_MAX_PAGES} pages.`);
+  return pages;
 }
 /** Reject oversized/encrypted archives before invoking an office parser. No extraction to disk. */
 export function checkOfficeArchive(data:Buffer) {
@@ -86,7 +98,7 @@ export async function prepareAnalysisFiles(files:AnalysisFile[]) {
     try{
     if(file.type==="application/pdf"){
       const document=await PDFDocument.load(file.data);
-      if(!document.getPageCount()||document.getPageCount()>SCOPE_PDF_PAGE_LIMIT)throw new Error(`Use PDFs with 1 to ${SCOPE_PDF_PAGE_LIMIT} pages.`);
+      if(!document.getPageCount()||document.getPageCount()>SCOPE_MAX_PAGES)throw new Error(`Use PDFs with 1 to ${SCOPE_MAX_PAGES} pages.`);
       readable.push(file);
     }else if(["image/heic","image/heif","image/tiff","image/avif"].includes(file.type)||(file.type.startsWith("image/")&&file.data.length>16*1024*1024)){readable.push(...await prepareImages(file));
     }else if(file.type==="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"){

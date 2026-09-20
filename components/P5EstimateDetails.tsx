@@ -47,7 +47,7 @@ export default function P5EstimateDetails({result,openFirst=false,showGlance=tru
      {group.tasks.length>0&&<ul className={styles.bullets} style={{marginBottom:group.items.length?12:0}}>{group.tasks.map((task,i)=><li key={i}>{task}</li>)}</ul>}
      {group.items.length>0&&<ul className={styles.lineItems}>{group.items.map(item=><li key={item.id} className={styles.lineItem}>
       <strong>{item.label}</strong>
-      <span className={styles.qty}>{item.quantity.toLocaleString('en-US')} {item.unit}{item.quantityRange?` (modeled: ${item.quantityRange.low.toLocaleString('en-US')} to ${item.quantityRange.high.toLocaleString('en-US')} ${item.unit} to verify)`:''}{item.quantity!==1||item.quantityRange?` · ${unitPrice(item.unitLow)} to ${unitPrice(item.unitHigh)} per ${item.unit}`:''}</span>
+      <span className={styles.qty}>{item.quantity.toLocaleString('en-US')} {item.unit}{item.quantityRange?` (modeled: ${item.quantityRange.low.toLocaleString('en-US')} to ${item.quantityRange.high.toLocaleString('en-US')} ${item.unit} to verify)`:''}{(item.quantity!==1||item.quantityRange)&&item.unitLow!==undefined&&item.unitHigh!==undefined?` · ${unitPrice(item.unitLow)} to ${unitPrice(item.unitHigh)} per ${item.unit}`:''}</span>
       <span className={styles.total}>{range(item.low,item.high)}</span>
       <span className={styles.note}><span className={styles.badge} data-kind={item.status==='estimated-allowance'?'allowance':item.status==='owner-planning-rate'?'assumption':'included'}>{STATUS_LABEL[item.status]||item.status}</span>{item.verification?` ${item.verification}`:''}{item.rateLocation?` Cost location: ${item.rateLocation}.`:''}{item.rateDate?` Researched ${item.rateDate}.`:''}</span>
      </li>)}</ul>}
