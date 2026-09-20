@@ -1,0 +1,9 @@
+# The format of this file is identical to `.dockerignore`.
+.local
+.p5-model-qa
+p5-sonnet-fixtures.json
+p5-verification
+.npm-cache
+.cache
+test-results
+playwright-report
