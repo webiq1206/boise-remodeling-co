@@ -2,6 +2,8 @@ export const ESTIMATOR_BRAND = {
   "id": "remodeling",
   "name": "Boise Remodeling Co",
   "domain": "boiseremodeling.co",
+  "legalName": null,
+  "parentLegalName": "P5 Home Co, LLC",
   "accent": "#9AA098",
   "services": [
     "kitchen",
