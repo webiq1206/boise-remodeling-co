@@ -14,6 +14,7 @@ import { SITE_CONFIG } from "@/shared/siteConfig";
 import { NavEstimateButton } from "@/components/modals/NavEstimateButton";
 import { SaveContactLink } from "@/components/SaveContactLink";
 import { isPortalPath } from "@/lib/portalRoutes";
+import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
@@ -55,9 +56,10 @@ export function Navigation() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   /* Pages whose own wizard owns the bottom of a phone screen. Kept beside the
-     route rather than inferred, so adding a wizard page is one line here. */
+     route rather than inferred, so adding a wizard page is one line here.
+     The estimator is not listed: this header does not render there at all (see isEstimatorPath
+     below), so naming its routes here would be a second copy of that list with nothing to do. */
   const wizardOwnsBottom =
-    (pathname === "/estimate" || pathname === "/estimate/p5-preview") ||
     (pathname?.startsWith("/re-10") ?? false) ||
     (pathname?.startsWith("/remodel-plans") ?? false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,6 +73,11 @@ export function Navigation() {
   const isActivePath = (href: string) =>
     href === "/" ? pathname === "/" : Boolean(pathname?.startsWith(href));
   const isPortal = isPortalPath(pathname);
+
+  // The estimator is a one-page app with its own brand bar, step progress and exit control. Stacking
+  // the marketing header on top of it cost about a third of a phone screen before any content, and
+  // gave the customer a hamburger menu out of the flow they were in (owner report 2026-09-23).
+  if (isEstimatorPath(pathname)) return null;
 
   if (isPortal) {
     return (
