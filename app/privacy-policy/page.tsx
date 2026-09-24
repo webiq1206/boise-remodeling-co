@@ -1,11 +1,12 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { Metadata } from "next";
-import { ObfuscatedEmail } from "@/components/ObfuscatedEmail";
+import { InteriorDocument,InteriorPage } from '@/components/approved/InteriorLayout';
 import { BusinessPhoneLink } from "@/components/BusinessPhoneContact";
+import { ObfuscatedEmail } from "@/components/ObfuscatedEmail";
 import { SaveContactLink } from "@/components/SaveContactLink";
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildCanonical,FEED_ALTERNATES } from "@/lib/page-metadata";
+import { generateBreadcrumbSchema,generateWebPageSchema } from "@/lib/schema";
 import { SITE_CONFIG } from "@/shared/siteConfig";
-import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
-import { buildCanonical, FEED_ALTERNATES } from "@/lib/page-metadata";
+import { Metadata } from "next";
 
 const PRIVACY_CANONICAL = buildCanonical("/privacy-policy");
 
@@ -42,7 +43,7 @@ export default function PrivacyPolicyPage() {
   });
 
   return (
-    <div className="flex flex-col">
+    <InteriorPage kind="legal"><div className="flex flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
@@ -53,18 +54,18 @@ export default function PrivacyPolicyPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container px-4">
-          <div className="max-w-3xl mx-auto blog-content prose-measure">
-            <h1>Privacy Policy for Boise Remodeling Co Services</h1>
+          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
+
             <p className="lead text-muted-foreground">
               Last updated: January 2024
             </p>
 
-            <h2>Introduction</h2>
+            <h2 id="document-section-1">Introduction</h2>
             <p>
               Boise Remodeling Co ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
             </p>
 
-            <h2>Information We Collect</h2>
+            <h2 id="document-section-2">Information We Collect</h2>
             <p>We may collect information about you in various ways, including:</p>
             <ul>
               <li><strong>Personal Data:</strong> Name, email address, phone number, and mailing address when you request a quote or contact us.</li>
@@ -73,7 +74,7 @@ export default function PrivacyPolicyPage() {
               <li><strong>Usage Data:</strong> Information about how you use our website, including pages visited and features used.</li>
             </ul>
 
-            <h2>How We Use Your Information</h2>
+            <h2 id="document-section-3">How We Use Your Information</h2>
             <p>We use the information we collect to:</p>
             <ul>
               <li>Provide and maintain our services</li>
@@ -84,7 +85,7 @@ export default function PrivacyPolicyPage() {
               <li>Send marketing communications (with your consent)</li>
             </ul>
 
-            <h2>Information Sharing</h2>
+            <h2 id="document-section-4">Information Sharing</h2>
             <p>
               We do not sell your personal information. We may share your information with:
             </p>
@@ -94,12 +95,12 @@ export default function PrivacyPolicyPage() {
               <li>Law enforcement when required by law</li>
             </ul>
 
-            <h2>Data Security</h2>
+            <h2 id="document-section-5">Data Security</h2>
             <p>
               We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
             </p>
 
-            <h2>Your Rights</h2>
+            <h2 id="document-section-6">Your Rights</h2>
             <p>You have the right to:</p>
             <ul>
               <li>Access your personal information</li>
@@ -108,7 +109,7 @@ export default function PrivacyPolicyPage() {
               <li>Opt-out of marketing communications</li>
             </ul>
 
-            <h2>Contact Us</h2>
+            <h2 id="document-section-7">Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy, please contact us at:
             </p>
@@ -126,9 +127,9 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>Service area: {SITE_CONFIG.address.cityState} · {SITE_CONFIG.address.serviceArea}</li>
             </ul>
-          </div>
+          </InteriorDocument>
         </div>
       </section>
-    </div>
+    </div></InteriorPage>
   );
 }

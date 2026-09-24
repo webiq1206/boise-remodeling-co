@@ -1,37 +1,38 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, Check, Phone, MessageSquare, AlertTriangle } from "lucide-react";
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
-import { MarketingCard } from "@/components/marketing/MarketingCard";
+import { Re10ContactTracking } from "@/components/re10/Re10ContactTracking";
+import { Re10Faqs } from "@/components/re10/Re10Faqs";
+import { Re10Wizard } from "@/components/re10/Re10Wizard";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
-import { buildCanonical, fitDescription } from '@/lib/page-metadata';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildCanonical,fitDescription } from '@/lib/page-metadata';
 import {
-  generateBreadcrumbSchema,
-  generateFAQSchema,
-  generateServiceSchema,
-  generateWebPageSchema,
+generateBreadcrumbSchema,
+generateFAQSchema,
+generateServiceSchema,
+generateWebPageSchema,
 } from "@/lib/schema";
-import { SITE_IMAGES } from "@/shared/siteImages";
-import { SITE_CONFIG } from "@/shared/siteConfig";
 import {
-  RE10_BENEFITS,
-  RE10_COORDINATION_ONLY,
-  RE10_DEFINITION,
-  RE10_DIRECT_ANSWER,
-  RE10_FAQS,
-  RE10_PRICING_DISCLAIMER,
-  RE10_PROCESS,
-  RE10_SERVICE_AREAS,
-  RE10_SERVICES,
+RE10_BENEFITS,
+RE10_COORDINATION_ONLY,
+RE10_DEFINITION,
+RE10_DIRECT_ANSWER,
+RE10_FAQS,
+RE10_PRICING_DISCLAIMER,
+RE10_PROCESS,
+RE10_SERVICE_AREAS,
+RE10_SERVICES,
 } from "@/shared/content/re10Content";
-import { Re10Faqs } from "@/components/re10/Re10Faqs";
-import { Re10Wizard } from "@/components/re10/Re10Wizard";
-import { Re10ContactTracking } from "@/components/re10/Re10ContactTracking";
+import { SITE_CONFIG } from "@/shared/siteConfig";
+import { SITE_IMAGES } from "@/shared/siteImages";
+import { AlertTriangle,ArrowRight,Check,MessageSquare,Phone } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
 
 const PATH = "/re-10-repairs-boise";
 
@@ -90,7 +91,7 @@ export default function Re10RepairsPage() {
   ];
 
   return (
-    <>
+    <InteriorPage kind="re-10-repairs-boise"><>
       <JsonLd data={schemas} />
       <Re10ContactTracking />
 
@@ -529,6 +530,6 @@ export default function Re10RepairsPage() {
           </p>
         </div>
       </Section>
-    </>
+    </></InteriorPage>
   );
 }

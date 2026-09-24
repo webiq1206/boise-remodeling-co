@@ -1,6 +1,4 @@
-import Image from "next/image";
-import { GRAIN_URL } from "@/lib/grain";
-import { cn } from "@/lib/utils";
+import { InteriorHero } from '@/components/approved/InteriorLayout';
 
 interface PageHeroBandProps {
   imageSrc: string;
@@ -15,61 +13,16 @@ interface PageHeroBandProps {
   children: React.ReactNode;
 }
 
-/**
- * Full-bleed photo hero band for index pages.
- *
- * Taller than it was - clamp(380px, 48vw, 620px) rather than a flat 420 - so
- * the photograph gets to be a composition rather than a strip, and on the
- * family shell (1380px) rather than the old container so its text lines up
- * with every section beneath it.
- */
+/** Editorial index introduction followed by wide imagery. */
 export function PageHeroBand({
   imageSrc,
   imageAlt,
   compact = false,
-  scrim = 0.66,
   children,
 }: PageHeroBandProps) {
   return (
-    <section
-      /* 220px on a phone, not 320. On a tool page the hero is orientation,
-         not the destination - every pixel it takes is a pixel of the actual
-         calculator pushed below the fold. Desktop keeps the taller band
-         because there the tool still fits beneath it. */
-      className={cn(
-        "relative flex items-end overflow-hidden bg-inverse border-b border-border/60",
-        compact ? "min-h-[240px] md:min-h-[440px]" : "min-h-[clamp(380px,48vw,620px)]",
-      )}
-    >
-      <Image
-        src={imageSrc}
-        alt={imageAlt}
-        fill
-        priority
-        sizes="100vw"
-        className="object-cover opacity-[0.9] img-brand-grade"
-      />
-      <div
-        className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse via-inverse/60 to-inverse/20"
-        style={{ opacity: scrim }}
-      />
-      <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/70 via-inverse/20 to-transparent" />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ backgroundImage: GRAIN_URL, backgroundRepeat: "repeat", opacity: 0.03 }}
-      />
-      <div
-        /* pt-28 (112px) exists to clear the fixed header. On a compact band
-           that plus pb-12 is 160px of padding around ~200px of content, which
-           is most of why the tool sat below the fold. Compact clears the
-           header and stops there. */
-        className={cn(
-          "relative z-10 w-full ed-shell",
-          compact ? "pt-20 pb-6 md:pt-32 md:pb-16" : "pt-28 pb-12 md:pt-32 md:pb-16",
-        )}
-      >
+    <InteriorHero imageSrc={imageSrc} imageAlt={imageAlt} layout="editorial">
         {children}
-      </div>
-    </section>
+      </InteriorHero>
   );
 }

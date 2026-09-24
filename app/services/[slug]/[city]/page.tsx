@@ -1,31 +1,32 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { notFound } from 'next/navigation';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { LandingPageTemplate } from '@/components/seo/LandingPageTemplate';
 import type { LandingProof } from '@/components/seo/LandingPageTemplate';
-import { buildPageMetadata, isCityServiceNoindex } from '@/lib/page-metadata';
+import { LandingPageTemplate } from '@/components/seo/LandingPageTemplate';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import {
-  landingBreadcrumbs,
-  landingFAQSchema,
-  landingServiceSchema,
+landingBreadcrumbs,
+landingFAQSchema,
+landingServiceSchema,
 } from '@/lib/landing-schema';
+import { buildPageMetadata,isCityServiceNoindex } from '@/lib/page-metadata';
+import { generateSpeakableSchema } from '@/lib/schema';
 import { CITY_SEO_DATA } from '@/lib/seo';
 import {
-  cityServicePath,
-  getAllCityServiceParams,
-  getCityBySlug,
-  getServiceBySlug,
+cityServicePath,
+getAllCityServiceParams,
+getCityBySlug,
+getServiceBySlug,
 } from '@/lib/seo-routes';
-import { getCountyLabel } from '@/shared/contentData';
-import {
-  getCityServiceFaqs,
-  getCityServiceIntro,
-  getCityServiceSections,
-  SERVICE_SEO_CONTENT,
-} from '@/shared/seoContent';
-import { generateSpeakableSchema } from '@/lib/schema';
 import { getCityServiceImageSet } from '@/shared/cityServiceImages';
+import { getCountyLabel } from '@/shared/contentData';
 import { getGalleryProjectsFor } from '@/shared/galleryData';
+import {
+getCityServiceFaqs,
+getCityServiceIntro,
+getCityServiceSections,
+SERVICE_SEO_CONTENT,
+} from '@/shared/seoContent';
+import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
   return getAllCityServiceParams();
@@ -105,7 +106,7 @@ export default async function CityServicePage(
   ];
 
   return (
-    <>
+    <InteriorPage kind="services"><>
       <JsonLd data={schemas} />
       <LandingPageTemplate
         h1={h1}
@@ -137,6 +138,6 @@ export default async function CityServicePage(
           citySlug: city.slug,
         }}
       />
-    </>
+    </></InteriorPage>
   );
 }

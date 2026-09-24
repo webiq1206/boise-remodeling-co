@@ -30,7 +30,7 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        centered && "mx-auto text-center [&_.ed-eyebrow]:justify-center [&_.ed-statement-display]:mx-auto [&_.ed-lede]:mx-auto",
+        "interior-page-heading",
         className
       )}
     >

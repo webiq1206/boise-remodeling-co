@@ -1,24 +1,25 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { Metadata } from 'next';
-import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
-import { ArrowRight } from 'lucide-react';
-import { BLOG_POSTS } from '@/shared/blogContent';
-import {
-  CONTENT_HUBS,
-  categoryHubPath,
-  getHubBySlug,
-  guidePath,
-  isCategoryHubIndexable,
-} from '@/shared/contentHubs';
-import { buildCanonical, FEED_ALTERNATES } from '@/lib/page-metadata';
-import { getHubHeroImage, getBlogImageAlt, getAbsoluteImageUrl } from '@/shared/blogImages';
-import { Section } from '@/components/marketing/Section';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { BlogCard } from '@/components/marketing/BlogCard';
 import { HubHeroBanner } from '@/components/marketing/BlogHeroBanner';
-import { generateBreadcrumbSchema, generateCollectionPageSchema } from '@/lib/schema';
+import { Section } from '@/components/marketing/Section';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildCanonical,FEED_ALTERNATES } from '@/lib/page-metadata';
+import { generateBreadcrumbSchema,generateCollectionPageSchema } from '@/lib/schema';
 import { getBaseUrl } from '@/lib/seo';
+import { BLOG_POSTS } from '@/shared/blogContent';
+import { getAbsoluteImageUrl,getBlogImageAlt,getHubHeroImage } from '@/shared/blogImages';
+import {
+categoryHubPath,
+CONTENT_HUBS,
+getHubBySlug,
+guidePath,
+isCategoryHubIndexable,
+} from '@/shared/contentHubs';
+import { ArrowRight } from 'lucide-react';
+import { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound,redirect } from 'next/navigation';
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -119,7 +120,7 @@ export default async function BlogCategoryHubPage(
       : null;
 
   return (
-    <>
+    <InteriorPage kind="blog"><>
       {collectionSchema && (
         <script
           type="application/ld+json"
@@ -140,9 +141,9 @@ export default async function BlogCategoryHubPage(
             ]}
           />
 
-          <HubHeroBanner src={hubHero} alt={hubAlt} />
 
-          <h1 className="text-3xl md:text-4xl font-serif tracking-tight mb-4">
+
+          <header className="interior-article-header"><h1 className="text-3xl md:text-4xl font-serif tracking-tight mb-4">
             {hub.title}
           </h1>
           <p className="text-lg text-muted-foreground mb-4 max-w-2xl">{hub.description}</p>
@@ -159,7 +160,7 @@ export default async function BlogCategoryHubPage(
           >
             Read the complete guide
             <ArrowRight className="ml-1 h-4 w-4" />
-          </Link>
+          </Link></header><HubHeroBanner src={hubHero} alt={hubAlt} />
 
           <div className="ed-cards-3 gap-6">
             {posts.map((post) => (
@@ -168,6 +169,6 @@ export default async function BlogCategoryHubPage(
           </div>
         </div>
       </Section>
-    </>
+    </></InteriorPage>
   );
 }

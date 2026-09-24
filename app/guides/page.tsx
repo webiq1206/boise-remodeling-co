@@ -1,22 +1,23 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { Metadata } from 'next';
-import Link from 'next/link';
-import Image from 'next/image';
-import { ArrowRight, BookOpen, MapPin } from 'lucide-react';
-import { buildPageMetadata } from '@/lib/page-metadata';
-import { Section } from '@/components/marketing/Section';
-import { MarketingCard } from '@/components/marketing/MarketingCard';
-import { PageHeroBand } from '@/components/sections/PageHeroBand';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
-import { CONTENT_HUBS, guidePath } from '@/shared/contentHubs';
-import { GUIDE_PAGES, type GuidePageData } from '@/shared/guideContent';
-import { getBlogHeroImage, getBlogImageAlt } from '@/shared/blogImages';
-import { generateBreadcrumbSchema, generateWebPageSchema } from '@/lib/schema';
+import { MarketingCard } from '@/components/marketing/MarketingCard';
+import { Section } from '@/components/marketing/Section';
+import { PageHeroBand } from '@/components/sections/PageHeroBand';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import {
-  countH2Headings,
-  countSubstantiveWords,
-  estimateReadingTime,
+countH2Headings,
+countSubstantiveWords,
+estimateReadingTime,
 } from '@/lib/content-utils';
+import { buildPageMetadata } from '@/lib/page-metadata';
+import { generateBreadcrumbSchema,generateWebPageSchema } from '@/lib/schema';
+import { getBlogHeroImage,getBlogImageAlt } from '@/shared/blogImages';
+import { CONTENT_HUBS,guidePath } from '@/shared/contentHubs';
+import { GUIDE_PAGES,type GuidePageData } from '@/shared/guideContent';
+import { ArrowRight,BookOpen,MapPin } from 'lucide-react';
+import { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
 
 function guideCardMeta(guide: GuidePageData) {
   const words = countSubstantiveWords(guide.content);
@@ -64,7 +65,7 @@ export default function GuidesIndexPage() {
   ]);
 
   return (
-    <>
+    <InteriorPage kind="guides"><>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }}
@@ -207,6 +208,6 @@ export default function GuidesIndexPage() {
         description="After reading our guides, use the project estimator for an instant Treasure Valley planning range - then book a free in-home visit when you're ready to move forward."
         variant="canvas"
       />
-    </>
+    </></InteriorPage>
   );
 }

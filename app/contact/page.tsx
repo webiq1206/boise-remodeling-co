@@ -1,43 +1,44 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { ArrowRight, Check, ChevronRight, Mail, MapPin, MessageSquare, Phone } from 'lucide-react';
-import Link from 'next/link';
-import { JsonLd } from '@/components/seo/JsonLd';
-import Image from 'next/image';
-import { Section } from '@/components/marketing';
-import { SectionHeader } from '@/components/marketing/SectionHeader';
-import { Hairline } from '@/components/marketing/Hairline';
-import { SITE_IMAGES } from '@/shared/siteImages';
-import { MarketingCard } from '@/components/marketing/MarketingCard';
-import { Reveal } from '@/components/Reveal';
-import { StatementBandSection } from '@/components/sections/StatementBandSection';
+import { InteriorEstimateLink,InteriorHero,InteriorPage } from '@/components/approved/InteriorLayout';
+import { BusinessPhoneContact } from '@/components/BusinessPhoneContact';
 import { ConsultationForm } from '@/components/ConsultationForm';
+import { EmailLink } from '@/components/EmailLink';
+import { Section } from '@/components/marketing';
+import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
+import { Hairline } from '@/components/marketing/Hairline';
+import { MarketingCard } from '@/components/marketing/MarketingCard';
+import { SectionHeader } from '@/components/marketing/SectionHeader';
+import { ConsultCTA } from '@/components/modals/ConsultCTA';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
+import { Reveal } from '@/components/Reveal';
+import { SaveContactLink } from '@/components/SaveContactLink';
+import { StatementBandSection } from '@/components/sections/StatementBandSection';
+import { JsonLd } from '@/components/seo/JsonLd';
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+Accordion,
+AccordionContent,
+AccordionItem,
+AccordionTrigger,
 } from '@/components/ui/accordion';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { GRAIN_URL } from '@/lib/grain';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import {
-  generateBreadcrumbSchema,
-  generateFAQSchema,
-  generateLocalBusinessSchema,
-  generateWebPageSchema,
+generateBreadcrumbSchema,
+generateFAQSchema,
+generateLocalBusinessSchema,
+generateWebPageSchema,
 } from '@/lib/schema';
-import { EmailLink } from '@/components/EmailLink';
-import { BusinessPhoneContact } from '@/components/BusinessPhoneContact';
-import { SaveContactLink } from '@/components/SaveContactLink';
 import { BUSINESS_INFO } from '@/lib/seo';
-import { SITE_CONFIG } from '@/shared/siteConfig';
-import { CITIES, TREASURE_VALLEY_CITIES } from '@/shared/contentData';
-import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
-import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
-import { CONSULT_BULLETS, HERO_STATS } from '@/shared/siteContent';
-import { EstimateCTA } from '@/components/modals/EstimateCTA';
-import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { areaPath } from '@/lib/seo-routes';
-import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
-import { GRAIN_URL } from '@/lib/grain';
+import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
+import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
+import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import { SITE_CONFIG } from '@/shared/siteConfig';
+import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
+import { SITE_IMAGES } from '@/shared/siteImages';
+import { ArrowRight,Check,ChevronRight,Mail,MapPin,MessageSquare,Phone } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 
 const SPEAKABLE_SUMMARY =
@@ -168,29 +169,11 @@ export default function ContactPage() {
   ];
 
   return (
-    <>
+    <InteriorPage kind="contact"><>
       <JsonLd data={schemas} />
       <div className="flex flex-col pb-20 md:pb-0">
-        {/* ─── Cinematic hero ─── */}
-        <section className="relative min-h-[520px] md:min-h-[72vh] flex items-end overflow-hidden bg-inverse">
-          <Image
-            src={SITE_IMAGES.hero}
-            alt="Modern luxury home interior remodel in Boise Idaho Treasure Valley"
-            fill
-            className="object-cover opacity-[0.82] img-brand-grade"
-            sizes="100vw"
-            priority
-          />
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/60 to-transparent" />
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/60 via-inverse/15 to-transparent" />
-          <div className="absolute inset-x-0 top-0 h-44 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/30 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }}
-          />
-
-          <div className="relative z-10 w-full container px-4 pb-14 md:pb-20 pt-10 fade-up">
+        {/* Approved editorial hero */}
+        <InteriorHero layout="contact" imageSrc={SITE_IMAGES.hero} imageAlt="Modern luxury home interior remodel in Boise Idaho Treasure Valley">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
@@ -218,16 +201,7 @@ export default function ContactPage() {
             >
               Prefer to text? Message us instead
             </a>
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap [&>*]:w-full sm:[&>*]:w-auto mb-8">
-              {/* Primary action on the contact page is the inline form below -
-                  one tap from the hero. The estimator lives on the homepage.
-                  Same sitewide CTA labels/components as everywhere else, just
-                  with this page's deliberate visual emphasis reversed. */}
-              <ConsultCTA variant="brand">
-                {CTA_SECONDARY} <ArrowRight className="h-4 w-4" />
-              </ConsultCTA>
-              <EstimateCTA variant="heroOutline">{CTA_PRIMARY}</EstimateCTA>
-            </div>
+            <div className="interior-contact-actions"><InteriorEstimateLink/><a href="#consult" className="interior-text-link">Request a consultation</a></div>
             <dl className="ed-hero-facts">
               {HERO_STATS.map((stat) => (
                 <div key={stat.label}>
@@ -236,14 +210,13 @@ export default function ContactPage() {
                 </div>
               ))}
             </dl>
-          </div>
-        </section>
+          </InteriorHero>
 
         {/* ─── Inline consultation form ─── */}
         <Section id="consult" divider className="scroll-mt-24">
           <div className="container px-4">
-            <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-12 items-start">
-              <div className="min-w-0 md:col-span-2">
+            <div className="interior-contact-grid">
+              <div className="interior-contact-intro">
                 <Reveal>
                   <p className="ed-eyebrow">Request your visit</p>
                   <h2 className="ed-h2 ed-statement-wide">
@@ -504,12 +477,12 @@ export default function ContactPage() {
                   <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
                   <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
                 </div>
-              
+
               </div></div>
             </Reveal>
           </div>
         </Section>
       </div>
-    </>
+    </></InteriorPage>
   );
 }

@@ -1,23 +1,23 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { notFound } from 'next/navigation';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
-  LandingPageTemplate,
-  type LandingSection,
+LandingPageTemplate,
+type LandingSection,
 } from '@/components/seo/LandingPageTemplate';
-import { buildPageMetadata } from '@/lib/page-metadata';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import {
-  landingBreadcrumbs,
-  landingFAQSchema,
-  landingServiceSchema,
-  landingSpeakable,
+landingBreadcrumbs,
+landingFAQSchema,
+landingServiceSchema
 } from '@/lib/landing-schema';
-import { SERVICE_SLUGS, getServiceBySlug, servicePath } from '@/lib/seo-routes';
-import { SERVICE_SEO_CONTENT } from '@/shared/seoContent';
+import { buildPageMetadata } from '@/lib/page-metadata';
 import { generateSpeakableSchema } from '@/lib/schema';
-import { getServiceImageSet } from '@/shared/serviceBackgrounds';
+import { SERVICE_SLUGS,getServiceBySlug,servicePath } from '@/lib/seo-routes';
 import { CITIES } from '@/shared/contentData';
 import { getFeaturedGalleryProject } from '@/shared/galleryData';
+import { SERVICE_SEO_CONTENT } from '@/shared/seoContent';
+import { getServiceImageSet } from '@/shared/serviceBackgrounds';
+import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
   return SERVICE_SLUGS.map((slug) => ({ slug }));
@@ -96,7 +96,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   ];
 
   return (
-    <>
+    <InteriorPage kind="services"><>
       <JsonLd data={schemas} />
       <LandingPageTemplate
         h1={content.headline}
@@ -122,6 +122,6 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         faqs={faqs}
         related={{ variant: 'service', serviceSlug: service.slug }}
       />
-    </>
+    </></InteriorPage>
   );
 }

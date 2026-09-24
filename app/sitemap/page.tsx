@@ -1,10 +1,11 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
+import { InteriorDocument,InteriorPage } from '@/components/approved/InteriorLayout';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildCanonical,FEED_ALTERNATES } from "@/lib/page-metadata";
+import { generateBreadcrumbSchema,generateWebPageSchema } from "@/lib/schema";
+import { getSiteUrlGroups } from "@/lib/siteUrls";
+import { SITE_CONFIG } from "@/shared/siteConfig";
 import { Metadata } from "next";
 import Link from "next/link";
-import { SITE_CONFIG } from "@/shared/siteConfig";
-import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
-import { buildCanonical, FEED_ALTERNATES } from "@/lib/page-metadata";
-import { getSiteUrlGroups } from "@/lib/siteUrls";
 
 const SITEMAP_CANONICAL = buildCanonical("/sitemap");
 const DESCRIPTION = `Every page on the ${SITE_CONFIG.name} website in one place: services, service areas, guides, and articles.`;
@@ -42,16 +43,16 @@ export default function SitemapPage() {
   });
 
   return (
-    <div className="flex flex-col">
+    <InteriorPage kind="sitemap"><div className="flex flex-col">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageSchema) }} />
       <section className="py-16 md:py-24">
         <div className="container px-4">
           <div className="blog-content">
-            <div className="max-w-3xl">
-              <h1>Site Map</h1>
+            <InteriorDocument heading={<h1>Site Map</h1>} contents={[]}>
+
               <p className="lead text-muted-foreground">{DESCRIPTION}</p>
-            </div>
+            </InteriorDocument>
             {/* Groups flow into columns so a 60-link group and a 6-link group share the width evenly. */}
             <div className="mt-10 columns-1 gap-x-10 sm:columns-2 lg:columns-3 [&_section]:mb-8 [&_section]:break-inside-avoid [&_ul]:mt-3 [&_h2]:mt-0 [&_li]:my-1">
             {groups.map((group) =>
@@ -74,6 +75,6 @@ export default function SitemapPage() {
           </div>
         </div>
       </section>
-    </div>
+    </div></InteriorPage>
   );
 }

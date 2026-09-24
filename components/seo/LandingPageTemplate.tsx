@@ -1,26 +1,26 @@
+import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
+import { Section } from '@/components/marketing';
+import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
+import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
+import { ConsultCTA } from '@/components/modals/ConsultCTA';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
+import { Reveal } from '@/components/Reveal';
+import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
+import {
+Accordion,
+AccordionContent,
+AccordionItem,
+AccordionTrigger,
+} from '@/components/ui/accordion';
+import { GRAIN_URL } from '@/lib/grain';
+import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import type { GalleryProject } from '@/shared/galleryData';
+import type { FAQItem } from '@/shared/seoContent';
+import { ArrowRight,ChevronRight,Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, Check, ChevronRight, Star } from 'lucide-react';
-import { Section } from '@/components/marketing';
-import { MarketingCard } from '@/components/marketing/MarketingCard';
-import { Reveal } from '@/components/Reveal';
 import { RelatedLinks } from './RelatedLinks';
-import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
-import type { FAQItem } from '@/shared/seoContent';
-import { EstimateCTA } from '@/components/modals/EstimateCTA';
-import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
-import { ConsultCTA } from '@/components/modals/ConsultCTA';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import type { GalleryProject } from '@/shared/galleryData';
-import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
-import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
-import { GRAIN_URL } from '@/lib/grain';
 
 interface BreadcrumbItem {
   name: string;
@@ -190,18 +190,8 @@ export function LandingPageTemplate({
 
   return (
     <div className="flex flex-col pb-20 md:pb-0">
-      {/* ─── Cinematic hero ─── */}
-      <section className="relative min-h-[clamp(560px,78vh,860px)] flex items-end overflow-hidden bg-inverse" data-contrast-skip>
-        {heroImageUrl && (
-          <Image src={heroImageUrl} alt="" fill className="object-cover opacity-[0.82] img-brand-grade" sizes="100vw" priority />
-        )}
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/85 via-inverse/60 to-transparent" />
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/90 via-inverse/60 to-inverse/10" />
-        <div className="absolute inset-x-0 top-0 h-44 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/30 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
-
-        <div className="ed-shell relative z-10 w-full pb-[clamp(56px,7vw,96px)] pt-10 fade-up">
+      {/* Approved editorial hero */}
+      <InteriorHero imageSrc={heroImageUrl} imageAlt="" layout="split">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           {eyebrow && (
@@ -222,12 +212,11 @@ export function LandingPageTemplate({
               <span className="ed-small text-inverse-foreground/70">Your exact range is confirmed at the free in-home visit</span>
             </p>
           )}
-        </div>
-      </section>
+        </InteriorHero>
+<div className="interior-detail-body"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2>Plan the details.<br/><em>Know the next step.</em></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
 
       {/* ─── Cost and timeline expectation ───
-          Position 2 by design: cost is the question that brought the visitor
-          here, so it answers before benefits, inclusions or process. */}
+          Cost guidance follows the concise scope and estimate sidebar. */}
       {costGuidance && (
         <Section surface="dark" spacing="xl">
           <div className="ed-shell">
@@ -307,30 +296,7 @@ export function LandingPageTemplate({
       )}
 
       {/* ─── Inclusions: split, list in an inset panel ─── */}
-      {inclusions && inclusions.length > 0 && (
-        <Section surface="dark" spacing="xl">
-          <div className="ed-shell">
-            <div className="ed-split ed-split-narrow">
-              <Reveal>
-                <p className="ed-eyebrow">Scope of work</p>
-                <h2 className="ed-h2 ed-statement">
-                  What&apos;s <em className="not-italic" style={accent}>included</em>
-                </h2>
-              </Reveal>
-              <Reveal delay={60}>
-                <ul className="ed-inset ed-grid-balance m-0 grid list-none gap-x-8 gap-y-4 p-[clamp(24px,2.6vw,40px)] sm:grid-cols-2">
-                  {inclusions.map((item) => (
-                    <li key={item} className="ed-body flex items-start gap-3 text-[0.9375rem]">
-                      <Check className="mt-1 h-4 w-4 flex-shrink-0" style={accent} aria-hidden="true" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            </div>
-          </div>
-        </Section>
-      )}
+
 
       {/* ─── Featured before/after (service hub) ─── */}
       {featuredProject && <FeaturedBeforeAfterSection project={featuredProject} />}

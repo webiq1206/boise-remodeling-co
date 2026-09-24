@@ -1,30 +1,30 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { ArrowRight, Check, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { JsonLd } from '@/components/seo/JsonLd';
-import Image from 'next/image';
-import { DisplayNum, formatStepNumber, Section } from '@/components/marketing';
-import { SectionHeader } from '@/components/marketing/SectionHeader';
+import { InteriorHero,InteriorPage } from '@/components/approved/InteriorLayout';
+import { DisplayNum,formatStepNumber,Section } from '@/components/marketing';
+import { AreaCard } from '@/components/marketing/AreaCard';
 import { Hairline } from '@/components/marketing/Hairline';
-import { SITE_IMAGES } from '@/shared/siteImages';
-import { MarketingCard } from '@/components/marketing/MarketingCard';
+import { SectionHeader } from '@/components/marketing/SectionHeader';
+import { ConsultCTA } from '@/components/modals/ConsultCTA';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { Reveal } from '@/components/Reveal';
-import { WhyChooseUsSection } from '@/components/sections/WhyChooseUsSection';
 import { StatementBandSection } from '@/components/sections/StatementBandSection';
+import { WhyChooseUsSection } from '@/components/sections/WhyChooseUsSection';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { GRAIN_URL } from '@/lib/grain';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import {
-  generateBreadcrumbSchema,
-  generateOrganizationSchema,
-  generateWebPageSchema,
+generateBreadcrumbSchema,
+generateOrganizationSchema,
+generateWebPageSchema,
 } from '@/lib/schema';
-import { CITIES, TREASURE_VALLEY_CITIES } from '@/shared/contentData';
-import { HERO_STATS, PRINCIPLES, TRUST_ITEMS } from '@/shared/siteContent';
-import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
-import { EstimateCTA } from '@/components/modals/EstimateCTA';
-import { AreaCard } from '@/components/marketing/AreaCard';
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
-import { ConsultCTA } from '@/components/modals/ConsultCTA';
-import { GRAIN_URL } from '@/lib/grain';
+import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
+import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import { HERO_STATS,PRINCIPLES,TRUST_ITEMS } from '@/shared/siteContent';
+import { SITE_IMAGES } from '@/shared/siteImages';
+import { ArrowRight,Check,ChevronRight } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 const SPEAKABLE_SUMMARY =
   'We are a locally owned design-build remodeling company serving the Treasure Valley. Our focus is clarity: written scope before construction, proactive weekly updates, permits handled in-house for Ada and Canyon County, and a written workmanship guarantee on our labor.';
@@ -87,29 +87,11 @@ export default function AboutPage() {
   ];
 
   return (
-    <>
+    <InteriorPage kind="about"><>
       <JsonLd data={schemas} />
       <div className="flex flex-col pb-20 md:pb-0">
-        {/* ─── Cinematic hero ─── */}
-        <section className="relative min-h-[540px] md:min-h-[78vh] flex items-end overflow-hidden bg-inverse">
-          <Image
-            src={SITE_IMAGES.leadership}
-            alt="Boise Remodeling Co design-build team at a finished kitchen project"
-            fill
-            className="object-cover opacity-[0.82] img-brand-grade"
-            sizes="100vw"
-            priority
-          />
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-inverse/80 via-inverse/60 to-transparent" />
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-inverse/90 via-inverse/60 to-inverse/10" />
-          <div className="absolute inset-x-0 top-0 h-44 pointer-events-none bg-gradient-to-b from-inverse/70 via-inverse/30 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none bg-gradient-to-t from-background via-background/40 to-transparent" />
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }}
-          />
-
-          <div className="relative z-10 w-full container px-4 pb-14 md:pb-20 pt-10 fade-up">
+        {/* Approved editorial hero */}
+        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.leadership} imageAlt="Boise Remodeling Co design-build team at a finished kitchen project">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
@@ -143,8 +125,7 @@ export default function AboutPage() {
                 </div>
               ))}
             </dl>
-          </div>
-        </section>
+          </InteriorHero>
 
         {/* ─── Design-build split ─── */}
         <Section variant="greige" spacing="none" divider className="p-0">
@@ -332,6 +313,6 @@ export default function AboutPage() {
           </div>
         </Section>
       </div>
-    </>
+    </></InteriorPage>
   );
 }

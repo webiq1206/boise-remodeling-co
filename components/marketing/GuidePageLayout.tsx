@@ -1,36 +1,34 @@
-import Link from 'next/link';
-import {
-  ArrowRight,
-  Calendar,
-  Phone,
-  Tag,
-  User,
-  BookOpen,
-} from 'lucide-react';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { CONTENT_AUTHOR } from '@/shared/authors';
-import { ArticleFaqs } from './ArticleFaqs';
-import { Chip } from './Chip';
-import { BlogEndCta } from './BlogEndCta';
-import { RelatedPostCards } from './RelatedPostCards';
-import { Section } from './Section';
-import { GuideContentBlocks, GuideJumpChips } from './GuideContentBlocks';
-import { SectionedArticle } from './SectionedArticle';
-import { ArticleSidebar, ArticleSidebarCta } from './ArticleSidebar';
-import type { GuidePageData } from '@/shared/guideContent';
-import { getBlogHeroImage, getBlogImageAlt, getArticleInlineFigures, isCostRelatedContent } from '@/shared/blogImages';
-import { BlogHeroBanner } from './BlogHeroBanner';
 import {
-  injectHeadingIds,
-  extractHeadingsFromHtml,
-  estimateReadingTime,
-  countSubstantiveWords,
+countSubstantiveWords,
+estimateReadingTime,
+extractHeadingsFromHtml,
+injectHeadingIds,
 } from '@/lib/content-utils';
-import { getHubBySlug, guidePath, getClustersForHub, categoryHubPath } from '@/shared/contentHubs';
-import { CATEGORY_HUB_MIN_POSTS } from '@/shared/contentHubs';
+import { CONTENT_AUTHOR } from '@/shared/authors';
+import { getArticleInlineFigures,getBlogHeroImage,getBlogImageAlt,isCostRelatedContent } from '@/shared/blogImages';
+import { CATEGORY_HUB_MIN_POSTS,categoryHubPath,getClustersForHub,getHubBySlug,guidePath } from '@/shared/contentHubs';
+import type { GuidePageData } from '@/shared/guideContent';
 import { getResourcesForGuide } from '@/shared/guideResources';
+import {
+ArrowRight,
+BookOpen,
+Calendar,
+Tag,
+User
+} from 'lucide-react';
+import Link from 'next/link';
+import { ArticleFaqs } from './ArticleFaqs';
+import { ArticleSidebar,ArticleSidebarCta } from './ArticleSidebar';
+import { BlogEndCta } from './BlogEndCta';
+import { BlogHeroBanner } from './BlogHeroBanner';
+import { Chip } from './Chip';
+import { GuideContentBlocks,GuideJumpChips } from './GuideContentBlocks';
 import { GuideResourceDownloads } from './GuideResourceDownloads';
 import { InlineEstimateCTA } from './InlineEstimateCTA';
+import { RelatedPostCards } from './RelatedPostCards';
+import { Section } from './Section';
+import { SectionedArticle } from './SectionedArticle';
 
 interface GuidePageLayoutProps {
   guide: GuidePageData;
@@ -56,7 +54,6 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
 
   return (
     <div className="flex flex-col pb-20 md:pb-0">
-      <BlogHeroBanner src={heroImage} alt={heroAlt} />
 
       <Section spacing="sm" className="pt-8 md:pt-10 pb-0">
         <div className="container px-4 max-w-6xl mx-auto">
@@ -68,7 +65,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
             ]}
           />
 
-          <header className="max-w-[42rem] mb-8 md:mb-10 mt-2">
+          <header className="interior-article-header">
             {hub && <Chip className="mb-4">{hub.categoryLabel}</Chip>}
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {guide.title}
@@ -89,11 +86,11 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
                 {CONTENT_AUTHOR.name}
               </Link>
             </div>
-          </header>
+          </header><BlogHeroBanner src={heroImage} alt={heroAlt}/>
 
           <GuideJumpChips headings={tocHeadings} />
 
-          <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-start">
+          <div className="interior-article-grid">
             <div className="flex-1 min-w-0 w-full">
               <GuideContentBlocks
                 quickAnswer={guide.quickAnswer}

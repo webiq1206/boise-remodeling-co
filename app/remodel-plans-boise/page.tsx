@@ -1,34 +1,35 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, Phone, Check, X } from "lucide-react";
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
-import { MarketingCard } from "@/components/marketing/MarketingCard";
+import { PlansWizard } from "@/components/plans/PlansWizard";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/button";
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical } from "@/lib/page-metadata";
 import {
-  generateBreadcrumbSchema,
-  generateFAQSchema,
-  generateHowToSchema,
-  generateServiceSchema,
-  generateWebPageSchema,
+generateBreadcrumbSchema,
+generateFAQSchema,
+generateHowToSchema,
+generateServiceSchema,
+generateWebPageSchema,
 } from "@/lib/schema";
-import { SITE_IMAGES } from "@/shared/siteImages";
-import { SITE_CONFIG } from "@/shared/siteConfig";
 import {
-  PLANS_DEFINITION,
-  PLANS_DIRECT_ANSWER,
-  PLANS_FAQS,
-  PLANS_PRICING_DISCLAIMER,
-  PLANS_PROCESS,
-  PLANS_WHAT_WE_DO_NOT_USE,
-  PLANS_WHAT_WE_READ,
+PLANS_DEFINITION,
+PLANS_DIRECT_ANSWER,
+PLANS_FAQS,
+PLANS_PRICING_DISCLAIMER,
+PLANS_PROCESS,
+PLANS_WHAT_WE_DO_NOT_USE,
+PLANS_WHAT_WE_READ,
 } from "@/shared/content/plansContent";
-import { PlansWizard } from "@/components/plans/PlansWizard";
+import { SITE_CONFIG } from "@/shared/siteConfig";
+import { SITE_IMAGES } from "@/shared/siteImages";
+import { ArrowRight,Check,Phone,X } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
 
 const PATH = "/remodel-plans-boise";
 
@@ -90,7 +91,7 @@ export default function RemodelPlansPage() {
   ];
 
   return (
-    <>
+    <InteriorPage kind="remodel-plans-boise"><>
       <JsonLd data={schemas} />
 
       {/* ------------------------------------------------------------ hero */}
@@ -317,6 +318,6 @@ export default function RemodelPlansPage() {
           </p>
         </div>
       </Section>
-    </>
+    </></InteriorPage>
   );
 }

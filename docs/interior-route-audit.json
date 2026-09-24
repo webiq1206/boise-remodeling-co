@@ -1,0 +1,102 @@
+[
+  {
+    "route": "/about",
+    "file": "app/about/page.tsx",
+    "seoSignature": "3e3a6a52dae1ddf0d867bb6f7522d7128c0ad7f8bdf721977feb283d2af753c1"
+  },
+  {
+    "route": "/areas/[city]",
+    "file": "app/areas/[city]/page.tsx",
+    "seoSignature": "5172a19ae232e3b7aab05dbe75f403e3ff70325043de5a3cb9bb8c91e5393d45"
+  },
+  {
+    "route": "/areas",
+    "file": "app/areas/page.tsx",
+    "seoSignature": "2a2c1d1e86d957f28fce111c4780495dd17c0b5fb65f3bcb8bf71d136a7d1d15"
+  },
+  {
+    "route": "/blog/[slug]",
+    "file": "app/blog/[slug]/page.tsx",
+    "seoSignature": "42c8d8dac802c5766af23b518406f3461f427595890768912a8206ec011dc21b"
+  },
+  {
+    "route": "/blog/category/[hubSlug]",
+    "file": "app/blog/category/[hubSlug]/page.tsx",
+    "seoSignature": "167a7b82b30ed95a20a514f5e02106af291f565741ebc1264c5a1a46a93ac82d"
+  },
+  {
+    "route": "/blog",
+    "file": "app/blog/page.tsx",
+    "seoSignature": "4faaa31a322cf08bf949a946217f760e63339430cf9790ad738772cd6f0c63ce"
+  },
+  {
+    "route": "/contact",
+    "file": "app/contact/page.tsx",
+    "seoSignature": "273bf47d3b7e74e556ee7c7676194a875d728c85af8a52ed168ce5e2f879f1c9"
+  },
+  {
+    "route": "/guides/[slug]",
+    "file": "app/guides/[slug]/page.tsx",
+    "seoSignature": "91d425cde77318b2d7556f838bb6612f47c242cf6969201aba0bcea4c17d2253"
+  },
+  {
+    "route": "/guides",
+    "file": "app/guides/page.tsx",
+    "seoSignature": "bb637a4c5ee8e9e023dc3d8155324fb49b2b0e88837e774e6cab4882b5d48e3b"
+  },
+  {
+    "route": "/privacy-policy",
+    "file": "app/privacy-policy/page.tsx",
+    "seoSignature": "a444df33035e696e9116e3b395ba176e80ff18f59ffd6f95f2a2b162bda9cd56"
+  },
+  {
+    "route": "/re-10-repairs-boise",
+    "file": "app/re-10-repairs-boise/page.tsx",
+    "seoSignature": "495b0310853261673e7c366ed17ec569db38dbeef0776f8cd261cf5b56fd4b2f"
+  },
+  {
+    "route": "/remodel-plans-boise",
+    "file": "app/remodel-plans-boise/page.tsx",
+    "seoSignature": "d79c59d069b814ae594c1e29e4bb8cdbfcf837ede1e2f211b76016365579cabd"
+  },
+  {
+    "route": "/resources/ada-canyon-permit-flow",
+    "file": "app/resources/ada-canyon-permit-flow/page.tsx",
+    "seoSignature": "4783fbeb922bc11087b7c03e9e237e431d063f3e645d1b7370b783321d032ac5"
+  },
+  {
+    "route": "/resources",
+    "file": "app/resources/page.tsx",
+    "seoSignature": "6df787011cb5c98b6bfac049e21c4aaabee5eabe3af0cb019026647fe73a355a"
+  },
+  {
+    "route": "/services/[slug]/[city]",
+    "file": "app/services/[slug]/[city]/page.tsx",
+    "seoSignature": "eb620ab9852ed4f22be79db083370229dfa287f6195bc4fa8701f4edd7d4f5d7"
+  },
+  {
+    "route": "/services/[slug]",
+    "file": "app/services/[slug]/page.tsx",
+    "seoSignature": "318beae477771bc2876f65ae6807c61df7005010369a4fbe79c06576f587900a"
+  },
+  {
+    "route": "/services",
+    "file": "app/services/page.tsx",
+    "seoSignature": "0a70b53235ebcdd38e643caab05131d172a301ad83f09fcd43f954a0ee3fc649"
+  },
+  {
+    "route": "/sitemap",
+    "file": "app/sitemap/page.tsx",
+    "seoSignature": "3c30961ef2d9eeb8621883e39f53a4395ef97820330be25c36143517d24f30de"
+  },
+  {
+    "route": "/terms-of-service",
+    "file": "app/terms-of-service/page.tsx",
+    "seoSignature": "b15fc8105b5bf9f239439deb95357099e07feee12808ab4ba860477f28096031"
+  },
+  {
+    "route": "/testimonials",
+    "file": "app/testimonials/page.tsx",
+    "seoSignature": "d871b3cce05de025e182c2796367f3f438ee7943ef4e9bcae9c95fa8d30458e7"
+  }
+]

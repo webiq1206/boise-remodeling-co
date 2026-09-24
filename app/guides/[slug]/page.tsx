@@ -1,24 +1,24 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { GUIDE_PAGES, getGuideBySlug } from '@/shared/guideContent';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
+import { GuidePageLayout } from '@/components/marketing/GuidePageLayout';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { FEED_ALTERNATES,buildCanonical,fitDescription,stripBrandSuffix } from '@/lib/page-metadata';
+import {
+generateArticleSchema,
+generateBreadcrumbSchema,
+generateFAQSchema,
+generateSpeakableSchema,
+} from '@/lib/schema';
+import { generateSafePageTitle,getBaseUrl } from '@/lib/seo';
 import { CONTENT_AUTHOR } from '@/shared/authors';
 import {
-  generateArticleSchema,
-  generateBreadcrumbSchema,
-  generateFAQSchema,
-  generateSpeakableSchema,
-} from '@/lib/schema';
-import { buildCanonical, stripBrandSuffix, FEED_ALTERNATES } from '@/lib/page-metadata';
-import { GuidePageLayout } from '@/components/marketing/GuidePageLayout';
-import { getHubBySlug, guidePath } from '@/shared/contentHubs';
-import {
-  getAbsoluteImageUrl,
-  getBlogHeroImage,
-  getBlogImageAlt,
+getAbsoluteImageUrl,
+getBlogHeroImage,
+getBlogImageAlt,
 } from '@/shared/blogImages';
-import { generateSafePageTitle, getBaseUrl } from '@/lib/seo';
-import { fitDescription } from '@/lib/page-metadata';
+import { getHubBySlug,guidePath } from '@/shared/contentHubs';
+import { GUIDE_PAGES,getGuideBySlug } from '@/shared/guideContent';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 export async function generateStaticParams() {
   return GUIDE_PAGES.map((guide) => ({ slug: guide.slug }));
@@ -109,7 +109,7 @@ export default async function GuidePage(props: { params: Promise<{ slug: string 
     : null;
 
   return (
-    <>
+    <InteriorPage kind="guides"><>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
@@ -131,6 +131,6 @@ export default async function GuidePage(props: { params: Promise<{ slug: string 
         />
       )}
       <GuidePageLayout guide={guide} formatDate={formatDate} />
-    </>
+    </></InteriorPage>
   );
 }

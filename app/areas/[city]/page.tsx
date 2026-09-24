@@ -1,21 +1,22 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { notFound } from 'next/navigation';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { JsonLd } from '@/components/seo/JsonLd';
+import type { LandingProof,LandingSection } from '@/components/seo/LandingPageTemplate';
 import { LandingPageTemplate } from '@/components/seo/LandingPageTemplate';
-import { buildPageMetadata } from '@/lib/page-metadata';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import {
-  landingAreaBusinessSchema,
-  landingBreadcrumbs,
-  landingFAQSchema,
+landingAreaBusinessSchema,
+landingBreadcrumbs,
+landingFAQSchema,
 } from '@/lib/landing-schema';
-import { CITY_SEO_DATA } from '@/lib/seo';
-import { areaPath, CITY_SLUGS, getCityBySlug } from '@/lib/seo-routes';
-import { getCountyLabel, SERVICES } from '@/shared/contentData';
-import { AREA_PAGE_FAQS, getAreaIntro } from '@/shared/seoContent';
+import { buildPageMetadata } from '@/lib/page-metadata';
 import { generateSpeakableSchema } from '@/lib/schema';
+import { CITY_SEO_DATA } from '@/lib/seo';
+import { areaPath,CITY_SLUGS,getCityBySlug } from '@/lib/seo-routes';
 import { getAreaImageSet } from '@/shared/cityServiceImages';
-import type { LandingSection, LandingProof } from '@/components/seo/LandingPageTemplate';
+import { getCountyLabel,SERVICES } from '@/shared/contentData';
 import { getGalleryProjectsForCity } from '@/shared/galleryData';
+import { AREA_PAGE_FAQS,getAreaIntro } from '@/shared/seoContent';
+import { notFound } from 'next/navigation';
 
 export function generateStaticParams() {
   return CITY_SLUGS.map((city) => ({ city }));
@@ -124,7 +125,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
   ];
 
   return (
-    <>
+    <InteriorPage kind="areas"><>
       <JsonLd data={schemas} />
       <LandingPageTemplate
         h1={h1}
@@ -153,6 +154,6 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         faqs={faqs}
         related={{ variant: 'area', citySlug: city.slug }}
       />
-    </>
+    </></InteriorPage>
   );
 }

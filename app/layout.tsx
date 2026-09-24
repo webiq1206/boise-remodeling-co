@@ -19,6 +19,7 @@ import './globals.css'
 import './family.css'
 import './approved-family.css'
 import './approved-system.css'
+import './approved-interiors.css'
 
 // P5 family typefaces, self-hosted from the same two OFL variable files P5 Home Co serves.
 const manrope = localFont({

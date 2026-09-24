@@ -1,21 +1,22 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import { ArrowRight } from 'lucide-react';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { Section } from '@/components/marketing/Section';
-import { ProjectGallerySection } from '@/components/sections/ProjectGallerySection';
-import { PageHeroBand } from '@/components/sections/PageHeroBand';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
-import { buildPageMetadata } from '@/lib/page-metadata';
-import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
-import { EstimateCTA } from '@/components/modals/EstimateCTA';
+import { Section } from '@/components/marketing/Section';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
+import { EstimateCTA } from '@/components/modals/EstimateCTA';
+import { PageHeroBand } from '@/components/sections/PageHeroBand';
+import { ProjectGallerySection } from '@/components/sections/ProjectGallerySection';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildPageMetadata } from '@/lib/page-metadata';
 import {
-  generateBreadcrumbSchema,
-  generateCollectionPageSchema,
+generateBreadcrumbSchema,
+generateCollectionPageSchema,
 } from '@/lib/schema';
+import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { GALLERY_PROJECTS } from '@/shared/galleryData';
 import { GALLERY_IMAGES } from '@/shared/siteImages';
+import { ArrowRight } from 'lucide-react';
 
 export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'about',
@@ -44,7 +45,7 @@ export default function TestimonialsPage() {
   ];
 
   return (
-    <div className="flex flex-col pb-20 md:pb-0">
+    <InteriorPage kind="testimonials"><div className="flex flex-col pb-20 md:pb-0">
       <JsonLd data={schemas} />
 
       <PageHeroBand
@@ -104,6 +105,6 @@ export default function TestimonialsPage() {
               </div>          </div>
         </div>
       </Section>
-    </div>
+    </div></InteriorPage>
   );
 }

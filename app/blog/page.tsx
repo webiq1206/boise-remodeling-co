@@ -1,19 +1,20 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
+import { InteriorPage } from '@/components/approved/InteriorLayout';
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { BlogIndexClient } from "@/components/marketing/BlogIndexClient";
+import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
+import { PageHeroBand } from "@/components/sections/PageHeroBand";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildPageMetadata } from "@/lib/page-metadata";
+import {
+generateBreadcrumbSchema,
+generateCollectionPageSchema,
+} from "@/lib/schema";
+import { BLOG_POSTS } from "@/shared/blogContent";
+import { getBlogHeroImage,getBlogImageAlt } from "@/shared/blogImages";
+import { ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { BlogIndexClient } from "@/components/marketing/BlogIndexClient";
-import { PageHeroBand } from "@/components/sections/PageHeroBand";
-import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { buildPageMetadata } from "@/lib/page-metadata";
-import { JsonLd } from "@/components/seo/JsonLd";
-import { BLOG_POSTS } from "@/shared/blogContent";
-import { getBlogHeroImage, getBlogImageAlt } from "@/shared/blogImages";
-import {
-  generateBreadcrumbSchema,
-  generateCollectionPageSchema,
-} from "@/lib/schema";
 
 export const metadata: Metadata = withBrandPageMetadata((buildPageMetadata({
   kind: "blog",
@@ -39,7 +40,7 @@ export default function BlogPage() {
   ];
 
   return (
-    <>
+    <InteriorPage kind="blog"><>
       <JsonLd data={schemas} />
 
       <PageHeroBand
@@ -77,6 +78,6 @@ export default function BlogPage() {
         description="Read enough to know what you want? Use our project estimator for an instant Treasure Valley planning range - takes about 60 seconds, no obligation."
         variant="greige"
       />
-    </>
+    </></InteriorPage>
   );
 }
