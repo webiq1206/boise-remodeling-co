@@ -332,8 +332,8 @@ check(
 
 const route = fs.readFileSync("app/api/plans/estimate/route.ts", "utf8");
 check(
-  route.includes("isStoredDocumentUrl"),
-  "the estimate route does not use the shared stored-document rule",
+  route.includes("retiredEstimatorResponse"),
+  "the retired route must return the P5 continuation",
 );
 /* THE PRICE IS NOT ACCEPTED FROM THE CLIENT. There must be nowhere in the body
    to put one, or a browser could quote itself whatever it liked. */
@@ -342,8 +342,8 @@ for (const forbidden of ["price:", "low:", "high:", "range:", "canTightenPrice"]
   check(!inSchema, `the estimate request schema accepts "${forbidden}" from the client`);
 }
 check(
-  route.includes("assessPlanQuality") && route.includes("planMeasurements"),
-  "the estimate route does not re-run the gates, so a client could skip them",
+  route.includes("retiredEstimatorResponse"),
+  "the retired route must not issue a price",
 );
 
 console.log(`  upload and request contract checked\n`);

@@ -153,144 +153,16 @@ async function main(): Promise<void> {
     check(prompt.includes("only after they agreed to be contacted"), "prompt must gate lead capture on consent");
   }
 
-  console.log("verify-assistant: remodel tool returns exactly what the engine computes");
-  {
-    const state = emptySessionState();
-    const run = await executeAssistantTool(
-      "price_remodel_estimate",
-      { project: "kitchen", finish: "mid-range", sqft: 250, refinements: { upgradeScope: ["lighting"] } },
-      state,
-    );
-    check(!run.isError, "valid kitchen input must succeed");
-    const data = JSON.parse(run.resultJson);
-
-    const refinements = { ...EMPTY_REFINEMENTS, upgradeScope: ["lighting"] };
-    const detailCount = countVisibleUserRefinements("kitchen", getSetRefinementKeys(refinements));
-    const guide = calculateEstimate({ project: "kitchen", finish: "mid-range", sqft: 250, refinements }, detailCount);
-    const range = resolveQuotedRange("kitchen", "mid-range", 250, refinements);
-    const expected = { ...guide, ...(range ?? {}) };
-    check(
-      data.priceLow === expected.priceLow && data.priceHigh === expected.priceHigh,
-      `tool price must equal the engine's exactly: tool ${data.priceLow}-${data.priceHigh}, engine ${expected.priceLow}-${expected.priceHigh}`,
-    );
-    check(
-      state.groundedPrices.includes(data.priceLow) && state.groundedPrices.includes(data.priceHigh),
-      "both numbers must land in the grounding allowlist",
-    );
-    check(state.lastEstimate?.kind === "remodel", "lastEstimate must be recorded for the CRM");
-    check(
-      !/"cost"|margin|internalCost|sellingPrice|unitCost/i.test(run.resultJson),
-      "remodel tool result must carry no internal cost or margin field",
-    );
-    check(Array.isArray(data.included) && data.included.length > 0, "result must say what is included");
-    check(
-      typeof data.notices?.[0] === "string" && data.notices[0].includes("not a quote"),
-      "result must carry the not-a-quote notice",
-    );
-
-    const clamped = await executeAssistantTool(
-      "price_remodel_estimate",
-      { project: "kitchen", finish: "mid-range", sqft: 99_999 },
-      emptySessionState(),
-    );
-    const clampedData = JSON.parse(clamped.resultJson);
-    check(!clamped.isError && typeof clampedData.sqftAdjusted === "string", "out-of-bounds sqft must clamp AND say so");
-
-    const badFinish = await executeAssistantTool(
-      "price_remodel_estimate",
-      { project: "addition", finish: "refresh", sqft: 400 },
-      emptySessionState(),
-    );
-    check(badFinish.isError, "a finish the project does not offer must be rejected, not silently substituted");
-
-    const garbage = await executeAssistantTool("price_remodel_estimate", { project: "castle", finish: "gold", sqft: -5 }, emptySessionState());
-    check(garbage.isError, "garbage input must be a tool error");
+  console.log("verify-assistant: retired tools continue without issuing prices or leads");
+  for(const tool of ['price_remodel_estimate','price_repair_list','capture_lead']) {
+    const state=emptySessionState(); state.groundedPrices=[1234];
+    const result=await executeAssistantTool(tool,{project:'kitchen',sqft:250,repairs:[]},state);
+    const data=JSON.parse(result.resultJson);
+    check(!result.isError&&data.nextStep==='/estimate'&&data.priceable===false,`${tool}: explicit continuation`);
+    check(!('priceLow' in data)&&!('firmPrice' in data)&&!('saved' in data),`${tool}: no retired price or false delivery`);
+    check(state.groundedPrices.length===0&&state.lastEstimate===null,`${tool}: no old pricing state survives`);
   }
-
-  console.log("verify-assistant: repair tool returns exactly what the engine computes");
-  {
-    const kinds = assistantRepairKinds();
-    check(kinds.length > 0 && kinds.every((k) => Boolean(RECIPES[k])), "every offered repair kind must be a real recipe");
-
-    const state = emptySessionState();
-    const input = {
-      repairs: [
-        { description: "Install GFCI at kitchen counters", kind: "gfci-install", quantity: 2 },
-        { description: "Re-caulk south windows", kind: "caulking-weatherproofing" },
-      ],
-      occupancy: "occupied",
-      access: "limited",
-    };
-    const run = await executeAssistantTool("price_repair_list", input, state);
-    check(!run.isError, "valid repair list must succeed");
-    const data = JSON.parse(run.resultJson);
-
-    const expected = estimateRe10(
-      [
-        { id: "assistant-0", description: "Install GFCI at kitchen counters", kind: "gfci-install" as never, quantity: 2, location: undefined },
-        { id: "assistant-1", description: "Re-caulk south windows", kind: "caulking-weatherproofing" as never, quantity: null, location: undefined },
-      ],
-      { occupancy: "occupied", access: "limited", daysToDeadline: null, hasInspectionReport: false },
-    );
-    check(
-      data.firmPrice === expected.quotedPrice,
-      `tool firm price must equal the engine's quotedPrice exactly: tool ${data.firmPrice}, engine ${expected.quotedPrice}`,
-    );
-    check(state.groundedPrices.includes(expected.quotedPrice), "the firm price must land in the grounding allowlist");
-    check(
-      !/internalCost|customerAmount|margin|adjustedCost|mobilization|"low"|"high"/i.test(run.resultJson),
-      "repair tool result must carry no internal cost, margin, or internal band field",
-    );
-
-    const clamped = await executeAssistantTool(
-      "price_repair_list",
-      { repairs: [{ description: "Cover plates everywhere", kind: "electrical-cover-plates", quantity: 99_000 }] },
-      emptySessionState(),
-    );
-    const clampedData = JSON.parse(clamped.resultJson);
-    check(
-      !clamped.isError && clampedData.categories?.[0]?.items?.[0]?.quantityAssumed === true,
-      "an absurd quantity must be clamped and flagged as assumed",
-    );
-
-    const badKind = await executeAssistantTool(
-      "price_repair_list",
-      { repairs: [{ description: "Rebuild the chimney", kind: "chimney-rebuild" }] },
-      emptySessionState(),
-    );
-    check(badKind.isError, "a kind outside the catalog must be rejected, never guessed at");
-  }
-
-  console.log("verify-assistant: lead capture fails safe offline");
-  {
-    const state = emptySessionState();
-    const run = await executeAssistantTool(
-      "capture_lead",
-      {
-        name: "Test Person",
-        email: "test@example.com",
-        preferredContact: "email",
-        projectSummary: "Kitchen remodel",
-        conversationSummary: "Discussed a mid-range kitchen.",
-      },
-      state,
-    );
-    // Every delivery leg is scrubbed, so the honest answer is failure with
-    // instructions to hand over the phone number - never a false "saved".
-    check(run.isError, "with no delivery path available, capture_lead must report failure");
-    check(state.leadCaptured === false, "a failed capture must not mark the session captured");
-    check(run.resultJson.includes("phone"), "the failure must tell the assistant to fall back to phone/email");
-
-    const noPhone = await executeAssistantTool(
-      "capture_lead",
-      { name: "Test", preferredContact: "phone", projectSummary: "Bath remodel", conversationSummary: "Talked baths." },
-      emptySessionState(),
-    );
-    check(noPhone.isError, "phone-preferred with no phone number must be rejected");
-
-    const unknown = await executeAssistantTool("not_a_tool", {}, emptySessionState());
-    check(unknown.isError, "an unknown tool name must error, not fall through");
-  }
+  check((await executeAssistantTool('not_a_tool',{},emptySessionState())).isError,'unknown tools fail closed');
 
   console.log("verify-assistant: tool definitions stay in lockstep with executors");
   {

@@ -36,9 +36,9 @@ export async function capturePricingDelivery(result:any,scope:any,artifacts:stri
     assert.equal(await outbox.enqueueSubmission(id,1,record),true);
     await outbox.processOutbox({draftId:id});
     await outbox.processOutbox({draftId:id});
-    assert.equal(capture.emails.length,2);assert.equal(capture.crm.length,1);
-    assert.deepEqual(capture.crm[0].record.customer,result.customer);
-    assert.deepEqual(capture.crm[0].record.internal,result.internal);
+    assert.equal(capture.emails.length,2);assert.equal(capture.crm.length,outbox.CRM_DELIVERY_ENABLED?1:0);
+    if(outbox.CRM_DELIVERY_ENABLED){assert.deepEqual(capture.crm[0].record.customer,result.customer);assert.deepEqual(capture.crm[0].record.internal,result.internal);}
+    else assert.equal((await db.query("SELECT 1 FROM p5_estimator_outbox WHERE destination='crm'")).length,0,'CRM off must enqueue nothing');
     assert.ok((await outbox.deliveryStatus(id)).every((d:any)=>d.status==='sent'));
     await mkdir(artifacts,{recursive:true});
     const mail=capture.emails.find((m:any)=>m.to===contact.email);

@@ -312,8 +312,8 @@ for (const [url, ok] of [
   }
 }
 check(
-  /isStoredDocumentUrl/.test(fs.readFileSync("app/api/re10/estimate/route.ts", "utf8")),
-  "the estimate route no longer validates document links with the shared predicate",
+  /retiredEstimatorResponse/.test(fs.readFileSync("app/api/re10/estimate/route.ts", "utf8")),
+  "the retired estimate route must never create a legacy estimate or delivery",
 );
 // A bare "Invalid request" names nothing the reader can change.
 check(

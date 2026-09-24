@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
     try {
       const payload = transcriptPayloadSchema.parse(JSON.parse(body.transcript.payload));
       history = payload.messages;
-      state = payload.state;
+      state = {...payload.state,groundedPrices:[],lastEstimate:null,leadCaptured:false};
     } catch {
       return NextResponse.json({ message: "Conversation expired. Say that again to start fresh.", reset: true }, { status: 409 });
     }

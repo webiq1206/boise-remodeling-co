@@ -1,3 +1,4 @@
+import {estimatorContinuation} from "@/lib/p5/legacyContinuation";
 import type Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import {
@@ -130,11 +131,7 @@ const captureLeadSchema = z
 export const ASSISTANT_TOOL_DEFINITIONS: Anthropic.Tool[] = [
   {
     name: "price_remodel_estimate",
-    description:
-      "Compute the planning range for a remodel or build project using the real pricing engine. " +
-      "Call this whenever the customer wants a number and you know project type, finish level and approximate square footage. " +
-      "Re-call it after any change of scope; never adjust a previous number yourself. " +
-      "For kitchens and bathrooms, upgradeScope lists only what they are redoing (omit or null = full remodel).",
+    description: "Continue the project at /estimate. Returns no price and sends no lead. The customer can carry chat notes using Continue project.",
     input_schema: {
       type: "object" as const,
       properties: {
@@ -168,10 +165,7 @@ export const ASSISTANT_TOOL_DEFINITIONS: Anthropic.Tool[] = [
   },
   {
     name: "price_repair_list",
-    description:
-      "Compute a firm price for a list of inspection/RE-10 style repairs using the real repair engine. " +
-      "Map each repair the customer describes to the closest kind; if nothing fits, leave it OFF the list and tell the customer it needs an onsite look. " +
-      "Quantities: only pass a number the customer actually gave; omit it otherwise and the engine prices the typical size and says so.",
+    description: "Continue the project at /estimate. Returns no price and sends no lead. The customer can carry chat notes using Continue project.",
     input_schema: {
       type: "object" as const,
       properties: {
@@ -198,9 +192,7 @@ export const ASSISTANT_TOOL_DEFINITIONS: Anthropic.Tool[] = [
   },
   {
     name: "capture_lead",
-    description:
-      "Save the customer's contact details so the team follows up. Call ONLY after the customer has explicitly shared " +
-      "their name and a way to reach them and agreed to be contacted. Never invent or assume contact details.",
+    description: "Continue the project at /estimate. Returns no price and sends no lead. The customer can carry chat notes using Continue project.",
     input_schema: {
       type: "object" as const,
       properties: {
@@ -432,11 +424,14 @@ export async function executeAssistantTool(
 ): Promise<ToolExecution> {
   switch (name) {
     case "price_remodel_estimate":
-      return runRemodelTool(input, state);
+      state.groundedPrices=[]; state.lastEstimate=null;
+      return {isError:false,resultJson:JSON.stringify(estimatorContinuation())};
     case "price_repair_list":
-      return runRepairTool(input, state);
+      state.groundedPrices=[]; state.lastEstimate=null;
+      return {isError:false,resultJson:JSON.stringify(estimatorContinuation())};
     case "capture_lead":
-      return runCaptureLead(input, state);
+      state.groundedPrices=[]; state.lastEstimate=null;
+      return {isError:false,resultJson:JSON.stringify(estimatorContinuation())};
     default:
       return toolError(`Unknown tool "${name}".`);
   }

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useFormInView } from "@/hooks/use-form-in-view";
 import Link from "next/link";
 import { MessageCircle, Send, X } from "lucide-react";
+import { continueAssistantProject } from "@/lib/p5/assistantContinuation";
 import { trackEvent } from "@/lib/analytics";
 import { isPortalPath } from "@/lib/portalRoutes";
 import { ASSISTANT_EVENTS } from "@/shared/assistant/analyticsEvents";
@@ -37,7 +38,7 @@ interface Transcript {
 
 const STORAGE_KEY = "brc_assistant_chat_v1";
 const GREETING =
-  "Hi - I can work up a planning range for a remodel, price an inspection repair list, or answer questions about how we work. What are you thinking about?";
+  "Hi - I can help describe your remodel or repair project, answer questions, and carry your notes into the project estimator.";
 
 function readEstimatorContext(): { project?: string; finish?: string; sqft?: number } | undefined {
   try {
@@ -151,7 +152,7 @@ export function AssistantWidget() {
             notice: true,
             content:
               data?.message ??
-              "Something went wrong on our end. Try again in a moment, or use the project estimator - it prices instantly.",
+              "Something went wrong on our end. Try again in a moment, or continue your project in the estimator.",
           },
         ]);
       }
@@ -234,17 +235,10 @@ export function AssistantWidget() {
                 <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
               </div>
             )}
-            {offerEstimator && !busy && (
-              <div className="pt-1">
-                <Link
-                  href={estimatorHref}
-                  onClick={() => trackEvent(ASSISTANT_EVENTS.handoffEstimator, {})}
-                  className="inline-block rounded-sm border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted transition-colors"
-                >
-                  Fine-tune this in the estimator
-                </Link>
-              </div>
-            )}
+            <button type="button" disabled={busy} data-testid="button-assistant-continue" className="min-h-11 rounded-sm border border-border px-3 py-2 text-sm disabled:opacity-40" onClick={()=>{
+              try {continueAssistantProject(messages,draft);trackEvent(ASSISTANT_EVENTS.handoffEstimator,{});window.location.assign('/estimate');}
+              catch(error){setMessages(prev=>[...prev,{role:'assistant',notice:true,content:error instanceof Error?error.message:'Your project could not be saved. Please retry.'}]);}
+            }}>Continue project</button>
           </div>
 
           <form
