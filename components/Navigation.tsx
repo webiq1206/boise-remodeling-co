@@ -1,20 +1,20 @@
 "use client";
+import { ApprovedBrand } from "@/components/approved/ApprovedBrand";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {useMobileActionVisibility} from "@/hooks/use-mobile-action-visibility";
-import { useFormInView } from "@/hooks/use-form-in-view";
-import * as Dialog from "@radix-ui/react-dialog";
+
+import { NavEstimateButton } from "@/components/modals/NavEstimateButton";
+import { SaveContactLink } from "@/components/SaveContactLink";
 import { Button } from "@/components/ui/button";
-import { Contact, Menu, MessageSquare, X, Phone } from "lucide-react";
+import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
+import { isPortalPath } from "@/lib/portalRoutes";
 import { cn } from "@/lib/utils";
 import { CTA_QUOTE } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
-import { NavEstimateButton } from "@/components/modals/NavEstimateButton";
-import { SaveContactLink } from "@/components/SaveContactLink";
-import { isPortalPath } from "@/lib/portalRoutes";
-import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Contact,Menu,MessageSquare,Phone,X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect,useState } from "react";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
@@ -32,21 +32,13 @@ function Logo() {
       {/* Bone wordmark with the sage Co., which is the dark-ground lockup the
           brand kit specifies. width/height match the 1617.52 x 159.96 viewBox
           so the browser reserves the right box and the header does not shift. */}
-      <img
-        src="/brand/svg/wordmark/dark/boise-remodeling-co-wordmark-bone-accent.svg"
-        alt="Boise Remodeling Co"
-        width={263}
-        height={26}
-        className="h-[26px] w-auto max-w-[calc(100vw-92px)] object-contain object-left"
-      />
+      <ApprovedBrand />
     </Link>
   );
 }
 
 export function Navigation() {
   const pathname = usePathname();
-  const formInView = useFormInView(pathname);
-  const pastHero=useMobileActionVisibility(pathname);
   // Solid contrast over every hero; a shadow separates the header while scrolling.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -64,7 +56,7 @@ export function Navigation() {
     (pathname?.startsWith("/remodel-plans") ?? false);
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 1440px)");
+    const desktop = window.matchMedia("(min-width: 1180px)");
     const closeOnDesktop = () => { if (desktop.matches) setMobileOpen(false); };
     closeOnDesktop();
     desktop.addEventListener("change", closeOnDesktop);
@@ -91,7 +83,7 @@ export function Navigation() {
 
   return (
     <>
-      <header
+      <header data-approved-navigation
         className={cn(
           "fixed top-0 z-[100] w-full transition-[background-color,border-color] duration-300",
           "bg-background/95 backdrop-blur border-b border-border",
@@ -101,7 +93,7 @@ export function Navigation() {
         <nav className="container flex h-[60px] items-center justify-between gap-4 px-4 md:px-6">
           <Logo />
 
-          <div className="hidden min-[1440px]:flex items-center gap-0">
+          <div className="hidden min-[1180px]:flex items-center gap-0">
             {NAV_LINKS.map((link) => {
               const active = isActivePath(link.href);
               return (
@@ -123,7 +115,7 @@ export function Navigation() {
             })}
           </div>
 
-          <div className="hidden min-[1440px]:flex shrink-0 items-center gap-3">
+          <div className="hidden min-[1180px]:flex shrink-0 items-center gap-3">
               <a
                 href={SITE_CONFIG.phoneHref}
                 className="flex items-center gap-2 whitespace-nowrap text-body-sm font-normal transition-colors text-muted-foreground hover:text-foreground"
@@ -163,7 +155,7 @@ export function Navigation() {
 
           {/* Mobile menu - Radix Dialog gives focus trap, Escape, scroll-lock,
               inert background, and auto aria-expanded/aria-controls on the trigger. */}
-          <div className="flex min-[1440px]:hidden items-center gap-2">
+          <div className="flex min-[1180px]:hidden items-center gap-2">
             <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
               <Dialog.Trigger asChild>
                 {/* The shared icon size is 36px, which suits dense admin
@@ -181,9 +173,9 @@ export function Navigation() {
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 z-[190] bg-background/80 backdrop-blur-sm min-[1440px]:hidden" />
+                <Dialog.Overlay className="fixed inset-0 z-[190] bg-background/80 backdrop-blur-sm min-[1180px]:hidden" />
                 <Dialog.Content
-                  className="fixed inset-0 z-[200] bg-background flex flex-col min-[1440px]:hidden focus:outline-none"
+                  className="fixed inset-0 z-[200] bg-background flex flex-col min-[1180px]:hidden focus:outline-none"
                   data-testid="mobile-nav-drawer"
                 >
                   <Dialog.Title className="sr-only">Navigation menu</Dialog.Title>
@@ -314,7 +306,7 @@ export function Navigation() {
       {!wizardOwnsBottom && (
       <div
         data-mobile-nav-bar=""
-        className={cn("fixed left-0 right-0 bottom-0 z-[100] lg:hidden pb-safe border-t bg-background border-border", (formInView || !pastHero || mobileOpen) && "invisible pointer-events-none")}
+        className={cn("fixed left-0 right-0 bottom-0 z-[100] min-[1180px]:hidden pb-safe border-t bg-background border-border", (mobileOpen) && "invisible pointer-events-none")}
       >
         <div className="flex items-stretch gap-2 p-2">
           <a

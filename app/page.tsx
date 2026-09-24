@@ -1,28 +1,18 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
-import type { Metadata } from "next";
-import Image from "next/image";
-import dynamic from "next/dynamic";
-import { FAQSection } from "@/components/FAQSection";
+import { ApprovedHome } from "@/components/approved/ApprovedHome";
 import { ConsultationForm } from "@/components/ConsultationForm";
-import { Reveal } from "@/components/Reveal";
-import { HeroSection } from "@/components/sections/HeroSection";
-import { ValueOverheadSection } from "@/components/sections/ValueOverheadSection";
-import { WhyChooseUsSection } from "@/components/sections/WhyChooseUsSection";
-import { ServicesGrid } from "@/components/sections/ServicesGrid";
-import { ProcessSection } from "@/components/sections/ProcessSection";
-import { BudgetInclusionsSection } from "@/components/sections/BudgetInclusionsSection";
-import { ProjectGallerySection } from "@/components/sections/ProjectGallerySection";
-import { BrandStatementBand } from "@/components/sections/BrandStatementBand";
-import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
-import { Section } from "@/components/marketing/Section";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
-import { Check } from "lucide-react";
-import { CONSULT_BULLETS, SITE_TAGLINE } from "@/shared/siteContent";
-import { CTA_PRIMARY } from "@/shared/ctaCopy";
+import { Section } from "@/components/marketing/Section";
+import { Reveal } from "@/components/Reveal";
+import { BudgetInclusionsSection } from "@/components/sections/BudgetInclusionsSection";
 import { HomePageSchema } from "@/components/seo/HomePageSchema";
-import { buildCanonical } from "@/lib/page-metadata";
+import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { buildCanonical,fitDescription } from "@/lib/page-metadata";
+import { CONSULT_BULLETS,SITE_TAGLINE } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
-import { fitDescription } from '@/lib/page-metadata';
+import { Check } from "lucide-react";
+import type { Metadata } from "next";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 
 const EstimateCalculator = dynamic(
   () =>
@@ -88,36 +78,8 @@ export default function HomePage() {
           thing they came for. Everything above it now exists only to make the
           number land well; everything below it answers what the number raised. */}
       <HomePageSchema />
-      <HeroSection />
-      <ValueOverheadSection />
-      <EstimateCalculator />
+      <ApprovedHome />
       <BudgetInclusionsSection />
-      <ServicesGrid />
-      {/* No longer excludes whole-home: the featured before/after slider that
-          used to carry that project was removed, so the gallery is now the only
-          place it appears. */}
-      <ProjectGallerySection limit={6} showViewAll={true} />
-
-      <EstimatePromptBand
-        eyebrow="Still comparing options"
-        title={
-          <>
-            Get your number without leaving{' '}
-            <em className="brc-accent">home</em>
-          </>
-        }
-        description="If you scrolled past the estimator above, come back anytime - or book a free in-home visit and we'll walk through scope, design direction, and a written project range together."
-        bullets={[
-          "Instant range based on real Treasure Valley costs",
-          "Free in-home visit when you're ready for detail",
-          "No obligation - we email you a copy of your estimate",
-        ]}
-      />
-
-      <WhyChooseUsSection limit={5} />
-      <ProcessSection />
-      <BrandStatementBand />
-      <FAQSection />
       <Section id="consult" divider className="scroll-mt-16 relative overflow-hidden pb-28 md:pb-28">
         {/* Warm, dimmed lifestyle photo grounds the closing section. Directional
             scrims keep the left-column copy legible and fade the edges into the
