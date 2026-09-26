@@ -1,3 +1,4 @@
+import {schemaTime} from './schemaTime';
 /**
  * JSON-LD Schema Markup Generators
  * Creates structured data for Google rich snippets and search features
@@ -112,8 +113,8 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     openingHoursSpecification: Object.entries(BUSINESS_INFO.hours).map(([day, hours]) => ({
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
-      opens: hours === 'Closed' ? undefined : hours.split(' - ')[0],
-      closes: hours === 'Closed' ? undefined : hours.split(' - ')[1],
+      opens: hours === 'Closed' ? undefined : schemaTime(hours.split(' - ')[0]),
+      closes: hours === 'Closed' ? undefined : schemaTime(hours.split(' - ')[1]),
     })).filter(spec => spec.opens),
     priceRange: '$$',
     areaServed: BUSINESS_INFO.serviceArea.map(area => ({

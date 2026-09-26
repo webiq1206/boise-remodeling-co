@@ -75,7 +75,7 @@ export default function BlogPage() {
             <em className="brc-accent">range</em>
           </>
         }
-        description="Read enough to know what you want? Use our project estimator for an instant Treasure Valley planning range - takes about 60 seconds, no obligation."
+        description="Read enough to know what you want? Use our project estimator for a preliminary Treasure Valley planning range, with no obligation."
         variant="greige"
       />
     </></InteriorPage>
