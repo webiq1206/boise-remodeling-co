@@ -1,3 +1,4 @@
+import {createEstimatorModelClient,estimatorConnection} from "@/lib/p5/estimatorModelClient";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   PLAN_EXTRACTION_SCHEMA,
@@ -63,11 +64,11 @@ export type PlanExtractionOutcome =
 
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
 const PDF_TYPE = "application/pdf";
-const DEEP_MODEL = "claude-opus-5";
+const DEEP_MODEL = "gpt-4.1";
 const DEEP_CONCURRENCY = 5;
 
 export function isPlanExtractionConfigured(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+  return Boolean(estimatorConnection().key);
 }
 
 class TruncatedError extends Error {}
@@ -117,7 +118,7 @@ export async function extractPlans(
     };
   }
 
-  const client = new Anthropic();
+  const client = (createEstimatorModelClient() as unknown as Anthropic);
   const inventory = await buildInventory(usable);
 
   /* Re-number into the whole submission's page space. A part covering sheets

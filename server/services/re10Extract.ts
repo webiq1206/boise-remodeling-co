@@ -1,3 +1,4 @@
+import {createEstimatorModelClient,estimatorConnection} from "@/lib/p5/estimatorModelClient";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   EXTRACTION_SCHEMA,
@@ -74,7 +75,7 @@ const PDF_TYPE = "application/pdf";
 
 export { MAX_TOTAL_UPLOAD_BYTES };
 
-const DEEP_MODEL = "claude-opus-5";
+const DEEP_MODEL = "gpt-4.1";
 const DEEP_CONCURRENCY = 5;
 
 /**
@@ -89,7 +90,7 @@ const DEEP_CONCURRENCY = 5;
 const RE10_CHUNK_PAGES = 2;
 
 export function isExtractionConfigured(): boolean {
-  return Boolean(process.env.ANTHROPIC_API_KEY);
+  return Boolean(estimatorConnection().key);
 }
 
 /** Kinds of page worth reading for repairs. A repair list can be anywhere. */
@@ -115,7 +116,7 @@ export async function extractRepairs(files: ExtractionInput[]): Promise<Extracti
     };
   }
 
-  const client = new Anthropic();
+  const client = (createEstimatorModelClient() as unknown as Anthropic);
   const inventory = await buildInventory(usable);
 
   if (inventory.pages.length === 0) {

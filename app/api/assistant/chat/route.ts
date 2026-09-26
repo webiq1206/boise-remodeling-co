@@ -1,3 +1,4 @@
+import {createEstimatorModelClient,estimatorConnection} from "@/lib/p5/estimatorModelClient";
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
@@ -40,7 +41,7 @@ const RATE_WINDOW_MS = 10 * 60 * 1000;
 
 const MAX_TURNS = 40;
 const MAX_TOOL_ROUNDS = 5;
-const MODEL = "claude-sonnet-5";
+const MODEL = "gpt-4.1";
 
 const transcriptMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!estimatorConnection().key) {
     return NextResponse.json({ message: FALLBACK_UNAVAILABLE, unavailable: true }, { status: 503 });
   }
 
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
     system += `\n\nVISITOR CONTEXT (from the page, not the customer's words): ${bits.join("; ")}.`;
   }
 
-  const anthropic = new Anthropic();
+  const anthropic = (createEstimatorModelClient() as unknown as Anthropic);
   const messages: Anthropic.MessageParam[] = [
     ...history.map((m) => ({ role: m.role, content: m.content })),
     { role: "user" as const, content: body.message },

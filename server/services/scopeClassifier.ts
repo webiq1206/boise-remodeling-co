@@ -24,7 +24,7 @@ import { TRADES, type Trade } from "@/shared/takeoff/units";
  * and the second produces a question.
  */
 
-const MODEL = "claude-sonnet-5";
+const MODEL = "gpt-4.1";
 const BATCH_SIZE = 12;
 const CONCURRENCY = 4;
 

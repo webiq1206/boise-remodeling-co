@@ -27,7 +27,7 @@ for (const key of [
 }
 // A syntactically-present key lets the route reach its validation layers;
 // model authentication failure is simulated below, without a network call.
-process.env.ANTHROPIC_API_KEY = "sk-ant-test-not-a-real-key";
+process.env.OPENAI_API_KEY = "synthetic-not-a-real-key";
 
 // Keep the offline contract literal. Never depend on an external API rejecting
 // a dummy credential, and never send the assembled assistant prompt off-host.
@@ -35,7 +35,7 @@ const originalFetch = globalThis.fetch;
 let modelAttempts = 0;
 globalThis.fetch = async (input) => {
   const url = new URL(input instanceof Request ? input.url : String(input));
-  if (url.hostname !== "api.anthropic.com") {
+  if (url.hostname !== "api.openai.com") {
     throw new Error(`Unexpected network request in offline verification: ${url.hostname}`);
   }
   modelAttempts++;
@@ -206,7 +206,8 @@ async function main(): Promise<void> {
     // A well-formed request reaches the model call, which fails auth on the
     // simulated authentication failure; that must surface as a graceful 502/503.
     const orig = console.error;
-    console.error = () => {};
+    let modelFailure = "";
+    console.error = (...args) => { modelFailure = args[1] instanceof Error ? args[1].message : "unknown failure"; };
     let reachedModel;
     try {
       reachedModel = await post({ message: "hello" });
@@ -217,7 +218,7 @@ async function main(): Promise<void> {
       reachedModel.status === 502 || reachedModel.status === 503,
       `a failed model call must degrade gracefully, got ${reachedModel.status}`,
     );
-    check(modelAttempts > 0, "the valid request must exercise the simulated model failure");
+    check(modelAttempts > 0, `the valid request must exercise the simulated model failure: ${modelFailure}`);
     const degraded = await reachedModel.json();
     check(typeof degraded.message === "string" && degraded.message.length > 0, "the degraded response must carry a human message");
   }

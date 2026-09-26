@@ -30,7 +30,7 @@ import {
  * page ends up READ with a sheet number and a title, or FAILED with a reason.
  */
 
-const CENSUS_MODEL = "claude-haiku-4-5-20251001";
+const CENSUS_MODEL = "gpt-4.1";
 const CENSUS_CONCURRENCY = 6;
 
 const CENSUS_SCHEMA = {
