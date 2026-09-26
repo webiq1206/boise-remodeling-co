@@ -1,0 +1,14 @@
+/* Audit corrections. Keep brand artwork and decorative accent colors unchanged. */
+.approved-shell { --audit-accent-ink:#4C5F50; }
+.approved-shell :target { scroll-margin-top:112px; }
+.approved-estimate { scroll-margin-top:112px; }
+.approved-interior .interior-hero-copy h1 em,
+.approved-interior .interior-document-heading h1 em { color:var(--audit-accent-ink); }
+.approved-shell :is(a,button,input,select,textarea,summary):focus-visible { outline:3px solid currentColor; outline-offset:4px; }
+@media(max-width:1179px) {
+  .approved-shell:has(input:focus,textarea:focus,select:focus,[contenteditable=true]:focus) [data-mobile-nav-bar] { visibility:hidden; pointer-events:none; }
+  .approved-shell { padding-bottom:env(safe-area-inset-bottom,0px); }
+}
+@media(prefers-reduced-motion:reduce) {
+  .approved-shell *, .approved-shell *::before, .approved-shell *::after { animation:none!important; scroll-behavior:auto!important; transition:none!important; }
+}

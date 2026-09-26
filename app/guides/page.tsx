@@ -205,7 +205,7 @@ export default function GuidesIndexPage() {
             <em className="brc-accent">number</em>
           </>
         }
-        description="After reading our guides, use the project estimator for an instant Treasure Valley planning range - then book a free in-home visit when you're ready to move forward."
+        description="After reading our guides, use the project estimator for a preliminary Treasure Valley planning range - then book a free in-home visit when you're ready to move forward."
         variant="canvas"
       />
     </></InteriorPage>

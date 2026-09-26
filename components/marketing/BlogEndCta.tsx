@@ -29,7 +29,7 @@ export function BlogEndCta() {
       </div>
       <div>
       <p className="ed-body">
-        Get an instant planning range in 60 seconds, then book a free in-home visit when you&apos;re
+        Get a preliminary planning range online, then book a free in-home visit when you&apos;re
         ready. No obligation, no pressure.
       </p>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto sm:items-center">
