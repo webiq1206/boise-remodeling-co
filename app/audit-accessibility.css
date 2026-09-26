@@ -12,3 +12,4 @@
 @media(prefers-reduced-motion:reduce) {
   .approved-shell *, .approved-shell *::before, .approved-shell *::after { animation:none!important; scroll-behavior:auto!important; transition:none!important; }
 }
+[data-mobile-nav-bar][data-p5-actions-ready="false"] { visibility:hidden !important; pointer-events:none !important; }
