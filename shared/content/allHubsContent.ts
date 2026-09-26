@@ -246,6 +246,14 @@ const wholeSlugs = [
   ['design-build-process-guide', 'Design-Build Process Guide'],
 ] as const;
 
+const wholeHomeAnswers:Record<string,string>={
+  'remodeling-vs-moving':'Remodeling can address layout, condition and comfort while keeping your location; moving can solve needs your current property cannot accommodate. Compare a complete remodeling scope and temporary housing costs with the costs of buying, selling and moving. Consider daily routines, future space needs and how long you expect to stay, not just an assumed resale return.',
+  'whole-home-remodel-timeline':'A whole-home remodeling schedule includes scope development, design and selections, permits where required, procurement, construction and closeout. Separate those phases when comparing timelines. Structural changes, occupied rooms and long-lead materials can affect sequencing. Ask for a schedule with decision deadlines and dependencies, then confirm how changes and concealed conditions will be handled.',
+  'living-through-a-remodel':'Living at home during a remodel depends on safe access, working bathrooms, cooking arrangements and the ability to separate occupants from work areas. Noise, dust and temporary utility interruptions may make some phases impractical. Agree on room closures, work hours, pet safety, cleanup and any temporary accommodation before construction begins.',
+  'remodel-planning-guide':'Plan a remodel by defining the problems you want to solve, the work included and the limits of your budget. Record measurements, priorities and owner-supplied items before comparing proposals. Confirm design, permit and construction responsibilities, then set selection deadlines and a written change process. Leave room in the schedule and budget for verified concealed conditions.',
+  'remodeling-mistakes-to-avoid':'Common remodeling mistakes include comparing different scopes as if they were equivalent, ordering finishes before checking dimensions, and leaving responsibilities unwritten. Confirm what each quote includes, which decisions affect the schedule and how changes are approved. Discuss access, protection and temporary loss of rooms before work starts, especially if you plan to remain at home.',
+  'design-build-process-guide':'Design-build keeps design decisions and construction planning with one accountable team. Start with project fit, scope and preliminary budget; confirm the agreement before detailed design and selections. Drawings, permit requirements, procurement and construction should follow a documented sequence. Ask who approves changes and how updated costs and schedules are communicated before work proceeds.',
+};
 export const WHOLE_HOME_CLUSTER_POSTS: BlogPostData[] = wholeSlugs.map(([slug, title]) =>
   buildClusterPost({
     slug,
@@ -255,7 +263,7 @@ export const WHOLE_HOME_CLUSTER_POSTS: BlogPostData[] = wholeSlugs.map(([slug, t
     excerpt: `${title}: practical Idaho advice from a design-build remodeler.`,
     hubSlug: 'whole-home-remodeling',
     tags: ['whole-home'],
-    quickAnswer: `${title} decisions should account for Treasure Valley home values, permits, and family disruption.`,
+    quickAnswer: wholeHomeAnswers[slug],
     takeaways: ['Plan one master scope.', 'Use written milestones and selections schedule.'],
     serviceUrl: w,
     cityServiceUrl: wb,

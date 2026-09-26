@@ -1,4 +1,5 @@
 "use client";
+import { useP5MobileActions } from "@/components/P5MobileActions";
 import { ApprovedBrand } from "@/components/approved/ApprovedBrand";
 
 
@@ -39,6 +40,7 @@ function Logo() {
 
 export function Navigation() {
   const pathname = usePathname();
+  const mobileActionsVisible = useP5MobileActions(pathname);
   // Solid contrast over every hero; a shadow separates the header while scrolling.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -306,6 +308,7 @@ export function Navigation() {
       {!wizardOwnsBottom && (
       <div
         data-mobile-nav-bar=""
+        data-p5-actions-ready={mobileActionsVisible}
         className={cn("fixed left-0 right-0 bottom-0 z-[100] min-[1180px]:hidden pb-safe border-t bg-background border-border", (mobileOpen) && "invisible pointer-events-none")}
       >
         <div className="flex items-stretch gap-2 p-2">

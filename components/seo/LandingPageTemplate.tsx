@@ -491,7 +491,7 @@ export function LandingPageTemplate({
       {showEstimatePrompt && (
         <EstimatePromptBand
           title={<>What might your <em className="not-italic" style={accent}>project</em> cost?</>}
-          description="Get an instant planning range based on real Treasure Valley remodel costs - about 60 seconds, no obligation."
+          description="Get a preliminary planning range based on real Treasure Valley remodel costs, with no obligation."
         />
       )}
 

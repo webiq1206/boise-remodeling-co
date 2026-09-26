@@ -10,7 +10,7 @@ import { fitDescription } from '@/lib/page-metadata';
 
 const TITLE = "Remodel Cost Estimator";
 const DESCRIPTION =
-  fitDescription("Get an instant planning range for kitchen, bathroom, whole-home, addition, ADU, and basement remodels in Boise, Meridian, Eagle, Nampa, and the Treasure Valley. Free, no obligation.");
+  fitDescription("Get a preliminary planning range for kitchen, bathroom, whole-home, addition, ADU, and basement remodels in Boise, Meridian, Eagle, Nampa, and the Treasure Valley. Free, no obligation.");
 
 export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: `${TITLE} | Boise Remodeling Co` },

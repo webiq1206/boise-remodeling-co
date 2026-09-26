@@ -1,4 +1,5 @@
 import { PILLAR_COST, type ContentSection } from './wave1/snippets';
+import {permitGuidanceHtml} from '../../lib/permitGuidance';
 
 /** City- and neighborhood-specific sections (not shared templates). */
 
@@ -282,11 +283,9 @@ export function buildLocationGuideSections(
       ],
     },
     {
-      h2: county === 'ada' ? 'Ada County permits' : 'Canyon County permits',
+      h2: `Permits and property jurisdiction in ${cityName}`,
       paragraphs: [
-        county === 'ada'
-          ? `${cityName} layout and structural work typically routes through Ada County plan review.`
-          : `${cityName} uses Canyon County processes - expect different portals and review cadence than Boise or Meridian.`,
+        permitGuidanceHtml(cityName),
         countyGuide,
       ],
     },

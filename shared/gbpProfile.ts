@@ -281,7 +281,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
     price: 'Free',
     url: `${SITE}/#calculator`,
     description:
-      'Instant planning range in 60 seconds. Kitchen, bath, whole-home, addition, or ADU. Not a bid - a starting point for conversation.',
+      'Preliminary planning range online. Kitchen, bath, whole-home, addition, or ADU. Not a bid - a starting point for conversation.',
   },
   {
     category: 'Consultation & Tools',
@@ -364,7 +364,7 @@ export interface GbpQaEntry {
 export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'Do you provide free estimates?',
-    answer: `Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also get an instant planning range online at ${SITE}/#calculator`,
+    answer: `Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also get a preliminary planning range online at ${SITE}/#calculator`,
   },
   {
     question: 'What areas do you serve?',

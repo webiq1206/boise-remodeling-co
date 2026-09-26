@@ -13,7 +13,7 @@ interface ArticleSidebarProps {
 
 export function ArticleSidebar({
   tocHeadings,
-  ctaDescription = 'Get an instant planning range for your project before you commit to anything.',
+  ctaDescription = 'Get a preliminary planning range for your project before you commit to anything.',
 }: ArticleSidebarProps) {
   return (
     <>

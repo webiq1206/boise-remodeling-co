@@ -413,7 +413,7 @@ export default function ContactPage() {
               <em className="brc-accent">call</em>?
             </>
           }
-          description="Use our online project estimator for an instant Treasure Valley planning range - then schedule your free in-home visit when you're ready for a written scope."
+          description="Use our online project estimator for a preliminary Treasure Valley planning range - then schedule your free in-home visit when you're ready for a written scope."
           variant="canvas"
         />
 
