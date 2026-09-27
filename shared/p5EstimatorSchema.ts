@@ -2,6 +2,20 @@ import { sql } from "drizzle-orm";
 import { primaryKey, pgTable, uuid, text, integer, jsonb, timestamp, unique, foreignKey, index, bigserial, boolean } from "drizzle-orm/pg-core";
 
 // Keep these declarations aligned with the existing estimator storage schema.
+// Runtime DDL in lib/p5/reviewRequest.ts creates this durable customer request.
+// Keep it declared here so deployment schema comparison never treats it as obsolete.
+// Match the runtime primary key exactly; that table deliberately has no foreign key.
+export const p5EstimatorReviewRequests = pgTable("p5_estimator_review_requests", {
+  draftId: uuid("draft_id").notNull(),
+  revision: integer("revision").notNull(),
+  contact: jsonb("contact").notNull(),
+  scope: jsonb("scope").notNull(),
+  status: text("status").notNull().default("saved"),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, table => [
+  primaryKey({ name: "p5_estimator_review_requests_pkey", columns: [table.draftId, table.revision] }),
+]);
+
 export const p5EstimatorDrafts = pgTable("p5_estimator_drafts", {
   id: uuid("id").primaryKey(),
   keyHash: text("key_hash").notNull(),
