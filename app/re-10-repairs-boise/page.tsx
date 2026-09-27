@@ -123,7 +123,7 @@ export default function Re10RepairsPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Button variant="brand" asChild>
-            <Link href="#re10-estimator">
+            <Link href="#re10-wizard">
               Upload your RE-10 <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
