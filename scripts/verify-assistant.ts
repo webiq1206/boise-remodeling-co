@@ -22,6 +22,11 @@ for (const key of [
   "REPL_IDENTITY",
   "WEB_REPL_RENEWAL",
   "LEAD_DASHBOARD_KEY",
+  // Host gateways override the synthetic key below. Keep this offline test
+  // independent of Replit's integrated connection and custom direct endpoints.
+  "AI_INTEGRATIONS_OPENAI_API_KEY",
+  "AI_INTEGRATIONS_OPENAI_BASE_URL",
+  "OPENAI_BASE_URL",
 ]) {
   delete process.env[key];
 }
