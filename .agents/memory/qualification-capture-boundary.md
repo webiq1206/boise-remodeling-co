@@ -17,3 +17,15 @@ Allow only the local file/data asset reads needed by the isolated fixture, never
 real HTTP delivery. Restore the enclosing guard on both success and failure.
 Recover downstream capture failures from the saved priced result without making
 another provider request or replacing the spend ledger.
+
+Offline regression runs must remove provider credentials from the child process
+and reject outbound HTTP before loading application modules.
+
+**Why:** Mocking the main pricing provider did not isolate the separate book
+shortlisting provider. A supposedly synthetic recovery test reached live GPT-4.1
+under hosting credentials and also changed its retry behavior.
+
+**How to apply:** Enforce a process-wide network guard and credential isolation,
+including integrated gateways, rather than trusting an individual mocked
+provider. Never run recovery tests with inherited provider access unless that
+specific live spending has been approved.
