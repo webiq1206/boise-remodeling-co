@@ -1,4 +1,6 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 npm install
-npm run db:push
+node scripts/p5-schema-safety.mjs
+# Add missing estimator objects only. Never reconcile by deleting other tables.
+npm run db:prepare -- --optional

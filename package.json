@@ -10,7 +10,7 @@
     "test:e2e": "playwright test",
     "test:p5-pricing-qualification": "node --import tsx scripts/test-p5-pricing-qualification.mts",
     "test:e2e:install": "playwright install chromium",
-    "db:push": "drizzle-kit push",
+    "db:push": "npm run db:prepare",
     "links:generate": "node --import tsx scripts/internal-links/generate.ts",
     "audit:links": "node --import tsx scripts/internal-links/audit.ts",
     "verify:bottom-up": "node --import tsx scripts/verify-bottom-up-costs.ts",
@@ -38,7 +38,7 @@
     "images:marketing": "node scripts/generate-marketing-images.mjs",
     "images:optimize": "node scripts/optimize-marketing-images-sharp.mjs",
     "verify:p5-shared": "node --import tsx --test tests/p5-shared-engine.test.ts tests/p5-review-schema.test.mjs",
-    "prebuild": "npm run verify:p5-shared && npm run verify:no-em-dash && npm run verify:estimate && npm run verify:cost-pricing && npm run verify:estimator-e2e && npm run verify:estimate-routes && npm run verify:assistant && npm run verify:documents && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:plans-delivery && npm run verify:disclosure && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run verify:section-links && npm run verify:redirect-collisions && npm run resources:generate && npm run verify:content && npm run verify:images && npm run verify:llms && npm run verify:estimator-recovery",
+    "prebuild": "npm run verify:db-safety && npm run verify:p5-shared && npm run verify:no-em-dash && npm run verify:estimate && npm run verify:cost-pricing && npm run verify:estimator-e2e && npm run verify:estimate-routes && npm run verify:assistant && npm run verify:documents && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:plans-delivery && npm run verify:disclosure && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run verify:section-links && npm run verify:redirect-collisions && npm run resources:generate && npm run verify:content && npm run verify:images && npm run verify:llms && npm run verify:estimator-recovery",
     "backlink:score": "node backlink-engine/src/score.mjs",
     "backlink:run": "node backlink-engine/src/run.mjs",
     "backlink:preflight": "node backlink-engine/src/preflight.mjs",
@@ -54,7 +54,10 @@
     "verify:disclosure": "node --import tsx scripts/verify-disclosure.ts",
     "check:re10-extraction": "node --import tsx --env-file-if-exists=.env.local scripts/check-re10-extraction.ts",
     "check:large-documents": "node --import tsx --env-file-if-exists=.env.local scripts/check-large-documents.ts",
-    "verify:contrast": "node scripts/verify-contrast.mjs"
+    "verify:contrast": "node scripts/verify-contrast.mjs",
+    "db:prepare": "node --env-file-if-exists=.env.local scripts/p5-prepare-database.mjs",
+    "verify:db-safety": "node scripts/p5-schema-safety.mjs && node --test tests/p5-database-safety.test.mjs",
+    "predev": "npm run db:prepare -- --optional"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
@@ -135,7 +138,8 @@
     "zod": "^3.24.2",
     "zod-validation-error": "^3.4.0",
     "jszip": "^3.10.1",
-    "saxes": "^5.0.1"
+    "saxes": "^5.0.1",
+    "pg": "^8.23.0"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
