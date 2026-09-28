@@ -34,8 +34,8 @@ export function EstimatePromptBand({
   description,
   bullets = [
     "Based on real Treasure Valley project costs",
-    "Instant range in about 60 seconds",
-    "No obligation - we email you a copy",
+    "A preliminary estimate in a few minutes",
+    "No call or appointment needed",
   ],
 }: EstimatePromptBandProps) {
   return (
