@@ -20,3 +20,14 @@ successful repository synchronization.
 Preserve the raw commit message, including its final newline, when recreating
 an existing commit through the Git-data API. Trimming that newline produced a
 different commit hash despite identical tree, parents, author and timestamps.
+
+Use bounded text-file reads rather than shell stdout to transport large Git
+blobs, and hash the reconstructed bytes before uploading.
+
+**Why:** The shell callback returned only the tail of a large base64 blob even
+with a larger output budget and a false truncation flag. Git hash checks caught
+the corruption before any branch reference was updated.
+
+**How to apply:** Read the full file with an explicit sufficient byte budget,
+verify its Git blob SHA against the committed object, then verify the remote
+blob, tree and commit hashes before a non-forced reference update.
