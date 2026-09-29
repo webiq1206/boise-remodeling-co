@@ -15,7 +15,7 @@ export interface EstimatorConfiguration { finance:FinancePolicy;costBooks:Servic
   /** The exact catalog an estimate was priced from (saved catalog version plus price book content hash and tier), snapshotted into its audit trail. */
   catalogVersion?:string }
 export const EMPTY_CONFIGURATION:EstimatorConfiguration={finance:DEFAULT_FINANCE,costBooks:[]};
-export interface ScopePriceResolution { rules:CostRule[]; assumptions:string[]; issues:string[];removeLineIds?:string[];removeExclusions?:string[];addExclusions?:string[];completeScopeVerified?:boolean;replaceBase?:boolean }
+export interface ScopePriceResolution { rules:CostRule[]; assumptions:string[]; issues:string[];removeLineIds?:string[];removeExclusions?:string[];addExclusions?:string[];completeScopeVerified?:boolean;replaceBase?:boolean;buildingAssignments?:Record<string,string> }
 /** An RE-10 repair list, however the project was classified: the owner prices these at one firm number. */
 export function isRe10Scope(scope:{answers:{service?:string|null};text?:string;extraction?:{summary?:string}|null;uploads?:{name?:string}[]}):boolean{
   if(scope.answers.service==='re10')return true;
@@ -51,7 +51,7 @@ function priceReviewedScopeInternal(scope:ReviewedScope,configuration:EstimatorC
   }
   const lines:DirectCostLine[]=[];
   if(resolution){
-    book={...book,rules:[...book.rules.filter(r=>!resolution.removeLineIds?.includes(r.id)),...resolution.rules],exclusions:book.exclusions.filter(e=>!resolution.removeExclusions?.includes(e)),assumptions:[...book.assumptions,...resolution.assumptions],coverage:book.coverage.map(c=>resolution.rules.some(r=>r.category===c.category)?{...c,status:'included' as const,reason:'Itemized scope pricing includes this category.'}:c)};
+    book={...book,rules:[...book.rules.filter(r=>!resolution.removeLineIds?.includes(r.id)),...resolution.rules].map(rule=>resolution.buildingAssignments?.[rule.id]?{...rule,building:resolution.buildingAssignments[rule.id]}:rule),exclusions:book.exclusions.filter(e=>!resolution.removeExclusions?.includes(e)),assumptions:[...book.assumptions,...resolution.assumptions],coverage:book.coverage.map(c=>resolution.rules.some(r=>r.category===c.category)?{...c,status:'included' as const,reason:'Itemized scope pricing includes this category.'}:c)};
     missingInformation.push(...resolution.issues);
   }
   for(const rule of book.rules){
