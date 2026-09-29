@@ -1912,3 +1912,79 @@ test('retained image waste is priced separately and installed flooring cannot sw
  const {contractorConsumableIncluded}=await import('../lib/p5/contractorConsumables.ts');
  assert.ok(contractorConsumableIncluded(local,'Ordinary installation supplies'),'source responsibilities survive a compressed summary');
 });
+
+test('atomic research excludes unrelated product rows without discarding its valid requested product',async()=>{
+ const {reconcileResearchReply,researchQuantityEvidence}=await import('../lib/p5/scopePricing.ts');
+ const requested={...extra,id:'supplies',description:'Supply contractor screws and shims',evidence:'Contractor supplies screws and shims for 9 LF base and 12 LF wall cabinets',researchDescription:'Research ONLY contractor-supplied screws for cabinet mounting. Installation quantities: cabinetBaseLf=9 LF; cabinetUpperLf=12 LF.'};
+ const local={...scope,answers:{...scope.answers,cabinetBaseLf:'9',cabinetUpperLf:'12'}};
+ const context=researchQuantityEvidence(requested,local);
+ assert.doesNotMatch(context,/shims/);assert.match(context,/cabinetBaseLf=9/);assert.match(context,/cabinetUpperLf=12/);
+ const screw={...researched.rates[0],taskId:'supplies',description:'Cabinet mounting screws',unit:'EA',quantity:60,quantityEvidence:'ALLOWANCE: 60 mounting screws for the stated cabinet runs; verify usage',quantityRange:{low:40,high:80},includes:'mounting screws',landedCost:null,sources:urls.map(url=>({...source(url,0.2,0.2),unit:'EA',excerpt:'Cabinet mounting screws $0.20 each.'}))};
+ const shims={...screw,description:'Cabinet shims',includes:'shims',sources:urls.map(url=>({...source(url,0.3,0.3),unit:'EA',excerpt:'Cabinet shims $0.30 each.'}))};
+ const reply=await reconcileResearchReply({value:{rates:[screw,shims],issues:[],notes:[]},sourceUrls:urls,sourceReport:'Cabinet mounting screws $0.20 each.\n\nCabinet shims $0.30 each.'},[requested],async()=>{throw Error('No second search or formatter is needed for an unrelated extra row');},()=>60000);
+ assert.deepEqual((reply.value as any).rates.map((rate:any)=>rate.description),['Cabinet mounting screws']);
+ assert.equal((reply.value as any).rates[0].sources[0].low,0.2);
+});
+
+test('a zero consumption formatter defect gets one explicit corrective request against saved research',async()=>{
+ const {reconcileResearchReply}=await import('../lib/p5/scopePricing.ts');
+ const requested={...extra,researchDescription:'Research ONLY contractor-supplied screws for 9 LF of base cabinets.'};
+ const valid={...researched,rates:[{...researched.rates[0],description:'Cabinet screws',unit:'EA',quantity:24,quantityEvidence:'ALLOWANCE: 24 screws for the stated 9 LF cabinet run, verify usage',quantityRange:{low:18,high:30},sources:urls.map(url=>({...source(url,0.2,0.2),unit:'EA',excerpt:'Cabinet screws $0.20 each.'}))}]};
+ let calls=0;
+ const reply=await reconcileResearchReply({value:{...valid,rates:[{...valid.rates[0],quantity:0}]},sourceUrls:urls,sourceReport:'Cabinet screws $0.20 each.'},[requested],async(_instructions,input)=>{
+  calls++;assert.ok((input as any).validationFailure.some((issue:any)=>issue.path.join('.')==='rates.0.quantity'));
+  assert.match((input as any).correctionInstruction,/Zero is not a purchase allowance/);
+  return {value:valid,sourceUrls:[]};
+ },()=>60000);
+ assert.equal(calls,1);assert.equal((reply.value as any).rates[0].quantity,24);
+});
+
+test('one rejected source does not erase an independently valid cited consumable allowance',async()=>{
+ const local={...scope,text:'Supply 10 LF cabinetry. Contractor supplies cabinet screws.'};
+ const screws={...extra,id:'screws',description:'Supply contractor screws',evidence:'Contractor supplies cabinet screws',researchDescription:'Research ONLY contractor-supplied screws for cabinet mounting.'};
+ const good='Cabinet screws $0.20 each.',wrong='Cabinet shims $0.30 each.';
+ const rate={...researched.rates[0],taskId:'screws',description:'Cabinet mounting screws',unit:'EA',quantity:30,quantityEvidence:'ALLOWANCE: 30 screws for 10 LF of cabinetry; verify usage',quantityRange:{low:20,high:40},includes:'screws only',landedCost:null,sources:[{...source(urls[0],0.2,0.2),unit:'EA',excerpt:good},{...source(urls[1],0.3,0.3),unit:'EA',excerpt:wrong}]};
+ const value={rates:[rate],issues:[],notes:[]};let searches=0;
+ const result=await priceCompleteScope(local,config,async(_instructions,input,search)=>{
+  const data=input as any;
+  if(search){searches++;return {value,sourceUrls:urls,sourceReport:good+'\n\n'+wrong};}
+  if(data.correctionInstruction)return {value,sourceUrls:[]};
+  if(data.taskBatch)return {value:{tasks:[task,screws],issues:[]},sourceUrls:[]};
+  if(data.priorPricingIssues)return {value:{coveredTaskIds:['cabinets','screws'],issues:[]},sourceUrls:[]};
+  return {value:{tasks:[task,screws].map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
+ },now);
+ assert.equal(searches,3);assert.ok(result.customer.range,JSON.stringify(result.internal.scopePricing));
+ const priced=(result.internal as any).costBookSnapshot.rules.find((r:any)=>r.scopeTaskId==='screws');
+ assert.equal(priced.unitCost,0.2);
+ assert.equal(priced.evidence.provenance.sources.length,1);
+ assert.equal(priced.evidence.provenance.sources[0].url,urls[0]);
+ assert.match(priced.evidence.reference,/Single cited supplier budget allowance/);
+});
+
+test('a screw allowance that expressly excludes shims is not rejected as a bundled product',()=>{
+ const screws={...extra,researchDescription:'Research ONLY contractor-supplied screws for cabinet mounting.'};
+ const row={...researched.rates[0],description:'Contractor-supplied cabinet mounting screws for installation of both base and wall cabinets; cabinet-rated screws only. No shims, no labor, no other consumables, only cabinet-mounting screws as per scope.',unit:'EA',quantity:30,quantityEvidence:'ALLOWANCE: 30 cabinet screws; verify consumption',quantityRange:{low:20,high:40},includes:'cabinet mounting screws only',landedCost:null,sources:urls.map(url=>({...source(url,0.2,0.2),unit:'EA',excerpt:'Cabinet mounting screws $0.20 each.'}))};
+ const accepted=marketResolution({rates:[row],issues:[]},urls,[screws],now);
+ assert.equal(accepted.rules.length,1);assert.deepEqual(accepted.issues,[]);
+ const bundled=marketResolution({rates:[{...row,description:'Cabinet screws and shims supplied together'}],issues:[]},urls,[screws],now);
+ assert.equal(bundled.rules.length,0);assert.ok(bundled.issues.some(issue=>/bundling/.test(issue)));
+});
+test('unmapped standard cabinet alignment links to complete installation labor once',async()=>{
+ const {priceBookRates}=await import('../lib/p5/priceBook.ts');
+ const configuration={...config,planningCatalog:{...catalog,rates:priceBookRates({service:'cabinet-install'})}};
+ const local={...scope,text:'Install 9 LF owner-supplied base cabinets and 12 LF owner-supplied wall cabinets. Normal cabinet alignment during installation.',answers:{service:'cabinet-install',cabinetBaseLf:'9',cabinetUpperLf:'12',cabinetTallLf:'0',location:'Boise'}};
+ const make=(id:string,description:string,code:string,quantity:number)=>({...extra,id,description,evidence:description,existingLineIds:[],additions:code?[{code,quantity,quantityEvidence:quantity+' LF expressly requested'}]:[],researchDescription:''});
+ const alignment=make('alignment','Provide cabinet alignment during installation for both runs.','',0);
+ const baseInstall=make('base','Install 9 LF owner-supplied base cabinets','PB-12-32-01-L',9);
+ const wallInstall=make('wall','Install 12 LF owner-supplied wall cabinets','PB-12-32-02-L',12);
+ const mapping={tasks:[alignment,baseInstall,wallInstall],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ const resolved=catalogResolution(mapping,configuration,[],now,local);
+ assert.deepEqual(resolved.issues,[]);
+ assert.deepEqual(alignment.existingLineIds,['scope-1','scope-2']);
+ assert.equal(resolved.rules.length,2,'alignment cannot create another installation charge');
+ assert.equal(resolved.rules.reduce((sum,rule)=>sum+(rule.quantity.fixed||0),0),21);
+ const repair={...alignment,description:'Realign existing cabinets independently of new installation',existingLineIds:[]};
+ const held=catalogResolution({...mapping,tasks:[repair,baseInstall,wallInstall]},configuration,[],now,local);
+ assert.deepEqual(repair.existingLineIds,[],'separate repair work cannot inherit new-installation coverage');
+ assert.ok(held.issues.some(issue=>issue.includes('no supported price')));
+});

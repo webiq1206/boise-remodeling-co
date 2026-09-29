@@ -210,7 +210,7 @@ const COVERED_POLICY=`Each task's alreadyCovered lists components of that task a
 const RESEARCH=`Research average construction UNIT COSTS for the supplied tasks and project area. ${COVERED_POLICY} ${UNTRUSTED} ${ALLOWANCE_POLICY} ${DIMENSION_POLICY} ${BENCHMARK_POLICY} ${ISSUE_POLICY}
 Return an ordinary prose research report with inline web citations, NOT JSON. Organize by taskId and product. For every proposed rate state description, unit, quantity and its evidence, any modeled quantity range, building/floor if supplied, direct-cost basis, inclusions and exclusions. For each independent source cite its URL and record the supported unit-price low/high, unit, cost basis, actual date if known, Boise-area applicability, a short supporting excerpt, source type and date basis. Distinguish unresolved issues from nonblocking notes. For every source include a short factual excerpt, at most 25 words, that names the actual product, published unit/package and its price, so the formatter can copy it without changing the product. Write that evidence as a standalone line beginning Evidence: followed by the actual product name, package count and published price, at most 25 words. Keep its source URL and evidenced local applicability beside it. Do not make the formatter reconstruct an excerpt from headings and disconnected bullets. Each supplied description defines the exact research boundary; task IDs and original quantity evidence are context, never permission to add other products. If the description says Research ONLY screws, research only screws even when the original scope also names shims. Different listings from the same retailer are not independent sources. A likely local stock assertion is not evidence; verify the retailer serves Boise and disclose item-stock uncertainty separately. A later tool-free stage converts this cited report to structured records; do not suppress citation annotations to format JSON.
 Put undated-source freshness, standard profile assumptions and unconfirmed incidental charges in notes, NOT issues, when they do not prevent a supported preliminary allowance. National-only evidence is not a substitute for the required Boise-area applicability. Do not label an explicitly allowed benchmark limitation as missing scope.
-Never put private names, street addresses, contact details, document identifiers or project-specific narrative into a search query. Search only the generic work, unit and broad region. Find two independent published sources for comparable work in Boise / Treasure Valley, Idaho. Prefer local estimating guides and published contractor rates for services. For products and materials, use current supplier prices with Boise-area availability, excluding temporary promotions. Search the specific product specification or generic assembly, correct unit and requested area. Never label national or nonlocal prices as Boise-local. A manufacturer named Boise Cascade is not evidence that a retailer or price is in Boise. Verify the actual store, delivery region or geographic rate coverage from the cited page. A regional adjustment requires cited numeric evidence, not an invented multiplier. Fetch a guide only when necessary to verify the cost breakdown. Stop when sufficient comparable evidence is available; do not repeatedly shop alternatives. Each source must support its own numeric range in USD per the rate's unit and the same material/labor responsibility. Source unit and costBasis MUST match the proposed rate; normalize known unit aliases, and disclose any evidenced conversion arithmetic. Never average prices per hour with prices per square foot, total-project budgets with per-unit rates, or materials with installed prices.
+Never put private names, street addresses, contact details, document identifiers or project-specific narrative into a search query. Search only the generic work, unit and broad region. Find two independent published sources for comparable work in Boise / Treasure Valley, Idaho. Prefer local estimating guides and published contractor rates for services. For products and materials, use current supplier prices with Boise-area availability, excluding temporary promotions. Search the specific product specification or generic assembly, correct unit and requested area. Never label national or nonlocal prices as Boise-local. A manufacturer named Boise Cascade is not evidence that a retailer or price is in Boise. For common installation supplies, begin with independent retailers that demonstrably serve Boise: verify official location pages such as https://www.lowes.com/store/ID-Boise/0688 and https://www.homedepot.com/l/Boise/ID/Boise/83704/1801, then open the actual requested product listing from each retailer. These location URLs establish neither a product price nor SKU stock. Cite current product-price evidence separately; disclose store-price and stock uncertainty rather than inventing an inventory confirmation. Do not use a distant-only retailer without evidenced delivery to the project area. Verify the actual store, delivery region or geographic rate coverage from the cited page. A regional adjustment requires cited numeric evidence, not an invented multiplier. Fetch a guide only when necessary to verify the cost breakdown. Stop when sufficient comparable evidence is available; do not repeatedly shop alternatives. Each source must support its own numeric range in USD per the rate's unit and the same material/labor responsibility. Source unit and costBasis MUST match the proposed rate; normalize known unit aliases, and disclose any evidenced conversion arithmetic. Never average prices per hour with prices per square foot, total-project budgets with per-unit rates, or materials with installed prices.
 Use sourceType regional-guide, national-guide, supplier-price or contractor-rate as appropriate. Boise-local pricing must have source evidence of Boise / Treasure Valley applicability; national benchmarks alone do not establish it. For a dated guide, publishedAt must be its actual publication/update date within the last 365 days and dateBasis=published. For an undated accessible guide, use publishedAt='' and dateBasis=retrieved, explicitly noting that publication freshness requires verification. Never manufacture dates, URLs, numeric averages, quotes or geographic factors. Use only URLs returned by the tools, and excerpts of at most 25 words. Prefer original cost-guide publishers, not articles repeating another guide's numbers as independent evidence.
 Allowed pricing units: ${Object.values(UNIT_REGISTRY).map(unit=>unit.label).join(', ')}. Do not invent descriptive units such as each-job (consumables bundle). Keep pounds of screws and packs of shims as separate rates, never averaged together. For pack or box prices, specify the contents and package size and compare equivalent packages, or convert to per-piece EA prices using each source's stated count. Each product needs its own comparable source observations. Return separate supported material and labor components when needed. Source low/high are comparable UNIT costs, not extended totals or tax percentages. The calculator takes the mean of source midpoints, multiplies by quantity and applies the owner's approved financial policy once. Use quantityRange only for a clearly labeled modeled quantity; measured quantities retain their supplied evidence. Keep building/floor labels for requested separate totals. includes/excludes describe the benchmark, not permission to exclude requested work. Missing supplier selection alone is a verification assumption, not an unpriced task. Unsupported work remains an explicit issue. Do not fabricate a rate to release a total.`;
 const PLANNING_AVERAGE=`Provide a defensible REGIONAL PLANNING AVERAGE unit cost for each supplied task, without web research. ${COVERED_POLICY} ${UNTRUSTED} ${ALLOWANCE_POLICY} ${DIMENSION_POLICY} ${ISSUE_POLICY}
@@ -723,6 +723,26 @@ export function catalogResolution(mapping:Mapping,configuration:EstimatorConfigu
   const pricedLines=existing.length?existing:result.rules.map(rule=>({...rule,quantity:rule.quantity.fixed||0,quantitySource:'Accepted mapped quantity'}));
   for(const t of mapping.tasks){
     if(taskSelectionStatus(t,mapping.tasks)!=='billable')continue;
+    // Standard alignment during new cabinet installation is the already
+    // purchased installation labor, not a separate missing service. Bind the
+    // operation to actual positive lines only when both confirmed runs reconcile.
+    if(scope&&!scope.extraction?.instructions?.separateBuildings&&!t.additions.length&&!t.existingLineIds.length
+      &&/\bcabinet\b/i.test(t.description)&&/\b(?:alignment|aligning|leveling)\b/i.test(t.description)
+      &&/\b(?:during installation|while installing|newly installed)\b/i.test(t.description)
+      &&!/\b(?:repair|realign|re-align|existing cabinet|custom|scribing)\b/i.test(t.description)){
+      const runs=[['cabinetBaseLf','PB-12-32-01-L'],['cabinetUpperLf','PB-12-32-02-L'],['cabinetTallLf','PB-12-32-03-L']] as const;
+      const required=runs.filter(([field])=>Number(scope.answers[field])>0);
+      const matched=required.map(([field,code])=>{
+        const lines=pricedLines.filter(line=>line.category==='field-labor'&&line.unitCost>0&&unitKey(line.unit)==='lf'
+          &&!result.removeLineIds?.includes(line.id)&&(line.evidence?.reference||'').split(';').some(part=>part.trim()===code));
+        return Math.abs(lines.reduce((sum,line)=>sum+line.quantity,0)-Number(scope.answers[field]))<.001?lines:[];
+      });
+      if(required.length&&matched.every(lines=>lines.length)){
+        t.existingLineIds=[...new Set(matched.flat().map(line=>line.id))];t.researchDescription='';
+        result.issues=result.issues.filter(issue=>issue!==t.description+': no supported price.');
+        result.assumptions.push(t.description+': standard alignment and leveling are included in the confirmed cabinet installation labor, priced once. Separately requested repairs or custom fitting are not inferred.');
+      }
+    }
     t.existingLineIds=[...new Set(t.existingLineIds.map(id=>resolvePricedLineId(id,pricedLines)))];
     for(const id of t.existingLineIds){
       const line=pricedLines.find(l=>l.id===id);
@@ -1014,14 +1034,45 @@ export function repeatedResearchSupplier(reply:PricingReply|undefined):string[]{
  const domains=[...new Set(sources.map(source=>new URL(source.url).hostname.replace(/^www\./,'')))];
  return domains.length===1?domains:[];
 }
+/** Keep an atomic supplier search scoped to its product. Full parent evidence
+ * stays in the pricing audit, but must not invite the researcher to buy other
+ * components that are being researched separately. */
+export function researchQuantityEvidence(task:Mapping['tasks'][number],scope?:ReviewedScope):string{
+ if(!/^Research ONLY contractor-supplied /.test(task.researchDescription))return task.evidence;
+ const quantities=['cabinetBaseLf','cabinetUpperLf','cabinetTallLf','flooringSqft','trimLf','sqft'].flatMap(field=>{
+   const value=Number(scope?.answers[field as keyof ReviewedScope['answers']]);
+   return Number.isFinite(value)&&value>0?[field+'='+value]:[];
+ });
+ return 'Research only the product in this request description. Other products and all labor are separate. '+(quantities.length?'Installation context: '+quantities.join('; ')+'. ':'')+'Consumption is not a measured product count. Model a positive item-specific purchase allowance for the stated work and disclose its quantity range.';
+}
+/** Drop an unambiguously different product row, never relabel it as the requested
+ * product. Missing requested products still fail coverage and get researched. */
+/** A rejected alternative is not a purchased product: "screws only; no shims"
+ * describes screws, not a screws-and-shims bundle. Preserve the full wording
+ * for disclosure; use positive clauses only for product identity. */
+function affirmativeProductDescription(value:string):string{
+ return value.replace(/\b(?:no|not)(?!\s+(?:only|just)\b)[^.;\n)]*|\b(?:without|excluding|excludes?)\b[^.;\n)]*/gi,' ');
+}
+function requestedResearchRates(raw:unknown,tasks:Mapping['tasks']){
+ const parsed=parseResearchRates(raw);
+ parsed.rates=parsed.rates.filter(rate=>{
+  const requested=tasks.find(task=>task.id===rate.taskId)?.researchDescription.match(/^Research ONLY contractor-supplied (screws|nails|fasteners|shims|caulk|adhesives|sealants)\b/)?.[1];
+  if(!requested)return true;
+  const words=['screws','nails','fasteners','shims','caulk','adhesives','sealants'].filter(word=>new RegExp('\\b'+word.replace(/s$/,'')+'s?\\b','i').test(affirmativeProductDescription(rate.description)));
+  const allowed=requested==='fasteners'?['screws','nails','fasteners']: [requested];
+  return !words.length||words.some(word=>allowed.includes(word));
+ });
+ return parsed;
+}
 /** Normalization may format evidence, never rename a source's product. */
 /** Repair evidence formatting against the saved report before buying another
  * search. The corrected reply must pass the same product/source validation. */
 export async function reconcileResearchReply(reply:PricingReply,tasks:Mapping['tasks'],request:PricingRequest,remaining:()=>number,validate:(value:unknown)=>void=()=>{}):Promise<PricingReply>{
- const input={requested:{tasks:tasks.map(task=>({id:task.id,description:task.researchDescription||task.description,quantityEvidence:task.evidence}))},report:reply.sourceReport||JSON.stringify(reply.value),sourceUrls:reply.sourceUrls};
+ const input={requested:{tasks:tasks.map(task=>({id:task.id,description:task.researchDescription||task.description,quantityEvidence:researchQuantityEvidence(task)}))},report:reply.sourceReport||JSON.stringify(reply.value),sourceUrls:reply.sourceUrls};
  let accepted=reply;
- if(!marketSchema.safeParse(accepted.value).success){
-   const normalized=await request(normalizeResearch,input,false,remaining());
+ const shape=marketSchema.safeParse(accepted.value);
+ if(!shape.success){
+   const normalized=await request(normalizeResearch,{...input,priorStructuredReply:accepted.value,validationFailure:shape.error.issues.map(issue=>({path:issue.path,code:issue.code,message:issue.message})),correctionInstruction:'Repair the listed structured-output defects using the saved report and requested scope. Preserve all supported rates and quantities. For a required consumable with unstated usage, use a disclosed positive modeled consumption allowance supported by the installation scope, with ALLOWANCE: evidence and a positive quantityRange. Zero is not a purchase allowance. Never invent a source price or remove required work to repair formatting.'},false,remaining());
    accepted={...reply,value:parseResearchRates(normalized.value)};
  }
  const failures=()=>{
@@ -1033,10 +1084,11 @@ export async function reconcileResearchReply(reply:PricingReply,tasks:Mapping['t
    }
    return [...new Set(errors)];
  };
+ accepted={...accepted,value:requestedResearchRates(accepted.value,tasks)};
  let problems=failures();
  if(problems.length&&accepted.sourceReport){
    const corrected=await request(normalizeResearch,{...input,correctionInstruction:'Repair every listed failure that the saved report supports. Prefer the exact Evidence: line; otherwise copy exact product-name and price fragments from one source paragraph, preserving their order, at most 25 words. Do not reword an excerpt or append location claims. Use canonical units and retain exact package counts. Do not invent another supplier, local availability, or missing evidence. Omit unsupported rates and explain the remaining evidence needed. Do not search again.',validationFailure:problems.join('; '),priorStructuredReply:accepted.value},false,remaining());
-   accepted={...reply,value:parseResearchRates(corrected.value)};
+   accepted={...reply,value:requestedResearchRates(corrected.value,tasks)};
    problems=failures();
  }
  if(problems.length)throw new ResearchEvidenceError(problems.join('; '));
@@ -1114,8 +1166,9 @@ export function marketResolution(raw:unknown,urls:string[],tasks:Mapping['tasks'
     }
     const atomic=t.researchDescription.match(/^Research ONLY contractor-supplied (screws|nails|fasteners|shims|caulk|adhesives|sealants)\b/);
     if(atomic){
-      const named=['screws','nails','shims','caulk','adhesives','sealants'].filter(word=>new RegExp('\\b'+word.replace(/s$/,'')+'s?\\b','i').test(r.description));
-      const matches=atomic[1]==='fasteners'?/\b(?:fasteners?|screws?|nails?|bolts?|anchors?)\b/i.test(r.description):new RegExp('\\b'+atomic[1].replace(/s$/,'')+'s?\\b','i').test(r.description);
+      const productDescription=affirmativeProductDescription(r.description);
+      const named=['screws','nails','shims','caulk','adhesives','sealants'].filter(word=>new RegExp('\\b'+word.replace(/s$/,'')+'s?\\b','i').test(productDescription));
+      const matches=atomic[1]==='fasteners'?/\b(?:fasteners?|screws?|nails?|bolts?|anchors?)\b/i.test(productDescription):new RegExp('\\b'+atomic[1].replace(/s$/,'')+'s?\\b','i').test(productDescription);
       if(!matches||(atomic[1]==='fasteners'?named.length>1:named.some(word=>word!==atomic[1]))){
         result.issues.push(t.description+': atomic material research must price only the requested product, without substituting or bundling other supplies.');
         continue;
@@ -1196,8 +1249,9 @@ export function planningResolution(raw:unknown,tasks:Mapping['tasks'],now:Date,o
     }
     const atomic=t.researchDescription.match(/^Research ONLY contractor-supplied (screws|nails|fasteners|shims|caulk|adhesives|sealants)\b/);
     if(atomic){
+      const productDescription=affirmativeProductDescription(r.description);
       const named=['screws','nails','shims','caulk','adhesives','sealants'].filter(word=>new RegExp('\\b'+word.replace(/s$/,'')+'s?\\b','i').test(r.description));
-      const matches=new RegExp('\\b'+atomic[1].replace(/s$/,'')+'s?\\b','i').test(r.description);
+      const matches=new RegExp('\\b'+atomic[1].replace(/s$/,'')+'s?\\b','i').test(productDescription);
       if(!matches||named.some(word=>word!==atomic[1])){
         result.issues.push(t.description+': atomic material research must price only the requested product, without substituting or bundling other supplies.');
         continue;
@@ -1620,12 +1674,30 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
      * batches run in parallel; saved replies prevent repeated provider charges. */
     const priceGapBatch=async(gapBatch:Mapping['tasks'],batchIndex:number,covered:(task:Mapping['tasks'][number])=>unknown[],priorIssues?:string[]):Promise<{replies:PricingReply[];resolution:ScopePriceResolution;modelIssues:string[]}>=>{
       const replies:PricingReply[]=[];const offset=batchIndex*100;
-      const tasksInput=gapBatch.map(t=>({id:t.id,description:t.researchDescription,application:scope.answers.service||'construction',quantityEvidence:t.evidence,alreadyCovered:covered(t)}));
+      const tasksInput=gapBatch.map(t=>({id:t.id,description:t.researchDescription,application:scope.answers.service||'construction',quantityEvidence:researchQuantityEvidence(t,pricingScope),alreadyCovered:covered(t)}));
       const provisionalCandidates:{rates:ReturnType<typeof parseResearchRates>;urls:string[];report:string}[]=[];
       let currentSourceUrls:string[]=[],currentReport='';
       const validateReply=(value:unknown)=>{
         const rates=parseResearchRates(value);
         if(currentReport){
+          // An invalid second observation must not erase a valid cited
+          // observation for the same atomic product. Retain only sources that
+          // individually pass product, price, unit, locality and quantity checks.
+          // They still seek an independent comparison before any labeled
+          // single-supplier budget can be used.
+          if(gapBatch.length===1&&/^Research ONLY contractor-supplied /.test(gapBatch[0].researchDescription)){
+            for(const rate of rates.rates){
+              const sources=rate.sources.filter(source=>{
+                const candidate={rates:[{...rate,sources:[source]}],issues:[],notes:rates.notes};
+                try{
+                  assertResearchReportProducts(candidate,currentReport,gapBatch);
+                  const checked=marketResolution(candidate,currentSourceUrls,gapBatch,now,offset,region,scope,true);
+                  return !checked.issues.length&&checked.rules.some(rule=>rule.scopeTaskId===gapBatch[0].id&&rule.unitCost>0);
+                }catch{return false;}
+              });
+              if(sources.length)provisionalCandidates.push({rates:{...rates,rates:[{...rate,sources}]},urls:[...currentSourceUrls],report:currentReport});
+            }
+          }
           assertResearchReportProducts(rates,currentReport,gapBatch);
           provisionalCandidates.push({rates,urls:[...currentSourceUrls],report:currentReport});
         }
