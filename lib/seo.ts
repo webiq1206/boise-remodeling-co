@@ -251,7 +251,7 @@ export function generateSafePageTitle(primary: string, suffix?: string): string 
   // A word-boundary cut can still land on a dangling connector, producing
   // titles like "Aging-in-Place Remodeling in the". Drop trailing connectors so
   // an overflowing title degrades to a clean phrase instead of a broken one.
-  const DANGLING = new Set(['in', 'the', 'a', 'an', 'of', 'for', 'and', '&', 'to', 'at', 'on', 'with']);
+  const DANGLING = new Set(['in', 'the', 'a', 'an', 'of', 'for', 'and', '&', 'to', 'at', 'on', 'with', '|', ':']);
   let cleaned = truncated.trim();
   let parts = cleaned.split(' ');
   while (parts.length > 1 && DANGLING.has(parts[parts.length - 1].toLowerCase())) {
