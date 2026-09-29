@@ -35,8 +35,10 @@ for (const entry of inventory) {
 test('interior CSS follows the original family and system layers', () => {
   const source = read('app/layout.tsx');
   const styles = [...source.matchAll(/import ['"](.+\.css)['"]/g)].map(match => match[1]);
-  assert.equal(styles.at(-1), './approved-interiors.css');
+  for (const layer of ['./family.css', './approved-system.css', './approved-interiors.css', './audit-accessibility.css']) assert.ok(styles.includes(layer), layer);
   assert.ok(styles.indexOf('./family.css') < styles.indexOf('./approved-system.css'));
+  assert.ok(styles.indexOf('./approved-system.css') < styles.indexOf('./approved-interiors.css'));
+  assert.ok(styles.indexOf('./approved-interiors.css') < styles.indexOf('./audit-accessibility.css'), 'accessibility corrections override the presentation layers');
 });
 
 test('contact hero puts the estimate before the secondary consultation link', () => {
