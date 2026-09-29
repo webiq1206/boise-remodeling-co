@@ -358,6 +358,20 @@ test('consumable research separates unlike products and retains parent coverage 
  const ownerOnly={...local,text:'Owner supplies all screws and shims.'};
  assert.equal(researchTaskBatches([supplies],ownerOnly).length,1);
 });
+test('consumables attached to cabinet installation tasks are researched as separate products',async()=>{
+ const {researchTaskBatches}=await import('../lib/p5/scopePricing.ts');
+ const local={...scope,text:'Install 9 LF base and 12 LF wall cabinets. Owner supplies fully assembled cabinets. Contractor supplies screws and shims.',answers:{service:'cabinet-install',cabinetBaseLf:'9',cabinetUpperLf:'12',location:'Boise'}};
+ const parent={...extra,id:'install_base_cabinets',description:'Install 9 linear feet of owner-supplied, fully assembled base cabinets in the existing kitchen.',evidence:local.text,researchDescription:"Material purchase only: shims, screws needed for cabinet installation. Price only these contractor-supplied installation consumables for this task's stated quantity. Owner-supplied products and separately priced installation labor are excluded."};
+ const batches=researchTaskBatches([parent],local);
+ assert.equal(batches.length,2);
+ assert.deepEqual(batches.map(batch=>batch[0].description),['Supply contractor installation screws','Supply contractor installation shims']);
+ assert.ok(batches.every(batch=>batch[0].id===parent.id&&batch[0].researchDescription.startsWith('Research ONLY contractor-supplied')&&batch[0].researchDescription.includes('prefer EA')));
+ const screwsOnly={...parent,researchDescription:'Material purchase only: screws needed for this installation. Shims are already priced.'};
+ // An explicit remaining component list must not reopen already priced supplies.
+ assert.deepEqual(researchTaskBatches([screwsOnly],local).map(batch=>batch[0].description),['Supply contractor installation screws']);
+ const ordinary={...parent,researchDescription:'Research cabinet installation labor only; contractor supplies screws and shims separately.'};
+ assert.equal(researchTaskBatches([ordinary],{...local,text:'Owner supplies cabinets, screws and shims.'})[0][0],ordinary);
+});
 test('source verification ignores tracking but preserves product and region identity',async()=>{
  const {verifiedResearchUrl}=await import('../lib/p5/scopePricing.ts');
  assert.ok(verifiedResearchUrl(urls[0],[urls[0]+'?utm_source=openai#price']));
@@ -1649,4 +1663,43 @@ test('invalid flooring references recover approved supplies and cleanup instead 
  const wrong=catalogResolution({tasks:[explicit],issues:[],notes:[],replacements:[],removeExclusions:[]},configuration,[],now,floorScope);
  assert.ok(wrong.issues.some(issue=>/does not match the explicit quantity/.test(issue)),'a stated underlayment quantity still controls that material');
 
+});
+
+test('explicit source package weights are converted once before averaging',()=>{
+ const input=structuredClone(researched),rate=input.rates[0];
+ rate.unit='lb';rate.quantity=1;rate.quantityEvidence='ALLOWANCE: one pound, verify consumption';rate.quantityRange={low:0.5,high:2};
+ rate.sources[0]={...rate.sources[0],unit:'lb',low:7.37,high:7.37};
+ rate.sources[1]={...rate.sources[1],unit:'5 lb',low:18.52,high:18.52,excerpt:'Synthetic nails price: 5 lb box for $18.52.'};
+ const result=marketResolution(input,urls,[extra],now);
+ assert.equal(result.rules[0].unitCost,5.537);
+ assert.match(result.assumptions.join(' '),/18.52.*5 lb.*divided by 5.*3.704/);
+ assert.equal(input.rates[0].sources[1].low,18.52,'source input is retained unchanged');
+ rate.sources[1].low=3.704;rate.sources[1].high=3.704;
+ assert.throws(()=>marketResolution(input,urls,[extra],now),/Incompatible benchmark unit/,'a price already converted must not be divided again under a stale package label');
+ rate.sources[1].low=18.52;rate.sources[1].high=18.52;
+ rate.sources[1].unit='5 SF';
+ assert.throws(()=>marketResolution(input,urls,[extra],now),/Incompatible benchmark unit/);
+ rate.sources[1].unit='5 lb';rate.sources[1].url=rate.sources[0].url;
+ assert.throws(()=>marketResolution(input,urls,[extra],now),/Independent market sources/);
+});
+test('corrective research keeps prior observed evidence and excludes only a repeated supplier',async()=>{
+ const {combineResearchEvidence,repeatedResearchSupplier,openAiPricingRequestEnvelope,reconcileResearchReply}=await import('../lib/p5/scopePricing.ts');
+ const firstValue=structuredClone(researched);firstValue.rates[0].sources=[firstValue.rates[0].sources[0]];
+ const nextValue=structuredClone(researched);nextValue.rates[0].sources=[nextValue.rates[0].sources[1]];
+ const first={value:firstValue,sourceUrls:[urls[0]],sourceReport:'First saved supplier report'};
+ const next={value:nextValue,sourceUrls:[urls[1]],sourceReport:'Second independent supplier report'};
+ const combined=combineResearchEvidence(first,next);
+ assert.deepEqual(combined.sourceUrls,urls);assert.match(combined.sourceReport!,/First saved.*Second independent/s);
+ assert.deepEqual(repeatedResearchSupplier(first),[new URL(urls[0]).hostname]);
+ assert.deepEqual(repeatedResearchSupplier({value:researched,sourceUrls:urls}),[]);
+ const envelope=openAiPricingRequestEnvelope('Research',{region:'Boise, Idaho',searchControl:{blockedDomains:repeatedResearchSupplier(first)}},true);
+ const searchTool=(envelope.body as any).tools[0];
+ assert.equal(searchTool.user_location.city,'Boise');
+ assert.deepEqual(searchTool.filters.blocked_domains,[new URL(urls[0]).hostname]);
+ let fixes=0;
+ const accepted=await reconcileResearchReply(combined,[extra],async(_instructions,input)=>{
+  fixes++;assert.match((input as any).report,/First saved.*Second independent/s);assert.deepEqual((input as any).sourceUrls,urls);
+  return {value:researched,sourceUrls:[]};
+ },()=>60000,value=>{marketResolution(value,combined.sourceUrls,[extra],now,0,'Boise');});
+ assert.equal(fixes,1);assert.equal(marketResolution(accepted.value,accepted.sourceUrls,[extra],now).rules[0].unitCost,20);
 });

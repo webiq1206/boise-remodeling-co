@@ -68,7 +68,7 @@ export default async function CityServicePage(
   const county = getCountyLabel(city.county);
   const neighborhood = seo?.neighborhoods[0];
   const localFact = neighborhood
-    ? `Homes near ${neighborhood} and across ${city.name} often need layouts that respect ${county} codes and local inspection timelines.`
+    ? `Homes near ${neighborhood} and across ${city.name} often need layouts that meet the applicable local building requirements and inspection schedules.`
     : undefined;
 
   const overview = getCityServiceIntro(content, city, localFact);

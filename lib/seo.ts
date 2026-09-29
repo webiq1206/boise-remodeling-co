@@ -167,7 +167,7 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   }
   
   if (city) {
-    return `Remodeling contractor in ${city}, Idaho. Licensed, insured & locally owned. Call ${phone} for a free in-home consultation in ${city}!`;
+    return `Plan kitchen, bathroom and whole-home remodeling in ${city}, ID. Explore services, start an online estimate or request an in-home consultation.`;
   }
   
   if (!serviceName) {
