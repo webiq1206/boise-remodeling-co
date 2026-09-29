@@ -8,6 +8,7 @@ export const ESTIMATOR_BRAND = {
   "services": [
     "kitchen",
     "bathroom",
+    "remodel",
     "whole-home",
     "addition",
     "adu",
