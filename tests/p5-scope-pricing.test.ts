@@ -31,6 +31,19 @@ test('an unmapped missing rate automatically enters evidenced research without a
  assert.ok(result.customer.range);
  assert.ok((result.internal as any).costBookSnapshot.rules.some((rule:any)=>rule.id.startsWith('market-')&&rule.unitCost===20));
 });
+test('long source evidence survives inventory, mapping and audit without blocking a valid price',async()=>{
+ const evidence='Ten feet of cabinetry supplied under the stated exclusions. '.repeat(70);
+ const complete={...task,evidence};
+ const request=replies([{tasks:[complete],issues:[],notes:[evidence]},{coveredTaskIds:['cabinets'],issues:[],notes:[evidence]}]);
+ let mappedEvidence='';
+ const result=await priceCompleteScope(scope,config,async(system,input,...rest)=>{
+  if((input as any).taskBatch)mappedEvidence=(input as any).taskBatch[0].evidence;
+  return request(system,input,...rest);
+ },now);
+ assert.ok(result.customer.range,'narrative length must not discard priced work');
+ assert.equal(mappedEvidence,evidence.trim(),'retain every source qualification');
+ assert.ok(JSON.stringify(result.internal.scopePricing).includes(evidence.trim()));
+});
 test('missing-rate routing preserves existing prices, exclusions and quantity validation',async()=>{
  const {routeUnpricedTasks}=await import('../lib/p5/scopePricing.ts');
  const missing={...extra,researchDescription:'',existingLineIds:[],additions:[]};
@@ -1859,4 +1872,43 @@ test('corrective research keeps prior observed evidence and excludes only a repe
   return {value:researched,sourceUrls:[]};
  },()=>60000,value=>{marketResolution(value,combined.sourceUrls,[extra],now,0,'Boise');});
  assert.equal(fixes,1);assert.equal(marketResolution(accepted.value,accepted.sourceUrls,[extra],now).rules[0].unitCost,20);
+});
+
+test('invalid inventory formatting is repaired with a distinct request and preserves the scope',async()=>{
+ let calls=0;
+ const result=await priceCompleteScope(scope,config,async(_instructions,input)=>{
+  calls++;
+  if(calls===1)return {value:{tasks:[{id:task.id,description:task.description,evidence:task.evidence,origin:'REQUESTED'}],issues:[]},sourceUrls:[]};
+  if(calls===2){
+   assert.equal((input as any).formatRepair.attempt,1);
+   assert.equal((input as any).formatRepair.priorResponse.tasks[0].evidence,task.evidence);
+   return {value:{tasks:[{id:task.id,description:task.description,evidence:task.evidence,origin:'requested'}],issues:[]},sourceUrls:[]};
+  }
+  if(calls===3)return {value:{tasks:[task],issues:[]},sourceUrls:[]};
+  return {value:{coveredTaskIds:[task.id],issues:[]},sourceUrls:[]};
+ },now);
+ assert.equal(calls,4);assert.ok(result.customer.range);
+});
+
+test('retained image waste is priced separately and installed flooring cannot swallow cleanup',async()=>{
+ const {normalizeConsumableMapping}=await import('../lib/p5/scopePricing.ts');
+ const {priceBookRates}=await import('../lib/p5/priceBook.ts');
+ const configuration={...config,planningCatalog:{...catalog,rates:priceBookRates({service:'remodel'})}};
+ const sourceText='Install 300 SF LVP. Purchase 330 SF including 10% material waste. Contractor supplies ordinary installation consumables. Include minor cleanup.';
+ const local={...scope,text:'Keep the uploaded scope unchanged.',answers:{service:'remodel',flooringSqft:'300'},extraction:{summary:'Install 300 SF LVP',sourceText,facts:[],conflicts:[],missingInformation:[],reviewNotes:[]}};
+ const flooring={...extra,id:'floor',description:'Supply and install LVP',evidence:'300 SF installed',researchDescription:'',additions:[{code:'PB-09-65-01',quantity:300,quantityEvidence:'300 SF installed; no additional wastage required'}]};
+ const cleanup={...extra,id:'cleanup',description:'Minor job cleanup',evidence:'Include minor cleanup',researchDescription:'',existingLineIds:['priced-floor'],additions:[]};
+ const existing=[{...base.internal.lines[0],id:'priced-floor',description:'Supply and install LVP: Luxury vinyl plank (installed price, labor and material together)',quantity:300,unit:'SF',unitCost:7.28,category:'subcontractors',evidence:{reference:'P5 master price book; PB-09-65-01; 300 SF'}}];
+ const mapping={tasks:[flooring,cleanup],issues:[],notes:[],replacements:[],removeExclusions:[]};
+ normalizeConsumableMapping(mapping,configuration,existing as any,local);
+ assert.deepEqual(flooring.additions.map(a=>[a.code,a.quantity]),[['PB-09-65-01-L',300],['PB-09-65-01-M',330]]);
+ assert.ok(flooring.additions.every(a=>!/no additional wastage/.test(a.quantityEvidence)));
+ assert.deepEqual(cleanup.existingLineIds,[],'model claims cannot add cleanup to a generic flooring assembly');
+ assert.match(cleanup.researchDescription,/separate job-sized cleanup/);
+ const explicitCleanup={...cleanup,researchDescription:'',additions:[{code:'PB-01-74-05',quantity:300,quantityEvidence:'Minor cleanup of the same 300 SF room'}]};
+ normalizeConsumableMapping({...mapping,tasks:[explicitCleanup]},configuration,existing as any,local);
+ assert.equal(explicitCleanup.additions[0]?.code,'PB-01-74-05','the compatible existing book rate remains usable');
+
+ const {contractorConsumableIncluded}=await import('../lib/p5/contractorConsumables.ts');
+ assert.ok(contractorConsumableIncluded(local,'Ordinary installation supplies'),'source responsibilities survive a compressed summary');
 });
