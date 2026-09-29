@@ -4,7 +4,7 @@ import {ESTIMATOR_VERSION} from './version.ts';
 import {SERVER_BUDGET_MS,remainingBudget,withinDeadline,ProcessingDeadlineError,isProcessingDeadline} from './processingBudget.ts';
 import {createHash} from 'node:crypto';
 import {recordEvent} from './events.ts';
-import {saveLearnedLines,readLearnedLines,learnedCostRules,saveSupportedServiceBook} from './learnedBook.ts';
+import {saveLearnedLines,readLearnedLines,learnedCostRules,learnedResearchLeads,saveSupportedServiceBook} from './learnedBook.ts';
 import {databasePricingCache,pricingCacheEnabled} from './pricingCache.ts';
 import {claimWork,writeWork,releaseWork,renewWork,readSavedWorkReply} from './workStore.ts';
 import {priceCompleteScope,requestPricing,type PricingReply,type PricingRequest,PRICING_STAGE_MAX_MS} from './scopePricing.ts';
@@ -37,7 +37,7 @@ export function reusableSavedPricingReply(value:unknown):value is PricingReply{
  return !reply.timeouts&&!reply.timedOut&&!reply.outputLimited&&Array.isArray(reply.sourceUrls)
    &&(reply.value!==null&&reply.value!==undefined||typeof reply.sourceReport==='string'&&reply.sourceReport.trim().length>0);
 }
-type Payload=PricingRepairState&{replies:Record<string,PricingReply>;shortlists?:Record<string,Record<string,string[]>>;failures?:number;completed?:number;regionalRates?:EstimatorConfiguration['regionalRates'];processing?:ProcessingStatus;pricingAt?:string;busyWaitMs?:number};
+type Payload=PricingRepairState&{replies:Record<string,PricingReply>;shortlists?:Record<string,Record<string,string[]>>;failures?:number;completed?:number;regionalRates?:EstimatorConfiguration['regionalRates'];researchLeads?:EstimatorConfiguration['researchLeads'];processing?:ProcessingStatus;pricingAt?:string;busyWaitMs?:number};
 export async function priceSavedScope(id:string,scope:ReviewedScope,configuration:EstimatorConfiguration,pricingAt=new Date(),deadline=Date.now()+SERVER_BUDGET_MS,identity?:PricingIdentity){
  // Construction prices only a project whose every source page was verified;
  // the other brands return a partial read for manual review instead.
@@ -46,7 +46,7 @@ export async function priceSavedScope(id:string,scope:ReviewedScope,configuratio
  await saveSupportedServiceBook(configuration,scope.answers.service||'');
  const workKey=pricingWorkKey(scope,configuration,pricingAt);
  const [regional,learned]=await Promise.all([readRegionalRates(scope.answers.location||'',pricingAt),readLearnedLines()]);
- const claimed=await claimWork(id,workKey,{replies:{},regionalRates:[...regional,...learnedCostRules(learned,scope.answers.service||'',{location:scope.answers.location||'',finish:scope.answers.finish},pricingAt)]},290);
+ const claimed=await claimWork(id,workKey,{replies:{},researchLeads:learnedResearchLeads(learned,scope.answers.service||'',{location:scope.answers.location||'',finish:scope.answers.finish}),regionalRates:[...regional,...learnedCostRules(learned,scope.answers.service||'',{location:scope.answers.location||'',finish:scope.answers.finish},pricingAt)]},290);
  if(!claimed)throw new PricingPending('Your pricing check is already running. Waiting for its saved result...',10000);
  const payload=claimed.payload as Payload;
  // Freeze the pricing timestamp across requests. Rate freshness and generated
@@ -54,7 +54,7 @@ export async function priceSavedScope(id:string,scope:ReviewedScope,configuratio
  if(payload.pricingAt)pricingAt=new Date(payload.pricingAt);
  else payload.pricingAt=pricingAt.toISOString();
  if(!payload.replies||Array.isArray(payload.replies))payload.replies={};
- configuration={...configuration,regionalRates:(payload.regionalRates||[]).filter(rule=>rule.estimatingBasis==='sourced-market-average')};
+ configuration={...configuration,researchLeads:payload.researchLeads||[],regionalRates:(payload.regionalRates||[]).filter(rule=>rule.estimatingBasis==='sourced-market-average')};
  let saving=Promise.resolve();
  const persist=()=>{saving=saving.then(async()=>{try{await writeWork(id,workKey,claimed.token,payload);}catch{throw new PricingPending('Pricing progress could not be saved yet. Please retry to continue.',0);}});return saving;};
  // A new shortlist changes the mapping request hash even when the scope is

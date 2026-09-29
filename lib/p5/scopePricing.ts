@@ -1744,7 +1744,7 @@ export async function priceCompleteScope(scope:ReviewedScope,configuration:Estim
       const pastWindow=!LIVE_RESEARCH;
       if(pastWindow)researchFailure='published cost research is temporarily disabled';
       if(!pastWindow)try{
-        let researched=await request(RESEARCH,{date:now.toISOString().slice(0,10),region,tasks:tasksInput,...(priorIssues?{priorIssues}:{})},true,Math.min(RESEARCH_STAGE_MS,deadline-Date.now()));
+        let researched=await request(RESEARCH,{date:now.toISOString().slice(0,10),region,tasks:tasksInput,previouslySavedEvidence:{purpose:'Research starting points only. Recheck the exact current product, package, Boise applicability and price, and find an independent comparison. These retained records are not approved current rates or proof of stock.',records:configuration.researchLeads||[]},...(priorIssues?{priorIssues}:{})},true,Math.min(RESEARCH_STAGE_MS,deadline-Date.now()));
         previousResearch=researched;
         currentSourceUrls=researched.sourceUrls;
         currentReport=researched.sourceReport||'';
