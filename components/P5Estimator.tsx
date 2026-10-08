@@ -553,6 +553,10 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
   const transcript=draft.transcript||[];const hasProgress=transcript.length>0||draft.step>0||Boolean(result)||uploadedCount>0;
   const locked=Boolean(busy)||preparingFiles;
   const canSend=!locked&&(composerMode==='project'?Boolean(composerText.trim()||files.length||uploadedCount||attachedProjectSource):composerMode==='answer'?Boolean(reply.trim()||files.length):Boolean(editText.trim()||files.length));
+  // Back from review intentionally opens the project composer. If the saved
+  // analysis still matches, let the customer return without re-reading the
+  // same scope or attaching the same files again.
+  const canContinueSaved=stage===0&&hasProgress&&!needsAnalysis();
   const customerDelivery=delivery.find(d=>d.channel==='customer');
   // The staff notice is tracked on its own, so "our team was told" is never implied by the customer email.
   const staffDelivery=delivery.filter(d=>d.channel==='admin'||d.channel.startsWith('admin'));
@@ -621,6 +625,7 @@ export function P5Estimator({defaultService='',headingAs='h1',projectSource,layo
     :stage===3?<div className={styles.dockBar}><a className={styles.primary} href="#p5-project-review" onClick={()=>trackScopeEvent("onsiteRequested",draft.answers.service)}>{estimateDoc?estimateDoc.review.label:'Schedule a consultation'}</a><a className={styles.secondary} href={`tel:${brand.phone.replace(/[^\d+]/g,'').replace(/^(?!\+)(\d{10})$/,'+1$1')}`}>Call {brand.phone}</a></div>
     :stage===2?<>{addingDetails&&composer}<div className={styles.dockBar} data-final-action><button type="submit" form={formId} className={styles.primary} disabled={locked} aria-describedby={error?submitErrorId:undefined}>{busy?'Preparing your estimate…':'Get my estimate'}</button></div><div className={styles.dockRow}><span className={styles.dockHint}>{contactReady?(confirmed?(hasEmail?'Your estimate opens right here and is emailed to you.':'Your estimate opens right here. You can download a PDF when it is ready.'):'Confirm your project details above, then get your estimate.'):'Add your name above. Email is optional; check it or leave it blank.'}</span><button type="button" className={styles.ghost} disabled={locked} onClick={()=>setAddingDetails(v=>!v)} aria-expanded={addingDetails}>{addingDetails?'Cancel editing':'Add or edit details'}</button></div></>
     :stage===1&&active?.handoff?<div className={styles.dockBar}><a className={styles.primary} href={active.handoff.url} onClick={e=>{e.preventDefault();void carryProject(active.handoff!.url);}}>{active.handoff.label}</a></div>
+    :canContinueSaved?<><div className={styles.dockBar}><button type="button" className={styles.primary} onClick={()=>{if(current.current)showQuestions(current.current);}}>Continue</button></div><p className={styles.dockHint}>Your reviewed project is saved. Edit the description above to update it, or continue without repeating analysis.</p></>
     // What the customer can attach is already said by the field's own placeholder and the attach
     // button. The only thing this line adds is that written limits are obeyed, so that is all it says
     // now: on a phone the old sentence ran to three lines of text the customer had just read.
