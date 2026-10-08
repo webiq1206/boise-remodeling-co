@@ -94,7 +94,7 @@ const bodySchema = z.object({
     .optional(),
 });
 
-const FALLBACK_UNAVAILABLE = `The assistant is offline right now. The project estimator on this site prices remodels instantly, or call us at ${SITE_CONFIG.phone} - a real person answers during business hours.`;
+const FALLBACK_UNAVAILABLE = `The assistant is offline right now. You can share your project details on this site for team review, or call us at ${SITE_CONFIG.phone} - a real person answers during business hours.`;
 
 const FALLBACK_UNGROUNDED =
   "I don't want to guess at a number for that. Let me run the actual estimate - can you confirm the project type, rough square footage, and the finish level you have in mind? Or book the free in-home consultation and the team will price it properly.";
