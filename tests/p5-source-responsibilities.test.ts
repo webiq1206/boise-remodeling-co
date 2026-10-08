@@ -1,10 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {groundSourceResponsibilities,groundCabinetExclusions} from '../lib/p5/sourceResponsibilities.ts';
+import {groundSourceResponsibilities,groundCabinetExclusions,groundConsumableExamples} from '../lib/p5/sourceResponsibilities.ts';
 import {emptyInstructions} from '../lib/p5/instructions.ts';
 import {instructionPrompts} from '../lib/p5/clarifications.ts';
 import type {ScopeExtraction} from '../lib/p5/scope.ts';
 const source='Owner-selected decorative fixtures; recessed, utility and standard exterior fixtures are carried separately. Appliance allowances are product-only and exclude shipping, sales/use tax, delivery, installation and hookups. Anticipated ancillary costs are carried separately within Division .';
+test('generic consumables never become a customer-specified shopping list',()=>{
+ const description='Contractor provides labor and consumables (nails, screws, shims, caulk).';
+ const input:ScopeExtraction={summary:description,facts:[{field:'installation',value:description,source:'typed scope',evidence:'Contractor provides labor and consumables.',confidence:1,basis:'stated'}],conflicts:[],missingInformation:[],reviewNotes:[],instructions:{...emptyInstructions(),inclusions:[description],responsibilities:[description]}};
+ const safe=groundConsumableExamples(input,'Install three owner-supplied levers. Contractor provides labor and consumables.');
+ assert.equal(safe.summary,'Contractor provides labor and consumables.');
+ assert.equal(safe.facts[0].value,safe.summary);
+ assert.deepEqual(safe.instructions?.responsibilities,[safe.summary]);
+ assert.deepEqual(groundConsumableExamples(safe,'Contractor provides labor and consumables.'),safe);
+ assert.deepEqual(groundConsumableExamples(input,description),input);
+});
 const extraction:ScopeExtraction={summary:'New house',sourceText:source,facts:[
  {field:'installation',value:'Standard installation and waterproofing for engineered wood and tile. Owner responsible for appliance and decorative lighting installation.',confidence:1,source:'scope.pdf',evidence:'Flooring installation included. Appliance allowances are product-only.',basis:'stated'},
  {field:'ownerSupplied',value:'Decorative lighting and all appliances are product-only allowances.',confidence:1,source:'scope.pdf',evidence:source,basis:'stated'},
@@ -43,4 +53,49 @@ test('explicit owner installation and supply remain authoritative',()=>{
 test('a confirmed installation answer stays resolved without a new PDF',()=>{
  const safe=groundSourceResponsibilities(extraction,undefined,'Owner handles installation',{});
  assert.equal(safe,extraction);
+});
+
+test('retained appliance detach and reset does not ask who installs new appliances',()=>{
+ const source='Existing owner appliances remain and are not replaced; detach and reset only as needed.';
+ const input:ScopeExtraction={summary:'Kitchen',facts:[{field:'installation',value:'Owner responsible for appliance installation.',confidence:1,source:'kitchen.pdf',evidence:source,basis:'stated'}],conflicts:[],reviewNotes:[],missingInformation:[],instructions:{...emptyInstructions(),responsibilities:['Owner responsible for appliance installation']}};
+ const safe=groundSourceResponsibilities(input,source,'',{});
+ assert.equal(safe.facts.length,0);
+ assert.equal(safe.instructions?.responsibilities.length,0);
+ assert.deepEqual(safe.instructions?.questions,[]);
+});
+
+test('saved installer question is retired when retained-appliance reset is explicit',()=>{
+ const source='Existing owner appliances remain and are not replaced; detach and reset only as needed.';
+ const input:ScopeExtraction={summary:'Kitchen',facts:[],conflicts:[],reviewNotes:[],missingInformation:[],instructions:{...emptyInstructions(),questions:['Who should install the appliances?','Which countertop edge is requested?']}};
+ const safe=groundSourceResponsibilities(input,source,'',{});
+ assert.deepEqual(safe.instructions?.questions,['Which countertop edge is requested?']);
+ assert.deepEqual(groundSourceResponsibilities(safe,source,'',{}),safe);
+});
+
+test('ADU exclusions do not invent owner supply or responsibility in typed or uploaded scopes',()=>{
+ const source='Build a complete 600 SF ADU. Exclude land, landscaping, permits, design, engineering and appliance supply.';
+ const input:ScopeExtraction={summary:'ADU',facts:[{field:'ownerSupplied',value:'Appliances owner-supplied. Land, permits and design owner-responsibility.',confidence:1,source:'typed scope',evidence:'Exclude appliance supply',basis:'stated'}],conflicts:[],reviewNotes:[],missingInformation:[],instructions:{...emptyInstructions(),exclusions:['Appliance supply','Permit fees'],responsibilities:['Contractor: Complete ADU construction','Owner: land, permits, design and appliances']}};
+ for(const native of [undefined,source]){
+  const safe=groundSourceResponsibilities(input,native,source,{});
+  assert.equal(safe.facts.some(f=>f.field==='ownerSupplied'),false);
+  assert.deepEqual(safe.instructions?.responsibilities,['Contractor: Complete ADU construction']);
+  assert.deepEqual(safe.instructions?.exclusions,input.instructions?.exclusions);
+  assert.deepEqual(safe.instructions?.questions,[]);
+ }
+ assert.ok(groundSourceResponsibilities(input,undefined,source+' Owner supplies the appliances.',{}).facts.some(f=>f.field==='ownerSupplied'));
+ assert.ok(groundSourceResponsibilities(input,undefined,source,{ownerSupplied:'Appliances'}).facts.some(f=>f.field==='ownerSupplied'));
+});
+
+test('an excluded appliance does not leak invented ownership through another fact field',()=>{
+ const source='Build an ADU. Exclude appliance supply.';
+ const input:ScopeExtraction={summary:'ADU',facts:[{field:'appliances',value:'Owner supplies all appliances.',confidence:1,source:'typed scope',evidence:'Exclude appliance supply',basis:'stated'}],conflicts:[],reviewNotes:[],missingInformation:[],instructions:emptyInstructions()};
+ assert.equal(groundSourceResponsibilities(input,undefined,source,{}).facts.length,0);
+ assert.equal(groundSourceResponsibilities(input,undefined,source+' Owner provides appliances.',{}).facts.length,1);
+});
+
+test('owner supplies all parts also removes invented incidental contractor supplies',()=>{
+ const input:ScopeExtraction={summary:'Handles',facts:[],conflicts:[],reviewNotes:[],missingInformation:[],instructions:{...emptyInstructions(),responsibilities:['Owner supplies passage levers','Contractor supplies installation labor and minor installation consumables only (e.g., screws as needed)']}};
+ const safe=groundSourceResponsibilities(input,undefined,'Replace 3 handles. All parts are provided by owner.',{});
+ assert.deepEqual(safe.instructions?.responsibilities,['Owner supplies passage levers','Contractor supplies installation labor.']);
+ assert.deepEqual(groundSourceResponsibilities(input,undefined,'Replace 3 handles. Owner provides handles. Contractor supplies screws.',{}),input);
 });

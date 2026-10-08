@@ -1,9 +1,11 @@
+import {withQaPaidDraft,qaPaidContext} from './qaPaid.ts';
+import {assertQaProvidersAllowed} from './qaProviderPolicy.ts';
 import {MODEL_POLICY_VERSION} from './modelPolicy.ts';
 import {ANALYSIS_PASS_MS,READ_ALLOWANCE_MS,READ_START_MARGIN_MS,remainingBudget,ProcessingDeadlineError,isProcessingDeadline} from './processingBudget.ts';
 import {createHash} from 'node:crypto';
 import {openablePdf,PdfAccessError} from './pdfAccess.ts';
 import {Client} from '@replit/object-storage';
-import {analyzeBatch,AnalysisBusyError,retainScopeContext,type AnalysisFile,type AnalysisResult} from './extraction.ts';
+import {analyzeBatch,AnalysisBusyError,retainScopeContext,visualFallbackFiles,type AnalysisFile,type AnalysisResult} from './extraction.ts';
 import {prepareAnalysisFiles} from './documents.ts';
 import {SCOPE_MAX_PAGES,combineScopeExtractions,type ScopeAnswers,type ScopeExtraction} from './scope.ts';
 import {query} from './database.ts';
@@ -11,8 +13,8 @@ import {ESTIMATOR_BUCKETS} from './objectStorage.ts';
 import {ESTIMATOR_BRAND} from './brand.ts';
 import {claimWork,writeWork,releaseWork} from './workStore.ts';
 import {type Draft,DraftError} from './store.ts';
-import {isInstructionFile,mergeInstructions} from './instructions.ts';
-import {combineCoverage} from './documentLedger.ts';
+import {isInstructionFile,mergeInstructions,emptyInstructions,type ScopeInstructions} from './instructions.ts';
+import {combineCoverage,pageCovered} from './documentLedger.ts';
 import {analysisConcurrency,analysisProgress} from './analysisProgress.ts';
 import {recordEvent,describeError} from './events.ts';
 import {analysisMessage,type ProcessingStatus} from './processingStatus.ts';
@@ -35,12 +37,36 @@ export class IncompleteAnalysisError extends DraftError {
   }
 }
 
-type Unit={name:string;type:string;object:string;uploadId?:string;pages?:AnalysisFile['pages'];text?:string;context?:string;detailViews?:boolean;detailRegions?:AnalysisFile['detailRegions'];result?:AnalysisResult;attempts?:number;rateLimitRetries?:number;error?:string;lastCode?:string;retryAt?:number;active?:boolean};
+type Unit={name:string;type:string;object:string;uploadId?:string;pages?:AnalysisFile['pages'];text?:string;context?:string;detailViews?:boolean;formViews?:number;detailRegions?:AnalysisFile['detailRegions'];result?:AnalysisResult;attempts?:number;rateLimitRetries?:number;error?:string;lastCode?:string;retryAt?:number;active?:boolean};
 type Job={prepared:number;units:Unit[];notes:string[];preparationFailures?:string[];textDone?:AnalysisResult;textPrepared?:boolean;cursor?:number;expected?:{source:string;page:number}[];progress?:string;processing?:ProcessingStatus;concurrency?:number;cooldownUntil?:number};
-/** Reads of one section before it is reported as unread. Each attempt may use
- * a different provider or the page's text layer, so this is several distinct
- * strategies, not the same call repeated. */
+/** Independent page readers can reuse a generated ID for different decisions.
+ * Disambiguate only those collisions before aggregation. Keep every question,
+ * preserve saved customer identities, and never transfer an answer by ID alone. */
+function disambiguateReaderDecisions(parts:ScopeInstructions[]):ScopeInstructions[]{
+  const identity=(decision:NonNullable<ScopeInstructions['decisions']>[number])=>JSON.stringify([decision.subject,decision.aspect]);
+  const groups=new Map<string,Set<string>>(),answered=new Map<string,Set<string>>();
+  for(const part of parts)for(const decision of part.decisions||[]){
+    const identities=groups.get(decision.id)||new Set<string>();identities.add(identity(decision));groups.set(decision.id,identities);
+    if(decision.answer||decision.status==='answered'||decision.status==='deferred'){
+      const retained=answered.get(decision.id)||new Set<string>();retained.add(identity(decision));answered.set(decision.id,retained);
+    }
+  }
+  return parts.map(part=>({...part,decisions:part.decisions?.map(decision=>{
+    if((groups.get(decision.id)?.size||0)<2)return decision;
+    const retained=answered.get(decision.id);
+    // Conflicting saved answers require review; changing their identity would
+    // detach them from the customer's saved clarification record.
+    if(retained&&retained.size>1)throw new Error('Conflicting scope decision identity');
+    if(retained?.has(identity(decision)))return decision;
+    return {...decision,id:'reader-decision-'+createHash('sha256').update(JSON.stringify([decision.id,decision.subject,decision.aspect])).digest('hex')};
+  })}));
+}
+/** Reads of one section before it is reported as unread. PDF retries may
+ * change transport, but must retain the visual source on every attempt. */
 export const MAX_READ_ATTEMPTS=Math.max(1,Number(process.env.P5_READ_ATTEMPTS||4));
+export async function analysisAttemptFiles(file:AnalysisFile,attempt:number):Promise<AnalysisFile[]>{
+ return attempt>=3&&file.type==='application/pdf'?visualFallbackFiles([file]):[file];
+}
 const pending=(u:Unit)=>!u.result&&(u.attempts||0)<MAX_READ_ATTEMPTS;
 export function analysisWorkKey(draft:Draft,text:string,answers:ScopeAnswers,route?:'remote'|'local'){
   const mode=(route?route==='remote':process.env.P5_DOCUMENT_SERVICE_MODE==='remote')?'document-service-v2':'v8';
@@ -93,7 +119,11 @@ export async function advanceMixedSources(draft:Draft,text:string,answers:ScopeA
  return {pending:false,version:createHash('sha256').update(JSON.stringify([MODEL_POLICY_VERSION,text,answers,draft.uploads.map(f=>[f.id,f.sha256])])).digest('hex'),analysis:{modelPolicy:MODEL_POLICY_VERSION,extraction,provider:[read.analysis.provider,additional.analysis.provider].join(' + '),model:[read.analysis.model,additional.analysis.model].join(' + '),analyzedAt:new Date().toISOString()}};
 }
 /** Each request checkpoints work before returning. Reloading resumes the same source fingerprint. */
-export async function advanceAnalysis(draft:Draft,text:string,answers:ScopeAnswers,request=fetch,retryFailed=false,absoluteDeadline=Date.now()+ANALYSIS_PASS_MS):Promise<DocumentAnalysisStep>{
+export async function advanceAnalysis(...args:Parameters<typeof advanceAnalysisImpl>):Promise<DocumentAnalysisStep>{
+ return withQaPaidDraft(args[0].id,()=>advanceAnalysisImpl(...args));
+}
+async function advanceAnalysisImpl(draft:Draft,text:string,answers:ScopeAnswers,request=fetch,retryFailed=false,absoluteDeadline=Date.now()+ANALYSIS_PASS_MS):Promise<DocumentAnalysisStep>{
+  await assertQaProvidersAllowed(draft.id);
   remainingBudget(absoluteDeadline);
   const key=analysisWorkKey(draft,text,answers);
   if(draft.uploads.length)await assertAnalysisMigrationSafe(draft,text,answers,key);
@@ -213,7 +243,7 @@ async function advanceLocalAnalysis(draft:Draft,text:string,answers:ScopeAnswers
             if(segment.preparationError){fileFailed=true;prepareFailed(file.name);job.units.push({name:segment.name,type:segment.type,object:'',uploadId:upload.id,pages:segment.pages,error:segment.preparationError,lastCode:'preparation',attempts:MAX_READ_ATTEMPTS});event('prepare','failed',{file:segment.name,code:'preparation',message:segment.preparationError});job.cursor=segment.nextPage;await checkpoint();continue;}
             const saved=await client.uploadFromBytes(object,segment.data,{compress:false});
             if(!saved.ok)throw new DraftError('Document preparation was interrupted. Retry to resume.',503);
-            job.units.push({name:segment.name,type:segment.type,object,uploadId:upload.id,pages:segment.pages,text:segment.text,context:segment.context,detailViews:segment.detailViews,detailRegions:segment.detailRegions});
+            job.units.push({name:segment.name,type:segment.type,object,uploadId:upload.id,pages:segment.pages,text:segment.text,context:segment.context,detailViews:segment.detailViews,formViews:segment.formViews,detailRegions:segment.detailRegions});
             if(segment.nextPage!==undefined){job.cursor=segment.nextPage;await checkpoint();if(Date.now()-preparedAt>PREPARE_WINDOW_MS||job.units.filter(pending).length>=analysisConcurrency()*2){finished=false;break;}}
           }
         }catch(error){if(error instanceof DraftError||isProcessingDeadline(error))throw error;fileFailed=true;const message=`${file.name}: ${error instanceof Error?error.message:'Could not read this file.'} Review the original before pricing.`;job.notes.push(message);prepareFailed(file.name);job.units.push({name:file.name,type:file.type,object:'',uploadId:upload.id,error:message,lastCode:'preparation',attempts:MAX_READ_ATTEMPTS});event('prepare','failed',{file:file.name,code:'prepare-error',message:error instanceof Error?error.message:String(error),durationMs:Date.now()-preparing});}
@@ -239,16 +269,16 @@ async function advanceLocalAnalysis(draft:Draft,text:string,answers:ScopeAnswers
         const unit=ready[position++];unit.active=true;await checkpoint();
         unit.attempts=(unit.attempts||0)+1;
         const context={...answers};if((context.estimatingInstructions?.length||0)>48000)delete context.estimatingInstructions;
-        if(instructionUnits.some(u=>u.result?.extraction.instructions))context.estimatingInstructions=[context.estimatingInstructions,JSON.stringify(mergeInstructions(instructionUnits.flatMap(u=>u.result?.extraction.instructions?[u.result.extraction.instructions]:[])))].filter(Boolean).join('\n');
+        if(instructionUnits.some(u=>u.result?.extraction.instructions))context.estimatingInstructions=[context.estimatingInstructions,JSON.stringify(mergeInstructions(disambiguateReaderDecisions(instructionUnits.flatMap(u=>u.result?.extraction.instructions?[u.result.extraction.instructions]:[]))))].filter(Boolean).join('\n');
         const started=Date.now();
         try{
           const saved=await client.downloadAsBytes(unit.object);
           if(!saved.ok)throw new DraftError('A prepared document section could not be read. Retry to resume.',503);
           const allowance=Math.min(READ_ALLOWANCE_MS,absoluteDeadline-Date.now());
-          // Later attempts read from the text layer when the page has one, so a
-          // page whose bytes keep failing is still read.
-          const file:AnalysisFile={name:unit.name,type:unit.type,data:saved.value[0],pages:unit.pages,text:unit.text,context:unit.context,detailViews:unit.detailViews,detailRegions:unit.detailRegions};
-          const input=unit.attempts>=3&&unit.type==='application/pdf'&&unit.text?[{...file,type:'text/plain',data:Buffer.from(unit.text,'utf8'),text:undefined,name:`${unit.name} (text layer)`}]:[file];
+          // A text layer cannot represent checkmarks, strikeouts or geometry.
+          // If rendering fails, preserve the failed read rather than certify text.
+          const file:AnalysisFile={name:unit.name,type:unit.type,data:saved.value[0],pages:unit.pages,text:unit.text,context:unit.context,detailViews:unit.detailViews,formViews:unit.formViews,detailRegions:unit.detailRegions};
+          const input=await analysisAttemptFiles(file,unit.attempts);
           unit.result=await analyzeBatch(text.length>48000?'The complete typed scope is processed in saved sections; use the interpreted scope instructions.':text,input,context,request,allowance,Date.now()+allowance,{event:{draftId:draft.id,estimator:answers.service||null,file:unit.name}});
           delete unit.error;delete unit.retryAt;delete unit.lastCode;
           event('read-section','ok',{file:unit.name,provider:unit.result.provider,model:unit.result.model,durationMs:Date.now()-started,attempt:unit.attempts,fallback:unit.attempts>1});
@@ -257,6 +287,7 @@ async function advanceLocalAnalysis(draft:Draft,text:string,answers:ScopeAnswers
             // The pass ran out, not the read. Give the attempt back and let the next pass resume it.
             unit.attempts=Math.max(0,(unit.attempts||1)-1);unit.active=false;await checkpoint();break;
           }
+          if(qaPaidContext()){unit.attempts=Math.max(0,(unit.attempts||1)-1);unit.active=false;await checkpoint();throw error;}
           const detail=describeError(error);
           unit.lastCode=detail.code;
           unit.error=`${unit.name}: automatic reading could not finish (${detail.code}).`;
@@ -291,7 +322,8 @@ async function advanceLocalAnalysis(draft:Draft,text:string,answers:ScopeAnswers
     // result. Return an explicit incomplete extraction instead of dereferencing
     // an absent result (or, worse, letting callers treat it as complete).
     const last=results[results.length-1]||{provider:'P5 document reader',model:'none',analyzedAt:new Date().toISOString(),extraction:combineScopeExtractions([])};
-    const extraction:ScopeExtraction=combineScopeExtractions(results.map(r=>r.extraction));
+    const instructions=disambiguateReaderDecisions(results.map(r=>r.extraction.instructions||emptyInstructions()));
+    const extraction:ScopeExtraction=combineScopeExtractions(results.map((r,index)=>({...r.extraction,...(r.extraction.instructions?{instructions:instructions[index]}:{})})));
     const unprocessed=job.units.filter(u=>!u.result).flatMap(u=>(u.pages||[]).map(p=>({...p,sheet:'',revision:'',status:'unreadable' as const,notes:[u.error||'Page analysis did not finish.']})));
     if(unprocessed.length){const c=extraction.documentCoverage||{pages:[],expectedPages:0,complete:false};extraction.documentCoverage={pages:[...c.pages,...unprocessed],expectedPages:c.expectedPages+unprocessed.length,complete:false};}
     if(job.expected?.length)extraction.documentCoverage=combineCoverage(extraction.documentCoverage?[extraction.documentCoverage]:[],job.expected);
@@ -299,7 +331,7 @@ async function advanceLocalAnalysis(draft:Draft,text:string,answers:ScopeAnswers
     // Pages the reader did open but found partly illegible keep their own notes.
     const failedPages=new Set(unprocessed.map(p=>JSON.stringify([p.source,p.page])));
     extraction.reviewNotes.push(...job.notes,...unreadNotes(job.units));
-    extraction.reviewNotes.push(...(extraction.documentCoverage?.pages.filter(p=>p.status!=='read'&&!failedPages.has(JSON.stringify([p.source,p.page]))).map(p=>`${p.source}, page ${p.page}: ${p.status}. ${p.notes.join(' ')}`)||[]));
+    extraction.reviewNotes.push(...(extraction.documentCoverage?.pages.filter(p=>!pageCovered(p)&&!failedPages.has(JSON.stringify([p.source,p.page]))).map(p=>`${p.source}, page ${p.page}: ${p.status}. ${p.notes.join(' ')}`)||[]));
     extraction.reviewNotes=[...new Set(extraction.reviewNotes)];
     if(job.preparationFailures?.length){const coverage=extraction.documentCoverage||{pages:[],expectedPages:job.expected?.length||0,complete:false};extraction.documentCoverage={...coverage,complete:false};}
     const unread=job.units.filter(u=>!u.result).length;

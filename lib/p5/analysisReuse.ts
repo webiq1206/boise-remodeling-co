@@ -1,6 +1,10 @@
 import {createHash} from "node:crypto";
 import type {AnalysisResult} from "./extraction.ts";
 import type {ScopeAnswers,ScopeUpload} from "./scope.ts";
+import type {ScopeExtraction} from './scope.ts';
+import {manualScopeAnswers} from './adaptive.ts';
+import {hasVerifiedAnalysis} from './modelPolicy.ts';
+import {blockingExtractionNotes} from './documentLedger.ts';
 
 type LegacyInput={kind?:string;draft?:{uploads?:Array<{id?:string;sha256?:string}>};text?:string;answers?:ScopeAnswers};
 export type CompletedAnalysisCandidate={workKey:string;payload:unknown};
@@ -52,4 +56,29 @@ export function selectReusableAnalysis(candidates:CompletedAnalysisCandidate[],c
   const matches=candidates.map(candidate=>compatibleLegacyAnalysis(candidate,current)).filter((result):result is {ok:true;reusable:ReusableAnalysis}=>result.ok);
   if(matches.length>1)return {reusable:null,reason:"multiple-compatible-analyses"};
   return matches.length?{reusable:matches[0].reusable}:{reusable:null,reason:"no-compatible-analysis"};
+}
+
+/** An initially supplied value can also be extracted from the source. Once
+ * reconciled, it drops out of manualScopeAnswers; that bookkeeping change
+ * must not reread a complete plan set. Compare both answer records through
+ * the saved extraction, while preserving every explicit customer correction.
+ * Text, upload identity, model verification and complete coverage stay exact. */
+export function selectSourceEquivalentAnalysis(candidates:CompletedAnalysisCandidate[],current:AnalysisReuseInput&{extraction:ScopeExtraction|null;resolutions?:ScopeAnswers}):ReusableAnalysis|null{
+ const stable=(answers:ScopeAnswers)=>JSON.stringify(Object.entries(answers).sort(([a],[b])=>a.localeCompare(b)));
+ const matches=candidates.flatMap(candidate=>{
+  const payload=candidate.payload as {state?:string;result?:{analysis?:AnalysisResult}};
+  const input=asLegacyInput(payload),analysis=payload?.result?.analysis;
+  if(payload?.state!=='complete'||input?.kind!=='analysis'||input.text!==current.text
+   ||uploadIdentity(input.draft?.uploads||[])!==uploadIdentity(current.uploads)||!hasVerifiedAnalysis(analysis)||!analysis)return [];
+  if(typeof analysis.provider!=='string'||!analysis.provider.trim()||typeof analysis.analyzedAt!=='string'||!Number.isFinite(Date.parse(analysis.analyzedAt)))return [];
+  if(!analysis.extraction||blockingExtractionNotes(analysis.extraction).length)return [];
+  if(current.uploads.length&&(!analysis.extraction.documentCoverage?.complete||analysis.extraction.documentCoverage.pages.some(p=>p.status!=='read')))return [];
+  const exact=stable(input.answers||{})===stable(current.answers);
+  const prior=current.extraction?manualScopeAnswers(input.answers||{},current.extraction,current.resolutions||{}):null;
+  if(!exact&&(!prior||stable(prior)!==stable(current.answers)))return [];
+  return [{version:hashVersion(current),analysis}];
+ });
+ // Ambiguity falls back to the ordinary exact-key checkpoint lookup. Never
+ // merge competing results or restart their attempt ledgers here.
+ return matches.length===1?matches[0]:null;
 }

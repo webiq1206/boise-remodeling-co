@@ -1,6 +1,8 @@
+import {withQaPaidDraft} from './qaPaid.ts';
 import {analysisSegments} from './analysisSegments.ts';
 import {query} from './database.ts';
 import {readDraft,DraftError} from './store.ts';
+import {assertQaProvidersAllowed} from './qaProviderPolicy.ts';
 import {readStoredBytes} from './objectStorage.ts';
 import {benchmarkProvider,benchmarkRead,type AnalysisFile} from './extraction.ts';
 /**
@@ -16,9 +18,11 @@ import {benchmarkProvider,benchmarkRead,type AnalysisFile} from './extraction.ts
  */
 export interface BenchmarkCandidate {kind:'OpenAI'|'Anthropic';model:string;textOnly:boolean}
 const MODEL=/^(?:gpt-[\w.-]{1,40}|o\d[\w.-]{0,40}|claude-[\w.-]{1,60})$/;
-export async function runReadBenchmark(id:string,key:string,raw:unknown){
+export async function runReadBenchmark(...args:Parameters<typeof runReadBenchmarkImpl>){return withQaPaidDraft(args[0],()=>runReadBenchmarkImpl(...args));}
+async function runReadBenchmarkImpl(id:string,key:string,raw:unknown){
   const draft=await readDraft(id,key);
   if(!draft)throw new DraftError('Draft not found.',404);
+  await assertQaProvidersAllowed(id);
   if(!/\[QA\]/.test(draft.text||''))throw new DraftError('Reader benchmarks run only on QA drafts.',403);
   const input=(raw||{}) as {candidate?:Partial<BenchmarkCandidate>;maxPages?:number};
   const c=input.candidate||{};

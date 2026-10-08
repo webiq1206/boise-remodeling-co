@@ -1,7 +1,9 @@
 import {chromium} from '@playwright/test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-const parent=process.env.P5_PARENT==='1';const browser=await chromium.launch();
+const parent=process.env.P5_PARENT==='1';const browser=await chromium.launch({
+ ...(process.env.P5_TEST_CHROMIUM_PATH?{executablePath:process.env.P5_TEST_CHROMIUM_PATH}:{}),
+});
 const extraRoutes=[];
 if(await fs.stat('components/re10/Re10Wizard.tsx').catch(()=>null))extraRoutes.push('/re-10-repairs-boise');
 if(await fs.stat('components/plans/PlansWizard.tsx').catch(()=>null))extraRoutes.push('/remodel-plans-boise');
@@ -9,6 +11,12 @@ const results=[];await fs.mkdir('p5-verification',{recursive:true});
 try{
  for(const width of [320,390,768,1024,1440]){
   const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<1024});
+  // Navigation/layout qualification never calls business APIs or third parties.
+  await context.route('**/*',route=>{
+   const url=new URL(route.request().url());
+   if(url.origin!==new URL(process.env.P5_TEST_BASE_URL||'http://127.0.0.1:5000').origin||url.pathname.startsWith('/api/'))return route.abort('blockedbyclient');
+   return route.continue();
+  });
   await context.route('**/api/estimator-session',r=>r.fulfill({json:{ok:true}}));
   await context.route('**/api/meta-capi',r=>r.fulfill({json:{ok:true}}));
   const page=await context.newPage();

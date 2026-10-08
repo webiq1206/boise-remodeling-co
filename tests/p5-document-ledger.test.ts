@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {coverageFor,reconcileTakeoffs,type Takeoff} from '../lib/p5/documentLedger.ts';
+import {coverageFor,combineCoverage,reconcileTakeoffs,type Takeoff} from '../lib/p5/documentLedger.ts';
 import {analysisProgress,analysisConcurrency} from '../lib/p5/analysisProgress.ts';
 import {emptyInstructions,mergeInstructions} from '../lib/p5/instructions.ts';
 import {pricingSourceParts} from '../lib/p5/pricingSources.ts';
@@ -22,6 +22,32 @@ test('Missing or conflicting page reports never claim completion',()=>{
   assert.equal(coverageFor([page],[read,read]).complete,true);
   assert.equal(coverageFor([page],[read,{...read,status:'partial',notes:['Section C is unreadable.']}]).complete,false);
   assert.equal(coverageFor([page],[{...read,status:'unreadable'}]).complete,false);
+  assert.equal(coverageFor([page],[{...read,status:'read',notes:['The repair notes could not be read.']}]).complete,false);
+});
+test('an unreadable detail stays unreadable regardless of note wording or merge order',()=>{
+  for(const notes of [[],['Detail text is too blurry to identify.'],['Drawing needs a clearer image.']]){
+    const failed={...read,status:'unreadable' as const,notes};
+    for(const rows of [[read,failed],[failed,read]]){
+      const reported=coverageFor([page],rows);
+      assert.equal(reported.complete,false);
+      assert.equal(reported.pages[0].status,'unreadable');
+      const tiles=combineCoverage(rows.map(row=>({pages:[row],expectedPages:1,complete:row.status==='read'})),[page]);
+      assert.equal(tiles.complete,false);
+      assert.equal(tiles.pages[0].status,'unreadable');
+      assert.deepEqual(tiles.pages[0].notes,notes);
+    }
+  }
+});
+test('unknown page records cannot be assigned to an arbitrary file with the same page number',()=>{
+  const wanted=[{source:'existing.pdf',page:1},{source:'proposed.pdf',page:1}];
+  const unknown={...read,source:'unidentified drawing'};
+  const result=coverageFor(wanted,[unknown]);
+  assert.equal(result.complete,false);
+  assert.deepEqual(result.pages.map(page=>page.status),['unreadable','unreadable']);
+  const oneKnown=coverageFor(wanted,[{...read,source:'existing.pdf'},unknown]);
+  assert.deepEqual(oneKnown.pages.map(page=>page.status),['read','unreadable']);
+  const identified=coverageFor(wanted,[{...read,source:'existing.pdf'},{...read,source:'proposed.pdf'}]);
+  assert.equal(identified.complete,true);
 });
 test('A read page labelled differently by the reader is bound to the page that was sent (live permit set, 2026-09-21)',()=>{
   const sent={source:'Permit Plans - Gambardella.pdf',page:8};
@@ -98,4 +124,17 @@ test('Text from a PDF is made well formed before it is sent to a reader (live Co
   const out=wellFormed(broken);
   assert.equal(out.isWellFormed(),true);assert.match(out,/Budget .* line kept\nnext/);
   assert.equal([...out].some(c=>c.charCodeAt(0)<9),false,'control bytes are removed');
+});
+
+test('a customer revision retains its own citation instead of becoming a claim about an old PDF',async()=>{
+ const {bindTypedTakeoffSources,readTakeoffs}=await import('../lib/p5/documentLedger.ts');
+ const text='Change the garage to 24 by 24 feet, 576 SF, superseding the PDF garage size.';
+ const garage={...takeoff,id:'garage',component:'garage',description:'Attached garage',quantity:576,unit:'SF',evidence:text,sources:[{source:'typed scope',page:1,sheet:'',revision:''}]};
+ bindTypedTakeoffSources([garage],text);assert.equal(garage.quantity,576);assert.deepEqual(garage.sources,[{source:'typed scope',page:0,sheet:'',revision:''}]);assert.doesNotThrow(()=>readTakeoffs([garage]));
+ const drywall={...garage,id:'patch',component:'drywall',quantity:2.25,evidence:'user: Change to 18x18 in; (18/12)x(18/12)=2.25 SF',sources:[{source:'user revision',page:1,sheet:'',revision:''}]};
+ bindTypedTakeoffSources([drywall],'Change the drywall hole to 18 by 18 inches, superseding the PDF 12 by 12 inches.');
+ assert.equal(drywall.quantity,2.25);assert.equal(drywall.sources[0].page,0);
+ const invented={...drywall,quantity:144,evidence:'user: Change to 18x18 in; area 144 SF'};
+ bindTypedTakeoffSources([invented],'Change the drywall hole to 18 by 18 inches.');assert.equal(invented.quantity,null);assert.equal(invented.basis,'uncertain');
+ assert.throws(()=>readTakeoffs([{...garage,sources:[{source:'drawing.pdf',page:0,sheet:'',revision:''}]}]),/page reference/);
 });

@@ -1,10 +1,11 @@
-import {instructionPrompts,instructionPromptText} from './clarifications.ts';
+import {instructionPrompts,instructionPromptText,answeredScopeQuestion} from './clarifications.ts';
 import {ESTIMATOR_BRAND} from './brand.ts';
 import {SCOPE_FIELDS,mergeScopeFacts,validateAnswer,type ScopeAnswers,type ScopeField,type ScopeExtraction,type ScopeConflict} from './scope.ts';
-import {dynamicScopeFields,questionContext,scopeFieldApplies,scopePromptApplies} from './dynamicQuestions.ts';
+import {dynamicScopeFields,questionContext,scopeFieldApplies,scopePromptApplies,unresolvedScopeAnswer,needsWorkDefinition} from './dynamicQuestions.ts';
 import {serviceEvidenceSupports} from './serviceSignals.ts';
+import {atomicInstructionQuestions,cabinetQuestionField,projectQuestionField} from './atomicQuestions.ts';
 
-export interface ScopeQuestion {field:ScopeField;label:string;reason:string;values?:string[];conflict?:boolean;instructionId?:string;detail?:string;handoff?:{label:string;url:string}}
+export interface ScopeQuestion {semanticId?:string;field:ScopeField;label:string;reason:string;values?:string[];choiceEvidence?:{value:string;source:string;quote:string}[];conflict?:boolean;instructionId?:string;detail?:string;handoff?:{label:string;url:string}}
 export function sameAnswer(field:ScopeField,a:string,b:string){
   if(SCOPE_FIELDS[field].kind==='number')return Number(a.replaceAll(',',''))===Number(b.replaceAll(',',''));
   return a.trim().toLowerCase()===b.trim().toLowerCase();
@@ -63,12 +64,16 @@ export function materialScopeFields(answers:ScopeAnswers,pricedFields:ScopeField
   return dynamicScopeFields(deriveScopeAnswers(answers),extraction,pricedFields,sourceText);
 }
 const detailQuestions:Partial<Record<ScopeField,string>>={
+  fixtures:'Which fixtures are being replaced, and how many of each?',
+  utilities:'Which utility connections are needed, and approximately how long is each run? Include water, sewer and power; tell us if any details are unknown.',
+  site:'What are the actual site slope, soil and access conditions? Tell us what is known and what still needs verification.',
   cabinetRoom:'Which room are the cabinets for?',cabinetBaseLf:'How many linear feet of base cabinets are needed?',
   cabinetUpperLf:'How many linear feet of wall cabinets are needed?',cabinetTallLf:'How many linear feet of tall cabinets are needed? Enter 0 if there are none.',
   garageIncluded:'Does the new home estimate include a garage?',garageSqft:'How many square feet is the included garage?',
   coveredOutdoorSqft:'How many square feet of covered outdoor space are included?',laborHours:'How many hours should this hourly work allowance cover?',
   projectMonths:'What construction duration should this estimate allow for?',rooms:'How many rooms are included?',bathrooms:'How many bathrooms are included?',stories:'How many stories are included?',
   flooringSqft:'About how many square feet of flooring are being installed?',tileSqft:'How many square feet of tile are included? Keep floor, wall and backsplash areas clear in your answer.',
+  wallTileSqft:'How many square feet of wall tile are included? Keep floor tile separate.',
   demolitionSqft:'About how large is the area being demolished?',trimLf:'About how many linear feet of trim or baseboard are included?',
 };
 export function questionReason(field:ScopeField,answers:ScopeAnswers):string{
@@ -93,21 +98,31 @@ export function questionForField(field:ScopeField,answers:ScopeAnswers):ScopeQue
  * only that a detail is needed, rather than naming the wrong thing. */
 const FIELD_WORDS:Partial<Record<ScopeField,RegExp>>={demolitionSqft:/demol|tear[- ]?out|gutt?(?:ed|ing)\b/i,tileSqft:/tile|backsplash/i,flooringSqft:/floor/i,trimLf:/trim|baseboard|crown|casing|mould|mold/i,cabinetBaseLf:/cabinet|vanit/i,cabinetUpperLf:/cabinet/i,cabinetTallLf:/cabinet|pantry/i,garageSqft:/garage/i,coveredOutdoorSqft:/patio|porch|deck|outdoor|covered/i,countertopSqft:/counter|worktop|bench/i,sqft:/area|square|size|living|footage|large|big/i};
 export const clarificationLabel=(field:ScopeField,question:string)=>FIELD_WORDS[field]&&!FIELD_WORDS[field]!.test(question)?'Project detail':SCOPE_FIELDS[field].label;
-function conflictSourceDetail(conflict:ScopeConflict,extraction:ScopeExtraction|null){
+function conflictQuestion(conflict:ScopeConflict,extraction:ScopeExtraction|null):ScopeQuestion{
   const facts=(extraction?.facts||[]).filter(f=>f.field===conflict.field&&conflict.values.some(value=>sameAnswer(f.field,value,f.value)));
-  const evidence=[...new Set(facts.map(f=>`${f.value} (${f.source}): ${f.evidence}`).filter(Boolean))];
-  return evidence.length?`Source details: ${evidence.join(' | ')}`:undefined;
+  const choiceEvidence=facts.filter((fact,index)=>facts.findIndex(other=>other.value===fact.value&&other.source===fact.source&&other.evidence===fact.evidence)===index)
+    .map(fact=>({value:fact.value,source:fact.source,quote:fact.evidence}));
+  const label=SCOPE_FIELDS[conflict.field].label;
+  return {field:conflict.field,label,reason:`Please confirm the ${label.toLowerCase()} to use for this estimate.`,values:conflict.values,conflict:true,choiceEvidence,detail:conflict.explanation};
+}
+/** The same source question can arrive as both an instruction and a field
+ * clarification. Compare its actual question, without its pricing explanation. */
+function sameQuestionWording(left:string,right:string):boolean{
+ const core=(value:string)=>value.split('?')[0].normalize('NFKC').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+ return Boolean(core(left))&&core(left)===core(right);
 }
 export function scopeQuestions(input:ScopeAnswers,extraction:ScopeExtraction|null,conflicts:ScopeConflict[]=[],skipped:ScopeField[]=[],pricedFields:ScopeField[]=[],sourceText=''):ScopeQuestion[]{
   const answers=deriveScopeAnswers(input);
+  if(extraction?.clarifications)extraction={...extraction,clarifications:extraction.clarifications.flatMap(q=>atomicInstructionQuestions(q.question,answers,conflicts).map(question=>({...q,question,field:cabinetQuestionField(question)||projectQuestionField(question,answers)||q.field}))).filter(q=>conflicts.some(conflict=>conflict.field===q.field)||extraction?.conflicts.some(conflict=>conflict.field===q.field)||!answeredScopeQuestion(q.question,answers,sourceText))};
   const context=questionContext(answers,extraction,sourceText);
   const applicableConflicts=conflicts.filter(c=>scopeFieldApplies(c.field,context));
   // Resolve the project type before calculating the next service-specific question.
   const serviceConflict=applicableConflicts.find(c=>c.field==='service');
-  if(serviceConflict)return [{field:'service',label:SCOPE_FIELDS.service.label,reason:serviceConflict.explanation,values:serviceConflict.values,conflict:true,detail:conflictSourceDetail(serviceConflict,extraction)}];
+  if(serviceConflict)return [conflictQuestion(serviceConflict,extraction)];
   if(!answers.service&&!applicableConflicts.length)return [questionForField('service',answers)];
+  if(needsWorkDefinition(answers,extraction,sourceText))return [questionForField('taskList',answers)];
   const relevant=new Set(materialScopeFields(answers,pricedFields,extraction,sourceText));
-  const questions:ScopeQuestion[]=applicableConflicts.map(c=>({field:c.field,label:SCOPE_FIELDS[c.field].label,reason:c.explanation,values:c.values,conflict:true,detail:conflictSourceDetail(c,extraction)}));
+  const questions:ScopeQuestion[]=applicableConflicts.map(c=>conflictQuestion(c,extraction));
   for(const q of instructionPrompts(extraction,answers,sourceText)){
     if(!scopePromptApplies(q.field,instructionPromptText(q),context))continue;
     if(q.field&&questions.some(existing=>existing.field===q.field))continue;
@@ -117,15 +132,22 @@ export function scopeQuestions(input:ScopeAnswers,extraction:ScopeExtraction|nul
     questions.push({field:q.field||'estimatingInstructions',label:q.field?SCOPE_FIELDS[q.field].label:'One scope detail',reason:q.question,detail:q.detail,values:q.values,...(!q.field?{instructionId:q.id}:{})});
   }
   const uncertain=(extraction?.facts||[]).filter(f=>Number.isFinite(f.confidence)&&f.confidence<.85&&f.confidence>=.4&&f.basis!=='visual'&&f.basis!=='inferred'&&!validateAnswer(f.field,f.value)&&!answers[f.field]?.trim()&&relevant.has(f.field)&&(f.field!=='service'||serviceEvidenceSupports(f.value,f.evidence)));
-  for(const fact of uncertain)if(!questions.some(q=>q.field===fact.field)&&!skipped.includes(fact.field))questions.push({field:fact.field,label:SCOPE_FIELDS[fact.field].label,reason:`${SCOPE_FIELDS[fact.field].label}: we found ${fact.value} in ${fact.source}. Is that correct?`,values:[fact.value]});
+  for(const fact of uncertain)if(!questions.some(q=>q.field===fact.field)&&!skipped.includes(fact.field)){
+    const unresolved=/\b(?:not specified|unspecified|unknown|not provided|to be determined|TBD)\b/i.test(fact.value);
+    questions.push(unresolved?questionForField(fact.field,answers):{field:fact.field,label:SCOPE_FIELDS[fact.field].label,reason:`${SCOPE_FIELDS[fact.field].label}: we found ${fact.value} in ${fact.source}. Is that correct?`,values:[fact.value]});
+  }
   // Keep the reader's project-specific wording, including which room or component
   // is missing. Replacing it with a generic numeric prompt loses that context.
-  for(const q of extraction?.clarifications||[])if(relevant.has(q.field)&&!answers[q.field]?.trim()&&!skipped.includes(q.field)&&!questions.some(x=>x.field===q.field))questions.push({field:q.field,label:clarificationLabel(q.field,q.question),reason:SCOPE_FIELDS[q.field].kind==='number'&&clarificationLabel(q.field,q.question)!=='Project detail'&&!/how (?:many|much|long|wide|large)|number of|square feet|linear feet|footage/i.test(q.question)?questionReason(q.field,answers):q.question,detail:q.reason});
+  for(const q of extraction?.clarifications||[]){
+    if(relevant.has(q.field)&&unresolvedScopeAnswer(answers[q.field])&&!skipped.includes(q.field)&&!questions.some(x=>x.field===q.field||sameQuestionWording(x.reason,q.question)))questions.push({field:q.field,label:clarificationLabel(q.field,q.question),reason:SCOPE_FIELDS[q.field].kind==='number'&&clarificationLabel(q.field,q.question)!=='Project detail'&&!/how (?:many|much|long|wide|large)|number of|square feet|linear feet|footage/i.test(q.question)?questionReason(q.field,answers):q.question,detail:q.reason});
+  }
   for(const field of relevant)if(!questions.some(q=>q.field===field)&&!skipped.includes(field))questions.push(questionForField(field,answers));
   return questions.map(q=>{
     const allowed=choiceValues(q.field,answers);
     const values=q.field==='finish'?allowed:q.values?.length?q.values:allowed;
-    return {...q,...(values?.length?{values}:{}),...(q.reason.length>240?{reason:`Please confirm ${q.label.toLowerCase()}.`,detail:[q.reason,q.detail].filter(Boolean).join(" ")}:{})};
+    const mixedSitePrompt=q.field==='site'&&/\butilit(?:y|ies)\s*\/\s*site\b|\bsite\s*\/\s*utilit(?:y|ies)\b/i.test(q.reason);
+    const reason=mixedSitePrompt||q.field!=='estimatingInstructions'&&!q.conflict&&!/\?|^(?:what|which|how|where|is|are|do|does|will|can|could|would|should|please|confirm|describe|provide|select|choose)\b/i.test(q.reason)?questionReason(q.field,answers):q.reason;
+    return {...q,reason,...(values?.length?{values}:{}),...(reason!==q.reason?{detail:[q.reason,q.detail].filter(Boolean).join(' ')}:{}),...(q.reason.length>240?{reason:`Please confirm ${q.label.toLowerCase()}.`,detail:[q.reason,q.detail].filter(Boolean).join(" ")}:{})};
   });
 }
 export function validateScopeAnswer(field:ScopeField,value:string){

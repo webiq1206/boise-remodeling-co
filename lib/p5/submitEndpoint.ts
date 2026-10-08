@@ -1,4 +1,10 @@
+import {qaProvidersRestricted,QA_PROVIDER_HOLD} from './qaProviderPolicy.ts';
+import {publicProjectMode} from './intakePolicy.ts';
+import {hasIntakeTransferHold,TRANSFER_HOLD_MESSAGE} from './intakeTransferGuards.ts';
+import {priceDeterministicScope} from './scopePricing.ts';
+import {withSupportedServiceBook} from './planningBooks.ts';
 import {HANDOFF_ISSUE} from './scopePricing.ts';
+import {ESTIMATOR_VERSION} from './version.ts';
 import {withRateCard} from './rateCard.ts';
 import {finishTier,priceBookRates,PRICE_BOOK_VERSION} from './priceBook.ts';
 import { query } from "./database.ts";
@@ -18,6 +24,10 @@ import {customerPresentation,HIDE_CUSTOMER_UNIT_RATES} from './presentation.ts';
 import {recordEvent} from './events.ts';
 import {issueRecord,buildEstimateDocument,type EstimateBrand} from './estimateDocument.ts';
 import {legalIdentityLine} from './brandIdentity.ts';
+import {restoreSavedCustomerCopy} from './savedCustomerCopy.ts';
+import {withQaWriteFence,assertQaOperationAccess} from './qaOperationFence.ts';
+import {isOperatorQaCase} from './qaCases.ts';
+import {qaOperationContext} from './qaOperationContext.ts';
 // Every public response uses the one customer boundary, including responses
 // rebuilt from a previously saved estimate.
 const publicResult=(estimate:unknown)=>customerPresentation(estimate,{hideUnitRates:HIDE_CUSTOMER_UNIT_RATES});
@@ -31,7 +41,8 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
     if(!draft)throw new DraftError("Draft not found.",404);
     requireEstimateContact(draft.contact);
     if(draft.status==="submitted"){
-      const [row]=await query("SELECT customer_estimate,submitted_at FROM p5_estimator_drafts WHERE id=$1",[id]);
+      const [row]=await query("SELECT customer_estimate,internal_estimate,submitted_at FROM p5_estimator_drafts WHERE id=$1",[id]);
+      if(row?.customer_estimate)row.customer_estimate=restoreSavedCustomerCopy(row.customer_estimate,row.internal_estimate);
       // A status check after submission drives any delivery still queued; an autoscale host has no CPU between requests.
       // Delivery is scoped to this saved revision so a status check never drives another revision's queue.
       await processOutbox({draftId:id,revision:draft.revision,limit:12}).catch(()=>undefined);
@@ -43,34 +54,48 @@ export async function postSubmission(request:Request,schedule?:(task:()=>Promise
       const delivered=await deliveryStatus(id).catch(error=>{console.error(`[p5-delivery] status lookup failed for draft ${id}:`,error instanceof Error?error.message:error);return [];});
             return json({accepted:false,duplicate:true,id,...(saved?{result:saved}:{}),...(row?.customer_estimate?{document:estimateDocument(id,row.customer_estimate,row.submitted_at?new Date(row.submitted_at).toISOString():null)}:{}),delivery:delivered});
     }
+    if(publicProjectMode(brand.id,draft.answers.service)==='review'){
+      const operation=qaOperationContext();
+      if(!operation?.active||operation.draftId!==id||!isOperatorQaCase(id))return json({reviewRequired:true,error:'Review your project request and send it to the team before an estimate is prepared.'},409);
+      // Only the authenticated operator controller supplies this leased context.
+      // Existing QA provider, contact and per-request spend fences remain in force.
+      await assertQaOperationAccess(id);
+    }
     const body=JSON.parse(new TextDecoder().decode(await limitedBody(request,4000)));
     if(body.revision!==draft.revision)throw new DraftError("Save the latest scope before submitting.",409);
     // A background submission is recorded before any work starts, so it finishes (saved estimate, email)
     // even if this page is closed: the estimate driver completes it without the browser.
     const notifyEmail=typeof body.notifyEmail==='string'?body.notifyEmail.trim().slice(0,200):'';
     if(notifyEmail&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(notifyEmail))throw new DraftError('Enter a valid email address.');
-    if(body.background===true){await recordSubmitRequest(id,draft.revision,body.notify===true,notifyEmail);kickDriver('submit');}
+    const deterministicOnly=await qaProvidersRestricted(id);
+    if(deterministicOnly&&(body.background===true||body.notifyOnly===true))return json({qaProviderHold:true,error:QA_PROVIDER_HOLD},422);
+    if(body.background===true){await recordSubmitRequest(id,draft.revision,body.notify===true,notifyEmail,body.retry===true);kickDriver('submit');}
     // "Email me when it's ready": the request is recorded and the customer may leave now.
     if(body.notifyOnly===true)return json({notified:true,email:notifyEmail||draft.contact.email||''});
     return await completeSubmission(id,draft,{background:body.background===true,retry:body.retry===true},schedule);
   }catch(error){if(isPricingPending(error))return error.retryAfterMs===0?json({error:error.message},503):json({pending:true,message:error.message,retryAfterMs:error.retryAfterMs},202);return failed(error);}
 }
 /** Record that the customer asked for this revision's estimate; the driver finishes it if they leave. */
-export async function recordSubmitRequest(id:string,revision:number,notify:boolean,notifyEmail=''){
-  const payload={state:'pending',revision,notify,...(notifyEmail?{notifyEmail}:{}),requestedAt:new Date().toISOString()};
-  // The same revision keeps its state and any address already given (the page's own status polls carry
-  // none); notify is sticky once asked for. A new revision starts a fresh request.
-  await query(`INSERT INTO p5_estimator_work(draft_id,work_key,payload) VALUES($1,'submit-request-v1',$2::jsonb)
+export async function recordSubmitRequest(id:string,revision:number,notify:boolean,notifyEmail='',retry=false){
+  const payload={state:'pending',revision,engineVersion:ESTIMATOR_VERSION,notify,...(notifyEmail?{notifyEmail}:{}),requestedAt:new Date().toISOString()};
+  // Same-engine polls preserve state. A new engine or explicit retry restarts
+  // completion for this revision, keeping its requested delivery preferences.
+  const accepted=await withQaWriteFence(id,()=>query(`WITH owned AS (SELECT id FROM p5_estimator_drafts WHERE id=$1 AND revision=$3 AND status='draft' FOR UPDATE)
+    INSERT INTO p5_estimator_work(draft_id,work_key,payload) SELECT id,'submit-request-v1',$2::jsonb FROM owned
     ON CONFLICT(draft_id,work_key) DO UPDATE SET payload=CASE
-      WHEN (p5_estimator_work.payload->>'revision')::int=$3 THEN p5_estimator_work.payload
+      WHEN (p5_estimator_work.payload->>'revision')::int=$3 THEN
+        (CASE WHEN p5_estimator_work.payload->>'engineVersion'=$6 AND NOT $7 THEN p5_estimator_work.payload
+          ELSE $2::jsonb || CASE WHEN p5_estimator_work.payload ? 'notifyEmail' THEN jsonb_build_object('notifyEmail',p5_estimator_work.payload->>'notifyEmail') ELSE '{}'::jsonb END END)
         ||jsonb_build_object('notify',coalesce((p5_estimator_work.payload->>'notify')::boolean,false) OR $4)
         ||CASE WHEN $5::text<>'' THEN jsonb_build_object('notifyEmail',$5::text) ELSE '{}'::jsonb END
-      ELSE $2::jsonb END,updated_at=now()`,[id,JSON.stringify(payload),revision,notify,notifyEmail]);
+      ELSE $2::jsonb END,updated_at=now() RETURNING draft_id`,[id,JSON.stringify(payload),revision,notify,notifyEmail,ESTIMATOR_VERSION,retry]));
+  if(!accepted.length)throw new DraftError('The project changed before its estimate request was saved. Reload the saved project before retrying.',409);
 }
 /** Price (or wait for) a revision and, once it has a validated range, save it and queue its delivery.
  * Shared by the customer's request and the background driver, so the outcome is the same either way. */
 export async function completeSubmission(id:string,draft:Awaited<ReturnType<typeof readDraft>>&object,opts:{background:boolean;retry:boolean;holdMs?:number},schedule?:(task:()=>Promise<void>)=>void){
   try{
+    if(await hasIntakeTransferHold(id,query))throw new DraftError(TRANSFER_HOLD_MESSAGE,409);
     if(!(brand.services as readonly string[]).includes(String(draft.answers.service)))throw new DraftError("Choose a service offered by this company.");
     if(!draft.reviewed)throw new DraftError("Review and confirm the extracted scope before submitting.");
     const [policy]=await query("SELECT payload FROM p5_estimator_policy WHERE id='current'");
@@ -85,6 +110,10 @@ export async function completeSubmission(id:string,draft:Awaited<ReturnType<type
     // Ask for a quantity the planning model cannot work without now, before any pricing work starts.
     const needed=pricingPreflight(draft.reviewed,configuration);
     if(needed.length)return json({pricingReviewRequired:true,needsCustomerInput:true,handoff:false,preflight:true,missingFields:needed,verificationItems:[],error:PREFLIGHT_MESSAGE},422);
+    const deterministicOnly=await qaProvidersRestricted(id);
+    if(deterministicOnly&&opts.background)return json({qaProviderHold:true,error:QA_PROVIDER_HOLD},422);
+    const deterministic=deterministicOnly?priceDeterministicScope(draft.reviewed,withSupportedServiceBook(configuration,draft.reviewed.answers.service||'')):null;
+    if(deterministicOnly&&!deterministic)return json({qaProviderHold:true,providerCalls:0,error:QA_PROVIDER_HOLD},422);
     const job=opts.background?await queuedJob({kind:'pricing',draft,configuration},opts.retry,opts.holdMs):null;
     // A stopped job preserves the draft. Do not promise a human follow-up: this branch creates no delivery record.
     if(job&&job.state==='failed'){console.error(`[p5-pricing] handoff for draft ${id}: ${job.progress}`);return json({pricingReviewRequired:true,needsCustomerInput:false,handoff:true,missingFields:[],verificationItems:[],error:HANDOFF_ISSUE},422);}
@@ -94,12 +123,12 @@ export async function completeSubmission(id:string,draft:Awaited<ReturnType<type
     // priced inline (no background job) may use the route's own time allowance.
     const customerKey=`${draft.contact.email.trim().toLowerCase()}|${draft.contact.name.trim().toLowerCase()}`;
     const pricingIdentity={draftId:id,customerKey,revision:draft.revision};
-    const priced=job?job.result:await priceSavedScope(id,draft.reviewed,configuration,new Date(),Date.now()+250_000,pricingIdentity);
+    const priced=deterministic|| (job?job.result:await priceSavedScope(id,draft.reviewed,configuration,new Date(),Date.now()+250_000,pricingIdentity));
     const publicCustomer=publicResult(priced.customer);
     if(!priced.customer.range){
       // Keep incomplete pricing available to the authenticated admin, but do
       // not submit it or create customer-email/CRM delivery records.
-      const retained=await query("UPDATE p5_estimator_drafts SET internal_estimate=$2 WHERE id=$1 AND revision=$3 AND status='draft' RETURNING id",[id,JSON.stringify(priced.internal),draft.revision]);
+      const retained=await withQaWriteFence(id,()=>query("UPDATE p5_estimator_drafts SET internal_estimate=$2 WHERE id=$1 AND revision=$3 AND status='draft' RETURNING id",[id,JSON.stringify(priced.internal),draft.revision]));
       if(!retained.length)throw new DraftError("Your project changed during pricing. Save the latest details and retry.",409);
       const missing=('missingInformation' in priced.internal?priced.internal.missingInformation:[])||[];
       const missingFields=missingScopeFields(missing);
@@ -136,15 +165,23 @@ export async function completeSubmission(id:string,draft:Awaited<ReturnType<type
     const revisionSummary=Number.isInteger(revisionOf)?changeSummary(await archivedVersion(id,revisionOf).catch(()=>undefined),priced.customer):[];
     const record={draftId:id,revision:draft.revision,brand:brand.name,estimator:"p5-policy",contact,scope:draft.reviewed,...priced,customer:{...priced.customer,...(revisionSummary.length?{revisionSummary,revisionOf}:{}),issue:{...issue,contact:{...issue.contact,email:issue.contact?.email||notifyEmail}}}};
     const accepted=await enqueueSubmission(id,draft.revision,record);
+    if(!accepted){
+      const [persisted]=await query("SELECT status,revision,customer_estimate,internal_estimate,submitted_at FROM p5_estimator_drafts WHERE id=$1",[id]);
+      if(persisted?.status!=='submitted'||Number(persisted.revision)!==draft.revision||!persisted.customer_estimate)throw new DraftError('The project changed before this estimate was saved. Your work is retained; reload its saved status before retrying.',409);
+      const saved=restoreSavedCustomerCopy(persisted.customer_estimate,persisted.internal_estimate);
+      return json({accepted:false,duplicate:true,id,result:publicResult(saved),document:estimateDocument(id,saved,persisted.submitted_at?new Date(persisted.submitted_at).toISOString():null),delivery:await deliveryStatus(id)});
+    }
     // Persistence is acknowledged separately from delivery. A transport failure
     // never erases the submission or tells a visitor to create a duplicate.
     const deliver=async()=>{await processOutbox({draftId:id,revision:draft.revision,limit:12}).catch(()=>undefined);};
     // An autoscale host gives a request no CPU after its response, so delivery
     // runs inside this request within a bounded wait; anything left continues
     // after the response and on the visitor's next status check.
-    const started=deliver();
-    await Promise.race([started,new Promise<void>(resolve=>setTimeout(resolve,DELIVERY_WAIT_MS))]);
-    if(schedule)schedule(()=>started);
+    if(!qaOperationContext()){
+      const started=deliver();
+      await Promise.race([started,new Promise<void>(resolve=>setTimeout(resolve,DELIVERY_WAIT_MS))]);
+      if(schedule)schedule(()=>started);
+    }
     return json({accepted,duplicate:!accepted,id,result:publicCustomer,document:estimateDocument(id,record.customer),delivery:await deliveryStatus(id)});
   }catch(error){if(isPricingPending(error))return error.retryAfterMs===0?json({error:error.message},503):json({pending:true,message:error.message,retryAfterMs:error.retryAfterMs},202);return failed(error);}
 }

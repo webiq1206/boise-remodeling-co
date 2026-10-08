@@ -25,6 +25,73 @@ const adjustmentEvidence={url:urls[0],publishedAt:'',dateBasis:'retrieved' as co
 const purchaseAdjustments={taxRate:0,freightPerUnit:0,taxOnFreight:false,taxEvidence:adjustmentEvidence,freightEvidence:adjustmentEvidence};
 const researched={rates:[{taskId:'overlay',description:'Protective overlay',unit:'LF',quantity:10,quantityEvidence:'Ten feet requested',basis:'material-purchase',includes:'overlay material',excludes:'',landedCost:purchaseAdjustments,sources:[source(urls[0],10,20),source(urls[1],20,30)]}],issues:[]};
 const replies=(values:unknown[]):PricingRequest=>{const first=values[0] as {tasks:typeof task[]};const queue=[{tasks:first.tasks.map(({id,description,evidence})=>({id,description,evidence})),issues:[]},...values];return async()=>({value:queue.shift(),sourceUrls:urls});};
+test('remaining-component remaps retain priced labor instead of replacing it with unpriced catalog references',async()=>{
+ const {retainMappedComponents}=await import('../lib/p5/scopePricing.ts');
+ const prior={...task,existingLineIds:[],additions:[{code:'BASE-L',quantity:9,quantityEvidence:'9 LF'},{code:'WALL-L',quantity:12,quantityEvidence:'12 LF'}]};
+ const next={...prior,additions:[],existingLineIds:['BASE-L','WALL-L'],researchDescription:'Contractor-supplied installation consumables'};
+ const kept=retainMappedComponents(prior,next);
+ assert.deepEqual(kept.additions,prior.additions);assert.deepEqual(kept.existingLineIds,[]);
+ const corrected=retainMappedComponents(prior,{...next,additions:[{code:'BASE-L',quantity:10,quantityEvidence:'Revised 10 LF'}]});
+ assert.deepEqual(corrected.additions.map(item=>item.quantity),[12,10]);
+});
+test('minor support work produces an audited estimate without item-specific web research',async()=>{
+ const cleanup={...extra,id:'cleanup',description:'Minor cleanup and packaging disposal',evidence:'Include minor cleanup and packaging disposal',researchDescription:'Minor cleanup and packaging disposal'};
+ const request=replies([{tasks:[task,cleanup],issues:[]},{coveredTaskIds:['cabinets','cleanup'],issues:[]}]);
+ let searches=0;
+ const result=await priceCompleteScope({...scope,text:scope.text+' Include minor cleanup and packaging disposal.'},config,async(system,input,search,...rest)=>{if(search)searches++;return request(system,input,search,...rest);},now);
+ assert.ok(result.customer.range);
+ assert.equal(searches,0);
+ assert.equal(result.customer.lineItems.filter(line=>line.id==='minor-work-allowance').length,1);
+ assert.equal(result.customer.lineItems.find(line=>line.id==='minor-work-allowance')?.pricingStatus,'estimated-allowance');
+ assert.equal((result.internal as any).currentCostsConfirmed,false);
+});
+test('fresh minor-work pricing carries typed advisories through the complete audit pipeline',async()=>{
+ const cleanup={...extra,id:'cleanup',description:'Minor cleanup and packaging disposal',evidence:'Include minor cleanup and packaging disposal',researchDescription:'Minor cleanup and packaging disposal'};
+ const fallback=replies([{tasks:[task,cleanup],issues:[]},{coveredTaskIds:['cabinets','cleanup'],issues:[]}]);
+ let audits=0,searches=0;
+ const result=await priceCompleteScope({...scope,text:scope.text+' Include minor cleanup and packaging disposal.'},config,async(system,input,search,...rest)=>{
+  if(search)searches++;
+  const data=input as Record<string,unknown>;
+  if(Array.isArray(data.assumptionLedger)){
+   audits++;
+   return {value:{coveredTaskIds:['cabinets','cleanup'],issues:[],notes:[],resolvedIssues:[],advisoryReview:{
+    assumptions:(data.assumptionLedger as {id:string}[]).map(entry=>({id:entry.id,kind:'advisory',basis:'scope-assumption',message:'Confirm the supporting-work budget against actual site conditions before a firm proposal.',taskIds:[],lineIds:[],retiredCodes:[]})),
+    advisories:[{message:'Confirm convenient access for cleanup.',taskIds:['cleanup'],lineIds:['minor-work-allowance']}],blockers:[],
+   }},sourceUrls:[]};
+  }
+  return fallback(system,input,search,...rest);
+ },now);
+ assert.equal(audits,1);assert.equal(searches,0);assert.ok(result.customer.range);
+ assert.match(JSON.stringify(result.customer),/Confirm convenient access/);
+ assert.doesNotMatch(JSON.stringify(result.customer),/Earlier scope and pricing assumptions remain pending/);
+ assert.equal((result.internal as any).scopePricing.advisoryProvenance.length,1);
+});
+test('a requested shared allowance exists before its first audit and carries no stale invalid-reference finding',async()=>{
+ const cleanup={...extra,id:'cleanup',description:'Minor cleanup and packaging disposal',evidence:'Include minor cleanup and packaging disposal',researchDescription:'',existingLineIds:['minor-work-allowance']};
+ const request=replies([{tasks:[task,cleanup],issues:[]},{coveredTaskIds:['cabinets','cleanup'],issues:[]}]);
+ const result=await priceCompleteScope({...scope,text:scope.text+' Include minor cleanup and packaging disposal.'},config,async(system,input,search,...rest)=>{
+  assert.equal(search,false);
+  if((input as any).priorPricingIssues){
+   assert.ok(!(input as any).priorPricingIssues.some((issue:string)=>issue.includes('invalid existing price reference')));
+   const pool=(input as any).additionalRules.find((rule:any)=>rule.id==='minor-work-allowance');
+   assert.ok(pool.unitCost>0);assert.match(pool.evidence.reference,/Minor cleanup and packaging disposal/);
+  }
+  return request(system,input,search,...rest);
+ },now);
+ assert.ok(result.customer.range,JSON.stringify(result.internal.scopePricing));
+ assert.equal(result.customer.lineItems.filter(line=>line.id==='minor-work-allowance').length,1);
+});
+test('a separate-evidence demand cannot veto a real shared minor-work budget or trigger another research loop',async()=>{
+ const cleanup={...extra,id:'cleanup',description:'Minor cleanup and packaging disposal',evidence:'Minor cleanup and packaging disposal',researchDescription:'Minor cleanup and packaging disposal'};
+ const issue='cleanup: No independently supported labor price. Must research a separate labor rate despite the shared allowance.';
+ const request=replies([{tasks:[task,cleanup],issues:[]},{coveredTaskIds:['cabinets'],issues:[issue]}]);
+ let calls=0;
+ const result=await priceCompleteScope({...scope,text:scope.text+' Include minor cleanup and packaging disposal.'},config,async(...args)=>{calls++;assert.equal(args[2],false);assert.ok(calls<=3,'No unnecessary repair or research request');return request(...args);},now);
+ assert.ok(result.customer.range,JSON.stringify(result.internal.scopePricing));
+ assert.equal(result.customer.lineItems.filter(line=>line.id==='minor-work-allowance').length,1);
+ assert.equal((result.internal.scopePricing as any).policyDecisions[0].issue,issue);
+ assert.ok(!JSON.stringify(result.customer).includes('No independently supported'));
+});
 test('an unmapped missing rate automatically enters evidenced research without a model opt-in',async()=>{
  const mapping={tasks:[task,{...extra,researchDescription:'',additions:[{code:'MISSING',quantity:10,quantityEvidence:'10 LF'}]}],issues:[]};
  const result=await priceCompleteScope(scope,config,replies([mapping,researched,{coveredTaskIds:['cabinets','overlay'],issues:[]}]),now);
@@ -112,7 +179,7 @@ test('a separately priced vanity top cannot overlap its cabinet package and fauc
  assert.deepEqual(laborOnly.additions,[]);
  assert.match(laborOnly.researchDescription,/Faucet installation labor only/);
 });
-test('the 60-inch double vanity prices one cabinet, separate quartz, two sinks and faucets with a cited nail allowance',async()=>{
+for(const retryTimeout of [false,true])test(`the double vanity budgets minor nails without a comparison that ${retryTimeout?'times out':'lacks independence'}`,async()=>{
  const vanityScope:ReviewedScope={...scope,text:'Supply and install one 60-inch double-sink vanity cabinet, separate 8.33 SF quartz top, two sinks and two faucets. Contractor supplies installation nails.',answers:{service:'bathroom',location:'Boise'}};
  const fixtureRates=[
   {code:'PB-12-41-03',description:'Double vanity cabinet-only 60-72 in, installed, excludes top and sinks',type:'Subcontractor',unit:'LF',amount:350},
@@ -142,21 +209,22 @@ test('the 60-inch double vanity prices one cabinet, separate quartz, two sinks a
  let searches=0;
  const priced=await priceCompleteScope(vanityScope,vanityConfig,async(_instructions,input,search)=>{
   const data=input as Record<string,unknown>;
-  if(search){searches++;return {value:cited,sourceReport:report,sourceUrls:cited.rates[0].sources.map(s=>s.url)};}
+  if(search){searches++;if(retryTimeout&&searches>1)throw new PricingStageTimeout('pricing-stage-exhausted');return {value:cited,sourceReport:report,sourceUrls:cited.rates[0].sources.map(s=>s.url)};}
   if(data.correctionInstruction)return {value:cited,sourceUrls:[]};
   if(data.taskBatch)return {value:{tasks:mapped.filter(t=>(data.taskBatch as {id:string}[]).some(i=>i.id===t.id)),issues:[],notes:[],replacements:[],removeExclusions:[]},sourceUrls:[]};
   if(data.priorPricingIssues)return {value:{coveredTaskIds:mapped.map(t=>t.id),issues:[],notes:[],resolvedIssues:[]},sourceUrls:[]};
   return {value:{tasks:mapped.map(({id,description,evidence})=>({id,description,evidence})),issues:[],notes:[],dependencies:[]},sourceUrls:[]};
  },now);
- assert.equal(searches,3,'independent evidence is sought before using the provisional fallback');
+ assert.equal(searches,0,'minor supplies do not require supplier comparison or encounter its timeout');
  assert.ok(priced.customer.range,'supported preliminary allowance must not end in a manual handoff: '+JSON.stringify({issues:(priced.internal as any).scopePricing?.issues,verificationItems:priced.customer.verificationItems}));
  const rules=(priced.internal as any).costBookSnapshot.rules.filter((r:any)=>mapped.some(t=>t.id===r.scopeTaskId));
  assert.deepEqual(rules.filter((r:any)=>r.scopeTaskId==='vanity').map((r:any)=>r.quantity.fixed),[5]);
  assert.deepEqual(rules.filter((r:any)=>r.scopeTaskId==='top').map((r:any)=>r.quantity.fixed),[8.33]);
  assert.deepEqual(rules.filter((r:any)=>r.scopeTaskId==='sinks').map((r:any)=>r.quantity.fixed),[2,2]);
  assert.deepEqual(rules.filter((r:any)=>r.scopeTaskId==='faucets').map((r:any)=>r.quantity.fixed),[2,2]);
- assert.equal(rules.filter((r:any)=>r.scopeTaskId==='nails').length,1);
- assert.match(rules.find((r:any)=>r.scopeTaskId==='nails').evidence.reference,/Single cited supplier budget allowance/);
+ const allowance=(priced.internal as any).costBookSnapshot.rules.find((r:any)=>r.id==='minor-work-allowance');
+ assert.ok(allowance.unitCost>=75);
+ assert.equal(allowance.evidence.basis,'owner-budget-allowance');
  assert.ok(!rules.some((r:any)=>r.evidence.reference.includes('PB-12-41-02')),'no included-top vanity or second vanity labor');
 });
 test('a sixty-inch vanity cannot use a smaller cabinet assembly rate',async()=>{
@@ -184,7 +252,13 @@ test('a sixty-inch vanity cannot use a smaller cabinet assembly rate',async()=>{
 test('a repaired catalog reference can be replaced by a real positive addition',async()=>{
  const broken={...extra,researchDescription:'',existingLineIds:['03-15-02-M'],additions:[]};
  const fixed={...broken,existingLineIds:[],additions:[{code:'03-15-02-M',quantity:10,quantityEvidence:'Ten feet requested'}]};
- const result=await priceCompleteScope(scope,config,replies([{tasks:[task,broken],issues:[]},{coveredTaskIds:['cabinets','overlay'],issues:[]},{tasks:[task,fixed],issues:[]},{coveredTaskIds:['cabinets','overlay'],issues:[]}]),now);
+ let mappings=0;
+ const result=await priceCompleteScope(scope,config,async(_instructions,input)=>{
+  const data=input as {taskBatch?:{id:string}[];priorPricingIssues?:unknown};
+  if(data.taskBatch){mappings++;return {value:{tasks:data.taskBatch.map(item=>item.id===task.id?task:mappings===1?broken:fixed),issues:[]},sourceUrls:[]};}
+  if('priorPricingIssues' in data)return {value:{coveredTaskIds:[task.id,extra.id],issues:[]},sourceUrls:[]};
+  return {value:{tasks:[task,broken].map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
+ },now);
  assert.ok(result.customer.range,'a supported added line resolves the old bad reference');
  assert.ok(!(result.internal as any).scopePricing.issues.some((issue:string)=>issue.includes('invalid existing price reference')));
 });
@@ -233,6 +307,21 @@ test('A malformed mapping answer is asked again, then repaired, instead of handi
  const repaired=await priceCompleteScope(scope,config,replies([{tasks:[task,broken],issues:[]},{tasks:[task,broken],issues:[]},audit]),now);
  assert.ok(repaired.customer.range,'a repeat malformed answer keeps its well-formed additions');
  assert.equal((repaired.internal as any).lines.find((l:any)=>l.id==='scope-1').unitCost,100);
+});
+test('the mapping provider schema restricts IDs to the exact requested batch',async()=>{
+ const {openAiPricingRequestEnvelope}=await import('../lib/p5/scopePricing.ts');
+ const queued=replies([{tasks:[task],issues:[]},{coveredTaskIds:[task.id],issues:[]}]);let checked=false;
+ const result=await priceCompleteScope(scope,config,async(instructions,input,search,remaining)=>{
+  const batch=(input as {taskBatch?:{id:string}[]}).taskBatch;
+  if(batch){
+   const body=openAiPricingRequestEnvelope(instructions,input,false).body as {text?:{format:{schema:unknown}}};
+   const schema=body.text!.format.schema as {properties:{tasks:{type:string;items:{properties:{id:{enum:string[]}}}}}};
+   assert.equal(schema.properties.tasks.type,'array');
+   assert.deepEqual(schema.properties.tasks.items.properties.id.enum,batch.map(item=>item.id));checked=true;
+  }
+  return queued(instructions,input,search,remaining);
+ },now);
+ assert.ok(checked);assert.ok(result.customer.range);
 });
 test('task-level mapping notes preserve the complete estimate and audit context',async()=>{
  const note='Standard protective overlay selection; confirm color before ordering.';
@@ -538,6 +627,7 @@ test('completed OpenAI search prose retains actual citations for strict normaliz
  }finally{globalThis.fetch=oldFetch;names.forEach((n,i)=>{if(saved[i]===undefined)delete process.env[n];else process.env[n]=saved[i]});}
 });
 test('legacy provider parser retains historical source extraction support',async()=>{
+ const causedBy=(message:string)=>(error:unknown)=>error instanceof Error&&error.cause instanceof Error&&error.cause.message===message;
  const names=['OPENAI_API_KEY','AI_INTEGRATIONS_OPENAI_API_KEY','AI_INTEGRATIONS_OPENAI_BASE_URL','ANTHROPIC_API_KEY','P5_PRICING_MODEL','P5_PRICING_RESEARCH_MODEL','P5_PRICING_PROVIDER'];
  const saved=names.map(n=>process.env[n]);const oldFetch=globalThis.fetch;
  try{
@@ -545,7 +635,7 @@ test('legacy provider parser retains historical source extraction support',async
   let search=false;
   globalThis.fetch=async(url,init)=>{
    assert.equal(url,'https://api.anthropic.com/v1/messages');
-   const input=JSON.parse(String(init?.body));search=Boolean(input.tools);assert.equal(input.model,'claude-sonnet-5');
+   const input=JSON.parse(String(init?.body));search=Boolean(input.tools?.some((tool:{name:string})=>tool.name==='web_search'));assert.equal(input.model,'claude-sonnet-5');
    return Response.json({stop_reason:'end_turn',content:search?[{type:'text',text:'Searching now.'},{type:'web_search_tool_result',content:urls.map(url=>({type:'web_search_result',url}))},{type:'text',text:JSON.stringify(researched)}]:[{type:'text',text:'{"coveredTaskIds":["cabinets"],"issues":[]}'}]});
   };
   assert.deepEqual((await requestPricingWith('anthropic','JSON',{},false,1000)).value,{coveredTaskIds:['cabinets'],issues:[]});
@@ -567,19 +657,19 @@ test('legacy provider parser retains historical source extraction support',async
   };
   const resumed=await requestPricingWith('anthropic','JSON',{},true,5000);assert.equal(pausedCalls,2);assert.deepEqual(resumed.sourceUrls,urls);assert.deepEqual(resumed.value,researched);
   pausedCalls=0;globalThis.fetch=async()=>{pausedCalls++;return Response.json({stop_reason:'pause_turn',content:pausedContent});};
-  await assert.rejects(()=>requestPricingWith('anthropic','JSON',{},true,5000),/pricing-check-incomplete:pause_turn/);assert.equal(pausedCalls,3);
+  await assert.rejects(()=>requestPricingWith('anthropic','JSON',{},true,5000),causedBy('pricing-check-incomplete:pause_turn'));assert.equal(pausedCalls,3);
   globalThis.fetch=async()=>Response.json({stop_reason:'max_tokens',content:[{type:'text',text:'{"rates":['}]});
-  await assert.rejects(()=>requestPricingWith('anthropic','JSON',{},true,5000),/pricing-check-incomplete:max_tokens/);
+  await assert.rejects(()=>requestPricingWith('anthropic','JSON',{},true,5000),causedBy('pricing-check-incomplete:max_tokens'));
   let calls=0;
   globalThis.fetch=async(_url,init)=>{
    calls++;const body=JSON.parse(String(init?.body));
    if(calls===1)return Response.json({stop_reason:'end_turn',content:[{type:'web_search_tool_result',content:urls.map(url=>({type:'web_search_result',url}))},{type:'text',text:'# Research\nSynthetic cited report.'}]});
-   assert.ok(body.output_config.format.schema.properties.rates);assert.equal(body.tools,undefined);assert.ok(body.messages[0].content.includes(urls[0]));
-   return Response.json({stop_reason:'end_turn',content:[{type:'text',text:JSON.stringify(researched)}]});
+   assert.ok(body.tools[0].input_schema.properties.rates);assert.equal(body.tool_choice.name,'record_market');assert.ok(body.messages[0].content.includes(urls[0]));
+   return Response.json({stop_reason:'tool_use',content:[{type:'tool_use',name:'record_market',id:'synthetic',input:researched}]});
   };
-  const normalized=await requestPricingWith('anthropic','JSON',{},true,5000);assert.equal(calls,2);assert.deepEqual(normalized.value,researched);assert.ok(normalized.sourceReport?.startsWith('# Research'));assert.deepEqual(normalized.sourceUrls,urls);
+  const retained=await requestPricingWith('anthropic','JSON',{},true,5000);assert.equal(calls,1);assert.equal(retained.value,null);assert.ok(retained.sourceReport?.startsWith('# Research'));assert.deepEqual(retained.sourceUrls,urls);
   globalThis.fetch=async()=>Response.json({stop_reason:'end_turn',content:[{type:'text',text:'{"rates":[],"issues":[]}'}]});
-  await assert.rejects(()=>requestPricingWith('anthropic','JSON',{},true,1000),/search-unavailable/);
+  await assert.rejects(()=>requestPricingWith('anthropic','JSON',{},true,1000),causedBy('pricing-search-unavailable'));
  }finally{globalThis.fetch=oldFetch;names.forEach((n,i)=>{if(saved[i]===undefined)delete process.env[n];else process.env[n]=saved[i]});}
 });
 test('Allowance notes release a range only after complete scope coverage passes the independent audit',async()=>{
@@ -622,7 +712,7 @@ test('Large scope maps bounded batches and audits every original task together',
 test('A missing or substituted batch task never releases a partial total',async()=>{
  let calls=0;
  const result=await priceCompleteScope(scope,config,async()=>({value:++calls===1?{tasks:[{id:task.id,description:task.description,evidence:task.evidence}],issues:[]}:{tasks:[{...task,id:'substituted'}],issues:[]},sourceUrls:[]}),now);
- assert.equal(result.customer.range,null);assert.equal(calls,2);
+ assert.equal(result.customer.range,null);assert.equal(calls,3,'one initial mapping and exactly one bounded repair');
 });
 test('Research batches retain unique rule IDs and all source evidence',async()=>{
  const tasks=Array.from({length:7},(_,i)=>({...extra,id:`gap-${i}`}));let calls=0;let searches=0;
@@ -984,6 +1074,19 @@ test('two research timeouts preserve progress without substituting an uncited pl
  };
  await assert.rejects(()=>priceCompleteScope(scope,config,request,now),PricingPending);
  assert.equal(calls,4,'inventory, mapping and two bounded research attempts; no uncited average is requested');
+});
+test('exhausted research ends bounded recovery without releasing invented prices or polling forever',async()=>{
+ let calls=0,searches=0;
+ const tasks=[task,extra];
+ const request:PricingRequest=async(_instructions,input,search)=>{
+  calls++;const data=input as {taskBatch?:{id:string}[]};
+  if(calls===1)return {value:{tasks:tasks.map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
+  if(data.taskBatch)return {value:{tasks:data.taskBatch.map(t=>({...tasks.find(row=>row.id===t.id)!,...t})),issues:[],notes:[],replacements:[],removeExclusions:[]},sourceUrls:[]};
+  if(search){searches++;throw new PricingStageTimeout('pricing-stage-exhausted');}
+  throw new Error('No unsupported fallback price may be requested');
+ };
+ await assert.rejects(()=>priceCompleteScope(scope,config,request,now),(error:unknown)=>error instanceof PricingPending&&error.fatal&&error.retryAfterMs===0);
+ assert.equal(searches,2,'both saved research paths are checked before ending recovery');
 });
 test('Unresolved duplicate pricing blocks release, and missing measurements remain questions',async()=>{
  const tasks=[{...task,id:'drywall',description:'Patch drywall',researchDescription:''}];
@@ -1511,7 +1614,7 @@ test('a small single-component swap does not draw its own protection or disconne
  assert.match(text,/room-scale demolition, multi-item work/,'the exception for substantial work is preserved');
 });
 
-test('omitted contractor consumables become one researched task instead of free labor inclusions',async()=>{
+test('omitted contractor consumables receive one budget instead of free labor inclusions',async()=>{
  const {normalizeConsumableMapping}=await import('../lib/p5/scopePricing.ts');
  const restricted={...scope,text:'Install 9 LF owner-supplied base cabinets and 12 LF owner-supplied wall cabinets. Contractor supplies screws and shims.',answers:{service:'cabinet-install'}};
  const rate={code:'QA-LABOR',description:'Cabinet installation labor. Excludes all installation consumables, screws and shims.',type:'Labor',unit:'LF',amount:70,source:'Synthetic fixture',basis:'owner-average-cost'};
@@ -1545,10 +1648,10 @@ test('omitted contractor consumables become one researched task instead of free 
   return queue(instructions,input,search,remaining);
  },now);
  assert.ok(priced.customer.range,JSON.stringify(priced.internal.scopePricing));
- assert.deepEqual(products.sort(),['screws','shims']);
- assert.equal((priced.internal as any).lines.filter((line:any)=>line.category==='materials'&&line.unitCost===40).length,2);
+ assert.deepEqual(products,[]);
+ assert.equal((priced.internal as any).lines.filter((line:any)=>line.id==='minor-work-allowance'&&line.unitCost>=75).length,1);
 });
-test('9 LF base and 12 LF wall installation prices labor, cleanup and evidenced supplies only',async()=>{
+test('9 LF base and 12 LF wall installation prices labor, cleanup and one supplies budget only',async()=>{
  const restricted:ReviewedScope={...scope,text:'Install 9 LF owner-supplied fully assembled base cabinets and 12 LF owner-supplied fully assembled wall cabinets in an existing Boise kitchen. Contractor supplies normal cabinet screws, shims and cleanup. Exclude cabinet purchase, demolition, plumbing, electrical, countertops, flooring and all other trades.',answers:{service:'cabinet-install',location:'Boise',cabinetBaseLf:'9',cabinetUpperLf:'12',ownerSupplied:'Fully assembled base and wall cabinets',exclusions:'Cabinet purchase, demolition, plumbing, electrical, countertops, flooring and all other trades'}};
  const labor=(code:string,description:string,unit:string,amount:number)=>({code,description,type:'Labor' as const,unit,amount,source:'Synthetic approved fixture only',basis:'owner-average-cost' as const});
  const configuration=createPlanningConfiguration({...catalog,rates:[...catalog.rates,labor('QA-BASE','Base cabinet installation labor only; excludes screws and shims','LF',70),labor('QA-WALL','Wall cabinet installation labor only; excludes screws and shims','LF',80),labor('QA-CLEAN','Minor job cleanup labor only; excludes demolition','LS',90)]});
@@ -1574,13 +1677,13 @@ test('9 LF base and 12 LF wall installation prices labor, cleanup and evidenced 
  };
  const result=await priceCompleteScope(restricted,configuration,response,now);
  assert.ok(result.customer.range,JSON.stringify(result.internal.scopePricing));
- assert.deepEqual(researchedProducts.sort(),['screws','shims']);
+ assert.deepEqual(researchedProducts,[]);
  const lines=(result.internal as any).lines as {description:string;quantity:number;unit:string;category:string;unitCost:number}[];
  assert.ok(lines.some(line=>line.quantity===9&&line.unit.toLowerCase()==='lf'&&line.category==='field-labor'));
  assert.ok(lines.some(line=>line.quantity===12&&line.unit.toLowerCase()==='lf'&&line.category==='field-labor'));
  assert.ok(lines.some(line=>/cleanup/i.test(line.description)&&line.unitCost>0));
- assert.equal(lines.filter(line=>line.category==='materials').length,2);
- assert.equal(lines.length,5,'only the two installation runs, cleanup, screws and shims may be charged');
+ assert.equal(lines.filter(line=>line.category==='other-direct'&&line.unitCost>=75).length,1);
+ assert.equal(lines.length,4,'two installation runs, priced cleanup and one shared supplies allowance');
  assert.ok(!lines.some(line=>/^(?:countertop|flooring|demolition|plumbing|electrical)\b/i.test(line.description)));
 });
 test('labor-only pricing retains requested contractor consumables through final release',async()=>{
@@ -1614,12 +1717,16 @@ test('a clean model audit cannot cover requested consumable material with labor 
  const consumables={...labor,id:'supplies',description:'Supply nails and caulk',evidence:restricted.text,additions:[{code:'REF-GENERAL-HOUR',quantity:1,quantityEvidence:'ALLOWANCE: One hour.',quantityRange:{low:1,high:1}}]};
  const request:PricingRequest=async(_instructions,input)=>{
   const data=input as any;
-  if(data.taskBatch)return {value:{tasks:[labor,consumables],issues:[]},sourceUrls:[]};
+  if(data.taskBatch)return {value:{tasks:data.taskBatch.map((item:{id:string})=>item.id===labor.id?labor:consumables),issues:[]},sourceUrls:[]};
   if('priorPricingIssues' in data)return {value:{coveredTaskIds:['trim','supplies'],issues:[]},sourceUrls:[]};
   if(data.tasks&&data.region)return {value:{rates:[],issues:[]},sourceUrls:[]};
   return {value:{tasks:[labor,consumables].map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
  };
- await assert.rejects(()=>priceCompleteScope(restricted,config,request,now),PricingPending);
+ const result=await priceCompleteScope(restricted,config,request,now);
+ assert.ok(result.customer.range);
+ assert.ok('lines' in result.internal);
+ assert.equal(result.internal.lines.filter(line=>line.category==='field-labor').length,1,'supply cannot become another labor hour');
+ assert.equal(result.internal.lines.find(line=>line.id==='minor-work-allowance')?.unitCost,75);
 });
 
 test('research excerpts may join exact heading and price fragments within one source paragraph',async()=>{
@@ -1638,7 +1745,8 @@ test('a requested drywall patch survives a parenthetical paint exclusion',async(
  const patch={id:'patch-drywall',description:'Patch one 12x12 inch hole in garage wall with 5/8 inch Type X drywall, tape, finish and spot-prime (paint excluded).',evidence:'Patch one 12x12 garage wall hole with 5/8 inch Type X, tape, finish, spot-prime. Paint excluded. Applies only to specified patch area.',existingLineIds:[],additions:[{code:'PB-09-01-08',quantity:1,quantityEvidence:'One patch, 1 square foot'}],researchDescription:'',issues:[]};
  const mapping={tasks:[patch],issues:[],notes:[],replacements:[],removeExclusions:[]};
  const result=catalogResolution(mapping,configured,[],now,{...scope,answers:{service:'re10',location:'Boise',area:'1'},text:patch.evidence});
- assert.equal(result.rules.length,1);assert.equal(result.rules[0].unitCost,300);
+ assert.equal(result.rules.length,2);assert.equal(result.rules[0].unitCost,300);
+ assert.ok(result.rules.some(r=>r.evidence?.reference.includes('PB-09-91-12')),'explicit primer has its own documented coverage');
  assert.ok(!result.assumptions.some(a=>a.includes('not billable')));
  const excluded={...patch,description:'Drywall patch excluded',evidence:'Drywall patch excluded.'};
  assert.equal(catalogResolution({...mapping,tasks:[excluded]},configured,[],now).rules.length,0);
@@ -1947,7 +2055,7 @@ test('a zero consumption formatter defect gets one explicit corrective request a
  assert.equal(calls,1);assert.equal((reply.value as any).rates[0].quantity,24);
 });
 
-test('one rejected source does not erase an independently valid cited consumable allowance',async()=>{
+test('minor supplies use a disclosed policy budget without relying on mismatched product sources',async()=>{
  const local={...scope,text:'Supply 10 LF cabinetry. Contractor supplies cabinet screws.'};
  const screws={...extra,id:'screws',description:'Supply contractor screws',evidence:'Contractor supplies cabinet screws',researchDescription:'Research ONLY contractor-supplied screws for cabinet mounting.'};
  const good='Cabinet screws $0.20 each.',wrong='Cabinet shims $0.30 each.';
@@ -1961,12 +2069,11 @@ test('one rejected source does not erase an independently valid cited consumable
   if(data.priorPricingIssues)return {value:{coveredTaskIds:['cabinets','screws'],issues:[]},sourceUrls:[]};
   return {value:{tasks:[task,screws].map(({id,description,evidence})=>({id,description,evidence})),issues:[]},sourceUrls:[]};
  },now);
- assert.equal(searches,3);assert.ok(result.customer.range,JSON.stringify(result.internal.scopePricing));
- const priced=(result.internal as any).costBookSnapshot.rules.find((r:any)=>r.scopeTaskId==='screws');
- assert.equal(priced.unitCost,0.2);
- assert.equal(priced.evidence.provenance.sources.length,1);
- assert.equal(priced.evidence.provenance.sources[0].url,urls[0]);
- assert.match(priced.evidence.reference,/Single cited supplier budget allowance/);
+ assert.equal(searches,0);assert.ok(result.customer.range,JSON.stringify(result.internal.scopePricing));
+ const priced=(result.internal as any).costBookSnapshot.rules.find((r:any)=>r.id==='minor-work-allowance');
+ assert.ok(priced.unitCost>=75);
+ assert.equal(priced.evidence.provenance,undefined,'policy is not supplier evidence');
+ assert.equal(priced.evidence.basis,'owner-budget-allowance');
 });
 
 test('a screw allowance that expressly excludes shims is not rejected as a bundled product',()=>{
@@ -2144,6 +2251,10 @@ test('generic material-budget recovery rejects fabricated prices, missing compon
  const raw={rates:[row],issues:[],notes:[]};
  const report=row.sources[0].excerpt;
  assert.ok(materialBudgetCandidate(raw,report,[urls[0]],[materials],now,0,'Boise'));
+ const independence=materialBudgetCandidate({...raw,issues:['Both observations are from the same vendor, not independent retailers. No secondary Boise supplier was found.']},report,[urls[0]],[materials],now,0,'Boise');
+ assert.ok(independence);assert.deepEqual(independence.issues,[]);assert.match(independence.notes.join(' '),/Single-supplier limitation/);
+ assert.equal(materialBudgetCandidate({...raw,issues:['Independent source unavailable; adhesive is unpriced.']},report,[urls[0]],[materials],now,0,'Boise'),null);
+ assert.equal(materialBudgetCandidate({...raw,issues:['Independent source unavailable','Wrong package count']},report,[urls[0]],[materials],now,0,'Boise'),null);
  assert.equal(materialBudgetCandidate(raw,'Boise store location, hours and address.',[urls[0]],[materials],now,0,'Boise'),null);
  assert.equal(materialBudgetCandidate({rates:[{...row,sources:[{...row.sources[0],low:10,high:10}]}],issues:[]},report,[urls[0]],[materials],now,0,'Boise'),null);
  assert.equal(materialBudgetCandidate({rates:[row,{...row,description:'Missing adhesive',sources:[{...row.sources[0],excerpt:'Adhesive $9.00.'}]}],issues:[]},report,[urls[0]],[materials],now,0,'Boise'),null);
@@ -2151,7 +2262,7 @@ test('generic material-budget recovery rejects fabricated prices, missing compon
  assert.equal(materialBudgetCandidate({rates:[{...row,sources:[{...row.sources[0],region:'Moscow, Idaho (Boise regional supply)'}]}],issues:[]},report,[urls[0]],[materials],now,0,'Boise'),null);
 });
 
-test('generic consumables do not invent a second repair-material task because cleanup is labor',async()=>{
+test('generic consumables preserve a labor-only repair gap but not a cleanup-only gap',async()=>{
  const {normalizeConsumableMapping}=await import('../lib/p5/scopePricing.ts');
  const local={...scope,text:'Replace two GFCIs, one P-trap and repair one drywall patch. Include normal installation consumables and minor cleanup.',answers:{service:'re10',location:'Boise'}};
  const entries=[
@@ -2163,5 +2274,145 @@ test('generic consumables do not invent a second repair-material task because cl
  const configuration=createPlanningConfiguration({...catalog,rates:[...catalog.rates,...entries as PlanningCatalog['rates']]});
  const mapping={tasks:entries.map((rate,index)=>({...extra,id:'repair-'+index,description:rate.description,evidence:local.text,researchDescription:'',additions:[{code:rate.code,quantity:index===0?2:1,quantityEvidence:'Explicit repair quantity'}]})),issues:[],notes:[],replacements:[],removeExclusions:[]};
  normalizeConsumableMapping(mapping,configuration,[],local);
- assert.equal(mapping.tasks.length,4,'the audit still checks GFCI product coverage; no invented extra compound or PVC kit');
+ assert.equal(mapping.tasks.length,5,'the explicitly labor-only GFCI rate cannot establish consumables coverage');
+ assert.equal(mapping.tasks[4].id,'required-contractor-consumables');
+ const coveredRepairs={...mapping,tasks:mapping.tasks.slice(1,4)};
+ normalizeConsumableMapping(coveredRepairs,configuration,[],local);
+ assert.equal(coveredRepairs.tasks.length,3,'included repair supplies plus cleanup alone do not invent another material purchase');
+});
+
+test('descriptive EA package units retain evidenced physical quantities and price arithmetic',()=>{
+ const raw=structuredClone(researched),rate=raw.rates[0];
+ rate.basis='material-purchase';rate.unit='EA (100-pack)';rate.quantity=2;rate.quantityEvidence='ALLOWANCE: two 100-pack boxes of cabinet screws';rate.quantityRange={low:1,high:3};
+ rate.sources=[{...source(urls[0],12,12),unit:'EA (100-pack)',excerpt:'Cabinet screws, 100-pack, $12.'},{...source(urls[1],14,14),unit:'EA (100-pack)',excerpt:'Cabinet screws, 100-pack, $14.'}];
+ const result=marketResolution(raw,urls,[extra],now);
+ assert.equal(result.rules[0].unit,'EA');assert.equal(result.rules[0].quantity.fixed,200);
+ assert.equal(result.rules[0].unitCost,0.13);assert.deepEqual(result.rules[0].quantityRange,{low:100,high:300});
+ rate.sources[0].excerpt='Cabinet screws, 50-pack, $12.';
+ assert.throws(()=>marketResolution(raw,urls,[extra],now),/Package size does not match/);
+});
+
+test('descriptive pound-box units compare equivalent weights and preserve modeled purchase amount',()=>{
+ const raw=structuredClone(researched),rate=raw.rates[0];
+ rate.basis='material-purchase';rate.unit='EA (5 lb box)';rate.quantity=2;rate.quantityEvidence='ALLOWANCE: two five-pound boxes of cabinet screws';rate.quantityRange={low:1,high:3};
+ rate.sources=[{...source(urls[0],12,12),unit:'EA (1 lb box)',excerpt:'Cabinet screws, 1 lb box, $12.'},{...source(urls[1],50,50),unit:'EA (5 lb box)',excerpt:'Cabinet screws, 5 lb box, $50.'}];
+ const result=marketResolution(raw,urls,[extra],now);
+ assert.equal(result.rules[0].unit,'LB');assert.equal(result.rules[0].quantity.fixed,10);assert.equal(result.rules[0].unitCost,11);
+ assert.deepEqual(result.rules[0].quantityRange,{low:5,high:15});
+});
+
+test('bare supplier package units retain evidenced weights and counts',()=>{
+ for(const [unit,excerpt,expectedUnit,expectedQty] of [['1 lb. box','Cabinet screws, 1 lb box, $12.','LB',2],['10-pack','Cabinet shims, 10-pack, $12.','EA',20]] as const){
+  const raw=structuredClone(researched),rate=raw.rates[0];
+  Object.assign(rate,{basis:'material-purchase',unit,quantity:2,quantityEvidence:'ALLOWANCE: two supplier packages',quantityRange:{low:1,high:3}});
+  rate.sources=urls.map(url=>({...source(url,12,12),unit,excerpt}));
+  const result=marketResolution(raw,urls,[extra],now);
+  assert.equal(result.rules[0].unit,expectedUnit);assert.equal(result.rules[0].quantity.fixed,expectedQty);
+  assert.equal(result.rules[0].unitCost*expectedQty,24);
+ }
+});
+test('descriptive caulk tubes retain one purchased cartridge and reject differing sizes',()=>{
+ const raw=structuredClone(researched),rate=raw.rates[0];
+ Object.assign(rate,{basis:'material-purchase',unit:'10.1 oz tube',quantity:2,quantityEvidence:'ALLOWANCE: two caulk cartridges',quantityRange:{low:1,high:3}});
+ rate.sources=urls.map(url=>({...source(url,8,8),unit:'10.1 oz tube',excerpt:'Installation caulk 10.1 oz tube, $8.'}));
+ const result=marketResolution(raw,urls,[extra],now);
+ assert.equal(result.rules[0].unit,'EA');assert.equal(result.rules[0].quantity.fixed,2);assert.equal(result.rules[0].unitCost,8);
+ rate.sources[1].excerpt='Installation caulk 28 oz tube, $8.';
+ assert.throws(()=>marketResolution(raw,urls,[extra],now),/Cartridge size/);
+});
+
+test('generic consumable formatting retains reviewed installation quantities and allowance policy',async()=>{
+ const {reconcileResearchReply}=await import('../lib/p5/scopePricing.ts');
+ const local={...scope,text:'Install finishes. Include normal installation consumables.',answers:{service:'whole-home',flooringSqft:'1600',tileSqft:'80',trimLf:'550',cabinetBaseLf:'18',cabinetUpperLf:'12'}};
+ const supplies={...extra,id:'supplies',description:'Normal installation consumables',researchDescription:'Material purchase only: installation consumables',evidence:'Normal materials included'};
+ let called=false;
+ const accepted=await reconcileResearchReply({value:null,sourceUrls:urls,sourceReport:'Installation caulk: supplier observations retained.'},[supplies],async(instructions,input,search)=>{
+  called=true;assert.equal(search,false);
+  const context=(input as any).requested.tasks[0].quantityEvidence;
+  for(const quantity of ['flooringSqft=1600','tileSqft=80','trimLf=550','cabinetBaseLf=18'])assert.ok(context.includes(quantity));
+  assert.match(instructions,/positive consumption allowance/);
+  assert.match(instructions,/Never invent dates, costs, physical measurements/);
+  return {value:{rates:[],issues:['Supplier observations incomplete'],notes:[]},sourceUrls:[]};
+ },()=>60000,()=>{},[],local);
+ assert.ok(called);assert.deepEqual((accepted.value as any).rates,[],'no rate is fabricated when evidence is absent');
+});
+
+test('four-decimal tile-spacer display prices preserve exact supplier package arithmetic',()=>{
+ const raw=structuredClone(researched),rate=raw.rates[0];rate.unit='EA';rate.quantity=400;rate.quantityEvidence='ALLOWANCE: 400 spacers';rate.quantityRange={low:200,high:400};
+ rate.sources=[{...source(urls[0],.0763,.0763),unit:'EA',excerpt:'Roto-Wedge Spacers (75 pack), $5.72 per package.'},{...source(urls[1],.0315,.0315),unit:'each',excerpt:'Tile spacers (400-Pack), $12.59 per set.'}];
+ const result=marketResolution(raw,urls,[extra],now);assert.equal(result.rules[0].unitCost,.0539);
+ assert.match(result.assumptions.join(' '),/5.72 USD divided by 75/);
+ rate.sources[0].low=rate.sources[0].high=.0768;assert.throws(()=>marketResolution(raw,urls,[extra],now),/Package price does not match/);
+});
+
+test('counted bag and sanding-sheet packages preserve total price and reject unsupported counts',()=>{
+ for(const [unit,noun,count] of [['pack (50 bags)','bags',50],['pack (5 sheets)','sheets',5]] as const){
+  const raw=structuredClone(researched),rate=raw.rates[0];rate.unit=unit;rate.quantity=1;rate.quantityEvidence='ALLOWANCE: one package';rate.quantityRange={low:1,high:2};
+  rate.sources=[{...source(urls[0],10,10),unit,excerpt:`${count} ${noun} per pack, $10.`},{...source(urls[1],12,12),unit,excerpt:`${count} ${noun} per pack, $12.`}];
+  const result=marketResolution(raw,urls,[extra],now);assert.equal(result.rules[0].quantity.fixed,count);assert.equal(result.rules[0].unitCost,11/count);
+  rate.sources[0].excerpt=`${count+1} ${noun} per pack, $10.`;assert.throws(()=>marketResolution(raw,urls,[extra],now),/Package size does not match/);
+ }
+});
+
+test('countertop square feet cannot be copied into a linear-foot demolition price',()=>{
+ const rates=[{code:'PB-02-41-07',description:'Countertop removal',type:'Subcontractor',unit:'LF',amount:20,source:'Owner fixture',basis:'owner-average-cost'}];
+ const configuration=createPlanningConfiguration({...catalog,rates:[...catalog.rates,...rates] as any});
+ const local={...scope,text:'Replace 45 SF quartz countertop.',answers:{service:'kitchen',countertopSqft:'45'}};
+ const demolition={...extra,id:'demo',description:'Remove replaced finishes',evidence:local.text,additions:[{code:'PB-02-41-07',quantity:45,quantityEvidence:'ALLOWANCE: 45 LF for 45 SF countertop',quantityRange:{low:45,high:50}}],researchDescription:''};
+ const mapping={tasks:[demolition],notes:[],issues:[],replacements:[],removeExclusions:[]};
+ const result=catalogResolution(mapping as any,configuration,[],now,local);
+ assert.equal(result.rules.length,0);assert.ok(result.issues.some(issue=>/area in SF cannot be copied into LF/.test(issue)));
+ const stated={...local,text:'Remove 45 LF existing countertop, replace 45 SF countertop.'};
+ assert.equal(catalogResolution(mapping as any,configuration,[],now,stated).rules.length,1);
+});
+
+test('bare packs with explicitly declared contents compare different supplier sizes per piece',()=>{
+ const raw=structuredClone(researched),rate=raw.rates[0];
+ Object.assign(rate,{unit:'pack',quantity:2,quantityEvidence:'ALLOWANCE: two packs for installation',quantityRange:{low:1,high:3},includes:'Cabinet mounting shims, 12-piece pack only',landedCost:null});
+ rate.sources=[{...source(urls[0],6,6),unit:'pack',excerpt:'Cabinet shims, 12-piece pack, $6.'},{...source(urls[1],16,16),unit:'pack',excerpt:'Cabinet shims, 40-piece pack, $16.'}];
+ const result=marketResolution(raw,urls,[extra],now);
+ assert.equal(result.rules[0].unit,'EA');assert.equal(result.rules[0].quantity.fixed,24);assert.equal(result.rules[0].unitCost,.45);
+ assert.deepEqual(result.rules[0].quantityRange,{low:12,high:36});
+ const unknown=structuredClone(raw);unknown.rates[0].unit='pack';unknown.rates[0].includes='Cabinet shims only';
+ unknown.rates[0].sources=[{...source(urls[0],6,6),unit:'pack',excerpt:'Cabinet shims, 12-piece pack, $6.'},{...source(urls[1],16,16),unit:'pack',excerpt:'Cabinet shims, 40-piece pack, $16.'}];
+ assert.throws(()=>marketResolution(unknown,urls,[extra],now),/Incompatible package sizes/);
+});
+
+test('live cabinet screw boxes reconcile supplier count formats without inventing a weight conversion',()=>{
+ const raw=structuredClone(researched),rate=raw.rates[0];
+ Object.assign(rate,{unit:'box',quantity:1,quantityEvidence:'ALLOWANCE: one box',quantityRange:{low:1,high:1},includes:'1 lb box of cabinet-mounting screws, approximately 79 screws per box.',landedCost:null});
+ rate.sources=[{...source(urls[0],12.08,12.08),unit:'box',excerpt:'Cabinet mounting screws 1 lb. Box. Includes 79 screws. $12.08'},
+  {...source(urls[1],12.48,12.48),unit:'box',excerpt:'Cabinet screws 79‑Per Box. $12.48'}];
+ const result=marketResolution(raw,urls,[extra],now);
+ assert.equal(result.rules[0].unit,'EA');assert.equal(result.rules[0].quantity.fixed,79);
+ assert.ok(Math.abs(result.rules[0].unitCost-12.28/79)<.0001);
+ const unsupported=structuredClone(raw);unsupported.rates[0].sources[1].excerpt='Cabinet screws, 1 box. $12.48';
+ assert.throws(()=>marketResolution(unsupported,urls,[extra],now),/Incompatible benchmark unit|Package/);
+});
+
+test('a cartridge conversion defect uses the saved report repair before any new search',async()=>{
+ const {reconcileResearchReply}=await import('../lib/p5/scopePricing.ts');
+ const requested={...extra,researchDescription:'Research ONLY contractor-supplied caulk for one vanity perimeter.'};
+ const excerpt='Silicone caulk 10.1 oz cartridge $9.98 each.';
+ const valid={rates:[{...researched.rates[0],description:'Silicone caulk',unit:'10.1 oz tube',quantity:1,quantityEvidence:'ALLOWANCE: one cartridge for one vanity perimeter',quantityRange:{low:1,high:1},includes:'silicone caulk only',landedCost:null,sources:urls.map(url=>({...source(url,9.98,9.98),unit:'EA',excerpt}))}],issues:[]};
+ const invalid=structuredClone(valid);invalid.rates[0].sources[0].high=12;
+ let calls=0;
+ const reply=await reconcileResearchReply({value:invalid,sourceUrls:urls,sourceReport:excerpt},[requested],async(_instructions,input,search)=>{
+  calls++;assert.equal(search,false);assert.match(String((input as any).validationFailure),/Cartridge size and package price/);return {value:valid,sourceUrls:[]};
+ },()=>60000);
+ assert.equal(calls,1);assert.equal((reply.value as any).rates[0].sources[0].high,9.98);
+ await assert.rejects(reconcileResearchReply({value:invalid,sourceUrls:urls,sourceReport:excerpt},[requested],async()=>({value:invalid,sourceUrls:[]}),()=>60000),/Cartridge size and package price/,'unsupported source prices remain rejected after the bounded repair');
+});
+
+
+test('the public pricing audit receives generated customer assumptions, not only priced lines',async()=>{
+ const note='Owner supplies cabinetry; contractor performs installation and disposal.';
+ const request=replies([{tasks:[task],issues:[],notes:[note]},{coveredTaskIds:['cabinets'],issues:[],notes:[]}]);
+ let sawAssumptions=false;
+ const result=await priceCompleteScope(scope,config,async(system,input,...rest)=>{
+  const payload=input as {customerAssumptions?:string[]};
+  if(payload.customerAssumptions){assert.ok(payload.customerAssumptions.includes(note));sawAssumptions=true;}
+  return request(system,input,...rest);
+ },now);
+ assert.equal(sawAssumptions,true);assert.ok(result.customer.range);
 });

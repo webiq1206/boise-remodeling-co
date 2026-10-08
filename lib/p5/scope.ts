@@ -3,7 +3,9 @@ import {readPageRecords,readTakeoffs,reconcileTakeoffs,combineCoverage,blockingR
 import type {RetainedClarificationProvenance,RetainedLaborCoverage} from './retainedClarification.ts';
 import {aggregateLaborFacts} from './laborFacts.ts';
 import {separateFixtureFacts} from './fixtureFacts.ts';
-import {verifiedCabinetWidth} from './cabinetMeasurements.ts';
+import {separateCabinetFacts} from './cabinetFacts.ts';
+import {separateFlooringFacts} from './flooringFacts.ts';
+import {cabinetWidthFeet,verifiedCabinetWidth,explicitCabinetAbsence} from './cabinetMeasurements.ts';
 import {SCOPE_FIELDS,type ScopeField} from './scopeFields.ts';
 export {SCOPE_FIELDS,type ScopeField} from './scopeFields.ts';
 export type ScopeAnswers = Partial<Record<ScopeField, string>>;
@@ -92,14 +94,16 @@ export function validateAnswer(field: ScopeField, value: string): string | null 
   return null;
 }
 /** Quantity fields whose stated parts (a wall and a floor, two rooms) add up to the field's total. */
-const AREA_PART_FIELDS: ScopeField[] = ['tileSqft', 'flooringSqft', 'countertopSqft', 'demolitionSqft', 'trimLf'];
+const AREA_PART_FIELDS: ScopeField[] = ['tileSqft', 'wallTileSqft', 'flooringSqft', 'countertopSqft', 'demolitionSqft', 'trimLf'];
 const SURFACE_WORDS = /\b(?:walls?|floors?|backsplash|ceilings?|countertops?|island|niche|tub surround|shower pan|perimeter|casing|baseboards?|crown)\b/gi;
 const ROOM_WORDS = /\b(?:bedrooms?|living room|family room|great room|kitchen|bath(?:room)?s?|powder room|hall(?:way)?|basement|garage|master|primary|guest|main level|upper level|lower level|office|closets?|laundry|entry|dining|mudroom|pantry)\b/gi;
 const wordSet = (text: string, pattern: RegExp) => new Set((text.toLowerCase().match(pattern) || []).map(w => w.replace(/s$/, '')));
+const sourceDocument=(source:string)=>source.replace(/,?\s*page\s+\d+.*$/i,'').trim();
+const AUTOMATIC_QUANTITY_CONFLICTS=new Set(['Different document pages state different values. Confirm the intended project information.','The supplied information contains different values. Please confirm the intended scope.']);
 const disjoint = (a: Set<string>, b: Set<string>) => a.size > 0 && b.size > 0 && [...a].every(w => !b.has(w));
 /** True when every stated fact in the group names its own surface (or, on the same surface, its own room). */
 function distinctAreaParts(group: ExtractedFact[]): boolean {
-  if (group.length < 2 || group.length > 6) return false;
+  if (group.length < 2 || group.length > 6 || new Set(group.map(f=>sourceDocument(f.source))).size!==1) return false;
   if (group.some(f => f.basis === 'calculated' || f.basis === 'inferred' || f.basis === 'visual' || !/\d/.test(f.evidence) || /\btotal\b/i.test(f.evidence) || !Number.isFinite(Number(f.value.replace(/,/g, ''))))) return false;
   if (new Set(group.map(f => f.value.trim())).size !== group.length) return false;
   for (let i = 0; i < group.length; i++) for (let j = i + 1; j < group.length; j++) {
@@ -111,6 +115,59 @@ function distinctAreaParts(group: ExtractedFact[]): boolean {
     return false;
   }
   return true;
+}
+/** A cited arithmetic total already includes its explicitly named components.
+ * Keep component detail in the takeoff ledger without presenting it as a
+ * competing project-wide quantity. Never infer totals from insulation/roofing. */
+function reconcileAreaTotals(facts:ExtractedFact[]):ExtractedFact[]{
+ let retained=[...facts];
+ const document=sourceDocument;
+ for(const field of AREA_PART_FIELDS){
+  const group=retained.filter(f=>f.field===field&&f.confidence>=.85&&f.basis!=='inferred'&&f.basis!=='visual');
+  for(const total of group.filter(f=>f.basis==='calculated'&&/\+/.test(f.evidence)&&/\btotal\b|=/.test(f.evidence)&&!/[\$]/.test(f.evidence))){
+   const unit=field==='trimLf'?'(?:LF|linear feet|linear foot)':'(?:SF|sq\\.?\\s*ft\\.?|square feet|square foot)';
+   const terms=[...total.evidence.matchAll(new RegExp('(?<![\\d,.])(\\d+(?:,\\d{3})*(?:\\.\\d+)?)\\s*'+unit+'(?=\\s|[.,;:=+]|$)','gi'))].map(m=>Number(m[1].replaceAll(',','')));
+   const amount=Number(total.value.replaceAll(',',''));
+   // Exclude the written result, when repeated with units after '='.
+   if(terms.at(-1)===amount)terms.pop();
+   if(terms.length<2||Math.abs(terms.reduce((a,b)=>a+b,0)-amount)>.01)continue;
+   retained=retained.filter(f=>{
+    if(f===total||f.field!==field||document(f.source)!==document(total.source)||!terms.includes(Number(f.value.replaceAll(',',''))))return true;
+    const subjects=(f.evidence.toLowerCase().match(/\b(?:carpet|lvp|tile|baseboard|casing|crown|backsplash|countertop)\b/g)||[]);
+    return !subjects.length||!subjects.some(subject=>new RegExp('\\b'+subject+'\\b','i').test(total.evidence));
+   });
+  }
+ }
+ const trim=retained.filter(f=>f.field==='trimLf'&&f.confidence>=.85&&f.basis!=='inferred'&&f.basis!=='visual');
+ const exterior=trim.filter(f=>/\bexterior\b/i.test(f.evidence)&&!/\b(?:interior|baseboard|casing)\b/i.test(f.evidence));
+ const interior=trim.filter(f=>/\b(?:interior|baseboard|casing)\b/i.test(f.evidence)&&!/\bexterior\b/i.test(f.evidence));
+ if(exterior.length&&interior.length&&exterior.length+interior.length===trim.length
+   &&new Set(exterior.map(f=>f.value)).size===1&&new Set(interior.map(f=>f.value)).size===1
+   &&new Set(trim.map(f=>document(f.source))).size===1){
+  const a=Number(exterior[0].value.replaceAll(',','')),b=Number(interior[0].value.replaceAll(',',''));
+  if(Number.isFinite(a+b))retained=[...retained.filter(f=>!trim.includes(f)),{field:'trimLf',value:String(a+b),confidence:Math.min(...trim.map(f=>f.confidence)),source:document(trim[0].source),basis:'calculated',evidence:`Exterior trim ${a} LF + interior trim ${b} LF = ${a+b} LF. Separate trade quantities retained in the source takeoffs.`}];
+ }
+ return retained;
+}
+/** A source schedule's separately named EA rows are item quantities, not
+ * competing answers to one project-wide fixture count. Preserve every row as
+ * task detail. Never sum unrelated devices or erase disagreements for the
+ * same item, an aggregate total, or another source. */
+function retainTypedFixtureRows(facts:ExtractedFact[]):ExtractedFact[]{
+ const candidates=facts.filter(f=>f.field==='fixtureCount');
+ if(candidates.length<2||new Set(candidates.map(f=>f.source.replace(/,?\s*page\s+\d+.*$/i,'').trim())).size!==1)return facts;
+ const rows=candidates.map(f=>{
+  const match=f.evidence.match(/^([^\n]+?)\s*\(?\b(?:EA|each)\b\)?\s*(\d+)\b/i);
+  const label=match?.[1].trim();
+  return {fact:f,label,key:label?.toLowerCase().replace(/[^a-z0-9]+/g,' ').trim(),quantity:match?.[2]};
+ });
+ if(rows.some(({fact,label,quantity})=>!label||/\btotal\b/i.test(label)||fact.confidence<.85||fact.basis!=='stated'||Number(quantity)!==Number(fact.value)))return facts;
+ if(new Set(rows.map(r=>r.key)).size<2)return facts;
+ for(const row of rows)if(rows.some(other=>other.key===row.key&&other.quantity!==row.quantity))return facts;
+ return facts.map(f=>{
+  const row=rows.find(row=>row.fact===f);
+  return row?{...f,field:'taskList',value:`${row.quantity} EA ${row.label}`} as ExtractedFact:f;
+ });
 }
 /** Reply fields a reader sometimes returns as a JSON string instead of the structure itself. Live
  * Construction plan set (2026-09-25): two drawing pages came back with facts as a 1,900-character
@@ -164,7 +221,7 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
   if (JSON.stringify(raw).length>SCOPE_TEXT_LIMIT) throw new Error("Scope analysis exceeds the safe response size; read this source in smaller sections.");
   const unreadValues: string[] = [];
   const takeoffs=r.takeoffs?readTakeoffs(r.takeoffs):undefined;
-  const factsBeforeLaborAggregation = r.facts.flatMap((item: unknown): ExtractedFact[] => {
+  const rawFactsBeforeLaborAggregation = r.facts.flatMap((item: unknown): ExtractedFact[] => {
     if (!item || typeof item !== "object") throw new Error("Invalid fact");
     const f = {...item} as Record<string, unknown>;
     // Accept an explicit JSON number without changing its value or evidence.
@@ -198,6 +255,21 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
     if (f.basis !== undefined && !["stated", "calculated", "visual", "inferred"].includes(String(f.basis))) throw new Error("Invalid fact basis");
     // A model's confidence is not evidence that an assumption was supplied by the user.
     let confidence = fact.confidence;
+    // Live P5 qualification: a 30-inch vanity became a 2.08 SF countertop
+    // with confidence 1, while the evidence assumed a depth and said 2.5 SF.
+    // Arithmetic involving an invented operand is an assumption, not a
+    // verified measurement. Preserve it for review without promoting it to
+    // an answer or discarding the rest of the successfully read scope.
+    if (SCOPE_FIELDS[fact.field].kind === 'number' && f.basis === 'calculated') {
+      const assumedOperand = /\b(?:assum(?:e|ed|ing|ption)|default(?:ed)?|typical(?:ly)?|presum(?:e|ed)|estimated\s+(?:depth|width|length|height))\b/i.test(fact.evidence);
+      const resultMatches = [...fact.evidence.matchAll(/=\s*(\d+(?:,\d{3})*(?:\.\d+)?)/g)];
+      const lastResult = resultMatches.at(-1)?.[1];
+      const disagrees = lastResult !== undefined && Math.abs(Number(lastResult.replaceAll(',', '')) - Number(fact.value.replaceAll(',', ''))) > .011;
+      if (assumedOperand || disagrees) {
+        f.basis = 'inferred';
+        confidence = Math.min(confidence, .2);
+      }
+    }
     if (f.basis === "inferred") confidence = Math.min(confidence, .2);
     if (f.basis === "visual") confidence = Math.min(confidence, SCOPE_FIELDS[f.field as ScopeField].kind === "number" ? 0 : .6);
     const value=SCOPE_FIELDS[f.field as ScopeField].kind === "number" ? String(Number(fact.value.replaceAll(",", ""))) : fact.value.trim();
@@ -210,16 +282,22 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
     const numericEvidence=NUMERIC_EVIDENCE[f.field as ScopeField];
     const assemblyMeasurement=f.field==="cabinetBaseLf"||f.field==="cabinetUpperLf"||f.field==="cabinetTallLf";
     const verifiedWidth=verifiedCabinetWidth(fact.field,value,fact.evidence);
-    const explicitAbsence=value==="0"&&/\b(?:no|none|zero|without)\b.{0,30}\b(?:base|lower|upper|wall|tall|pantry|cabinet)\b/i.test(fact.evidence);
+    const widthDisagrees=cabinetWidthFeet(fact.field,fact.evidence)!==null&&!verifiedWidth;
+    const explicitAbsence=explicitCabinetAbsence(fact.field,value,fact.evidence);
     if(assemblyMeasurement&&
-      (numericEvidence&&!numericEvidence.test(fact.evidence)&&!explicitAbsence&&!verifiedWidth||
+      (widthDisagrees||numericEvidence&&!numericEvidence.test(fact.evidence)&&!explicitAbsence&&!verifiedWidth||
        value==="0"&&UNDOCUMENTED_QUANTITY.test(fact.evidence))){
       unreadValues.push(`Confirm ${SCOPE_FIELDS[f.field as ScopeField].label.toLowerCase()} from an explicit measurement before pricing.`);
       return [];
     }
     return [{ ...f, value, confidence } as unknown as ExtractedFact];
   });
-  const conflicts = r.conflicts.map((item: unknown): ScopeConflict => {
+  const factsBeforeLaborAggregation=separateFlooringFacts(rawFactsBeforeLaborAggregation);
+  // Rebuild only our own raster-confirmation records from the validated facts.
+  // A saved confirmation must not resurrect a measurement now rejected as inferred.
+  const retainedConflicts = r.conflicts.filter((item: any) => !(typeof item?.explanation === 'string'
+    && /^Please confirm .+ read from the image: .+ Check the drawing label and enter a correction if needed; image readings can be mistaken\.$/.test(item.explanation)));
+  const conflicts = retainedConflicts.map((item: unknown): ScopeConflict => {
     if (!item || typeof item !== "object") throw new Error("Invalid conflict");
     const c = item as Record<string, unknown>;
     if (typeof c.field !== "string" || !Object.hasOwn(SCOPE_FIELDS,c.field) || typeof c.explanation !== "string" || c.explanation.length > 4000) throw new Error("Invalid conflict");
@@ -227,20 +305,9 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
     const values=[...new Set(strings(c.values,10).filter(v=>v.trim()&&!validateAnswer(field,v)).map(v=>SCOPE_FIELDS[field].kind === "number" ? String(Number(v.replaceAll(",", ""))) : v.trim()))];
     return { field, values, explanation: c.explanation };
   });
-  // A confident image transcription is not a verified measurement. A live
-  // drawing labeled 20'-0" by 15'-0" was read as 20'-9" by 15'-9" at 1.0
-  // confidence. Require confirmation of consequential raster measurements.
-  const geometricFields=new Set(['length','width','sqft','flooringSqft','tileSqft','countertopSqft','cabinetBaseLf','cabinetUpperLf','cabinetTallLf','garageSqft','coveredOutdoorSqft']);
-  for(const fact of factsBeforeLaborAggregation){
-    if(!geometricFields.has(fact.field)||fact.confidence<.85||fact.basis==='visual'||fact.basis==='inferred'||conflicts.some(c=>c.field===fact.field))continue;
-    if(/\.(?:png|jpe?g|webp|gif)\b/i.test(fact.source)&&!factsBeforeLaborAggregation.some(other=>other.field===fact.field&&other.source!==fact.source&&!/\.(?:png|jpe?g|webp|gif)\b/i.test(other.source)&&other.basis==='stated'&&other.confidence>=.85)){
-      conflicts.push({field:fact.field,values:[fact.value],explanation:`Please confirm ${SCOPE_FIELDS[fact.field].label.toLowerCase()} read from the image: ${fact.value}. Check the drawing label and enter a correction if needed; image readings can be mistaken.`});
-    }else if(fact.field==='flooringSqft'&&/\b(?:including|includes|plus|with)\b.{0,35}\bwaste\b|\bwaste\s+(?:included|allowance)\b/i.test(`${fact.value} ${fact.evidence}`)){
-      conflicts.push({field:fact.field,values:[],explanation:'What is the installed flooring area in square feet, before material waste? Purchased flooring and installation labor use separate quantities.'});
-    }
-  }
   const laborAggregation=aggregateLaborFacts(factsBeforeLaborAggregation,takeoffs,laborCoverage);
-  const fixtureGroups=separateFixtureFacts(laborAggregation.facts,conflicts);
+  const cabinetGroups=separateCabinetFacts(laborAggregation.facts,conflicts);
+  const fixtureGroups=separateFixtureFacts(cabinetGroups.facts,cabinetGroups.conflicts);
   const facts=fixtureGroups.facts;
   conflicts.splice(0,conflicts.length,...fixtureGroups.conflicts);
   conflicts.push(...laborAggregation.conflicts);
@@ -280,6 +347,21 @@ export function validateExtraction(raw: unknown): ScopeExtraction {
       evidence: `${group.map(f => `${f.value} (${f.evidence.trim().slice(0, 80)})`).join(' + ')} = ${Math.round(total * 100) / 100}` };
     for (const f of group) facts.splice(facts.indexOf(f), 1);
     facts.push(combined);
+    // Validation can follow cross-page merging or restore a saved record.
+    // Retire only our own stale part-versus-part conflict after proving the sum.
+    for(let i=conflicts.length-1;i>=0;i--)if(conflicts[i].field===field&&AUTOMATIC_QUANTITY_CONFLICTS.has(conflicts[i].explanation))conflicts.splice(i,1);
+  }
+  // A confident image transcription is not a verified measurement. A live
+  // drawing labeled 20'-0" by 15'-0" was read as 20'-9" by 15'-9" at 1.0
+  // confidence. Require confirmation of consequential raster measurements.
+  const geometricFields=new Set(['length','width','sqft','flooringSqft','tileSqft','wallTileSqft','countertopSqft','cabinetBaseLf','cabinetUpperLf','cabinetTallLf','garageSqft','coveredOutdoorSqft']);
+  for(const fact of facts){
+    if(!geometricFields.has(fact.field)||fact.confidence<.85||fact.basis==='visual'||fact.basis==='inferred'||conflicts.some(c=>c.field===fact.field))continue;
+    if(/\.(?:png|jpe?g|webp|gif)\b/i.test(fact.source)&&!facts.some(other=>other.field===fact.field&&other.source!==fact.source&&!/\.(?:png|jpe?g|webp|gif)\b/i.test(other.source)&&other.basis==='stated'&&other.confidence>=.85)){
+      conflicts.push({field:fact.field,values:[fact.value],explanation:`Please confirm ${SCOPE_FIELDS[fact.field].label.toLowerCase()} read from the image: ${fact.value}. Check the drawing label and enter a correction if needed; image readings can be mistaken.`});
+    }else if(fact.field==='flooringSqft'&&/\b(?:including|includes|plus|with)\b.{0,35}\bwaste\b|\bwaste\s+(?:included|allowance)\b/i.test(`${fact.value} ${fact.evidence}`)){
+      conflicts.push({field:fact.field,values:[],explanation:'What is the installed flooring area in square feet, before material waste? Purchased flooring and installation labor use separate quantities.'});
+    }
   }
   // Independent conflict detection: never let a model overwrite two different measurements.
   for (const field of Object.keys(SCOPE_FIELDS) as ScopeField[]) {
@@ -358,8 +440,9 @@ export function protectPricingFacts(extraction: ScopeExtraction): ScopeExtractio
       continue;
     }
     const numericEvidence=NUMERIC_EVIDENCE[fact.field];
-    const explicitAbsence=fact.value.trim()==='0'&&/\b(?:no|none|zero|without)\b.{0,30}\b(?:base|lower|upper|wall|tall|pantry|cabinet)\b/i.test(fact.evidence);
-    if(numericEvidence&&!verifiedCabinetWidth(fact.field,fact.value,fact.evidence)&&(!numericEvidence.test(fact.evidence)&&!explicitAbsence||DERIVED_MEASUREMENT.test(fact.evidence))){
+    const explicitAbsence=explicitCabinetAbsence(fact.field,fact.value,fact.evidence);
+    const widthDisagrees=cabinetWidthFeet(fact.field,fact.evidence)!==null&&!verifiedCabinetWidth(fact.field,fact.value,fact.evidence);
+    if(widthDisagrees||numericEvidence&&!verifiedCabinetWidth(fact.field,fact.value,fact.evidence)&&(!numericEvidence.test(fact.evidence)&&!explicitAbsence||DERIVED_MEASUREMENT.test(fact.evidence))){
       heldDerivedMeasurement=true;
       reviewNotes.push(`Unconfirmed derived measurement - ${SCOPE_FIELDS[fact.field].label}: ${fact.value}. The source evidence does not explicitly label this measurement, so it is not a pricing fact.`);
       continue;
@@ -460,6 +543,13 @@ export function combineScopeExtractions(parts:ScopeExtraction[]):ScopeExtraction
     } as RetainedClarificationProvenance;
   }
   if(clarificationProvenance)merged.clarificationProvenance=clarificationProvenance;
+  const beforeAreaFacts=merged.facts;
+  merged.facts=reconcileAreaTotals(merged.facts);
+  const beforeFixtureRows=merged.facts;
+  merged.facts=retainTypedFixtureRows(merged.facts);
+  const resolvedFixtureRows=beforeFixtureRows!==merged.facts&&!merged.facts.some(f=>f.field==='fixtureCount');
+  const resolvedAreas=AREA_PART_FIELDS.filter(field=>new Set(beforeAreaFacts.filter(f=>f.field===field&&f.confidence>=.4).map(f=>f.value)).size>1&&new Set(merged.facts.filter(f=>f.field===field&&f.confidence>=.4).map(f=>f.value)).size===1);
+  merged.conflicts=merged.conflicts.filter(conflict=>!(resolvedAreas.includes(conflict.field)||resolvedFixtureRows&&conflict.field==='fixtureCount')||!AUTOMATIC_QUANTITY_CONFLICTS.has(conflict.explanation));
   for(const field of Object.keys(SCOPE_FIELDS) as ScopeField[]){
     const values=[...new Set(merged.facts.filter(f=>f.field===field&&f.confidence>=.4).map(f=>f.value.trim()))];
     if(values.length>1&&SCOPE_FIELDS[field].kind!=="text"&&!merged.conflicts.some(c=>c.field===field))merged.conflicts.push({field,values,explanation:"Different document pages state different values. Confirm the intended project information."});
@@ -467,6 +557,12 @@ export function combineScopeExtractions(parts:ScopeExtraction[]):ScopeExtraction
   // Missing questions from one page may be answered on another.
   merged.reviewNotes=reconcileReviewNotes(merged);
   merged.missingInformation=reconcileMissingInformation(merged);
+  if(merged.documentCoverage?.complete&&merged.documentCoverage.pages.every(page=>page.status==='read')){
+    // Asking whether the reader should process its other segments is an
+    // internal workflow question. All uploaded pages have already been read.
+    merged.clarifications=merged.clarifications.filter(q=>!(q.field==='service'&&/\b(?:pages?|segments?)\b/i.test(q.question)&&/\b(?:extract|re-estimate|read)\b/i.test(q.question)));
+    merged.clarifications=merged.clarifications.map(q=>({...q,reason:q.reason.split(/(?<=[.!?])\s+/).filter(sentence=>!PAGE_LOCAL.test(sentence)).join(' ')}));
+  }
   return preserveIndependentQuestions(merged);
 }
 /** blockingReviewNote lives in documentLedger.ts so page coverage and pricing share one rule. */
@@ -476,7 +572,7 @@ export {blockingReviewNote};
 const GENERIC_SUBJECT=new Set(['work','works','item','items','material','materials','labor','labour','hours','install','installation','installed','finish','finishes','finishing','spec','specs','specification','specifications','detail','details','scope','project','area','size','sizes','type','types','system','systems','concrete','wood','metal','paint','trim','unit','units','total','totals','quantity','quantities','dimension','dimensions','not','and','the','for','with','only','shown','stated','specified','provided','required','page','pages','per','this','that','from','all','new','existing']);
 /** A note referring to the reader's own page or excerpt, meaningless once every
  * page of the document has been read. */
-const PAGE_LOCAL=/\b(?:on|in|to|for)\s+this\s+(?:page|segment|section|sheet|excerpt|crop|view|group)\b|\bnot\s+(?:included|shown|present|visible|legible)\s+(?:in|on)\s+this\b|\bthis\s+(?:page|segment|section|excerpt)\s+(?:does\s+not|only)\b|\bpage\s+\d+[^.;]*\b(?:not\s+included|may\s+continue|continues?\s+(?:on|elsewhere))\b|\b(?:on|to)\s+(?:a\s+|the\s+)?(?:later|next|following|subsequent|other)\s+pages?\b|\b(?:may|might|could)\s+continue\b/i;
+const PAGE_LOCAL=/\b(?:on|in|to|for)\s+this\s+(?:page|segment|section|sheet|excerpt|crop|view|group)\b|\bnot\s+(?:yet\s+)?(?:included|shown|present|visible|legible)\s+(?:in|on)\s+(?:this\b|page\s+\d+\b)|\bthis\s+(?:page|segment|section|excerpt)\s+(?:does\s+not|only)\b|\bpage\s+\d+[^.;]*\b(?:not\s+included|may\s+continue|continues?\s+(?:on|elsewhere))\b|\b(?:on|to)\s+(?:a\s+|the\s+)?(?:later|next|following|subsequent|other)\s+pages?\b|\b(?:may|might|could)\s+continue\b/i;
 /** A note about money in the source document. The estimator never prices from a
  * number printed on an upload, so a missing or redacted price is not missing
  * project information. */

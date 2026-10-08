@@ -3,6 +3,7 @@ import type {ReviewedScope,ScopeExtraction} from './scope.ts';
 import {PRICE_BOOK} from './priceBookData.ts';
 import {finishTier,priceBookRate,serviceContext} from './priceBook.ts';
 import {suggestedTrade} from './trades.ts';
+import {applyMinorWorkAllowance,minorWorkEligible} from './minorWorkAllowance.ts';
 
 /**
  * Deterministic corrections to a priced scope, applied after the model's mapping and audit and
@@ -46,10 +47,10 @@ const ASSEMBLY_MARKER='complete assembly, do not add its component lines';
 const WHOLE_UNIT_SECTIONS=/Whole-House New Build|Additions & ADUs|Whole-House & Conversions/;
 const WHOLE_UNIT_ITEMS=/new home construction|\bADU\b|addition|suite|second-story|whole-home renovation|garage conversion|attic conversion|basement finishing|detached garage/i;
 /** Work a whole-unit assembly does not include, by the book's own division and section names. */
-const OUTSIDE_WHOLE_UNIT=/Pre-Construction & Fees|Permits|Impact Fee|Design & Engineering|Survey|Earthwork|Excavation|Grading|Site (?:Work|Prep|Clearing|Utilities|Improvements)|Utilit|Sewer|Septic|Well\b|Water (?:service|line|meter|lateral)|Service (?:extension|lateral)|Trench|Landscap|Exterior Improvements|Driveway|Sidewalk|Fenc|Existing Conditions|Demolition|Tree|Land\b|Temporary Facilities|Cleaning & Waste|Dumpster/i;
+const OUTSIDE_WHOLE_UNIT=/Pre-Construction & Fees|Permits|Impact Fee|Design & Engineering|Survey|Earthwork|Excavation|Grading|Site (?:Work|Prep|Clearing|Utilities|Improvements)|Utilit|Sewer|Septic|Well\b|Water (?:service|line|meter|lateral)|Service (?:extension|lateral)|Trench|Landscap|Exterior Improvements|Decks & Outdoor Structures|Porch|Patio|Deck\b|Driveway|Sidewalk|Fenc|Existing Conditions|Demolition|Tree|Land\b|Temporary Facilities|Cleaning & Waste|Dumpster/i;
 /** Task wording for work a whole-unit assembly includes, and for work that stays outside it. */
 const COMPONENT_TASK=/\b(?:foundation|slab|footings?|fram(?:e|ing)|roof(?:ing)?|envelope|siding|cladding|insulat\w*|air[- ]seal\w*|drywall|paint\w*|floor(?:ing)?|finish(?:es)?|trim|casing|cabinet\w*|kitchen|bath(?:room)?|plumbing|electrical system|wiring|hvac|mini-?split|heating|cooling|ventilat\w*|windows?|doors?|life-safety|smoke|carbon|egress|clean(?:up|ing)?|protect\w*|debris|haul)\b/i;
-const OUTSIDE_TASK=/\b(?:site (?:prep\w*|work|clearing|grading|layout)|excavat\w*|grad(?:e|ing) the|utilit(?:y|ies)|sewer|septic|well\b|water (?:line|service|main|lateral)|(?:electrical|power) service|trench\w*|permits?|fees?|impact|design|engineer\w*|architect\w*|survey\w*|land\b|lot\b|driveway|sidewalk|landscap\w*|fenc\w*|tree)\b/i;
+const OUTSIDE_TASK=/\b(?:site (?:prep\w*|work|clearing|grading|layout)|excavat\w*|grad(?:e|ing) the|utilit(?:y|ies)|sewer|septic|well\b|water (?:line|service|main|lateral)|(?:electrical|power) service|trench\w*|permits?|fees?|impact|design|engineer\w*|architect\w*|survey\w*|land\b|lot\b|porch|patio|deck|driveway|sidewalk|landscap\w*|fenc\w*|tree)\b/i;
 const HAUL_OFF_INCLUDED=/removal labor with haul-off and dump fees/i;
 const DEMOLITION_LIKE=/\b(?:demo(?:lition)?|removal|remove|tear-?(?:out|off))\b/i;
 const DEBRIS_TASK=/\b(?:debris|haul|junk|dumpster|dispos\w*|waste)\b/i;
@@ -58,7 +59,6 @@ const RECONNECT=/\b(?:re-?connect(?:ion|ing|ed)?|hook(?:ing|ed)?\s+(?:back\s+)?u
 const RELOCATE=/\brelocat\w*|\bmov(?:e|ing)\s+(?:the\s+|a\s+)?(?:drain|plumbing|supply|toilet|sink|shower|tub|fixture)|\bnew\s+(?:drain|supply|plumbing)\s+(?:location|run|line)|\brough-?in\b|\badd(?:ing)?\s+(?:a\s+|an\s+|new\s+)?(?:bathroom|fixture|shower|sink|toilet)/i;
 const ROUGH_AND_FINISH=/^(?:Plumbing per fixture, rough \+ finish|Rough-in only, per fixture)\b/;
 const PROTECT_OR_CLEAN=/\bprotect\w*|\bdust\b|\bmask(?:ing)?\b|\bclean(?:ing|up|-up)?\b|\bbroom\b|\bfloor protection\b/i;
-const SUPPORTING_SHARE=0.15;
 
 const hasMarker=(d:string)=>d.includes(ASSEMBLY_MARKER);
 /** Where a book line's own text begins inside "task description: item (what it includes; section, division)". */
@@ -126,6 +126,52 @@ export function applyPricingCorrections(input:CorrectionInput):CorrectionResult{
     }
   }
 
+  // Integrated tops belong to the one installed vanity package already bought.
+  // Reconnection, faucets and separately selected countertops stay separate.
+  if(oneVanity){
+    const assembly=resolution.rules.find(r=>/\bPB-12-41-0[12]\b/.test(r.evidence?.reference||'')&&r.category==='subcontractors'&&r.quantity.fixed===1&&direct(r)>0);
+    if(assembly)for(const task of mappingTasks){
+      if(task.id===assembly.scopeTaskId||!task.existingLineIds.includes(assembly.id))continue;
+      if(/\b(?:integrated|integral)\b/i.test(task.description)&&/\b(?:top|sink)\b/i.test(task.description)&&!/\b(?:faucet|reconnect|plumbing|rough-in|drain connection)\b/i.test(task.description))cover(task.id,assembly.id);
+    }
+  }
+
+  // One unambiguous remove/install pair for the same handles uses the book's
+  // replacement labor once. A labor-only rate never supplies disposal for free.
+  const hardware=resolution.rules.filter(r=>/\bPB-08-71-01\b/.test(r.evidence?.reference||'')&&r.category==='field-labor'&&direct(r)>0);
+  const installations=hardware.filter(r=>/\b(?:install|replace)\b/i.test(taskDescription(r.scopeTaskId||'')));
+  const removals=hardware.filter(r=>/^remove\b/i.test(taskDescription(r.scopeTaskId||''))
+    &&/\b(?:handles?|levers?|hardware)\b/i.test(taskDescription(r.scopeTaskId||''))
+    &&!/\b(?:install|replace)\b/i.test(taskDescription(r.scopeTaskId||'')));
+  if(installations.length===1&&removals.length===1){
+    const installation=installations[0],removal=removals[0];
+    const source=[scope.text,scope.extraction?.sourceText].filter(Boolean).join('\n');
+    const conflicting=/\b(?:additional|different|other)\s+(?:\w+\s+)?doors?\b|\bnot\s+(?:on\s+)?(?:the\s+)?same\b/i.test(source);
+    const sameReplacement=/\breplace\b[^.\n]{0,100}\bexisting\b[^.\n]{0,60}\b(?:lever handles?|handle sets?)\b\s+with\b/i.test(source);
+    const sameExplicit=/\bremove\b[^.\n]{0,120}\b(?:levers?|handles?)\b[^.\n]{0,40}\band install\b[^.\n]{0,120}\b(?:levers?|handles?)\b[^.\n]{0,40}\bon (?:the )?same (?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)?\s*doors?\b/i.test(source);
+    const sameMapped=/\bsame doors?\b/i.test(taskDescription(installation.scopeTaskId||''));
+    const identical=removal.quantity.fixed===installation.quantity.fixed&&(removal.quantity.fixed||0)>0
+      &&JSON.stringify(removal.quantity)===JSON.stringify(installation.quantity)
+      &&JSON.stringify(removal.quantityRange)===JSON.stringify(installation.quantityRange)
+      &&removal.unit===installation.unit&&removal.unitCost===installation.unitCost
+      &&(removal.building||'').trim().toLowerCase()===(installation.building||'').trim().toLowerCase()
+      &&removal.floor===installation.floor;
+    const removalDescription=taskDescription(removal.scopeTaskId||'');
+    const disposal=/\b(?:dispos\w*|haul[- ]?off)\b/i.test(removalDescription);
+    const residual={id:removal.scopeTaskId||removal.id,description:removalDescription,policyParentDescription:removalDescription,evidence:source,researchDescription:'Dispose of the removed door levers or handles',existingLineIds:[installation.id]};
+    const extraRemoval=/\b(?:hinges?|frames?|drilling|patching|structural)\b/i.test(removalDescription);
+    if(!conflicting&&!extraRemoval&&(sameReplacement||sameExplicit||sameMapped)&&identical&&(!disposal||minorWorkEligible(residual))){
+      dropRule(removal,installation.id);cover(removal.scopeTaskId,installation.id);
+      if(disposal){
+        residual.description=residual.researchDescription;
+        applyMinorWorkAllowance([residual],resolution,lines,input.now);
+        for(const id of residual.existingLineIds)cover(removal.scopeTaskId,id);
+      }
+      installation.description=`Remove existing handles and install their replacements on the same doors: ${ratePart(installation.description)}`;
+      notes.push('Removal and replacement of the same door handles are covered by one per-door hardware replacement labor charge.');
+    }
+  }
+
   // 1. One complete assembly, priced once; a whole unit covers its own components.
   const assemblies=resolution.rules.filter(rule=>hasMarker(rule.description));
   const groups=new Map<string,CostRule[]>();
@@ -142,21 +188,55 @@ export function applyPricingCorrections(input:CorrectionInput):CorrectionResult{
   for(const assembly of kept){
     const {section}=sectionOf(assembly.description);
     if(!WHOLE_UNIT_SECTIONS.test(section)||!WHOLE_UNIT_ITEMS.test(itemOf(assembly.description)))continue;
-    const components=resolution.rules.filter(rule=>rule!==assembly&&!hasMarker(rule.description)&&sameBuilding(rule.building,assembly.building)&&!OUTSIDE_WHOLE_UNIT.test(ratePart(rule.description)));
-    const roomAssemblies=resolution.rules.filter(rule=>rule!==assembly&&hasMarker(rule.description)&&sameBuilding(rule.building,assembly.building)&&!WHOLE_UNIT_SECTIONS.test(sectionOf(rule.description).section));
+    // A project-wide SF cleanup can span the separately priced garage/porch.
+    // Remove only the measured house share already included by the complete
+    // home. Never delete the other areas or charge the house a second time.
+    const houseArea=Number(scope.answers.sqft),garageArea=Number(scope.answers.garageSqft||0),porchArea=Number(scope.answers.coveredOutdoorSqft||0);
+    if(/\bPB-90-10-01\b/.test(assembly.evidence?.reference||'')&&assembly.quantity.fixed===houseArea&&houseArea>0
+      &&garageArea+porchArea>0&&kept.filter(r=>/\bPB-90-10-01\b/.test(r.evidence?.reference||'')).length===1){
+      for(const rule of resolution.rules){
+        if(!/\bPB-01-74-05\b/.test(rule.evidence?.reference||'')||rule.unit!=='SF'||rule.quantityRange
+          ||rule.quantity.fixed!==houseArea+garageArea+porchArea
+          ||!/\b(?:project|site|house|home|interiors)\b/i.test(taskDescription(rule.scopeTaskId||''))
+          ||/\b(?:trench|driveway|landscape|external utility)\b/i.test(taskDescription(rule.scopeTaskId||'')))continue;
+        const remaining=garageArea+porchArea;
+        rule.quantity={...rule.quantity,fixed:remaining};
+        rule.description=`Final cleanup of separately measured garage and covered porch; house cleanup included in the complete home: ${ratePart(rule.description)}`;
+        rule.building='garage and covered porch';
+        cover(rule.scopeTaskId,assembly.id);
+        notes.push(`Final cleanup is priced once: ${houseArea} SF of house cleanup is included in the complete home; the separate cleanup line covers only ${remaining} SF of garage and covered porch.`);
+      }
+    }
+    const completionCleanup=(description:string)=>(PROTECT_OR_CLEAN.test(description)||DEBRIS_TASK.test(description))
+      && /\b(?:house|home|ADU|building|project-wide)\b/i.test(description)
+      && !/\b(?:excavat\w*|trench\w*|site clearing|sewer|septic|driveway|sidewalk|landscap\w*|external utilit\w*|off[- ]site)\b/i.test(description);
+    const measuredBuildingCleanup=(rule:CostRule)=>PROTECT_OR_CLEAN.test(itemOf(rule.description))&&/^SF$/i.test(rule.unit)
+      &&Number(scope.answers.sqft)>0&&rule.quantity.fixed===Number(scope.answers.sqft)
+      &&/\b(?:house|home|ADU|building)\b/i.test(taskDescription(rule.scopeTaskId||''));
+    const outsideUnit=(rule:CostRule)=>OUTSIDE_WHOLE_UNIT.test(ratePart(rule.description))
+      && !((PROTECT_OR_CLEAN.test(itemOf(rule.description))||DEBRIS_LINE.test(itemOf(rule.description)))&&(!OUTSIDE_TASK.test(taskDescription(rule.scopeTaskId||''))||completionCleanup(taskDescription(rule.scopeTaskId||'')))||measuredBuildingCleanup(rule));
+    const components=resolution.rules.filter(rule=>rule!==assembly&&!hasMarker(rule.description)&&sameBuilding(rule.building,assembly.building)&&!outsideUnit(rule));
+    const roomAssemblies=resolution.rules.filter(rule=>rule!==assembly&&hasMarker(rule.description)&&sameBuilding(rule.building,assembly.building)&&!WHOLE_UNIT_SECTIONS.test(sectionOf(rule.description).section)&&!OUTSIDE_WHOLE_UNIT.test(ratePart(rule.description)));
     const drop=[...components,...roomAssemblies];
     const total=drop.reduce((n,rule)=>n+direct(rule),0);
     for(const rule of drop){dropRule(rule,assembly.id);cover(rule.scopeTaskId,assembly.id);}
     // A component task the mapping left unpriced (roofing, insulation, the envelope) is inside the
     // unit's price too; otherwise it would be carried out of the total as "not priced" and the
     // finished unit shown as a partial estimate.
+    const normalPerimeterConnection=(description:string)=>{
+      const included=description.split(/\bexclud(?:e[sd]?|ing)\b/i)[0];
+      return /\butilities\s+stubbed\s+at\s+(?:the\s+)?building perimeter\b/i.test([scope.text,scope.extraction?.sourceText,scope.answers.utilities].filter(Boolean).join('\n'))
+        &&/\b(?:connect|tie[- ]?in)\b/i.test(included)&&/\b(?:at|within)\s+(?:the\s+)?building perimeter\b/i.test(included)
+        &&!/\b(?:extend|extension|trench|excavat|off[- ]site|street|\d+\s*(?:LF|feet|ft))\b/i.test(included);
+    };
     const unpricedComponents=mappingTasks.filter(task=>task.id!==assembly.scopeTaskId&&!covered.has(task.id)
       &&!resolution.rules.some(rule=>rule.scopeTaskId===task.id)&&!task.existingLineIds.some(id=>lines.some(line=>line.id===id&&!removed.has(line.id)))
-      &&COMPONENT_TASK.test(task.description)&&!OUTSIDE_TASK.test(task.description));
+      &&(COMPONENT_TASK.test(task.description)&&!OUTSIDE_TASK.test(task.description)||completionCleanup(task.description)||normalPerimeterConnection(task.description)));
     for(const task of unpricedComponents)cover(task.id,assembly.id);
+    if(unpricedComponents.some(task=>normalPerimeterConnection(task.description)))notes.push('Normal building connections at the expressly provided perimeter utility stubs are included in the complete building. External utility extensions and trenching remain separate.');
     if(!drop.length&&!unpricedComponents.length)continue;
     console.error(`[p5-pricing] whole-unit assembly kept ${assembly.id}; removed ${drop.length} component lines (${money(total)} direct)`);
-    notes.push(`To confirm: the ${itemOf(assembly.description)} price is a complete assembly that already includes its structure, envelope, systems, finishes and cleanup${drop.length?`, so ${drop.length} component ${drop.length===1?'line was':'lines were'} removed so nothing is charged twice`:''}${unpricedComponents.length?`; ${unpricedComponents.length} component ${unpricedComponents.length===1?'item is':'items are'} covered by it rather than priced separately`:''}. Site work, utility connections, permits, fees and design stay separate.`);
+    notes.push(`To confirm: the ${itemOf(assembly.description)} price is a complete assembly that already includes its structure, envelope, systems, finishes and cleanup${drop.length?`, so ${drop.length} component ${drop.length===1?'line was':'lines were'} removed so nothing is charged twice`:''}${unpricedComponents.length?`; ${unpricedComponents.length} component ${unpricedComponents.length===1?'item is':'items are'} covered by it rather than priced separately`:''}. Site work, external utility connections and extensions, permits, fees and design stay separate.`);
   }
 
   // 2. One building described means one building priced.
@@ -185,67 +265,73 @@ export function applyPricingCorrections(input:CorrectionInput):CorrectionResult{
   }
 
   // 4. Reconnecting existing plumbing is reconnection labor, not a rough-in package.
-  const plumbingText=[scope.text,scope.answers.plumbing,scope.answers.taskList,scope.answers.installation,...(instructions?.inclusions||[])].filter(Boolean).join('\n');
-  if(RECONNECT.test(plumbingText)&&!RELOCATE.test(plumbingText)){
+  const plumbingText=[scope.text,scope.extraction?.sourceText,scope.answers.plumbing,scope.answers.taskList,scope.answers.installation,...(instructions?.inclusions||[])].filter(Boolean).join('\n');
+  const retainedPlumbing=/\bexisting\s+(?:plumbing|fixture)\s+locations\s+(?:remain|stay|are unchanged)\b/i.test(plumbingText)&&/\bre-?connect\w*\b/i.test(plumbingText);
+  const affirmativePlumbing=plumbingText.split(/(?<=[.!?])\s+|\n|;/).filter(part=>!/^\s*(?:no\b|exclude\w*\b|not\b)/i.test(part)).join('\n');
+  if((RECONNECT.test(plumbingText)||retainedPlumbing)&&!RELOCATE.test(affirmativePlumbing)){
+    const codeOf=(rule:CostRule)=>rule.evidence?.reference.match(/\bPB-(\d{2}-\d{2}-\d{2})(?![\d-])/)?.[1];
+    const reconnectTask=(rule:CostRule)=>/\bre-?connect\w*\b/i.test(taskDescription(rule.scopeTaskId||''))
+      &&!/\b(?:retained|untouched|additional|different)\s+(?:fixtures?|sinks?|faucets?|toilets?)\b/i.test(taskDescription(rule.scopeTaskId||''));
+    const compatible=(a:CostRule,b:CostRule)=>sameBuilding(a.building,b.building)&&(!a.floor||!b.floor||a.floor===b.floor);
+    // A project-wide reconnection row is a summary of the individual fixture
+    // installations. Remove only the quantity already bought for that same
+    // location; preserve a real residual (e.g. two vanity drain connections).
+    for(const extra of [...resolution.rules]){
+      const code=codeOf(extra);
+      if(!code||!/^22-(?:42-0[1-6]|01-09)$/.test(code)||!reconnectTask(extra)||extra.evidence?.reference.includes('[reconciled reconnect summary]'))continue;
+      const anchors=resolution.rules.filter(rule=>rule!==extra&&!reconnectTask(rule)&&compatible(rule,extra)
+        &&(codeOf(rule)===code||code==='22-01-09'&&/^12-41-0[12]$/.test(codeOf(rule)||''))&&direct(rule)>0);
+      const priced=anchors.reduce((sum,rule)=>sum+(rule.quantity.fixed||0),0);
+      if(!priced)continue;
+      const overlap=Math.min(priced,extra.quantity.fixed||0);
+      const remaining=Math.max(0,(extra.quantity.fixed||0)-priced);
+      if(!remaining){dropRule(extra,anchors[0].id);for(const anchor of anchors)cover(extra.scopeTaskId,anchor.id);}
+      else{extra.quantity={...extra.quantity,fixed:remaining};if(extra.quantityRange)extra.quantityRange={low:Math.max(remaining,extra.quantityRange.low-priced),high:Math.max(remaining,extra.quantityRange.high-priced)};if(extra.evidence)extra.evidence.reference+='; [reconciled reconnect summary]';}
+      notes.push(`${itemOf(extra.description)} is charged once per replaced fixture. ${overlap} overlapping installation${overlap===1?'':'s'} removed from the reconnection summary${remaining?`; ${remaining} additional connection${remaining===1?' remains':'s remain'} included`:''}.`);
+    }
     const row=PRICE_BOOK.find(r=>r[0]==='22-01-01');
     const packages=resolution.rules.filter(rule=>ROUGH_AND_FINISH.test(itemOf(rule.description)));
     if(row&&packages.length){
       const rate=priceBookRate(row,finishTier(scope.answers.finish),serviceContext(scope.answers.service).remodel);
       let hours=0;
       for(const rule of packages){
-        const fixtures=Math.max(1,Math.round(rule.quantity.fixed||1));
+        const installation=resolution.rules.filter(other=>other!==rule&&compatible(other,rule)&&/^22-42-0[1-69]$/.test(codeOf(other)||'')&&direct(other)>0);
+        const counts=new Map<string,number>();
+        for(const line of installation){const code=codeOf(line)!;const family=/22-42-0[59]/.test(code)?'shower':code;counts.set(family,(counts.get(family)||0)+(line.quantity.fixed||0));}
+        // Shower rough and trim are two operations on the same fixture.
+        if(counts.has('shower'))counts.set('shower',Math.max(...['22-42-05','22-42-09'].map(code=>installation.filter(line=>codeOf(line)===code).reduce((sum,line)=>sum+(line.quantity.fixed||0),0))));
+        const alreadyInstalled=[...counts.values()].reduce((sum,count)=>sum+count,0);
+        const fixtures=Math.max(0,Math.round(rule.quantity.fixed||1)-alreadyInstalled);
+        if(!fixtures&&installation.length){dropRule(rule,installation[0].id);for(const line of installation)cover(rule.scopeTaskId,line.id);continue;}
         const index=resolution.rules.indexOf(rule);
         const replacement:CostRule={scopeTaskId:rule.scopeTaskId,id:`${rule.id}-reconnect`,description:`${rule.description.slice(0,Math.max(0,rule.description.lastIndexOf(': ')))||taskDescription(rule.scopeTaskId||'')}: ${rate.description}`,trade:suggestedTrade(rate.description),unit:'hour',quantity:{fixed:fixtures*2,factor:1},unitCost:rate.amount,allowance:true,quantityRange:{low:fixtures*1.5,high:fixtures*3},building:rule.building,floor:rule.floor,category:'field-labor',priceBasis:'direct-cost',estimatingBasis:rate.basis,evidence:{basis:'owner-estimating-schedule',reference:`${rate.source}; ${rate.code}; ALLOWANCE: about 2 hours of licensed plumber time per fixture to reconnect ${fixtures} fixture${fixtures===1?'':'s'} to existing supply and drain locations`,verifiedAt:input.now.toISOString(),validUntil:new Date(input.now.getTime()+92*86400000).toISOString()}};
         resolution.rules.splice(index,1,replacement);
         for(const task of mappingTasks)if(task.existingLineIds.includes(rule.id))task.existingLineIds=task.existingLineIds.map(id=>id===rule.id?replacement.id:id);
         hours+=fixtures*2;
       }
-      notes.push(`To confirm: the request keeps the existing plumbing locations, so reconnection is priced as about ${hours} hours of licensed plumber time (an allowance) instead of a rough-in-plus-finish package per fixture. New or relocated plumbing would change this.`);
+      notes.push(`To confirm: existing plumbing locations remain. Fixture installation already priced is not charged again. Remaining reconnections carry ${hours} hours of licensed plumber time as an allowance, replacing full rough-in packages. Confirm the remaining connections before a firm proposal.`);
     }
   }
 
-  // 5. Supporting protection, cleanup and debris handling are scaled to the work they support, and
-  //    when the mapping left such a task unpriced it is part of the requested work's own labor rather
-  //    than a reason to withhold the estimate (live Handyman trim-only job, 2026-09-25: held for an
-  //    unpriced protection task and a full-truckload junk line for MDF cutoffs).
-  const debrisWords=/\b(?:debris|junk|dumpster|waste|cutoffs?|packaging|haul\w*|dispos\w*)\b/i;
-  // Explicitly requested installation cleanup is still supporting work. The
-  // customer's wording must not bypass the same scale guard as inferred cleanup.
-  // Standalone cleaning remains outside this correction.
-  const requestedInstallCleanup=(t:CorrectionTask)=>PROTECT_OR_CLEAN.test(t.description)&&/\b(?:after|following|post)[ -]?(?:the\s+)?(?:cabinet\s+|flooring\s+|trim\s+)?install(?:ation)?\b|\b(?:job|installation)[ -]?(?:site[ -]?)?clean(?:up|ing|-up)\b/i.test(t.description);
-  const supportingTasks=inventoryTasks.filter(t=>((t.origin||'requested')==='required'||requestedInstallCleanup(t))&&(PROTECT_OR_CLEAN.test(t.description)||debrisWords.test(t.description))
-    // "Remove the showers" is the removal itself; "remove cutoffs and packaging debris" is debris handling.
-    &&!(/\b(?:demoli\w*|remov\w*|tear)\b/i.test(t.description)&&!/\b(?:debris|cutoffs?|packaging|waste|junk)\b/i.test(t.description)));
-  if(supportingTasks.length){
-    const supportingIds=new Set(supportingTasks.map(t=>t.id));
-    const coreRules=resolution.rules.filter(rule=>!supportingIds.has(rule.scopeTaskId||''));
-    const coreLines=lines.filter(line=>!removed.has(line.id)&&!supportingTasks.some(t=>mappingTasks.find(m=>m.id===t.id)?.existingLineIds.includes(line.id)));
-    const core=coreRules.reduce((n,rule)=>n+direct(rule),0)+coreLines.reduce((n,line)=>n+line.unitCost*line.quantity,0);
-    const cap=core*SUPPORTING_SHARE;
-    const anchor=[...coreRules.map(r=>({id:r.id,value:direct(r)})),...coreLines.map(l=>({id:l.id,value:l.unitCost*l.quantity}))].sort((a,b)=>b.value-a.value)[0];
-    const absorbed:string[]=[];
-    for(const task of supportingTasks){
-      const mapped=mappingTasks.find(m=>m.id===task.id);
-      const priced=resolution.rules.some(rule=>rule.scopeTaskId===task.id&&direct(rule)>0)||Boolean(mapped?.existingLineIds.some(id=>lines.some(line=>line.id===id&&!removed.has(line.id)&&line.unitCost*line.quantity>0)));
-      if(priced||!anchor||covered.has(task.id)||(task.origin||'requested')!=='required')continue;
-      cover(task.id,anchor.id);absorbed.push(task.description.replace(/[.\s]+$/,''));
-    }
-    if(absorbed.length)notes.push(`To confirm: ${absorbed.join('; ')}: included within the installation labor for a job this size rather than priced as a separate line.`);
-    if(cap>0)for(const task of supportingTasks){
-      const rules=resolution.rules.filter(rule=>rule.scopeTaskId===task.id&&direct(rule)>0);
-      const total=rules.reduce((n,rule)=>n+direct(rule),0);
-      if(total<=cap)continue;
-      const factor=cap/total;
-      for(const rule of rules){
-        rule.unitCost=Math.round(rule.unitCost*factor*100)/100;
-        if(rule.unitCostRange)rule.unitCostRange={low:Math.round(rule.unitCostRange.low*factor*100)/100,high:Math.round(rule.unitCostRange.high*factor*100)/100};
-        rule.allowance=true;
-      }
-      console.error(`[p5-pricing] supporting work ${task.id} capped at ${money(cap)} direct (was ${money(total)})`);
-      notes.push(`To confirm: ${task.description.replace(/[.\s]+$/,'')} is carried as an allowance of about ${Math.round(SUPPORTING_SHARE*100)}% of the priced work, because the catalog package it matched is sized for a whole house; confirm on site.`);
+  // Measured room protection uses actual book components. A percentage of
+  // unrelated work is not a supported price or proof of included cleanup.
+  const roomArea=Number(scope.answers.sqft||scope.answers.flooringSqft);
+  if(['bathroom','kitchen','handyman'].includes(scope.answers.service||'')&&roomArea>0&&roomArea<=500
+    &&!instructions?.separateBuildings&&!/\b(?:two|three|four|[2-9])\s+(?:bathrooms?|kitchens?)\b/i.test(scope.text)){
+    for(const packageRule of [...resolution.rules].filter(rule=>/\bPB-01-50-04\b/.test(rule.evidence?.reference||''))){
+      const components=[{code:'01-50-10',quantity:roomArea,range:{low:roomArea,high:roomArea*2}},{code:'01-50-11',quantity:1,range:{low:1,high:2}}];
+      const replacements=components.map((component,index)=>{
+        const row=PRICE_BOOK.find(row=>row[0]===component.code)!;
+        const rate=priceBookRate(row,finishTier(scope.answers.finish),serviceContext(scope.answers.service).remodel);
+        return {...packageRule,id:index?packageRule.id+'-dust-barrier':packageRule.id,
+          description:`${taskDescription(packageRule.scopeTaskId||'')}: ${rate.description}`,unit:rate.unit,
+          quantity:{fixed:component.quantity,factor:1},quantityRange:component.range,unitCost:rate.amount,unitCostRange:undefined,allowance:true,
+          evidence:{...packageRule.evidence,reference:`${rate.source}; ${rate.code}; ALLOWANCE: protection for one ${roomArea} SF room; confirm access-path area and dust-barrier count on site.`}} as CostRule;
+      });
+      const index=resolution.rules.indexOf(packageRule);resolution.rules.splice(index,1,...replacements);
+      notes.push(`Room protection uses the approved floor-protection rate for ${roomArea} to ${roomArea*2} SF and one to two dust barriers. These are allowances for the room and access path, replacing the whole-house protection package; confirm site layout.`);
     }
   }
-
   resolution.assumptions.push(...notes);
   return {coveredTaskIds:[...covered],notes};
 }

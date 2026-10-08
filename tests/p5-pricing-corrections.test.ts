@@ -74,6 +74,19 @@ test('a single kitchen assembly and its separately requested appliance allowance
   applyPricingCorrections(input);
   assert.equal(input.resolution.rules.length,2);
 });
+
+test('new home keeps the separately measured porch, patio and garage outside conditioned living area',()=>{
+ const scope=scopeFor('Build 2000 SF home, plus 440 SF garage and 80 SF covered porch.',{service:'new-construction',sqft:'2000',garageSqft:'440',coveredOutdoorSqft:'80'});
+ const tasks=[{id:'home',description:'Construct 2000 SF new home'},{id:'garage',description:'Construct 440 SF garage'},{id:'porch',description:'Construct 80 SF covered porch'},{id:'roof',description:'Roofing for house'},{id:'patio',description:'Build separate covered patio roof'}];
+ const rules=[rule('home',tasks[0].description,'90-10-01',2000),rule('garage',tasks[1].description,'90-10-03',440),rule('porch',tasks[2].description,'06-15-06',80),rule('roof',tasks[3].description,'07-31-01',2000)];
+ const input=inputFor(scope,tasks,rules);
+ const result=applyPricingCorrections(input);
+ assert.ok(input.resolution.rules.some(r=>r.scopeTaskId==='porch'&&r.quantity.fixed===80));
+ assert.ok(input.resolution.rules.some(r=>r.scopeTaskId==='garage'&&r.quantity.fixed===440));
+ assert.ok(!input.resolution.rules.some(r=>r.scopeTaskId==='roof'));
+ assert.ok(!result.coveredTaskIds.includes('patio'),'unpriced exterior work cannot be marked covered by the house');
+ assert.ok(!result.coveredTaskIds.includes('porch'));
+});
 test('invented building labels are dropped for a one-building project and kept when the customer named two',()=>{
   const scope=scopeFor('Two bathrooms in a Boise home.',{service:'bathroom',finish:'mid-range'});
   const tasks=[{id:'t1',description:'Tile shower one',origin:'requested'},{id:'t2',description:'Tile shower two',origin:'requested'}];
@@ -118,11 +131,12 @@ test('whole-house protection on a one-room job is scaled to a share of the price
   const core=direct(input.resolution.rules[0])+direct(input.resolution.rules[1]);
   applyPricingCorrections(input);
   const protection=input.resolution.rules.find(r=>r.scopeTaskId==='protect')!;
-  assert.ok(direct(protection)<=core*0.15+0.01,`protection ${direct(protection)} is within 15% of ${core}`);
+  assert.equal(protection.unitCost,rate('01-50-10').amount,'preserve the approved floor-protection rate');
+  assert.equal(protection.quantity.fixed,200);
   assert.equal(protection.allowance,true);
   const clean=input.resolution.rules.find(r=>r.scopeTaskId==='clean')!;
   assert.equal(clean.unitCost,rate('01-74-05').amount,'a small final-clean line keeps its book price');
-  assert.ok(input.resolution.assumptions.some(a=>/allowance of about 15%/.test(a)));
+  assert.ok(!input.resolution.assumptions.some(a=>/allowance of about 15%/.test(a)));
 });
 test('nothing changes on an ordinary estimate with no assemblies, one building and sized supporting work',()=>{
   const scope=scopeFor('Install 100 LF of baseboard.',{service:'handyman',trimLf:'100'});
@@ -134,16 +148,16 @@ test('nothing changes on an ordinary estimate with no assemblies, one building a
   assert.equal(JSON.stringify(input.resolution.rules),snapshot);
   assert.deepEqual(result.notes,[]);
 });
-test('an unpriced protection, cleanup or debris task on a small job is absorbed into the requested work, not a hold (live Handyman trim-only, 2026-09-25)',()=>{
+test('unpriced supporting work cannot be claimed as free coverage by unrelated installation labor',()=>{
   const scope=scopeFor('Only price the trim: 300 LF of MDF baseboard and casing for 8 doors.',{service:'handyman',trimLf:'300'});
   const tasks=[{id:'base',description:'Supply and install 300 LF of MDF baseboard',origin:'requested'},{id:'protect',description:'Protect adjacent completed basement surfaces during the trim installation',origin:'required'},{id:'debris',description:'Remove MDF cutoffs and packaging debris',origin:'required'},{id:'clean',description:'Final cleanup of the work area',origin:'required'}];
   const input=inputFor(scope,tasks,[rule('base','Supply and install 300 LF of MDF baseboard','06-20-26',300),rule('debris','Remove MDF cutoffs and packaging debris','01-74-13',1)]);
   const result=applyPricingCorrections(input);
-  assert.ok(result.coveredTaskIds.includes('protect')&&result.coveredTaskIds.includes('clean'),'unpriced supporting tasks are covered');
-  assert.ok(input.mappingTasks.find(t=>t.id==='protect')!.existingLineIds.includes(input.resolution.rules[0].id),'covered by the requested line');
+  assert.ok(!result.coveredTaskIds.includes('protect')&&!result.coveredTaskIds.includes('clean'),'unpriced required work remains a coverage obligation');
+  assert.deepEqual(input.mappingTasks.find(t=>t.id==='protect')!.existingLineIds,[]);
   const debris=input.resolution.rules.find(r=>r.scopeTaskId==='debris')!;
-  assert.ok(direct(debris)<=direct(input.resolution.rules[0])*0.15+0.01,'a full truckload for cutoffs is capped');
-  assert.ok(input.resolution.assumptions.some(a=>/included within the installation labor/.test(a)));
+  assert.equal(debris.unitCost,rate('01-74-13').amount,'a price cannot be cut to an unrelated percentage');
+  assert.ok(!input.resolution.assumptions.some(a=>/included within the installation labor/.test(a)));
 });
 
 test('nested assembly consolidation preserves every dependent task reference',()=>{
@@ -160,18 +174,146 @@ test('nested assembly consolidation preserves every dependent task reference',()
 });
 
 
-test('explicitly requested cabinet-install cleanup cannot bypass the supporting-work scale guard',()=>{
+test('explicit cleanup retains its actual rate and never receives a percentage discount',()=>{
  const tasks=[{id:'base',description:'Install owner-supplied base cabinets',origin:'requested'},{id:'clean',description:'Perform job cleanup after cabinet installation.',origin:'requested'}];
  const scope=scopeFor('Install 9 LF owner-supplied base cabinets. Contractor supplies job cleanup.',{service:'cabinet-install'});
  const input=inputFor(scope,tasks,[rule('base',tasks[0].description,'12-39-06',9),rule('clean',tasks[1].description,'01-74-04',1)]);
  const core=direct(input.resolution.rules[0]);
  applyPricingCorrections(input);
- assert.ok(direct(input.resolution.rules[1])<=core*0.15+0.01);
- assert.ok(input.resolution.assumptions.some(a=>/allowance of about 15%/.test(a)));
+ assert.equal(input.resolution.rules[1].unitCost,rate('01-74-04').amount);
+ assert.ok(!input.resolution.assumptions.some(a=>/allowance of about 15%/.test(a)));
  const standalone=inputFor(scopeFor('Rough construction clean of the whole home.',{service:'handyman'}),[{id:'clean',description:'Rough construction clean of the whole home.',origin:'requested'}],[rule('clean','Rough construction clean of the whole home.','01-74-04',1)]);
  const before=JSON.stringify(standalone.resolution.rules);
  applyPricingCorrections(standalone);
  assert.equal(JSON.stringify(standalone.resolution.rules),before);
  const unpriced=inputFor(scope,tasks,[rule('base',tasks[0].description,'12-39-06',9)]);
  assert.ok(!applyPricingCorrections(unpriced).coveredTaskIds.includes('clean'),'explicitly requested unpriced cleanup is not silently absorbed');
+});
+
+test('complete house covers normal protection and final clean while separate porch remains priced',()=>{
+ const tasks=[{id:'home',description:'Build complete home'},{id:'porch',description:'Build separate covered porch'},{id:'cleanup',description:'Project-wide protection of adjacent finishes and final cleanup',origin:'required'}];
+ const input=inputFor(scopeFor('Build a 2000 SF home and 80 SF covered porch.',{service:'new-construction',sqft:'2000'}),tasks,[rule('home',tasks[0].description,'90-10-01',2000),rule('porch',tasks[1].description,'06-15-06',80),rule('cleanup',tasks[2].description,'01-50-10',2080),rule('cleanup',tasks[2].description,'01-74-05',2000)]);
+ const result=applyPricingCorrections(input);
+ assert.deepEqual(input.resolution.rules.map(r=>r.scopeTaskId),['home','porch']);
+ assert.ok(result.coveredTaskIds.includes('cleanup'));assert.ok(!result.coveredTaskIds.includes('porch'));
+});
+
+test('one set of door handles is not charged once for removal and again for replacement',()=>{
+ const tasks=[{id:'remove',description:'Remove three existing interior lever handles'},{id:'install',description:'Install three passage lever sets on the same doors'}];
+ const rules=[rule('remove',tasks[0].description,'08-71-01',3),rule('install',tasks[1].description,'08-71-01',3)];
+ const input=inputFor(scopeFor('Replace three existing interior door lever handles with owner-supplied passage lever sets.',{service:'handyman'}),tasks,rules);
+ const result=applyPricingCorrections(input);
+ assert.deepEqual(input.resolution.rules.map(r=>r.id),[rules[1].id]);
+ assert.deepEqual(input.mappingTasks[0].existingLineIds,[rules[1].id]);
+ assert.ok(result.coveredTaskIds.includes('remove'));
+ const separate=inputFor(input.scope,tasks,[rules[0],{...rules[1],floor:'Upstairs'}]);
+ applyPricingCorrections(separate);assert.equal(separate.resolution.rules.length,2);
+});
+test('three individually enumerated handle replacements retain three units of labor',()=>{
+ const tasks=['first','second','third'].map((ordinal,index)=>({id:'handle-'+index,description:`Remove existing lever handle set from ${ordinal} interior door and install new owner-supplied passage lever handle set, adjust, test operation.`}));
+ const rules=tasks.map(task=>rule(task.id,task.description,'08-71-01',1));
+ const input=inputFor(scopeFor('Replace three existing interior door lever handles with owner-supplied passage lever sets.',{service:'handyman'}),tasks,rules);
+ applyPricingCorrections(input);
+ assert.equal(input.resolution.rules.length,3);
+ assert.equal(input.resolution.rules.reduce((n,r)=>n+(r.quantity.fixed||0),0),3);
+});
+test('integrated vanity top/sink references a positive installed package, never a separate faucet',()=>{
+ const tasks=[{id:'vanity',description:'Supply and install one 30-inch vanity'},{id:'top',description:'Supply integrated top and sink'},{id:'tap',description:'Install faucet and reconnect plumbing'}];
+ const vanity=rule('vanity',tasks[0].description,'12-41-01',1);
+ const input=inputFor(scopeFor('Install one 30-inch vanity with integrated top and sink.',{service:'bathroom'}),tasks,[vanity]);
+ input.mappingTasks[1].existingLineIds=[vanity.id];input.mappingTasks[2].existingLineIds=[vanity.id];
+ const result=applyPricingCorrections(input);
+ assert.ok(result.coveredTaskIds.includes('top'));assert.ok(!result.coveredTaskIds.includes('tap'));
+ const unsupported=inputFor(input.scope,tasks,[{...vanity,unitCost:0}]);unsupported.mappingTasks[1].existingLineIds=[vanity.id];
+ assert.ok(!applyPricingCorrections(unsupported).coveredTaskIds.includes('top'));
+});
+
+test('normal connections at provided building stubs are within the complete home; utility extensions remain separate',()=>{
+ const tasks=[{id:'house',description:'Build complete 2000 SF house'},{id:'stubs',description:'Connect utilities at building perimeter as required for complete home'},{id:'sewer',description:'Extend sewer 20 LF beyond building perimeter'}];
+ const house=rule('house',tasks[0].description,'90-10-01',2000);
+ const input=inputFor(scopeFor('Build complete home. Utilities stubbed at building perimeter. Exclude utility extensions.',{service:'new-construction',sqft:'2000'}),tasks,[house]);
+ const result=applyPricingCorrections(input);
+ assert.ok(result.coveredTaskIds.includes('stubs'));
+ assert.ok(!result.coveredTaskIds.includes('sewer'));
+ const unknown=inputFor(scopeFor('Build complete home. Utility locations unknown.',{service:'new-construction'}),tasks,[house]);
+ assert.ok(!applyPricingCorrections(unknown).coveredTaskIds.includes('stubs'));
+ const liveDescription='Install and connect all stubbed utilities (water, sewer, electric, gas if needed) within the building perimeter for house, garage, and porch; excludes extensions outside perimeter.';
+ const revised=inputFor({...input.scope,text:'Change the garage to 576 SF.',answers:{...input.scope.answers,utilities:'Utilities stubbed at building perimeter; exclude utility extensions beyond perimeter'}},[{...tasks[0]},{id:'stubs',description:liveDescription}],[house]);
+ assert.ok(applyPricingCorrections(revised).coveredTaskIds.includes('stubs'),'excluded outside extensions do not negate confirmed inside connections');
+});
+
+test('live project-wide cleanup retains only the measured area outside the complete house assembly',()=>{
+ const tasks=[{id:'home',description:'Build complete 2000 SF home'},{id:'clean',description:'Final construction cleanup and protection of finished areas, one-time per project, to deliver site and interiors broom-clean post construction.',origin:'required'}];
+ const home=rule('home',tasks[0].description,'90-10-01',2000,{building:'main house'});
+ const cleanup=rule('clean',tasks[1].description,'01-74-05',2656,{building:'multiple'});
+ const input=inputFor(scopeFor('Build home, garage and covered porch.',{service:'new-construction',sqft:'2000',garageSqft:'576',coveredOutdoorSqft:'80'}),tasks,[home,cleanup]);
+ const originalRate=cleanup.unitCost;
+ const result=applyPricingCorrections(input);
+ assert.equal(cleanup.quantity.fixed,656);assert.equal(cleanup.unitCost,originalRate);
+ assert.ok(result.coveredTaskIds.includes('clean'));assert.ok(input.mappingTasks[1].existingLineIds.includes(home.id));
+ assert.equal(input.resolution.rules.length,2);assert.match(cleanup.description,/house cleanup included/);
+ applyPricingCorrections(input);assert.equal(cleanup.quantity.fixed,656,'a second pass must not subtract the house twice');
+});
+
+test('equal handle counts on different doors are not assumed to be one replacement',()=>{
+ const tasks=[{id:'remove',description:'Remove three garage door handles'},{id:'install',description:'Install three bedroom door handles'}];
+ const input=inputFor(scopeFor('Remove existing garage handles and install bedroom handles.',{service:'handyman'}),tasks,[rule('remove',tasks[0].description,'08-71-01',3),rule('install',tasks[1].description,'08-71-01',3)]);
+ applyPricingCorrections(input);assert.equal(input.resolution.rules.length,2);
+});
+
+test('whole-house completion cleanup stays covered when its description names garage and porch',()=>{
+ const description='Remove all construction debris generated during building of house, garage, and porch, and perform final cleanup at project end.';
+ const tasks=[{id:'home',description:'Build complete home'},{id:'porch',description:'Build covered porch'},{id:'clean',description,origin:'required'}];
+ const input=inputFor(scopeFor('Build 2000 SF home and 80 SF porch.',{service:'new-construction',sqft:'2000'}),tasks,[rule('home',tasks[0].description,'90-10-01',2000),rule('porch',tasks[1].description,'06-15-06',80),rule('clean',description,'01-74-05',2080)]);
+ const result=applyPricingCorrections(input);assert.deepEqual(input.resolution.rules.map(r=>r.scopeTaskId),['home','porch']);assert.ok(result.coveredTaskIds.includes('clean'));
+ const external='Final cleanup of driveway and external utility trenching for the house';
+ const other=inputFor(input.scope,[tasks[0],{id:'external',description:external}],[rule('home',tasks[0].description,'90-10-01',2000),rule('external',external,'01-74-05',100)]);
+ applyPricingCorrections(other);assert.ok(other.resolution.rules.some(r=>r.scopeTaskId==='external'));
+});
+
+test('uploaded replacement scope ties same-quantity handle removal and installation together',()=>{
+ const text='Replace exactly three existing interior door lever handles with three owner-supplied matching passage lever handle sets.';
+ const tasks=[{id:'remove',description:'Remove 3 existing interior door lever handles from ground floor doors.'},{id:'install',description:'Install 3 owner-supplied matching passage lever handle sets on ground floor doors.'}];
+ const scope={...scopeFor('Estimate the uploaded document.',{service:'handyman'}),extraction:{summary:'',facts:[],conflicts:[],missingInformation:[],reviewNotes:[],sourceText:text}};
+ const input=inputFor(scope,tasks,[rule('remove',tasks[0].description,'08-71-01',3),rule('install',tasks[1].description,'08-71-01',3)]);
+ applyPricingCorrections(input);assert.equal(input.resolution.rules.length,1);assert.equal(input.resolution.rules[0].quantity.fixed,3);
+});
+test('retained uploaded plumbing locations cannot acquire new rough-in charges',()=>{
+ const tasks=[{id:'plumbing',description:'Disconnect/reconnect and final connections of five replacement fixtures without moving their locations.'}];
+ const scope={...scopeFor('Estimate uploaded document.',{service:'whole-home'}),extraction:{summary:'',facts:[],conflicts:[],missingInformation:[],reviewNotes:[],sourceText:'Existing plumbing locations remain. Include removal of finishes, minor prep, reconnects and cleanup.'}};
+ const input=inputFor(scope,tasks,[rule('plumbing',tasks[0].description,'22-10-02',5)]);applyPricingCorrections(input);
+ assert.equal(input.resolution.rules[0].unit,'hour');assert.equal(input.resolution.rules[0].quantity.fixed,10);
+});
+
+test('unchanged fixture wording rejects rough-and-finish packages and subtracts already priced installations',()=>{
+ const tasks=[{id:'faucet',description:'Supply and install one faucet'},{id:'toilet',description:'Supply and install one toilet'},{id:'reconnect',description:'Normal plumbing reconnections'}];
+ const scope=scopeFor('Existing fixture locations stay unchanged. Include normal plumbing reconnections. No new rough-in or relocation.',{service:'bathroom'});
+ const input=inputFor(scope,tasks,[rule('faucet',tasks[0].description,'22-42-02',1),rule('toilet',tasks[1].description,'22-42-01',1),rule('reconnect',tasks[2].description,'22-10-02',3)]);
+ applyPricingCorrections(input);
+ assert.ok(!input.resolution.rules.some(r=>/Plumbing per fixture/.test(r.description)));
+ const remaining=input.resolution.rules.find(r=>r.unit==='hour')!;
+ assert.equal(remaining.quantity.fixed,2,'only the one remaining connection carries plumber time');
+ assert.equal(remaining.allowance,true);assert.deepEqual(remaining.quantityRange,{low:1.5,high:3});
+});
+test('whole-home reconnection summary does not repeat fixture labor and preserves residual sink connections across repeated passes',()=>{
+ const tasks=[{id:'kitchen',description:'Supply and install one kitchen sink and faucet'},{id:'bath1',description:'Supply and install vanity, faucet and toilet in bathroom 1'},{id:'bath2',description:'Supply and install vanity, faucet and toilet in bathroom 2'},{id:'reconnect',description:'Perform plumbing disconnects and reconnects at existing stub-outs for all replaced fixtures'}];
+ const rules=[rule('kitchen',tasks[0].description,'22-42-03',1),rule('kitchen',tasks[0].description,'22-42-02',1),...tasks.slice(1,3).flatMap(t=>[rule(t.id,t.description,'12-41-01',1),rule(t.id,t.description,'22-42-02',1),rule(t.id,t.description,'22-42-01',1)]),rule('reconnect',tasks[3].description,'22-42-03',3),rule('reconnect',tasks[3].description,'22-42-02',3),rule('reconnect',tasks[3].description,'22-42-01',2),rule('reconnect',tasks[3].description,'22-01-09',2)];
+ const input=inputFor(scopeFor('Existing plumbing locations remain. Include normal reconnects.',{service:'whole-home'}),tasks,rules);
+ applyPricingCorrections(input);applyPricingCorrections(input);
+ const reconnect=input.resolution.rules.filter(r=>r.scopeTaskId==='reconnect');
+ assert.equal(reconnect.length,1);assert.equal(reconnect[0].quantity.fixed,2);
+ assert.match(reconnect[0].evidence.reference,/22-42-03/);
+ assert.equal(input.resolution.rules.filter(r=>/Faucet install/.test(r.description)).reduce((n,r)=>n+(r.quantity.fixed||0),0),3);
+ assert.equal(input.resolution.rules.filter(r=>/Toilet set/.test(r.description)).reduce((n,r)=>n+(r.quantity.fixed||0),0),2);
+});
+
+test('explicit bathroom protection uses room-scale book components and disclosed quantities',()=>{
+ const task={id:'protect',description:'Provide protection of adjacent finishes and bathroom work area',origin:'requested'};
+ const input=inputFor(scopeFor('Remodel one 60 SF bathroom.',{service:'bathroom',sqft:'60'}),[task],[rule(task.id,task.description,'01-50-04',1)]);
+ applyPricingCorrections(input);applyPricingCorrections(input);
+ assert.deepEqual(input.resolution.rules.map(r=>[r.unit,r.quantity.fixed]),[['SF',60],['EA',1]]);
+ assert.deepEqual(input.resolution.rules.map(r=>r.quantityRange),[{low:60,high:120},{low:1,high:2}]);
+ assert.ok(input.resolution.rules.every(r=>r.allowance));
+ assert.equal(input.resolution.rules[0].unitCost,rate('01-50-10').amount);
+ assert.equal(input.resolution.rules[1].unitCost,rate('01-50-11').amount);
 });

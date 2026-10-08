@@ -1,3 +1,4 @@
+import {qaDocumentProject} from './qaPaid.ts';
 import {createHash,createHmac,randomUUID} from 'node:crypto';
 import {pageCovered} from './documentLedger.ts';
 import {query} from './database.ts';
@@ -10,15 +11,15 @@ import {type Draft,DraftError} from './store.ts';
 import {fetchWithinDeadline,remainingBudget} from './processingBudget.ts';
 import type {ProcessingStatus} from './processingStatus.ts';
 import {PDFDocument} from 'pdf-lib';
-import {assertEstimatorModel,ESTIMATOR_MODEL,MODEL_POLICY_VERSION} from './modelPolicy.ts';
-const VERSION='p5-documents-gpt41-2026-09-26-v2';
+import {assertEstimatorModel,ESTIMATOR_PROVIDER,ESTIMATOR_MODEL,MODEL_POLICY_VERSION} from './modelPolicy.ts';
+const VERSION=ESTIMATOR_PROVIDER==='openai'?'p5-documents-gpt41-2026-09-26-v2':'p5-documents-haiku45-2026-10-01-v1';
 const digest=(value:string|Buffer)=>createHash('sha256').update(value).digest('hex');
-/** Brand policy. Construction refuses to complete a local read, or queue pricing,
+/** Brand policy. P5 and Construction refuse to complete a local read, or queue pricing,
  * while any uploaded source lacks verified page coverage. The other brands
  * return the partial read with blocking review notes and incomplete coverage,
  * so the visitor can still submit for manual review. Shared-reader (remote and
  * mixed) results always require complete verified coverage on every brand. */
-export const SOURCE_COVERAGE_REQUIRED=(ESTIMATOR_BRAND.id as string)==='construction';
+export const SOURCE_COVERAGE_REQUIRED=['p5','construction'].includes(ESTIMATOR_BRAND.id as string);
 type Environment=Readonly<Record<string,string|undefined>>;
 /** The client default equals the upload limit. It is a request, not a claim
  * about the host: /readyz must attest at least these limits before any
@@ -212,9 +213,9 @@ export function documentServiceConfiguration(env:Environment=process.env){
  * provider or service health block that is present must be healthy. */
 export function validateDocumentServiceReadiness(value:unknown,limits=documentServiceLimits()){
  const ready=value as {ready?:boolean;ok?:boolean;providerConfigured?:boolean;tenant?:string;protocol?:string;limits?:{maxFileBytes?:number;maxPages?:number};capabilities?:{pdf?:boolean};pdf?:boolean;maxBytes?:number;maxPages?:number;provider?:{name?:string;model?:string;verifyModel?:string;configured?:boolean;ready?:boolean;health?:string};model?:string;service?:{healthy?:boolean;database?:string}}|null;
- const fail=()=>{throw new DraftError('Reader readiness is unverified: /readyz must confirm this tenant, a configured provider using full GPT-4.1, v1 PDF support, and the configured byte/page limits. No documents were sent; your files are saved.',503);};
+ const fail=()=>{throw new DraftError('Reader readiness is unverified: /readyz must confirm this tenant, a configured provider using the selected estimator model, v1 PDF support, and the configured byte/page limits. No documents were sent; your files are saved.',503);};
  if(!ready||typeof ready!=='object')return fail();
- if(ready.provider?.name!=='openai'||ready.provider.model!==ESTIMATOR_MODEL||ready.provider.verifyModel!==ESTIMATOR_MODEL)return fail();
+ if(ready.provider?.name!==ESTIMATOR_PROVIDER||ready.provider.model!==ESTIMATOR_MODEL||ready.provider.verifyModel!==ESTIMATOR_MODEL)return fail();
  const maxFileBytes=ready.limits?.maxFileBytes??ready.maxBytes,maxPages=ready.limits?.maxPages??ready.maxPages;
  const providerReady=ready.provider===undefined?ready.providerConfigured===true:ready.providerConfigured!==false&&ready.provider?.configured===true&&ready.provider.ready===true&&ready.provider.health==='configured';
  const serviceReady=ready.service===undefined||(ready.service?.healthy===true&&ready.service.database==='ok');
@@ -223,7 +224,7 @@ export function validateDocumentServiceReadiness(value:unknown,limits=documentSe
 }
 export function verifyDocumentModelEvidence(value:unknown):string{
  const evidence=value as {verified?:boolean;requestedModel?:string;responseModels?:unknown[];calls?:number}|null;
- if(!evidence?.verified||evidence.requestedModel!==ESTIMATOR_MODEL||!Number.isSafeInteger(evidence.calls)||evidence.calls!<1||!Array.isArray(evidence.responseModels)||!evidence.responseModels.length)throw new DraftError('Saved document model evidence is unverified. Your files are preserved; the reader must complete a verified GPT-4.1 review.',503);
+ if(!evidence?.verified||evidence.requestedModel!==ESTIMATOR_MODEL||!Number.isSafeInteger(evidence.calls)||evidence.calls!<1||!Array.isArray(evidence.responseModels)||!evidence.responseModels.length)throw new DraftError('Saved document model evidence is unverified. Your files are preserved; the reader must complete a verified review with the selected estimator model.',503);
  return [...new Set(evidence.responseModels.map(assertEstimatorModel))].join(' + ');
 }
 /** No-charge readiness check: GET only, no document upload or review creation. */
@@ -249,7 +250,8 @@ export async function advanceDocumentService(draft:Draft,text:string,answers:Sco
  // Authenticated, no-charge preflight: the host must attest this tenant and
  // at least the configured limits before any document bytes leave the site.
  const {tenant,secret,origin,limits}=await checkDocumentServiceReadiness(request,process.env,Math.min(deadline,Date.now()+10000));
- const base=`/v1/projects/${encodeURIComponent(draft.id)}`;
+ const project=await qaDocumentProject(draft.id);
+ const base=`/v1/projects/${encodeURIComponent(project)}`;
  const send=async(method:string,path:string,body:Buffer=Buffer.alloc(0),contentType='application/json')=>{
   const response=await fetchWithinDeadline(request,origin.origin+origin.pathname.replace(/\/$/,'')+path,{method,headers:{...documentServiceHeaders(method,path,tenant,secret,body),'content-type':contentType},...(method==='POST'?{body:body as unknown as BodyInit}:{}),redirect:'error'},Math.min(deadline,Date.now()+60000));
   let value:any;try{value=await response.json();}catch{throw new DraftError('The document service returned an invalid response. Saved files are preserved.',503);}
@@ -266,7 +268,7 @@ export async function advanceDocumentService(draft:Draft,text:string,answers:Sco
  try{
   const documents:{id:string;source:string}[]=[],expectedPages=new Set<string>();let complete=true,readPages=0,totalPages=0;
   for(const upload of draft.uploads){
-   remainingBudget(deadline);const id=remoteDocumentId(tenant,draft.id,upload.sha256),path=base+'/documents/'+id;
+   remainingBudget(deadline);const id=remoteDocumentId(tenant,project,upload.sha256),path=base+'/documents/'+id;
    // One request, progress count and coverage identity per physical PDF.
    if(documents.some(d=>d.id===id))continue;
    let response=await send('GET',path);
@@ -318,6 +320,6 @@ export async function advanceDocumentService(draft:Draft,text:string,answers:Sco
   // The host returns its page manifest as result.pages; validation normalizes it
   // (or a documentCoverage block) into one coverage record before the strict check.
   assertCompleteSourceCoverage(extraction,documents.map(d=>d.source),[...expectedPages].map(key=>{const [source,page]=JSON.parse(key);return {source,page};}),true);
-  return {pending:false as const,version:digest(JSON.stringify([MODEL_POLICY_VERSION,text,answers,draft.uploads.map(f=>[f.id,f.sha256])])),analysis:{modelPolicy:MODEL_POLICY_VERSION,extraction,provider:'P5 Document Service / OpenAI',model,analyzedAt:new Date().toISOString()}};
+  return {pending:false as const,version:digest(JSON.stringify([MODEL_POLICY_VERSION,text,answers,draft.uploads.map(f=>[f.id,f.sha256])])),analysis:{modelPolicy:MODEL_POLICY_VERSION,extraction,provider:`P5 Document Service / ${ESTIMATOR_PROVIDER==='anthropic'?'Anthropic':'OpenAI'}`,model,analyzedAt:new Date().toISOString()}};
  }finally{await dependencies.releaseWork(draft.id,workKey,lease.token);}
 }

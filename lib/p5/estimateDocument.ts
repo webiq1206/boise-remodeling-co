@@ -1,3 +1,4 @@
+import {pricingBasisNotes} from './pricingBasis.ts';
 import {customerPresentation} from './customerProjection.ts';
 /**
  * The approved preliminary online estimate (owner template, 2026-09-21), as data.
@@ -129,11 +130,10 @@ export function buildEstimateDocument(input:{id:string;result:unknown;brand:Esti
     const text=clean(item);if(!text)continue;
     if(UNPRICED.test(text))unpriced.push(text.replace(UNPRICED,''));else exclusions.push(text);
   }
-  // A responsibility that gives work TO the contractor ("Contractor supplies and installs all cabinets",
-  // "Provide and install all listed materials") is included work, not an exclusion; live estimates
-  // showed it to customers as "By others or supplied by the owner" (owner report 2026-09-22).
-  const contractorsOwn=(t:string)=>!/\b(?:owner|homeowner|customer|client|by others|others|tenant|seller|buyer)\b/i.test(t)&&(/\bcontractor\b/i.test(t)||/^(?:supply|provide|furnish|install)\b/i.test(t));
-  for(const item of (result.instructions?.responsibilities||[]) as string[])if(clean(item)&&!contractorsOwn(clean(item)))exclusions.push(`By others or supplied by the owner: ${clean(item)}`);
+  // Responsibilities may describe contractor work on owner-supplied materials,
+  // or both parties in one sentence. Their wording is not an exclusion flag.
+  // Preserve the assignment under its own label without guessing the actor.
+  const responsibilities=[...new Set(((result.instructions?.responsibilities||[]) as string[]).map(item=>clean(item)).filter(Boolean))];
   // Exclusions and owner responsibilities the customer stated in the reviewed scope travel too.
   for(const raw of String(result.summary||'').split(/\n/)){
     const excluded=raw.match(/^Excluded work: (.+)$/),owner=raw.match(/^Owner-supplied items and responsibilities: (.+)$/);
@@ -176,7 +176,12 @@ export function buildEstimateDocument(input:{id:string;result:unknown;brand:Esti
       return `${amount?`${amount} for `:''}${item(l).text}${amount?'':' (included in this category amount)'}; selection and final quantity to confirm.`;
     });
     const low=priceKind==='single'?split[i]:Math.round(ranges[i].low),high=priceKind==='single'?split[i]:Math.round(ranges[i].high);
-    return {number:String(i+1).padStart(2,'0'),title:clean(name,120),amount:priceKind==='none'?'':priceKind==='single'?money(low):`${money(low)} to ${money(high)}`,low,high,work,items,allowances};
+    // A whole-building assembly spans trades. Give its existing category a
+    // meaningful display name without inventing a trade breakdown or changing
+    // any saved amounts. Mixed miscellaneous work keeps its original label.
+    const assemblyTitles:Record<string,string>={'new-construction':'New Home Construction',adu:'ADU Construction',addition:'Home Addition'};
+    const assembly=name==='Other Project Work'&&assemblyTitles[service]&&own.length>0&&own.every(l=>/^PB-90-(?:10|50)-\d+-\d+$/.test(String(l.id)));
+    return {number:String(i+1).padStart(2,'0'),title:assembly?assemblyTitles[service]:clean(name,120),amount:priceKind==='none'?'':priceKind==='single'?money(low):`${money(low)} to ${money(high)}`,low,high,work,items,allowances};
   });
   // Structured allowances carry their own coverage; each sits in the category it best matches.
   for(const a of (result.allowances||[]) as any[]){
@@ -206,7 +211,9 @@ export function buildEstimateDocument(input:{id:string;result:unknown;brand:Esti
   const assumptions=((result.assumptions||[]) as string[]).map(v=>clean(v,Infinity)).filter(v=>v&&!/^to confirm:.*not priced in this estimate/i.test(v)&&!confirmationKeys.has(noteKey(v)));
   const sources=(issue.sources||[]).map(s=>clean(s,120)).filter(Boolean);
   const assumptionRows:[string,string[]][]=([
-    ['Pricing basis',[`Your online submission${sources.length?` and ${sources.length===1?'the document':'the documents'} you uploaded: ${sources.join('; ')}`:''}.`]],
+    ['Pricing basis',pricingBasisNotes(result)],
+    ['Scope source',[`Your online submission${sources.length?` and ${sources.length===1?'the document':'the documents'} you uploaded: ${sources.join('; ')}`:''}.`]],
+    ['Responsibilities',responsibilities],
     ['Assumptions',[...new Set(assumptions)]],
     ['Changes in this version',((result.revisionSummary||[]) as string[]).map(v=>clean(v,Infinity)).filter(Boolean)],
     ['Included to complete the work',tasks.filter(t=>t.origin==='required'&&clean(t.basis)).map(t=>`${clean(t.description,Infinity)}: ${clean(t.basis,Infinity)}`)],

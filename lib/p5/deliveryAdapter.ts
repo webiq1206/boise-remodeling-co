@@ -19,3 +19,5 @@ export async function syncCrm(record:any,key:string){
   const payload={...buildCrmPayload(record,identity.externalLeadId,brand.domain),...identity};
   return deliverKeyedCrm(payload,key,process.env.LEAD_DASHBOARD_KEY||'',process.env.LEAD_DASHBOARD_API_URL||brand.crmUrl);
 }
+/** Synchronous readiness only: the Resend key or the Replit connector identity must be present before an intake notification is attempted. */
+export function emailTransportReady(){return Boolean(process.env.RESEND_API_KEY||(process.env.REPLIT_CONNECTORS_HOSTNAME&&(process.env.REPL_IDENTITY||process.env.WEB_REPL_RENEWAL)));}

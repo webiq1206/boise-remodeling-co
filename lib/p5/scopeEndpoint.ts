@@ -1,22 +1,28 @@
+import {intakeQuestions} from './intakeQuestions.ts';
+import {withQaPaidDraft,QaPaidHold} from './qaPaid.ts';
+import {isIntakeTransferStatus,TRANSFER_HOLD_MESSAGE} from './intakeTransferGuards.ts';
+import {qaOperationContext} from './qaOperationContext.ts';
+import {assertQaProvidersAllowed} from './qaProviderPolicy.ts';
+import {blockingExtractionNotes} from './documentLedger.ts';
 import {ProcessingDeadlineError,PROCESSING_PAUSED,isProcessingDeadline} from './processingBudget.ts';
 import {applyCabinetIntent} from "./projectIntent.ts";
+import {reconcileScopeReading} from './reconcileScopeReading.ts';
 import {advanceAnalysis,IncompleteAnalysisError} from "./analysisWork.ts";
 import {queuedJob} from './backgroundJobs.ts';
-import {manualScopeAnswers,reconcileScope,scopeQuestionsForBrand as scopeQuestions} from "./adaptive.ts";
+import {manualScopeAnswers,scopeQuestionsForBrand as scopeQuestions} from "./adaptive.ts";
 import {costQuestionFields} from "./questionPolicy.ts";
 import {createHash} from "node:crypto";
 import { analyzeScope } from "./extraction.ts";
 import { prepareAnalysisFiles,verifyPdfPageLimit,verifyUpload } from "./documents.ts";
-import { SCOPE_BATCH_LIMIT,SCOPE_TEXT_LIMIT,SCOPE_FILE_COUNT,SCOPE_UPLOAD_HELP,SCOPE_FIELDS } from "./scope.ts";
+import { SCOPE_BATCH_LIMIT,SCOPE_TEXT_LIMIT,SCOPE_FILE_COUNT,SCOPE_UPLOAD_HELP } from "./scope.ts";
 import { draftCredentials,readDraft,readUploads,saveUpload,saveDraft,DraftError } from "./store.ts";
 import {answersForEditedScope,normalizeScopeText,scopeFingerprint,scopeTextChanged,sourceSnapshot,sourceSnapshotsEqual} from "./scopeReplacement.ts";
 import { failed,json,limitedBody,protectRequest } from "./http.ts";
 import { ESTIMATOR_BRAND } from "./brand.ts";
 import {recordEvent,describeError} from './events.ts';
-import {blockingReviewNote} from './costBook.ts';
-import {selectReusableAnalysis} from './analysisReuse.ts';
-import {impliedComponentRemodel,impliedRepairService,serviceEvidenceSupports} from './serviceSignals.ts';
+import {selectReusableAnalysis,selectSourceEquivalentAnalysis} from './analysisReuse.ts';
 import {query} from './database.ts';
+import {readCompletedAnalysis,saveCompletedAnalysis,recoverTypedAnalysis} from './savedAnalysis.ts';
 
 /** Guard multipart analysis/upload requests before they can mutate files. */
 export function guardScopeRequestRevision(storedRevision:number,requestedRevision:unknown,storedText:string,incomingText:string){
@@ -43,6 +49,7 @@ export async function postScope(request:Request){
   try{
     protectRequest(request,1000);const {id,key}=draftCredentials(request);let draft=await readDraft(id,key);
     if(!draft)throw new DraftError("Save your draft before analyzing.",404);
+    if(isIntakeTransferStatus(draft.status))throw new DraftError(TRANSFER_HOLD_MESSAGE,409);
     const bytes=await limitedBody(request,24*1024*1024);
     const form=await new Response(bytes as BodyInit,{headers:{"Content-Type":request.headers.get("content-type")||""}}).formData();
     const text=normalizeScopeText(String(form.get("text")??draft.text));if(text.length>SCOPE_TEXT_LIMIT)throw new DraftError("Upload this scope as a document so every section can be processed.");
@@ -53,6 +60,8 @@ export async function postScope(request:Request){
     const requestIdentity=guardScopeRequestRevision(draft.revision,form.get("revision"),draft.text,text);
     const analyzedMismatch=Boolean(draft.analyzedFingerprint&&draft.extraction&&draft.analyzedFingerprint!==scopeFingerprint(text));
     const sourceChanged=requestIdentity.changed||analyzedMismatch;
+    const hint=form.get('savedAnalysisAnswers');
+    if(hint!==null&&((ESTIMATOR_BRAND.id as string)!=='p5'||typeof hint!=='string'||sourceChanged||form.getAll('files').length))throw new DraftError('This saved reading cannot be restored for a changed source.',409);
     // Keep the authored source snapshot from the request's validated read.
     // Uploads may race another tab; the reread below must not be allowed to
     // launder that newer revision into this request's old source.
@@ -93,24 +102,32 @@ export async function postScope(request:Request){
       draft=reset;analysisDraft=reset;
     }else analysisDraft=draft;
     if(form.get("analyze")==="false")return json({draft:await readDraft(id,key),analysis:null});
+    await assertQaProvidersAllowed(id);
     const checkpointed=form.get("resumable")==="true"&&process.env.P5_OBJECT_STORAGE_ENABLED==="true";
     const stored=checkpointed?[]:await readUploads(id,key);if(stored.reduce((n,f)=>n+f.data.length,0)>SCOPE_BATCH_LIMIT)throw new DraftError(SCOPE_UPLOAD_HELP,413);
-    const version=createHash("sha256").update(JSON.stringify([text,analysisDraft.uploads.map(f=>f.sha256)])).digest("hex");
-    const resolutions=analysisDraft.wizard?.sourceVersion===version?analysisDraft.wizard.resolutions:{};
     // Only visitor-authored answers shape the read. Facts the previous read
     // derived from these same documents are re-derived, so a retry after a
     // partial read keeps the same work key and never re-bills finished pages.
     const visitorAnswers=applyCabinetIntent(text,ESTIMATOR_BRAND.services,manualScopeAnswers(analysisDraft.answers,analysisDraft.extraction,analysisDraft.wizard?.resolutions||{})).answers;
+    const savedInput={text,answers:visitorAnswers,uploads:analysisDraft.uploads,extraction:analysisDraft.extraction,resolutions:analysisDraft.wizard?.resolutions};
+    // An explicit historical recovery must fail before any provider branch.
+    const recovered=typeof hint==='string'?await recoverTypedAnalysis(analysisDraft,savedInput,hint):null;
     let analysis=null;let warning="";let failedSourceNotes:string[]=[];
     try{
-      if(checkpointed){
+      const completed=recovered||((ESTIMATOR_BRAND.id as string)==='p5'?await readCompletedAnalysis(analysisDraft.id,savedInput):null);
+      if(completed){
+        analysis=structuredClone(completed.analysis);
+      }else if(checkpointed){
         const background=form.get('background')==='true';
         // Cabinet only: a completed legacy read queued before the service answer
         // was inferred is reused when its full source identity is exact, instead
         // of spending a second read on the same typed scope.
-        const reuse=(ESTIMATOR_BRAND.id as string)==='cabinet'&&background&&form.get('retry')!=='true'?selectReusableAnalysis(
+        const candidates=background&&form.get('retry')!=='true'?(
           (await query("SELECT work_key,payload FROM p5_estimator_work WHERE draft_id=$1 AND work_key LIKE 'background-v1-%' AND payload->>'state'='complete' AND payload->'input'->>'kind'='analysis' ORDER BY updated_at DESC",[analysisDraft.id]))
-            .map(row=>({workKey:String(row.work_key),payload:row.payload})),
+            .map(row=>({workKey:String(row.work_key),payload:row.payload}))):[];
+        const reuse=(ESTIMATOR_BRAND.id as string)==='p5'?selectSourceEquivalentAnalysis(candidates,
+          {text,answers:visitorAnswers,uploads:analysisDraft.uploads,extraction:analysisDraft.extraction,resolutions:analysisDraft.wizard?.resolutions},
+        ):(ESTIMATOR_BRAND.id as string)==='cabinet'?selectReusableAnalysis(candidates,
           {text,answers:visitorAnswers,uploads:analysisDraft.uploads},
         ).reusable:null;
         const job=!reuse&&background?await queuedJob({kind:'analysis',draft:analysisDraft,text,answers:visitorAnswers},form.get('retry')==='true'):null;
@@ -121,15 +138,17 @@ export async function postScope(request:Request){
       }else{
       const {readable,manualReview}=await prepareAnalysisFiles(stored);
       if(!text.trim()&&!readable.length&&!Object.values(analysisDraft.answers).some(v=>v?.trim()))throw new Error(manualReview.join(" ")||"Add a project description or a document.");
-      analysis=await analyzeScope(text,readable,visitorAnswers);
+      analysis=await withQaPaidDraft(draft.id,()=>analyzeScope(text,readable,visitorAnswers));
       analysis.extraction.reviewNotes.push(...manualReview);
       }
+      if(analysis&&(!completed||recovered)&&(ESTIMATOR_BRAND.id as string)==='p5')await saveCompletedAnalysis(analysisDraft.id,savedInput,analysis);
       // Only content that was not read blocks the estimate. A page the reader
       // finished with some values blank or redacted is a note to confirm, the
       // same rule the pricing engine applies.
-      const unread=[...new Set(analysis.extraction.reviewNotes.filter((note:string)=>blockingReviewNote(note)))];
+      const unread=[...new Set(blockingExtractionNotes(analysis.extraction))];
       if(unread.length)warning="Some files need review before pricing. "+unread.join(" ");
     }catch(error){
+      if(qaOperationContext()&&error instanceof QaPaidHold)throw error;
       if(isProcessingDeadline(error))throw new DraftError(PROCESSING_PAUSED,503);
       console.error("[p5-scope-analysis]",error instanceof Error?error.message:"analysis failed");
       const detail=describeError(error);
@@ -137,34 +156,12 @@ export async function postScope(request:Request){
       warning=scopeAnalysisFailureWarning(Boolean(analysisDraft.uploads.length));
       if(error instanceof IncompleteAnalysisError)failedSourceNotes=error.reviewNotes;
     }
-    // Copy before applying intent: a stored or reused result must never be mutated in place.
-    if(analysis)analysis={...analysis,extraction:applyCabinetIntent(text,ESTIMATOR_BRAND.services,visitorAnswers,analysis.extraction).extraction!};
-    // A repair-only site prices a plain repair request as home repairs instead of asking the customer
-    // to pick "Home repairs" from a menu of repair types (live Handyman baseboard, 2026-09-24/25). The
-    // type is supplied as a source-derived fact, exactly like the Cabinet intent above, and it is
-    // part of the SAVED extraction: a manual answer would change the analysis identity on the next
-    // request and re-read every finished section (CI resumable check, 2026-09-25). Any RE-10, rush or
-    // change-order signal keeps the question, and the type stays editable on the review screen.
-    if(analysis&&!visitorAnswers.service&&!analysis.extraction.conflicts.some((c:{field:string})=>c.field==='service')){
-      const facts:{field:string;value:string;confidence:number;source:string;evidence:string;basis?:string}[]=analysis.extraction.facts;
-      // A reader classification stands whether or not this site offers it: a bathroom remodel typed on
-      // the Handyman site is handed to Remodeling, never re-labelled as home repairs. Only when the
-      // reader gave no usable type (nothing, a low-confidence guess, or an RE-10/rush/change-order
-      // claim without the customer's signal) does the repair-only default apply.
-      const supported=facts.some(f=>f.field==='service'&&f.confidence>=.7&&f.basis!=='inferred'&&f.basis!=='visual'&&(SCOPE_FIELDS.service.options as readonly string[]).includes(f.value)&&serviceEvidenceSupports(f.value,f.evidence));
-      const implied=supported?null:(impliedComponentRemodel(text,ESTIMATOR_BRAND.services as readonly string[])||impliedRepairService([text,...facts.map(f=>f.evidence)].join('\n'),ESTIMATOR_BRAND.services as readonly string[]));
-      if(implied)analysis={...analysis,extraction:{...analysis.extraction,facts:[...facts.filter(f=>f.field!=='service'),{field:'service',value:implied,confidence:1,source:'typed scope',evidence:text.slice(0,4000),basis:'stated'}]}};
-    }
-    const extraction=analysis?.extraction||analysisDraft.extraction;
-    const merged=analysis?reconcileScope(visitorAnswers,analysis.extraction,resolutions):{answers:{...analysisDraft.answers,...visitorAnswers},conflicts:[]};
-    const wizard={instructionAnswers:sourceChanged?[]:analysisDraft.wizard?.instructionAnswers||[],skipped:sourceChanged?[]:analysisDraft.wizard?.skipped||[],resolutions,sourceVersion:analysis?version:sourceChanged?undefined:analysisDraft.wizard?.sourceVersion};
-    // Partial analysis is visible and prevents unread documents from being priced.
-    const safeExtraction=warning?{...extraction,summary:extraction?.summary||text,facts:extraction?.facts||[],conflicts:extraction?.conflicts||[],missingInformation:extraction?.missingInformation||[],reviewNotes:[...new Set([...(extraction?.reviewNotes||[]),...failedSourceNotes,warning])]}:extraction;
-    const analyzedAnswers=analysis?JSON.stringify(Object.entries(merged.answers).filter(([field,value])=>SCOPE_FIELDS[field as keyof typeof SCOPE_FIELDS].kind==='text'&&value?.trim()).sort(([a],[b])=>a.localeCompare(b))):undefined;
-    const saved=await saveDraft(id,key,ESTIMATOR_BRAND.id,{text,answers:merged.answers,extraction:safeExtraction,reviewed:null,contact:analysisDraft.contact,wizard,analyzedFingerprint:analysis?scopeFingerprint(text):undefined,analyzedAnswers},draft.revision);
+    const reconciled=reconcileScopeReading(analysisDraft,text,visitorAnswers,analysis,{sourceChanged,warning,failedSourceNotes});
+    analysis=reconciled.analysis;
+    const saved=await saveDraft(id,key,ESTIMATOR_BRAND.id,{...reconciled.payload,...(analysis?{analyzedUploads:analysisDraft.uploads.filter(file=>Boolean(file.sha256)).map(file=>({sha256:file.sha256!,size:file.size}))}:{})},draft.revision);
     if(requested.some(digest=>!saved.uploads.some(file=>file.sha256===digest)))throw new DraftError("Some files could not be confirmed. Please retry; duplicate files will not be added twice.",503);
     const pricedFields=await costQuestionFields(saved.answers);
-    return json({draft:saved,analysis,warning,conflicts:merged.conflicts,pricedFields,questions:scopeQuestions(saved.answers,safeExtraction,merged.conflicts,wizard.skipped,pricedFields,text)});
+    return json({draft:saved,analysis,warning,conflicts:reconciled.conflicts,pricedFields,questions:saved.intake?.questionMemory?.entries.length?intakeQuestions({...saved,conflicts:reconciled.conflicts,transcript:saved.intake.transcript}):scopeQuestions(saved.answers,reconciled.payload.extraction,reconciled.conflicts,reconciled.payload.wizard.skipped,pricedFields,text)});
   }catch(error){
     if(error instanceof DraftError&&error.status===409){try{const {id}=draftCredentials(request);void recordEvent({draftId:id,kind:'draft',stage:'scope-revision',status:409,code:'revision-conflict',message:error.message,outcome:'failed'});}catch{}}
     return failed(error);

@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import {PDFDocument,StandardFonts} from 'pdf-lib';
 import {analysisSegments} from '../lib/p5/analysisSegments.ts';
 import {SCOPE_MAX_PAGES} from '../lib/p5/scope.ts';
-import {analyzeBatch,textLayerFiles} from '../lib/p5/extraction.ts';
+import {analyzeBatch,visualFallbackFiles} from '../lib/p5/extraction.ts';
 import {pageTextFromItems} from '../lib/p5/pdfText.ts';
-import {unreadNotes,pageRanges,MAX_READ_ATTEMPTS} from '../lib/p5/analysisWork.ts';
+import {unreadNotes,pageRanges,MAX_READ_ATTEMPTS,analysisAttemptFiles} from '../lib/p5/analysisWork.ts';
 import {ANALYSIS_PASS_MS,READ_ALLOWANCE_MS,READ_START_MARGIN_MS,SERVER_BUDGET_MS} from '../lib/p5/processingBudget.ts';
 import {describeError,sanitizeEventMessage} from '../lib/p5/events.ts';
 import {analysisProgress} from '../lib/p5/analysisProgress.ts';
@@ -31,19 +31,31 @@ test('reading budgets let one dense page finish inside a pass and never cut a re
  assert.ok(MAX_READ_ATTEMPTS>=3);
 });
 
-test('a text PDF is split into one unit per page, each carrying its own text layer and adjacent-page context',async()=>{
+test('late PDF retries retain images and original page identities, including scans',async()=>{
+ const pdf=await PDFDocument.create();const page=pdf.addPage([300,300]);
+ page.drawRectangle({x:30,y:220,width:12,height:12,borderWidth:1});
+ const file={name:'form.pdf',type:'application/pdf',data:Buffer.from(await pdf.save()),pages:[{source:'original.pdf',page:7}],text:'Printed optional clause'};
+ assert.equal((await analysisAttemptFiles(file,2))[0],file);
+ for(const text of [file.text,undefined]){
+  const [image]=await analysisAttemptFiles({...file,text},3);
+  assert.equal(image.type,'image/png');assert.deepEqual(image.pages,file.pages);
+  assert.equal(image.text,text);assert.equal(image.data.subarray(1,4).toString(),'PNG');
+ }
+ await assert.rejects(analysisAttemptFiles({...file,data:Buffer.from('broken PDF')},3));
+});
+
+test('a text PDF is split into isolated pages without neighboring takeoff text',async()=>{
  const units=[];for await(const unit of analysisSegments({name:'budget.pdf',type:'application/pdf',data:await budgetPdf()}))units.push(unit);
  assert.equal(units.length,3);
  assert.deepEqual(units.map(u=>u.pages?.[0].page),[1,2,3]);
  assert.match(units[0].text||'',/Structural Framing/);
  assert.match(units[0].text||'',/PRELIMINARY CONSTRUCTION BUDGET/);
  assert.match(units[1].text||'',/Roofing and Gutters/);
- assert.match(units[1].context||'',/Following page 3 excerpt/);
- assert.match(units[1].context||'',/Preceding page 1 excerpt/);
- assert.ok(!units[0].context?.includes('Preceding'));
+ assert.ok(units.every(unit=>unit.context===undefined));
+ assert.ok(!units[1].text?.includes('Cabinetry is paint-grade Shaker'));
  for(const unit of units)assert.equal((await PDFDocument.load(unit.data)).getPageCount(),1);
- const layered=textLayerFiles(units);
- assert.equal(layered[2].type,'text/plain');assert.match(layered[2].data.toString('utf8'),/Cabinetry is paint-grade Shaker/);
+ const layered=await visualFallbackFiles(units);
+ assert.equal(layered[2].type,'image/png');assert.match(layered[2].text||'',/Cabinetry is paint-grade Shaker/);assert.deepEqual(layered.map(f=>f.pages),units.map(f=>f.pages));
 });
 
 test('the legacy reader accepts the published page boundary and rejects larger plans before preparation',async()=>{
@@ -64,11 +76,12 @@ test('page text keeps row structure from positioned runs',()=>{
 test('the text layer and context travel to the provider and a page read keeps its whole allowance',async()=>{
  await withProviders({OPENAI_API_KEY:'fixture-only',ANTHROPIC_API_KEY:'fixture-only',P5_SCOPE_PROVIDER:'openai'},async()=>{
   const calls:string[]=[];
-  const result=await analyzeBatch('Price this build',[{name:'budget.pdf (page 2 of 3)',type:'application/pdf',data:Buffer.from('%PDF-synthetic'),pages:[{source:'budget.pdf',page:2}],text:'Roofing and Gutters: architectural shingles',context:'[Following page 3 excerpt] Allowance: septic system'}],{},async(url,options)=>{
+  const result=await analyzeBatch('Price this build',[{name:'budget.pdf (page 2 of 3)',type:'application/pdf',data:Buffer.from('%PDF-synthetic'),pages:[{source:'budget.pdf',page:2}],text:'Roofing and Gutters: architectural shingles',formViews:1,context:'[Following page 3 excerpt] Allowance: septic system'}],{},async(url,options)=>{
    calls.push(String(url));const body=JSON.parse(String(options?.body));
    const texts=body.input[0].content.filter((v:any)=>v.type==='input_text').map((v:any)=>v.text);
    assert.ok(texts.some((t:string)=>/Text layer extracted/.test(t)&&/architectural shingles/.test(t)),'text layer is supplied');
    assert.ok(texts.some((t:string)=>/Adjacent-page context/.test(t)&&/septic/.test(t)),'adjacent context is supplied');
+   assert.ok(texts.some((t:string)=>/FORM CONTROL EVIDENCE/.test(t)&&/not selected/.test(t)&&/same original page manifest/.test(t)),'form details carry selection and original-page instructions');
    assert.ok(body.input[0].content.some((v:any)=>v.type==='input_file'),'the page itself is still supplied');
    await new Promise(r=>setTimeout(r,60));
    return openAiReply([{source:'budget.pdf',page:2}]);
@@ -78,19 +91,20 @@ test('the text layer and context travel to the provider and a page read keeps it
  });
 });
 
-test('a provider that refuses the page bytes reads the same page from its text layer before the fallback provider runs',async()=>{
+test('a rejected PDF transport retains page images and original text on the same provider',async()=>{
  await withProviders({OPENAI_API_KEY:'fixture-only',ANTHROPIC_API_KEY:'fixture-only',P5_SCOPE_PROVIDER:'openai'},async()=>{
-  const calls:{url:string;hasFile:boolean;textLayer:boolean}[]=[];
-  const result=await analyzeBatch('Price this build',[{name:'budget.pdf (page 1 of 3)',type:'application/pdf',data:Buffer.from('%PDF-synthetic'),pages:[{source:'budget.pdf',page:1}],text:'PRELIMINARY CONSTRUCTION BUDGET Structural Framing'}],{},async(url,options)=>{
+  const calls:{url:string;hasFile:boolean;hasImage:boolean;textLayer:boolean}[]=[];
+  const original=await budgetPdf();const single=await PDFDocument.create();single.addPage((await single.copyPages(await PDFDocument.load(original),[0]))[0]);
+  const result=await analyzeBatch('Price this build',[{name:'budget.pdf (page 1 of 3)',type:'application/pdf',data:Buffer.from(await single.save()),pages:[{source:'budget.pdf',page:1}],text:'PRELIMINARY CONSTRUCTION BUDGET Structural Framing'}],{},async(url,options)=>{
    const body=JSON.parse(String(options?.body));const content=body.input[0].content;
    const hasFile=content.some((v:any)=>v.type==='input_file');
-   calls.push({url:String(url),hasFile,textLayer:content.some((v:any)=>v.type==='input_text'&&/Structural Framing/.test(v.text))});
+   calls.push({url:String(url),hasFile,hasImage:content.some((v:any)=>v.type==='input_image'&&v.image_url.startsWith('data:image/png;base64,')),textLayer:content.some((v:any)=>v.type==='input_text'&&/Structural Framing/.test(v.text))});
    if(hasFile)return Response.json({error:{message:'PRIVATE: input_file is not supported by this endpoint'}},{status:400});
    return openAiReply([{source:'budget.pdf',page:1}]);
   },60_000,Date.now()+60_000);
   assert.equal(calls.length,2);
-  assert.ok(calls[0].hasFile&&!calls[1].hasFile,'the retry sends the text layer instead of the bytes');
-  assert.ok(calls[1].textLayer);
+  assert.ok(calls[0].hasFile&&!calls[1].hasFile,'the retry avoids rejected PDF transport');
+  assert.ok(calls[1].textLayer);assert.ok(calls[1].hasImage,'checkboxes and other visual evidence must still reach the reader');
   assert.ok(calls.every(c=>c.url.includes('openai')),'the same provider is retried before falling back');
   assert.equal(result.extraction.documentCoverage?.complete,true);
  });
