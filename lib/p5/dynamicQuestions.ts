@@ -7,10 +7,11 @@ const SMALL = new Set(['handyman', 're10', 'change-order', 'rush']);
 const TOPICS = {
   flooring: /\b(?:flooring|lvp|lvt|hardwood|laminate|carpet)\b|\b(?:install|replace|refinish|sand|new|repair) (?:the )?floors?\b/i,
   tile: /\b(?:tile|tiling|backsplash)\b/i,
+  wallTile: /\b(?:shower|wall)\s+(?:wall\s+)?(?:tile|tiling)\b|\btile(?:d)?\s+(?:shower\s+)?walls?\b/i,
   demolition: /\b(?:demolition|demolish|tear[ -]?out|remove|removal)\b/i,
-  trim: /\b(?:trim|baseboards?|crown moulding|crown molding)\b/i,
-  base: /\b(?:base cabinets?|lower cabinets?|vanit(?:y|ies))\b/i,
-  upper: /\b(?:upper cabinets?|wall cabinets?)\b/i,
+  trim: /(?<!shower )(?<!valve )(?<!valve and )(?<!valve\/)\btrim\b|\b(?:baseboards?|crown moulding|crown molding)\b/i,
+  base: /\b(?:(?:base|lower)(?: kitchen| bathroom)? cabinets?|vanit(?:y|ies))\b/i,
+  upper: /\b(?:upper|wall)(?: kitchen| bathroom)? cabinets?\b/i,
   tall: /\b(?:tall cabinets?|pantry cabinets?|full.height cabinets?)\b/i,
   cabinets: /\b(?:cabinets?|cabinetry|vanit(?:y|ies))\b/i,
   countertops: /\b(?:countertops?|counters?|worktops?)\b/i,
@@ -21,10 +22,11 @@ const TOPICS = {
   electrical: /\b(?:electrical|outlets?|switches?|lights?|lighting|gfci|panel|ceiling fan)\b/i,
   mechanical: /\b(?:hvac|heating|cooling|ventilation|furnace|air condition)\b/i,
   structural: /\b(?:structural|framing|foundation|load.bearing|beam|footing|slab)\b/i,
+  openings: /\b(?:windows?|doors?|skylights?)\b/i,
 } as const;
 type Topic = keyof typeof TOPICS;
 const FIELD_TOPIC: Partial<Record<ScopeField, Topic>> = {
-  flooringSqft: 'flooring', tileSqft: 'tile', demolitionSqft: 'demolition', trimLf: 'trim',
+  flooringSqft: 'flooring', tileSqft: 'tile', wallTileSqft: 'wallTile', demolitionSqft: 'demolition', trimLf: 'trim',
   cabinetBaseLf: 'base', cabinetUpperLf: 'upper', cabinetTallLf: 'tall', cabinetRoom: 'cabinets',
   cabinetConstruction: 'cabinets', garageIncluded: 'garage', garageSqft: 'garage',
   countertopSqft: 'countertops',
@@ -32,7 +34,7 @@ const FIELD_TOPIC: Partial<Record<ScopeField, Topic>> = {
   mechanical: 'mechanical', structural: 'structural',
 };
 const NEGATIVE = /\b(?:no|not|without|exclude[ds]?|excluding|retain|keep|reuse|unchanged|remain|existing .{0,20} stays?|do not|don't)\b/i;
-const AREA_UNIT = /^(?:sf|sq\.?\s*ft|sqft|square\s*feet|ft2|ft²)$/i;
+const AREA_UNIT = /^(?:sf|sq\.?\s*ft|sqft|square\s*(?:feet|foot)|ft2|ft²)$/i;
 const LENGTH_UNIT = /^(?:lf|lin\.?\s*ft|linear\s*feet|ft|feet)$/i;
 const COUNT_UNIT = /^(?:ea|each|unit|units|cabinet|cabinets|door|doors)$/i;
 const clauses = (text: string): string[] => text.split(/\n|;|\.(?:\s|$)|\bbut\b/i).map(s => s.trim()).filter(Boolean);
@@ -40,7 +42,11 @@ const excludedClause = /^(?:please\s+)?(?:exclude\w*|no|without|do not|don't)\b/
 const completedClause = /\b(?:has|have)\s+(?:already\s+)?been\s+completed\b|\b(?:is|was)\s+already\s+complete(?:d)?\b/i;
 const retainedSurfaceClause = /^(?:the\s+)?(?:existing\s+)?(?:flooring|floors?|walls?|ceilings?)(?:\s*(?:,|and)\s*(?:the\s+)?(?:existing\s+)?(?:flooring|floors?|walls?|ceilings?))*\s+(?:stay|remain)s?(?:\s+(?:unchanged|as[ -]is))?[.!]?$/i;
 const positiveClauses = (text: string) => clauses(text)
-  .filter(s => !excludedClause.test(s) && !completedClause.test(s) && !retainedSurfaceClause.test(s))
+  .filter(s => !excludedClause.test(s) && !(/^(?:retain|keep|reuse)\b/i.test(s) && !/\b(?:replace|install|new|repair|add|paint)\b/i.test(s)) && !completedClause.test(s) && !retainedSurfaceClause.test(s))
+  // Preserve the fixture context before splitting conjunctions. Otherwise
+  // "shower valve and trim" becomes a standalone architectural "trim".
+  .map(s => s.replace(/\b((?:shower\s+)?valve|shower|faucet)\s+and\s+trim\b/gi, '$1'))
+  .map(s => s.replace(/\b(base|lower)\s+and\s+(upper|wall)\s+cabinets?\b/gi, '$1 cabinets and $2 cabinets'))
   .flatMap(s => s.split(/,|\band\b/i)).filter(s => !NEGATIVE.test(s));
 const joined = (values: (string | undefined)[]) => values.filter(Boolean).join('\n');
 
@@ -50,6 +56,7 @@ export interface QuestionContext {
   text: string;
   positive: string;
   restriction: string;
+  customerRequested: string;
   exclusions: string[];
   takeoffs: NonNullable<ScopeExtraction['takeoffs']>;
   extraction: ScopeExtraction | null;
@@ -65,7 +72,7 @@ export function questionContext(answers: ScopeAnswers, extraction: ScopeExtracti
   // directions change responsibility, not which physical components belong to the project.
   const restrictive = clauses(explicitDirections).filter(s => /\bonly\b|limited to|restrict.*to/i.test(s)
     && !/^(?:labor|materials?|supply|installation)[ -]only[.!]?$/i.test(s.trim()));
-  const restriction = restrictive.filter(s => Object.values(TOPICS).some(re => re.test(s))).join('\n');
+  const restriction = positiveClauses(restrictive.filter(s => Object.values(TOPICS).some(re => re.test(s))).join('\n')).join('\n');
   const statedScope = (extraction?.facts || []).filter(f => f.confidence >= .85 && f.value?.trim()
     && f.basis !== 'visual' && f.basis !== 'inferred'
     && ['taskList','otherDetails','demolition','structural','plumbing','electrical','mechanical','installation','materials','fixtures'].includes(f.field))
@@ -85,6 +92,7 @@ export function questionContext(answers: ScopeAnswers, extraction: ScopeExtracti
   // A general service label alone does not make every trade part of a repair request.
   const fullProject = !restriction && (BUILDS.has(service) || REMODELS.has(service) && !componentRemodel(authored,exclusions));
   return {answers, service, text, positive: positiveClauses(text).join('\n'), restriction,
+    customerRequested:positiveClauses(joined([sourceText,answers.taskList,answers.estimatingInstructions])).join('\n'),
     exclusions, takeoffs, extraction, fullProject,
     laborOnly: extraction?.instructions?.laborOnly === true || /\blabou?r[ -]only\b/i.test(directions)
       || clauses(joined([sourceText,answers.taskList,answers.installation])).some(clause=>/^(?:(?:price|estimate|quote|include|provide)\s+)?labou?r(?:\s+and\s+installation)?[ -]only\b(?!\s+(?:for|on)\b)/i.test(clause))};
@@ -95,12 +103,16 @@ export function questionContext(answers: ScopeAnswers, extraction: ScopeExtracti
  * Keep area questions for broad renovations and any stated wall/ceiling work. */
 function componentRemodel(text:string,exclusions:string[]):boolean {
  const positive=positiveClauses(text).join('\n');
- const negative=[...exclusions,...clauses(text).filter(s=>/\b(?:exclude\w*|no|not|without)\b/i.test(s))].join('\n');
+ if(/\b(?:selected|partial|limited)\s+(?:interior\s+)?(?:finishes|renovation|remodel|work)\b/i.test(positive))return true;
+ const negative=[...exclusions,...clauses(text).filter(s=>/\b(?:exclude\w*|no|not|without|retain|keep|reuse)\b/i.test(s))].join('\n');
  if(!TOPICS.cabinets.test(positive)&&!TOPICS.countertops.test(positive))return false;
  const excludedTrades=['flooring','plumbing','electrical','mechanical','structural'].filter(t=>TOPICS[t as Topic].test(negative));
  if(excludedTrades.length<2)return false;
  if(/\b(?:full|complete|whole|gut)\s+(?:kitchen|bathroom|home|renovation|remodel)|\b(?:walls?(?! cabinets?)|ceilings?|drywall|plaster)\b/i.test(positive))return false;
- return !(['flooring','tile','plumbing','electrical','mechanical','structural'] as Topic[]).some(t=>TOPICS[t].test(positive)&&!TOPICS[t].test(negative));
+ // Counter replacement can include its sink/faucet and backsplash without
+ // becoming a renovation of every room surface or building system.
+ const broaderWork=positive.replace(/\b(?:tile|tiled|tiling)\s+backsplash\b|\bbacksplash\s+(?:tile|tiling)\b/gi,'').replace(/\b(?:backsplash|(?:one|a|\d+)\s+)?(?:sink|faucet)s?\b/gi,'').replace(/\bbacksplash\b/gi,'');
+ return !(['flooring','tile','plumbing','electrical','mechanical','structural'] as Topic[]).some(t=>TOPICS[t].test(broaderWork)&&!TOPICS[t].test(negative));
 }
 
 function excluded(context: QuestionContext, topic: Topic): boolean {
@@ -114,7 +126,7 @@ function excluded(context: QuestionContext, topic: Topic): boolean {
   const requested = (context.extraction?.instructions?.inclusions || []).some(s => pattern.test(s))
     || positiveClauses(context.text).some(s => pattern.test(s) && !excludedClause.test(s));
   if (excludedTopic && !requested) return true;
-  if (context.restriction && !pattern.test(context.restriction)) {
+  if (context.restriction && !pattern.test(context.restriction)&&!pattern.test(context.customerRequested)) {
     // Base/upper/tall are subdivisions of a genuinely requested cabinet package.
     if (['base', 'upper', 'tall'].includes(topic) && TOPICS.cabinets.test(context.restriction)) return false;
     return true;
@@ -123,12 +135,19 @@ function excluded(context: QuestionContext, topic: Topic): boolean {
 }
 function topicActive(context: QuestionContext, topic: Topic): boolean {
   if (excluded(context, topic)) return false;
-  return TOPICS[topic].test(context.restriction || context.positive);
+  return TOPICS[topic].test(context.restriction?context.restriction+'\n'+context.customerRequested:context.positive);
 }
 /** Painting measured trim or cabinet doors does not require whole-room area. */
 function paintedAreaApplies(context: QuestionContext): boolean {
  if (!topicActive(context,'paint')) return false;
+ // Measured patches or measured wall/ceiling surfaces already provide the
+ // area needed for this work. Do not ask for unrelated whole-project area.
+ if (measuredTopic(context,'paint')) return false;
  const text=context.restriction||context.positive;
+ // A repair hole needs its own count, dimensions and finish question. Whole
+ // project floor area says nothing about a localized patch's required work.
+ if(SMALL.has(context.service)&&/\b(?:patch|holes?)\b/i.test(text)
+  &&! /\b(?:paint|repaint|replace|install|skim)\b[^.;\n]{0,45}\b(?:all|entire|whole|walls|ceilings|room)\b/i.test(text))return false;
  if (/\b(?:walls?(?! cabinets?)|ceilings?|drywall|plaster|interior walls|exterior siding)\b/i.test(text)) return true;
  return !/\b(?:trim|baseboards?|moulding|molding|cabinets?|cabinetry|doors?|fence|gate|railings?)\b/i.test(text);
 }
@@ -169,8 +188,23 @@ function measuredTopic(context: QuestionContext, topic: Topic): boolean {
     : ['base', 'upper', 'tall', 'cabinets'].includes(topic) ? LENGTH_UNIT.test(t.unit) || COUNT_UNIT.test(t.unit)
     : AREA_UNIT.test(t.unit)));
 }
+export function unresolvedScopeAnswer(value:string|undefined):boolean{
+ return !value?.trim()||/\b(?:not specified|unspecified|unknown|not provided|not stated|not shown|not known|not detailed|no (?:site|soil|slope|utility)[^.;]{0,35}(?:data|information|info)|(?:site|utility|service) (?:information|details) must be provided|details? (?:are )?missing|missing (?:site|utility|quantity|measurement|scope) (?:details|information)|to be determined|TBD)\b/i.test(value)
+   ||/^(?:replace|new|update) (?:the )?(?:(?:bathroom|kitchen|plumbing)\s+)?fixtures?[.!]?$/i.test(value.trim());
+}
+/** Existing-condition photographs do not authorize construction. Resolve an
+ * explicitly missing work definition before asking quantities or selections. */
+export function needsWorkDefinition(answers:ScopeAnswers,extraction:ScopeExtraction|null,sourceText=''):boolean{
+ const intentQuestion=(extraction?.clarifications||[]).some(q=>q.field==='taskList'&&/\b(?:what|which)\b.*\b(?:work|changes|repairs|scope)\b/i.test(q.question));
+ if(!intentQuestion)return false;
+ const requestedWork=/\b(?:install|replace|repair|build|remodel|renovate|repaint|refinish|demolish|remove|supply|construct|patch)\b|\b(?:new construction|full[ -](?:home|kitchen|bathroom) remodel)\b/i;
+ const supplied=[sourceText,answers.taskList,answers.estimatingInstructions,
+ ...(extraction?.facts||[]).filter(f=>f.confidence>=.85&&f.basis==='stated'&&['taskList','demolition','installation'].includes(f.field)).map(f=>f.value),
+ ...(extraction?.instructions?.inclusions||[])].filter(Boolean).join('\n');
+ return !requestedWork.test(supplied);
+}
 function validQuestionValue(field:ScopeField,value:string|undefined):boolean {
-  if(!value?.trim()||validateAnswer(field,value))return false;
+  if(unresolvedScopeAnswer(value)||!value||validateAnswer(field,value))return false;
   return !['sqft','length','width','rooms','stories'].includes(field)||Number(value.replaceAll(',',''))>0;
 }
 function sourceAnswered(context: QuestionContext, field: ScopeField): boolean {
@@ -195,6 +229,10 @@ export function scopeFieldApplies(field: ScopeField, context: QuestionContext): 
   if (field === 'service' || field === 'taskList' || field === 'estimatingInstructions') return true;
   if (field === 'address') return false;
   if (!context.service) return true;
+  // A total tile area cannot answer a wall-only question. Use the separate
+  // surface fields whenever wall tile is explicitly requested.
+  if(field==='tileSqft'&&topicActive(context,'wallTile')&&!/\bbacksplash\b/i.test(context.positive))return false;
+  if(field==='flooringSqft'&&/\bfloor\s+tile\b/i.test(context.positive))return true;
   if (field === 'finish') return !context.laborOnly && !context.restriction && !cabinetSelectionsSpecified(context)
     && !ownerSuppliedCabinets(context) && (context.fullProject || context.service.startsWith('cabinet-'));
   // A garage is a building question. A repair in an existing garage (a GFCI outlet,
@@ -202,24 +240,37 @@ export function scopeFieldApplies(field: ScopeField, context: QuestionContext): 
   if (field === 'garageIncluded') return BUILDS.has(context.service) && (context.service === 'new-construction' && !context.restriction
     || topicActive(context, 'garage'));
   if (field === 'garageSqft') return BUILDS.has(context.service) && context.answers.garageIncluded !== 'no'
-    && (context.answers.garageIncluded === 'yes' || topicActive(context, 'garage'));
+    && (context.answers.garageIncluded === 'yes' || clauses(context.positive).some(s=>/\b(?:include|build|construct|new|attached|detached)\b[^.;]{0,40}\bgarage\b/i.test(s)&&!unresolvedScopeAnswer(s)&&!/\bundecided\b/i.test(s)));
   if (field === 'cabinetRoom') return context.service.startsWith('cabinet-') && cabinetPackage(context);
+  // A shower valve's trim is a plumbing fixture, never a baseboard length.
+  // The service label alone must not introduce an unrequested trim trade.
+  if (field === 'trimLf') return topicActive(context, 'trim');
   // "Remove debris from the crawl space" on a repair list is cleanup, not demolition of an area:
   // the area question needs a demolition word, or a removal aimed at a building surface.
+  if (field === 'demolitionSqft' && REMODELS.has(context.service) && sourceAnswered(context,'sqft')
+    && clauses(context.text).some(clause=>!excludedClause.test(clause) && /\bremov\w*\s+(?:all\s+|the\s+)?existing\s+finishes\s+and\s+fixtures\b/i.test(clause))
+    && !/\b(?:structural demolition|remove\s+(?:the\s+)?(?:walls?|slabs?)|gut(?:ted|ting)?)\b/i.test(context.positive)) return false;
   if (field === 'demolitionSqft') return topicActive(context, 'demolition')
     && /\b(?:demolition|demolish\w*|tear[ -]?out|gut(?:ted|ting)?)\b|\bremov\w*\s+(?:the\s+|all\s+|existing\s+|old\s+)*(?:walls?|drywall|floors?|flooring|tile|ceilings?|slabs?|plaster|paneling)\b/i.test(context.restriction || context.positive)
     &&/\b(?:walls?|floors?|flooring|ceilings?|tile|rooms?|drywall|slabs?|house|home)\b/i.test(context.restriction || context.positive);
   if (['cabinetBaseLf', 'cabinetUpperLf', 'cabinetTallLf', 'cabinetConstruction'].includes(field)) {
     if (!cabinetPackage(context)) return false;
-    if (field === 'cabinetBaseLf') return topicActive(context, 'base')
-      || context.service.startsWith('cabinet-') && !topicActive(context, 'upper') && !topicActive(context, 'tall');
-    if (field === 'cabinetUpperLf') return topicActive(context, 'upper');
-    if (field === 'cabinetTallLf') return topicActive(context, 'tall');
+    const unspecifiedPackage=!['base','upper','tall'].some(topic=>topicActive(context,topic as Topic))
+      &&!['cabinetBaseLf','cabinetUpperLf','cabinetTallLf'].some(key=>context.answers[key as ScopeField]?.trim());
+    const explicitlyAsked=context.extraction?.clarifications?.some(q=>q.field===field)===true;
+    if (field === 'cabinetBaseLf') return topicActive(context, 'base')||unspecifiedPackage||explicitlyAsked;
+    if (field === 'cabinetUpperLf') return topicActive(context, 'upper')||unspecifiedPackage||explicitlyAsked;
+    if (field === 'cabinetTallLf') return topicActive(context, 'tall')||unspecifiedPackage||explicitlyAsked;
     return true;
   }
   if (field === 'sqft') return !context.restriction && (context.fullProject || paintedAreaApplies(context));
   if (field === 'rooms' || field === 'bathrooms' || field === 'stories') return context.fullProject;
-  if (field === 'laborHours') return /\b(?:time and materials|hourly|labor hours|labour hours)\b/i.test(context.positive);
+  if (field === 'laborHours') {
+    // Questions and model explanations are not customer billing instructions.
+    const authored=joined([context.answers.taskList,context.answers.otherDetails,
+      (context.answers.estimatingInstructions||'').replace(/^Question:[\s\S]*?^Answer:\s*/gm,'')]);
+    return clauses(authored).some(clause=>!NEGATIVE.test(clause)&&/\b(?:time\s+and\s+materials|hourly|(?:purchase|book|budget|allow)\s+(?:for\s+)?\d+\s+(?:labou?r\s+)?hours)\b/i.test(clause));
+  }
   // This field is requested only by a priced assembly or a source question.
   // Keep that dependency unless countertops are explicitly outside the scope.
   if (field === 'countertopSqft') return true;
@@ -232,6 +283,7 @@ export function dynamicScopeFields(answers: ScopeAnswers, extraction: ScopeExtra
   pricedFields: ScopeField[] = [], sourceText = ''): ScopeField[] {
   const context = questionContext(answers, extraction, sourceText);
   if (!answers.service) return ['service'];
+  if(needsWorkDefinition(answers,extraction,sourceText))return ['taskList'];
   const fields = new Set<ScopeField>();
   const hasWork = Boolean(joined([sourceText, answers.taskList, answers.otherDetails, answers.demolition,
     answers.structural, answers.plumbing, answers.electrical, answers.installation]).trim()
@@ -243,21 +295,24 @@ export function dynamicScopeFields(answers: ScopeAnswers, extraction: ScopeExtra
   if (scopeFieldApplies('garageSqft', context)) fields.add('garageSqft');
   if (scopeFieldApplies('finish', context) && !sourceAnswered(context,'materials')) fields.add('finish');
   if (scopeFieldApplies('cabinetRoom', context) && !/\b(?:kitchen|bathroom|laundry|mudroom|pantry|office)\b/i.test(context.positive)) fields.add('cabinetRoom');
-  for (const field of ['flooringSqft', 'tileSqft', 'demolitionSqft', 'trimLf', 'cabinetBaseLf', 'cabinetUpperLf', 'cabinetTallLf', 'coveredOutdoorSqft'] as ScopeField[]) {
+  if(!context.fullProject && topicActive(context,'countertops'))fields.add('countertopSqft');
+  for (const field of ['flooringSqft', 'tileSqft', 'wallTileSqft', 'demolitionSqft', 'trimLf', 'cabinetBaseLf', 'cabinetUpperLf', 'cabinetTallLf', 'coveredOutdoorSqft'] as ScopeField[]) {
     if (scopeFieldApplies(field, context)) fields.add(field);
   }
   // A complete whole-project assembly can use documented quantity allowances;
   // do not turn every unspecified trade measurement into a homeowner questionnaire.
   if (context.fullProject) {
-    for (const field of ['flooringSqft', 'tileSqft', 'demolitionSqft', 'trimLf', 'cabinetBaseLf', 'cabinetUpperLf', 'cabinetTallLf'] as ScopeField[]) fields.delete(field);
+    for (const field of ['flooringSqft', 'tileSqft', 'wallTileSqft', 'demolitionSqft', 'trimLf', 'cabinetBaseLf', 'cabinetUpperLf', 'cabinetTallLf'] as ScopeField[]) fields.delete(field);
   }
   for (const field of pricedFields) if (scopeFieldApplies(field, context)) fields.add(field);
   for (const clarification of extraction?.clarifications || []) {
     const field = clarification.field;
+    if (selectionDetailsCovered(field, clarification.question, context)) continue;
     const optional = ['location','address','schedule','urgency','projectMonths','phasing'].includes(field);
-    const numeric = ['fixtureCount','rooms','stories','bathrooms','laborHours','countertopSqft','length','width','sqft','flooringSqft','tileSqft','demolitionSqft','trimLf','cabinetBaseLf','cabinetUpperLf','cabinetTallLf','garageSqft','coveredOutdoorSqft'].includes(field);
+    const numeric = ['fixtureCount','rooms','stories','bathrooms','laborHours','countertopSqft','length','width','sqft','flooringSqft','tileSqft','wallTileSqft','demolitionSqft','trimLf','cabinetBaseLf','cabinetUpperLf','cabinetTallLf','garageSqft','coveredOutdoorSqft'].includes(field);
     if (optional && !pricedFields.includes(field)) continue;
-    if (numeric && !pricedFields.includes(field) && !fields.has(field)) continue;
+    if(field==='fixtureCount'&&!/\b(?:how many|number of|count|quantity)\b/i.test(clarification.question)&&!pricedFields.includes(field)&&!fields.has(field))continue;
+    if (numeric && ['laborHours','length','width'].includes(field) && !pricedFields.includes(field) && !fields.has(field)) continue;
     if (scopeFieldApplies(field, context)) fields.add(field);
   }
   // Unknown production hours are an estimator's calculation. Ask about the
@@ -273,11 +328,22 @@ export function dynamicScopeFields(answers: ScopeAnswers, extraction: ScopeExtra
   });
 }
 
+/** A supplied price-book tier supports preliminary selection allowances.
+ * Brands and colors can be finalized later; material alternatives and technical
+ * requirements still need their actual scope decision. */
+function selectionDetailsCovered(field:ScopeField|undefined,question:string,context:QuestionContext):boolean {
+  return (field==='materials'||field==='finish')
+    && ['refresh','mid-range','high-end','luxury'].includes(context.answers.finish||'')
+    && /\b(?:brands?|colou?rs?|manufacturers?|model numbers?|finish specifications?)\b/i.test(question)
+    && !/\b(?:or|versus|rating|capacity|structural|fire|waterproofing)\b/i.test(question);
+}
+
 /** Remove only questions demonstrably answered or outside the selected scope. Unknown
  * specialist decisions stay visible rather than being silently treated as resolved. */
 export function scopePromptApplies(field: ScopeField | undefined, question: string, context: QuestionContext): boolean {
   // A pending source decision must not disappear merely because it has no answer.
   if (field === 'address') return false;
+  if (selectionDetailsCovered(field, question, context)) return false;
   const topic = field ? FIELD_TOPIC[field] : undefined;
   if (topic && excluded(context, topic)) return false;
   if (field && ['finish','sqft','rooms','bathrooms','stories'].includes(field) && !scopeFieldApplies(field, context)) return false;

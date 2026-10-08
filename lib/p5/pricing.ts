@@ -1,17 +1,17 @@
 import {publicPricingText} from './customerProjection.ts';
 import {tradeForLine,apportionAmount,type TradeCategory} from "./trades.ts";
 /** Internal policy. Import only from server entry points, never client components. */
-export const POLICY_VERSION = "p5-2026-09-21-business-plan";
+export const POLICY_VERSION = "p5-2026-10-01-contingency-and-minor-work";
 export const STANDARD_OVERHEAD_RATE = .20;
 /** Operating profit targets. Owner business plan (P5 Comprehensive Business Planning Roadmap, 2026):
  * a 32% planning gross margin with a 30% hard floor, company-wide. The engine prices as
  * cost / (1 - overhead - profit), so 20% overhead + 12% profit = the 32% gross margin target,
  * 20% + 10% = the 30% floor, and risk may add up to 3 points (35%). Rush keeps its urgency premium. */
 export const SERVICE_MATRIX = {
-  handyman: { target: .12, floor: .10, stretch: .15, contingency: [0, 0], method: "Flat-rate menu or fixed-price package" },
-  re10: { target: .12, floor: .10, stretch: .15, contingency: [0, 0], method: "Flat-rate menu or fixed-price package" },
-  "cabinet-product": { target: .12, floor: .10, stretch: .15, contingency: [0, 0], method: "Quoted product price with design and delivery separated" },
-  "cabinet-install": { target: .12, floor: .10, stretch: .15, contingency: [0, 0], method: "Fixed price after measurement and supplier confirmation" },
+  handyman: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Flat-rate menu or fixed-price package" },
+  re10: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Flat-rate menu or fixed-price package" },
+  "cabinet-product": { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Quoted product price with design and delivery separated" },
+  "cabinet-install": { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Fixed price after measurement and supplier confirmation" },
   kitchen: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Paid planning followed by fixed price or guaranteed maximum price" },
   bathroom: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Paid planning followed by fixed price or guaranteed maximum price" },
   remodel: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Written scope and fixed price after selections and site conditions are confirmed" },
@@ -19,8 +19,8 @@ export const SERVICE_MATRIX = {
   addition: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Paid preconstruction followed by a guaranteed maximum price" },
   adu: { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Paid preconstruction followed by a guaranteed maximum price" },
   "new-construction": { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Paid preconstruction followed by a guaranteed maximum price or controlled cost-plus agreement" },
-  "change-order": { target: .12, floor: .10, stretch: .15, contingency: [0, 0], method: "Written price and schedule approval before changed work proceeds" },
-  rush: { target: .25, floor: .20, stretch: .30, contingency: [0, 0], method: "Written fixed-price scope and schedule approval before work proceeds" },
+  "change-order": { target: .12, floor: .10, stretch: .15, contingency: [.10, .10], method: "Written price and schedule approval before changed work proceeds" },
+  rush: { target: .25, floor: .20, stretch: .30, contingency: [.10, .10], method: "Written fixed-price scope and schedule approval before work proceeds" },
 } as const;
 export type Service = keyof typeof SERVICE_MATRIX;
 export const COST_CATEGORIES = ["materials", "field-labor", "owner-production", "subcontractors", "permits-inspections", "engineering-design", "equipment-rentals", "disposal", "travel-mobilization", "protection-cleanup", "project-supervision", "closeout", "other-direct"] as const;
@@ -48,7 +48,7 @@ export const DEFAULT_FINANCE: FinancePolicy = {
 export const UNCONFIGURED_FINANCE = DEFAULT_FINANCE;
 export interface CostEvidence {
   provenance?:{status:'estimated'|'verified';location:string;retrievedAt:string;assumptions:string[];sources:{url:string;date:string;dateBasis?:'published'|'retrieved';region:string;low:number;high:number}[]};
-  basis: "written-quote" | "payroll" | "market-replacement" | "approved-cost-book" | "planning-assumption" | "owner-estimating-schedule" | "sourced-market-average" | "regional-planning-average";
+  basis: "written-quote" | "payroll" | "market-replacement" | "approved-cost-book" | "planning-assumption" | "owner-estimating-schedule" | "sourced-market-average" | "regional-planning-average" | "owner-budget-allowance";
   reference: string;
   verifiedAt: string;
   validUntil: string;
@@ -194,19 +194,16 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   if (margin < matrix.target) warn("below-target", "Value-engineer the scope first. Record the reason for using a target below the standard service target.");
   const validApprovals = approvals.filter(a => ["Nick", "Jared"].includes(a.owner) && a.estimateRevision === input.revision && a.recordId.trim() && a.writtenReason.trim().length >= 20 && Number.isFinite(dateValue(a.approvedAt)) && dateValue(a.approvedAt) <= now.getTime());
   if (margin < matrix.floor && !["Nick", "Jared"].every(owner => validApprovals.some(a => a.owner === owner))) warn("owner-approval-required", "Below-floor pricing requires written approval from both owners for this exact estimate revision.", "block");
-  // Owner rule 2026-09-21: a flat 10% contingency on remodels and new construction, none on cabinet,
-  // handyman, RE-10, change-order or rush work. Risk is reflected in the range, not a larger reserve.
-  // Keyed to the kind of project, not its urgency: a rushed new build is still new construction.
-  const projectContingency = SERVICE_MATRIX[input.service].contingency;
-  const contingencyRate = input.contingencyRate ?? projectContingency[0];
-  finite(contingencyRate, "Contingency rate");
-  if (contingencyRate < projectContingency[0]) warn("contingency-below-policy", "Contingency is below the service starting range.", "block");
-  if (contingencyRate > projectContingency[1]) warn("elevated-contingency", "Risk factors require contingency above the service starting range. Keep this reserve until closeout and warranty review.");
+  // Owner rule October 1: one 10% reserve on estimated direct project cost.
+  // For non-remodel/non-construction work it is embedded in customer items.
+  // Stale saved policy overrides cannot add another reserve or remove this one.
+  const contingencyRate = .10;
   const ids = new Set<string>();
   const directByCategory = Object.fromEntries(COST_CATEGORIES.map(c => [c, 0])) as Record<CostCategory, number>;
   const lines = input.lines.map(line => {
     const trade=tradeForLine(line);
     const modeled=input.estimatePurpose==='preliminary'&&((line.evidence?.basis==='owner-estimating-schedule'&&['owner-average-cost','historical-cost-budget'].includes(line.estimatingBasis||''))||(line.evidence?.basis==='sourced-market-average'&&line.estimatingBasis==='sourced-market-average')||(line.evidence?.basis==='regional-planning-average'&&line.estimatingBasis==='regional-planning-average'));
+    if(line.evidence?.basis==='owner-budget-allowance')warn(input.estimatePurpose==='preliminary'?'minor-work-budget':'minor-work-budget-preliminary-only',`${line.id}: owner-authorized preliminary job-support allowance; confirm conditions before a firm proposal.`,input.estimatePurpose==='preliminary'?'review':'block');
     if(line.evidence?.basis==='regional-planning-average')warn(modeled?'planning-average-preliminary':'planning-average-preliminary-only',`${line.id}: regional planning average, not verified local pricing. Confirm current local rates before a firm proposal.`,modeled?'review':'block');
     if(line.evidence?.basis==='sourced-market-average'&&!modeled)warn('market-average-preliminary-only',`${line.id}: sourced averages require current quotes before a firm proposal.`,'block');
     if(line.evidence?.basis==='owner-estimating-schedule'&&!modeled)warn('estimating-purpose-required',`${line.id}: owner estimating rates are restricted to the configured preliminary model.`,'block');
@@ -278,19 +275,18 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   // The low endpoint cannot cut known direct costs below the approved floor.
   const lowFloor = priceFromRiskAdjustedCost(riskAdjustedDirectCost, allocations.total, Math.min(matrix.floor, margin));
   const planningRange = { low: Math.ceil(Math.max(lowFloor, contractPrice * (1 - width)) / step) * step, high: Math.ceil(contractPrice * (1 + width) / step) * step };
-  // Extend observed direct-cost bounds before applying the same policy once. Each line's upside is
-  // its high quantity at its high cost, less its modeled cost. The uncertain lines of one job do
-  // not all land at their worst case together, so their upsides combine as independent errors
-  // (square root of the sum of squares) rather than stacking: a single uncertain allowance keeps
-  // its full upside, while twenty small ones no longer compound into a range the customer reads
-  // as a guess (live Marcliffe RE-10: $28,200 to $45,900).
+  const planningBandHigh=planningRange.high;
+  // Quantity and price bounds are scenario limits, not standard deviations.
+  // Without evidence of distributions or independence, root-sum-square
+  // aggregation understates a job where several unknowns rise together.
+  // Keep the supported upper scenario and apply the approved policy once.
   const upsides=lines.map(line=>{
     const range=line.unitCostRange;
     if(range){finite(range.low,'Source cost low',true);finite(range.high,'Source cost high',true);if(range.low>line.unitCost||range.high<line.unitCost)throw new Error('The source range must contain the unit cost');}
     if(line.quantityRange){finite(line.quantityRange.low,'Quantity allowance low',true);finite(line.quantityRange.high,'Quantity allowance high',true);if(line.quantityRange.low>line.quantity||line.quantityRange.high<line.quantity)throw new Error('The quantity range must contain the modeled quantity');}
     return Math.max(0,(line.quantityRange?.high??line.quantity)*(range?.high??line.unitCost)-line.cost);
   });
-  const sourceHigh=directCost+Math.sqrt(upsides.reduce((total,upside)=>total+upside*upside,0));
+  const sourceHigh=directCost+sum(upsides);
   planningRange.high=Math.max(planningRange.high,Math.ceil(priceFromRiskAdjustedCost(sourceHigh*(1+contingencyRate),allocations.total,margin)/step)*step);
   // A firm price is the modeled, margin-correct contract price, rounded up to the step: the number the
   // range was built around, never its low end. Quantities a document leaves open are priced at the
@@ -308,11 +304,11 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   return {
     policyVersion: POLICY_VERSION, revision: input.revision, evaluatedAt: now.toISOString(),
     estimatePurpose: input.estimatePurpose||'verified-cost-review',
-    currentCostsConfirmed: !lines.some(line=>['owner-estimating-schedule','sourced-market-average','regional-planning-average'].includes(line.evidence.basis)),
+    currentCostsConfirmed: !lines.some(line=>['owner-estimating-schedule','sourced-market-average','regional-planning-average','owner-budget-allowance'].includes(line.evidence.basis)),
     service, requestedService: input.service, matrix, lines:pricedLines, coverage: input.coverage,
     directByCategory, directCost, contingencyRate, contingency, riskAdjustedDirectCost,
     allocations, allocationDollars, targetOperatingProfit: margin, operatingProfit, divisor,
-    contractPrice, planningRange, assumptions: input.assumptions, allowances: input.allowances,
+    contractPrice, planningRange, planningBandHigh, assumptions: input.assumptions, allowances: input.allowances,
     exclusions: input.exclusions, missingInformation: input.missingInformation,
     riskFactors: [...riskSet], manualAdjustments: input.manualAdjustments ?? [],
     ownerApprovals: validApprovals, financeSnapshot: finance, warnings,
@@ -326,6 +322,13 @@ export type P5Estimate = ReturnType<typeof calculateP5Estimate>;
 export const PLANNING_DISCLAIMER = "Preliminary planning information only. This is not a bid, quote, offer or guaranteed price. A site or plan review, confirmed scope, current supplier and trade pricing, and written agreement are required before work proceeds.";
 const CUSTOMER_ALLOWANCE_DISCLOSURE="Preliminary allowance: confirm quantities, selections and current supplier or trade pricing before a firm proposal.";
 const INTERNAL_COMMERCIAL_NOTE=[
+  // Policy budgets and mapper instructions are internal audit material, even
+  // when the model omits the words "direct cost" around their dollar amounts.
+  /\b(?:minor-work-allowance|minor-work-v\d+|owner-authorized (?:preliminary )?(?:job-support )?budget|shared minimum)\b/i,
+  /\b(?:map to|map this to|catalog entry|price basis:)\b/i,
+  /\b(?:embedded reserve|standard project contingency applies|verifiedAt|validUntil|owner-average-cost)\b/i,
+  // Generated audit notes describe a direct-cost check, not the final selling policy.
+  /\boverhead(?:\s+(?:is|was|will be))?\s+(?:(?:not|never)\s+)?(?:included|excluded|added|charged)\b/i,
   /\bdirect[- ]costs?\b/i,
   /\bdirect[- ](?:materials?|labor|labour)\b/i,
   /\bunit costs?\b/i,
@@ -407,6 +410,7 @@ const PROSE_KEYS=new Set(['verificationItems','assumptions','exclusions','allowa
 /** One final recursive projection protects every prose field later rendered by
  * the customer page, PDF, email, or public API response. */
 export function customerSafeProjection<T>(value:T,key=''):T{
+  if(key==='id'&&typeof value==='string')return value;
   if(typeof value==="string"){const safe=customerSafeText(value);return (PROSE_KEYS.has(key)?withoutInternalIds(safe):safe) as T;}
   if(Array.isArray(value))return value.map(item=>customerSafeProjection(item,key)).filter(item=>item!==''&&item!==null&&item!==undefined) as T;
   if(value&&typeof value==="object")return Object.fromEntries(Object.entries(value).map(([k,item])=>[k,customerSafeProjection(item,k)])) as T;
@@ -424,11 +428,17 @@ export function customerEstimate(estimate: P5Estimate, summary: string) {
   const trades=[...new Set(estimate.lines.map(l=>tradeForLine(l)))];
   const weights=estimate.lines.map(line=>line.cost);
   const lows=apportionAmount(estimate.planningRange.low,weights);
-  // Assign item-specific uncertainty to its actual item/building instead of
-  // spreading a well allowance's high bound over unrelated cabinetry, etc.
-  const highWeights=estimate.lines.some(l=>l.unitCostRange||l.quantityRange)?estimate.lines.map((line,i)=>Math.max(0,(line.quantityRange?.high??line.quantity)*(line.unitCostRange?.high??line.unitCost)*(1+estimate.contingencyRate)/estimate.divisor-lows[i])):weights;
-  const increases=apportionAmount(estimate.planningRange.high-estimate.planningRange.low,highWeights.some(n=>n>0)?highWeights:weights);
-  const highs=lows.map((low,i)=>low+increases[i]);
+  // Reserve each line's supported upper quantity/cost first. Allocating the
+  // whole band by modeled cost hid 0.6-hour labor behind a 0.5-hour amount
+  // whenever the project band already covered that small upside. Only the
+  // residual generic spread is proportional to modeled cost; a small supply
+  // cannot absorb an unrelated project's entire uncertainty.
+  const upsides=estimate.lines.map(line=>Math.max(0,(line.quantityRange?.high??line.quantity)*(line.unitCostRange?.high??line.unitCost)-line.cost));
+  const highAmounts=estimate.lines.map((line,i)=>line.sellingAmount+upsides[i]*(1+estimate.contingencyRate)/estimate.divisor);
+  const residual=Math.max(0,estimate.planningRange.high-sum(highAmounts));
+  const totalWeight=sum(weights);
+  const highs=estimate.planningRange.low===estimate.planningRange.high?lows:
+    apportionAmount(estimate.planningRange.high,highAmounts.map((value,i)=>value+residual*weights[i]/totalWeight));
   const lineItems=estimate.publishable?estimate.lines.map((line,i)=>({id:line.id,category:tradeForLine(line),description:line.description,quantity:line.quantity,unit:line.unit,low:lows[i],high:highs[i],unitLow:lows[i]/line.quantity,unitHigh:highs[i]/line.quantity,...(line.building?{building:line.building}:{}),...(line.floor?{floor:line.floor}:{}),...(line.quantityRange?{quantityRange:line.quantityRange}:{}),pricingStatus:line.allowance||line.estimatingBasis==='sourced-market-average'||line.estimatingBasis==='regional-planning-average'?'estimated-allowance':line.evidence.basis==='owner-estimating-schedule'?'owner-planning-rate':'verified-cost',...(line.estimatingBasis==='regional-planning-average'?{verification:'Regional planning average, not verified local pricing. Confirm current local rates, quantities and selections before a firm proposal.'}:line.allowance||line.estimatingBasis==='sourced-market-average'||line.evidence.basis==='owner-estimating-schedule'?{verification:'Confirm quantities, selections and current supplier/trade pricing before a firm proposal.'}:{}),...(line.evidence.provenance?{rateLocation:line.evidence.provenance.location,rateDate:line.evidence.provenance.retrievedAt,rateSources:line.evidence.provenance.sources.map(s=>s.url)}:{})})):[];
   return customerSafeProjection({
     status: estimate.publishable ? "planning-range" as const : "review-required" as const,

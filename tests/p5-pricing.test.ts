@@ -5,9 +5,23 @@ import {validateReferences,compareReference,referenceDirectCostBudget,type Price
 import {combineScopeExtractions,mergeScopeFacts} from "../lib/p5/scope.ts";
 import {analyzeScope} from "../lib/p5/extraction.ts";
 import {PDFDocument} from "pdf-lib";
-import { COST_CATEGORIES, SERVICE_MATRIX, UNCONFIGURED_FINANCE, allowanceAdjustment, calculateP5Estimate, companyAllocation, customerEstimate, customerSafeNotes, landedUnitCost, loadedHourlyCost, priceFromRiskAdjustedCost, type FinancePolicy, type PricingInput, type Service } from "../lib/p5/pricing.ts";
+import { COST_CATEGORIES, SERVICE_MATRIX, UNCONFIGURED_FINANCE, allowanceAdjustment, calculateP5Estimate, companyAllocation, customerEstimate, customerSafeNotes, customerSafeProjection, landedUnitCost, loadedHourlyCost, priceFromRiskAdjustedCost, type FinancePolicy, type PricingInput, type Service } from "../lib/p5/pricing.ts";
 
 const now = new Date("2026-09-10T12:00:00Z");
+test('minor policy audit amounts and mapping instructions never enter customer notes',()=>{
+ const notes=customerSafeNotes([
+  'T001 (Removal & Disposal): Covered by minor-work-allowance ($75 job allowance). Scope includes removal of three existing levers and disposal of removed hardware.',
+  'Minor-work-allowance ($75 job): Owner-authorized preliminary allowance (minor-work-v1). Base: $210; shared minimum $75; 3% basis capped at $750. Confirm site conditions.',
+  'T003 (cleanup): Map to minor cleanup allowance or daily job-site cleanup labor at 0.5-1 hour if separate line needed.',
+  'Owner supplies three levers. Contractor removes the old hardware.',
+  'no embedded reserve; standard project contingency applies once.',
+  'sourced from owner-average-cost per P5 Cost Database 2026; verifiedAt 2026-09-11, validUntil 2026-12-12.',
+ ]).join(' ');
+ assert.doesNotMatch(notes,/\$|minor-work-v1|minor-work-allowance|map to|3%|reserve|project contingency|verifiedAt|validUntil|owner-average-cost/i);
+ assert.match(notes,/removal of three existing levers/);
+ assert.match(notes,/Owner supplies three levers/);
+ assert.equal(customerSafeProjection({id:'minor-work-allowance'}).id,'minor-work-allowance','stable line identifiers are not prose');
+});
 const finance: FinancePolicy = { annualOverhead: 420000, annualRevenue: 6000000, forecastSource: "TEST FIXTURE ONLY: conservative forecast", reviewedAt: "2026-09-10", approvedBy: ["Nick"] };
 function input(service: Service = "kitchen"): PricingInput {
   return { service, revision: "fixture-revision-1", scopeSummary: "Test project scope", uncertainty: "low", locationProvided: true,
@@ -261,14 +275,13 @@ test("a labeled regional planning average is reviewed, never a reason to withhol
   assert.ok(customer.disclaimer.toLowerCase().includes("not a bid"), "and stays explicitly preliminary");
 });
 
-test("uncertain lines widen the high end as independent errors, not all at their worst case together", () => {
-  // Twenty small allowances, each with an unverified count of 1 to 5. Live on the Marcliffe RE-10 the
-  // stacked worst case produced $28,200 to $45,900 for a list of small repairs.
+test("supported upper scenarios do not assume independent quantity errors without evidence", () => {
+  // These are plausible counts, not a distribution or standard deviation.
   const base = input("re10");
   const line = (i: number) => ({ ...base.lines[0], id: `repair-${i}`, description: `Repair ${i}`, unit: "each", quantity: 3, unitCost: 200, quantityRange: { low: 1, high: 5 } });
   const many = calculateP5Estimate({ ...base, lines: Array.from({ length: 20 }, (_, i) => line(i)) }, finance, [], now);
   const worst = calculateP5Estimate({ ...base, lines: Array.from({ length: 20 }, (_, i) => ({ ...line(i), quantity: 5, quantityRange: undefined })) }, finance, [], now);
-  assert.ok(many.planningRange.high < worst.contractPrice, "twenty upsides no longer compound into every line at its worst case");
+  assert.ok(many.planningRange.high >= worst.contractPrice, "the range must cover the stated upper-count scenario for every included task");
   assert.ok(many.planningRange.high >= many.contractPrice, "the high end never falls below the modeled price");
   // One uncertain allowance keeps its whole upside.
   const one = calculateP5Estimate({ ...base, lines: [line(0)] }, finance, [], now);
@@ -295,11 +308,12 @@ test("an RE-10 gets one firm price: the modeled contract price, shown as a singl
   assert.ok(!isRe10Scope({ answers: { service: "handyman" }, text: "Replace two exterior outlets and fix a leaking trap." }));
 });
 
-test("contingency is a flat 10% on remodels and new construction and none on cabinet or handyman work", () => {
+test("contingency is exactly 10% of direct project cost across services and is embedded in small-job prices", () => {
   for (const service of ["kitchen", "bathroom", "whole-home", "addition", "adu", "new-construction"] as Service[])
     assert.equal(calculateP5Estimate({ ...input(service), risks: ["hidden-conditions", "occupied-home"] }, finance, [], now).contingencyRate, .10, service);
   for (const service of ["handyman", "re10", "cabinet-product", "cabinet-install", "change-order", "rush"] as Service[])
-    assert.equal(calculateP5Estimate({ ...input(service), risks: ["hidden-conditions"] }, finance, [], now).contingency, 0, service);
+    {const r=calculateP5Estimate({ ...input(service), risks: ["hidden-conditions"] }, finance, [], now);assert.equal(r.contingency,6000,service);assert.ok(!JSON.stringify(customerEstimate(r,'Repair work')).toLowerCase().includes('contingency'));}
+  for(const override of [0,.20])assert.equal(calculateP5Estimate({...input('handyman'),contingencyRate:override},finance,[],now).contingencyRate,.10,'stale overrides do not stack or remove the policy');
   assert.equal(calculateP5Estimate({ ...input("new-construction"), urgency: "emergency" }, finance, [], now).contingencyRate, .10, "a rushed new build keeps its contingency");
 });
 
@@ -324,4 +338,24 @@ test("a genuinely unusable range is still refused",()=>{
   const line={...base.lines[0],quantity:10,unitCost:100,cost:1000};
   // Not a packaging quirk: a non-finite bound says nothing about the work and cannot be repaired.
   assert.throws(()=>calculateP5Estimate({...base,lines:[{...line,quantityRange:{low:Number.NaN,high:15}}]},finance,[],now));
+});
+
+test('small supply allowances cannot absorb an unrelated project planning band',()=>{
+ const base=input('bathroom');
+ const estimated=calculateP5Estimate({...base,uncertainty:'high',lines:[{...base.lines[0],unitCost:15000},{...base.lines[0],id:'screws',description:'Cabinet screws',unit:'box',unitCost:12,quantity:1,quantityRange:{low:1,high:2},allowance:true}]},finance,[],now);
+ const result=customerEstimate(estimated,'Bathroom');
+ assert.ok(result.lineItems.find(l=>l.id==='screws')!.high<100,'a twelve-dollar screw box must not inherit project-wide uncertainty');
+ assert.equal(result.lineItems.reduce((n,l)=>n+l.high,0),result.range!.high);
+});
+
+test('a small trim allowance retains its own upper labor quantity inside a larger project band',()=>{
+ const base=input('kitchen');
+ const lines=[{...base.lines[0],id:'window',description:'One replacement window',quantity:1,unit:'EA',unitCost:900},{...base.lines[0],id:'trim',description:'Repair 6 LF retained window trim',quantity:.5,unit:'hour',unitCost:70,quantityRange:{low:.4,high:.6},allowance:true}];
+ const estimate=calculateP5Estimate({...base,bookPriced:true,lines},finance,[],now);
+ const shown=customerEstimate(estimate,'One window with retained trim repair');
+ const trim=shown.lineItems.find(line=>line.id==='trim')!;
+ const supportedHigh=.6*70*(1+estimate.contingencyRate)/estimate.divisor;
+ assert.ok(trim.high>=supportedHigh-1,'whole-dollar allocation may round by under one dollar, but cannot ignore the upper labor allowance');
+ assert.equal(shown.lineItems.reduce((n,line)=>n+line.high,0),shown.range!.high);
+ assert.ok(shown.lineItems.every(line=>line.high>=line.low));
 });

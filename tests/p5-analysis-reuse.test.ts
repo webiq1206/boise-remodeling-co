@@ -69,11 +69,39 @@ test('progress lookup uses the persisted jsonb input hashed by the pricing worke
  const {pricingWorkKey}=await import('../lib/p5/pricingWork.ts');
  const {EMPTY_CONFIGURATION}=await import('../lib/p5/costBook.ts');
  const db=new PGlite();
+ const oldPool=globalThis.__p5Pool,oldUrl=process.env.DATABASE_URL;
+ process.env.DATABASE_URL='postgres://offline.invalid/isolated';
+ globalThis.__p5Pool={query:async()=>({rows:[]})} as unknown as NonNullable<typeof globalThis.__p5Pool>;
  try{
-  const job={createdAt:'2026-09-24T12:00:00Z',input:{kind:'pricing',draft:{id:'qa',reviewed:{text:'Trim',answers:{service:'handyman',location:'Boise'},extraction:null,uploads:[],reviewedAt:'2026-09-24',corrections:[]}},configuration:EMPTY_CONFIGURATION}};
+  const job={createdAt:'2026-09-24T12:00:00Z',input:{kind:'pricing',draft:{id:'qa',revision:1,contact:{email:'',name:'Synthetic',phone:''},reviewed:{text:'Trim',answers:{service:'handyman',location:'Boise'},extraction:null,uploads:[],reviewedAt:'2026-09-24',corrections:[]}},configuration:EMPTY_CONFIGURATION}};
   const {rows}=await db.query<{payload:typeof job}>('SELECT $1::jsonb AS payload',[JSON.stringify(job)]);const saved=rows[0].payload;
-  const workerKey=pricingWorkKey(saved.input.draft.reviewed,saved.input.configuration,new Date(saved.createdAt));
-  assert.notEqual(pricingWorkKey(job.input.draft.reviewed,job.input.configuration,new Date(job.createdAt)),workerKey,'jsonb reproduces the original key-order mismatch');
+  const identity={draftId:'qa',customerKey:'|synthetic',revision:1};
+  const workerKey=pricingWorkKey(saved.input.draft.reviewed,saved.input.configuration,new Date(saved.createdAt),undefined,identity);
+  assert.notEqual(pricingWorkKey(job.input.draft.reviewed,job.input.configuration,new Date(job.createdAt),undefined,identity),workerKey,'jsonb reproduces the original key-order mismatch');
   assert.deepEqual(await jobProgressWorkKeys(saved as Parameters<typeof jobProgressWorkKeys>[0]),[workerKey]);
- }finally{await db.close();}
+ }finally{globalThis.__p5Pool=oldPool;if(oldUrl===undefined)delete process.env.DATABASE_URL;else process.env.DATABASE_URL=oldUrl;await db.close();}
+});
+
+test('P5 reuses a verified complete source read when a supplied answer became an identical extracted fact',async()=>{
+ const {selectSourceEquivalentAnalysis}=await import('../lib/p5/analysisReuse.ts');
+ const {MODEL_POLICY_VERSION,ESTIMATOR_MODEL_SNAPSHOT}=await import('../lib/p5/modelPolicy.ts');
+ const uploads=[{id:'public-source',name:'public-plan.pdf',type:'application/pdf',size:100,sha256:'verified-source-hash',status:'stored' as const}];
+ const extraction={summary:'Complete public fixture',facts:[{field:'location' as const,value:'Boise, Idaho',evidence:'Boise, Idaho',source:'typed scope',basis:'stated' as const,confidence:1}],conflicts:[],reviewNotes:[],missingInformation:[],documentCoverage:{complete:true,expectedPages:1,pages:[{source:'public-plan.pdf',page:1,sheet:'A1',revision:'',status:'read' as const,notes:[]}]}};
+ const analysis={provider:'OpenAI',model:ESTIMATOR_MODEL_SNAPSHOT,modelPolicy:MODEL_POLICY_VERSION,analyzedAt:'2026-09-30',extraction};
+ const candidate={workKey:'saved',payload:{state:'complete',input:{kind:'analysis',text:'Build this ADU.',answers:{location:'Boise, Idaho'},draft:{uploads}},result:{analysis}}};
+ const input={text:'Build this ADU.',answers:{},uploads,extraction};
+ assert.equal(selectSourceEquivalentAnalysis([candidate],input)?.analysis,analysis);
+ assert.equal(selectSourceEquivalentAnalysis([candidate],{...input,text:'Build only the garage.'}),null);
+ assert.equal(selectSourceEquivalentAnalysis([candidate],{...input,answers:{location:'Nampa'}}),null);
+ assert.equal(selectSourceEquivalentAnalysis([candidate],{...input,answers:{location:'Nampa'},resolutions:{location:'Nampa'}}),null);
+ assert.equal(selectSourceEquivalentAnalysis([candidate],{...input,uploads:[{...uploads[0],sha256:'replaced-source'}]}),null);
+ assert.equal(selectSourceEquivalentAnalysis([candidate,candidate],input),null);
+ const wrong=structuredClone(candidate);wrong.payload.result.analysis.modelPolicy='unverified-legacy';
+ assert.equal(selectSourceEquivalentAnalysis([wrong],input),null);
+ const oldReader=structuredClone(candidate);oldReader.payload.result.analysis.modelPolicy='gpt-4.1-required-2026-09-26';
+ assert.equal(selectSourceEquivalentAnalysis([oldReader],input),null,'A verified model from the earlier reading policy cannot hide the new form evidence path.');
+ const partial=structuredClone(candidate);partial.payload.result.analysis.extraction.documentCoverage.complete=false;
+ assert.equal(selectSourceEquivalentAnalysis([partial],input),null);
+ const conflict=structuredClone(extraction);conflict.facts[0].value='Meridian';
+ assert.equal(selectSourceEquivalentAnalysis([candidate],{...input,extraction:conflict}),null);
 });

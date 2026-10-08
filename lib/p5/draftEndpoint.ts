@@ -1,3 +1,8 @@
+import {intakeQuestions} from './intakeQuestions.ts';
+import {intakeDraftContext} from './intakeDraft.ts';
+import {isIntakeTransferStatus,TRANSFER_HOLD_MESSAGE} from './intakeTransferGuards.ts';
+import {withQaPaidDraft} from './qaPaid.ts';
+import {assertQaProvidersAllowed,qaContactRestricted} from './qaProviderPolicy.ts';
 import {instructionPrompts,instructionPromptText} from './clarifications.ts';
 import {resolveInstructionAnswer} from './clarificationAnswer.ts';
 import {deriveScopeAnswers,reconcileScope,scopeQuestionsForBrand as scopeQuestions} from "./adaptive.ts";
@@ -11,6 +16,7 @@ import {draftEvents,recordEvent} from './events.ts';
 import {query} from './database.ts';
 import {listVersions} from './estimateRevisions.ts';
 import {customerPresentation,HIDE_CUSTOMER_UNIT_RATES} from './presentation.ts';
+import {restoreSavedCustomerCopy} from './savedCustomerCopy.ts';
 
 function stable(value:unknown):string{return JSON.stringify(value,(key,item)=>item&&typeof item==="object"&&!Array.isArray(item)?Object.fromEntries(Object.entries(item).sort(([a],[b])=>a.localeCompare(b))):item);}
 function withoutInstructions(answers:ScopeAnswers){const copy={...answers};delete copy.estimatingInstructions;return copy;}
@@ -55,7 +61,8 @@ export async function getDraft(request:Request){try{protectRequest(request);cons
   // The draft owner may read its own processing events (sanitized, no document
   // contents) so a failed read can be explained and verified from the browser.
   const withEvents=new URL(request.url).searchParams.get('events')==='1'&&draft;
-  const [stored]=draft?.status==='submitted'?await query('SELECT customer_estimate FROM p5_estimator_drafts WHERE id=$1',[id]):[];
+  const [stored]=draft?.status==='submitted'?await query('SELECT customer_estimate,internal_estimate FROM p5_estimator_drafts WHERE id=$1',[id]):[];
+  if(stored?.customer_estimate)stored.customer_estimate=restoreSavedCustomerCopy(stored.customer_estimate,stored.internal_estimate);
   // A submission still being prepared for THIS revision: a returning visitor (same browser or an emailed
   // link) sees its live progress instead of a form asking them to submit again.
   const [requested]=draft&&draft.status!=='submitted'?await query("SELECT payload FROM p5_estimator_work WHERE draft_id=$1 AND work_key='submit-request-v1'",[id]):[];
@@ -79,6 +86,8 @@ export async function putDraft(request:Request){
     const raw=JSON.parse(new TextDecoder().decode(await limitedBody(request,24*1024*1024)));
     if(typeof raw.text!=="string"||raw.text.length>SCOPE_TEXT_LIMIT||!Number.isInteger(raw.revision)||raw.revision<0)throw new DraftError("Invalid draft.");
     const existing=await readDraft(id,key);
+    if(isIntakeTransferStatus(existing?.status))throw new DraftError(TRANSFER_HOLD_MESSAGE,409);
+    if(raw.qaDeterministicOnly===true&&(existing||!/^\[QA\](?:\s|$)/i.test(String(raw.contact?.name||''))||raw.clarification))throw new DraftError('Deterministic QA mode requires a new labelled QA draft without clarification.',422);
     const incomingText=normalizeScopeText(raw.text);
     if(raw.scopeFingerprint!==undefined&&raw.scopeFingerprint!==scopeFingerprint(incomingText))throw new DraftError("The project source fingerprint does not match its text. Refresh before continuing.",409);
     const analyzedMismatch=Boolean(existing?.analyzedFingerprint&&existing.extraction&&existing.analyzedFingerprint!==scopeFingerprint(incomingText));
@@ -90,6 +99,8 @@ export async function putDraft(request:Request){
     const resolutions=parseAnswers(raw.wizard?.resolutions||{});
     let wizard={skipped,resolutions,sourceVersion:existing?.wizard?.sourceVersion,instructionAnswers:existing?.wizard?.instructionAnswers||[]};
     const contact={name:String(raw.contact?.name||"").trim(),email:String(raw.contact?.email||"").trim().toLowerCase(),phone:String(raw.contact?.phone||"").trim()};
+    if(existing&&await qaContactRestricted(id)&&(!/^\[QA\](?:\s|$)/i.test(contact.name)||contact.email||contact.phone))throw new DraftError('Keep this restricted QA draft labelled and without customer delivery details.',422);
+    if(raw.qaDeterministicOnly===true&&(contact.email||contact.phone))throw new DraftError('Restricted QA drafts must not contain customer delivery details.',422);
     if(contact.name.length>120||contact.email.length>200||contact.phone.length>40)throw new DraftError("Contact details are too long.");
     // A response can be lost after the server commits the clarification. If
     // the retry is byte-equivalent apart from the server's acknowledged
@@ -99,7 +110,7 @@ export async function putDraft(request:Request){
       const currentAnswers=existing.answers,currentExtraction=existing.extraction,currentResolutions=existing.wizard?.resolutions||{};
       const pricedFields=await costQuestionFields(currentAnswers);
       const conflicts=currentExtraction?reconcileScope(currentAnswers,currentExtraction,currentResolutions).conflicts:[];
-      return json({draft:existing,conflicts,questions:scopeQuestions(currentAnswers,currentExtraction,conflicts,existing.wizard?.skipped||[],pricedFields,existing.text),pricedFields});
+      return json({draft:existing,conflicts,questions:existing.intake?.questionMemory?.entries.length?intakeQuestions({...existing,conflicts,transcript:existing.intake.transcript}):scopeQuestions(currentAnswers,currentExtraction,conflicts,existing.wizard?.skipped||[],pricedFields,existing.text),pricedFields});
     }
     if(existing&&raw.clarification&&!replacing&&existing.wizard?.instructionAnswers?.some(item=>item.id===raw.clarification?.id&&item.answer===String(raw.clarification?.answer||"").trim())){
       throw new DraftError('This clarification retry includes other changes. Refresh the saved project before continuing.',409);
@@ -119,9 +130,10 @@ export async function putDraft(request:Request){
       if(raw.reviewed===true)throw new DraftError('Read the updated project before continuing.');
     }
     if(raw.clarification){
+      await assertQaProvidersAllowed(id);
       if(replacing)throw new DraftError('This clarification belongs to the previous project text. Read the updated project before answering.',409);
       if(!existing||raw.revision!==existing.revision)throw new DraftError('Your project changed in another tab. Refresh to continue.',409);
-      const resolved=await resolveInstructionAnswer(extraction,answers,raw.clarification,wizard.instructionAnswers,undefined,incomingText);
+      const resolved=await withQaPaidDraft(id,()=>resolveInstructionAnswer(extraction,answers,raw.clarification,wizard.instructionAnswers,undefined,incomingText,{draftId:id,estimator:answers.service||null}));
       extraction=resolved.extraction;answers=resolved.answers;wizard.instructionAnswers=resolved.history;
       // An earlier correction cannot resolve a new contradiction automatically.
       if('unresolvedFields' in resolved)for(const field of resolved.unresolvedFields||[])delete wizard.resolutions[field];
@@ -146,9 +158,9 @@ export async function putDraft(request:Request){
         corrections:Object.entries(answers).filter(([field,value])=>{const fact=extraction?.facts.find(f=>f.field===field);return fact&&fact.value!==value;}).map(([field,value])=>({field:field as keyof ScopeAnswers,previous:extraction!.facts.find(f=>f.field===field)!.value,value:value!})),
       };
     }
-    const [draft,pricedFields]=await Promise.all([saveDraft(id,key,ESTIMATOR_BRAND.id,{text:incomingText,answers,extraction,reviewed,contact,wizard,analyzedFingerprint:replacing?undefined:existing?.analyzedFingerprint,analyzedAnswers:replacing?undefined:existing?.analyzedAnswers,...((existing as {revisionOf?:number}|null)?.revisionOf!==undefined?{revisionOf:(existing as {revisionOf?:number}).revisionOf}:{})} as Parameters<typeof saveDraft>[3],raw.revision),costQuestionFields(answers)]);
+    const [draft,pricedFields]=await Promise.all([saveDraft(id,key,ESTIMATOR_BRAND.id,{text:incomingText,answers,extraction,reviewed,contact,wizard,intake:intakeDraftContext(id,ESTIMATOR_BRAND.id,existing,raw.intake,contact),analyzedFingerprint:replacing?undefined:existing?.analyzedFingerprint,analyzedAnswers:replacing?undefined:existing?.analyzedAnswers,...((existing as {revisionOf?:number}|null)?.revisionOf!==undefined?{revisionOf:(existing as {revisionOf?:number}).revisionOf}:{})} as Parameters<typeof saveDraft>[3],raw.revision,raw.qaDeterministicOnly===true),costQuestionFields(answers)]);
     const conflicts=extraction?reconcileScope(answers,extraction,resolutions).conflicts:[];
-    return json({draft,conflicts,questions:scopeQuestions(answers,extraction,conflicts,skipped,pricedFields,incomingText),pricedFields});
+    return json({draft,conflicts,questions:draft.intake?.questionMemory?.entries.length?intakeQuestions({...draft,conflicts,transcript:draft.intake.transcript}):scopeQuestions(answers,extraction,conflicts,skipped,pricedFields,incomingText),pricedFields});
   }catch(error){
     if(error instanceof DraftError&&error.status===409){try{const {id}=draftCredentials(request);void recordEvent({draftId:id,kind:'draft',stage:'save-revision',status:409,code:'revision-conflict',message:error.message,outcome:'failed'});}catch{}}
     return failed(error);

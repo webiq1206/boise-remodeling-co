@@ -25,7 +25,8 @@ export const scopeBullets=(s:string)=>s.split(/\n+|(?<=[.!?])\s+(?=[A-Z])/).map(
  * book's notes): how a line is priced, OH&P and remodel-premium notes, tier labels and internal
  * section names. Live, a kitchen line reached the customer email reading "complete assembly, do not
  * add its component lines ... GC OH&P (~25% on cost) removed from published pricing". */
-const PRIVATE_PRICING_TEXT=/\bdirect[- ](?:materials?|labor|labour)(?:[- ](?:work[- ]package|planning))?[- ]allowance\b|(?:third-party market rate|cost to you if subcontracted|parts \/ materials extra|installed price, labor and material|labor (?:only|with consumables)|material only|price (?:materials|installation) separately|complete assembly|component lines|remodel premium|\bOH&P\b|published pricing|owner (?:price book|selection allowance)|contractor allowance|(?:Builder Grade|Mid-Range|High-End|Luxury) (?:finish|direct cost)|rental or service charge|trip, call, minimum|operator labor and equipment|removal labor with|Project Assemblies|Assemblies,)|\b(?:direct[- ](?:project[- ]|labor[- ]|material[- ])?(?:unit[- ]?)?(?:rates?|costs?|prices?)|direct[- ]costs?|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|(?:actual|net|loaded|landed) (?:unit[- ]?)?cost|unit[- ]costs?|cost basis|owner[- ]average cost|owner[- ]approved estimating schedule|cost[- ]book|risk[- ]adjusted (?:direct )?cost|overhead (?:allocation|recovery|cost|costs|expense|expenses|burden|rate|charge|percentage|factor)|profit|divisor|reconciliation|pricing formula|calculation trace|cost ceiling|salary|payroll burden)\b|\b(?:overhead|margin|allocations?|markup)\b\s*(?:(?:target|rate|ratio)\s*)?(?::|=|\bis\b|\bof\b|\bat\b|\bequals\b)?\s*(?:\$[\d,.]+|\d+(?:\.\d+)?\s*(?:%|percent\b))|(?:\$[\d,.]+|\d+(?:\.\d+)?\s*(?:%|percent))\s*(?:(?:for|in|as)\s+)?\b(?:overhead|margin|allocations?|markup)\b|\bcontingency(?:\s+rate)?\s*(?::|=|\bis\b|\bof\b|\bat\b)?\s*\d+(?:\.\d+)?\s*(?:%|percent\b)|\d+(?:\.\d+)?\s*(?:%|percent)\s*contingency\b|(?:\+|÷|\/)\s*(?:overhead|profit|margin|contingency)|\bdivid(?:e|ed|ing)\s+by\b|\bpercent(?:age)?\s+of\s+(?:cost|revenue)\b/i;
+// Labor-only and material-only describe included work, not private finance.
+const PRIVATE_PRICING_TEXT=/\bdirect[- ](?:materials?|labor|labour)(?:[- ](?:work[- ]package|planning))?[- ]allowance\b|(?:third-party market rate|cost to you if subcontracted|parts \/ materials extra|installed price, labor and material|price (?:materials|installation) separately|complete assembly|component lines|remodel premium|\bOH&P\b|published pricing|owner (?:price book|selection allowance)|contractor allowance|(?:Builder Grade|Mid-Range|High-End|Luxury) (?:finish|direct cost)|rental or service charge|trip, call, minimum|operator labor and equipment|removal labor with|Project Assemblies|Assemblies,)|\b(?:direct[- ](?:project[- ]|labor[- ]|material[- ])?(?:unit[- ]?)?(?:rates?|costs?|prices?)|direct[- ]costs?|catalog(?:ued)? (?:unit[- ]?)?(?:rate|cost|price)|(?:actual|net|loaded|landed) (?:unit[- ]?)?cost|unit[- ]costs?|cost basis|owner[- ]average cost|owner[- ]approved estimating schedule|cost[- ]book|risk[- ]adjusted (?:direct )?cost|overhead (?:allocation|recovery|cost|costs|expense|expenses|burden|rate|charge|percentage|factor)|profit|divisor|reconciliation|pricing formula|calculation trace|cost ceiling|salary|payroll burden)\b|\b(?:overhead|margin|allocations?|markup)\b\s*(?:(?:target|rate|ratio)\s*)?(?::|=|\bis\b|\bof\b|\bat\b|\bequals\b)?\s*(?:\$[\d,.]+|\d+(?:\.\d+)?\s*(?:%|percent\b))|(?:\$[\d,.]+|\d+(?:\.\d+)?\s*(?:%|percent))\s*(?:(?:for|in|as)\s+)?\b(?:overhead|margin|allocations?|markup)\b|\bcontingency(?:\s+rate)?\s*(?::|=|\bis\b|\bof\b|\bat\b)?\s*\d+(?:\.\d+)?\s*(?:%|percent\b)|\d+(?:\.\d+)?\s*(?:%|percent)\s*contingency\b|(?:\+|÷|\/)\s*(?:overhead|profit|margin|contingency)|\bdivid(?:e|ed|ing)\s+by\b|\bpercent(?:age)?\s+of\s+(?:cost|revenue)\b/i;
 const NUM='\\d[\\d,]*(?:\\.\\d+)?';
 // Pricing units only. Room, wall, building, fixture and similar nouns are
 // scope, so "2 per room" and "5 nails per linear foot" remain untouched.
@@ -64,6 +65,10 @@ export function publicPricingText(value:unknown):string{
  const text=typeof value==='string'?value.trim():'';
  if(!text)return '';
  const repairSentence=(sentence:string):string[]=>{
+   // Rate-book benchmark annotations are internal evidence, not physical scope.
+   // Remove the entire annotation, including old saved text whose dollar band
+   // was already stripped, instead of printing an orphan "typical band" label.
+   if(/^[\w\s-]{0,60}\btypical (?:price |cost )?band(?:\s+\$[\d,.]+[^;]*)?[.;]?\s*$/i.test(sentence.trim()))return [];
    // Component derivation notes are useful to the pricing engine, never to
    // the customer. Remove the full note rather than leaving "Component" or
    // "calculated" fragments beside the actual cabinet scope and quantities.
@@ -96,7 +101,7 @@ export function publicPricingText(value:unknown):string{
  };
  // Removing a private figure can leave its connector behind ("allowance based on; confirm ...").
  const mend=(line:string)=>line.replace(/\s+(?:based on|at|using|from|with|of)\s*(?=[,;:.!?]|$)/gi,'').replace(/\s*[;,:]\s*(?=[.!?]?$)/,'').replace(/\s+([,;:.!?])/g,'$1').trim();
- const clean=(line:string)=>mend(scopeBullets(line).flatMap(repairSentence).flatMap(sentence=>{const safe=customerSentence(sentence);return safe?[safe]:[];}).join(' '));
+ const clean=(line:string)=>mend(scopeBullets(line).flatMap(repairSentence).flatMap(sentence=>{const safe=customerSentence(sentence);return safe?[safe]:[];}).join(' ').replace(/(?:^|(?<=[,.!?;]))\s*[\w -]{0,60}\btypical (?:price |cost )?band(?=[.;]|$)[.;]?/gi,''));
  return text.split('\n').map(raw=>{
   const line=plainCustomerLine(raw);
   // A scope label is structure, not part of the prose being redacted. Splitting

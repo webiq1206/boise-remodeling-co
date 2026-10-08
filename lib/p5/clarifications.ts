@@ -1,11 +1,12 @@
-import {questionContext,scopePromptApplies} from './dynamicQuestions.ts';
-import {atomicInstructionQuestions,textBenchTopChoices,cabinetQuestionField,projectAreaQuestionField} from './atomicQuestions.ts';
+import {questionContext,scopePromptApplies,unresolvedScopeAnswer} from './dynamicQuestions.ts';
+import {atomicInstructionQuestions,textBenchTopChoices,cabinetQuestionField,projectQuestionField} from './atomicQuestions.ts';
 import type {ScopeAnswers,ScopeExtraction,ScopeField} from './scope.ts';
 import type {ScopeInstructions} from './instructions.ts';
+import {isEstimateHandlingDirection} from './instructions.ts';
 import {isBenchTopClarificationQuestion,retainedBenchTopChoices,retainedChoiceValue} from './retainedClarification.ts';
 
-export interface InstructionAnswer {id:string;question:string;answer:string}
-export interface InstructionPrompt {id:string;question:string;detail?:string;values?:string[];field?:ScopeField;sourceQuestion?:string}
+export interface InstructionAnswer {decisionId?:string;id:string;question:string;answer:string}
+export interface InstructionPrompt {decisionId?:string;id:string;question:string;detail?:string;values?:string[];field?:ScopeField;sourceQuestion?:string}
 /** Preserve the original decision for saving and answer resolution. Helper text
  * is display context, never a replacement for the question. */
 export function instructionPromptText(prompt:InstructionPrompt):string {
@@ -25,15 +26,38 @@ const measuredQuestion=(text:string)=>/how (?:many|much|long|wide|tall|large)|sq
 /** Two wordings of one decision ("is the chimney cap repair structural or cosmetic?" asked
  * once per page of the document). A measured quantity is never treated as a repeat: base
  * and wall cabinet lengths share almost every word and are different answers. */
+/** A repeated request for the same combined covered access area can arrive
+ * once per plan page. Keep named buildings, floors and other components
+ * separate rather than using broad word similarity for measurements. */
+function coveredAccessAreaQuestion(text:string):boolean{
+ if(!/\bcovered\b/i.test(text)||! /\bstairs?\b/i.test(text)||!/\blandings?\b/i.test(text)||!/\b(?:area|square|footage|dimensions)\b/i.test(text))return false;
+ const remainder=text.toLowerCase().replace(/\b(?:what|is|are|the|any|of|in|to|be|included|include|covered|exterior|stairs?|landings?|or|and|area|square|feet|footage|dimensions|please|provide)\b/g,'').replace(/[^a-z0-9]/g,'');
+ return !remainder;
+}
 export function sameDecision(a:string,b:string):boolean{
+  if(coveredAccessAreaQuestion(a)&&coveredAccessAreaQuestion(b))return true;
   if(measuredQuestion(a)||measuredQuestion(b))return false;
+  // Similar repair/method wording cannot transfer an answer between named
+  // utilities. In particular a sewer decision is not a water-service decision.
+  const utilities=(text:string)=>new Set((text.toLowerCase().match(/\b(?:sewer|water|gas|electrical?|radon)\b/g)||[]).map(word=>word.startsWith('electric')?'electrical':word));
+  const aUtilities=utilities(a),bUtilities=utilities(b);
+  if(aUtilities.size&&bUtilities.size&&![...aUtilities].some(subject=>bUtilities.has(subject)))return false;
   // Compare the questions themselves; a shared helper sentence ("This affects cost.") is not a shared subject.
   const asked=(text:string)=>text.includes('?')?text.slice(0,text.indexOf('?')):text;
   const left=topicStems(asked(a)),right=topicStems(asked(b));
   const shared=[...left].filter(stem=>right.has(stem)).length;
   return shared>=3&&shared/Math.min(left.size,right.size)>=0.55;
 }
-const answeredQuestions=(answers:ScopeAnswers)=>[...(answers.estimatingInstructions||'').matchAll(/^Question: (.+)$/gm)].map(match=>match[1]);
+/** Editing/recovery can fold the saved Q&A into authored project text. Both
+ * locations retain customer answers; a question label without an answer is
+ * not a resolution. Documents' generated sourceText is never supplied here. */
+const answeredQuestions=(answers:ScopeAnswers,sourceText='')=>[answers.estimatingInstructions||'',sourceText].flatMap(text=>
+ [...text.matchAll(/^Question: ([^\n]+)\r?\nAnswer: ([\s\S]*?)(?=^Question: |$(?![\s\S]))/gm)]
+  .filter(match=>match[2].trim()).map(match=>match[1]));
+export function answeredScopeQuestion(question:string,answers:ScopeAnswers,sourceText=''):boolean{
+ if(/\b(?:internal reference rates|cost methodology|from first principles|contractor overhead application)\b/i.test(question))return true;
+ return answeredQuestions(answers,sourceText).some(prior=>questionKey(prior)===questionKey(question)||sameDecision(prior,question));
+}
 const RESPONSIBILITY_CHOICES=['Labor only','Materials only','Labor and materials'] as const;
 
 /** Split a stored paragraph into questions. A trailing statement such as
@@ -43,7 +67,7 @@ const questionParts=(raw:string)=>{
   const parts=(raw.match(/[^?]+\??/g)||[]).map(part=>part.trim()).filter(Boolean);
   const merged:string[]=[];
   for(const part of parts){
-    if(!part.endsWith('?')&&merged.length)merged[merged.length-1]+=' '+part;
+    if((!part.endsWith('?')||/^if (?:so|yes)\b/i.test(part))&&merged.length)merged[merged.length-1]+=' '+part;
     else merged.push(part);
   }
   return merged;
@@ -52,20 +76,27 @@ const normalizeQuestionPart=(part:string)=>part.replace(/\s+/g,' ').trim();
 
 /** One question per card, including older extractions that stored paragraphs. */
 export function instructionPrompts(extraction:ScopeExtraction|null,answers:ScopeAnswers,sourceText=''):InstructionPrompt[]{
-  const result:InstructionPrompt[]=[],answered=answeredQuestions(answers);
+  const result:InstructionPrompt[]=[];
   for(const raw of extraction?.instructions?.questions||[]){
     for(const part of questionParts(raw).flatMap(part=>atomicInstructionQuestions(part,answers,extraction?.conflicts))){
-      const full=normalizeQuestionPart(part);if(!full)continue;
+      const full=normalizeQuestionPart(part).replace(/\bIf yes\b/gi,'If so');if(!full)continue;
       // Filter each question separately so a legacy paragraph cannot lose a real scope decision.
-      if(serviceQuestion(full)||contractQuestion(full))continue;
-      const field=cabinetQuestionField(full)||projectAreaQuestionField(full,answers);
+      if(serviceQuestion(full)||contractQuestion(full)||isEstimateHandlingDirection(full))continue;
+      const matches=(extraction?.instructions?.decisions||[]).filter(item=>questionKey(item.question)===questionKey(full));
+      // The wording alone must not attach an answer to one of several
+      // distinct physical decisions. Keep the ambiguity for review.
+      if(new Set(matches.map(item=>JSON.stringify([item.subject,item.aspect]))).size>1)throw new Error('Ambiguous scope decision question');
+      const decision=matches[0];
+      if(decision?.answer&&decision.status!=='pending')continue;
+      const field=cabinetQuestionField(full)||projectQuestionField(full,answers);
+      if(!extraction?.conflicts.some(conflict=>conflict.field===field)&&answeredScopeQuestion(full,answers,sourceText))continue;
       // One decision is asked once, however many pages or wordings raised it.
-      if(!field&&(result.some(q=>!q.field&&sameDecision(instructionPromptText(q),full))||answered.some(q=>sameDecision(q,full))))continue;
-      if(field&&answers[field]?.trim()&&!extraction?.conflicts.some(conflict=>conflict.field===field))continue;
+      if(!field&&result.some(q=>!q.field&&(!decision||!q.decisionId||q.decisionId===decision.id)&&sameDecision(instructionPromptText(q),full)))continue;
+      if(field&&!unresolvedScopeAnswer(answers[field])&&!extraction?.conflicts.some(conflict=>conflict.field===field))continue;
       const id=questionKey(full);
       if(result.some(q=>q.id===id))continue;
       const trailing=full.match(/^(.*\?)\s+([^?]+)$/);
-      const asked=trailing?trailing[1].trim():full;
+      const asked=field==='garageIncluded'?full.split('?')[0]+'?':trailing?trailing[1].trim():full;
       const question=asked.length<=240?asked:'What should we include for this part of your project?';
       const values=/^Who\b[^?]*\b(?:supply|supplies|provide|provides|purchase|purchases)\b[^?]*\?/i.test(asked)?["I'll supply all of them",'Please include all of them',"I'll supply some of them","I'm not sure yet"]:
         /labor.only/i.test(full)&&/materials.only/i.test(full)?['Labor only','Materials only','Labor and materials']:
@@ -76,7 +107,7 @@ export function instructionPrompts(extraction:ScopeExtraction|null,answers:Scope
        const retainedValues=isBenchTopClarificationQuestion(full)
          ?(extraction?retainedBenchTopChoices(extraction):[]).map(retainedChoiceValue)
          :undefined;
-       result.push({id,question,sourceQuestion:full,...(field?{field}:{}),...(question!==asked?{detail:full}:trailing?{detail:trailing[2].trim()}:{}),values:/^Who should install the /i.test(full)?['Include installation in this estimate','Owner handles installation']:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
+       result.push({id,...(decision?{decisionId:decision.id}:{}),question,sourceQuestion:full,...(field?{field}:{}),...(question!==asked?{detail:full}:trailing?{detail:trailing[2].trim()}:{}),values:/^Who should install the /i.test(full)?['Include installation in this estimate','Owner handles installation']:retainedValues?.length?retainedValues:values?.length?values:textBenchTopChoices(extraction,full)});
     }
   }
   const context=questionContext(answers,extraction,sourceText);
@@ -125,8 +156,8 @@ export function removeInstructionPrompt(instructions:ScopeInstructions,id:string
 /** Answers remain scope data for the pricing audit, with original pages intact. */
 export function clarificationContext(extraction:ScopeExtraction,question:string,answer:string,answers:ScopeAnswers={}){
   return JSON.stringify({
-    task:'Resolve only this answered scope question using the answer below. Return the complete updated instructions and any directly changed structured facts, preserving every unrelated inclusion, exclusion, responsibility, building and floor. Remove this question when answered. Never ask it again because a page was not reuploaded. This is a clarification of a document review already completed. Do not reread or recreate pages or takeoffs, and do not return unreadable-file notes. If the answer is insufficient, return one short, specific follow-up explaining the missing decision. A fact update must be supported by the typed answer; retain source-backed facts that the answer did not change.',
+    task:'Resolve only this answered scope question using the answer below. Return the complete updated instructions and any directly changed structured facts, preserving every unrelated inclusion, exclusion, responsibility, building and floor. Remove this question when answered. Never ask it again because a page was not reuploaded. This is a clarification of a document review already completed. Do not reread or recreate pages or work items, and do not return unreadable-file notes. Return only quantity corrections to existing priorTakeoffs as objects containing id and quantity. Select exact existing IDs from the schema enum; do not regenerate IDs, descriptions, units or sources. The server retains that metadata. If the answer says a prior measurement is only a location or the work extent is unknown, revise the affected quantity to null. Never retain an old quantity merely because this answer has no attachment. An unresolved choice becomes an explicit allowance to confirm, not another question. A fact update must be supported by the typed answer; retain source-backed facts that the answer did not change.',
     answerPolicy:'The answer is from the customer. Interpret a selected option and additional typed detail together. A material contradiction requires one short confirmation, not a silent choice. A later explicit correction replaces the earlier answer only for that item. Not sure is unknown, never yes, no, zero or permission for an undisclosed assumption. Keep installation quantity separate from supply quantity. For example, four door installations with three customer-supplied doors and one requested door means four installations and one supplied door. Keep removal and disposal separate. Preserve excluded trades. Do not infer field painting only from the word painted.',
-    previousInstructions:extraction.instructions,previousFacts:extraction.facts,previousAnswers:answers,question,answer,
+    previousInstructions:extraction.instructions,previousFacts:extraction.facts,priorTakeoffs:extraction.takeoffs||[],previousAnswers:answers,question,answer,
   });
 }

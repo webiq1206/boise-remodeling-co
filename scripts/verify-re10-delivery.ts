@@ -174,7 +174,8 @@ for (const stage of RE10_FUNNEL_ORDER) {
 // Every event must actually be fired somewhere, or it is a reporting promise
 // nothing keeps. This is the check that catches an event defined and forgotten.
 const wizard = fs.readFileSync("components/P5Estimator.tsx", "utf8");
-const endpointSource = fs.readFileSync("lib/p5/scopeEndpoint.ts", "utf8");
+// The scope endpoint hands the reading to reconcileScopeReading, which builds the saved payload.
+const endpointSource = fs.readFileSync("lib/p5/scopeEndpoint.ts", "utf8") + fs.readFileSync("lib/p5/reconcileScopeReading.ts", "utf8");
 const questionSource = fs.readFileSync("lib/p5/adaptive.ts", "utf8");
 const tracking = fs.readFileSync("components/re10/Re10ContactTracking.tsx", "utf8");
 const source = wizard + tracking;

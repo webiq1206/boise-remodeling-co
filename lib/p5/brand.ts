@@ -25,5 +25,6 @@ export const ESTIMATOR_BRAND = {
   "font": "/fonts/p5-estimator-sans.ttf",
   "headingFont": "/fonts/p5-estimator-serif.ttf",
   "consultationPath": "/contact",
-  "crmUrl": "https://leads.boiseremodeling.co/api/external/leads"
+  "crmUrl": "https://leads.boiseremodeling.co/api/external/leads",
+  "estimatorProvider": "openai"
 } as const;

@@ -1,10 +1,10 @@
-import {analyzeBatch} from './extraction.ts';
+import {analyzeBatch,type AnalyzeOptions} from './extraction.ts';
 import {clarificationContext,exactResponsibilityChoice,instructionPrompts,instructionPromptText,isResponsibilityPrompt,questionKey,removeInstructionPrompt,type InstructionAnswer} from './clarifications.ts';
 import {applyRetainedBenchTopAnswer,isBenchTopClarificationQuestion,reconcileClarificationTakeoffs} from './retainedClarification.ts';
 import {DraftError} from './store.ts';
 import {SCOPE_TEXT_LIMIT,type ScopeAnswers,type ScopeExtraction} from './scope.ts';
 
-export async function resolveInstructionAnswer(extraction:ScopeExtraction|null,answers:ScopeAnswers,raw:unknown,prior:InstructionAnswer[]=[],request=fetch,sourceText=''){
+async function resolveInstructionAnswerInternal(extraction:ScopeExtraction|null,answers:ScopeAnswers,raw:unknown,prior:InstructionAnswer[]=[],request=fetch,sourceText='',event?:AnalyzeOptions['event']){
   const value=raw as {id?:unknown;answer?:unknown};
   if(typeof value?.id!=='string'||typeof value.answer!=='string'||!value.answer.trim()||value.answer.length>SCOPE_TEXT_LIMIT)throw new DraftError('Enter an answer to continue.');
   const prompt=instructionPrompts(extraction,answers,sourceText).find(q=>q.id===value.id);
@@ -56,7 +56,7 @@ export async function resolveInstructionAnswer(extraction:ScopeExtraction|null,a
       history:[...prior,record],
     };
   }
-   const result=await analyzeBatch(clarificationContext(extraction,question,answer,answers),[],answers,request,60000);
+   const result=await analyzeBatch(clarificationContext(extraction,question,answer,answers),[],answers,request,60000,Date.now()+60000,{takeoffRevisions:{prior:extraction.takeoffs||[],answer},event});
   if(!result.extraction.instructions)throw new DraftError('Your answer is still here. We could not save its scope update. Please retry.',503);
   const instructions=result.extraction.instructions;
   // Owner rule (2026-09-21): never ask the same question twice. The customer's reply is kept word for
@@ -86,4 +86,32 @@ export async function resolveInstructionAnswer(extraction:ScopeExtraction|null,a
   const combined=[answers.estimatingInstructions,`Question: ${question}\nAnswer: ${answer}`].filter(Boolean).join('\n\n');
   if(combined.length>SCOPE_TEXT_LIMIT)throw new DraftError('Upload the additional scope notes as a document to preserve them in full.');
     return {unresolvedFields:[...conflictedFields],extraction:{...extraction,instructions,facts,conflicts,clarifications,...(takeoffs?{takeoffs}:{})},answers:{...updatedAnswers,estimatingInstructions:combined},history:[...prior,record]};
+}
+
+/** Customer resolutions are server-owned and survive model rewording/reanalysis. */
+export async function resolveInstructionAnswer(...args:Parameters<typeof resolveInstructionAnswerInternal>){
+ const [before,answers,raw]=args;
+ const input=raw as {id?:string;answer?:string};
+ const prompt=instructionPrompts(before,answers,args[5]||'').find(item=>item.id===input?.id);
+ const resolved=await resolveInstructionAnswerInternal(...args);
+ const instructions=resolved.extraction?.instructions;
+ if(instructions){
+  const saved=new Map((before?.instructions?.decisions||[]).map(item=>[item.id,item]));
+  for(const item of instructions.decisions||[]){
+   const prior=saved.get(item.id);
+   if(prior&&(prior.subject!==item.subject||prior.aspect!==item.aspect))throw new DraftError('The scope decision identity changed. Your answer is preserved; please retry.',503);
+   if(prior?.answer&&item.answer&&prior.answer!==item.answer)throw new DraftError('The saved scope answers conflict. Your answer is preserved for review.',409);
+   saved.set(item.id,prior?.answer?{...prior}:item);
+  }
+  if(prompt?.decisionId&&input.answer){
+   const decision=saved.get(prompt.decisionId);
+   if(decision){
+    const deferred=/not sure|unknown|specialist|to determine|allowance/i.test(input.answer);
+    saved.set(decision.id,{...decision,status:deferred?'deferred':'answered',answer:input.answer.trim()});
+    resolved.history=resolved.history.map(item=>item.id===input.id?{...item,decisionId:decision.id}:item);
+   }
+  }
+  if(saved.size)instructions.decisions=[...saved.values()];
+ }
+ return resolved;
 }
