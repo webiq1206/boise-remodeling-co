@@ -1,7 +1,7 @@
 {
  "source": "boise-remodeling-co",
- "commit": "111de10178a1fb814f63dfa5b40df4454627c42f",
- "generatedAt": "2026-10-08T08:22:50.069Z",
+ "commit": "c37733ee5bcdbda35e1802225c9e8e6a04d716c6",
+ "generatedAt": "2026-10-08T12:34:47.000Z",
  "note": "Shared estimator files. Edit them in boise-remodeling-co and run scripts/p5-sync.mjs; never edit them in one brand.",
  "files": {
   "app/admin/p5-estimators/page.tsx": "a2401f2a29c22dd1a5631fa2c065114275b4e7c1d99ba6c97a8ff0f26cb6a3ad",
@@ -20,7 +20,7 @@
   "app/api/p5-estimator/upload/route.ts": "30513ebab4a4f175e0f31d03efceaf020ac3f6cc0d104a6d1779fe5580a14907",
   "components/P5EstimateDetails.tsx": "f1c3f3087391b27682c50b87d71f7ca56084bc826083ecdf4c413d23918362c8",
   "components/P5Estimator.module.css": "5c97d398ec147bd59d459dec12a974097d1e8b40c60acec933c88e9a0c65f8cf",
-  "components/P5Estimator.tsx": "3abdb1651810ecd945720d7d2c6769d55c642827b8b0a2745c683f8e27cbea6f",
+  "components/P5Estimator.tsx": "667910561f481a7e0cd6c2b8bfcb5815fa22b8f0247d4a60fa5b167213b2f4cc",
   "components/P5EstimatorNavigation.tsx": "e203317513965f77dc314e3ef8aa2be0e9fca1e7ca72494b3a23f3741cabbe83",
   "components/P5LazyEstimator.tsx": "237e404e81442499d54bf8668134e77b36513898b91503d5f275af80e6b8019a",
   "components/P5LinePricing.tsx": "9e0359cd6bff8226f491daab60c5ef468cc2f60dda67ee632910eaf5094b741d",
@@ -177,7 +177,7 @@
   "scripts/p5-build-price-book.mjs": "714a76f8a9f29077d052304456aca38769fc9485022774856eae816b2e847450",
   "scripts/p5-cli-acceptance.mts": "ed5b8fc80231c03b3c2b54de486fb6db7f259947e855ecf4985a9caf6f4ea6b8",
   "scripts/p5-component-review.mjs": "7035921690a6dc0648b1c3142b054ad09d67535c706e108817369e9e6de6ab26",
-  "scripts/p5-estimator-browser.mjs": "ebe72fbf2fa7126522e2cf4b9ec6b1d9723f29ed4f38c79ed2a5d76e3ee27a58",
+  "scripts/p5-estimator-browser.mjs": "b54c361f5bc4464d5ad009af8ff49df97eb62fe1b2229dab77459ea40d2ff3ea",
   "scripts/p5-hub-notification-check.mjs": "e2d4216777feeb2e4099b93986ca257e4760f671312a6b343014ef7677148f06",
   "scripts/p5-launcher-forms.mjs": "601862a5ec30750ab4acc20e69d86d51165fd235b38d5e5ab8fc77b6eaa4ffa7",
   "scripts/p5-live-journey.mjs": "1b72a8e19aa3df096bb37c72b11bad74abe9f25d2a94e53ee6b36102d7f6c1c1",
