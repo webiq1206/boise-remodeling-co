@@ -315,7 +315,7 @@ export function EstimateResultPanel({
           <ProgressChecklist progress={progress} />
 
           <p className="text-label leading-relaxed text-inverse-muted border-t border-inverse-foreground/10 pt-4">
-            Allow a few minutes. No call or appointment needed. Larger plan sets may take longer. Planning estimate only, not a binding quote - final pricing
+            Timing depends on the project details. Additional details or a site visit may be needed. Larger plan sets may take longer. Planning estimate only, not a binding quote - final pricing
             requires an in-home evaluation.
           </p>
         </>
