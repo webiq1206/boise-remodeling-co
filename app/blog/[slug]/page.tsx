@@ -38,15 +38,12 @@ export async function generateMetadata(
     return withBrandPageMetadata(await ({ title: "Post Not Found" }), "/blog/[slug]");
   }
 
-  // Strip any brand the author baked into seoTitle, then enforce the budget so
-  // the layout template's " | Boise Remodeling Co" keeps the rendered <title>
-  // under ~60 chars. OG/Twitter use the same title (no extra "| ... Blog"
-  // suffix, which previously doubled the brand and diverged from <title>).
+  // Keep the complete authored topic and append the layout brand only once.
+  // Search engines control display truncation; stored metadata stays readable.
   const rawTitle = post.seoTitle || post.title;
   const title = generateSafePageTitle(stripBrandSuffix(rawTitle));
   const description =
-    fitDescription(post.metaDescription ||
-    (post.excerpt.length > 160 ? post.excerpt.substring(0, 157) + "..." : post.excerpt));
+    fitDescription(post.metaDescription || post.excerpt);
   const heroPath = getBlogHeroImage(post.slug, post.heroImage);
   const imageUrl = getAbsoluteImageUrl(heroPath, getBaseUrl());
   const imageAlt = getBlogImageAlt(post.slug);

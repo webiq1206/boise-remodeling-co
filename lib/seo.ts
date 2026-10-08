@@ -222,44 +222,17 @@ export function generateCityServiceDescription(
   return `${serviceLC} in ${cityName}, ID. Licensed & insured pros. Call ${phone} for a free quote today!`;
 }
 
-/**
- * Generate a page title for any service or area page
- * Ensures final rendered title (with layout template " | Boise Remodeling Co")
- * stays under 60 characters
- */
+/** Keep complete authored titles; an optional secondary label may be omitted. */
 export function generateSafePageTitle(primary: string, suffix?: string): string {
-  const templateSuffix = " | Boise Remodeling Co";
-  const maxLen = 60 - templateSuffix.length;
-
-  if (suffix) {
-    const full = `${primary} | ${suffix}`;
-    if (full.length <= maxLen) return full;
+  const title = primary.replace(/\s+/g, ' ').trim();
+  const detail = suffix?.replace(/\s+/g, ' ').trim();
+  if (detail) {
+    const candidate = title + ' | ' + detail;
+    if (candidate.length + (' | ' + SITE_CONFIG.name).length <= 60) return candidate;
   }
-
-  if (primary.length <= maxLen) return primary;
-
-  // Truncate on a word boundary without a baked-in ellipsis (the ellipsis would
-  // become a literal part of the <title>, not SERP truncation).
-  const words = primary.split(' ');
-  let truncated = '';
-  for (const word of words) {
-    const candidate = truncated ? `${truncated} ${word}` : word;
-    if (candidate.length > maxLen) break;
-    truncated = candidate;
-  }
-
-  // A word-boundary cut can still land on a dangling connector, producing
-  // titles like "Aging-in-Place Remodeling in the". Drop trailing connectors so
-  // an overflowing title degrades to a clean phrase instead of a broken one.
-  const DANGLING = new Set(['in', 'the', 'a', 'an', 'of', 'for', 'and', '&', 'to', 'at', 'on', 'with', '|', ':']);
-  let cleaned = truncated.trim();
-  let parts = cleaned.split(' ');
-  while (parts.length > 1 && DANGLING.has(parts[parts.length - 1].toLowerCase())) {
-    parts.pop();
-    cleaned = parts.join(' ');
-  }
-
-  return cleaned || truncated || primary.substring(0, maxLen).trim();
+  // Preserve the authored topic, including dates and qualifiers. A display
+  // length preference must not become a broken title in the document itself.
+  return title;
 }
 
 /**
