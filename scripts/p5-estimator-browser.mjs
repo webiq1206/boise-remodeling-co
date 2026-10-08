@@ -98,10 +98,10 @@ for(const width of progressOnly?[]:[320,390,430,768,1024,1440,1920]){
   await estimator.getByRole('button',{name:'Talk instead',exact:true}).click();assert.match(await description.inputValue(),/Repair three interior doors\./);
   await description.fill('Repair three interior doors. '+('LongUnbrokenProjectSpecification'.repeat(90)));
   await estimator.getByLabel('Upload project files',{exact:true}).setInputFiles({name:'scope.txt',mimeType:'text/plain',buffer:Buffer.from('Repair three interior doors.')});
-  await estimator.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});await estimator.getByRole('alert').filter({hasText:'Your project save was not confirmed'}).waitFor();
-  await estimator.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});await estimator.getByRole('alert').filter({hasText:'Synthetic upload interruption'}).waitFor();
+  await estimator.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});await estimator.getByRole('alert').filter({hasText:'Your project save was not confirmed'}).waitFor();
+  await estimator.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});await estimator.getByRole('alert').filter({hasText:'Synthetic upload interruption'}).waitFor();
   await page.reload();await estimator.getByRole('button',{name:'Remove scope.txt'}).waitFor();assert.match(await description.inputValue(),/LongUnbrokenProjectSpecification/);await overflow(page);await capture(page,`${width}-scope`);
-  await estimator.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});await answerBrandQuestions(page,estimator,estimator.getByRole('heading',{name:'Review your project',exact:true}));assert.equal(await estimator.getByRole('region',{name:'Project question'}).count(),0,'Known facts were asked again');
+  await estimator.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});await answerBrandQuestions(page,estimator,estimator.getByRole('heading',{name:'Review your project',exact:true}));assert.equal(await estimator.getByRole('region',{name:'Project question'}).count(),0,'Known facts were asked again');
   // The approved bottom action remains reachable while the details scroll.
   // The first width runs against a cold server; the contact form is given a full minute to render after review.
   await estimator.getByLabel('Your name',{exact:true}).waitFor({timeout:60000});await estimator.getByLabel('Your name',{exact:true}).fill('Synthetic Test');await estimator.getByLabel(/^Email/).fill('customer@example.invalid');
@@ -143,7 +143,7 @@ for(const width of progressOnly?[]:[390,1440]){
  const context=await browser.newContext({viewport:{width,height:900}});const state=await mock(context,{scenario:'instructions'});const page=await context.newPage();
  try{
   await page.goto(base+'/estimate/p5-preview');const est=page.locator('[data-p5-estimator]');
-  await est.getByLabel('Tell us about your project',{exact:true}).fill('Price the trim package.');await est.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});
+  await est.getByLabel('Tell us about your project',{exact:true}).fill('Price the trim package.');await est.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});
   const question=est.getByRole('region',{name:'Project question'});await question.getByText('Labor only or materials only?',{exact:true}).waitFor();
   assert.equal(await est.getByText('Should we include or exclude painting?',{exact:true}).count(),0,'Only one question is rendered');
   await question.getByRole('button',{name:'Please include labor only',exact:true}).click();
@@ -164,7 +164,7 @@ for(const scenario of progressOnly?[]:['manual','conflict','unavailable']){
   await page.goto(base+'/estimate/p5-preview');const est=page.locator('[data-p5-estimator]');
   if(scenario==='conflict')await est.getByLabel('Tell us about your project',{exact:true}).fill('Two documents disagree about door repairs.');
   else await est.getByLabel('Tell us about your project',{exact:true}).fill('Repair three interior doors.');
-  await est.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});
+  await est.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});
   if(scenario!=='conflict'){
    await settled(page);
    // Answer the service choice if asked, then only this project material questions; unknown numeric details remain explicit.
@@ -188,7 +188,7 @@ for(const width of progressOnly?[]:[390,1440]){
  const context=await browser.newContext({viewport:{width,height:900}});const state=await mock(context,{scenario:'missing'});const page=await context.newPage();
  try{
   await page.goto(base+'/estimate/p5-preview');const est=page.locator('[data-p5-estimator]');
-  await est.getByLabel('Tell us about your project',{exact:true}).fill('Install new baseboard trim.');await est.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});
+  await est.getByLabel('Tell us about your project',{exact:true}).fill('Install new baseboard trim.');await est.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});
   // Brands that price trim ask for its length before review; the others discover the gap at submission and ask then.
   const trimQuestion=est.getByText('About how many linear feet of trim or baseboard are included?',{exact:true});const review=est.getByRole('heading',{name:'Review your project',exact:true});
   await answerBrandQuestions(page,est,review.or(trimQuestion));const askedUpFront=(await trimQuestion.count())>0;
@@ -217,7 +217,7 @@ for(const width of [320,390,1440]){
   // Page progress only applies when this project actually has an attachment.
   await est.getByLabel('Upload project files',{exact:true}).setInputFiles({name:'Plans.pdf',mimeType:'application/pdf',buffer:pdfBytes});
   // Allow bounded preparation to finish before Continue enables on a loaded runner.
-  await est.getByRole('button',{name:'Continue',exact:true}).click({timeout:120000});
+  await est.getByRole('button',{name:'Send message',exact:true}).click({timeout:120000});
   await page.getByText('8 of 250 pages checked',{exact:true}).waitFor();
   assert.equal(await page.getByRole('progressbar',{name:'Original pages checked'}).getAttribute('value'),'8');
   await page.getByRole('heading',{name:'Reviewing your documents',exact:true}).waitFor();await page.getByTestId('p5-eta').waitFor();await overflow(page);await capture(page,`${width}-live-reading`);
