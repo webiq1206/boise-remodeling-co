@@ -281,6 +281,7 @@ export async function recordCallbackRequest(req: CallbackRequest, now = new Date
     updatedAt: now,
   }).onConflictDoUpdate({
     target: estimatorSessions.id,
+    setWhere: req.flow === "p5-exit" ? eq(estimatorSessions.requestedCallback,false) : undefined,
     set: {
       lastActivityAt: now,
       engaged: true,
@@ -293,6 +294,11 @@ export async function recordCallbackRequest(req: CallbackRequest, now = new Date
       updatedAt: now,
     },
   });
+
+  if(req.flow === "p5-exit") {
+    const [saved] = await db.select({phone:estimatorSessions.contactPhone}).from(estimatorSessions).where(eq(estimatorSessions.id,req.sessionId));
+    if(saved?.phone !== phone)return {stored:false,notified:false,error:"callback_conflict"};
+  }
 
   // Claim the notification atomically so a retried request cannot send twice.
   const claimed = await db.update(estimatorSessions)

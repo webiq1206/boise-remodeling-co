@@ -121,6 +121,25 @@ async function main() {
   row = (await db.select().from(estimatorSessions).where(eq(estimatorSessions.id, "aaaaaaaa-0000-4000-8000-000000000006")))[0];
   assert.equal(row.notifyAttemptCount, MAX_NOTIFY_ATTEMPTS, "gives up after MAX_NOTIFY_ATTEMPTS");
 
+  // Explicit estimator-exit callbacks freeze their first phone and share the existing claim.
+  failNext = 0;
+  const beforeExit = sent.length;
+  const exitRequest = {sessionId: "aaaaaaaa-0000-4000-8000-000000000007", flow: "p5-exit", phone: "2085550100", note: "Explicit callback consent; no marketing."};
+  await Promise.all([recordCallbackRequest(exitRequest), recordCallbackRequest(exitRequest)]);
+  assert.equal(sent.length, beforeExit + 1, "concurrent callback retries send once");
+  const conflict = await recordCallbackRequest({...exitRequest, phone: "2085550101"});
+  assert.equal(conflict.error, "callback_conflict");
+  assert.equal(conflict.stored, false);
+  row = (await db.select().from(estimatorSessions).where(eq(estimatorSessions.id, exitRequest.sessionId)))[0];
+  assert.equal(row.contactPhone, "2085550100", "retry cannot change an already-requested number");
+  failNext = 1;
+  const retryRequest = {...exitRequest, sessionId: "aaaaaaaa-0000-4000-8000-000000000008"};
+  const failedCallback = await recordCallbackRequest(retryRequest);
+  assert.equal(failedCallback.stored, true);
+  assert.equal(failedCallback.notified, false);
+  assert.equal((await recordCallbackRequest(retryRequest)).notified, true);
+  assert.equal(sent.length, beforeExit + 2);
+
   console.log(`verify-estimator-recovery: all checks passed (${sent.length} emails captured)`);
   await pg.close();
 }
