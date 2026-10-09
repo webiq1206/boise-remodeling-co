@@ -265,7 +265,7 @@
     "scripts/p5-build-price-book.mjs": "714a76f8a9f29077d052304456aca38769fc9485022774856eae816b2e847450",
     "scripts/p5-cli-acceptance.mts": "ed5b8fc80231c03b3c2b54de486fb6db7f259947e855ecf4985a9caf6f4ea6b8",
     "scripts/p5-component-review.mjs": "7035921690a6dc0648b1c3142b054ad09d67535c706e108817369e9e6de6ab26",
-    "scripts/p5-estimator-browser.mjs": "7837e9e2580e3d19c1b1d2c411c1c0cab3eff32add9735d7085f1a93cfe358b1",
+    "scripts/p5-estimator-browser.mjs": "306b43b3d7aaa8393ff24382ed30b844999a4cb005833bd848000c1fdcff6465",
     "scripts/p5-host-build.mjs": "1d83b593096c24575847b9f290253c7d32e74dfaa640d22ac68b427307599b3f",
     "scripts/p5-hub-notification-check.mjs": "e2d4216777feeb2e4099b93986ca257e4760f671312a6b343014ef7677148f06",
     "scripts/p5-intake-browser-fixture.mts": "7d970f466dcf77c7f4435457de34dfb4da96da8877ad4b587e3ffea2dd01d5da",
@@ -539,5 +539,11 @@
     "source": "p5-home-co",
     "date": "2026-10-09",
     "scope": "Narrow source-backed typed intent, ambiguity-safe routing and offline verification. Preserve all prior brand-local patches and schema protections."
+  },
+  "localPatchProvenance": {
+    "reason": "Promote the Cabinet held-native-IndexedDB fixture isolation to Remodeling after WebKit recovery visibility failed at 1440px in run 37872519037. Fresh browser/storage process per held recovery case; queue every native success callback; retain all restoration, focus, zero-provider and zero-submission assertions. Test-only change with native event diagnostics.",
+    "upstreamHashes": {
+      "scripts/p5-estimator-browser.mjs": "7837e9e2580e3d19c1b1d2c411c1c0cab3eff32add9735d7085f1a93cfe358b1"
+    }
   }
 }
