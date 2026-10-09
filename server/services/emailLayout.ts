@@ -35,6 +35,9 @@ export function escapeHtml(text: string | number | null | undefined): string {
 
 export function htmlToPlainText(html: string): string {
   return html
+    // Non-message elements must lose their contents before generic tag removal.
+    // Keep the original HTML intact for clients that render the branded version.
+    .replace(/<(style|script)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, "")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "\n\n")
     .replace(/<\/li>/gi, "\n")

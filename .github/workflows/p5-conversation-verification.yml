@@ -7,6 +7,7 @@ on:
       - 'components/P5ProcessingStatus.tsx'
       - 'lib/p5/**'
       - 'tests/p5-*.test.ts'
+      - 'server/services/emailLayout.ts'
       - 'scripts/verify-assistant.ts'
       - '.github/workflows/p5-conversation-verification.yml'
   push:
@@ -16,6 +17,7 @@ on:
       - 'components/P5ProcessingStatus.tsx'
       - 'lib/p5/**'
       - 'tests/p5-*.test.ts'
+      - 'server/services/emailLayout.ts'
       - 'scripts/verify-assistant.ts'
       - '.github/workflows/p5-conversation-verification.yml'
 permissions:
