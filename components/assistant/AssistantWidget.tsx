@@ -211,7 +211,7 @@ export function AssistantWidget() {
           <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
             <div>
               <p className="font-semibold text-sm">Estimating assistant</p>
-              <p className="text-xs text-muted-foreground">Real engine pricing, in plain English</p>
+              <p className="text-xs text-muted-foreground">Project guidance, in plain English</p>
             </div>
             <button
               type="button"
