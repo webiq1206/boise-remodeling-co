@@ -155,7 +155,10 @@ for(const width of progressOnly?[]:[320,390,1440]){
  const context=await recoveryBrowser.newContext({viewport:{width,height:900}}),state=await mock(context),page=await context.newPage();
  const pageErrors=[];page.on('pageerror',error=>pageErrors.push(error.message));
  await context.addInitScript(()=>{
-  const open=indexedDB.open.bind(indexedDB),success=Object.getOwnPropertyDescriptor(IDBRequest.prototype,'onsuccess').set;
+  // WebKit can collect the IDBFactory wrapper and its own-property override.
+  // Keep the exact factory alive until this isolated recovery context closes.
+  const factory=window.__p5RecoveryFactory=indexedDB;
+  const open=factory.open.bind(factory),success=Object.getOwnPropertyDescriptor(IDBRequest.prototype,'onsuccess').set;
   // Isolate this held-open fixture from every other recovery context. Keep real
   // upgrade/open/transaction events, and release every pending application callback
   // exactly once; a single overwritten callback can strand a second boot reader.
@@ -176,6 +179,13 @@ for(const width of progressOnly?[]:[320,390,1440]){
   };
  });
  try{
+  // Exercise the same initialization hook before application code can retain
+  // anything. Without the factory reference, forced WebKit GC loses the hook.
+  const fixture=base+'/__p5-recovery-hook-fixture';
+  await context.route(fixture,route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>Local recovery hook fixture</title>'}));
+  await page.goto(fixture);await page.requestGC();
+  assert.equal(await page.evaluate(()=>window.__p5RecoveryFactory===indexedDB&&Object.hasOwn(indexedDB,'open')),true,'The real IndexedDB recovery hook must survive garbage collection');
+  await context.unroute(fixture);
   await page.goto(base+'/estimate');const est=page.locator('[data-p5-estimator]');
   await est.getByRole('heading',{name:'Preparing your saved project on this device',exact:true}).waitFor();
   assert.equal(await est.getByRole('heading',{name:'Understanding your project',exact:true}).count(),0);
