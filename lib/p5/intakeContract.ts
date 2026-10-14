@@ -1,6 +1,7 @@
 import {readQuestionMemory,currentQuestionEntries,questionHistoryNotes,reconcileQuestionMemory,questionTopic,type QuestionMemory} from './intakeQuestionMemory.ts';
 import {INTAKE_SITES,routeIntake,type IntakeSite,type IntakeRouting,type SupportingService,SUPPORTING_SERVICES} from './intakePolicy.ts';
 import type {ScopeAnswers,ScopeExtraction,ScopeUpload} from './scope.ts';
+import type {MarketingAttribution} from './marketingAttribution.ts';
 import {SCOPE_TEXT_LIMIT} from './scope.ts';
 import {sameAnswer,scopeQuestions} from './adaptive.ts';
 import {pageCovered} from './documentLedger.ts';
@@ -15,7 +16,7 @@ export interface IntakeContact {name:string;email:string;phone:string;preferredC
 export interface IntakeMessage {id:string;role:'user'|'assistant';text:string;at:number;kind?:string;label?:string;caption?:string;files?:string[]}
 export interface IntakeDetails {questionMemory?:QuestionMemory;desiredOutcome:string;workContext:string;budget:string;supportingServices:SupportingService[];transcript:IntakeMessage[];reviewedScopeFingerprint?:string}
 export interface IntakeContext extends IntakeDetails {projectId:string;originSite:IntakeSite;currentSite:IntakeSite;version:number;contact:IntakeContact}
-export interface IntakeSnapshot {schema:1;projectId:string;reference?:string;originSite:IntakeSite;currentSite:IntakeSite;draftId:string;revision:number;contextVersion:number;contact:IntakeContact;details:IntakeDetails;scope:{text:string;answers:ScopeAnswers;extraction:ScopeExtraction|null;uploads:ScopeUpload[]};routing:IntakeRouting;unresolved:string[];savedAt:string}
+export interface IntakeSnapshot {schema:1;projectId:string;reference?:string;originSite:IntakeSite;currentSite:IntakeSite;draftId:string;revision:number;contextVersion:number;contact:IntakeContact;details:IntakeDetails;scope:{text:string;answers:ScopeAnswers;extraction:ScopeExtraction|null;uploads:ScopeUpload[]};routing:IntakeRouting;unresolved:string[];savedAt:string;attribution?:MarketingAttribution}
 export interface IntakeReceipt {accepted:true;projectId:string;reference:string;revision:number;team:IntakeRouting;unresolved:string[];savedAt:string;delivery:{customer:string;team:string;crm:string};deliveryDetails?:{customer:string;team:string;crm:string}}
 export const INTAKE_CONTEXT_KEY='intake-context-v1';
 export const INTAKE_SUBMISSION_KEY='intake-submission-v1';

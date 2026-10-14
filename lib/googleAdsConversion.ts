@@ -60,12 +60,13 @@ export function googleAdsLeadParams(
 }
 
 const sentLeadKeys = new Set<string>();
+const pendingLeadKeys = new Set<string>();
 
 /**
  * Fires the Google Ads lead conversion once per dedupe key (per page load and,
  * where storage allows, per browser session). Returns true when it was sent.
  */
-export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: string): boolean {
+export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: string, retryCount=0): boolean {
   if (typeof window === "undefined") return false;
   const storageKey = dedupeKey ? `google_ads_lead:${dedupeKey}` : undefined;
   if (storageKey) {
@@ -77,7 +78,14 @@ export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: 
     }
   }
   const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
-  if (typeof gtag !== "function") return false;
+  if (typeof gtag !== "function") {
+    // Only called after an accepted submission. A lazy tag must not lose it.
+    if(dedupeKey&&retryCount<20&&!pendingLeadKeys.has(dedupeKey)){
+      pendingLeadKeys.add(dedupeKey);
+      window.setTimeout(()=>{pendingLeadKeys.delete(dedupeKey);trackGoogleAdsLeadConversion(ctx,dedupeKey,retryCount+1);},500);
+    }
+    return false;
+  }
   if (storageKey) {
     sentLeadKeys.add(storageKey);
     try {

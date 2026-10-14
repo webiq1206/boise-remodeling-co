@@ -399,6 +399,7 @@ export type SiteSetting = typeof siteSettings.$inferSelect;
 // Consultation Requests Schema (new contacts from the homepage form)
 export const consultationRequests = pgTable("consultation_requests", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  attribution: jsonb("attribution").$type<import("@/lib/p5/marketingAttribution").MarketingAttribution>(),
   name: text("name").notNull(),
   phone: text("phone").notNull(),
   email: text("email").notNull(),

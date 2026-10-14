@@ -1,4 +1,5 @@
 "use client";
+import {captureMarketingAttribution} from '@/lib/marketingAttributionBrowser';
 
 import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
@@ -258,6 +259,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
       const activeInquiryId = getOrCreateInquiryId();
       if (activeInquiryId !== inquiryId) setInquiryId(activeInquiryId);
       const payload = {
+        attribution: captureMarketingAttribution(),
         inquiryId: activeInquiryId,
         formStartedAt,
         website,

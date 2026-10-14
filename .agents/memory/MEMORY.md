@@ -13,3 +13,4 @@
 - [Local browser verification](local-browser-verification.md) — use Nix Chromium and the configured preview origin; localhost aliases can trigger legitimate origin rejection.
 - [Estimator source integrity](estimator-source-integrity.md) — upload receipts cannot authorize older scope; replacement answers and recoveries need independent safeguards.
 - [Customer scope preservation](customer-scope-preservation.md) — disclosure and scope guards need positive construction counterexamples alongside rejection tests.
+- [Attribution boundaries](attribution-boundaries.md) — forwarding numbers are not new business numbers; Caldwell is not P5's location; installed tags do not prove visitor consent.

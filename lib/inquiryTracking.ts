@@ -6,6 +6,7 @@ import { googleAdsLeadParams } from "@/lib/googleAdsConversion";
 const INQUIRY_ID_KEY = "brc_inquiry_id";
 const INQUIRY_STARTED_KEY = "brc_inquiry_started_at";
 const CONVERSION_KEY_PREFIX = "brc_lead_conversion_";
+const emittedInquiries=new Set<string>();
 const INQUIRY_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 export const INQUIRY_ROTATED_EVENT = "brc_inquiry_rotated";
 
@@ -78,7 +79,7 @@ export function trackAcceptedInquiry(
   projectType: string,
   retryCount = 0,
 ): void {
-  if (!response.conversionEligible || typeof window === "undefined") return;
+  if (response.accepted!==true || !response.conversionEligible || typeof window === "undefined") return;
   const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
   // Do not burn the browser marker before the analytics library is ready.
   // A short retry covers lazy loading without blocking the success UI.
@@ -90,6 +91,7 @@ export function trackAcceptedInquiry(
   }
 
   const marker = `${CONVERSION_KEY_PREFIX}${response.inquiryId}`;
+  if(emittedInquiries.has(marker)){acknowledgeConversion(response.inquiryId);return;}
   try {
     if (window.localStorage.getItem(marker)) {
       acknowledgeConversion(response.inquiryId);
@@ -97,13 +99,13 @@ export function trackAcceptedInquiry(
     }
     window.localStorage.setItem(marker, "1");
   } catch {
-    if (window.sessionStorage.getItem(marker)) {
-      acknowledgeConversion(response.inquiryId);
-      return;
-    }
-    window.sessionStorage.setItem(marker, "1");
+    try {
+      if (window.sessionStorage.getItem(marker)) { acknowledgeConversion(response.inquiryId);return; }
+      window.sessionStorage.setItem(marker, "1");
+    } catch { /* Strict privacy settings must not break the successful form. */ }
   }
 
+  emittedInquiries.add(marker);
   trackEvent("generate_lead", {
     project_type: projectType,
     inquiry_id: response.inquiryId,

@@ -53,7 +53,7 @@ interface ForwardPayload {
      the whole group as JSON on the lead's sourcePayload column. */
 
   /** Complete structured record: selections, scope, assumptions, disclaimers. */
-  estimate?: LeadEstimateRecord;
+  estimate?: Partial<LeadEstimateRecord> & {marketingAttribution?:Record<string,unknown>};
   /**
    * County parcel record: zoning, lot size, assessed value, owner and
    * occupancy. Passthrough on the dashboard side for the same reason as

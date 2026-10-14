@@ -40,6 +40,7 @@ import {
   recordDeliveryStatus,
 } from "@/server/services/inquiryAcceptance";
 import { readUnitCostOverrides } from "@/lib/unitCostOverrides";
+import {attributionSchema,submissionAttribution,attributionCrmMetadata} from '@/lib/p5/marketingAttribution';
 import {
   buildCrmIntakeFields,
   buildLeadPropertyRecord,
@@ -103,6 +104,7 @@ const estimateSchema = z
   .nullable();
 
 const bodySchema = z.object({
+  attribution: attributionSchema.optional(),
   inquiryId: z.string().uuid(),
   formStartedAt: z.number().int().positive(),
   website: z.string().max(200).optional(),
@@ -248,6 +250,7 @@ export async function POST(request: NextRequest) {
     }
 
     const data = parsed.data;
+    let attribution;try{attribution=submissionAttribution(data.attribution,request.headers);}catch{return NextResponse.json({message:'Invalid attribution metadata. Reload the page and retry.'},{status:400});}
 
     // Server-side verification: never trust client-supplied dollar amounts.
     const pricingAlertKinds: string[] = [];
@@ -277,6 +280,7 @@ export async function POST(request: NextRequest) {
           address: data.address,
           city: (profile?.city as string) || null,
           propertyProfile: (data.propertyProfile as PropertyProfile | null) ?? null,
+          ...(attribution?{attribution}:{}),
           projectType: data.projectType,
           message: data.message || null,
           estimateProject: estimate?.project || null,
@@ -351,10 +355,13 @@ export async function POST(request: NextRequest) {
       // The homeowner's own words stay in finalNotes; the estimate record goes
       // to estimateSummary, which the dashboard sizes for it (20k vs 2k).
       finalNotes: data.message || undefined,
-      estimate: estimate
+      estimate: estimate || attribution
         ? {
+            ...(attribution?{marketingAttribution:attributionCrmMetadata(attribution,'Boise Remodeling Co')}:{ }),
+            ...(estimate?{
             ...buildLeadEstimateRecord(estimate, unitCostOverrides),
             ...(pricingAlertKinds.length > 0 ? { pricingAlerts: pricingAlertKinds } : {}),
+            }:{}),
           }
         : undefined,
       // Zoning, lot size, assessed value, owner and occupancy as structured

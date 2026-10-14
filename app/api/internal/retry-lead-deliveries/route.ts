@@ -18,6 +18,7 @@ import {
   formatLeadReplyTo,
 } from "@/server/services/consultationEmail";
 import { recordDeliveryStatus } from "@/server/services/inquiryAcceptance";
+import {attributionCrmMetadata} from '@/lib/p5/marketingAttribution';
 
 /**
  * Protected operational retry for safely stored lead deliveries.
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
         projectTypes: row.projectType ? [row.projectType] : [],
         finalNotes: row.message || undefined,
         source: "boiseremodeling.co",
+        ...(row.attribution?{estimate:{marketingAttribution:attributionCrmMetadata(row.attribution,'Boise Remodeling Co')}}:{}),
       });
       crm = result.sent ? "sent" : "failed";
       lastError = result.error;

@@ -24,7 +24,7 @@ export function assertAdditiveSql(sql, label = 'migration') {
     if (/^CREATE (TABLE|(?:UNIQUE )?INDEX) IF NOT EXISTS /.test(text)) continue;
     // Existing migrations annotate columns. Metadata comments cannot drop data.
     if (/^COMMENT ON (COLUMN|TABLE) [A-Z_][A-Z_0-9$]*(?: \. [A-Z_][A-Z_0-9$]*)* IS LITERAL(?: LITERAL)*$/.test(text)) continue;
-    if (/^ALTER TABLE (?:[A-Z_][A-Z_0-9$]*)(?: \. [A-Z_][A-Z_0-9$]*)? ADD COLUMN IF NOT EXISTS /.test(text)
+    if (/^ALTER TABLE (?:IF EXISTS )?(?:[A-Z_][A-Z_0-9$]*)(?: \. [A-Z_][A-Z_0-9$]*)? ADD COLUMN IF NOT EXISTS /.test(text)
         && !statement.includes('ALTER', 1)) continue;
     throw new Error(`${label}: only additive CREATE IF NOT EXISTS and ADD COLUMN IF NOT EXISTS are permitted`);
   }

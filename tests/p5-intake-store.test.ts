@@ -5,6 +5,7 @@ import {isolatedDatabase} from './fixtures/p5-pglite.ts';
 import {intakeStore,deliveryKey,snapshotKey,IntakeConflict} from '../lib/p5/intakeStore.ts';
 import {emptyIntakeDetails,intakeReference,intakeContact,intakeDetails,requireIntakeReceipt,type IntakeSnapshot} from '../lib/p5/intakeContract.ts';
 import {routeIntake} from '../lib/p5/intakePolicy.ts';
+import {advanceAttribution,observedTouch} from '../lib/p5/marketingAttribution.ts';
 
 const id='12345678-1234-4234-8234-123456789abc';
 const clock=()=> '2099-01-02T12:00:00.000Z';
@@ -31,6 +32,18 @@ test('concurrent and lost-response retries retain one logical request and one de
   let lost=true;const uncertain=intakeStore(async(s,v)=>{const rows=await query(s,v);if(s.startsWith('WITH owned')&&lost){lost=false;throw Error('synthetic lost acknowledgement');}return rows;},clock);
   await assert.rejects(uncertain.save(request()),/lost acknowledgement/);
   assert.deepEqual(await uncertain.save(request()),receipts[0]);assert.equal((await query('SELECT * FROM p5_estimator_work')).length,3);
+ }finally{await db.close();}
+});
+test('attribution stays on the first immutable acceptance and cannot duplicate a revision on retry',async()=>{
+ const {db,query,store}=await database();try{
+  const first=request(),at=Date.now();
+  first.attribution=advanceAttribution(undefined,observedTouch('https://boiseremodeling.co/?gclid=first','',at)!);
+  const receipt=await store.save(first);
+  const retry={...first,attribution:advanceAttribution(undefined,observedTouch('https://boiseremodeling.co/?gclid=later','',at+1)!)};
+  assert.deepEqual(await store.save(retry),receipt);
+  const [saved]=await query('SELECT payload FROM p5_estimator_work WHERE draft_id=$1 AND work_key=$2',[id,snapshotKey(1)]);
+  assert.equal(saved.payload.snapshot.attribution.first.gclid,'first');
+  assert.equal((await query('SELECT * FROM p5_estimator_work')).length,3);
  }finally{await db.close();}
 });
 test('same revision with different contact cannot silently reuse an earlier success',async()=>{
