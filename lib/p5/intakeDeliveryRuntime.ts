@@ -8,7 +8,7 @@ import {intakeDeliveryWorker,type IntakeTransport} from './intakeDelivery.ts';
 import {INTAKE_RUNTIME_PROOF} from './intakeDeliveryPolicy.ts';
 import {suppressSyntheticEstimateNotifications} from './estimatorNotifications.ts';
 import {qaOperationContext} from './qaOperationContext.ts';
-import {projectReviewTransport} from './intakeProjectReview.ts';
+import {canonicalReviewTransport} from './canonicalReviewTransport.ts';
 
 /** Existing adapters only. Configuration values and provider errors never enter status payloads.
  * Runtime proof is a reviewed source gate, not a user-supplied option or a credential toggle.
@@ -22,9 +22,8 @@ export async function runtimeIntakeTransports():Promise<Record<'customer'|'team'
   prepare:(snapshot,envelope)=>prepareIntakeEmail(snapshot,envelope,{query,readBytes:readStoredBytes,secret:linkSecret}),
   send:async envelope=>{if(!envelope.email)throw new Error('payload-review');const {sendEmail}=await import('./deliveryAdapter.ts');return sendEmail({...envelope.email,attachments:envelope.email.attachments.map(f=>({filename:f.filename,content:Buffer.from(f.base64,'base64')})),key:envelope.key});},
  };
- // The same lead-dashboard setting and credential the priced estimator already uses; the
- // verified receiver endpoint is resolved by the transport, never by an environment override.
- const crm=projectReviewTransport({enabled:process.env.P5_CRM_DELIVERY==='on',token:process.env.LEAD_DASHBOARD_KEY||'',url:process.env.LEAD_DASHBOARD_API_URL||ESTIMATOR_BRAND.crmUrl,proof:INTAKE_RUNTIME_PROOF.crm,qaAllowlist:process.env.SYNTHETIC_QA_EMAIL_ALLOWLIST||''});
+ // Canonical source-specific credential; never repurpose a dashboard credential.
+ const crm=canonicalReviewTransport({enabled:process.env.P5_CRM_DELIVERY==='on',token:process.env.P5_CANONICAL_REVIEW_TOKEN||'',proof:INTAKE_RUNTIME_PROOF.crm});
  return {customer:email,team:email,crm};
 }
 export async function processIntakeDeliveries(limit=2){
