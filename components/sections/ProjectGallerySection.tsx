@@ -78,6 +78,7 @@ export function ProjectGallerySection({
             </div>
             <div
               className="ed-rail mt-6 [scrollbar-color:var(--ed-line)_transparent]"
+              tabIndex={0} role="region"
               style={{ ["--ed-rail-w" as string]: "31%" }}
               aria-label="More remodeling design ideas"
             >

@@ -51,7 +51,7 @@ function ResourceRow({ resource }: { resource: GuideResource }) {
         <p className="text-sm font-normal text-foreground">{resource.title}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{resource.description}</p>
         {resource.fileLabel && (
-          <p className="text-xs text-muted-foreground/80 mt-1">{resource.fileLabel}</p>
+          <p className="text-xs text-muted-foreground mt-1">{resource.fileLabel}</p>
         )}
       </div>
       {isExternalPdf ? (
