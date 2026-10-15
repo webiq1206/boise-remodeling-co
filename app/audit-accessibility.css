@@ -13,3 +13,36 @@
   .approved-shell *, .approved-shell *::before, .approved-shell *::after { animation:none!important; scroll-behavior:auto!important; transition:none!important; }
 }
 [data-mobile-nav-bar][data-p5-actions-ready="false"] { visibility:hidden !important; pointer-events:none !important; }
+
+/* Surface-aware text tokens: decorative brand accents stay unchanged. */
+.approved-shell { --accent-legible:var(--accent-on-light); --ed-accent:var(--audit-accent-ink); }
+.approved-shell :is(.family-site,.approved-interior) :is(h1,h2,h3,h4) em,
+.approved-shell .brc-accent { color:var(--audit-accent-ink); }
+.approved-shell :is(.f-hero,.f-value,.f-contact,.interior-hero-contact,.ed-on-gradient,.bg-inverse) :is(h1,h2,h3,h4) em {
+  color:var(--approved-accent);
+}
+.approved-shell footer {
+  --foreground:48 38% 97.5%; --heading:48 38% 97.5%;
+  --muted-foreground:42 15% 83%; --primary:48 38% 97.5%;
+  --primary-foreground:165 4% 18%; --accent-legible:var(--accent);
+}
+.approved-shell a.text-accent-legible { text-decoration:underline; text-underline-offset:3px; }
+.approved-shell [data-testid="link-save-contact"] { display:inline-flex; align-items:center; min-height:32px; }
+
+.approved-shell :is(.ed-on-gradient,.bg-inverse,.interior-hero-contact) {
+  --ed-accent:var(--approved-accent); --accent-legible:var(--accent);
+}
+
+/* The hero must grow at text zoom and on short landscape viewports. */
+.approved-shell .family-site .f-hero { height:auto; max-height:none; min-height:620px; }
+
+.approved-shell :is(.ed-on-gradient,.bg-inverse) {
+  --ed-ink:#fbfaf6; --ed-muted-ink:#dddfd5;
+  --foreground:48 38% 97.5%; --heading:48 38% 97.5%;
+  --muted-foreground:42 15% 83%; --primary:48 38% 97.5%;
+  --primary-foreground:165 4% 18%;
+}
+
+.approved-shell .brc-text-link,
+.approved-shell a[href$="contact.vcf"] { display:inline-flex; align-items:center; min-height:32px; }
+.approved-shell .blog-content .callout.warning .callout-label { color:var(--audit-accent-ink); }
