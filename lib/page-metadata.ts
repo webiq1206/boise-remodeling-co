@@ -86,7 +86,27 @@ export function fitTitle(title: string): string {
   return title.replace(/\s+/g, ' ').trim().replace(/[\s:|,-]+$/, '');
 }
 export function fitDescription(description: string): string {
-  return description.replace(/\s+/g, ' ').trim();
+  const text = description.replace(/\s+/g, ' ').trim();
+  if (text.length <= 160) return text;
+  const sentences = text.split(/(?<=[.!?])\s+/);
+  let out = '';
+  for (const sentence of sentences) {
+    const next = out ? `${out} ${sentence}` : sentence;
+    if (next.length <= 160) out = next;
+    else break;
+  }
+  // A short first sentence must not discard the rest of an authored
+  // description. Fill the remaining room on a word boundary.
+  if (out.length >= 140) return out;
+  const rest = text.slice(out.length).replace(/^\s+/, '');
+  const budget = 160 - (out ? out.length + 1 : 0);
+  let extra = rest.slice(0, Math.max(budget, 0));
+  if (extra.length < rest.length) {
+    extra = extra.replace(/\s+\S*$/, '').replace(/[,:;.\s-]+$/, '');
+  }
+  const combined = [out, extra].filter(Boolean).join(' ');
+  if (combined.length >= 40 && combined.length <= 160) return combined;
+  return text.slice(0, 160).replace(/\s+\S*$/, '').replace(/[,:;]\s*$/, '');
 }
 
 export function stripBrandSuffix(title: string): string {
@@ -103,16 +123,63 @@ export function stripBrandSuffix(title: string): string {
  * rendered title (after the layout appends " | Boise Remodeling Co") stays <= 60.
  */
 const SERVICE_TITLE_OVERRIDES: Record<string, string> = {
-  'kitchen-remodel': 'Treasure Valley Kitchen Remodeling',
+  'kitchen-remodel': 'Kitchen remodeling in Boise',
   'bathroom-remodel': 'Treasure Valley Bathroom Remodeling',
   'whole-home-remodel': 'Treasure Valley Whole-Home Remodeling',
-  'room-addition': 'Treasure Valley Home Additions',
+  'room-addition': 'Room additions in Boise',
   adu: 'Treasure Valley ADUs & Guest Houses',
   // Without an override these fall back to "<name> in the Treasure Valley",
   // which overruns the title budget and word-truncates to "... in the".
   'basement-remodel': 'Treasure Valley Basement Remodeling',
   'outdoor-living': 'Treasure Valley Decks & Outdoor Living',
   'aging-in-place': 'Aging-in-Place Remodeling in Boise',
+};
+
+/**
+ * Answer-first titles and descriptions for the pages called out in phase 1.
+ * Facts used here are limited to design-build, founded 2020, part of P5, a
+ * free in-home visit, written scope, workmanship guarantee, Ada or Canyon
+ * permitting, and budget ranges, not quotes.
+ */
+const AREA_ANSWER: Record<string, { title: string; description: string }> = {
+  eagle: {
+    title: 'Remodeling contractors in Eagle, ID',
+    description:
+      'Design-build remodeling in Eagle, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+  },
+  boise: {
+    title: 'Remodeling contractors in Boise, ID',
+    description:
+      'Design-build remodeling in Boise, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+  },
+  nampa: {
+    title: 'Remodeling contractors in Nampa, ID',
+    description:
+      'Design-build remodeling in Nampa, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+  },
+  kuna: {
+    title: 'Remodeling contractors in Kuna, ID',
+    description:
+      'Design-build remodeling in Kuna, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+  },
+  meridian: {
+    title: 'Remodeling contractors in Meridian',
+    description:
+      'Design-build remodeling in Meridian, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+  },
+};
+
+const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
+  'kitchen-remodel': {
+    title: 'Kitchen remodeling in Boise',
+    description:
+      'Design-build kitchen remodeling in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+  },
+  'room-addition': {
+    title: 'Room additions in Boise',
+    description:
+      'Design-build room additions in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, and Ada and Canyon permitting. Budget ranges, not quotes.',
+  },
 };
 
 export function buildPageMetadata(input: PageMetaInput): Metadata {
@@ -127,26 +194,35 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
       title = generatePageTitle({ serviceName: '', serviceSlug: '', isHomePage: true });
       description = generateMetaDescription({ serviceName: '', serviceSlug: '', isHomePage: true });
       break;
-    case 'service':
+    case 'service': {
+      const answer = SERVICE_ANSWER[input.serviceSlug ?? ''];
       // Intentional, full titles (no truncation/ellipsis). Each stays <= 60
       // chars once the layout template appends " | Boise Remodeling Co" (22).
       title =
+        answer?.title ??
         SERVICE_TITLE_OVERRIDES[input.serviceSlug ?? ''] ??
         generateSafePageTitle(`${input.serviceName} in the Treasure Valley`);
-      description = generateMetaDescription({
-        serviceName: input.serviceName!,
-        serviceSlug: input.serviceSlug!,
-      });
+      description =
+        answer?.description ??
+        generateMetaDescription({
+          serviceName: input.serviceName!,
+          serviceSlug: input.serviceSlug!,
+        });
       break;
-    case 'area':
-      title = generateSafePageTitle(`Remodeling Contractor in ${input.cityName}, Idaho`);
-      description = generateMetaDescription({
-        serviceName: '',
-        serviceSlug: '',
-        city: input.cityName,
-        citySlug: input.citySlug,
-      });
+    }
+    case 'area': {
+      const answer = AREA_ANSWER[input.citySlug ?? ''];
+      title = answer?.title ?? generateSafePageTitle(`Remodeling Contractor in ${input.cityName}, Idaho`);
+      description =
+        answer?.description ??
+        generateMetaDescription({
+          serviceName: '',
+          serviceSlug: '',
+          city: input.cityName,
+          citySlug: input.citySlug,
+        });
       break;
+    }
     case 'city-service':
       title = generateCityServiceTitle(input.serviceName!, input.cityName!);
       description = generateCityServiceDescription(

@@ -152,6 +152,16 @@ export default function Re10RepairsPage() {
           <p className="text-lg md:text-xl text-foreground leading-relaxed font-light">
             {RE10_DIRECT_ANSWER}
           </p>
+          <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
+            Boise Handyman Co owns this RE-10 repair service.{" "}
+            <a
+              href="https://boisehandyman.co/re-10-repairs-boise"
+              className="text-accent-legible hover:underline"
+            >
+              Continue at boisehandyman.co/re-10-repairs-boise
+            </a>
+            .
+          </p>
           <p className="mt-5 hidden md:block text-sm text-muted-foreground leading-relaxed">
             <strong className="font-normal text-foreground">What is an RE-10?</strong>{" "}
             {RE10_DEFINITION}

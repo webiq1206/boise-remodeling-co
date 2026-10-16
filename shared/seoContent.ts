@@ -39,10 +39,10 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   'kitchen-remodel': {
     slug: 'kitchen-remodel',
     name: 'Kitchen Remodel',
-    headline: 'Kitchen Remodeling in the Treasure Valley',
+    headline: 'Kitchen remodeling in Boise',
     primaryKeyword: 'kitchen remodeling boise idaho',
     overview:
-      'A well-planned kitchen remodel improves how your family cooks, gathers, and moves through the home. Boise Remodeling Co handles design, permitting, and construction under one roof so layout, cabinetry, lighting, and finishes stay aligned from first visit to final walkthrough.',
+      'Boise Remodeling Co is a design-build kitchen remodeler in Boise and the Treasure Valley, founded in 2020 and part of P5. A free in-home visit includes a written scope. The first figures are budget ranges, not quotes. A well-planned kitchen remodel improves how your family cooks, gathers, and moves through the home. Boise Remodeling Co handles design, permitting, and construction under one roof so layout, cabinetry, lighting, and finishes stay aligned from first visit to final walkthrough.',
     benefits: [
       'Single design-build team, no juggling separate designers and contractors',
       'Written scope and finish selections before construction begins',
@@ -344,10 +344,10 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   'room-addition': {
     slug: 'room-addition',
     name: 'Room Addition',
-    headline: 'Home Additions in the Treasure Valley',
+    headline: 'Room additions in Boise',
     primaryKeyword: 'home additions boise idaho',
     overview:
-      'Room additions expand living space without moving. We design attached additions, in-law suites, and bonus rooms that match your roof lines, foundation, and interior architecture, with permits and structural scope handled professionally.',
+      'Boise Remodeling Co builds room additions in Boise and the Treasure Valley as a design-build remodeler founded in 2020 and part of P5. A free in-home visit includes a written scope, and Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes. Room additions expand living space without moving. We design attached additions, in-law suites, and bonus rooms that match your roof lines, foundation, and interior architecture, with permits and structural scope handled professionally.',
     benefits: [
       'Structural and architectural planning before breaking ground',
       'Exterior materials matched to your existing home',

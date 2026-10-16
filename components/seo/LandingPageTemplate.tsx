@@ -14,6 +14,7 @@ AccordionItem,
 AccordionTrigger,
 } from '@/components/ui/accordion';
 import { GRAIN_URL } from '@/lib/grain';
+import { contentImageAlt } from '@/shared/contentImageAlt';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import type { GalleryProject } from '@/shared/galleryData';
 import type { FAQItem } from '@/shared/seoContent';
@@ -191,7 +192,7 @@ export function LandingPageTemplate({
   return (
     <div className="flex flex-col pb-20 md:pb-0">
       {/* Approved editorial hero */}
-      <InteriorHero imageSrc={heroImageUrl} imageAlt="" layout="split">
+      <InteriorHero imageSrc={heroImageUrl} imageAlt={contentImageAlt(heroImageUrl)} layout="split">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           {eyebrow && (
@@ -307,7 +308,7 @@ export function LandingPageTemplate({
           <div className="ed-panel ed-panel-reverse">
             <div className="ed-panel-media">
               {processImage && (
-                <Image src={processImage} alt="" fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
+                <Image src={processImage} alt={contentImageAlt(processImage, 'Remodel work in progress')} fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
               )}
               <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
             </div>

@@ -26,6 +26,8 @@ export WS_NO_UTF_8_VALIDATE=1
 # Backgrounded, and its failure swallowed, so it can neither delay nor fail the
 # boot. `exec` hands the container's PID 1 straight to node so SIGTERM reaches
 # the server rather than this shell.
-( node scripts/submit-indexnow.mjs || true ) &
+# Ping only the URLs this deploy changed. A full sitemap submit is still
+# available as `node scripts/submit-indexnow.mjs` without --changed.
+( node --import tsx scripts/submit-indexnow.mjs --changed || true ) &
 
 HOSTNAME=0.0.0.0 exec node .next/standalone/server.js

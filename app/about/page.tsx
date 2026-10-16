@@ -98,9 +98,14 @@ export default function AboutPage() {
             </p>
             <p className="ed-eyebrow" style={{ color: "rgb(255 255 255 / 0.72)" }}>About us</p>
             <h1 className="ed-display ed-statement-display text-inverse-foreground mb-8">
-              About Boise Remodeling{' '}
-              <em className="brc-accent">Co</em>
+              Boise Remodeling Co, design-build since{' '}
+              <em className="brc-accent">2020</em>
             </h1>
+            <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
+              Boise Remodeling Co is a design-build remodeler founded in 2020 and part of P5. A free
+              in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon
+              permitting is part of the project. The first figures are budget ranges, not quotes.
+            </p>
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
               We are a locally owned design-build remodeling company serving the Treasure Valley.
               Homeowners work with one accountable team from first in-home visit through final
@@ -234,7 +239,8 @@ export default function AboutPage() {
             {/* Stacked emblem - bright badge on the dark band */}
             <img
               src="/brand/svg/icon/boise-remodeling-co-icon-bone.svg"
-              alt="Boise Remodeling Co emblem"
+              alt=""
+              aria-hidden="true"
               width={72}
               height={72}
               className="h-16 w-16 md:h-[72px] md:w-[72px] mb-8"

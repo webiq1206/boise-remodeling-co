@@ -184,11 +184,24 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
  * Target: under 40 chars so final rendered title stays under 60 chars
  */
 export function generateCityServiceTitle(serviceName: string, cityName: string): string {
-  const short = `${serviceName} in ${cityName}, Idaho`;
-  if (short.length <= 40) {
-    return short;
+  // 38 leaves room for the layout suffix " | Boise Remodeling Co" (22) so the
+  // rendered title stays within 60 characters. Prefer the full service name.
+  const budget = 38;
+  const names = [
+    serviceName,
+    serviceName.replace(/ Remodeling$/, ''),
+    serviceName.replace('Outdoor Living & Decks', 'Outdoor Living'),
+    serviceName.replace('Aging-in-Place Remodeling', 'Aging-in-Place'),
+    serviceName.replace('ADU / Guest House', 'ADU'),
+  ];
+  for (const name of names) {
+    for (const region of ['Idaho', 'ID'] as const) {
+      const candidate = `${name} in ${cityName}, ${region}`;
+      if (candidate.length <= budget) return candidate;
+    }
   }
-  return `${serviceName} in ${cityName}, ID`;
+  const fallback = `${names[names.length - 1]} in ${cityName}`;
+  return fallback.length <= budget ? fallback : fallback.slice(0, budget).trim();
 }
 
 /**
@@ -222,17 +235,61 @@ export function generateCityServiceDescription(
   return `${serviceLC} in ${cityName}, ID. Licensed & insured pros. Call ${phone} for a free quote today!`;
 }
 
-/** Keep complete authored titles; an optional secondary label may be omitted. */
+/**
+ * Child title budget. The root layout appends " | Boise Remodeling Co".
+ * 60 - 22 = 38.
+ */
+export function indexedTitle(raw: string): string {
+  let title = raw.replace(/\s+/g, ' ').trim();
+  const budget = 38;
+  if (title.length <= budget) return title;
+  const withoutParen = title.replace(/\s*\([^)]*\)\s*$/, '').trim();
+  if (withoutParen.length > 0 && withoutParen.length <= budget) return withoutParen;
+  title = withoutParen || title;
+  if (title.includes(' | ')) {
+    const head = title.split(' | ')[0].trim();
+    if (head.length > 0 && head.length <= budget) return head;
+    if (head.length > 0) title = head;
+  }
+  title = title.replace(/, Idaho\b/g, ', ID');
+  if (title.length <= budget) return title;
+
+  // Drop a trailing qualifier or an interior filler before cutting the last
+  // content word off the title.
+  const trailing = new Set(['boise', 'homes', 'idaho', 'id']);
+  const filler = new Set(['a', 'an', 'the', 'for', 'at', 'guide']);
+  const bare = (word: string) => word.replace(/[^A-Za-z&]/g, '').toLowerCase();
+  let words = title.split(' ');
+  while (words.join(' ').length > budget && words.length > 3 && trailing.has(bare(words[words.length - 1]))) {
+    words.pop();
+  }
+  while (words.join(' ').length > budget && words.length > 3) {
+    let index = -1;
+    for (let i = words.length - 2; i >= 1; i--) {
+      if (filler.has(bare(words[i]))) {
+        index = i;
+        break;
+      }
+    }
+    if (index === -1) break;
+    words.splice(index, 1);
+  }
+  title = words.join(' ').replace(/[\s:|&,.-]+$/, '');
+  if (title.length <= budget && title.length >= 18) return title;
+
+  const cut = title.slice(0, budget).replace(/\s+\S*$/, '').replace(/[\s:|&,.-]+$/, '');
+  return cut.length >= 18 ? cut : title.slice(0, budget).trim();
+}
+
+/** Keep the authored topic, then fit the rendered title to 60 characters. */
 export function generateSafePageTitle(primary: string, suffix?: string): string {
   const title = primary.replace(/\s+/g, ' ').trim();
   const detail = suffix?.replace(/\s+/g, ' ').trim();
   if (detail) {
     const candidate = title + ' | ' + detail;
-    if (candidate.length + (' | ' + SITE_CONFIG.name).length <= 60) return candidate;
+    if (candidate.length + (' | ' + SITE_CONFIG.name).length <= 60) return indexedTitle(candidate);
   }
-  // Preserve the authored topic, including dates and qualifiers. A display
-  // length preference must not become a broken title in the document itself.
-  return title;
+  return indexedTitle(title);
 }
 
 /**
@@ -436,8 +493,8 @@ export const BUSINESS_INFO = {
   founderName: '',
   phone: SITE_CONFIG.phone,
   email: SITE_CONFIG.email,
-  // Street and ZIP are for off-site citations only. Public JSON-LD does not
-  // read them: it is a service-area locality (Meridian, ID, US) with no street.
+  // Full NAP for JSON-LD and citations. Visible pages stay city and state
+  // only: service-area business, no storefront.
   address: {
     street: SITE_CONFIG.address.street,
     city: SITE_CONFIG.address.city,

@@ -79,16 +79,38 @@ const CITY_WIKIPEDIA: Record<string, string> = {
 };
 
 /**
- * The only public JSON-LD address. Service-area business: locality only.
- * No street, no postal code, and no storefront. Region and country are
- * the codes ID and US. A page about another city uses areaServed.
+ * Public contractor type. HomeAndConstructionBusiness is the specific type;
+ * GeneralContractor stays so existing consumers of that type still match.
  */
-function serviceAreaPostalAddress() {
+const CONTRACTOR_TYPES = ['HomeAndConstructionBusiness', 'GeneralContractor'] as const;
+
+/**
+ * The registered Meridian NAP. This is a service-area business with no
+ * storefront: visible pages still show city and state only. JSON-LD carries
+ * the full postal address so the entity matches the citation record.
+ * A page about another city puts that city in areaServed, never in this address.
+ */
+function publicPostalAddress() {
   return {
     '@type': 'PostalAddress' as const,
-    addressLocality: 'Meridian',
+    streetAddress: BUSINESS_INFO.address.street,
+    addressLocality: BUSINESS_INFO.address.city,
     addressRegion: 'ID',
+    postalCode: BUSINESS_INFO.address.postalCode,
     addressCountry: 'US',
+  };
+}
+
+/** Named public contact. Not a founder node and not a second business. */
+function publicRepresentative() {
+  return {
+    '@type': 'ContactPoint' as const,
+    name: 'Nick Perkins',
+    contactType: 'Public representative',
+    telephone: BUSINESS_INFO.phone,
+    email: BUSINESS_INFO.email,
+    areaServed: 'US-ID',
+    availableLanguage: 'English',
   };
 }
 
@@ -102,7 +124,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'GeneralContractor',
+    '@type': [...CONTRACTOR_TYPES],
     name: BUSINESS_INFO.name,
     legalName: BUSINESS_INFO.legalName,
     description: `Design-build remodeling contractor serving ${city || 'Boise'} and the Treasure Valley, Idaho. Kitchen remodels, bathrooms, additions & whole-home renovations.`,
@@ -110,10 +132,11 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     logo: LOGO_URL,
     '@id': LOCALBUSINESS_ID,
     url: baseUrl,
-    parentOrganization: { '@id': ORG_ID },
+    parentOrganization: P5_PARENT_ORGANIZATION,
     telephone: BUSINESS_INFO.phone,
     email: BUSINESS_INFO.email,
-    address: serviceAreaPostalAddress(),
+    contactPoint: publicRepresentative(),
+    address: publicPostalAddress(),
     geo: {
       '@type': 'GeoCoordinates',
       latitude: coordinates.lat,
@@ -193,12 +216,13 @@ export function generateServiceSchema(serviceName: string, serviceDescription: s
     name: serviceName,
     description: serviceDescription,
     provider: {
-      '@type': 'GeneralContractor',
+      '@type': [...CONTRACTOR_TYPES],
       name: BUSINESS_INFO.name,
       telephone: BUSINESS_INFO.phone,
       email: BUSINESS_INFO.email,
       priceRange: '$$',
-      address: serviceAreaPostalAddress(),
+      address: publicPostalAddress(),
+      parentOrganization: { '@id': P5_ORG_ID },
     },
     // The page city is the service area. It is not a second PostalAddress.
     areaServed: city ? {
@@ -269,7 +293,7 @@ export function generateOrganizationSchema(): SchemaContext {
       : {}),
     telephone: BUSINESS_INFO.phone,
     email: BUSINESS_INFO.email,
-    address: serviceAreaPostalAddress(),
+    address: publicPostalAddress(),
     knowsAbout: [
       'kitchen remodeling',
       'bathroom remodeling',
@@ -281,13 +305,16 @@ export function generateOrganizationSchema(): SchemaContext {
       'Canyon County building permits',
     ],
     sameAs: BUSINESS_INFO.sameAs,
-    contactPoint: {
-      '@type': 'ContactPoint',
-      telephone: BUSINESS_INFO.phone,
-      contactType: 'Customer Service',
-      areaServed: 'US-ID',
-      availableLanguage: 'English',
-    },
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        telephone: BUSINESS_INFO.phone,
+        contactType: 'Customer Service',
+        areaServed: 'US-ID',
+        availableLanguage: 'English',
+      },
+      publicRepresentative(),
+    ],
   };
 }
 
@@ -303,7 +330,7 @@ export function generateReviewSchema(reviews: Array<{
 }>): SchemaContext {
   return {
     '@context': 'https://schema.org',
-    '@type': 'GeneralContractor',
+    '@type': [...CONTRACTOR_TYPES],
     '@id': LOCALBUSINESS_ID,
     name: BUSINESS_INFO.name,
     // AggregateRating is gated on a real, populated review count. Emitting a

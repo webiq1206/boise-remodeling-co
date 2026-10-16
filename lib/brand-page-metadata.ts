@@ -22,7 +22,7 @@ const COPY:Record<string,Record<string,Copy>>={
   "/blog/adu-cost-boise":{title:"Boise ADU Costs (2026)",description:"Compare Boise ADU costs for detached units, garage conversions and interior suites. Review utilities, site work, finish levels and permit considerations."},
   '/':{title:'Remodeling Contractor in Boise, ID',description:'Plan a kitchen, bathroom or whole-home remodel in Boise and the Treasure Valley. Explore design-build services, project scopes and budget guidance.'},
   '/services':{title:'Kitchen, Bath & Home Remodeling',description:'Explore kitchen, bathroom and whole-home remodeling, additions and ADUs in Boise and the Treasure Valley. See the scope of our design-build services.'},
-  '/about':{title:'About Our Boise Remodeling Team',description:'Learn how Boise Remodeling Co plans and manages Treasure Valley renovations, including project scopes, design decisions, communication and construction.'},
+  '/about':{title:'Design-build remodeler since 2020',description:'Design-build remodeler founded in 2020 and part of P5. Free in-home visit, written scope, workmanship guarantee, and Ada and Canyon permitting.'},
   '/contact':{title:'Contact Our Boise Remodeling Team',description:'Discuss your kitchen, bathroom or whole-home renovation with Boise Remodeling Co. Call our team or request a consultation for your Treasure Valley project.'}},
  handyman:{
   '/':{title:'Handyman & Home Repairs in Boise, ID',description:'Get help with repairs, installations and home maintenance in Boise and the Treasure Valley. Describe your project or send a repair list for an estimate.'},

@@ -6,6 +6,7 @@ import { Chip } from "./Chip";
 import type { CityData } from "@/shared/contentData";
 import { getCountyLabel } from "@/shared/contentData";
 import { areaPath } from "@/lib/seo-routes";
+import { contentImageAlt } from "@/shared/contentImageAlt";
 
 export interface AreaCardProps {
   city: CityData;
@@ -24,7 +25,7 @@ export function AreaCard({ city, imageSrc }: AreaCardProps) {
       <div className="relative aspect-[4/3] overflow-hidden">
         <Image
           src={imageSrc}
-          alt={`Remodeling in ${city.name}, Idaho`}
+          alt={contentImageAlt(imageSrc, `Residential street in ${city.name}`)}
           fill
           sizes="(max-width: 640px) 100vw, 50vw"
           className="object-cover img-brand-grade transition-transform duration-300 ease-out group-hover:scale-[1.02]"
