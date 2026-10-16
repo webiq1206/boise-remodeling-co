@@ -14,6 +14,7 @@ import {
   generateLocalBusinessSchema,
   generateOrganizationSchema,
   generateServiceSchema,
+  NICK_PERKINS_ID,
   P5_ORG_ID,
 } from '../lib/schema.ts';
 import { BUSINESS_INFO, generateSafePageTitle } from '../lib/seo.ts';
@@ -23,7 +24,7 @@ import { BLOG_POSTS } from '../shared/blogContent.ts';
 import { CITIES, SERVICES } from '../shared/contentData.ts';
 import { CONTENT_HUBS, categoryHubPath, guidePath, isCategoryHubIndexable } from '../shared/contentHubs.ts';
 import { GUIDE_PAGES } from '../shared/guideContent.ts';
-import { SITE_CONFIG } from '../shared/siteConfig.ts';
+import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 
 const BRAND = ' | Boise Remodeling Co';
 const AREAS = ['Boise', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'];
@@ -54,6 +55,15 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
   assert.equal((business.contactPoint as { name: string }).name, 'Nick Perkins');
   assert.equal((business.contactPoint as { contactType: string }).contactType, 'Public representative');
   assert.equal((business.contactPoint as { email: string }).email, 'hello@boiseremodeling.co');
+  assert.deepEqual(business.geo, { '@type': 'GeoCoordinates', latitude: 43.6515, longitude: -116.4444 });
+  assert.deepEqual(business.employee, {
+    '@type': 'Person',
+    '@id': 'https://p5homeco.com/#nick-perkins',
+    name: 'Nick Perkins',
+    jobTitle: 'Public representative',
+    worksFor: { '@id': 'https://p5homeco.com/#organization' },
+  });
+  assert.equal((business.employee as { '@id': string })['@id'], NICK_PERKINS_ID);
   assert.equal((business.parentOrganization as { '@id': string })['@id'], 'https://p5homeco.com/#organization');
   assert.equal((business.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
   assert.deepEqual(
@@ -67,6 +77,8 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
 
   const organization = generateOrganizationSchema();
   assert.equal((organization.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
+  assert.equal((organization.employee as { '@id': string })['@id'], NICK_PERKINS_ID);
+  assert.equal((organization.employee as { worksFor: { '@id': string } }).worksFor['@id'], P5_ORG_ID);
   assert.deepEqual(organization.sameAs, BUSINESS_INFO.sameAs);
   assert.deepEqual(organization.address, business.address);
   const contacts = organization.contactPoint as Array<{ contactType: string; name?: string }>;
@@ -212,6 +224,54 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /founded in 2020 and part of P5/);
+});
+
+test('phase-2 NAP, sister row, RE-10 links, and deferred HubSpot', () => {
+  const footerLine = 'Public representative: Nick Perkins · 4031 W Wapoot St, Meridian, ID 83646 · Service-area business, not a staffed storefront';
+  const footer = readFileSync('components/Footer.tsx', 'utf8');
+  assert.match(footer, /publicFooterLine\(\)/);
+  assert.match(footer, /<EmailLink/);
+  assert.match(footer, /Part of P5 Home Co/);
+  assert.match(footer, /Boise Construction Co/);
+  assert.match(footer, /Boise Handyman Co/);
+  assert.match(footer, /Boise Cabinet Co/);
+  assert.match(footer, /Boise ADU Co \(launching soon\)/);
+  assert.match(footer, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
+  assert.match(footer, /RE-10 repairs \(Boise Handyman Co\)/);
+  assert.equal(footer.includes('href: "/re-10-repairs-boise"'), false);
+  const contact = readFileSync('app/contact/page.tsx', 'utf8');
+  assert.match(contact, /Call, text, or email\. We come to you\./);
+  assert.match(contact, /never use high-pressure sales tactics/);
+  assert.match(contact, /publicFooterLine\(\)/);
+  assert.equal(contact.includes('Call, email, or visit'), false);
+  const email = readFileSync('components/EmailLink.tsx', 'utf8');
+  assert.match(email, /mailto:\$\{address\}/);
+  assert.equal(email.includes('use client'), false);
+  const hubspot = readFileSync('components/HubSpotScript.tsx', 'utf8');
+  assert.match(hubspot, /strategy="lazyOnload"/);
+  assert.match(hubspot, /247066159/);
+  assert.match(hubspot, /js-na2\.hs-scripts\.com/);
+  const hero = readFileSync('components/approved/ApprovedHomeHero.tsx', 'utf8');
+  assert.equal(hero.includes('use client'), false);
+  assert.match(hero, /fetchPriority="high"/);
+  assert.match(hero, /Boise home remodeling/);
+  const home = readFileSync('app/page.tsx', 'utf8');
+  assert.match(home, /hero=\{<ApprovedHomeHero/);
+  const css = readFileSync('app/globals.css', 'utf8');
+  assert.equal(/\.js \.reveal-init \{[^}]*opacity:\s*0/.test(css), false);
+  assert.match(css, /\.f-hero > img/);
+  assert.match(css, /\.interior-hero-image img/);
+  const llms = readFileSync('public/llms.txt', 'utf8');
+  const full = readFileSync('public/llms-full.txt', 'utf8');
+  for (const file of [llms, full]) {
+    assert.match(file, /Nick Perkins/);
+    assert.match(file, /4031 W Wapoot St/);
+    assert.match(file, /hello@boiseremodeling\.co/);
+    assert.match(file, /Last updated: 2026-10-16/);
+    assert.match(file, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
+    assert.equal(file.includes('/blog/category/treasure-valley-locations'), false);
+  }
+  assert.equal(publicFooterLine(), footerLine);
 });
 
 test('phase-1 copy is additive on the named pages', () => {

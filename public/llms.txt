@@ -2,6 +2,8 @@
 
 > Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. Serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell. Phone (208) 477-1169.
 
+Public representative: Nick Perkins. Service-area business based at 4031 W Wapoot St, Meridian, ID 83646 (not a staffed storefront). Phone (208) 477-1169. Email hello@boiseremodeling.co.
+
 Design-build means one accountable team handles design direction, estimating, Ada and Canyon County permitting, and construction under one contract, backed by a written scope before work starts and a workmanship guarantee at completion. Planning ranges come from an on-site estimator that prices the room, the scope and the finish level rather than a flat price per square foot; they are budget ranges, not quotes, and a firm proposal follows a free in-home visit.
 
 ## Services
@@ -14,7 +16,7 @@ Design-build means one accountable team handles design direction, estimating, Ad
 - [Basement Remodeling](https://boiseremodeling.co/services/basement-remodel): Finished basements and lower-level living space, from egress and framing to a fully finished suite.
 - [Outdoor Living & Decks](https://boiseremodeling.co/services/outdoor-living): Decks, covered patios, and outdoor kitchens that extend your living space into the yard.
 - [Aging-in-Place Remodeling](https://boiseremodeling.co/services/aging-in-place): Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.
-- [RE-10 / Inspection Repairs](https://boiseremodeling.co/re-10-repairs-boise): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.
+- [RE-10 repairs (Boise Handyman Co)](https://boisehandyman.co/re-10-repairs-boise): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.
 - [Estimate From Your Plans](https://boiseremodeling.co/remodel-plans-boise): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules on the sheets. Free, no obligation, and the homeowner confirms every measurement before anything is priced.
 - [All Services](https://boiseremodeling.co/services): plus city pages at /services/{service}/{city} and [Service Areas](https://boiseremodeling.co/areas).
 
@@ -49,7 +51,7 @@ Design-build means one accountable team handles design direction, estimating, Ad
 - [Remodeling Process](https://boiseremodeling.co/blog/category/remodeling-process)
 - [ROI & Home Value](https://boiseremodeling.co/blog/category/remodeling-roi)
 - [Outdoor Living](https://boiseremodeling.co/blog/category/outdoor-living)
-- [Treasure Valley Locations](https://boiseremodeling.co/blog/category/treasure-valley-locations)
+- [Treasure Valley Locations](https://boiseremodeling.co/areas)
 
 ## About and contact
 
@@ -70,4 +72,4 @@ Design-build means one accountable team handles design direction, estimating, Ad
 - [RSS feed](https://boiseremodeling.co/feed.xml): guides and articles, newest first, with publication and revision dates.
 - [Full text for LLMs](https://boiseremodeling.co/llms-full.txt): expanded reference copy of the core facts.
 
-Last updated: 2026-09-08.
+Last updated: 2026-10-16.
