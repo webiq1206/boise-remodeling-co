@@ -47,7 +47,10 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
   const seo = CITY_SEO_DATA[city.name];
   const county = getCountyLabel(city.county);
   const path = areaPath(city.slug);
-  const overview = getAreaIntro(city);
+  const answerFirst = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
+    ? `Boise Remodeling Co is a design-build remodeling contractor in ${city.name}, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. The first figures are budget ranges, not quotes. `
+    : '';
+  const overview = `${answerFirst}${getAreaIntro(city)}`;
   const images = getAreaImageSet(city.slug);
   const localNote = seo
     ? `We serve ${city.name} homeowners across ${seo.neighborhoods.slice(0, 3).join(', ')}, and all of ${county}. Confirm the permitting authority for the project address before applying.`
@@ -63,10 +66,15 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         `Boise Remodeling Co is a full-service design-build remodeler serving ${city.name} and the surrounding ${county} area. Whether you are updating a single room or reimagining your whole home, every project runs through one accountable team - from the first in-home consultation and design, through permits, construction, and the final walkthrough.`,
         `Explore the specific services we provide for ${city.name} homeowners below. Each links to a dedicated ${city.name} service page with local details, typical scope, and planning guidance.`,
       ],
-      links: SERVICES.map((s) => ({
-        label: `${s.name} in ${city.name}`,
-        href: `/services/${s.slug}/${city.slug}`,
-      })),
+      links: [
+        ...SERVICES.map((s) => ({
+          label: `${s.name} in ${city.name}`,
+          href: `/services/${s.slug}/${city.slug}`,
+        })),
+        { label: 'Kitchen remodel', href: '/services/kitchen-remodel' },
+        { label: 'Bathroom remodel', href: '/services/bathroom-remodel' },
+        { label: 'Room addition', href: '/services/room-addition' },
+      ],
     },
     {
       heading: `Neighborhoods and homes we work on in ${city.name}`,
@@ -109,7 +117,9 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         }
       : undefined;
 
-  const h1 = `Remodeling Contractor in ${city.name}, Idaho`;
+  const h1 = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
+    ? `Remodeling contractors in ${city.name}, Idaho`
+    : `Remodeling Contractor in ${city.name}, Idaho`;
   const faqs = [
     ...AREA_PAGE_FAQS,
     {

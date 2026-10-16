@@ -25,12 +25,9 @@ export const SITE_CONFIG = {
   phoneSmsHref: `sms:${process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL}`,
   email: process.env.NEXT_PUBLIC_EMAIL ?? DEFAULT_EMAIL,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL,
-  // Canonical NAP. This is the owner's HOME address, so the street is NEVER
-  // rendered on-page and is NOT emitted in public JSON-LD (which is view-source
-  // visible). It exists here only to supply the full NAP to Google Business
-  // Profile and off-site citation submissions. Public surfaces (schema, footer,
-  // contact) show city/state only: Meridian, ID. Google gets the full street
-  // via GBP, where a service-area business hides the address publicly.
+  // Canonical NAP. Visible pages (footer, contact) show Meridian, ID only:
+  // service-area business, no storefront. Public JSON-LD uses the full street,
+  // city, state, and ZIP so the entity matches this record.
   address: {
     street: "4031 W Wapoot St",
     city: "Meridian",

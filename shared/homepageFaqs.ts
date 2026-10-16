@@ -5,6 +5,10 @@ export interface HomepageFaq {
 
 export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
+    q: "Remodeling contractors in Boise",
+    a: "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes.",
+  },
+  {
     q: "How are you different from other remodeling companies in the Treasure Valley?",
     a: "We operate as a true design-build firm with one accountable team from first visit to final walkthrough, not separate designers and contractors you have to coordinate. You receive a written scope with documented finish selections before construction, weekly written Friday updates, and written change orders before any additional work. We protect your home with daily dust barriers and floor protection, communicate schedule changes early, and handle Ada and Canyon County permits in-house. We stand behind our work with a final walkthrough and a written workmanship guarantee. Our free consultation focuses on planning guidance, not commission-driven sales pressure.",
   },

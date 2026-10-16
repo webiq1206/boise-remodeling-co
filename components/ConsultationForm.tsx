@@ -322,7 +322,8 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         {/* Stacked emblem confirms the brand on the request-received state */}
         <img
           src="/brand/svg/icon/boise-remodeling-co-icon-bone.svg"
-          alt="Boise Remodeling Co emblem"
+          alt=""
+          aria-hidden="true"
           width={48}
           height={48}
           className="h-12 w-12"

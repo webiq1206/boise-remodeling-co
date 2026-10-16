@@ -10,6 +10,9 @@
  *   KEY_LOCATION    (default: https://boiseremodeling.co/f9e329f80c1a4609bd70d590f64e0544.txt)
  */
 
+import { execSync } from 'node:child_process';
+import { urlsForChangedFiles } from './indexnow-urls.mjs';
+
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY ?? 'f9e329f80c1a4609bd70d590f64e0544';
 const HOST = process.env.HOST ?? 'boiseremodeling.co';
 const SITEMAP_URL = process.env.SITEMAP_URL ?? 'https://boiseremodeling.co/sitemap.xml';
@@ -102,10 +105,57 @@ async function collectSitemapUrls(url, visited = new Set()) {
   return urls;
 }
 
+function gitChangedFiles() {
+  try {
+    return execSync('git diff --name-only HEAD~1 HEAD', { encoding: 'utf8' })
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+  } catch (err) {
+    console.warn(`[IndexNow] Could not read git diff for changed URLs: ${err.message}`);
+    return [];
+  }
+}
+
+async function contentCatalogs() {
+  try {
+    const { BLOG_POSTS } = await import('../shared/blogContent.ts');
+    const { GUIDE_PAGES } = await import('../shared/guideContent.ts');
+    const { guidePath } = await import('../shared/contentHubs.ts');
+    return {
+      blog: BLOG_POSTS.map((post) => `/blog/${post.slug}`),
+      guides: GUIDE_PAGES.map((guide) => guidePath(guide.slug)),
+    };
+  } catch (err) {
+    console.warn(`[IndexNow] Content catalog unavailable (${err.message}). Blog and guide URLs are omitted.`);
+    return { blog: [], guides: [] };
+  }
+}
+
+function absoluteUrl(path) {
+  if (path === '/') return `https://${HOST}`;
+  return `https://${HOST}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 /**
  * Main entry point.
+ * `--changed` submits only URLs implied by the last commit, which is what a
+ * deploy should ping. Without the flag the script still walks the sitemap.
  */
 async function main() {
+  if (process.argv.includes('--changed')) {
+    const files = gitChangedFiles();
+    const catalogs = await contentCatalogs();
+    const paths = urlsForChangedFiles(files, catalogs);
+    console.log(`[IndexNow] Changed files: ${files.length}`);
+    console.log(`[IndexNow] Changed URLs: ${paths.length}`);
+    if (paths.length === 0) {
+      console.log('[IndexNow] No changed URLs to submit. Exiting.');
+      return;
+    }
+    await submitUrlList(paths.map(absoluteUrl));
+    return;
+  }
   console.log(`[IndexNow] Host: ${HOST}`);
   console.log(`[IndexNow] Key:  ${INDEXNOW_KEY}`);
   console.log(`[IndexNow] Key location: ${KEY_LOCATION}`);
@@ -138,7 +188,13 @@ async function main() {
     process.exit(0);
   }
 
-  // Submit to IndexNow
+  await submitUrlList(hostUrls);
+}
+
+/**
+ * @param {string[]} hostUrls absolute URLs on this host
+ */
+async function submitUrlList(hostUrls) {
   const payload = {
     host: HOST,
     key: INDEXNOW_KEY,

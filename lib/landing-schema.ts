@@ -27,12 +27,9 @@ export function landingServiceSchema(
 }
 
 export function landingAreaBusinessSchema(cityName: string) {
-  const schema = generateLocalBusinessSchema(cityName);
-  // Area pages name the city through areaServed. They do not carry a
-  // PostalAddress for that city. The Meridian locality stays on the
-  // homepage, contact, and organization nodes.
-  delete schema.address;
-  return schema;
+  // The PostalAddress stays the Meridian NAP. The page city is named in the
+  // description. areaServed remains the eight-city service area.
+  return generateLocalBusinessSchema(cityName);
 }
 
 export function landingSpeakable(path: string, name: string) {
