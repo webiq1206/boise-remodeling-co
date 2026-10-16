@@ -436,8 +436,8 @@ export const BUSINESS_INFO = {
   founderName: '',
   phone: SITE_CONFIG.phone,
   email: SITE_CONFIG.email,
-  // Canonical NAP sourced from SITE_CONFIG. Street + ZIP feed structured data
-  // and off-site citations; locality (Meridian, Idaho) stays consistent.
+  // Street and ZIP are for off-site citations only. Public JSON-LD does not
+  // read them: it is a service-area locality (Meridian, ID, US) with no street.
   address: {
     street: SITE_CONFIG.address.street,
     city: SITE_CONFIG.address.city,

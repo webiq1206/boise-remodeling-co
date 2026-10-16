@@ -37,6 +37,14 @@ import Link from "next/link";
 const PATH = "/re-10-repairs-boise";
 
 /**
+ * Canonical is the Boise Handyman copy of this page. Domain is
+ * boisehandyman.co (family site list and live sitemap path
+ * /re-10-repairs-boise). Link rel=canonical only. No redirect until
+ * that choice is confirmed.
+ */
+const CANONICAL = "https://boisehandyman.co/re-10-repairs-boise";
+
+/**
  * Title and description are length-budgeted deliberately.
  *
  * The first draft ran to 80 characters once the brand was appended, which
@@ -54,7 +62,7 @@ const DESCRIPTION =
 export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: TITLE_WITH_BRAND },
   description: DESCRIPTION,
-  alternates: { canonical: buildCanonical(PATH) },
+  alternates: { canonical: CANONICAL },
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
