@@ -47,6 +47,7 @@ export default function EstimatePage() {
   return (
     <>
       <JsonLd data={schemas} />
+      <h1 className="sr-only">Remodel Cost Estimator</h1>
 
       {/* ONE SCREEN. The estimator is the page: the conversational app frame
           mounts beneath the site header and owns everything below it, with its

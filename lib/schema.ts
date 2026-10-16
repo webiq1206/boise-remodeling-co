@@ -119,17 +119,28 @@ function publicEmployee() {
   };
 }
 
-/** Named public contact. Not a founder node and not a second business. */
+/**
+ * Schema.org telephone. Visible pages keep the display format in
+ * BUSINESS_INFO.phone. JSON-LD uses E.164 only.
+ */
+const SCHEMA_TELEPHONE = '+1-208-477-1169';
+
+/** One family ContactPoint. The Person jobTitle stays Public representative. */
 function publicRepresentative() {
   return {
     '@type': 'ContactPoint' as const,
     name: 'Nick Perkins',
-    contactType: 'Public representative',
-    telephone: BUSINESS_INFO.phone,
+    contactType: 'customer service',
+    telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     areaServed: 'US-ID',
     availableLanguage: 'English',
   };
+}
+
+/** The home-page entity sentence. City pages pass their own city name. */
+export function contractorDescription(city = 'Boise'): string {
+  return `Design-build remodeling contractor serving ${city} and the Treasure Valley, Idaho. Kitchen remodels, bathrooms, additions & whole-home renovations.`;
 }
 
 export function generateLocalBusinessSchema(city?: string): SchemaContext {
@@ -142,13 +153,13 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     '@type': [...CONTRACTOR_TYPES],
     name: BUSINESS_INFO.name,
     legalName: BUSINESS_INFO.legalName,
-    description: `Design-build remodeling contractor serving ${city || 'Boise'} and the Treasure Valley, Idaho. Kitchen remodels, bathrooms, additions & whole-home renovations.`,
+    description: contractorDescription(city),
     image: `${baseUrl}/images/hero-great-room.webp`,
     logo: LOGO_URL,
     '@id': LOCALBUSINESS_ID,
     url: baseUrl,
     parentOrganization: P5_PARENT_ORGANIZATION,
-    telephone: BUSINESS_INFO.phone,
+    telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     contactPoint: publicRepresentative(),
     employee: publicEmployee(),
@@ -234,7 +245,7 @@ export function generateServiceSchema(serviceName: string, serviceDescription: s
     provider: {
       '@type': [...CONTRACTOR_TYPES],
       name: BUSINESS_INFO.name,
-      telephone: BUSINESS_INFO.phone,
+      telephone: SCHEMA_TELEPHONE,
       email: BUSINESS_INFO.email,
       priceRange: '$$',
       address: publicPostalAddress(),
@@ -307,7 +318,7 @@ export function generateOrganizationSchema(): SchemaContext {
           },
         }
       : {}),
-    telephone: BUSINESS_INFO.phone,
+    telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     employee: publicEmployee(),
     address: publicPostalAddress(),
@@ -322,16 +333,7 @@ export function generateOrganizationSchema(): SchemaContext {
       'Canyon County building permits',
     ],
     sameAs: BUSINESS_INFO.sameAs,
-    contactPoint: [
-      {
-        '@type': 'ContactPoint',
-        telephone: BUSINESS_INFO.phone,
-        contactType: 'Customer Service',
-        areaServed: 'US-ID',
-        availableLanguage: 'English',
-      },
-      publicRepresentative(),
-    ],
+    contactPoint: publicRepresentative(),
   };
 }
 

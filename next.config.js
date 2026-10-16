@@ -80,6 +80,13 @@ const nextConfig = {
       permanent: true,
     });
 
+    // The locations category has no articles and was a 307 to /areas.
+    // 301 it so the URL is not a second locations index.
+    redirects.push(
+      { source: '/blog/category/treasure-valley-locations', destination: '/areas', statusCode: 301 },
+      { source: '/blog/category/treasure-valley-locations/', destination: '/areas', statusCode: 301 },
+    );
+
     // Legacy page aliases → canonical BRC routes
     const pageAliases = {
       '/about-us': '/about',

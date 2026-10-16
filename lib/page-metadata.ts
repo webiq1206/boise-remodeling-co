@@ -145,12 +145,12 @@ const AREA_ANSWER: Record<string, { title: string; description: string }> = {
   eagle: {
     title: 'Remodeling contractors in Eagle, ID',
     description:
-      'Design-build remodeling in Eagle, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Eagle kitchen remodeling. Design-build, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
   },
   boise: {
     title: 'Remodeling contractors in Boise, ID',
     description:
-      'Design-build remodeling in Boise, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Kitchen and bathroom remodeling, Boise, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
   },
   nampa: {
     title: 'Remodeling contractors in Nampa, ID',

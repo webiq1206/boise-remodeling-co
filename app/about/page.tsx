@@ -202,12 +202,19 @@ export default function AboutPage() {
                     >
                       choosing a remodeling contractor in Boise
                     </Link>{' '}
-                    or explore our most requested service,{' '}
+                    or explore{' '}
                     <Link
                       href="/services/kitchen-remodel"
                       className="text-foreground underline underline-offset-2 hover:text-accent-legible"
                     >
                       kitchen remodeling in Boise
+                    </Link>
+                    {' '}and{' '}
+                    <Link
+                      href="/services/bathroom-remodel"
+                      className="text-foreground underline underline-offset-2 hover:text-accent-legible"
+                    >
+                      bathroom remodeling in Boise
                     </Link>
                     .
                   </p>
