@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 import { withBrandPageMetadata } from '../lib/brand-page-metadata.ts';
 import { urlsForChangedFiles } from '../scripts/indexnow-urls.mjs';
@@ -226,7 +226,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /founded in 2020 and part of P5/);
 });
 
-test('phase-2 NAP, sister row, RE-10 links, and deferred HubSpot', () => {
+test('phase-2 NAP, sister row, and RE-10 links', () => {
   const footerLine = 'Public representative: Nick Perkins · 4031 W Wapoot St, Meridian, ID 83646 · Service-area business, not a staffed storefront';
   const footer = readFileSync('components/Footer.tsx', 'utf8');
   assert.match(footer, /publicFooterLine\(\)/);
@@ -247,10 +247,10 @@ test('phase-2 NAP, sister row, RE-10 links, and deferred HubSpot', () => {
   const email = readFileSync('components/EmailLink.tsx', 'utf8');
   assert.match(email, /mailto:\$\{address\}/);
   assert.equal(email.includes('use client'), false);
-  const hubspot = readFileSync('components/HubSpotScript.tsx', 'utf8');
-  assert.match(hubspot, /strategy="lazyOnload"/);
-  assert.match(hubspot, /247066159/);
-  assert.match(hubspot, /js-na2\.hs-scripts\.com/);
+  const layout = readFileSync('app/layout.tsx', 'utf8');
+  assert.equal(layout.includes('HubSpot'), false);
+  assert.equal(layout.includes('hs-scripts.com'), false);
+  assert.equal(existsSync('components/HubSpotScript.tsx'), false);
   const hero = readFileSync('components/approved/ApprovedHomeHero.tsx', 'utf8');
   assert.equal(hero.includes('use client'), false);
   assert.match(hero, /fetchPriority="high"/);

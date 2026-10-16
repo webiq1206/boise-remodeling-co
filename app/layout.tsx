@@ -9,7 +9,6 @@ import { Providers } from '@/components/Providers'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { SITE_TAGLINE } from '@/shared/siteContent'
 import { GoogleAnalytics } from '@/components/GoogleAnalytics'
-import { HubSpotScript } from '@/components/HubSpotScript'
 import {MarketingAttribution} from '@/components/MarketingAttribution'
 import {Suspense} from 'react'
 import { MetaPixel } from '@/components/MetaPixel'
@@ -148,7 +147,6 @@ export default function RootLayout({
           <AssistantWidget />
         </Providers>
         <GoogleAnalytics />
-        <HubSpotScript />
         <Suspense fallback={null}><MarketingAttribution /></Suspense>
         <MetaPixel />
         <MicrosoftClarity />
