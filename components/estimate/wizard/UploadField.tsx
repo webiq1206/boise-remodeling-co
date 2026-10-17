@@ -131,6 +131,7 @@ export function UploadField({
         </div>
 
         <input
+          data-clarity-mask="True"
           ref={pickerRef}
           type="file"
           multiple
@@ -144,6 +145,7 @@ export function UploadField({
         />
         {allowCamera ? (
           <input
+            data-clarity-mask="True"
             ref={cameraRef}
             type="file"
             multiple
