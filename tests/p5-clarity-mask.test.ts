@@ -15,18 +15,21 @@ type FakeNode = {
   tag: string;
   children: FakeNode[];
   attrs: Map<string, string>;
+  parentElement: FakeNode | null;
   matches: (selector: string) => boolean;
   querySelectorAll: (selector: string) => FakeNode[];
   setAttribute: (name: string, value: string) => void;
+  getAttribute: (name: string) => string | null;
 };
 
-function el(tag: string, children: FakeNode[] = []): FakeNode {
-  const attrs = new Map<string, string>();
+function el(tag: string, children: FakeNode[] = [], attrsInit: Record<string, string> = {}): FakeNode {
+  const attrs = new Map<string, string>(Object.entries(attrsInit));
   const node: FakeNode = {
     nodeType: 1,
     tag,
     children,
     attrs,
+    parentElement: null,
     matches(selector: string) {
       return selector.split(',').map((part) => part.trim()).includes(tag);
     },
@@ -44,7 +47,11 @@ function el(tag: string, children: FakeNode[] = []): FakeNode {
     setAttribute(name: string, value: string) {
       attrs.set(name, value);
     },
+    getAttribute(name: string) {
+      return attrs.get(name) ?? null;
+    },
   };
+  for (const child of children) child.parentElement = node;
   return node;
 }
 
@@ -104,9 +111,13 @@ test('every form field is masked for Clarity', () => {
   const script = clarityFieldMaskScript();
   assert.match(script, /data-clarity-mask/);
   assert.match(script, /"True"/);
-  assert.match(script, /input, textarea, select/);
+  assert.equal(CLARITY_FIELD_SELECTOR, 'form,input,textarea,select');
+  assert.match(script, /form,input,textarea,select/);
   assert.match(script, /MutationObserver/);
+  assert.match(script, /addedNodes/);
   assert.match(script, /childList:true,subtree:true/);
+  const observer = script.slice(script.indexOf('MutationObserver'));
+  assert.equal(observer.includes('mask(document)'), false);
 
   const layout = readFileSync(new URL('../app/layout.tsx', import.meta.url), 'utf8');
   assert.match(layout, /clarity-field-mask/);
@@ -140,4 +151,42 @@ test('every form field is masked for Clarity', () => {
   assert.match(estimator, /<textarea\b/);
   assert.match(estimator, /<select\b/);
   assert.equal(shared.has('components/P5Estimator.tsx'), true);
+});
+
+test('a form ancestor is masked so echoed text and suggestions are covered', () => {
+  const suggestions = el('ul');
+  const form = el('form', [el('input', [], { type: 'text' }), suggestions]);
+  applyClarityMask(form);
+  assert.equal(form.attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
+  assert.equal(suggestions.attrs.has(CLARITY_MASK_ATTRIBUTE), false);
+
+  const label = el('label', [el('input', [], { type: 'radio' })]);
+  const wrapped = el('form', [label]);
+  applyClarityMask(wrapped);
+  assert.equal(wrapped.attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
+  assert.equal(label.attrs.has(CLARITY_MASK_ATTRIBUTE), false);
+});
+
+test('a checkbox with no masked ancestor masks its parent', () => {
+  const already = el('input', [], { type: 'text' });
+  const parent = el('div', [el('input', [], { type: 'checkbox' })]);
+  applyClarityMask(parent);
+  assert.equal(parent.attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
+  assert.equal(parent.children[0].attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
+  assert.equal(already.attrs.has(CLARITY_MASK_ATTRIBUTE), false);
+
+  for (const type of ['radio', 'range', 'button']) {
+    const holder = el('div', [el('input', [], { type })]);
+    applyClarityMask(holder);
+    assert.equal(holder.attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE, type);
+  }
+});
+
+test('the assistant transcript container is masked', () => {
+  const source = readFileSync(new URL('../components/assistant/AssistantWidget.tsx', import.meta.url), 'utf8');
+  const start = source.indexOf('ref={logRef}');
+  assert.ok(start > 0);
+  const tag = source.slice(source.lastIndexOf('<', start), source.indexOf('>', start) + 1);
+  assert.match(tag, /role="log"/);
+  assert.match(tag, /data-clarity-mask="True"/);
 });

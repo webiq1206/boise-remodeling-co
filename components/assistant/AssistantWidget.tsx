@@ -223,7 +223,7 @@ export function AssistantWidget() {
             </button>
           </div>
 
-          <div ref={logRef} role="log" aria-live="polite" className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          <div ref={logRef} role="log" aria-live="polite" data-clarity-mask="True" className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
             <Bubble role="assistant" content={GREETING} />
             {messages.map((m, i) => (
               <Bubble key={i} role={m.role} content={m.content} notice={m.notice} />
