@@ -275,8 +275,15 @@ export function P5Estimator({defaultService='',entryLabel,headingAs='h1',project
         top=Math.max(top,rect.bottom);
       }
       setTopInset(Math.round(top));
+      let bottom=0;
+      const registration=document.querySelector<HTMLElement>('[data-registration-footer]');
+      if(registration){
+        const rect=registration.getBoundingClientRect();
+        if(rect.height>0&&rect.bottom>=window.innerHeight-1)bottom=Math.max(bottom,Math.round(window.innerHeight-rect.top));
+      }
       const vv=window.visualViewport;
-      if(vv){const gap=window.innerHeight-(vv.height+vv.offsetTop);setBottomInset(gap>40?Math.round(gap):0);}
+      if(vv){const gap=window.innerHeight-(vv.height+vv.offsetTop);if(gap>40)bottom=Math.max(bottom,Math.round(gap));}
+      setBottomInset(bottom);
     };
     // Marketing pages use smooth scrolling. Measure only after an immediate
     // reset, or a sticky site header can still be above the viewport and the

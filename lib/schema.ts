@@ -161,6 +161,17 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     '@id': LOCALBUSINESS_ID,
     url: baseUrl,
     parentOrganization: P5_PARENT_ORGANIZATION,
+    hasCredential: {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'registration',
+      name: 'Idaho Registered Contractor',
+      identifier: '8381215',
+      recognizedBy: {
+        '@type': 'GovernmentOrganization',
+        name: 'Idaho Division of Occupational and Professional Licenses',
+        url: 'https://dopl.idaho.gov/con/',
+      },
+    },
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     contactPoint: publicRepresentative(),

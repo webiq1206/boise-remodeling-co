@@ -1,0 +1,57 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import test from 'node:test';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Footer } from '../components/Footer.tsx';
+import { RegistrationLine, REGISTRATION_LINE, DOPL_LICENSE_SEARCH, registrationPresentation } from '../components/RegistrationLine.tsx';
+import { generateLocalBusinessSchema } from '../lib/schema.ts';
+import { getAllSiteUrls } from '../lib/siteUrls.ts';
+
+(globalThis as typeof globalThis & { React: typeof React }).React = React;
+
+test('every sitemap page shows the registration line, plain text on the estimate funnel', () => {
+  const paths = getAllSiteUrls().map((entry) => entry.path);
+  assert.ok(paths.includes('/'));
+  assert.ok(paths.includes('/areas/boise'));
+  assert.ok(paths.includes('/estimate'));
+  for (const path of paths) {
+    const mode = registrationPresentation(path);
+    assert.notEqual(mode, 'hidden', path);
+    if (path === '/estimate' || path.startsWith('/estimate/')) {
+      assert.equal(mode, 'plain', path);
+    }
+  }
+  assert.equal(registrationPresentation('/'), 'link');
+  assert.equal(registrationPresentation('/areas/boise'), 'link');
+  assert.equal(registrationPresentation('/estimate'), 'plain');
+  assert.equal(registrationPresentation('/estimate/scope'), 'plain');
+});
+
+test('the footer links the registration line and the funnel prints it as plain text', () => {
+  const linked = renderToStaticMarkup(React.createElement(Footer));
+  assert.match(linked, /Idaho Registered Contractor #8381215/);
+  assert.match(linked, new RegExp(DOPL_LICENSE_SEARCH.replace(/[?]/g, '\\?')));
+  assert.equal(linked.includes('License details available upon request'), false);
+  assert.equal(/8381215\s*\(/.test(linked), false);
+  assert.equal(linked.includes('Easy Home'), false);
+
+  const plain = renderToStaticMarkup(React.createElement(RegistrationLine, { plain: true }));
+  assert.equal(plain.includes(REGISTRATION_LINE), true);
+  assert.equal(plain.includes('<a'), false);
+  assert.equal(plain.includes('edopl.idaho.gov'), false);
+
+  const source = readFileSync('components/RegistrationLine.tsx', 'utf8');
+  assert.equal(source.includes('process.env'), false);
+  assert.equal(source.includes(REGISTRATION_LINE), true);
+});
+
+test('local business schema carries hasCredential identifier 8381215', () => {
+  for (const city of [undefined, 'Boise', 'Eagle'] as const) {
+    const business = generateLocalBusinessSchema(city);
+    const credential = business.hasCredential as { identifier?: string; name?: string };
+    assert.equal(credential.identifier, '8381215');
+    assert.equal(credential.name, 'Idaho Registered Contractor');
+    assert.equal(JSON.stringify(business).includes('8381215'), true);
+  }
+});
