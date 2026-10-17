@@ -99,8 +99,23 @@ export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: 
       // Ignore; in-memory guard is enough for this page load.
     }
   }
-  applyGoogleAdsUserData(contactFromStoredDraft(dedupeKey));
-  gtag("event", "conversion", googleAdsLeadParams(ctx, dedupeKey));
+  const contact = contactFromStoredDraft(dedupeKey);
+  const params = googleAdsLeadParams(ctx, dedupeKey);
+  if (!suppressionCheckNeeded(contact)) {
+    applyGoogleAdsUserData(contact);
+    gtag("event", "conversion", params);
+    return true;
+  }
+  // The shared estimator cannot read a new response field. Ask the server, then set user_data, then convert.
+  void enhancedConversionsAllowedByServer(contact).then(
+    (allow) => {
+      if (allow) applyGoogleAdsUserData(contact);
+      gtag("event", "conversion", params);
+    },
+    () => {
+      gtag("event", "conversion", params);
+    },
+  );
   return true;
 }
 
@@ -143,6 +158,33 @@ export function googleAdsUserData(contact: GoogleAdsLeadContact = {}): Record<st
     payload.address = address;
   }
   return Object.keys(payload).length > 0 ? payload : null;
+}
+
+function suppressionCheckNeeded(contact?: GoogleAdsLeadContact): contact is GoogleAdsLeadContact {
+  return Boolean((contact?.email ?? "").trim() || (contact?.phone ?? "").trim());
+}
+
+/** Server boolean from the form-submit check. Missing fetch skips user_data and still lets the caller convert. */
+export function enhancedConversionsAllowedByServer(contact: GoogleAdsLeadContact): Promise<boolean> {
+  const fetchFn = (window as unknown as { fetch?: typeof fetch }).fetch;
+  if (typeof fetchFn !== "function") return Promise.resolve(false);
+  const controller = typeof AbortController === "function" ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), 1500) : null;
+  return fetchFn("/api/enhanced-conversions/allow", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: contact.email ?? "", phone: contact.phone ?? "" }),
+    ...(controller ? { signal: controller.signal } : {}),
+  })
+    .then(async (response) => {
+      if (!response.ok) return false;
+      const body = (await response.json()) as { allowEnhancedConversions?: unknown };
+      return body?.allowEnhancedConversions === true;
+    })
+    .catch(() => false)
+    .finally(() => {
+      if (timer !== null) clearTimeout(timer);
+    });
 }
 
 export function applyGoogleAdsUserData(contact?: GoogleAdsLeadContact | null): boolean {

@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import {
   applyGoogleAdsUserData,
+  GOOGLE_ADS_LEAD_LABEL,
   googleAdsUserData,
   trackGoogleAdsLeadConversion,
 } from "../lib/googleAdsConversion.ts";
@@ -21,7 +22,7 @@ function restore(name: "window" | "navigator", prior: PropertyDescriptor | undef
   else delete (globalThis as Record<string, unknown>)[name];
 }
 
-function withBrowser(run: (calls: unknown[][]) => void, options: { denied?: boolean; disabled?: boolean; webdriver?: boolean } = {}) {
+function installBrowser(options: { denied?: boolean; disabled?: boolean; webdriver?: boolean; fetch?: typeof fetch } = {}) {
   const priorWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
   const priorNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
   const calls: unknown[][] = [];
@@ -38,19 +39,51 @@ function withBrowser(run: (calls: unknown[][]) => void, options: { denied?: bool
     dataLayer: options.denied ? [["consent", "update", { ad_user_data: "denied" }]] : [],
     gtag: (...args: unknown[]) => calls.push(args),
     setTimeout,
+    fetch: options.fetch,
   };
   Object.defineProperty(globalThis, "window", { value: fakeWindow, configurable: true });
   Object.defineProperty(globalThis, "navigator", {
     value: { webdriver: options.webdriver === true, doNotTrack: "0", globalPrivacyControl: false },
     configurable: true,
   });
+  return {
+    calls,
+    restore() {
+      restore("window", priorWindow);
+      restore("navigator", priorNavigator);
+    },
+  };
+}
+
+function withBrowser(run: (calls: unknown[][]) => void, options: { denied?: boolean; disabled?: boolean; webdriver?: boolean; fetch?: typeof fetch } = {}) {
+  const installed = installBrowser(options);
   try {
-    run(calls);
+    run(installed.calls);
   } finally {
-    restore("window", priorWindow);
-    restore("navigator", priorNavigator);
+    installed.restore();
   }
-  return calls;
+  return installed.calls;
+}
+
+async function withBrowserAsync(run: (calls: unknown[][]) => Promise<void>, options: { denied?: boolean; disabled?: boolean; webdriver?: boolean; fetch?: typeof fetch } = {}) {
+  const installed = installBrowser(options);
+  try {
+    await run(installed.calls);
+  } finally {
+    installed.restore();
+  }
+  return installed.calls;
+}
+
+function allowFetch(allow: boolean): typeof fetch {
+  return (async () => ({
+    ok: true,
+    json: async () => ({ allowEnhancedConversions: allow }),
+  })) as unknown as typeof fetch;
+}
+
+async function flushEnhancedConversionChecks(): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 test("user data keeps normalized email, a 10-digit phone, name parts and ZIP, and drops everything else", () => {
@@ -113,8 +146,27 @@ test("denied consent and a disabled tag skip user_data and the conversion still 
   assert.equal(disabled.length, 0);
 });
 
-test("an estimator finish that stored a lead sets user_data from contact fields only", () => {
+test("a suppressed inquiry skips user_data and still records the lead and the conversion", () => {
+  const inquiryId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
   const calls = withBrowser(() => {
+    trackAcceptedInquiry({ ...accepted, inquiryId, allowEnhancedConversions: false }, "addition", 0, {
+      email: "ada@example.com",
+      phone: "2085550100",
+      name: "Ada Lovelace",
+      postalCode: "83702",
+    });
+  });
+  assert.equal(calls.some((call) => call[0] === "set"), false);
+  const lead = calls.find((call) => call[1] === "generate_lead");
+  const conversion = calls.find((call) => call[1] === "conversion");
+  assert.ok(lead);
+  assert.equal((lead?.[2] as { inquiry_id: string }).inquiry_id, inquiryId);
+  assert.equal((conversion?.[2] as { transaction_id: string; send_to: string }).transaction_id, inquiryId);
+  assert.equal((conversion?.[2] as { send_to: string }).send_to, GOOGLE_ADS_LEAD_LABEL);
+});
+
+test("an estimator finish that stored a lead sets user_data from contact fields only", async () => {
+  const calls = await withBrowserAsync(async () => {
     const draft = {
       id: "11111111-1111-4111-8111-111111111111",
       text: "Replace the kitchen and describe the island.",
@@ -125,7 +177,8 @@ test("an estimator finish that stored a lead sets user_data from contact fields 
     window.localStorage.setItem("p5-project-draft-v2", JSON.stringify(draft));
     assert.equal(trackGoogleAdsLeadConversion({ service: "kitchen" }, `estimator:${draft.id}`), true);
     assert.equal(trackGoogleAdsLeadConversion({ service: "kitchen" }, `intake:${draft.intake.projectId}`), true);
-  });
+    await flushEnhancedConversionChecks();
+  }, { fetch: allowFetch(true) });
   const sets = calls.filter((call) => call[0] === "set" && call[1] === "user_data");
   assert.equal(sets.length, 2);
   const first = sets[0][2] as { email: string; phone_number: string; address: Record<string, string> };
@@ -139,6 +192,26 @@ test("an estimator finish that stored a lead sets user_data from contact fields 
   assert.equal(conversions.length, 2);
   assert.ok(calls.indexOf(sets[0]) < calls.indexOf(conversions[0]));
   assert.equal((conversions[0][2] as { transaction_id: string }).transaction_id, "estimator:11111111-1111-4111-8111-111111111111");
+});
+
+test("a suppressed estimator finish skips user_data and still fires the conversion", async () => {
+  const calls = await withBrowserAsync(async () => {
+    const draft = {
+      id: "22222222-2222-4222-8222-222222222222",
+      text: "Describe the bathroom.",
+      contact: { name: "Sam Rivera", email: "sam@example.com", phone: "2085550199" },
+      answers: { address: "123 Main Street, Boise, ID 83702", service: "bathroom" },
+    };
+    window.localStorage.setItem("p5-project-draft-v2", JSON.stringify(draft));
+    assert.equal(trackGoogleAdsLeadConversion({ service: "bathroom" }, `estimator:${draft.id}`), true);
+    await flushEnhancedConversionChecks();
+  }, { fetch: allowFetch(false) });
+  assert.equal(calls.some((call) => call[0] === "set"), false);
+  const conversions = calls.filter((call) => call[1] === "conversion");
+  assert.equal(conversions.length, 1);
+  assert.equal((conversions[0][2] as { transaction_id: string }).transaction_id, "estimator:22222222-2222-4222-8222-222222222222");
+  assert.equal(JSON.stringify(conversions).includes("sam@example.com"), false);
+  assert.equal(JSON.stringify(conversions).includes("Main Street"), false);
 });
 
 test("consultation passes contact fields and leaves the message and street address out of the tracker call", () => {

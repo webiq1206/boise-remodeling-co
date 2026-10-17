@@ -16,6 +16,8 @@ export interface AcceptedInquiryResponse {
   duplicate: boolean;
   conversionEligible: boolean;
   delivery: "sent" | "pending_retry";
+  /** False when this email or phone is on the server suppression list. Omitted means allowed. */
+  allowEnhancedConversions?: boolean;
 }
 
 function createId(): string {
@@ -114,7 +116,8 @@ export function trackAcceptedInquiry(
     event_id: response.inquiryId,
   });
   // Per-lead value for ROAS reporting. user_data is set first, then the conversion keeps transaction_id.
-  applyGoogleAdsUserData(contact);
+  // A suppressed email or phone skips user_data only. The lead event above and this conversion still fire.
+  if (response.allowEnhancedConversions !== false) applyGoogleAdsUserData(contact);
   trackEvent("conversion", googleAdsLeadParams({ projectType }, response.inquiryId));
   trackMetaEvent(
     "Lead",
