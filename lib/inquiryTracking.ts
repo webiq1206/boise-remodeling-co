@@ -1,7 +1,7 @@
 "use client";
 
 import { trackEvent, trackMetaEvent } from "@/lib/analytics";
-import { googleAdsLeadParams } from "@/lib/googleAdsConversion";
+import { applyGoogleAdsUserData, googleAdsLeadParams, type GoogleAdsLeadContact } from "@/lib/googleAdsConversion";
 
 const INQUIRY_ID_KEY = "brc_inquiry_id";
 const INQUIRY_STARTED_KEY = "brc_inquiry_started_at";
@@ -72,12 +72,14 @@ export function rotateInquiryId(): string {
  * Server conversionEligible is authoritative. The browser marker prevents a
  * repeat on the same device, while the Google transaction_id and Meta eventID
  * give the advertising platforms the same stable dedupe key across callbacks.
- * No name, email, phone or address is sent.
+ * GA4 and Meta still receive no name, email, phone, or street address.
+ * Google Ads user_data is a separate set, and only after this inquiry is accepted.
  */
 export function trackAcceptedInquiry(
   response: AcceptedInquiryResponse,
   projectType: string,
   retryCount = 0,
+  contact?: GoogleAdsLeadContact,
 ): void {
   if (response.accepted!==true || !response.conversionEligible || typeof window === "undefined") return;
   const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
@@ -85,7 +87,7 @@ export function trackAcceptedInquiry(
   // A short retry covers lazy loading without blocking the success UI.
   if (typeof gtag !== "function") {
     if (retryCount < 10) {
-      window.setTimeout(() => trackAcceptedInquiry(response, projectType, retryCount + 1), 500);
+      window.setTimeout(() => trackAcceptedInquiry(response, projectType, retryCount + 1, contact), 500);
     }
     return;
   }
@@ -111,7 +113,8 @@ export function trackAcceptedInquiry(
     inquiry_id: response.inquiryId,
     event_id: response.inquiryId,
   });
-  // Per-lead value for ROAS reporting (lib/googleAdsConversion.ts); no PII.
+  // Per-lead value for ROAS reporting. user_data is set first, then the conversion keeps transaction_id.
+  applyGoogleAdsUserData(contact);
   trackEvent("conversion", googleAdsLeadParams({ projectType }, response.inquiryId));
   trackMetaEvent(
     "Lead",

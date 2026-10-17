@@ -54,10 +54,10 @@ export default function PrivacyPolicyPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container px-4">
-          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
+          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"cookies-analytics-advertising","label":"Cookies, analytics and advertising"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
 
             <p className="lead text-muted-foreground">
-              Last updated: January 2024
+              Last updated: October 17, 2026
             </p>
 
             <h2 id="document-section-1">Introduction</h2>
@@ -94,6 +94,17 @@ export default function PrivacyPolicyPage() {
               <li>Professional advisors as needed</li>
               <li>Law enforcement when required by law</li>
             </ul>
+
+            <h2 id="cookies-analytics-advertising">Cookies, analytics and advertising</h2>
+            <p>
+              We use Google Analytics 4 (GA4) to understand how visitors use this site, such as pages viewed, referring site, approximate location, browser and device type. We use Google Ads conversion tracking to measure which of our ads lead to calls, form submissions and completed estimates. Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites (remarketing). These tools set cookies and receive information about your visit, including your IP address, which Google processes under its own privacy policy (<a href="https://policies.google.com/privacy" className="text-primary hover:underline">https://policies.google.com/privacy</a>). When you successfully submit a form or finish the estimator with your contact details, our site passes whichever of these you provide (your email address, phone number, first name, last name and ZIP code) to Google's advertising tag, which converts them into a scrambled code (a SHA-256 hash) before sending them to Google, which matches that code against its own records to tell us which of our ads lead to inquiries. We do not send your street address or your project description to Google. Google Analytics receives only the type of project you choose (for example, an addition or an ADU) and a random reference number for your inquiry when you use the estimator or send an inquiry. Google Ads receives a random reference number for your inquiry so each lead is counted only once. Calls from our site or ads may be routed through a Google forwarding number so we can measure which ads lead to calls. You can opt out of personalized Google ads at <a href="https://adssettings.google.com" className="text-primary hover:underline">https://adssettings.google.com</a>, use the Google Analytics opt-out add-on at <a href="https://tools.google.com/dlpage/gaoptout" className="text-primary hover:underline">https://tools.google.com/dlpage/gaoptout</a>, or block or delete cookies in your browser; the site will still work.
+            </p>
+            <p>
+              We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. When you submit an inquiry, we may send Meta the type of project you choose, a project-inquiry label, an inquiry id, the web address of the page you are on, your IP address, your browser's user agent, and the Meta cookies _fbp and _fbc so it can match the inquiry to an ad. Meta's pixel may also record which buttons you click and basic information about the page, such as its title. Meta processes this under its own privacy policy (<a href="https://www.facebook.com/privacy/policy" className="text-primary hover:underline">https://www.facebook.com/privacy/policy</a>).
+            </p>
+            <p>
+              We also use Microsoft Clarity to see how visitors use our pages through heatmaps and session recordings; form fields are masked so what you type is not recorded. Microsoft processes this under its own privacy statement (<a href="https://privacy.microsoft.com/privacystatement" className="text-primary hover:underline">https://privacy.microsoft.com/privacystatement</a>).
+            </p>
 
             <h2 id="document-section-5">Data Security</h2>
             <p>
