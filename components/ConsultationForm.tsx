@@ -305,7 +305,12 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
       setDeliveryDelayed(response.delivery === "pending_retry");
       sessionStorage.removeItem("brc_estimate");
         sessionStorage.removeItem("brc_consult_context");
-      trackAcceptedInquiry(response, variables.projectType);
+      trackAcceptedInquiry(response, variables.projectType, 0, {
+        email: variables.email,
+        phone: variables.phone,
+        name: variables.name,
+        postalCode: deriveZip(variables.address),
+      });
       markEstimatorCompleted("consultation");
       rotateInquiryId();
     },
