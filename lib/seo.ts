@@ -408,8 +408,10 @@ export const CITY_SEO_DATA: Record<string, {
     population: '24,011',
     founded: '1992',
     zipCodes: ['83634'],
-    neighborhoods: ['Indian Creek', 'Black Cat', 'Crimson Point', 'Ten Mile Creek'],
-    landmarks: ['Kuna Caves', 'Swan Falls Dam', 'Indian Creek Plaza'],
+    // Indian Creek is the creek, not a Kuna neighborhood. Bernie Fisher Park
+    // replaces Indian Creek Plaza, which is in downtown Caldwell.
+    neighborhoods: ['Black Cat', 'Crimson Point', 'Ten Mile Creek'],
+    landmarks: ['Kuna Caves', 'Swan Falls Dam', 'Bernie Fisher Park'],
     climate: 'semi-arid high desert climate with hot summers and cold winters',
     coordinates: { lat: 43.4913, lng: -116.4201 },
   },
@@ -427,7 +429,8 @@ export const CITY_SEO_DATA: Record<string, {
     founded: '1893',
     zipCodes: ['83642', '83646'],
     neighborhoods: ['Lochsa Falls', 'Tuscany', 'Paramount', 'Meridian Ranch'],
-    landmarks: ['The Village at Meridian', 'Julius M. Kleiner Memorial Park', 'Eagle Island State Park'],
+    // Settlers Park replaces Eagle Island State Park, which is in Eagle.
+    landmarks: ['The Village at Meridian', 'Julius M. Kleiner Memorial Park', 'Settlers Park'],
     climate: 'semi-arid with hot, dry summers and cold winters',
     coordinates: { lat: 43.6121, lng: -116.3915 },
   },
@@ -445,7 +448,8 @@ export const CITY_SEO_DATA: Record<string, {
     founded: '1907',
     zipCodes: ['83669'],
     neighborhoods: ['Star River Ranch', 'Hillsdale', 'Paramount', 'Star Crossing'],
-    landmarks: ['Boise River', 'Star Riverfront Park', 'Celebration Park'],
+    // Freedom Park replaces Celebration Park, which is near Melba.
+    landmarks: ['Boise River', 'Star Riverfront Park', 'Freedom Park'],
     climate: 'semi-arid climate with hot summers and cool winters',
     coordinates: { lat: 43.6921, lng: -116.4939 },
   },
@@ -471,7 +475,9 @@ export const CITY_SEO_DATA: Record<string, {
     population: '65,359',
     founded: '1883',
     zipCodes: ['83605', '83607'],
-    neighborhoods: ['Indian Creek', 'Cleveland Blvd', 'Ustick', 'Wilson'],
+    // Indian Creek is the creek through downtown, not a Caldwell neighborhood.
+    // Indian Creek Plaza stays: it is in Caldwell.
+    neighborhoods: ['Cleveland Blvd', 'Ustick', 'Wilson'],
     landmarks: ['Indian Creek Plaza', 'Caldwell Night Rodeo', 'College of Idaho'],
     climate: 'semi-arid high desert with four distinct seasons',
     coordinates: { lat: 43.6629, lng: -116.6874 },
