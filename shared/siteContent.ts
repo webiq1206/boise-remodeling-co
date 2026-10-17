@@ -7,6 +7,7 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { SHOW_FOUNDED_YEAR } from "@/shared/foundingClaim";
 
 export const SITE_TAGLINE = "Treasure Valley design-build, built on clarity and craftsmanship";
 
@@ -111,7 +112,7 @@ export const TRUST_ITEMS = [
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
-];
+].filter((item) => SHOW_FOUNDED_YEAR || item !== `Est. ${PROOF_STATS.established}`);
 
 export const PROMISE_ITEMS = [
   {
