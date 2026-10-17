@@ -224,7 +224,7 @@ export default function AdminProjectDetailPage() {
             </div>
           </TabsContent>
 
-          <TabsContent value="scope" className="mt-4 space-y-4">
+          <TabsContent value="scope" className="mt-4 space-y-4" data-clarity-mask="true">
             <div className="space-y-2">
               <Label>Scope of Work</Label>
               <Textarea
@@ -361,7 +361,7 @@ export default function AdminProjectDetailPage() {
               )
             )}
             <Card>
-              <CardContent className="pt-4 space-y-3">
+              <CardContent className="pt-4 space-y-3" data-clarity-mask="true">
                 <Input placeholder="Title" value={coTitle} onChange={(e) => setCoTitle(e.target.value)} />
                 <Textarea placeholder="Description" value={coDescription} onChange={(e) => setCoDescription(e.target.value)} />
                 <Input placeholder="Amount delta" type="number" value={coAmount} onChange={(e) => setCoAmount(e.target.value)} />

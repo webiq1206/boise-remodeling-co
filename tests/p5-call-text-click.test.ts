@@ -165,26 +165,43 @@ test("Clarity masks the form containers and Meta autoconfig is off before init",
     "components/P5ProjectReview.tsx",
     "components/P5ReviewRequest.tsx",
     "components/P5IntakeReview.tsx",
+    "components/P5ProcessingStatus.tsx",
     "components/estimate/recovery/AbandonmentPrompt.tsx",
     "components/assistant/AssistantWidget.tsx",
     "components/modals/ModalProvider.tsx",
     "app/estimate/page.tsx",
     "components/StripePaymentForm.tsx",
     "components/takeoff/ClarifyInterview.tsx",
+    "components/admin/AdminLeadsPanel.tsx",
+    "components/admin/PropertyProfileEditor.tsx",
+    "components/admin/AdminSubcontractorPanel.tsx",
+    "components/subcontractor/LeadMarketplace.tsx",
+    "components/P5PriceReferences.tsx",
+    "components/P5OverheadReview.tsx",
+    "app/subcontractor/contracts/page.tsx",
+    "app/subcontractor/purchases/page.tsx",
+    "app/admin/projects/[id]/page.tsx",
+    "app/admin/takeoff/page.tsx",
+    "app/admin/contractors/page.tsx",
+    "app/admin/contracts/page.tsx",
+    "app/admin/p5-estimators/page.tsx",
   ];
   for (const file of files) {
     const source = readFileSync(new URL(file, root), "utf8");
     assert.equal(source.includes('data-clarity-mask="true"'), true, file);
   }
   const consult = readFileSync(new URL("components/ConsultationForm.tsx", root), "utf8");
-  assert.equal((consult.match(/data-clarity-mask="true"/g) || []).length >= 2, true);
+  assert.match(consult, /<form\s+data-clarity-mask="true"/);
   const estimator = readFileSync(new URL("components/P5Estimator.tsx", root), "utf8");
   assert.match(estimator, /<form id=\{formId\}[^>]*data-clarity-mask="true"/);
   assert.match(estimator, /styles\.composer\} data-clarity-mask="true"/);
+  const waitEmail = readFileSync(new URL("components/P5ProcessingStatus.tsx", root), "utf8");
+  assert.match(waitEmail, /styles\.waitEmail\} data-clarity-mask="true"/);
   const pixel = readFileSync(new URL("components/MetaPixel.tsx", root), "utf8");
-  const setAt = pixel.indexOf("fbq('set','autoConfig',false,");
-  const initAt = pixel.indexOf("fbq('init',");
+  const setAt = pixel.indexOf("fbq('set','autoConfig',false,'${META_PIXEL_ID}');");
+  const initAt = pixel.indexOf("fbq('init','${META_PIXEL_ID}');");
   assert.equal(setAt > 0 && initAt > setAt, true);
+  assert.equal(/fbq\('init',\s*'[^']+',\s*\{/.test(pixel), false);
 });
 
 test("the existing click listener stays single-bound and GA4 click events stay in place", () => {
