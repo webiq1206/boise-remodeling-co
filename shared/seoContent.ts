@@ -2,6 +2,7 @@ import type { ServiceData, CityData } from './contentData';
 import { getCountyLabel } from './contentData';
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
 import { AREA_CITY_COPY } from './content/areaCopy';
+import { getCityServiceCopy } from './content/cityServiceCopy';
 
 export interface FAQItem {
   question: string;
@@ -637,6 +638,8 @@ export function getCityServiceIntro(
   city: CityData,
   localFact?: string,
 ): string {
+  const override = getCityServiceCopy(service.slug, city.slug);
+  if (override) return override.intro;
   const county = getCountyLabel(city.county);
   const fact = localFact
     ? ` ${localFact}`
@@ -645,6 +648,8 @@ export function getCityServiceIntro(
 }
 
 export function getCityServiceFaqs(service: ServiceSEOContent, city: CityData): FAQItem[] {
+  const override = getCityServiceCopy(service.slug, city.slug);
+  if (override) return override.faqs;
   const county = getCountyLabel(city.county);
   // First sentence of the cost band, reused as a direct city-level answer for
   // "{service} cost in {city}" queries (voice/AI extractable).
