@@ -106,24 +106,24 @@ test("analytics off and denied consent send no click conversion", () => {
   assert.equal(denied.length, 0);
 });
 
-test("the privacy page states the tap, analytics, and forwarding facts", () => {
+test("the privacy page states the rev 4 cookies section verbatim", () => {
   const privacy = readFileSync(new URL("../app/privacy-policy/page.tsx", import.meta.url), "utf8");
   const section = privacy.slice(privacy.indexOf('id="cookies-analytics-advertising"'));
   const beforeNext = section.slice(0, section.indexOf('id="document-section-5"'));
-  const google = "We use Google Analytics 4 (GA4) to understand how visitors use this site, such as pages viewed, referring site, approximate location, browser and device type. We use Google Ads conversion tracking to measure which of our ads lead to calls, texts, form submissions and completed estimates. Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites (remarketing).";
-  const clarity = "We also use Microsoft Clarity to see how visitors use our pages through heatmaps and session recordings; form fields are masked so what you type is not recorded. Microsoft processes this under its own privacy statement";
-  const meta = "Meta's pixel may also record which buttons you click and basic information about the page, such as its title.";
-  const tap = [
-    "When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, your own phone number or what you say or write.",
-    "Google Analytics also records the tap, including the number tapped, which is our business number.",
-    "If your call goes through a Google forwarding number, Google connects the call and can see the calling number and call length, but not what's said.",
-  ].join(" ");
-  for (const part of [google, clarity, meta, tap, "event name, event id, event time, action source", "fbp and fbc"]) {
-    assert.equal(beforeNext.includes(part), true, part.slice(0, 48));
+  const paragraphs = [
+    "We use Google Analytics 4 (GA4) to understand how visitors use this site and Google Ads to measure which of our ads lead to quote requests, calls and texts. These tools set cookies and receive information about your visit, including your IP address, which Google processes under its own privacy policy (https://policies.google.com/privacy). When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, your own phone number or what you say or write. Google Analytics also records the tap, including the number tapped, which is our business number. If your call goes through a Google forwarding number, Google connects the call and can see the calling number and call length, but not what's said.",
+    "We also use Microsoft Clarity to see how visitors use our pages through heatmaps and session recordings; form fields are masked so what you type is not recorded. Microsoft processes this under its own privacy statement (https://privacy.microsoft.com/privacystatement).",
+    "We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. The pixel records a page view. Meta's pixel may also record which buttons you click and basic information about the page, such as its title. We do not send your name, email or phone number to Meta. When you submit an inquiry, we may send Meta the Lead event with the type of project you chose and an inquiry category, the page address, the event time, a matching event id, your IP address, your browser user agent, and the Meta cookies _fbp and _fbc, so it can match the inquiry to an ad. Meta processes this under its own privacy policy (https://www.facebook.com/privacy/policy).",
+  ];
+  const visible = beforeNext.replace(/<[^>]+>/g, "");
+  for (const paragraph of paragraphs) {
+    assert.equal(visible.includes(paragraph), true, paragraph.slice(0, 48));
   }
-  const order = [google, clarity, meta, tap].map((part) => beforeNext.indexOf(part));
+  const order = paragraphs.map((paragraph) => visible.indexOf(paragraph));
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
-  assert.equal(beforeNext.includes("your name, phone number or what you say or write"), false);
+  assert.equal(visible.includes("your name, phone number or what you say or write"), false);
+  assert.equal(visible.includes("remarketing"), false);
+  assert.equal(visible.includes("action source"), false);
 });
 
 test("the existing click listener stays single-bound and GA4 click events stay in place", () => {
