@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { GET } from '../app/api/testimonials/route.ts';
@@ -55,6 +57,9 @@ test('the public testimonials API returns no seed rows while the flag is off', a
   const gate = route.indexOf('if (!SHOW_TESTIMONIALS)');
   const read = route.indexOf('db.select');
   assert.ok(gate >= 0 && read > gate, 'the flag returns before any database read');
+  assert.equal(/from\s+["']@\/lib\/db["']/.test(route), false);
+  assert.equal(/from\s+["']@\/server\/storage["']/.test(route), false);
+  assert.equal(/from\s+["']\.\/db["']/.test(route), false);
   const response = await GET();
   assert.equal(response.headers.get('cache-control'), 'no-store, max-age=0');
   const body = await response.json();
@@ -62,6 +67,37 @@ test('the public testimonials API returns no seed rows while the flag is off', a
   const serialized = JSON.stringify(body);
   for (const name of SEED_NAMES) assert.equal(serialized.includes(name), false, name);
   for (const phrase of OTHER_BUSINESS_REVIEWS) assert.equal(serialized.includes(phrase), false, phrase);
+});
+
+test('the flag-off API returns [] in production with no database', () => {
+  const env = { ...process.env, NODE_ENV: 'production' };
+  delete env.DATABASE_URL;
+  delete env.NEXT_PHASE;
+  const probe = spawnSync(
+    process.execPath,
+    [
+      '--import',
+      'tsx',
+      '--input-type=module',
+      '-e',
+      [
+        "const mod = await import('./app/api/testimonials/route.ts');",
+        'const GET = mod.GET ?? mod.default?.GET;',
+        "if (typeof GET !== 'function') throw new Error('GET missing: ' + Object.keys(mod).join(','));",
+        'const response = await GET();',
+        'const body = await response.json();',
+        "if (response.status !== 200) throw new Error('status ' + response.status);",
+        "if (JSON.stringify(body) !== '[]') throw new Error('body ' + JSON.stringify(body));",
+        "if (response.headers.get('cache-control') !== 'no-store, max-age=0') throw new Error('cache ' + response.headers.get('cache-control'));",
+      ].join('\n'),
+    ],
+    {
+      cwd: fileURLToPath(new URL('..', import.meta.url)),
+      env,
+      encoding: 'utf8',
+    },
+  );
+  assert.equal(probe.status, 0, `${probe.stderr || ''}\n${probe.stdout || ''}`);
 });
 
 test('client source does not carry the other business review text', () => {
