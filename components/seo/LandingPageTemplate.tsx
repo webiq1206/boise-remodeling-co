@@ -15,6 +15,7 @@ AccordionTrigger,
 } from '@/components/ui/accordion';
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
+import { testimonialsForPublish } from '@/shared/testimonialsData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import type { GalleryProject } from '@/shared/galleryData';
 import type { FAQItem } from '@/shared/seoContent';
@@ -183,8 +184,9 @@ export function LandingPageTemplate({
   related,
 }: LandingPageTemplateProps) {
   const eyebrow = breadcrumbs[breadcrumbs.length - 2]?.name;
+  const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
-    !!proof && ((proof.testimonials?.length ?? 0) > 0 || (proof.projects?.length ?? 0) > 0);
+    publishedQuotes.length > 0 || (proof?.projects?.length ?? 0) > 0;
   const breatherImage = breatherImageUrl ?? heroImageUrl;
   const processImage = processImageUrl ?? heroImageUrl;
   const showTimelineBelow = !!timeline && !costGuidance;
@@ -467,12 +469,12 @@ export function LandingPageTemplate({
               </div>
             )}
 
-            {proof?.testimonials && proof.testimonials.length > 0 && (
+            {publishedQuotes.length > 0 && (
               <div
                 className="ed-matrix mt-[clamp(32px,4vw,56px)]"
-                style={{ ['--ed-cols' as string]: Math.min(proof.testimonials.length, 2), ['--ed-cell-h' as string]: '0' }}
+                style={{ ['--ed-cols' as string]: Math.min(publishedQuotes.length, 2), ['--ed-cell-h' as string]: '0' }}
               >
-                {proof.testimonials.map((t) => (
+                {publishedQuotes.map((t) => (
                   <figure key={t.name} className="m-0">
                     <div className="flex gap-0.5" aria-label={`${t.rating} out of 5 stars`}>
                       {Array.from({ length: Math.round(t.rating) }).map((_, i) => (

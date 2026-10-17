@@ -6,6 +6,7 @@ import {schemaTime} from './schemaTime';
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
+import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 
 interface SchemaContext {
   '@context': string;
@@ -181,7 +182,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
       name: area,
       ...(CITY_WIKIPEDIA[area] ? { sameAs: CITY_WIKIPEDIA[area] } : {}),
     })),
-    ...(BUSINESS_INFO.reviewCount > 0
+    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -352,10 +353,10 @@ export function generateReviewSchema(reviews: Array<{
     '@type': [...CONTRACTOR_TYPES],
     '@id': LOCALBUSINESS_ID,
     name: BUSINESS_INFO.name,
-    // AggregateRating is gated on a real, populated review count. Emitting a
-    // zero/empty rating would publish a misleading 0-star signal, so it is only
-    // included once BUSINESS_INFO.rating/reviewCount reflect genuine reviews.
-    ...(BUSINESS_INFO.reviewCount > 0
+    // Ratings and reviews publish only when SHOW_TESTIMONIALS is on and the
+    // count is a real populated number. A zero count would publish a
+    // misleading 0-star signal, so it stays omitted.
+    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -366,21 +367,25 @@ export function generateReviewSchema(reviews: Array<{
           },
         }
       : {}),
-    review: reviews.map(review => ({
-      '@type': 'Review',
-      author: {
-        '@type': 'Person',
-        name: review.author,
-      },
-      ...(review.date ? { datePublished: review.date } : {}),
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: review.rating,
-        bestRating: 5,
-        worstRating: 1,
-      },
-      reviewBody: review.text,
-    })),
+    ...(SHOW_TESTIMONIALS
+      ? {
+          review: reviews.map(review => ({
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: review.author,
+            },
+            ...(review.date ? { datePublished: review.date } : {}),
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: review.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+            reviewBody: review.text,
+          })),
+        }
+      : {}),
   };
 }
 
