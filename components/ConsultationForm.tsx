@@ -415,6 +415,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         <div className="absolute -left-[10000px]" aria-hidden="true">
           <label htmlFor="consult-website">Website</label>
           <input
+            data-clarity-mask="True"
             id="consult-website"
             name="website"
             tabIndex={-1}

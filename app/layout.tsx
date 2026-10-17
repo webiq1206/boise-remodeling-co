@@ -13,6 +13,8 @@ import {MarketingAttribution} from '@/components/MarketingAttribution'
 import {Suspense} from 'react'
 import { MetaPixel } from '@/components/MetaPixel'
 import { MicrosoftClarity } from '@/components/MicrosoftClarity'
+import { clarityFieldMaskScript } from '@/lib/clarityMask'
+import Script from 'next/script'
 import { ConversionTracking } from '@/components/ConversionTracking'
 import { AssistantWidget } from '@/components/assistant/AssistantWidget'
 import './globals.css'
@@ -149,6 +151,9 @@ export default function RootLayout({
         <GoogleAnalytics />
         <Suspense fallback={null}><MarketingAttribution /></Suspense>
         <MetaPixel />
+        <Script id="clarity-field-mask" strategy="beforeInteractive">
+          {clarityFieldMaskScript()}
+        </Script>
         <MicrosoftClarity />
         <ConversionTracking />
       </body>

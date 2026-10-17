@@ -140,6 +140,7 @@ export function ClarifyInterview({
       <div className="mt-4 flex items-center gap-2">
         {prompt?.prefix ? <span className="text-sm text-muted-foreground">{prompt.prefix}</span> : null}
         <input
+          data-clarity-mask="True"
           data-testid="interview-input"
           value={value}
           onChange={(e) => {

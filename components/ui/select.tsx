@@ -25,6 +25,7 @@ const SelectTrigger = React.forwardRef<
       className
     )}
     {...props}
+    data-clarity-mask="True"
   >
     {children}
     <SelectPrimitive.Icon asChild>

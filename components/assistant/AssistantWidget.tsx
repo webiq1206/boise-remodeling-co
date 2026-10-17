@@ -249,6 +249,7 @@ export function AssistantWidget() {
             }}
           >
             <textarea
+              data-clarity-mask="True"
               ref={inputRef}
               data-testid="assistant-input"
               value={draft}

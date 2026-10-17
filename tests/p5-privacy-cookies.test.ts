@@ -19,8 +19,12 @@ test('the privacy page adds the cookies section without removing the existing po
   assert.match(page, /the type of project you choose, a project-inquiry label, an inquiry id, the web address of the page you are on, your IP address, your browser's user agent, and the Meta cookies _fbp and _fbc/);
   assert.match(page, /https:\/\/www\.facebook\.com\/privacy\/policy/);
   assert.equal(page.includes('hashed email'), false);
-  assert.match(page, /CLARITY-PLACEHOLDER pending Larry/);
-  assert.match(page, /\[Placeholder, wording pending Larry: Microsoft Clarity loads on this site\.\]/);
+  assert.match(page, /Meta's pixel may also record which buttons you click and basic information about the page, such as its title\./);
+  assert.match(page, /We also use Microsoft Clarity to see how visitors use our pages through heatmaps and session recordings; form fields are masked so what you type is not recorded\./);
+  assert.match(page, /Microsoft processes this under its own privacy statement/);
+  assert.match(page, /https:\/\/privacy\.microsoft\.com\/privacystatement/);
+  assert.equal(page.includes('CLARITY-PLACEHOLDER'), false);
+  assert.equal(page.includes('wording pending Larry'), false);
   assert.match(page, /Boise Remodeling Co \("we," "our," or "us"\) is committed to protecting your privacy\./);
   assert.match(page, /We do not sell your personal information\./);
   assert.equal(page.includes(String.fromCharCode(8212)), false);
