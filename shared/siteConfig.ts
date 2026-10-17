@@ -39,6 +39,13 @@ export const SITE_CONFIG = {
   },
 } as const;
 
+/** Hours we answer texts. Call-desk hours are a separate schedule. */
+export const TEXT_REPLY_HOURS = "Mon–Fri 9–6, Sat 9–4 MT";
+
+export function textReplyLine(phone: string = SITE_CONFIG.phone): string {
+  return `Prefer to text? Text ${phone}. We reply in minutes during business hours (${TEXT_REPLY_HOURS}).`;
+}
+
 export function formatPhoneDisplay(tel: string = SITE_CONFIG.phoneTel): string {
   const digits = tel.replace(/\D/g, "");
   if (digits.length === 10) {

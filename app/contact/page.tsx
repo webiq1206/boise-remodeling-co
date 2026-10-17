@@ -33,7 +33,7 @@ import { areaPath } from '@/lib/seo-routes';
 import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
-import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
+import { publicFooterLine, SITE_CONFIG, textReplyLine } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight,Mail,MapPin,MessageSquare,Phone } from 'lucide-react';
@@ -199,7 +199,7 @@ export default function ContactPage() {
               className="block text-sm text-inverse-foreground/80 hover:text-inverse-foreground transition-colors mb-8"
               data-testid="link-hero-text"
             >
-              Prefer to text? Message us instead
+              {textReplyLine()}
             </a>
             <div className="interior-contact-actions"><InteriorEstimateLink/><a href="#consult" className="interior-text-link">Request a consultation</a></div>
             <dl className="ed-hero-facts">
