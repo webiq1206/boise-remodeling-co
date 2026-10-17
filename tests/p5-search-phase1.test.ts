@@ -138,7 +138,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 
   push('/', withBrandPageMetadata({
     title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath & whole-home remodels. Clear budget guidance. Free in-home consultation'),
+    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.'),
     alternates: { canonical: buildCanonical('/') },
   }, '/'));
 
@@ -222,7 +222,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   }
 
   assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
-  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath & whole-home remodels. Clear budget guidance. Free in-home consultation';
+  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.';
   assert.equal(homeMeta.length, 160);
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
