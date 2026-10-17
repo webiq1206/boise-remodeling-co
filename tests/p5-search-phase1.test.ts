@@ -50,10 +50,11 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
   });
   assert.equal(business.address.streetAddress, SITE_CONFIG.address.street);
   assert.equal(business.address.postalCode, SITE_CONFIG.address.postalCode);
-  assert.equal(business.telephone, '(208) 477-1169');
-  assert.equal(business.telephone, SITE_CONFIG.phone);
+  assert.equal(business.telephone, '+1-208-477-1169');
+  assert.equal(SITE_CONFIG.phone, '(208) 477-1169');
   assert.equal((business.contactPoint as { name: string }).name, 'Nick Perkins');
-  assert.equal((business.contactPoint as { contactType: string }).contactType, 'Public representative');
+  assert.equal((business.contactPoint as { contactType: string }).contactType, 'customer service');
+  assert.equal((business.contactPoint as { telephone: string }).telephone, '+1-208-477-1169');
   assert.equal((business.contactPoint as { email: string }).email, 'hello@boiseremodeling.co');
   assert.deepEqual(business.geo, { '@type': 'GeoCoordinates', latitude: 43.6515, longitude: -116.4444 });
   assert.deepEqual(business.employee, {
@@ -81,12 +82,11 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
   assert.equal((organization.employee as { worksFor: { '@id': string } }).worksFor['@id'], P5_ORG_ID);
   assert.deepEqual(organization.sameAs, BUSINESS_INFO.sameAs);
   assert.deepEqual(organization.address, business.address);
-  const contacts = organization.contactPoint as Array<{ contactType: string; name?: string }>;
-  assert.equal(contacts.some((contact) => contact.contactType === 'Customer Service'), true);
-  assert.equal(
-    contacts.some((contact) => contact.name === 'Nick Perkins' && contact.contactType === 'Public representative'),
-    true,
-  );
+  const contact = organization.contactPoint as { contactType: string; name?: string; telephone?: string };
+  assert.equal(contact.name, 'Nick Perkins');
+  assert.equal(contact.contactType, 'customer service');
+  assert.equal(contact.telephone, '+1-208-477-1169');
+  assert.equal(organization.telephone, '+1-208-477-1169');
 
   for (const service of SERVICES) {
     for (const city of CITIES) {
@@ -137,8 +137,8 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   };
 
   push('/', withBrandPageMetadata({
-    title: { absolute: 'Remodeling Contractor in Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Design-build remodeling for Boise, Meridian, Eagle, Nampa & the Treasure Valley. Clear expectations and budget guidance. Schedule a free in-home consultation.'),
+    title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
+    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.'),
     alternates: { canonical: buildCanonical('/') },
   }, '/'));
 
@@ -221,9 +221,22 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
     descriptions.set(row.description, row.path);
   }
 
+  assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
+  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.';
+  assert.equal(homeMeta.length, 160);
+  assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
+  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.equal(eagleMeta.length, 160);
+  assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
+  assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
+  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.equal(boiseMeta.length, 160);
+  assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /founded in 2020 and part of P5/);
+  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
+  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler since 2020/);
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {
@@ -239,6 +252,9 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   assert.match(footer, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
   assert.match(footer, /RE-10 repairs \(Boise Handyman Co\)/);
   assert.equal(footer.includes('href: "/re-10-repairs-boise"'), false);
+  assert.match(footer, /href="\/subcontractor"/);
+  assert.equal(footer.includes('/api/login'), false);
+  assert.match(readFileSync('app/estimate/page.tsx', 'utf8'), /<h1 className="sr-only">Remodel Cost Estimator<\/h1>/);
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
   assert.match(contact, /Call, text, or email\. We come to you\./);
   assert.match(contact, /never use high-pressure sales tactics/);

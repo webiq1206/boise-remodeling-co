@@ -107,7 +107,11 @@ export default function ServicesIndexPage() {
             <Reveal delay={60}>
               <p className="ed-body">
                 Permit paths, housing stock and HOA requirements differ between Ada and Canyon
-                County communities. Choose your city for local guidance.
+                County communities. Choose your city for local guidance.{' '}
+                <Link href="/areas/eagle" className="underline underline-offset-2">Remodeling contractors in Eagle</Link>
+                {' '}and{' '}
+                <Link href="/services/kitchen-remodel/eagle" className="underline underline-offset-2">Eagle kitchen remodeling</Link>
+                {' '}each have a page.
               </p>
             </Reveal>
           </div>

@@ -86,6 +86,8 @@ export function buildClusterArticleSections(config: ClusterArticleConfig): Conte
   const serviceUrl = config.serviceUrl ?? '/services/kitchen-remodel';
   const cityUrl = config.cityServiceUrl ?? '/services/kitchen-remodel/boise';
   const topicSections = SLUG_SECTIONS[config.slug] ?? defaultTopicSections(config.title, config.hubSlug);
+  const moreHref = config.hubSlug === 'treasure-valley-locations' ? '/areas' : `/blog/category/${config.hubSlug}`;
+  const moreLabel = config.hubSlug === 'treasure-valley-locations' ? 'Service areas' : 'More articles';
 
   return [
     {
@@ -97,7 +99,7 @@ export function buildClusterArticleSections(config: ClusterArticleConfig): Conte
     {
       h2: 'Full guide and cost planning',
       paragraphs: [
-        `<a href="${pillarUrl}">${hub.title}</a> · <a href="${PILLAR_COST}">Remodeling cost guide</a> · <a href="/blog/category/${config.hubSlug}">More articles</a>.`,
+        `<a href="${pillarUrl}">${hub.title}</a> · <a href="${PILLAR_COST}">Remodeling cost guide</a> · <a href="${moreHref}">${moreLabel}</a>.`,
       ],
     },
     {

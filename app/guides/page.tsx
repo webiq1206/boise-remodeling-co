@@ -135,6 +135,12 @@ export default function GuidesIndexPage() {
           <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-6">
             City &amp; neighborhood guides
           </h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            <Link href="/areas/eagle" className="text-accent-legible hover:underline">Remodeling contractors in Eagle</Link>
+            {' '}and{' '}
+            <Link href="/services/kitchen-remodel/eagle" className="text-accent-legible hover:underline">Eagle kitchen remodeling</Link>
+            {' '}are on their own pages.
+          </p>
           <div className="ed-cards-3 gap-4">
             {locationGuides.map((guide) => (
               <MarketingCard key={guide.slug} className="p-0 flex flex-col h-full overflow-hidden">
@@ -185,10 +191,10 @@ export default function GuidesIndexPage() {
                     <ArrowRight className="ml-1 h-3 w-3" />
                   </Link>
                   <Link
-                    href={`/blog/category/${hub.hubSlug}`}
+                    href={hub.hubSlug === 'treasure-valley-locations' ? '/areas' : `/blog/category/${hub.hubSlug}`}
                     className="inline-flex items-center min-h-11 lg:min-h-0 text-muted-foreground hover:text-accent-legible hover:underline"
                   >
-                    Related articles
+                    {hub.hubSlug === 'treasure-valley-locations' ? 'Service areas' : 'Related articles'}
                   </Link>
                 </div>
               </MarketingCard>

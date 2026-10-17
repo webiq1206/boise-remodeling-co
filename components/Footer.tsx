@@ -213,7 +213,7 @@ export function Footer() {
             <Link href="/sitemap" className="transition-colors hover:text-inverse-foreground">Site Map</Link>
             <Link href="/privacy-policy" className="transition-colors hover:text-inverse-foreground">Privacy Policy</Link>
             <Link href="/terms-of-service" className="transition-colors hover:text-inverse-foreground">Terms of Service</Link>
-            <a href="/api/login" rel="nofollow" className="transition-colors hover:text-inverse-foreground">Subcontractor Login</a>
+            <a href="/subcontractor" rel="nofollow" className="transition-colors hover:text-inverse-foreground">Subcontractor Login</a>
           </div>
         </div>
       </div>

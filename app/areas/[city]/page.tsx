@@ -67,14 +67,17 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
       paragraphs: [
         `Boise Remodeling Co is a full-service design-build remodeler serving ${city.name} and the surrounding ${county} area. Whether you are updating a single room or reimagining your whole home, every project runs through one accountable team - from the first in-home consultation and design, through permits, construction, and the final walkthrough.`,
         `Explore the specific services we provide for ${city.name} homeowners below. Each links to a dedicated ${city.name} service page with local details, typical scope, and planning guidance.`,
+        ...(city.slug === 'boise'
+          ? ['Kitchen remodeling and bathroom remodeling are listed with the Boise services below. Both stay design-build, with a written scope before construction.']
+          : []),
       ],
       links: [
         ...SERVICES.map((s) => ({
           label: `${s.name} in ${city.name}`,
           href: `/services/${s.slug}/${city.slug}`,
         })),
-        { label: 'Kitchen remodel', href: '/services/kitchen-remodel' },
-        { label: 'Bathroom remodel', href: '/services/bathroom-remodel' },
+        { label: city.slug === 'boise' ? 'Kitchen remodeling' : 'Kitchen remodel', href: '/services/kitchen-remodel' },
+        { label: city.slug === 'boise' ? 'Bathroom remodeling' : 'Bathroom remodel', href: '/services/bathroom-remodel' },
         { label: 'Room addition', href: '/services/room-addition' },
       ],
     },

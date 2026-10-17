@@ -1,3 +1,4 @@
+import { contractorDescription } from "@/lib/schema";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { brands } from "./family-content";
 
@@ -27,9 +28,8 @@ export function ApprovedHomeHero() {
           <br />
           <em>Love where you live.</em>
         </h1>
-        <p>
-          {b.title.join(" ")} {b.intro}
-        </p>
+        <p>{contractorDescription()}</p>
+        <p>{b.intro}</p>
         <div className="f-actions">
           <a className="f-button" href="/estimate">
             {b.action}

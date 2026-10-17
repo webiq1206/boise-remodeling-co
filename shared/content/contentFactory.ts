@@ -214,7 +214,7 @@ export function buildPillarGuide(config: PillarConfig): GuidePageData {
     relatedLinks: [
       { url: '/guides/treasure-valley-remodeling-guide' },
       { url: '/guides/boise-remodeling-cost-guide' },
-      { url: `/blog/category/${config.hubSlug}` },
+      { url: config.hubSlug === 'treasure-valley-locations' ? '/areas' : `/blog/category/${config.hubSlug}` },
       { url: '/areas' },
     ],
   };

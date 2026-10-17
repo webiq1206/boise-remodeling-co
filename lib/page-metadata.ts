@@ -144,13 +144,19 @@ const SERVICE_TITLE_OVERRIDES: Record<string, string> = {
 const AREA_ANSWER: Record<string, { title: string; description: string }> = {
   eagle: {
     title: 'Remodeling contractors in Eagle, ID',
+    // Exactly 160 characters. fitDescription drops the budget sentence once
+    // the kept prefix is 140 or longer, so do not lengthen this line.
+    // "Idaho" is "ID" and "founded in 2020" is "founded 2020" so kitchen,
+    // home, Eagle, and every trust claim still fit.
     description:
-      'Design-build remodeling in Eagle, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
   },
   boise: {
     title: 'Remodeling contractors in Boise, ID',
+    // Exactly 160 characters. "Idaho" is "ID" and "Founded in 2020" is
+    // "Founded 2020" so Design-build stays with kitchen and bath.
     description:
-      'Design-build remodeling in Boise, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
   },
   nampa: {
     title: 'Remodeling contractors in Nampa, ID',
