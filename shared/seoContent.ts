@@ -663,9 +663,11 @@ export function serviceCostLabel(name: string): string {
 export function indefiniteArticle(name: string): 'a' | 'an' {
   const firstWord = name.trim().split(/[\s/]+/)[0] ?? '';
   const acronym = /^[A-Z]{2,}$/.test(firstWord);
-  const first = firstWord[0] ?? '';
-  if (acronym) return ACRONYM_VOWEL_SOUND.test(first) ? 'an' : 'a';
-  return /^[aeiou]/i.test(first) ? 'an' : 'a';
+  if (acronym) return ACRONYM_VOWEL_SOUND.test(firstWord[0] ?? '') ? 'an' : 'a';
+  const word = firstWord.toLowerCase();
+  if (/^(hour|honest|honou?r|heir)/.test(word)) return 'an';
+  if (/^(uni|use|usu|uti|ute|ure|eu|ewe|one|once)/.test(word)) return 'a';
+  return /^[aeiou]/i.test(word) ? 'an' : 'a';
 }
 
 export function cityServiceCostQuestion(service: ServiceSEOContent, city: CityData): string {
