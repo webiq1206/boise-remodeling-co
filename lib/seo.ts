@@ -176,7 +176,8 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   }
   
   const serviceLC = serviceName.toLowerCase();
-  return `Expert ${serviceLC} in Boise & the Treasure Valley. Idaho Registered Contractor #8381215, bonded & insured. Call ${phone} for a free consultation!`;
+  const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
+  return `Expert ${serviceLC} in Boise & the Treasure Valley. Idaho Registered Contractor #8381215, bonded & insured${guarantee}. Call ${phone} for a free consultation!`;
 }
 
 /**

@@ -81,6 +81,7 @@ test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is o
   assert.equal(SHOW_UNPROVEN_SATISFACTION_GUARANTEE, false);
   const source = readFileSync('lib/seo.ts', 'utf8');
   assert.match(source, /Satisfaction guaranteed/);
+  assert.match(source, /& satisfaction guaranteed/);
   const service = generateMetaDescription({ serviceName: 'Kitchen Remodel', serviceSlug: 'kitchen-remodel' });
   const unknownCity = generateMetaDescription({
     serviceName: 'Kitchen Remodel',
@@ -93,8 +94,8 @@ test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is o
   assert.match(unknownCity, /Free in-home consultation/);
 });
 
-test('the open graph page preview is the year-free seal', () => {
+test('the open graph page preview stays the current brand card until Ada supplies a no-year file', () => {
   const hash = createHash('sha256').update(readFileSync('public/brand/page-preview.png')).digest('hex');
-  assert.equal(hash, 'da5ff48bfb7d52e90a20b3dfc84707960cf78f05234f7754e9e8ebe6dc3bebea');
+  assert.equal(hash, '8f4cdbece88584fbb30097582e81da9459b460c34b9b9fb7dfeae4667e655278');
 });
 
