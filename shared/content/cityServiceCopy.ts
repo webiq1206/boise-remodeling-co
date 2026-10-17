@@ -532,7 +532,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Composite or wood decking, which is better for Idaho?", answer: "Both work in Caldwell. Composite holds up to strong sun, snow and moisture, needs little maintenance and can last decades, though you pay more for it upfront. Cedar and hardwood are less expensive to install and need sealing periodically. We'll weigh the lifetime cost of each with you during design." },
       { question: "Do you offer outdoor living & decks in Caldwell?", answer: "Yes. Decks and outdoor living spaces bring us to Caldwell regularly, and into the Canyon County towns around it." },
       { question: "How do I get a quote for outdoor living & decks in Caldwell?", answer: "Check the planning range our online estimator offers. Next is a free visit to your home: 60 to 90 minutes studying the yard, ending with design direction and next steps." },
-      { question: "What is Caldwell's climate like for outdoor living?", answer: "Warm and dry, with real winters. At Deer Flat Dam on Lake Lowell, south of Caldwell, NOAA's 1991\u20132020 normals average about 10 inches of precipitation, about 41 days of 90\u00b0F or more, and some 106 nights below freezing each year. Shade, drainage and freeze-tolerant materials all matter here." },
+      { question: "What is Caldwell's climate like for outdoor living?", answer: "Warm and dry, with real winters. At the Deer Flat Dam station by Lake Lowell, southwest of Caldwell, NOAA's 1991\u20132020 normals average about 10 inches of precipitation, about 41 days of 90\u00b0F or more, and some 106 nights below freezing each year. Shade, drainage and freeze-tolerant materials all matter here." },
     ],
   },
   "aging-in-place/boise": {
