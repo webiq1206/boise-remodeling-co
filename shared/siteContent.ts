@@ -100,19 +100,26 @@ export const PROOF_STATS = {
   projectsCompleted: "100+",
 } as const;
 
-/**
- * Post-hero proof bar. Leads with the two credibility stats, then the genuine
- * trust signals the business carries. No review counts or ratings until real
- * ones exist. Keep labels concise so the strip stays on one desktop row.
- */
-export const TRUST_ITEMS = [
-  `Est. ${PROOF_STATS.established}`,
+const TRUST_ITEM_BASE = [
   `${PROOF_STATS.projectsCompleted} Projects`,
   "Bonded · Insured",
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
-].filter((item) => SHOW_FOUNDED_YEAR || item !== `Est. ${PROOF_STATS.established}`);
+] as const;
+
+/**
+ * Post-hero proof bar. The founding flag adds at most one badge, `Est. YYYY`.
+ * The other founding phrases stay in the guard test and are never badges.
+ * Keep labels concise so the strip stays on one desktop row.
+ */
+export function visibleTrustItems(showYear: boolean = SHOW_FOUNDED_YEAR): string[] {
+  const items: string[] = [...TRUST_ITEM_BASE];
+  if (showYear) items.unshift(`Est. ${PROOF_STATS.established}`);
+  return items;
+}
+
+export const TRUST_ITEMS = visibleTrustItems();
 
 export const PROMISE_ITEMS = [
   {
