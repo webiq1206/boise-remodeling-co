@@ -410,9 +410,10 @@ export const CITY_SEO_DATA: Record<string, {
     zipCodes: ['83634'],
     // Crimson Point leads so a generated intro does not open on Black Cat Road.
     // Ten Mile Creek is a waterway, not a neighborhood. Indian Creek is the creek.
-    // Bernie Fisher Park replaces Indian Creek Plaza, which is in Caldwell.
+    // Bernie Fisher Park is the city park. Indian Creek Plaza is in Caldwell.
+    // Kuna Caves are about 5 miles south on BLM land. Swan Falls Dam is in Melba.
     neighborhoods: ['Crimson Point', 'Black Cat'],
-    landmarks: ['Kuna Caves', 'Swan Falls Dam', 'Bernie Fisher Park'],
+    landmarks: ['Bernie Fisher Park'],
     climate: 'semi-arid high desert climate with hot summers and cold winters',
     coordinates: { lat: 43.4913, lng: -116.4201 },
   },
@@ -439,7 +440,10 @@ export const CITY_SEO_DATA: Record<string, {
     population: '30,346',
     founded: '1864',
     zipCodes: ['83616'],
-    neighborhoods: ['Shadow Valley', 'Banbury', 'The Estates', 'Floating Feather'],
+    // Banbury leads so a generated intro does not open on Floating Feather Road.
+    // Shadow Valley's course is addressed in Boise, and its Eagle annexation is still pending.
+    // "The Estates" is the Dry Creek Ranch product, outside Eagle.
+    neighborhoods: ['Banbury', 'Floating Feather'],
     landmarks: ['Eagle Island State Park', 'Heritage Park', 'Eagle Hills Golf Course'],
     climate: 'semi-arid with distinct four seasons',
     coordinates: { lat: 43.6954, lng: -116.3540 },
@@ -448,9 +452,11 @@ export const CITY_SEO_DATA: Record<string, {
     population: '12,701',
     founded: '1907',
     zipCodes: ['83669'],
-    neighborhoods: ['Star River Ranch', 'Hillsdale', 'Paramount', 'Star Crossing'],
-    // Freedom Park replaces Celebration Park, which is near Melba.
-    landmarks: ['Boise River', 'Star Riverfront Park', 'Freedom Park'],
+    // Hillsdale and Paramount are in Meridian. No City of Star source names Star Crossing.
+    neighborhoods: ['Star River Ranch'],
+    // Official name is Star Riverwalk Park, 1000 S. Main Street.
+    // Freedom Park is a city park. Celebration Park is near Melba.
+    landmarks: ['Boise River', 'Star Riverwalk Park', 'Freedom Park'],
     climate: 'semi-arid climate with hot summers and cool winters',
     coordinates: { lat: 43.6921, lng: -116.4939 },
   },
@@ -458,8 +464,12 @@ export const CITY_SEO_DATA: Record<string, {
     population: '10,141',
     founded: '1909',
     zipCodes: ['83644'],
-    neighborhoods: ['Middleton Heights', 'Purple Sage', 'Puckett Estates', 'Windermere'],
-    landmarks: ['Boise River', 'Middleton City Park', 'Purple Sage Golf Course'],
+    // Purple Sage Estates and the golf course are addressed in Caldwell.
+    // No City of Middleton source names Puckett Estates or Windermere.
+    neighborhoods: ['Middleton Heights'],
+    // Purple Sage Golf Course is a Caldwell city course.
+    // The city does not list a park named Middleton City Park.
+    landmarks: ['Boise River'],
     climate: 'semi-arid high desert climate with warm summers and cool winters',
     coordinates: { lat: 43.7068, lng: -116.6209 },
   },
@@ -467,8 +477,10 @@ export const CITY_SEO_DATA: Record<string, {
     population: '108,188',
     founded: '1886',
     zipCodes: ['83651', '83653', '83686', '83687'],
-    neighborhoods: ['Downtown Nampa', 'Karcher', 'Greenhurst', 'Columbia Village'],
-    landmarks: ['Ford Idaho Center', 'Lake Lowell', 'Nampa Train Depot'],
+    // Columbia Village is in southeast Boise.
+    neighborhoods: ['Downtown Nampa', 'Karcher', 'Greenhurst'],
+    // Lake Lowell is the Deer Flat refuge just outside Nampa.
+    landmarks: ['Ford Idaho Center', 'Nampa Train Depot'],
     climate: 'semi-arid with hot summers and cold winters',
     coordinates: { lat: 43.5407, lng: -116.5635 },
   },
