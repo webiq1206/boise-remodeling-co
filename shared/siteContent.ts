@@ -7,7 +7,7 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { SHOW_FOUNDED_YEAR } from "@/shared/foundingClaim";
+import { SHOW_FOUNDED_YEAR, SHOW_UNPROVEN_PROJECT_COUNT } from "@/shared/foundingClaim";
 
 export const SITE_TAGLINE = "Treasure Valley design-build, built on clarity and craftsmanship";
 
@@ -112,7 +112,11 @@ export const TRUST_ITEMS = [
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
-].filter((item) => SHOW_FOUNDED_YEAR || item !== `Est. ${PROOF_STATS.established}`);
+].filter((item) => {
+  if (!SHOW_FOUNDED_YEAR && item === `Est. ${PROOF_STATS.established}`) return false;
+  if (!SHOW_UNPROVEN_PROJECT_COUNT && item === `${PROOF_STATS.projectsCompleted} Projects`) return false;
+  return true;
+});
 
 export const PROMISE_ITEMS = [
   {
@@ -146,7 +150,7 @@ export interface ClientPriority {
 export const CLIENT_PRIORITIES: ClientPriority[] = [
   {
     title: "Trust and credibility",
-    body: "Licensed, bonded, and insured with permits handled in-house and a written scope before work begins.",
+    body: "Idaho Registered Contractor #8381215, bonded and insured, with permits handled in-house and a written scope before work begins.",
     icon: ShieldCheck,
   },
   {

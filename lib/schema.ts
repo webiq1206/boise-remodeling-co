@@ -163,6 +163,17 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     '@id': LOCALBUSINESS_ID,
     url: baseUrl,
     parentOrganization: P5_PARENT_ORGANIZATION,
+    hasCredential: {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'registration',
+      name: 'Idaho Registered Contractor',
+      identifier: '8381215',
+      recognizedBy: {
+        '@type': 'GovernmentOrganization',
+        name: 'Idaho Division of Occupational and Professional Licenses',
+        url: 'https://dopl.idaho.gov/con/',
+      },
+    },
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     contactPoint: publicRepresentative(),
@@ -309,7 +320,7 @@ export function generateOrganizationSchema(): SchemaContext {
       '@type': 'ImageObject',
       url: LOGO_URL,
     },
-    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Licensed, insured, and committed to excellence.'),
+    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Idaho Registered Contractor #8381215, insured, and committed to excellence.'),
     ...(publicFoundedYear() ? { foundingDate: publicFoundedYear() } : {}),
     // founder is gated: only emitted once a real named founder is supplied in
     // BUSINESS_INFO.founderName (see seo-audit/trust-signal-map.md).

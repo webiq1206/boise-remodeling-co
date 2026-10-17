@@ -240,7 +240,7 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
     case 'about':
       title = 'About Us';
       description =
-        'Learn about Boise Remodeling Co, a Treasure Valley design-build remodeler. Licensed, insured, and committed to clear communication start to finish.';
+        'Learn about Boise Remodeling Co, a Treasure Valley design-build remodeler. Idaho Registered Contractor #8381215, insured, and committed to clear communication.';
       break;
     case 'contact':
       title = 'Contact Us';

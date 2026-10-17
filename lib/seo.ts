@@ -6,7 +6,12 @@
 
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
-import { publicPreviewPath, SHOW_FOUNDED_YEAR } from '@/shared/foundingClaim';
+import {
+  publicPreviewPath,
+  SHOW_FOUNDED_YEAR,
+  SHOW_UNPROVEN_SATISFACTION_GUARANTEE,
+  SHOW_UNPROVEN_TOP_RATED,
+} from '@/shared/foundingClaim';
 
 interface SEOMetaData {
   title: string;
@@ -126,20 +131,20 @@ export function generatePageTitle(params: ServiceSEOParams): string {
 }
 
 const CITY_DESCRIPTION_VARIANTS: Record<string, string> = {
-  Kuna: "Kuna's trusted design-build",
+  Kuna: "Kuna design-build",
   Boise: "Boise's design-build",
-  Meridian: "Meridian's trusted",
+  Meridian: "Meridian",
   Eagle: "Eagle's preferred",
   Star: "Star's reliable",
   Middleton: "Middleton's expert",
-  Nampa: "Nampa's trusted",
-  Caldwell: "Caldwell's trusted",
+  Nampa: "Nampa",
+  Caldwell: "Caldwell",
 };
 
 const CITY_CTA_VARIANTS: Record<string, string> = {
   Kuna: "Free in-home consultation",
   Boise: "Treasure Valley design-build",
-  Meridian: "Licensed & insured",
+  Meridian: "Permits handled in-house",
   Eagle: "Clear written scope",
   Star: "Weekly project updates",
   Middleton: "Workmanship guarantee",
@@ -157,14 +162,15 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   const phone = SITE_CONFIG.phone;
   
   if (params.isHomePage) {
-    return `Design-build remodeling contractor serving Boise, Meridian, Eagle & the Treasure Valley. Licensed, insured, top-rated. Call ${phone} for your free consultation!`;
+    const topRated = SHOW_UNPROVEN_TOP_RATED ? ", top-rated" : "";
+    return `Design-build remodeling contractor serving Boise, Meridian, Eagle & the Treasure Valley. Idaho Registered Contractor #8381215, insured${topRated}. Call ${phone} for your free consultation!`;
   }
   
   if (city && serviceName) {
     const serviceLC = serviceName.toLowerCase();
-    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || `${city}'s trusted`;
-    const ctaVariant = CITY_CTA_VARIANTS[city] || "Satisfaction guaranteed";
-    return `${cityVariant} ${serviceLC} team. Licensed & insured. ${ctaVariant}. Call ${phone} for a free consultation!`;
+    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || city;
+    const ctaVariant = CITY_CTA_VARIANTS[city] || (SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? "Satisfaction guaranteed" : "Free in-home consultation");
+    return `${cityVariant} ${serviceLC} team. Idaho Registered Contractor #8381215 & insured. ${ctaVariant}. Call ${phone} for a free consultation!`;
   }
   
   if (city) {
@@ -172,11 +178,12 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   }
   
   if (!serviceName) {
-    return `Professional remodeling contractor in Boise & Treasure Valley. Licensed, insured. Call ${phone} for a free consultation. Residential design-build services!`;
+    return `Professional remodeling contractor in Boise & Treasure Valley. Idaho Registered Contractor #8381215, insured. Call ${phone} for a free consultation.`;
   }
   
   const serviceLC = serviceName.toLowerCase();
-  return `Expert ${serviceLC} in Boise & the Treasure Valley. Licensed, insured & satisfaction guaranteed. Call ${phone} for a free consultation!`;
+  const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
+  return `Expert ${serviceLC} in Boise & the Treasure Valley. Idaho Registered Contractor #8381215, insured${guarantee}. Call ${phone} for a free consultation!`;
 }
 
 /**
@@ -216,24 +223,24 @@ export function generateCityServiceDescription(
 ): string {
   const phone = SITE_CONFIG.phone;
   const serviceLC = serviceName.toLowerCase();
-  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || `${cityName}'s trusted`;
+  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || "Local";
   const cityData = CITY_SEO_DATA[cityName as keyof typeof CITY_SEO_DATA];
   const neighborhood = cityData?.neighborhoods?.[0];
 
   if (neighborhood) {
-    const withNeighborhood = `${cityVariant} ${serviceLC}. Serving ${neighborhood} & all ${cityName}. Licensed & insured. Call ${phone}!`;
+    const withNeighborhood = `${cityVariant} ${serviceLC}. Serving ${neighborhood} & all ${cityName}. Idaho Registered Contractor #8381215 & insured. Call ${phone}!`;
     if (withNeighborhood.length <= 160) return withNeighborhood;
   }
 
   if (shortDescription) {
-    const desc = `${cityVariant} ${serviceLC}. ${shortDescription}. Licensed & insured. Call ${phone}!`;
+    const desc = `${cityVariant} ${serviceLC}. ${shortDescription}. Idaho Registered Contractor #8381215 & insured. Call ${phone}!`;
     if (desc.length <= 160) return desc;
   }
 
-  const base = `${cityVariant} ${serviceLC} in ${cityName}, ID. Licensed & insured. Call ${phone} for a free quote!`;
+  const base = `${cityVariant} ${serviceLC} in ${cityName}, ID. Idaho Registered Contractor #8381215 & insured. Call ${phone} for a free quote!`;
   if (base.length <= 160) return base;
 
-  return `${serviceLC} in ${cityName}, ID. Licensed & insured pros. Call ${phone} for a free quote today!`;
+  return `${serviceLC} in ${cityName}, ID. Insured pros, Idaho Registered Contractor #8381215. Call ${phone} for a free quote today!`;
 }
 
 /**
@@ -342,7 +349,7 @@ export function generateLogoAltTag(params: ServiceSEOParams): string {
   
   if (city && serviceName) {
     // City-specific alt tag with service context
-    return `Boise Remodeling Co logo - ${serviceName} services in ${city} Idaho - Licensed remodeling professionals`;
+    return `Boise Remodeling Co logo - ${serviceName} services in ${city} Idaho - Idaho Registered Contractor #8381215`;
   }
   
   if (city) {
@@ -536,9 +543,9 @@ export const BUSINESS_INFO = {
   founded: '2020',
   serviceArea: ['Boise', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'],
   serviceRadius: '35 miles',
-  licenses: ['License details available upon request'],
+  licenses: ['Idaho Registered Contractor #8381215'],
   certifications: ['Design-Build Remodeling', 'Bonded & Insured'],
-  insurance: 'Fully Licensed & Insured',
+  insurance: 'Idaho Registered Contractor #8381215 & Insured',
   rating: 0,
   reviewCount: 0,
   yearlyServicesCompleted: 0,

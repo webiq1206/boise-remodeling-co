@@ -1,5 +1,6 @@
 
 import { BusinessPhoneLink } from "@/components/BusinessPhoneContact";
+import { RegistrationLink } from "@/components/RegistrationLink";
 import { EmailLink } from "@/components/EmailLink";
 import { SaveContactLink } from "@/components/SaveContactLink";
 import { ApprovedBrand } from "@/components/approved/ApprovedBrand";
@@ -199,7 +200,9 @@ export function Footer() {
         <div className="flex flex-col gap-4 pt-5 text-xs text-inverse-muted sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             <span>&copy; {currentYear} Boise Remodeling Co. All rights reserved.</span>
-            <span>License details available upon request</span>
+            <span>
+              <RegistrationLink className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" />
+            </span>
             {/* Required parent-company disclosure. This brand is a DBA of
                 P5 Home Co LLC, not a separate company. */}
             <span>

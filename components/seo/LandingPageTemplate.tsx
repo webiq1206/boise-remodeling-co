@@ -5,6 +5,7 @@ import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
+import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
 import {
@@ -513,7 +514,7 @@ export function LandingPageTemplate({
                   <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:[color:var(--ed-accent)]">
                     {faq.question}
                   </AccordionTrigger>
-                  <AccordionContent className="ed-body pb-7 text-[0.9375rem]">{faq.answer}</AccordionContent>
+                  <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>

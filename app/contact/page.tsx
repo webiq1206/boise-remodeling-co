@@ -9,6 +9,7 @@ import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { SectionHeader } from '@/components/marketing/SectionHeader';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
+import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { SaveContactLink } from '@/components/SaveContactLink';
 import { StatementBandSection } from '@/components/sections/StatementBandSection';
@@ -389,7 +390,7 @@ export default function ContactPage() {
                       {faq.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-sm leading-relaxed pb-6 text-muted-foreground">
-                      {faq.answer}
+                      <RegistrationText text={faq.answer} />
                     </AccordionContent>
                   </AccordionItem>
                 ))}

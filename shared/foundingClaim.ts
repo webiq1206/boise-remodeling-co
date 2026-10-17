@@ -5,6 +5,11 @@
  */
 export const SHOW_FOUNDED_YEAR = false;
 
+/** Unproven marketing claims. Source strings stay. Public copy omits them while these are false. */
+export const SHOW_UNPROVEN_TOP_RATED = false;
+export const SHOW_UNPROVEN_SATISFACTION_GUARANTEE = false;
+export const SHOW_UNPROVEN_PROJECT_COUNT = false;
+
 export const FOUNDED_YEAR = '2020';
 
 export function publicFoundedYear(): string | undefined {

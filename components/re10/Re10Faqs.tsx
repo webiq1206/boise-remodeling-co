@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RegistrationText } from "@/components/RegistrationLink";
 import {
   Accordion,
   AccordionContent,
@@ -57,7 +58,7 @@ export function Re10Faqs() {
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-5">
-                  {faq.answer}
+                  <RegistrationText text={faq.answer} />
                 </AccordionContent>
               </AccordionItem>
             ))}

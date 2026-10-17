@@ -52,7 +52,8 @@ test('published pages, schema, and llms files do not render the 2020 founding cl
   const heroHtml = renderToStaticMarkup(React.createElement(HeroSection));
   const homeHtml = renderToStaticMarkup(React.createElement(ApprovedHome, { hero: null }));
   assert.match(aboutHtml, /Boise Remodeling Co, design-build/);
-  assert.match(heroHtml, /100\+ Projects/);
+  assert.equal(PROOF_STATS.projectsCompleted, '100+');
+  assert.equal(heroHtml.includes('100+ Projects'), false);
   assert.match(homeHtml, /Remodeling contractors in Boise/);
   assertHidden('about page', aboutHtml);
   assertHidden('hero', heroHtml);

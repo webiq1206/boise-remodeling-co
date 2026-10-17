@@ -394,9 +394,9 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
     answer: `Guest baths typically plan $18,000–$45,000; primary baths $35,000–$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
   },
   {
-    question: 'Are you licensed and insured?',
+    question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is bonded and insured for residential remodeling across the Treasure Valley. Idaho contractor license details are available upon request.',
+      'Yes. Boise Remodeling Co is bonded and insured for residential remodeling across the Treasure Valley. Idaho Registered Contractor #8381215.',
   },
   {
     question: 'Do you build ADUs?',
