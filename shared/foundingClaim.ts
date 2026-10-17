@@ -11,6 +11,21 @@ export function publicFoundedYear(): string | undefined {
   return SHOW_FOUNDED_YEAR ? FOUNDED_YEAR : undefined;
 }
 
+/** The seal's lower arc reads EST 2020. The file stays in the repo. */
+export const SEAL_LOGO_PATH = '/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png';
+/** Square mark with no founding year, used while the seal is withheld. */
+export const PUBLIC_LOGO_PATH = '/brand/png/icon/boise-remodeling-co-icon-charcoal-512px.png';
+export const SEAL_PREVIEW_PATH = '/brand/page-preview.png';
+export const PUBLIC_PREVIEW_PATH = '/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png';
+
+export function publicLogoPath(): string {
+  return SHOW_FOUNDED_YEAR ? SEAL_LOGO_PATH : PUBLIC_LOGO_PATH;
+}
+
+export function publicPreviewPath(): string {
+  return SHOW_FOUNDED_YEAR ? SEAL_PREVIEW_PATH : PUBLIC_PREVIEW_PATH;
+}
+
 /** Publish a string that may contain the unproven 2020 founding claim. */
 export function publishFoundingCopy(text: string): string {
   if (SHOW_FOUNDED_YEAR || !text) return text;

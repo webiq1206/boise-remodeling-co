@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -15,8 +15,9 @@ import {
 } from '../lib/schema.ts';
 import { BUSINESS_INFO } from '../lib/seo.ts';
 import { getCityBySlug } from '../shared/contentData.ts';
-import { FOUNDED_YEAR, SHOW_FOUNDED_YEAR, publishFoundingCopy } from '../shared/foundingClaim.ts';
-import { GBP_DESCRIPTION, GBP_NAP } from '../shared/gbpProfile.ts';
+import { FOUNDED_YEAR, SHOW_FOUNDED_YEAR, publishFoundingCopy, publicLogoPath, publicPreviewPath } from '../shared/foundingClaim.ts';
+import { GBP_DESCRIPTION, GBP_NAP, publicGbpNap } from '../shared/gbpProfile.ts';
+import { getDefaultOgImage } from '../lib/seo.ts';
 import { HOMEPAGE_FAQS } from '../shared/homepageFaqs.ts';
 import { getAreaIntro, SERVICE_SEO_CONTENT } from '../shared/seoContent.ts';
 import { PROOF_STATS, TRUST_ITEMS } from '../shared/siteContent.ts';
@@ -96,6 +97,24 @@ test('published pages, schema, and llms files do not render the 2020 founding cl
   for (const file of ['public/llms.txt', 'public/llms-full.txt', 'public/brand/BRAND.md', 'public/brand/brand-kit.html']) {
     assertHidden(file, readFileSync(file, 'utf8'));
   }
+
+  const kit = readFileSync('public/brand/brand-kit.html', 'utf8');
+  assert.equal(/<img[^>]+svg\/seal\//.test(kit), false);
+  assert.equal(existsSync('public/brand/svg/seal/light/boise-remodeling-co-seal-charcoal-accent.svg'), true);
+  assert.equal(existsSync('public/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png'), true);
+  assert.equal(existsSync('public/brand/page-preview.png'), true);
+  assert.equal(publicLogoPath().includes('/seal/'), false);
+  assert.equal(publicPreviewPath().includes('page-preview.png'), false);
+  assert.equal(String(business.logo).includes('/seal/'), false);
+  const orgLogo = org.logo as { url?: string };
+  assert.equal(String(orgLogo.url).includes('/seal/'), false);
+  const aboutImages = aboutMeta.openGraph?.images;
+  const aboutImage = Array.isArray(aboutImages) ? aboutImages[0] : undefined;
+  const aboutImageUrl = typeof aboutImage === 'string' ? aboutImage : aboutImage && 'url' in aboutImage ? String(aboutImage.url) : '';
+  assert.equal(aboutImageUrl.includes('page-preview.png'), false);
+  assert.equal(aboutImageUrl.includes('/seal/'), false);
+  assert.equal(getDefaultOgImage().includes('og-default.png'), false);
+  assert.equal('founded' in publicGbpNap(), false);
 });
 
 test('census and climate years are not treated as a founding claim', () => {
