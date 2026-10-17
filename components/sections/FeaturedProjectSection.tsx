@@ -32,8 +32,8 @@ export function FeaturedProjectSection() {
         <ProjectInspirationImage
           beforeSrc={project.beforeImageUrl}
           afterSrc={project.afterImageUrl}
-          beforeAlt={`Before: ${project.title}`}
-          afterAlt={`After: ${project.title}`}
+          beforeAlt={project.description}
+          afterAlt={project.description}
           aspectClass="aspect-[16/10] md:aspect-[16/9]"
           caption={
             <>

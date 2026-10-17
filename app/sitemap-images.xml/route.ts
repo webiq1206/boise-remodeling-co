@@ -53,7 +53,7 @@ export async function GET() {
     const pageUrl = `${baseUrl}/services/${project.serviceType}`;
     add(pageUrl, {
       loc: absolute(project.afterImageUrl, baseUrl),
-      title: `${project.title} (design inspiration)`,
+      title: project.title,
       caption: `Representative design imagery. ${project.description}`,
     });
   }

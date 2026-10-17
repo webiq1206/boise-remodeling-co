@@ -22,7 +22,6 @@ export function FeaturedBeforeAfterSection({
     <Section divider>
       <div className="container px-4 max-w-5xl">
         <SectionHeader
-          eyebrow="Design inspiration"
           title={title}
           description="Explore a design direction for your own home. Final layouts and materials are tailored to your property."
           className="mb-8 max-w-3xl"
@@ -32,8 +31,8 @@ export function FeaturedBeforeAfterSection({
             <ProjectInspirationImage
               beforeSrc={project.beforeImageUrl}
               afterSrc={project.afterImageUrl}
-              beforeAlt={`Before: ${project.title}`}
-              afterAlt={`After: ${project.title}`}
+              beforeAlt={project.description}
+              afterAlt={project.description}
               aspectClass="aspect-[16/10] md:aspect-[21/9]"
             />
             <div className="p-6 md:p-8">

@@ -10,7 +10,6 @@ import { GALLERY_PROJECTS, type GalleryProject } from "@/shared/galleryData";
 function ProjectMeta({ project, lead = false }: { project: GalleryProject; lead?: boolean }) {
   return (
     <>
-      <p className="ed-eyebrow ed-eyebrow-accent !mb-3">Design inspiration</p>
       <h3 className={lead ? "ed-h3" : "ed-h4"}>{project.title}</h3>
       <p className={`ed-body mt-3 ${lead ? "" : "text-[0.875rem]"}`}>{project.description}</p>
     </>
@@ -40,7 +39,6 @@ export function ProjectGallerySection({
         {/* LEAD: the slider at the size it deserves, heading alongside. */}
         <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <Reveal>
-            <p className="ed-eyebrow">Design inspiration</p>
             <h2 className="ed-h2 ed-statement">
               Ideas for your Treasure Valley home
             </h2>
@@ -57,8 +55,8 @@ export function ProjectGallerySection({
               <ProjectInspirationImage
                 beforeSrc={lead.beforeImageUrl}
                 afterSrc={lead.afterImageUrl}
-                beforeAlt={`Before: ${lead.title}`}
-                afterAlt={`After: ${lead.title}`}
+                beforeAlt={lead.description}
+                afterAlt={lead.description}
                 aspectClass="aspect-[4/3]"
               />
             </div>
@@ -90,8 +88,8 @@ export function ProjectGallerySection({
                   <ProjectInspirationImage
                     beforeSrc={project.beforeImageUrl}
                     afterSrc={project.afterImageUrl}
-                    beforeAlt={`Before: ${project.title}`}
-                    afterAlt={`After: ${project.title}`}
+                    beforeAlt={project.description}
+                    afterAlt={project.description}
                     aspectClass="aspect-[4/3]"
                     sizes="(max-width: 768px) 80vw, 33vw"
                   />

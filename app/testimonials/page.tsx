@@ -23,7 +23,7 @@ export const metadata = withBrandPageMetadata((buildPageMetadata({
   path: '/testimonials',
   titleOverride: 'Remodeling Inspiration',
   descriptionOverride:
-    'Kitchen, bathroom, whole-home, and addition design inspiration for Treasure Valley homeowners. Representative imagery, not completed customer projects.',
+    'Kitchen, bathroom, whole-home, and addition ideas for Treasure Valley homeowners. Representative imagery, not completed customer projects.',
 })), "/testimonials");
 
 export default function TestimonialsPage() {
@@ -35,7 +35,7 @@ export default function TestimonialsPage() {
     generateCollectionPageSchema({
       title: 'Remodeling Inspiration',
       description:
-        'Representative remodeling design inspiration for kitchens, bathrooms, whole homes, and additions.',
+        'Kitchen, bathroom, whole-home, and addition ideas for Treasure Valley homeowners.',
       url: '/testimonials',
       items: GALLERY_PROJECTS.map((p) => ({
         name: p.title,
@@ -50,7 +50,7 @@ export default function TestimonialsPage() {
 
       <PageHeroBand
         imageSrc={GALLERY_IMAGES.kitchen.after}
-        imageAlt="Representative modern kitchen design inspiration"
+        imageAlt="Kitchen with white shaker cabinets, a farmhouse sink, quartz counters, and oak flooring"
         scrim={0.75}
       >
         <Breadcrumbs
@@ -59,8 +59,7 @@ export default function TestimonialsPage() {
             { name: 'Remodeling Inspiration' },
           ]}
         />
-        <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Design inspiration</p>
-        <h1 className="ed-display ed-statement-display text-inverse-foreground">
+        <h1 className="ed-display ed-statement-display text-inverse-foreground mt-8">
           Imagine the <em className="brc-accent">possibilities</em> for your home
         </h1>
         <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-8">
