@@ -647,6 +647,31 @@ export function getCityServiceIntro(
   return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, proactive weekly updates, and a written workmanship guarantee. Schedule a free in-home consultation or use our project estimator for a planning range.`;
 }
 
+/** Letter names that start with a vowel sound, so an acronym such as ADU takes "an". */
+const ACRONYM_VOWEL_SOUND = /^[aefhilmnorsx]/i;
+
+/** Keep an all-caps acronym (ADU) and lowercase the rest of the display name. */
+export function serviceCostLabel(name: string): string {
+  return name.replace(/[A-Za-z]+(?:-[A-Za-z]+)*/g, (word) => {
+    const letters = word.replace(/-/g, '');
+    if (letters.length > 1 && letters === letters.toUpperCase()) return word;
+    return word.toLowerCase();
+  });
+}
+
+/** "an" before a vowel sound, "a" before a consonant sound. */
+export function indefiniteArticle(name: string): 'a' | 'an' {
+  const firstWord = name.trim().split(/[\s/]+/)[0] ?? '';
+  const acronym = /^[A-Z]{2,}$/.test(firstWord);
+  const first = firstWord[0] ?? '';
+  if (acronym) return ACRONYM_VOWEL_SOUND.test(first) ? 'an' : 'a';
+  return /^[aeiou]/i.test(first) ? 'an' : 'a';
+}
+
+export function cityServiceCostQuestion(service: ServiceSEOContent, city: CityData): string {
+  return `How much does ${indefiniteArticle(service.name)} ${serviceCostLabel(service.name)} cost in ${city.name}?`;
+}
+
 export function getCityServiceFaqs(service: ServiceSEOContent, city: CityData): FAQItem[] {
   const override = getCityServiceCopy(service.slug, city.slug);
   if (override) return override.faqs;
@@ -660,7 +685,7 @@ export function getCityServiceFaqs(service: ServiceSEOContent, city: CityData): 
     ...(costSentence
       ? [
           {
-            question: `How much does a ${service.name.toLowerCase()} cost in ${city.name}?`,
+            question: cityServiceCostQuestion(service, city),
             answer: `${city.name} pricing tracks the broader Treasure Valley market. ${costSentence} Schedule a free in-home visit for a written scope specific to your home.`,
           },
         ]
