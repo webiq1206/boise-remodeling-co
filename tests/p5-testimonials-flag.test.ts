@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -40,12 +41,52 @@ test('SHOW_TESTIMONIALS is off and drops seed quotes', () => {
   assert.deepEqual(getTestimonialsFor('lawn-care', 'kuna'), []);
 });
 
+const OTHER_BUSINESS_REVIEWS = [
+  'Lawn Care',
+  'Lawn Care Kuna',
+  'taking care of our yard',
+  'Best Christmas light installation',
+  'recommended them to all our neighbors',
+  'beautiful patio in our backyard',
+];
+
 test('the public testimonials API returns no seed rows while the flag is off', async () => {
+  const route = text('../app/api/testimonials/route.ts');
+  const gate = route.indexOf('if (!SHOW_TESTIMONIALS)');
+  const read = route.indexOf('db.select');
+  assert.ok(gate >= 0 && read > gate, 'the flag returns before any database read');
   const response = await GET();
+  assert.equal(response.headers.get('cache-control'), 'no-store, max-age=0');
   const body = await response.json();
   assert.deepEqual(body, []);
   const serialized = JSON.stringify(body);
   for (const name of SEED_NAMES) assert.equal(serialized.includes(name), false, name);
+  for (const phrase of OTHER_BUSINESS_REVIEWS) assert.equal(serialized.includes(phrase), false, phrase);
+});
+
+test('client source does not carry the other business review text', () => {
+  const roots = ['app', 'components', 'shared', 'lib', 'public'];
+  const hits: string[] = [];
+  const walk = (dir: string) => {
+    for (const name of readdirSync(dir)) {
+      if (name === 'node_modules' || name === '.next') continue;
+      const file = join(dir, name);
+      const info = statSync(file);
+      if (info.isDirectory()) walk(file);
+      else if (info.isFile() && info.size < 2_000_000) {
+        const body = readFileSync(file, 'utf8');
+        for (const phrase of OTHER_BUSINESS_REVIEWS) {
+          if (body.includes(phrase)) hits.push(`${file}: ${phrase}`);
+        }
+      }
+    }
+  };
+  for (const root of roots) walk(root);
+  assert.deepEqual(hits, []);
+  const guard = text('../scripts/grep-client-reviews.mjs');
+  assert.match(guard, /Lawn Care/);
+  assert.match(guard, /taking care of our yard/);
+  assert.match(text('../package.json'), /next build && node scripts\/grep-client-reviews\.mjs/);
 });
 
 test('AggregateRating and Review schema stay out while the flag is off', () => {

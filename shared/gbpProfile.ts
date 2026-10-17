@@ -4,6 +4,7 @@
  * Operator checklists: local-seo-audit/02-gbp-plan.md
  */
 
+import { publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
@@ -58,8 +59,9 @@ export const GBP_CATEGORIES = {
   ],
 } as const;
 
-export const GBP_DESCRIPTION =
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.';
+export const GBP_DESCRIPTION = publishFoundingCopy(
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+);
 
 export const GBP_LINKS = {
   website: SITE,
