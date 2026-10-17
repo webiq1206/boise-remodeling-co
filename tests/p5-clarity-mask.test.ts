@@ -182,6 +182,16 @@ test('a checkbox with no masked ancestor masks its parent', () => {
   }
 });
 
+test('the consultation success panel is masked', () => {
+  const source = readFileSync(new URL('../components/ConsultationForm.tsx', import.meta.url), 'utf8');
+  const start = source.indexOf('data-testid="consultation-success"');
+  assert.ok(start > 0);
+  const tag = source.slice(source.lastIndexOf('<', start), source.indexOf('>', start) + 1);
+  assert.match(tag, /data-clarity-mask="True"/);
+  assert.match(source, /submitted\.name\.split\(" "\)\[0\]/);
+  assert.match(source, /submitted\?\.address/);
+});
+
 test('the assistant transcript container is masked', () => {
   const source = readFileSync(new URL('../components/assistant/AssistantWidget.tsx', import.meta.url), 'utf8');
   const start = source.indexOf('ref={logRef}');

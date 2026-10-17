@@ -5,7 +5,7 @@ import test from 'node:test';
 const page = readFileSync(new URL('../app/privacy-policy/page.tsx', import.meta.url), 'utf8');
 
 test('the privacy page adds the cookies section without removing the existing policy', () => {
-  assert.match(page, /Last updated: October 2026/);
+  assert.match(page, /Last updated: October 17, 2026/);
   assert.match(page, /Cookies, analytics and advertising/);
   assert.match(page, /We use Google Analytics 4 \(GA4\)/);
   assert.match(page, /Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites \(remarketing\)\./);
