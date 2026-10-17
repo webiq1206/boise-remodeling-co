@@ -89,8 +89,9 @@ test('one primary Ads dispatch per successful lead key, including lazy tag loadi
   trackGoogleAdsLeadConversion({},'intake:offline-test');assert.equal(timers.length,1);
   fake.gtag=(...args:unknown[])=>calls.push(args);timers.shift()!();
   assert.equal(trackGoogleAdsLeadConversion({},'intake:offline-test'),false);
-  assert.equal(calls.length,1);assert.equal(calls[0][1],'conversion');
-  assert.equal((calls[0][2] as any).transaction_id,'intake:offline-test');
+  assert.equal(calls.length,2);
+  assert.deepEqual(calls.map((call)=>call[1]),['conversion','conversion']);
+  assert.deepEqual(calls.map((call)=>(call[2] as {transaction_id?:string}).transaction_id),['intake:offline-test','intake:offline-test']);
  }finally{if(prior)Object.defineProperty(globalThis,'window',prior);else delete (globalThis as any).window;}
 });
 test('click tracking remains intent only and attribution attaches only to existing form payloads',()=>{

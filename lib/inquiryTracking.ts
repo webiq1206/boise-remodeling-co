@@ -112,8 +112,7 @@ export function trackAcceptedInquiry(
     event_id: response.inquiryId,
   });
   // Per-lead value for ROAS reporting (lib/googleAdsConversion.ts); no PII.
-  // The form label is deduped on the inquiry id, including when the estimator
-  // completion that created this lead fires the same conversion.
+  // An inquiry id is not an intake: or estimator: key, so this sends the form label only.
   trackGoogleAdsLeadConversion({ projectType }, response.inquiryId);
   trackMetaEvent(
     "Lead",
