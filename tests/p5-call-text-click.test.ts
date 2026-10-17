@@ -14,13 +14,13 @@ function restore(name: "window" | "navigator", prior: PropertyDescriptor | undef
 
 function withBrowser(
   run: (calls: unknown[][]) => void,
-  options: { disabled?: boolean; denied?: boolean; hostname?: string } = {},
+  options: { disabled?: boolean; denied?: boolean; hostname?: string; pathname?: string } = {},
 ) {
   const priorWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
   const priorNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
   const calls: unknown[][] = [];
   const fakeWindow = {
-    location: { hostname: options.hostname ?? "boiseremodeling.co" },
+    location: { hostname: options.hostname ?? "boiseremodeling.co", pathname: options.pathname ?? "/" },
     sessionStorage: {
       getItem: (key: string) => (options.disabled && key === "p5_analytics_disabled" ? "1" : null),
     },
@@ -113,7 +113,7 @@ test("the privacy page states the rev 4 cookies section verbatim", () => {
   const paragraphs = [
     "We use Google Analytics 4 (GA4) to understand how visitors use this site and Google Ads to measure which of our ads lead to quote requests, calls and texts. These tools set cookies and receive information about your visit, including your IP address, which Google processes under its own privacy policy (https://policies.google.com/privacy). When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, your own phone number or what you say or write. Google Analytics also records the tap, including the number tapped, which is our business number. If your call goes through a Google forwarding number, Google connects the call and can see the calling number and call length, but not what's said.",
     "We also use Microsoft Clarity to see how visitors use our pages through heatmaps and session recordings; form fields are masked so what you type is not recorded. Microsoft processes this under its own privacy statement (https://privacy.microsoft.com/privacystatement).",
-    "We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. The pixel records a page view. Meta's pixel may also record which buttons you click and basic information about the page, such as its title. We do not send your name, email or phone number to Meta. When you submit an inquiry, we may send Meta the Lead event with the type of project you chose and an inquiry category, the page address, the event time, a matching event id, your IP address, your browser user agent, and the Meta cookies _fbp and _fbc, so it can match the inquiry to an ad. Meta processes this under its own privacy policy (https://www.facebook.com/privacy/policy).",
+    "We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. The pixel records a page view. Meta's pixel may also record which buttons you click and basic information about the page, such as its title. Depending on Meta's settings, the pixel may also collect contact details you type into a form, in hashed form. When you submit an inquiry, our server may send Meta the Lead event with the type of project you chose and an inquiry category, the page address, the event time, a matching event id, your IP address, your browser user agent, and the Meta cookies _fbp and _fbc, so it can match the inquiry to an ad. Meta processes this under its own privacy policy (https://www.facebook.com/privacy/policy).",
   ];
   const visible = beforeNext.replace(/<[^>]+>/g, "");
   for (const paragraph of paragraphs) {
@@ -121,9 +121,70 @@ test("the privacy page states the rev 4 cookies section verbatim", () => {
   }
   const order = paragraphs.map((paragraph) => visible.indexOf(paragraph));
   assert.deepEqual(order, [...order].sort((a, b) => a - b));
+  assert.equal(visible.includes("We do not send your name, email or phone number to Meta."), false);
+  assert.equal(visible.includes("we may send"), false);
   assert.equal(visible.includes("your name, phone number or what you say or write"), false);
   assert.equal(visible.includes("remarketing"), false);
   assert.equal(visible.includes("action source"), false);
+});
+
+test("any tel or sms tap fires outside admin and portal, including a forwarding number", () => {
+  const calls = withBrowser(() => {
+    trackDelegatedContactClick({ target: link("tel:+18005550199") });
+    trackDelegatedContactClick({ target: link("sms:+18005550100?body=hello") });
+  }, { pathname: "/contact" });
+  assert.equal(calls.length, 2);
+  assert.equal((calls[0][2] as { send_to: string }).send_to, GOOGLE_ADS_CALL_CLICK_LABEL);
+  assert.equal((calls[1][2] as { send_to: string }).send_to, GOOGLE_ADS_TEXT_CLICK_LABEL);
+
+  for (const pathname of ["/admin", "/admin/leads", "/portal", "/portal/jobs"]) {
+    const blocked = withBrowser(() => {
+      trackDelegatedContactClick({ target: link("tel:+18005550199") });
+      trackDelegatedContactClick({ target: link("sms:+18005550100") });
+    }, { pathname });
+    assert.equal(blocked.length, 0, pathname);
+  }
+
+  const ads = readFileSync(new URL("../lib/googleAdsConversion.ts", import.meta.url), "utf8");
+  const helper = ads.slice(ads.indexOf("export function trackDelegatedContactClick"));
+  assert.equal(helper.includes("4771169"), false);
+  assert.equal(helper.includes("GOOGLE_ADS_PHONE"), false);
+  assert.equal(helper.includes("phoneTel"), false);
+  assert.match(helper, /startsWith\("tel:"\)/);
+  assert.match(helper, /startsWith\("sms:"\)/);
+});
+
+test("Clarity masks the form containers and Meta autoconfig is off before init", () => {
+  const root = new URL("../", import.meta.url);
+  const files = [
+    "components/ConsultationForm.tsx",
+    "components/P5Estimator.tsx",
+    "components/P5AddressInput.tsx",
+    "components/AddressAutocomplete.tsx",
+    "components/P5ExitOffer.tsx",
+    "components/P5ProjectReview.tsx",
+    "components/P5ReviewRequest.tsx",
+    "components/P5IntakeReview.tsx",
+    "components/estimate/recovery/AbandonmentPrompt.tsx",
+    "components/assistant/AssistantWidget.tsx",
+    "components/modals/ModalProvider.tsx",
+    "app/estimate/page.tsx",
+    "components/StripePaymentForm.tsx",
+    "components/takeoff/ClarifyInterview.tsx",
+  ];
+  for (const file of files) {
+    const source = readFileSync(new URL(file, root), "utf8");
+    assert.equal(source.includes('data-clarity-mask="true"'), true, file);
+  }
+  const consult = readFileSync(new URL("components/ConsultationForm.tsx", root), "utf8");
+  assert.equal((consult.match(/data-clarity-mask="true"/g) || []).length >= 2, true);
+  const estimator = readFileSync(new URL("components/P5Estimator.tsx", root), "utf8");
+  assert.match(estimator, /<form id=\{formId\}[^>]*data-clarity-mask="true"/);
+  assert.match(estimator, /styles\.composer\} data-clarity-mask="true"/);
+  const pixel = readFileSync(new URL("components/MetaPixel.tsx", root), "utf8");
+  const setAt = pixel.indexOf("fbq('set','autoConfig',false,");
+  const initAt = pixel.indexOf("fbq('init',");
+  assert.equal(setAt > 0 && initAt > setAt, true);
 });
 
 test("the existing click listener stays single-bound and GA4 click events stay in place", () => {

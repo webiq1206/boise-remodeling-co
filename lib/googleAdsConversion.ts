@@ -135,16 +135,22 @@ export function trackGoogleAdsContactClick(method: "call" | "text", retryCount =
   return true;
 }
 
-/** One Ads conversion per click event. A later click is a new event and fires again. */
+/** Staff tools are not ad traffic. A forwarding number is still a tel: tap. */
+function publicContactSurface(): boolean {
+  if (typeof window === "undefined") return false;
+  const path = window.location?.pathname || "/";
+  if (path === "/admin" || path.startsWith("/admin/")) return false;
+  if (path === "/portal" || path.startsWith("/portal/")) return false;
+  return true;
+}
+
+/** One Ads conversion per click event. Any tel: or sms: link counts. The number is not compared, because a Google forwarding number replaces the business number. A later click is a new event and fires again. */
 export function trackDelegatedContactClick(event: { target: EventTarget | null }): void {
   if (!event || clickedEvents.has(event)) return;
   const target = event.target as { closest?: (selector: string) => { getAttribute?: (name: string) => string | null } | null } | null;
   const href = target?.closest?.("a[href]")?.getAttribute?.("href") || "";
-  if (href.startsWith("tel:")) {
-    clickedEvents.add(event);
-    trackGoogleAdsContactClick("call");
-  } else if (href.startsWith("sms:")) {
-    clickedEvents.add(event);
-    trackGoogleAdsContactClick("text");
-  }
+  const method = href.startsWith("tel:") ? "call" : href.startsWith("sms:") ? "text" : null;
+  if (!method || !publicContactSurface()) return;
+  clickedEvents.add(event);
+  trackGoogleAdsContactClick(method);
 }
