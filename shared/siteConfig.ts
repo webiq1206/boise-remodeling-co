@@ -5,6 +5,14 @@
 
 const DEFAULT_PHONE = "(208) 477-1169";
 const DEFAULT_PHONE_TEL = "2084771169";
+
+/** tel: links use E.164. Visible copy stays on DEFAULT_PHONE. */
+function companyTelHref(raw: string): string {
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length === 10) return `tel:+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `tel:+${digits}`;
+  return `tel:${raw.replace(/[^\d+]/g, "")}`;
+}
 const DEFAULT_EMAIL = "hello@boiseremodeling.co";
 const DEFAULT_SITE_URL = "https://boiseremodeling.co";
 
@@ -21,7 +29,7 @@ export const SITE_CONFIG = {
   legalName: "P5 Home Co LLC",
   phone: process.env.NEXT_PUBLIC_PHONE ?? DEFAULT_PHONE,
   phoneTel: process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL,
-  phoneHref: `tel:${process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL}`,
+  phoneHref: companyTelHref(process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL),
   phoneSmsHref: `sms:${process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL}`,
   email: process.env.NEXT_PUBLIC_EMAIL ?? DEFAULT_EMAIL,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL,

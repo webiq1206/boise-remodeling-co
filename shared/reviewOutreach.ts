@@ -4,6 +4,7 @@
  */
 
 import { GBP_LINKS, GBP_NAP, getGbpReviewUrl } from '@/shared/gbpProfile';
+import { SITE_CONFIG } from '@/shared/siteConfig';
 
 export const REVIEW_TARGETS = {
   daysToFirstMilestone: 60,
@@ -71,7 +72,7 @@ ${GBP_NAP.website}`;
 <p>Thank you again for trusting us with your ${projectType} in ${city}. We hope the final walkthrough left everything clear and complete.</p>
 <p>If you have a moment, a Google review helps other ${city} homeowners find a remodeling team they can trust. No script needed - whatever stood out to you (communication, timeline, craftsmanship) is perfect.</p>
 <p><a href="${reviewLink}">Leave a review on Google</a></p>
-<p>Questions? Call or text <a href="tel:2084771169">${GBP_NAP.phone}</a> anytime.</p>
+<p>Questions? Call or text <a href="${SITE_CONFIG.phoneHref}">${GBP_NAP.phone}</a> anytime.</p>
 <p>- The Boise Remodeling Co team<br>${GBP_NAP.name}<br>${GBP_NAP.phone}<br><a href="${GBP_NAP.website}">${GBP_NAP.website.replace(/^https?:\/\//, '')}</a></p>`;
 
   return { subject, preview, bodyText, bodyHtml };
