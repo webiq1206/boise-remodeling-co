@@ -779,3 +779,20 @@ export const estimatorSessions = pgTable("estimator_sessions", {
 ]);
 
 export type EstimatorSession = typeof estimatorSessions.$inferSelect;
+
+/**
+ * Enhanced-conversion suppression list.
+ *
+ * Each row is a SHA-256 hash of a normalized email (trimmed, lowercased) or
+ * an E.164 phone. The raw address or number is never stored.
+ */
+export const enhancedConversionSuppressions = pgTable("enhanced_conversion_suppressions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  kind: text("kind").notNull(),
+  valueHash: text("value_hash").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("enhanced_conversion_suppressions_value_hash_idx").on(table.valueHash),
+]);
+
+export type EnhancedConversionSuppression = typeof enhancedConversionSuppressions.$inferSelect;

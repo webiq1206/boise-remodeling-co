@@ -39,6 +39,7 @@ import {
   InquiryRejectedError,
   recordDeliveryStatus,
 } from "@/server/services/inquiryAcceptance";
+import { allowEnhancedConversionsForLead } from "@/server/services/enhancedConversionSuppression";
 import { readUnitCostOverrides } from "@/lib/unitCostOverrides";
 import {attributionSchema,submissionAttribution,attributionCrmMetadata} from '@/lib/p5/marketingAttribution';
 import {
@@ -308,6 +309,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    let allowEnhancedConversions = true;
+    try {
+      allowEnhancedConversions = await allowEnhancedConversionsForLead(data.email, data.phone);
+    } catch {
+      allowEnhancedConversions = false;
+    }
+
     if (acceptance.duplicate) {
       return NextResponse.json({
         accepted: true,
@@ -315,6 +323,7 @@ export async function POST(request: NextRequest) {
         duplicate: true,
         conversionEligible: acceptance.conversionEligible,
         delivery: acceptance.needsDeliveryRetry ? "pending_retry" : "sent",
+        allowEnhancedConversions,
       });
     }
 
@@ -468,6 +477,7 @@ export async function POST(request: NextRequest) {
       duplicate: acceptance.duplicate,
       conversionEligible: acceptance.conversionEligible,
       delivery: allDelivered ? "sent" : "pending_retry",
+      allowEnhancedConversions,
     });
   } catch (err) {
     console.error("[consultation] Error:", err);
