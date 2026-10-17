@@ -153,8 +153,10 @@ const AREA_ANSWER: Record<string, { title: string; description: string }> = {
   },
   boise: {
     title: 'Remodeling contractors in Boise, ID',
+    // Exactly 160 characters. "Idaho" is "ID" and "Founded in 2020" is
+    // "Founded 2020" so Design-build stays with kitchen and bath.
     description:
-      'Kitchen and bathroom remodeling, Boise, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
   },
   nampa: {
     title: 'Remodeling contractors in Nampa, ID',

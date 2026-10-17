@@ -229,9 +229,10 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
   assert.equal(eagleMeta.length, 160);
   assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
-  assert.match(rows.find((row) => row.path === '/areas/boise')?.description ?? '', /Budget ranges, not quotes/);
   assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
-  assert.match(rows.find((row) => row.path === '/areas/boise')?.description ?? '', /Kitchen and bathroom remodeling/);
+  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.equal(boiseMeta.length, 160);
+  assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /founded in 2020 and part of P5/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
