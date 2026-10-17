@@ -1,5 +1,6 @@
 name: P5 question context verification
 on:
+  workflow_dispatch:
   workflow_call:
   push:
     branches: [fix/p5-question-context-20260916]

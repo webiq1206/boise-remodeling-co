@@ -1,5 +1,12 @@
 name: P5 question evidence verification
 on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Pinned source commit for the refinement script
+        required: false
+        default: e8d95fe8e555d508728706de82745db6763588b8
+        type: string
   workflow_call:
     inputs:
       source_ref:

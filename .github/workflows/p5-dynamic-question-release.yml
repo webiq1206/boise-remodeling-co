@@ -1,5 +1,6 @@
 name: P5 dynamic question release verification
 on:
+  workflow_dispatch:
   workflow_call:
   push:
     branches: [fix/p5-dynamic-questions-20260915]

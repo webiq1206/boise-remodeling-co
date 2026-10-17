@@ -1,5 +1,6 @@
 name: P5 final build and browser verification
 on:
+  workflow_dispatch:
   push:
     branches: [codex/p5-form-launcher]
 permissions:
