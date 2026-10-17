@@ -16,6 +16,7 @@ import { areaPath,CITY_SLUGS,getCityBySlug } from '@/lib/seo-routes';
 import { getAreaImageSet } from '@/shared/cityServiceImages';
 import { getCountyLabel,SERVICES } from '@/shared/contentData';
 import { getGalleryProjectsForCity } from '@/shared/galleryData';
+import { AREA_CITY_COPY } from '@/shared/content/areaCopy';
 import { AREA_PAGE_FAQS,getAreaIntro } from '@/shared/seoContent';
 import { notFound } from 'next/navigation';
 
@@ -58,6 +59,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
 
   const neighborhoods = seo?.neighborhoods ?? [];
   const landmarks = seo?.landmarks ?? [];
+  const cityCopy = AREA_CITY_COPY[city.slug];
 
   const sections: LandingSection[] = [
     {
@@ -82,6 +84,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         neighborhoods.length
           ? `We remodel homes throughout ${city.name}, including ${neighborhoods.join(', ')}. Housing stock varies block by block, so our designers tailor layouts, structural plans, and finish selections to the age and style of your specific home.`
           : `We remodel homes throughout ${city.name}, tailoring layouts, structural plans, and finish selections to the age and style of your specific home.`,
+        ...(cityCopy?.creekNote ? [cityCopy.creekNote] : []),
         landmarks.length
           ? `As a local team familiar with ${city.name} landmarks like ${landmarks.slice(0, 3).join(', ')}, we understand the area's character and how to design remodels that fit the neighborhood and protect resale value.`
           : `As a local team, we understand the area's character and how to design remodels that fit the neighborhood and protect resale value.`,
@@ -120,7 +123,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
   const h1 = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
     ? `Remodeling contractors in ${city.name}, Idaho`
     : `Remodeling Contractor in ${city.name}, Idaho`;
-  const faqs = [
+  const faqs = cityCopy?.faqs ?? [
     ...AREA_PAGE_FAQS,
     {
       question: `Do you serve ${city.name}, Idaho?`,

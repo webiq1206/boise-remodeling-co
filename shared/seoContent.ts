@@ -1,6 +1,7 @@
 import type { ServiceData, CityData } from './contentData';
 import { getCountyLabel } from './contentData';
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
+import { AREA_CITY_COPY } from './content/areaCopy';
 
 export interface FAQItem {
   question: string;
@@ -624,6 +625,8 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
 };
 
 export function getAreaIntro(city: CityData): string {
+  const custom = AREA_CITY_COPY[city.slug];
+  if (custom) return custom.intro;
   const county = getCountyLabel(city.county);
   const neighborhood = ''; // filled from CITY_SEO_DATA at runtime in pages
   return `Boise Remodeling Co provides design-build remodeling for homeowners in ${city.name}, Idaho and throughout ${county}. From kitchen and bathroom renovations to whole-home remodels and room additions, you work with one accountable team from consultation through final walkthrough.`;
