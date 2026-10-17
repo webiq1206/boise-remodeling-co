@@ -38,6 +38,7 @@ on:
       - 'public/llms-full.txt'
       - 'app/sitemap.ts'
       - 'app/sitemap/**'
+      - 'app/sitemap-images.xml/route.ts'
       - 'app/robots.ts'
   push:
     branches: [main]
@@ -77,6 +78,7 @@ on:
       - 'public/llms-full.txt'
       - 'app/sitemap.ts'
       - 'app/sitemap/**'
+      - 'app/sitemap-images.xml/route.ts'
       - 'app/robots.ts'
 permissions:
   contents: read
