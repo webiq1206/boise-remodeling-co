@@ -138,7 +138,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 
   const homeMetadata = withBrandPageMetadata({
     title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa, Treasure Valley. Kitchen, bath, whole-home remodels. Budget guidance. Free in-home consultation.'),
+    description: fitDescription('Design-build remodeling contractors for Boise and the Treasure Valley. Kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.'),
     alternates: { canonical: buildCanonical('/') },
   }, '/');
   push('/', homeMetadata);
@@ -223,8 +223,8 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   }
 
   assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
-  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa, Treasure Valley. Kitchen, bath, whole-home remodels. Budget guidance. Free in-home consultation.';
-  assert.equal(homeMeta.length, 158);
+  const homeMeta = 'Design-build remodeling contractors for Boise and the Treasure Valley. Kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.';
+  assert.equal(homeMeta.length, 156);
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
