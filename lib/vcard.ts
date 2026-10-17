@@ -17,15 +17,38 @@ function formatTelE164(tel: string): string {
   return tel;
 }
 
+const textEncoder = new TextEncoder();
+
+function octetLength(value: string): number {
+  return textEncoder.encode(value).length;
+}
+
+/**
+ * Fold one logical line so every physical line is at most 75 octets.
+ * A continuation begins with a single space, and a multibyte character stays
+ * intact. CRLF separates the physical lines.
+ */
 function foldLine(line: string, max = 75): string {
-  if (line.length <= max) return line;
-  const parts: string[] = [line.slice(0, max)];
-  let rest = line.slice(max);
-  while (rest.length > 0) {
-    parts.push(` ${rest.slice(0, max - 1)}`);
-    rest = rest.slice(max - 1);
+  if (octetLength(line) <= max) return line;
+  const parts: string[] = [];
+  let remaining = line;
+  let budget = max;
+  while (octetLength(remaining) > budget) {
+    let take = 0;
+    let used = 0;
+    for (const char of remaining) {
+      const size = octetLength(char);
+      if (used + size > budget) break;
+      used += size;
+      take += char.length;
+    }
+    if (take === 0) break;
+    parts.push(remaining.slice(0, take));
+    remaining = remaining.slice(take);
+    budget = max - 1;
   }
-  return parts.join("\r\n");
+  if (remaining) parts.push(remaining);
+  return parts.map((part, index) => (index === 0 ? part : ` ${part}`)).join("\r\n");
 }
 
 /** Build a vCard 3.0 payload from canonical site config (single source of truth). */

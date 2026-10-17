@@ -115,3 +115,24 @@ test('contact card uses the site NAP street address', () => {
     ),
   );
 });
+
+test('every vCard line is at most 75 octets and lines use CRLF', () => {
+  const card = buildBusinessVCard();
+  assert.equal(card.endsWith('\r\n'), true);
+  assert.equal(card.replace(/\r\n/g, '').includes('\n'), false);
+  const physical = card.slice(0, -2).split('\r\n');
+  const logical: string[] = [];
+  for (const line of physical) {
+    assert.ok(Buffer.byteLength(line) <= 75, `${Buffer.byteLength(line)} octets: ${line}`);
+    if (line.startsWith(' ')) {
+      assert.ok(logical.length > 0);
+      logical[logical.length - 1] += line.slice(1);
+    } else {
+      logical.push(line);
+    }
+  }
+  const note = logical.find((line) => line.startsWith('NOTE:'));
+  assert.ok(note);
+  assert.match(note, /Treasure Valley · Ada and Canyon County/);
+  assert.match(note, /Hours: Monday 7:00 AM - 6:00 PM\\; Tuesday 7:00 AM - 6:00 PM\\; Wednesday 7:00 AM - 6:00 PM\\; Thursday 7:00 AM - 6:00 PM\\; Friday 7:00 AM - 6:00 PM\\; Saturday 8:00 AM - 4:00 PM\\; Sunday Closed/);
+});
