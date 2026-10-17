@@ -134,6 +134,39 @@ test('published pages, schema, and llms files do not render the 2020 founding cl
   assert.equal('founded' in publicGbpNap(), false);
 });
 
+test('with the founding flag off, schema JSON has no seal URL', () => {
+  assert.equal(SHOW_FOUNDED_YEAR, false);
+  const icon = '/brand/png/icon/boise-remodeling-co-icon-charcoal-512px.png';
+  const seal = '/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png';
+  assert.equal(publicLogoPath(), icon);
+  assert.equal(existsSync(`public${icon}`), true);
+  assert.equal(existsSync(`public${seal}`), true);
+  const blobs = [
+    JSON.stringify(generateOrganizationSchema()),
+    JSON.stringify(generateLocalBusinessSchema()),
+    JSON.stringify(generateLocalBusinessSchema('Boise')),
+    JSON.stringify(generateHomePageSchemaGraph(
+      HOMEPAGE_FAQS.map((faq) => ({ question: faq.q, answer: faq.a })),
+    )),
+  ];
+  for (const json of blobs) {
+    assert.equal(json.includes(seal), false);
+    assert.equal(json.includes('/seal/'), false);
+    assert.equal(json.includes('page-preview.png'), false);
+    assert.equal(json.includes('boise-remodeling-co-seal'), false);
+    assert.equal(json.includes(icon), true);
+  }
+  const aboutHtml = renderToStaticMarkup(React.createElement(AboutPage));
+  const homeHtml = renderToStaticMarkup(React.createElement(ApprovedHome, { hero: null }));
+  for (const html of [aboutHtml, homeHtml]) {
+    assert.equal(html.includes(seal), false);
+    assert.equal(html.includes('/seal/'), false);
+    assert.equal(html.includes('page-preview.png'), false);
+    assert.equal(html.includes('boise-remodeling-co-seal'), false);
+  }
+  assert.equal(aboutHtml.includes(icon), true);
+});
+
 test('the founding flag adds at most one trust badge', () => {
   const on = visibleTrustItems(true);
   const badges = on.filter((item) => CLAIM.test(item));
