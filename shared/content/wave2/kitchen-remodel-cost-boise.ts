@@ -35,7 +35,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   ],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation as of 2026, based on a 250 square foot kitchen. Cosmetic refreshes run $16,000-$21,000, mid-range remodels run $37,000-$47,000, high-end renovations run $85,000-$110,000, and luxury gut renovations run $136,000-$166,000. Your final number depends on layout changes, cabinetry, and finish level far more than square footage.',
+    'A kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation as of 2026, based on a 250-square-foot kitchen. Cosmetic refreshes run $16,000-$21,000, mid-range remodels run $37,000-$47,000, high-end renovations run $85,000-$110,000, and luxury gut renovations run $136,000-$166,000. Your final number depends on layout changes, cabinetry, and finish level far more than square footage.',
   keyTakeaways: [
     'Full Boise kitchen remodels plan $37,000-$166,000; refreshes start near $16,000, luxury reaches $166,000.',
     'Cabinetry is the biggest single line item (30-40% of the budget), followed by labor and countertops.',
@@ -91,7 +91,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a kitchen remodel cost in Boise?</h2>
-<p><strong>As of 2026, a kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation of a 250 square foot kitchen.</strong> Cosmetic refreshes that keep the existing footprint run $16,000-$21,000, mid-range remodels run $37,000-$47,000, and high-end or luxury gut renovations with custom cabinetry and layout changes run $85,000-$166,000. Your final number is driven far more by cabinetry, layout changes, and finish level than by the size of the room.</p>
+<p><strong>As of 2026, a kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation of a 250-square-foot kitchen.</strong> Cosmetic refreshes that keep the existing footprint run $16,000-$21,000, mid-range remodels run $37,000-$47,000, and high-end or luxury gut renovations with custom cabinetry and layout changes run $85,000-$166,000. Your final number is driven far more by cabinetry, layout changes, and finish level than by the size of the room.</p>
 <p>The ranges below are planning ranges from real design-build consultations across the Treasure Valley - not advertised teaser prices. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, the hub for Treasure Valley remodeling budgets. For an instant starting range tailored to your project, use our <a href="/#calculator">project estimator</a>.</p>
 <table class="cost-table">
 <thead><tr><th>Kitchen remodel tier</th><th>2026 Boise planning range</th><th>What it includes</th></tr></thead>

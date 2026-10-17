@@ -29,7 +29,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'How much does an ADU cost to build in the Treasure Valley?',
     answer:
-      'Planning ranges for a typical 600 square foot unit: garage conversions often run $65,000 to $135,000; attached ADUs $135,000 to $335,000; detached new-build ADUs $150,000 to $365,000. Compact 300 to 400 square foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
+      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $65,000 to $135,000; attached ADUs $135,000 to $335,000; detached new-build ADUs $150,000 to $365,000. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
   },
   {
     question: 'Do ADUs need their own utility connections?',

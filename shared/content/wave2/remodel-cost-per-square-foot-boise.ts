@@ -53,7 +53,7 @@ export const remodelCostPerSquareFootBoise: BlogPostData = {
     {
       question: 'What is kitchen remodel cost per square foot?',
       answer:
-        'A mid-range kitchen runs about $150-$190 per square foot, but the figure is misleading because kitchen cost lives in cabinets, countertops, and appliances - which are fixed regardless of floor area. A small kitchen can cost more per square foot than a large one: the same mid-range scope is roughly $220 per square foot in a 10x10 and about $100 in a 600 square foot great-room kitchen. Budget by scope and selections instead.',
+        'A mid-range kitchen runs about $150-$190 per square foot, but the figure is misleading because kitchen cost lives in cabinets, countertops, and appliances - which are fixed regardless of floor area. A small kitchen can cost more per square foot than a large one: the same mid-range scope is roughly $220 per square foot in a 10x10 and about $100 in a 600-square-foot great-room kitchen. Budget by scope and selections instead.',
     },
     {
       question: 'Why do additions cost more per square foot than remodels?',
