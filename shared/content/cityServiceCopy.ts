@@ -15,7 +15,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Do you handle permits for kitchen remodels?", answer: "Yes. Permits are part of the job and we manage them ourselves, whether the house falls under an Ada County or a Canyon County jurisdiction." },
       { question: "Do you offer kitchen remodel in Boise?", answer: "Yes. Boise is a regular stop for us, and we remodel kitchens all over the city as well as in neighboring Ada County areas." },
       { question: "How do I get a quote for kitchen remodel in Boise?", answer: "Start with the online project estimator, which puts a planning range on your kitchen. Next, a free in-home visit of 60 to 90 minutes, after which you'll have a design direction and clear next steps." },
-      { question: "Does a Boise kitchen remodel need a building permit?", answer: "It depends on the scope. Boise's homeowner guide exempts painting, flooring, cabinets, countertops and wall coverings. A permit is needed once the work opens walls down to the framing, adds a wall or partition, or moves a sink. Venting a new range hood is mechanical work that takes its own permit. We sort out which permits apply during design." },
+      { question: "Does a Boise kitchen remodel need a building permit?", answer: "It depends on the scope. Boise's homeowner guide exempts painting, floor covering, cabinets, countertops and wall coverings. A permit is needed once the work removes wall coverings and exposes the framing, adds a wall or partition (bearing or not), or moves a sink. Venting a new range hood is mechanical work that takes its own permit. We sort out which permits apply during design." },
     ],
   },
   "kitchen-remodel/meridian": {
@@ -26,7 +26,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Do you handle permits for kitchen remodels?", answer: "We do. Permits come included, and our team manages them for jurisdictions in both Ada County and Canyon County." },
       { question: "Do you offer kitchen remodel in Meridian?", answer: "Absolutely. Kitchen remodels in Meridian are routine work for us, and so are projects in the Ada County neighborhoods on every side of it." },
       { question: "How do I get a quote for kitchen remodel in Meridian?", answer: "Two steps. Run your kitchen through the online estimator for a planning range, then book the free home visit, which usually takes 60 to 90 minutes. You'll come out of it with a design direction and a clear plan for what's next." },
-      { question: "What happens if a Meridian kitchen remodel starts before the permit?", answer: "It gets more expensive. Meridian charges at least double the normal fees when someone starts work and gets the permit afterward. A kitchen that moves plumbing or opens walls needs that permit first, so we file it before any demolition and the penalty never comes up." },
+      { question: "What happens if a Meridian kitchen remodel starts before the permit?", answer: "It gets more expensive. Meridian charges at least double the normal fees when someone starts work and gets the permit afterward. We file the permit before any demolition so that penalty never comes up." },
     ],
   },
   "kitchen-remodel/eagle": {
@@ -48,7 +48,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Do you handle permits for kitchen remodels?", answer: "Yes. Permits are included in our price, and we manage them in-house for Canyon County and Ada County jurisdictions alike." },
       { question: "Do you offer kitchen remodel in Nampa?", answer: "Yes. Nampa kitchens are regular work for us, and we cover the Canyon County neighborhoods around the city too." },
       { question: "How do I get a quote for kitchen remodel in Nampa?", answer: "Start by entering the kitchen in our online estimator, and note the planning range it gives. Book a free visit at your house after that. It runs 60 to 90 minutes, and by the end you'll have design direction for the kitchen and know the next steps." },
-      { question: "When does a Nampa kitchen remodel need a permit?", answer: "Nampa's residential FAQ exempts painting, new flooring, cabinets, countertops and wall coverings. The permit comes in when the project strips walls to the studs, builds a new wall or partition (load-bearing or not), or relocates a sink. Most of the kitchens we design move or open something, so we plan on a permit and file it with Nampa Development Services." },
+      { question: "When does a Nampa kitchen remodel need a permit?", answer: "Nampa's residential FAQ exempts painting, floor covering, cabinets, countertops and wall coverings. The permit comes in when the project removes wall coverings and exposes the framing, builds a new wall or partition (load-bearing or not), or relocates a sink. Most of the kitchens we design move or open something, so we plan on a permit and file it with Nampa Development Services." },
     ],
   },
   "kitchen-remodel/kuna": {
@@ -103,7 +103,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Can you remodel a bathroom without moving plumbing?", answer: "Yes. A cosmetic or mid-scope remodel can leave the plumbing right where it is. We only suggest moving fixtures when doing so adds real value to the room." },
       { question: "Do you offer bathroom remodel in Boise?", answer: "Yes, we do. Boise and the neighboring Ada County communities are part of our regular territory for bathroom remodels." },
       { question: "How do I get a quote for bathroom remodel in Boise?", answer: "The online estimator gives you a planning range in a few minutes. After that, we schedule a no-cost home visit lasting 60 to 90 minutes; by the end you'll have design direction and a clear list of next steps." },
-      { question: "Which permits does a bathroom remodel need in Boise?", answer: "Usually a plumbing permit at minimum. The City of Boise says plumbing permits are required for most bathroom remodels when fixtures are replaced, and installing or relocating an exhaust fan is listed as mechanical work. If a new electrical fixture goes in under a building permit, the required smoke alarms come with it. We pull these as part of the job." },
+      { question: "Which permits does a bathroom remodel need in Boise?", answer: "Usually a plumbing permit at minimum. The City of Boise says plumbing permits are required for most bathroom remodels when fixtures are replaced, and installing or relocating an exhaust fan is mechanical work. When a building permit is required, the city also expects the required smoke alarms, which take an electrical permit. We pull these as part of the job." },
     ],
   },
   "bathroom-remodel/meridian": {
@@ -136,7 +136,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Can you remodel a bathroom without moving plumbing?", answer: "Yes. Cosmetic and mid-level remodels can work with the drains and supply lines exactly where they sit today. We'll suggest moving them only when it adds genuine value." },
       { question: "Do you offer bathroom remodel in Nampa?", answer: "Yes. We regularly remodel bathrooms in Nampa and in the Canyon County communities around it." },
       { question: "How do I get a quote for bathroom remodel in Nampa?", answer: "The online project estimator gets you a planning range first. Then schedule the free home visit, about 60 to 90 minutes, at the end of which the design direction and next steps are laid out." },
-      { question: "Can I pull my own bathroom permit in Nampa?", answer: "Only in a narrow case. Nampa lets homeowners apply for permits on a primary or secondary residence without registering as a contractor if they'll live there within 12 months of completion and do all the work themselves. In every other case, the person pulling that permit and doing the work must be a State of Idaho registered contractor or a licensed trade sub-contractor. On our projects, we pull it." },
+      { question: "Can I pull my own bathroom permit in Nampa?", answer: "Only in a narrow case. Nampa lets homeowners apply for permits on a primary or secondary residence without registering as a contractor if they'll live there within 12 months of completion and do all the work themselves. In every other case, the person pulling that permit and doing the work must be a State of Idaho registered building contractor or a licensed sub-contractor in that trade. On our projects, we pull it." },
     ],
   },
   "bathroom-remodel/kuna": {
@@ -279,7 +279,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Will an addition match my existing home?", answer: "That's central to how we design. Rooflines, siding and interior trim are planned so the addition blends in rather than looking bolted on." },
       { question: "Do you offer room addition in Boise?", answer: "Yes. We regularly build room additions in Boise and in the Ada County neighborhoods that surround it." },
       { question: "How do I get a quote for room addition in Boise?", answer: "The online project estimator is the quickest way to a planning range. After that we come out for a free visit, 60 to 90 minutes, and leave you with design direction for the addition and the next steps spelled out." },
-      { question: "What extra permits can a Boise addition trigger?", answer: "Besides the building permit for adding a room, Boise can require an erosion and sediment control permit when an addition disturbs more than 500 square feet of ground or involves more than 10 cubic yards of excavation. Footings are set below the city's 24-inch frost depth. We fold both into the plan and the schedule." },
+      { question: "What extra permits can a Boise addition trigger?", answer: "Besides the building permit for adding a room, Boise can require an erosion and sediment control permit when an addition disturbs more than 500 square feet of ground or involves more than 10 cubic yards of excavation. Boise's frost depth is 24 inches. Light-frame buildings over 600 square feet, and other structures over 400 square feet, need foundations to that depth. We fold these into the plan and the schedule." },
     ],
   },
   "room-addition/meridian": {
@@ -290,7 +290,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Will an addition match my existing home?", answer: "Yes, and we design for it from day one. The roofline, siding and inside trim are all planned to tie in with the house, so the new room looks original instead of tacked on." },
       { question: "Do you offer room addition in Meridian?", answer: "Yes. We build room additions in Meridian regularly, along with the Ada County neighborhoods around the city." },
       { question: "How do I get a quote for room addition in Meridian?", answer: "The fastest start is the online estimator, which gives a planning range. After that comes a free visit at your home, 60 to 90 minutes, ending with design direction and clear next steps." },
-      { question: "How is a Meridian addition permit priced?", answer: "By valuation. Meridian adds an application fee for additions and remodels, then charges a base permit amount plus $5.50 for every $1,000 the addition is worth, so a $120,000 addition works out to about $710 by the city's posted fee formula, before trade permits. Impact fees are separate and depend on square footage. We include all of it in your budget." },
+      { question: "How is a Meridian addition permit priced?", answer: "By valuation. Meridian charges an application fee for additions and remodels, and that fee is applied to the building permit. The permit is a base amount plus $5.50 for every $1,000 the addition is worth, so a $120,000 addition works out to about $710 by the city's posted fee formula, before trade permits. We include the permit in your budget." },
     ],
   },
   "room-addition/eagle": {
@@ -356,7 +356,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Will an addition match my existing home?", answer: "Yes, that's a big part of the design work. We carry the roof lines through, match the siding, and continue the inside trim so the new space looks like it was always there." },
       { question: "Do you offer room addition in Caldwell?", answer: "Yes. Additions in Caldwell are regular projects for us, and we also work throughout the Canyon County area around it." },
       { question: "How do I get a quote for room addition in Caldwell?", answer: "Have the online estimator give you a planning range. Then set up a no-cost visit of 60 to 90 minutes at your home, ending with design direction and the addition's next steps." },
-      { question: "What can slow down a Caldwell addition permit?", answer: "Usually the parcel. Caldwell's residential permit packet gives 5 to 7 working days as the typical plan review time, but lots that aren't platted take longer, and a property inside a mapped flood plain also has to have a certificate for it. We check the parcel's status first so the schedule reflects it." },
+      { question: "What can slow down a Caldwell addition permit?", answer: "Usually the parcel. Caldwell's residential permit packet gives 5 to 7 working days as the typical plan review time, but lots that aren't platted take longer, and a property inside a designated flood plain also has to have a certificate for it. We check the parcel's status first so the schedule reflects it." },
     ],
   },
   "basement-remodel/boise": {
@@ -378,7 +378,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Does my basement bedroom need an egress window?", answer: "Yes. Idaho code says a basement bedroom needs its own emergency exit, either an egress window or a door, so someone can climb out and a firefighter can climb in. A bedroom in the plan means we include the cutout, the window well, and code-compliant sizing." },
       { question: "Do you offer basement remodeling in Meridian?", answer: "Yes. We finish basements in Meridian on a regular basis, and in the nearby Ada County neighborhoods as well." },
       { question: "How do I get a quote for basement remodeling in Meridian?", answer: "Plug your basement into the online project estimator and it returns a planning range. Then set up the free in-home visit, which runs about 60 to 90 minutes; afterward you'll know the design direction and the next steps." },
-      { question: "How do Meridian basement permits get filed and inspected?", answer: "Inside city limits, the City of Meridian's Building Services handles them, and applications, payments and inspection requests go through its Citizen Access portal rather than a counter visit. A remodel there carries a small application fee and a permit priced on the project's valuation. We submit, schedule and meet each inspector for you." },
+      { question: "How do Meridian basement permits get filed and inspected?", answer: "Inside city limits, the City of Meridian's Building Services handles them, and applications, payments and inspection requests go through its Citizen Access portal. A remodel there carries a small application fee and a permit priced on the project's valuation. We submit, schedule and meet each inspector for you." },
     ],
   },
   "basement-remodel/eagle": {
@@ -389,7 +389,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Does my basement bedroom need an egress window?", answer: "Yes. A basement bedroom must have its own egress window or door under Idaho code; it's the escape route for whoever sleeps there and the entry point for firefighters. So if the design has a bedroom, we handle the cut, the well and the code sizing." },
       { question: "Do you offer basement remodeling in Eagle?", answer: "Yes. Eagle basement finishes come up regularly for us, and we take them in the Ada County subdivisions on the city's edges as well." },
       { question: "How do I get a quote for basement remodeling in Eagle?", answer: "Have a look at the planning range our online project estimator gives. After that, the free home visit takes 60 to 90 minutes; we go through the basement together and settle the design direction and next steps." },
-      { question: "Which code governs a finished basement in Eagle?", answer: "Eagle builds to the 2018 edition of the International Residential Code, the source of the emergency-escape rules for basement bedrooms, and its Building Division requires permits for alterations to residential structures. We draw the basement to that code edition and submit it to the city." },
+      { question: "Which code governs a finished basement in Eagle?", answer: "Eagle builds to the 2018 edition of the International Residential Code, and its Building Division requires permits for alterations to residential structures. We draw the basement to that code edition and submit it to the city." },
     ],
   },
   "basement-remodel/nampa": {
@@ -400,7 +400,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Does my basement bedroom need an egress window?", answer: "Yes. Idaho code requires every basement bedroom to have an egress window or door so occupants can escape and firefighters can enter. When the plan includes a bedroom, we handle cutting the opening, the window well and the code sizing." },
       { question: "Do you offer basement remodeling in Nampa?", answer: "Yes. Nampa basement remodels are regular projects for us, and so are basements in the nearby Canyon County neighborhoods." },
       { question: "How do I get a quote for basement remodeling in Nampa?", answer: "The online project estimator is the place to see a planning range. When you're ready, book the free in-home visit; set aside 60 to 90 minutes, and it wraps up with design direction and a clear set of next steps." },
-      { question: "What if a Nampa basement was finished without a permit?", answer: "It can cause real trouble. Nampa's residential FAQ warns that unpermitted work can bring higher permit fees, citations, and even removal, and that discovering it may delay the sale of the home or leave you without insurance coverage. Finishing a basement for living space is on the city's building-permit list, so we start every basement with the permit in place." },
+      { question: "What if a Nampa basement was finished without a permit?", answer: "It can cause real trouble. Nampa's residential FAQ warns that unpermitted work can bring higher permit fees, citations, and even removal, and that discovering it may delay the sale of the home. Insurance may not cover problems that come from that unpermitted work. Finishing a basement for living space is on the city's building-permit list, so we start every basement with the permit in place." },
     ],
   },
   "basement-remodel/kuna": {
@@ -444,7 +444,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Does my basement bedroom need an egress window?", answer: "Yes. Under Idaho code, a basement bedroom has to have an egress window or door, both for getting out in an emergency and for letting firefighters in. A bedroom in the plan means the excavation for the window well, the opening and the code sizing are all in our scope." },
       { question: "Do you offer basement remodeling in Caldwell?", answer: "Yes. Basement finishes in Caldwell and nearby Canyon County neighborhoods are regular work for us." },
       { question: "How do I get a quote for basement remodeling in Caldwell?", answer: "Our online project estimator shows a planning range. When you're ready, the free in-home visit takes roughly 60 to 90 minutes, after which the basement has a design direction and you know the next steps." },
-      { question: "What plan review fees apply to a Caldwell basement?", answer: "Caldwell's FY2026 fee schedule adds residential plan review on top of the building permit: 40% of the permit fee for building review, 35% for planning and zoning (minimum $55), and 20% for engineering when it applies, with up to a third review included. We figure these into the budget from the valuation." },
+      { question: "What plan review fees apply to a Caldwell basement?", answer: "Caldwell's FY2026 fee schedule adds residential plan review on top of the building permit: 40% of the permit fee for building review, 35% for planning and zoning (minimum $55), and 20% for engineering. We figure these into the budget from the valuation." },
     ],
   },
   "outdoor-living/boise": {
@@ -466,7 +466,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "Composite or wood decking, which is better for Idaho?", answer: "Both work well in Meridian. Composite deals with Treasure Valley sun, snow and moisture almost maintenance-free and lasts decades, but it costs more at the start. Cedar and hardwood install for less and need periodic sealing. We help you weigh the lifetime cost while we design." },
       { question: "Do you offer outdoor living & decks in Meridian?", answer: "Yes. Decks, patios and outdoor living spaces are regular projects for us in Meridian, as well as in the Ada County towns and subdivisions around it." },
       { question: "How do I get a quote for outdoor living & decks in Meridian?", answer: "Run the online estimator for a planning range. Next, book a free visit at your home; within 60 to 90 minutes we look over the yard and lay out a design direction and the next steps." },
-      { question: "What should a Meridian covered patio or pergola plan for?", answer: "Frost and footings, for one. Meridian's handout for detached accessory structures calls for footings at the 24-inch frost line, and sheds of 200 square feet or less don't need a permit. Summers are dry: at a volunteer gauge south of the city, NOAA's 1991\u20132020 normals total just under 13 inches of precipitation yearly, with July and August under 0.4 inches each." },
+      { question: "What should a Meridian covered patio or pergola plan for?", answer: "Whether it needs a permit. Meridian's handout for detached accessory structures says a detached patio cover, pergola, or gazebo under 200 square feet does not need a building permit, and one over that size needs a patio-cover permit. A one-story shed of 200 square feet or less does not need a building permit either. Summers are dry: at a volunteer gauge south of the city, NOAA's 1991\u20132020 normals total just under 13 inches of precipitation yearly, with July and August under 0.4 inches each." },
     ],
   },
   "outdoor-living/eagle": {
