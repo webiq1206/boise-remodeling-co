@@ -4,7 +4,7 @@ const BASE_TOPICS = [
   'Ada County plan review often adds weeks when plumbing, electrical, or structural sheets are required - build that into your calendar before ordering demo.',
   'Canyon County projects in Nampa, Middleton, and Caldwell use different portals than Ada; your contractor should submit in the correct jurisdiction from day one.',
   'Treasure Valley ranches and split-levels from the 1970s–1990s frequently need panel and insulation upgrades when walls are opened - budget contingency accordingly.',
-  'Eagle and Hidden Springs neighborhoods may require HOA architectural review in addition to county permits - start design early.',
+  'Eagle neighborhoods, and Hidden Springs in the Boise foothills, may require HOA architectural review in addition to county permits - start design early.',
   'Dry Idaho summers favor exterior concrete and roofing; schedule hardscape and addition work outside winter freeze-thaw cycles when possible.',
   'Design-build keeps design, permits, and construction under one contract - reducing gaps that cause change orders mid-project.',
   'Written scope with clear allowances beats a low bid that excludes haul-off, protection, or engineering.',
