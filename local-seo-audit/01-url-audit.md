@@ -20,7 +20,7 @@ The Google Business Profile is created but unverified/suspended. Until it is liv
 
 ### EEAT = 4 sitewide (3 on /about)
 - No named founder or team anywhere: `BUSINESS_INFO.founderName = ''`, so the `founder` Person entity is gated off in `generateOrganizationSchema()` (`lib/schema.ts`). Public permit records already associate the owner with the business, so anonymity gains nothing.
-- `licenses: ['License details available upon request']` - no license number displayed.
+- `licenses: ['Idaho Registered Contractor #8381215']` - the registration number is published.
 - `rating: 0, reviewCount: 0` - `aggregateRating` gated off in both LocalBusiness and Review schema.
 - 4 testimonials, undated, first names + last initial only.
 - Blog/guide articles have no Person author (all attributed to the Organization).

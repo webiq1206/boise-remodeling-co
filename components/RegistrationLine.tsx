@@ -31,7 +31,7 @@ export function RegistrationLine({ plain = false }: { plain?: boolean }) {
       target="_blank"
       rel="noopener noreferrer"
       title="Look up registration 8381215 on Idaho DOPL"
-      aria-label="Idaho Registered Contractor #8381215 on the Idaho DOPL public search, opens in a new tab"
+      aria-label="Verify with Idaho DOPL: look up registration 8381215, opens in a new tab"
       className={`${lineClass} underline underline-offset-2 transition-colors hover:text-inverse-foreground`}
     >
       {REGISTRATION_LINE}

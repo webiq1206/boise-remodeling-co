@@ -77,7 +77,7 @@ export default function AboutPage() {
     generateWebPageSchema({
       title: 'About Boise Remodeling Co',
       description:
-        'Treasure Valley design-build remodeling company. Licensed, insured, and committed to clear communication.',
+        'Treasure Valley design-build remodeling company. Idaho Registered Contractor #8381215, insured, and committed to clear communication.',
       url: '/about',
       speakable: true,
     }),
@@ -179,8 +179,8 @@ export default function AboutPage() {
                   className="mb-8 max-w-none"
                 />
                 <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                  Idaho contractor license information is available upon request. We are bonded and
-                  insured for residential remodeling work across the Treasure Valley.
+                  Idaho Registered Contractor #8381215. We are bonded and insured for residential
+                  remodeling work across the Treasure Valley.
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3">
                   {TRUST_ITEMS.map((item) => (

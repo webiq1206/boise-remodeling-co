@@ -150,7 +150,7 @@ export interface ClientPriority {
 export const CLIENT_PRIORITIES: ClientPriority[] = [
   {
     title: "Trust and credibility",
-    body: "Licensed, bonded, and insured with permits handled in-house and a written scope before work begins.",
+    body: "Idaho Registered Contractor #8381215, bonded and insured, with permits handled in-house and a written scope before work begins.",
     icon: ShieldCheck,
   },
   {

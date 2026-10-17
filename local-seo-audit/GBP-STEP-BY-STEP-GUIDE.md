@@ -351,8 +351,8 @@ As of 2026, planning ranges run roughly $15,000 for a cosmetic refresh, $35,000-
 **Q5: How much does a bathroom remodel cost?**  
 Guest baths typically plan $18,000-$45,000; primary baths $35,000-$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide
 
-**Q6: Are you licensed and insured?**  
-Yes. Boise Remodeling Co is bonded and insured for residential remodeling across the Treasure Valley. Idaho contractor license details are available upon request.
+**Q6: Are you a registered contractor and insured?**  
+Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.
 
 **Q7: Do you build ADUs?**  
 Yes - attached, detached, and garage-conversion ADUs. Planning ranges from $90,000 for garage conversions to $180,000-$300,000+ for detached new builds. Guide: https://boiseremodeling.co/guides/boise-adu-guide
