@@ -21,10 +21,8 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
         <BeforeAfterSlider
           beforeSrc={beforeSrc}
           afterSrc={afterSrc}
-          beforeAlt="Representative kitchen before the design refresh, with oak cabinets and the original appliance layout"
-          afterAlt="Design concept for the same kitchen, with white shaker cabinets, quartz counters and oak flooring"
-          beforeLabel="Original concept"
-          afterLabel="Refresh concept"
+          beforeAlt="Kitchen with oak cabinets, dark counters, and the original appliance layout"
+          afterAlt="Kitchen with white shaker cabinets, a farmhouse sink, quartz counters, and oak flooring"
           aspectClass="aspect-[3/2]"
           sizes={sizes}
         />

@@ -71,7 +71,7 @@ export interface ArticleInlineFigurePlacement {
  * to break up text-heavy content (Phase 4).
  */
 const INLINE_HUB_ALTS: Record<string, string> = {
-  "remodeling-costs": "Representative living room renovation concept",
+  "remodeling-costs": "Living room with updated finishes and furnishings",
   "kitchen-remodeling": "Representative remodeled kitchen with coordinated cabinetry and counters",
   "bathroom-remodeling": "Representative remodeled bathroom design",
   "home-additions": "Representative room addition design",
@@ -79,7 +79,7 @@ const INLINE_HUB_ALTS: Record<string, string> = {
   "contractor-selection": "Remodeling plans, paint colors and finish samples arranged for a design discussion",
   "remodeling-process": "Existing living room before a design refresh",
   "remodeling-roi": "Representative kitchen with updated cabinetry",
-  "outdoor-living": "Existing backyard illustrating an outdoor planning starting point",
+  "outdoor-living": "Existing backyard with open lawn and space for outdoor living",
   "treasure-valley-locations": "Representative Boise-area home exterior"
 };
 
