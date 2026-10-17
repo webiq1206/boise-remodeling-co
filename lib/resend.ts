@@ -1,4 +1,4 @@
-import { SITE_CONFIG } from '@/shared/siteConfig';
+import { SITE_CONFIG, textReplyLineHtml } from '@/shared/siteConfig';
 import {
   escapeHtml,
   wrapEmailHtml,
@@ -98,6 +98,7 @@ export async function sendQuoteConfirmationEmail(data: {
     content: `
       <p class="greeting">Hi ${escapeHtml(data.customerName)},</p>
       <p>Thank you for requesting a quote from Boise Remodeling Co! We've received your request and will be in touch within one business day to schedule your free consultation.</p>
+      ${textReplyLineHtml()}
       <div class="highlight-box">
         <h3 style="margin: 0 0 15px 0; color: inherit;">Quote Details</h3>
         <p style="margin: 0 0 8px 0;"><strong>Reference:</strong> ${escapeHtml(data.quoteId.slice(0, 8))}</p>

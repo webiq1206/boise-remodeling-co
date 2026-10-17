@@ -8,6 +8,7 @@ import { BudgetInclusionsSection } from "@/components/sections/BudgetInclusionsS
 import { HomePageSchema } from "@/components/seo/HomePageSchema";
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical,fitDescription } from "@/lib/page-metadata";
+import { TextReplyLine } from "@/components/TextReplyLine";
 import { CONSULT_BULLETS,SITE_TAGLINE } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
 import { Check } from "lucide-react";
@@ -117,6 +118,7 @@ export default function HomePage() {
                   We will reach out within one business day to schedule your free
                   60 to 90 minute in-home visit.
                 </p>
+                <TextReplyLine className="ed-body mt-4 max-w-[46ch]" />
                 <p className="ed-body mt-4">
                   You will leave with planning guidance, design direction, and no
                   obligation.
@@ -126,13 +128,18 @@ export default function HomePage() {
                   style={{ borderColor: "var(--ed-line)" }}
                 >
                   {CONSULT_BULLETS.map((item) => (
-                    <li key={item} className="ed-body flex items-center gap-3 text-[0.875rem]">
+                    <li key={item} className="ed-body flex items-start gap-3 text-[0.875rem]">
                       <Check
-                        className="h-4 w-4 flex-shrink-0"
+                        className="h-4 w-4 flex-shrink-0 mt-0.5"
                         style={{ color: "var(--ed-accent)" }}
                         aria-hidden="true"
                       />
-                      {item}
+                      <span>
+                        {item}
+                        {item === "Response within one business day" ? (
+                          <TextReplyLine as="span" className="mt-1.5 block" />
+                        ) : null}
+                      </span>
                     </li>
                   ))}
                 </ul>

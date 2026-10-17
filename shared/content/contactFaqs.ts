@@ -1,4 +1,5 @@
 import { TREASURE_VALLEY_CITIES } from "../contentData";
+import { textReplyLine } from "../siteConfig";
 
 /**
  * The questions every channel answers the same way.
@@ -12,7 +13,7 @@ export const CONTACT_FAQS: { question: string; answer: string }[] = [
   {
     question: "How quickly will you respond to my inquiry?",
     answer:
-      "We respond within one business day. Call us during business hours for an immediate conversation, or submit the form and we will reach out to schedule your free in-home visit.",
+      `We respond within one business day. ${textReplyLine()} Call us during business hours for an immediate conversation, or submit the form and we will reach out to schedule your free in-home visit.`,
   },
   {
     question: "Is the in-home consultation really free?",

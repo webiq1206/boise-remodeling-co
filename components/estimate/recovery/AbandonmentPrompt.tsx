@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { MessageSquare, Phone, PhoneCall } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { TextReplyLine } from "@/components/TextReplyLine";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { trackEvent } from "@/lib/analytics";
 import { deviceCategory, getEstimatorSessionId, recordRecoveryAction, type EstimatorFlow } from "@/lib/estimatorSession";
@@ -96,6 +97,7 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
             ? "Thanks. Someone from the team will call within one business day. You can keep going here or close this window."
             : `A quick call or text answers most questions in a minute. Or leave a number and we will call you back within one business day.`}
         </DialogDescription>
+        <TextReplyLine className="ed-body mt-3 text-[0.9375rem] text-inverse-muted" />
 
         {state !== "sent" && (
           <>
