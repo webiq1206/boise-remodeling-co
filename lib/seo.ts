@@ -6,6 +6,7 @@
 
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
+import { publicPreviewPath, SHOW_FOUNDED_YEAR } from '@/shared/foundingClaim';
 
 interface SEOMetaData {
   title: string;
@@ -304,7 +305,8 @@ export const DEFAULT_OG_IMAGE_PATH = '/images/og-default.png';
  * Absolute URL for the default Open Graph image.
  */
 export function getDefaultOgImage(): string {
-  return `${getBaseUrl().replace(/\/$/, '')}${DEFAULT_OG_IMAGE_PATH}`;
+  const path = SHOW_FOUNDED_YEAR ? DEFAULT_OG_IMAGE_PATH : publicPreviewPath();
+  return `${getBaseUrl().replace(/\/$/, '')}${path}`;
 }
 
 /**
@@ -387,7 +389,7 @@ export function generateSEOMetadata(params: ServiceSEOParams): SEOMetaData {
     ogDescription: description,
     // A 1200x630 card, not the square seal: this feeds summary_large_image,
     // where a square logo gets letterboxed or cropped to a sliver.
-    ogImage: `${baseUrl}/images/og-default.png`,
+    ogImage: getDefaultOgImage(),
     twitterCard: 'summary_large_image',
   };
 }

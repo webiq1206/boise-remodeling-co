@@ -1,6 +1,6 @@
 # 11 - EEAT Audit
 
-Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The site *claims* trust ("bonded, insured, workmanship guarantee") but *demonstrates* almost none of it. For YMYL-adjacent home services, this gates both Google rankings and AI-engine recommendations.
+Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The site claims trust it has not documented. Bonded: leave blank until documented. For YMYL-adjacent home services, this gates both Google rankings and AI-engine recommendations.
 
 ## Experience - 4/10
 - 5 gallery projects, 4 testimonials, 1 featured before/after. No project dates, no addresses/neighborhoods, no budget bands, no duration.
@@ -22,10 +22,10 @@ Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The sit
 - **Fix**: owner supplies the Idaho contractor registration number → footer + /about + `BUSINESS_INFO.licenses` + future `hasCredential` schema. Also reconcile public-record association with Timber and Love Inc (RCE-42326) - if Boise Remodeling Co operates under or alongside that registration, state the relationship plainly on /about; ambiguity between two contractor identities is a trust leak that a diligent homeowner (or AI engine) will find in permit records.
 
 ## Page-by-page EEAT actions
-- **/about (Critical)**: founder section (#team), license/registration display, history timeline (founded 2017 → today), insurance specifics, photo of team/vehicle
+- **/about (Critical)**: founder section (#team), license/registration display, history timeline (leave blank until documented), insurance specifics, photo of team/vehicle
 - **/testimonials (High)**: dates + cities + project types on all entries; Google review embeds post-GBP
 - **Guides (High)**: Person author + dateModified on every expanded guide
-- **Footer (Medium)**: registration number + "Bonded & Insured" with bond/carrier detail
+- **Footer (Medium)**: registration number. Bonded: leave blank until documented. Do not add bond or carrier detail until it is documented.
 - **Blog (Medium)**: author byline once /about#team exists
 
 ## What NOT to do

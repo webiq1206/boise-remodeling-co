@@ -19,6 +19,7 @@ import { SERVICES, CITIES } from '../shared/contentData';
 import { GUIDE_PAGES } from '../shared/guideContent';
 import { CONTENT_HUBS } from '../shared/contentHubs';
 import { BLOG_POSTS } from '../shared/blogContent';
+import { publishFoundingCopy, SHOW_FOUNDED_YEAR } from '../shared/foundingClaim';
 
 const BASE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 const url = (p: string) => `${BASE}${p}`;
@@ -36,10 +37,11 @@ const pillarGuides = GUIDE_PAGES.filter((g) => g.guideType === 'hub-pillar' || g
 const cityGuides = GUIDE_PAGES.filter((g) => g.guideType === 'location');
 const neighborhoodGuides = GUIDE_PAGES.filter((g) => g.guideType === 'neighborhood');
 
-const SUMMARY =
+const SUMMARY = publishFoundingCopy(
   `Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, ` +
   `basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. ` +
-  `Serving ${CITIES.map((c) => c.name).join(', ')}. Phone ${SITE_CONFIG.phone}.`;
+  `Serving ${CITIES.map((c) => c.name).join(', ')}. Phone ${SITE_CONFIG.phone}.`,
+);
 
 const POSITIONING =
   `Design-build means one accountable team handles design direction, estimating, Ada and ` +
@@ -99,7 +101,7 @@ function buildShort(): string {
   lines.push('');
 
   lines.push('## About and contact', '');
-  lines.push(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.`);
+  lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.`));
   lines.push(`- [Contact](${url('/contact')})`);
   lines.push(`- [Free remodel estimator](${url('/estimate')})`);
   lines.push(`- [Before and after projects](${url('/testimonials')})`);
@@ -126,7 +128,8 @@ function buildFull(): string {
 
   lines.push('## About', '');
   lines.push(
-    `${SITE_CONFIG.name} is a residential design-build remodeling company serving the Treasure ` +
+    publishFoundingCopy(
+      `${SITE_CONFIG.name} is a residential design-build remodeling company serving the Treasure ` +
       `Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel ` +
       `existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ` +
       `accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means ` +
@@ -135,10 +138,11 @@ function buildFull(): string {
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
       `scope before construction, a dedicated project manager, a written progress update every ` +
       `Friday, and a workmanship guarantee at completion.`,
+    ),
     '',
   );
   lines.push('- Business type: Residential design-build remodeling contractor');
-  lines.push('- Founded: 2020');
+  if (SHOW_FOUNDED_YEAR) lines.push('- Founded: 2020');
   lines.push('- Parent company: P5 Home Co (https://p5homeco.com)');
   lines.push('- Service model: One accountable team for design, permits, and construction');
   lines.push(`- Contact: ${SITE_CONFIG.email} (${url('/contact')})`);

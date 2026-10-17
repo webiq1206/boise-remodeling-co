@@ -6,6 +6,7 @@ import {schemaTime} from './schemaTime';
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
+import { publicFoundedYear, publicLogoPath, publishFoundingCopy } from '@/shared/foundingClaim';
 
 interface SchemaContext {
   '@context': string;
@@ -64,8 +65,11 @@ export const P5_PARENT_ORGANIZATION = {
  *
  * 512px square: comfortably above Google's 112px floor, and square suits the
  * panel and rich-result crops better than a wide wordmark would.
+ *
+ * While SHOW_FOUNDED_YEAR is off, the seal is withheld because its lower arc
+ * reads EST 2020. The icon is the existing square mark without that year.
  */
-const LOGO_URL = `${baseUrl}/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png`;
+const LOGO_URL = `${baseUrl}${publicLogoPath()}`;
 
 /**
  * Generate LocalBusiness schema for homepage and location pages
@@ -192,7 +196,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
           },
         }
       : {}),
-    foundingDate: BUSINESS_INFO.founded,
+    ...(publicFoundedYear() ? { foundingDate: publicFoundedYear() } : {}),
     slogan: 'Boise\'s Design-Build Remodeling Company',
     paymentAccepted: 'Cash, Credit Card, Check, Financing',
     currenciesAccepted: 'USD',
@@ -305,8 +309,8 @@ export function generateOrganizationSchema(): SchemaContext {
       '@type': 'ImageObject',
       url: LOGO_URL,
     },
-    description: 'Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Licensed, insured, and committed to excellence.',
-    foundingDate: BUSINESS_INFO.founded,
+    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Licensed, insured, and committed to excellence.'),
+    ...(publicFoundedYear() ? { foundingDate: publicFoundedYear() } : {}),
     // founder is gated: only emitted once a real named founder is supplied in
     // BUSINESS_INFO.founderName (see seo-audit/trust-signal-map.md).
     ...(BUSINESS_INFO.founderName

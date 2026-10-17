@@ -7,10 +7,10 @@ Existing / weak / missing trust signals and recommendations.
 | Signal | Where | Strength |
 |---|---|---|
 | Licensed & insured (claim) | meta, about, schema description | medium |
-| Bonded & insured | `certifications`, footer | medium |
+| Bonded | leave blank until documented | |
 | Workmanship guarantee | about, FAQs, benefits | medium |
 | Permits handled in-house (Ada/Canyon) | FAQs, copy | medium |
-| Founded 2017 | `foundingDate` in schema | medium |
+| Founding year | leave blank until documented | |
 | Service hours | `openingHoursSpecification` | OK |
 | Offer catalog | `hasOfferCatalog` | OK |
 | Contact point | `Organization.contactPoint` | OK |

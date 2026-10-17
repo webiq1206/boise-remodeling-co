@@ -4,7 +4,9 @@
  * Operator checklists: local-seo-audit/02-gbp-plan.md
  */
 
+import { SHOW_FOUNDED_YEAR } from '@/shared/foundingClaim';
 import { SITE_CONFIG } from '@/shared/siteConfig';
+import { publishFoundingCopy } from '@/shared/foundingClaim';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 
@@ -36,6 +38,13 @@ export const GBP_NAP = {
   },
 } as const;
 
+/** Operator paste. The founded year stays on GBP_NAP and is omitted here while the flag is off. */
+export function publicGbpNap() {
+  if (SHOW_FOUNDED_YEAR) return GBP_NAP;
+  const { founded: _year, ...rest } = GBP_NAP;
+  return rest;
+}
+
 export const GBP_SERVICE_AREAS = [
   'Boise, ID',
   'Meridian, ID',
@@ -58,8 +67,9 @@ export const GBP_CATEGORIES = {
   ],
 } as const;
 
-export const GBP_DESCRIPTION =
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.';
+export const GBP_DESCRIPTION = publishFoundingCopy(
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+);
 
 export const GBP_LINKS = {
   website: SITE,
