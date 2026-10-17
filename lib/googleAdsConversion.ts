@@ -78,9 +78,9 @@ export function googleAdsEstimatorParams(
 const sentLeadKeys = new Set<string>();
 const pendingLeadKeys = new Set<string>();
 
-/** Ten half-second checks: about five seconds for a lazy gtag, then give up. */
+/** Twenty half-second checks: the 10 second wait already used on main. */
 export const GTAG_READY_WAIT_MS = 500;
-export const GTAG_READY_ATTEMPTS = 10;
+export const GTAG_READY_ATTEMPTS = 20;
 
 /** Shared estimator finishes. The component stays on trackGoogleAdsLeadConversion. */
 export function isEstimatorCompletionKey(dedupeKey?: string): boolean {
@@ -145,7 +145,7 @@ function dispatchesFor(ctx: LeadContext, dedupeKey?: string): ConversionDispatch
  * confirm and a later estimate submit on the same project share one form
  * conversion. A finish with no project id sends only the estimator label.
  * Any other key is a consultation inquiry and sends the form label only.
- * A missing gtag retries for about five seconds.
+ * A missing gtag retries for about ten seconds.
  * Returns true when at least one conversion was sent.
  */
 export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: string, retryCount = 0): boolean {

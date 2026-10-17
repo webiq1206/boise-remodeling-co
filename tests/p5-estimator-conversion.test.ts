@@ -84,8 +84,8 @@ test('a form key fires the form label only', () => {
   });
 });
 
-test('a missing gtag retries for five seconds and still fires both labels once', () => {
-  assert.equal(GTAG_READY_ATTEMPTS * GTAG_READY_WAIT_MS, 5000);
+test('a missing gtag retries for ten seconds and still fires both labels once', () => {
+  assert.equal(GTAG_READY_ATTEMPTS * GTAG_READY_WAIT_MS, 10000);
   withBrowser((calls, timers) => {
     const browser = window as unknown as {gtag?: (...args: unknown[]) => void};
     delete browser.gtag;
@@ -133,6 +133,24 @@ test('a thrown gtag does not escape the conversion call', () => {
     assert.doesNotThrow(() => trackGoogleAdsLeadConversion({service: 'kitchen'}, 'intake:throws'));
     assert.equal(trackGoogleAdsLeadConversion({service: 'kitchen'}, 'intake:throws'), false);
   });
+});
+
+test('accepted, duplicate, and 409 are decided at the engine call sites', () => {
+  const estimator = readFileSync(new URL('../components/P5Estimator.tsx', import.meta.url), 'utf8');
+  const intakeStart = estimator.indexOf('async function submitIntake');
+  const submitStart = estimator.indexOf('async function submit(');
+  const intake = estimator.slice(intakeStart, submitStart);
+  const notOk = intake.indexOf('if(!response.ok)throw');
+  const receipt = intake.indexOf('requireIntakeReceipt(value)');
+  const intakeTrack = intake.indexOf('trackGoogleAdsLeadConversion({service:latest.answers.service},`intake:${receipt.projectId}`)');
+  assert.ok(notOk >= 0 && notOk < intakeTrack);
+  assert.ok(receipt > notOk && receipt < intakeTrack);
+  const submit = estimator.slice(submitStart);
+  const submitTrack = submit.indexOf('trackGoogleAdsLeadConversion({service:d.answers.service},`estimator:${d.id}`)');
+  assert.ok(submitTrack > 0);
+  const submitCall = submit.slice(submitTrack, submit.indexOf(');', submitTrack));
+  assert.equal(submitCall.includes('accepted'), false);
+  assert.equal(submitCall.includes('data.accepted'), false);
 });
 
 test('the shared estimator engine is unchanged', () => {
