@@ -16,5 +16,5 @@ test('the privacy page adds the cookies section without removing the existing po
   assert.match(page, /We also use the Meta Pixel to measure visits and inquiries that come from our Facebook and Instagram ads\./);
   assert.match(page, /Boise Remodeling Co \("we," "our," or "us"\) is committed to protecting your privacy\./);
   assert.match(page, /We do not sell your personal information\./);
-  assert.equal(page.includes('\u2014'), false);
+  assert.equal(page.includes(String.fromCharCode(8212)), false);
 });
