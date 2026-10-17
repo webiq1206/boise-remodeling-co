@@ -80,7 +80,7 @@ test('founding-year sentences stay in source while the flag is off', () => {
 test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is off', () => {
   assert.equal(SHOW_UNPROVEN_SATISFACTION_GUARANTEE, false);
   const source = readFileSync('lib/seo.ts', 'utf8');
-  assert.match(source, /satisfaction guaranteed/);
+  assert.match(source, /Satisfaction guaranteed/);
   const service = generateMetaDescription({ serviceName: 'Kitchen Remodel', serviceSlug: 'kitchen-remodel' });
   const unknownCity = generateMetaDescription({
     serviceName: 'Kitchen Remodel',
@@ -88,6 +88,7 @@ test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is o
     city: 'NotACity',
   });
   assert.equal(/satisfaction guaranteed/i.test(service), false);
+  assert.match(service, /Idaho Registered Contractor #8381215, bonded & insured/);
   assert.equal(/satisfaction guaranteed/i.test(unknownCity), false);
   assert.match(unknownCity, /Free in-home consultation/);
 });

@@ -318,7 +318,7 @@ export function generateOrganizationSchema(): SchemaContext {
       '@type': 'ImageObject',
       url: LOGO_URL,
     },
-    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Idaho Registered Contractor #8381215, insured, and committed to excellence.'),
+    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Idaho Registered Contractor #8381215, bonded, and insured, and committed to excellence.'),
     ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     // founder is gated: only emitted once a real named founder is supplied in
     // BUSINESS_INFO.founderName (see seo-audit/trust-signal-map.md).
