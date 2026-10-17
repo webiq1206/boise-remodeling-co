@@ -108,15 +108,22 @@ test("analytics off and denied consent send no click conversion", () => {
 
 test("the privacy page states the tap, analytics, and forwarding facts", () => {
   const privacy = readFileSync(new URL("../app/privacy-policy/page.tsx", import.meta.url), "utf8");
-  const text = [
-    "When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, phone number or what you say or write.",
+  const section = privacy.slice(privacy.indexOf('id="cookies-analytics-advertising"'));
+  const beforeNext = section.slice(0, section.indexOf('id="document-section-5"'));
+  const google = "We use Google Analytics 4 (GA4) to understand how visitors use this site, such as pages viewed, referring site, approximate location, browser and device type. We use Google Ads conversion tracking to measure which of our ads lead to calls, texts, form submissions and completed estimates. Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites (remarketing).";
+  const clarity = "We also use Microsoft Clarity to see how visitors use our pages through heatmaps and session recordings; form fields are masked so what you type is not recorded. Microsoft processes this under its own privacy statement";
+  const meta = "Meta's pixel may also record which buttons you click and basic information about the page, such as its title.";
+  const tap = [
+    "When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, your own phone number or what you say or write.",
     "Google Analytics also records the tap, including the number tapped, which is our business number.",
     "If your call goes through a Google forwarding number, Google connects the call and can see the calling number and call length, but not what's said.",
   ].join(" ");
-  assert.equal(privacy.includes(text), true);
-  const section = privacy.slice(privacy.indexOf('id="cookies-analytics-advertising"'));
-  const beforeNext = section.slice(0, section.indexOf('id="document-section-5"'));
-  assert.equal(beforeNext.includes(text), true);
+  for (const part of [google, clarity, meta, tap, "event name, event id, event time, action source", "fbp and fbc"]) {
+    assert.equal(beforeNext.includes(part), true, part.slice(0, 48));
+  }
+  const order = [google, clarity, meta, tap].map((part) => beforeNext.indexOf(part));
+  assert.deepEqual(order, [...order].sort((a, b) => a - b));
+  assert.equal(beforeNext.includes("your name, phone number or what you say or write"), false);
 });
 
 test("the existing click listener stays single-bound and GA4 click events stay in place", () => {
