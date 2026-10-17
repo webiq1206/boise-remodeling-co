@@ -9,7 +9,7 @@ test('the privacy page adds the cookies section without removing the existing po
   assert.match(page, /Cookies, analytics and advertising/);
   assert.match(page, /We use Google Analytics 4 \(GA4\)/);
   assert.match(page, /Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites \(remarketing\)\./);
-  assert.match(page, /We do not currently send your name, email, phone number, address or project description to Google; Google Analytics receives only the type of project you choose \(for example, an addition or an ADU\) when you use the estimator or send an inquiry, and a random reference number for your inquiry when you send one\./);
+  assert.match(page, /We do not currently send your name, email, phone number, address or project description to Google; Google Analytics receives only the type of project you choose \(for example, an addition or an ADU\) when you use the estimator or send an inquiry, and a random reference number for your inquiry when you send one\. Google Ads receives a random reference number for your inquiry so each lead is counted only once\./);
   assert.match(page, /Calls from our site or ads may be routed through a Google forwarding number so we can measure which ads lead to calls\./);
   assert.equal(page.includes('We do not send your name, email, phone number or project details to Google.'), false);
   assert.match(page, /https:\/\/policies\.google\.com\/privacy/);
