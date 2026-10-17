@@ -322,8 +322,8 @@ export default function ContactPage() {
           <div className="grid md:grid-cols-2 overflow-hidden">
             <div className="relative min-h-[260px] md:min-h-[520px] overflow-hidden bg-inverse order-2 md:order-1">
               <Image
-                src={SITE_IMAGES.leadership}
-                alt="Boise Remodeling Co team at a finished kitchen project"
+                src={SITE_IMAGES.aboutKitchen}
+                alt="Warm open kitchen with white oak cabinets, a large island and black-framed windows"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover img-brand-grade"
@@ -333,14 +333,6 @@ export default function ContactPage() {
                 className="absolute inset-0 pointer-events-none"
                 style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.028 }}
               />
-              <div className="absolute bottom-0 left-0 p-8 md:p-12">
-                <p className="ed-eyebrow" style={{ color: "rgb(255 255 255 / 0.72)" }}>Your free visit includes</p>
-                <p className="font-sans font-light text-xl md:text-2xl text-inverse-foreground">
-                  No pressure.
-                  <br />
-                  No pitch. Just answers.
-                </p>
-              </div>
             </div>
 
             <div className="section-y-sm px-8 md:px-14 lg:px-16 bg-card border-l border-border order-1 md:order-2">

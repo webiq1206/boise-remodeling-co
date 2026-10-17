@@ -69,10 +69,11 @@ export async function GET() {
 
   for (const post of BLOG_POSTS) {
     if (!post.heroImage) continue;
+    const caption = post.heroImage.endsWith('/whole-home-rough-in.webp') ? undefined : post.excerpt;
     add(`${baseUrl}/blog/${post.slug}`, {
       loc: absolute(post.heroImage, baseUrl),
       title: post.title,
-      caption: post.excerpt,
+      caption,
     });
   }
 

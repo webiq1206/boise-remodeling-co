@@ -91,7 +91,7 @@ export default function AboutPage() {
       <JsonLd data={schemas} />
       <div className="flex flex-col pb-20 md:pb-0">
         {/* Approved editorial hero */}
-        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.leadership} imageAlt="Boise Remodeling Co design-build team at a finished kitchen project">
+        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.aboutKitchen} imageAlt="Warm open kitchen with white oak cabinets, a large island and black-framed windows">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
