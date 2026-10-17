@@ -9,7 +9,7 @@ import { areaPath,servicePath } from "@/lib/seo-routes";
 import { CITIES,SERVICES } from "@/shared/contentData";
 import { CONTENT_HUBS,guidePath } from "@/shared/contentHubs";
 import { GUIDE_PAGES } from "@/shared/guideContent";
-import { SITE_CONFIG } from "@/shared/siteConfig";
+import { publicFooterLine, SITE_CONFIG } from "@/shared/siteConfig";
 import { SITE_TAGLINE } from "@/shared/siteContent";
 import { ChevronDown,Facebook } from "lucide-react";
 import Link from "next/link";
@@ -47,7 +47,7 @@ function buildFooterGroups(): { title: string; links: FooterLink[] }[] {
     },
     {
       title: "Company",
-      links: [{ label: "About", href: "/about" }, { label: "Design Ideas", href: "/testimonials" }, { label: "Why Choose Us", href: "/#why-choose-us" }, { label: "How We Build", href: "/#how-we-build" }, { label: "RE-10 Repairs", href: "/re-10-repairs-boise" }, { label: "Estimate From Plans", href: "/remodel-plans-boise" }, { label: "Contact", href: "/contact" }],
+      links: [{ label: "About", href: "/about" }, { label: "Design Ideas", href: "/testimonials" }, { label: "Why Choose Us", href: "/#why-choose-us" }, { label: "How We Build", href: "/#how-we-build" }, { label: "RE-10 repairs (Boise Handyman Co)", href: "https://boisehandyman.co/re-10-repairs-boise" }, { label: "Estimate From Plans", href: "/remodel-plans-boise" }, { label: "Contact", href: "/contact" }],
     },
     {
       title: "Resources",
@@ -61,22 +61,36 @@ function buildFooterGroups(): { title: string; links: FooterLink[] }[] {
   ];
 }
 
+const FOOTER_LINK_CLASS =
+  "flex min-h-[44px] items-center text-sm text-inverse-muted transition-colors hover:text-inverse-foreground lg:min-h-0";
+
 function GroupLinks({ links }: { links: FooterLink[] }) {
   return (
     <ul className="space-y-2.5">
       {links.map((link) => (
         <li key={link.href}>
-          <Link
-            href={link.href}
-            className="flex min-h-[44px] items-center text-sm text-inverse-muted transition-colors hover:text-inverse-foreground lg:min-h-0"
-          >
-            {link.label}
-          </Link>
+          {link.href.startsWith("http") ? (
+            <a href={link.href} className={FOOTER_LINK_CLASS} rel="noopener noreferrer">
+              {link.label}
+            </a>
+          ) : (
+            <Link href={link.href} className={FOOTER_LINK_CLASS}>
+              {link.label}
+            </Link>
+          )}
         </li>
       ))}
     </ul>
   );
 }
+
+const SISTER_SITES: { name: string; href?: string }[] = [
+  { name: "Boise Construction Co", href: "https://boiseconstruction.co" },
+  { name: "Boise Remodeling Co", href: "https://boiseremodeling.co" },
+  { name: "Boise Handyman Co", href: "https://boisehandyman.co" },
+  { name: "Boise Cabinet Co", href: "https://boisecabinet.co" },
+  { name: "Boise ADU Co (launching soon)" },
+];
 
 /** Collapsed accordion on phones and tablets, a plain column from lg up. */
 function FooterGroup({ title, links }: { title: string; links: FooterLink[] }) {
@@ -129,6 +143,7 @@ export function Footer() {
               <p className="py-2 text-sm text-inverse-muted">
                 {SITE_CONFIG.address.cityState} · {SITE_CONFIG.address.serviceArea}
               </p>
+              <p className="py-2 text-sm text-inverse-muted">{publicFooterLine()}</p>
             </div>
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <Button variant="brandInverseOutline" size="sm" asChild>
@@ -164,6 +179,22 @@ export function Footer() {
             ))}
           </div>
         </div>
+
+        <p className="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-2 text-sm text-inverse-muted">
+          <span>Part of P5 Home Co:</span>
+          {SISTER_SITES.map((site, index) => (
+            <span key={site.name} className="inline-flex items-baseline gap-x-2">
+              {index > 0 && <span aria-hidden="true">·</span>}
+              {site.href ? (
+                <a href={site.href} className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" rel="noopener noreferrer">
+                  {site.name}
+                </a>
+              ) : (
+                <span>{site.name}</span>
+              )}
+            </span>
+          ))}
+        </p>
 
         <div className="flex flex-col gap-4 pt-5 text-xs text-inverse-muted sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-x-4 gap-y-2">

@@ -25,9 +25,10 @@ export const SITE_CONFIG = {
   phoneSmsHref: `sms:${process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL}`,
   email: process.env.NEXT_PUBLIC_EMAIL ?? DEFAULT_EMAIL,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL,
-  // Canonical NAP. Visible pages (footer, contact) show Meridian, ID only:
-  // service-area business, no storefront. Public JSON-LD uses the full street,
-  // city, state, and ZIP so the entity matches this record.
+  /** Named public contact. Not a founder and not a staffed-office claim. */
+  publicRepresentative: "Nick Perkins",
+  // Canonical NAP. This is a service-area business, not a staffed storefront.
+  // Visible pages and JSON-LD both carry the full street, city, state, and ZIP.
   address: {
     street: "4031 W Wapoot St",
     city: "Meridian",
@@ -44,4 +45,10 @@ export function formatPhoneDisplay(tel: string = SITE_CONFIG.phoneTel): string {
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
   }
   return SITE_CONFIG.phone;
+}
+
+/** Construction's footer line, with middle-dot separators. Same words on every page. */
+export function publicFooterLine(): string {
+  const address = SITE_CONFIG.address;
+  return `Public representative: ${SITE_CONFIG.publicRepresentative} · ${address.street}, ${address.city}, ${address.state} ${address.postalCode} · Service-area business, not a staffed storefront`;
 }

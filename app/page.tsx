@@ -1,4 +1,5 @@
 import { ApprovedHome } from "@/components/approved/ApprovedHome";
+import { ApprovedHomeHero } from "@/components/approved/ApprovedHomeHero";
 import { ConsultationForm } from "@/components/ConsultationForm";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Section } from "@/components/marketing/Section";
@@ -78,7 +79,7 @@ export default function HomePage() {
           thing they came for. Everything above it now exists only to make the
           number land well; everything below it answers what the number raised. */}
       <HomePageSchema />
-      <ApprovedHome />
+      <ApprovedHome hero={<ApprovedHomeHero />} />
       <BudgetInclusionsSection />
       <Section id="consult" divider className="scroll-mt-16 relative overflow-hidden pb-28 md:pb-28">
         {/* Warm, dimmed lifestyle photo grounds the closing section. Directional
