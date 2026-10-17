@@ -138,7 +138,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 
   push('/', withBrandPageMetadata({
     title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Home remodeling contractors in Boise. Kitchen, bathroom, and whole-home remodels in the Treasure Valley. Design-build services, project scopes, budget guidance.'),
+    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath & whole-home remodels. Clear budget guidance. Free in-home consultation'),
     alternates: { canonical: buildCanonical('/') },
   }, '/'));
 
@@ -222,8 +222,9 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   }
 
   assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
-  assert.match(rows.find((row) => row.path === '/')?.description ?? '', /Home remodeling contractors in Boise/);
-  assert.match(rows.find((row) => row.path === '/')?.description ?? '', /Kitchen, bathroom, and whole-home/);
+  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath & whole-home remodels. Clear budget guidance. Free in-home consultation';
+  assert.equal(homeMeta.length, 160);
+  assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
   const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
   assert.equal(eagleMeta.length, 160);
