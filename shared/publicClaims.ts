@@ -5,6 +5,9 @@
  */
 export const SHOW_FOUNDING_YEAR = false;
 
+/** Unproven satisfaction-guaranteed line. The source phrase stays. Public meta omits it while this is false. */
+export const SHOW_UNPROVEN_SATISFACTION_GUARANTEE = false;
+
 const FOUNDING_YEAR_CLAIM =
   /,?\s*founded(?:\s+in)?\s*:?\s*2020\b(?:\s+and\b)?,?\s*/gi;
 

@@ -4,6 +4,7 @@
  * for service and location pages
  */
 
+import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
 
@@ -162,7 +163,7 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   if (city && serviceName) {
     const serviceLC = serviceName.toLowerCase();
     const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || `${city}'s trusted`;
-    const ctaVariant = CITY_CTA_VARIANTS[city] || "Satisfaction guaranteed";
+    const ctaVariant = CITY_CTA_VARIANTS[city] || (SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? "Satisfaction guaranteed" : "Free in-home consultation");
     return `${cityVariant} ${serviceLC} team. Idaho Registered Contractor #8381215. ${ctaVariant}. Call ${phone}.`;
   }
   
@@ -175,7 +176,8 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   }
   
   const serviceLC = serviceName.toLowerCase();
-  return `Idaho Registered Contractor #8381215. Expert ${serviceLC} in the Treasure Valley. Insured, satisfaction guaranteed. Call ${phone}.`;
+  const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? ", satisfaction guaranteed" : "";
+  return `Idaho Registered Contractor #8381215. Expert ${serviceLC} in the Treasure Valley. Insured${guarantee}. Call ${phone}.`;
 }
 
 /**
@@ -523,12 +525,12 @@ export const BUSINESS_INFO = {
     country: 'United States',
   },
   hours: {
-    monday: '7:00 AM - 6:00 PM',
-    tuesday: '7:00 AM - 6:00 PM',
-    wednesday: '7:00 AM - 6:00 PM',
-    thursday: '7:00 AM - 6:00 PM',
-    friday: '7:00 AM - 6:00 PM',
-    saturday: '8:00 AM - 4:00 PM',
+    monday: '9:00 AM - 6:00 PM',
+    tuesday: '9:00 AM - 6:00 PM',
+    wednesday: '9:00 AM - 6:00 PM',
+    thursday: '9:00 AM - 6:00 PM',
+    friday: '9:00 AM - 6:00 PM',
+    saturday: '9:00 AM - 4:00 PM',
     sunday: 'Closed',
   },
   founded: '2020',
