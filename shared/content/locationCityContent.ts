@@ -67,7 +67,7 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
       h2: 'Kuna housing stock: young city, young homes',
       paragraphs: [
         'Kuna (ZIP 83634) is one of Idaho\'s fastest-growing cities, and most of its housing postdates 2000. Subdivisions like Crimson Point and developments along the Indian Creek and Ten Mile Creek corridors deliver solid bones with builder-grade everything: laminate counters, basic stall showers, and kitchens that face away from the living space. That makes Kuna remodels efficient - structure rarely needs correction, so budget goes into the finishes and flow homeowners actually feel.',
-        'Older properties near the original downtown grid by Indian Creek Plaza are the exception, where 20th-century homes can need electrical and layout work alongside cosmetic updates.',
+        'Older properties near the original downtown grid by Bernie Fisher Park are the exception, where 20th-century homes can need electrical and layout work alongside cosmetic updates.',
       ],
     },
     {
