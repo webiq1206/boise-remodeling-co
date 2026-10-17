@@ -96,7 +96,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'How old are Meridian homes?',
         answer:
-          'Young. Census ACS 2020–2024 estimates put the median Meridian home at 2007, with only about 7% built before 1980 and roughly 30% built between 2000 and 2009, so many Meridian remodels start from a house that is 15 to 25 years old. Design starts from your home\'s actual layout at the in-home visit.',
+          'Young. Census ACS 2020–2024 estimates put the median Meridian home at 2007, with only about 7% built before 1980 and roughly 30% built between 2000 and 2009, so many Meridian remodels start from a fairly young house. Design starts from your home\'s actual layout at the in-home visit.',
       },
     ],
   },
@@ -122,7 +122,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Do you serve Eagle, Idaho?',
         answer:
-          'Yes. Eagle sits inside our Treasure Valley coverage, from Shadow Valley and Banbury to The Estates. We do kitchen, bathroom, whole-home, and addition remodels throughout Eagle, and the Eagle remodeling guide covers local specifics.',
+          'Yes. Eagle sits inside our Treasure Valley coverage, including Banbury and Floating Feather. We do kitchen, bathroom, whole-home, and addition remodels throughout Eagle, and the Eagle remodeling guide covers local specifics.',
       },
       {
         question: 'How long does Eagle take to review a room addition?',
@@ -195,7 +195,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Do you serve Kuna, Idaho?',
         answer:
-          'Yes. Our Treasure Valley service area includes Kuna, with Black Cat, Crimson Point, and Ten Mile Creek. Our Kuna work covers kitchens, bathrooms, whole homes, and additions, all handled locally; see the Kuna remodeling guide too.',
+          'Yes. Our Treasure Valley service area includes Kuna, with Black Cat and Crimson Point. Our Kuna work covers kitchens, bathrooms, whole homes, and additions, all handled locally; see the Kuna remodeling guide too.',
       },
       {
         question: 'What does a Kuna permit cost for a remodel?',
@@ -231,7 +231,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Do you serve Star, Idaho?',
         answer:
-          'Yes, we serve Star within the Treasure Valley, including Star River Ranch, Hillsdale, and Paramount. Kitchen, bath, whole-home, and addition projects in Star are handled by our local team; the Star remodeling guide has details.',
+          'Yes, we serve Star within the Treasure Valley, including Star River Ranch. Kitchen, bath, whole-home, and addition projects in Star are handled by our local team; the Star remodeling guide has details.',
       },
       {
         question: 'Which Star remodels need a permit?',
@@ -267,7 +267,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Do you serve Middleton, Idaho?',
         answer:
-          'Yes. Middleton is on our Treasure Valley service map, including Middleton Heights, Purple Sage, and Windermere. Kitchens, bathrooms, whole-home remodels, and additions in Middleton are local projects for our team, and the Middleton remodeling guide covers more.',
+          'Yes. Middleton is on our Treasure Valley service map, including Middleton Heights. Kitchens, bathrooms, whole-home remodels, and additions in Middleton are local projects for our team, and the Middleton remodeling guide covers more.',
       },
       {
         question: 'When does a Middleton remodel need a building permit?',

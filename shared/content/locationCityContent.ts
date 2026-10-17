@@ -36,14 +36,14 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
     {
       h2: 'Eagle finish level and HOA design review',
       paragraphs: [
-        'Larger footprints and premium materials are normal here - budget for architectural review time and exterior material boards in Harris Ranch, Hidden Springs, and Foothills communities.',
+        'Larger footprints and premium materials are normal here - budget for architectural review time and exterior material boards in Foothills communities.',
         'Roof and stone tie-ins matter when additions must match executive streetscapes.',
       ],
     },
     {
       h2: 'Eagle housing stock and what drives remodels',
       paragraphs: [
-        'Eagle (ZIP 83616) carries the highest median finish level in our service area. Estates along the Boise River corridor and golf-course communities like Banbury and Eagle Hills date largely from the 1990s and 2000s: big footprints with dated kitchens, sunken living rooms, and primary baths built around corner garden tubs. Newer foothills construction in Shadow Valley and The Estates trends contemporary and usually needs personalization rather than reconfiguration.',
+        'Eagle (ZIP 83616) carries the highest median finish level in our service area. Estates along the Boise River corridor and golf-course communities like Banbury and Eagle Hills date largely from the 1990s and 2000s: big footprints with dated kitchens, sunken living rooms, and primary baths built around corner garden tubs. Newer construction in Eagle trends contemporary and usually needs personalization rather than reconfiguration.',
         'The common thread in Eagle remodels is bringing 1990s-2000s luxury up to current-decade luxury: panel-ready appliances, full-height backsplashes, curbless wet-room baths, and outdoor living that takes advantage of larger lots near Eagle Island State Park.',
       ],
     },
@@ -87,7 +87,7 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
     {
       h2: 'Star housing stock along the river corridor',
       paragraphs: [
-        'Star (ZIP 83669) doubled in population over the last decade, and its housing splits into riverside acreage properties near Star Riverfront Park and newer subdivisions like Star River Ranch built since the mid-2000s. The newer stock needs the familiar builder-grade upgrade path: kitchen islands, pantry storage, and primary bath improvements. Acreage properties along the Boise River often support additions, shops, and guest quarters that subdivision lots cannot.',
+        'Star (ZIP 83669) doubled in population over the last decade, and its housing splits into riverside acreage properties near Star Riverwalk Park and newer subdivisions like Star River Ranch built since the mid-2000s. The newer stock needs the familiar builder-grade upgrade path: kitchen islands, pantry storage, and primary bath improvements. Acreage properties along the Boise River often support additions, shops, and guest quarters that subdivision lots cannot.',
         'Star sits at the Ada-Canyon county line, so the permit jurisdiction for your address is worth confirming before design - we handle both and check this on the first visit.',
       ],
     },
@@ -103,7 +103,7 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
     {
       h2: 'Middleton housing stock and remodel patterns',
       paragraphs: [
-        'Middleton (ZIP 83644) mixes century-old farmhouse stock near the original townsite with newer subdivisions like Middleton Heights and acreage properties toward Purple Sage. Farmhouse-era homes reward careful remodeling: original footprints are small, so kitchen openings and primary suite additions deliver outsized livability gains, but knob-and-tube wiring and undersized panels should be budgeted for upgrade when walls open.',
+        'Middleton (ZIP 83644) mixes century-old farmhouse stock near the original townsite with newer subdivisions like Middleton Heights. Farmhouse-era homes reward careful remodeling: original footprints are small, so kitchen openings and primary suite additions deliver outsized livability gains, but knob-and-tube wiring and undersized panels should be budgeted for upgrade when walls open.',
         'Newer Middleton subdivisions follow the standard builder-grade path - kitchen, bath, and storage upgrades - while acreage owners frequently add shops, guest quarters, and outdoor living that town lots cannot fit.',
       ],
     },
@@ -119,7 +119,7 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
     {
       h2: 'Nampa neighborhoods and housing eras',
       paragraphs: [
-        'Nampa is the second-largest city in the Treasure Valley, and its housing spans a full century. Early-1900s bungalows and cottages around Downtown Nampa and the Nampa Train Depot have charm and small, divided rooms; opening them up takes structural diligence and almost always reveals electrical work worth doing while walls are open. Mid-century neighborhoods like Greenhurst offer ranch layouts that convert beautifully to open plans. The Karcher corridor and newer south-side subdivisions near Lake Lowell follow the modern builder-grade pattern where finish-level upgrades go furthest.',
+        'Nampa is the second-largest city in the Treasure Valley, and its housing spans a full century. Early-1900s bungalows and cottages around Downtown Nampa and the Nampa Train Depot have charm and small, divided rooms; opening them up takes structural diligence and almost always reveals electrical work worth doing while walls are open. Mid-century neighborhoods like Greenhurst offer ranch layouts that convert beautifully to open plans. The Karcher corridor and newer south-side subdivisions follow the modern builder-grade pattern where finish-level upgrades go furthest.',
         'ZIP codes 83651, 83686, and 83687 are all in our regular rotation, and Nampa\'s lower entry prices mean remodel budgets often stretch further here than anywhere else in the valley.',
       ],
     },

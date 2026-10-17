@@ -48,7 +48,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     { path: '/about', label: 'About', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/areas', label: 'Service areas', changeFrequency: 'monthly', priority: 0.75 },
     { path: '/estimate', label: 'Get an estimate', changeFrequency: 'monthly', priority: 0.9 },
-    { path: '/re-10-repairs-boise', label: 'RE-10 and inspection repairs', changeFrequency: 'monthly', priority: 0.9 },
+    // /re-10-repairs-boise canonicals to boisehandyman.co, so it is not listed here.
     { path: '/remodel-plans-boise', label: 'Remodel plans', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/testimonials', label: 'Testimonials', changeFrequency: 'monthly', priority: 0.65 },
     { path: '/contact', label: 'Contact', changeFrequency: 'monthly', priority: 0.7 },
