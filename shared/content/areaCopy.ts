@@ -96,7 +96,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'How old are Meridian homes?',
         answer:
-          'Young. Census ACS 2020–2024 estimates put the median Meridian home at 2007, with only about 7% built before 1980 and roughly 30% built between 2000 and 2009, so many Meridian remodels start from a house that is 15 to 25 years old. Design starts from your home\'s actual layout at the in-home visit.',
+          'Young. Census ACS 2020–2024 estimates put the median Meridian home at 2007, with only about 7% built before 1980 and roughly 30% built between 2000 and 2009, so many Meridian remodels start from a fairly young house. Design starts from your home\'s actual layout at the in-home visit.',
       },
     ],
   },
