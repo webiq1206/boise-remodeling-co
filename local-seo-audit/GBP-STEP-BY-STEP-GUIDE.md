@@ -24,12 +24,12 @@ Use these exact details everywhere — on Google, Yelp, Facebook, Instagram, Bin
 
 | Day | Hours |
 |-----|-------|
-| Monday | 7:00 AM - 6:00 PM |
-| Tuesday | 7:00 AM - 6:00 PM |
-| Wednesday | 7:00 AM - 6:00 PM |
-| Thursday | 7:00 AM - 6:00 PM |
-| Friday | 7:00 AM - 6:00 PM |
-| Saturday | 8:00 AM - 4:00 PM |
+| Monday | 9:00 AM - 6:00 PM |
+| Tuesday | 9:00 AM - 6:00 PM |
+| Wednesday | 9:00 AM - 6:00 PM |
+| Thursday | 9:00 AM - 6:00 PM |
+| Friday | 9:00 AM - 6:00 PM |
+| Saturday | 9:00 AM - 4:00 PM |
 | Sunday | Closed |
 
 ---
@@ -506,7 +506,7 @@ Either way, thank you again for choosing Boise Remodeling Co.
 ### Step 7.1 — Google messaging
 
 1. Confirm messaging is ON.
-2. Check messages daily during business hours (Mon-Fri 7-6, Sat 8-4).
+2. Check messages daily during business hours (Mon-Fri 9-6, Sat 9-4).
 3. Confirm welcome message is set (see Phase 3, Step 3.1).
 
 ### Step 7.2 — Bing Places
