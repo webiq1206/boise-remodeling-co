@@ -97,7 +97,10 @@ export default function PrivacyPolicyPage() {
 
             <h2 id="advertising">Advertising</h2>
             <p>
-              We use Google tags to measure visits and ads. We do not currently send your name, email, phone number or project details to Google.
+              We use Google Analytics 4 to measure how people use this site, and Google Ads conversion tracking to measure completed actions such as an inquiry or a finished estimator.
+            </p>
+            <p>
+              We do not currently send your name, email, phone number or project details to Google.
             </p>
             <p>
               Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites (remarketing).

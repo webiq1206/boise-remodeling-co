@@ -5,6 +5,7 @@ import {readFileSync} from 'node:fs';
 const page = readFileSync(new URL('../app/privacy-policy/page.tsx', import.meta.url), 'utf8');
 
 test('privacy policy states what Google and Meta actually receive', () => {
+  assert.match(page, /We use Google Analytics 4 to measure how people use this site, and Google Ads conversion tracking to measure completed actions such as an inquiry or a finished estimator\./);
   assert.match(page, /We do not currently send your name, email, phone number or project details to Google\./);
   assert.match(page, /Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites \(remarketing\)\./);
   assert.equal(page.includes('Google may also use information collected by its tags to personalise ads.'), false);

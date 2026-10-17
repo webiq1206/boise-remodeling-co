@@ -53,9 +53,9 @@ test('an estimator key fires both labels once', () => {
     assert.deepEqual(sent.map((row) => row.send_to), [ESTIMATOR, FORM, ESTIMATOR, FORM]);
     assert.deepEqual(sent.map((row) => row.transaction_id), [
       'intake:remodeling:abc',
-      'intake:remodeling:abc',
+      'abc',
       'estimator:draft-1',
-      'estimator:draft-1',
+      'draft-1',
     ]);
   });
 });
@@ -99,9 +99,31 @@ test('a missing gtag retries for five seconds and still fires both labels once',
     timers[0].fn();
     const sent = conversions(calls);
     assert.deepEqual(sent.map((row) => row.send_to), [ESTIMATOR, FORM]);
-    assert.deepEqual(sent.map((row) => row.transaction_id), ['estimator:lazy', 'estimator:lazy']);
+    assert.deepEqual(sent.map((row) => row.transaction_id), ['estimator:lazy', 'lazy']);
     assert.equal(trackGoogleAdsLeadConversion({service: 'kitchen'}, 'estimator:lazy'), false);
     assert.equal(conversions(calls).length, 2);
+  });
+});
+
+test('intake confirm and estimate submit on one project fire the form label once', () => {
+  withBrowser((calls) => {
+    trackGoogleAdsLeadConversion({service: 'kitchen'}, 'intake:remodeling:project-9');
+    trackGoogleAdsLeadConversion({service: 'kitchen'}, 'estimator:project-9');
+    const sent = conversions(calls);
+    const estimator = sent.filter((row) => row.send_to === ESTIMATOR);
+    const form = sent.filter((row) => row.send_to === FORM);
+    assert.deepEqual(estimator.map((row) => row.transaction_id), ['intake:remodeling:project-9', 'estimator:project-9']);
+    assert.equal(form.length, 1);
+    assert.equal(form[0].transaction_id, 'project-9');
+  });
+});
+
+test('a finish that did not create an accepted lead fires only the estimator label', () => {
+  withBrowser((calls) => {
+    assert.equal(trackGoogleAdsLeadConversion({service: 'kitchen'}, 'estimator:'), true);
+    const sent = conversions(calls);
+    assert.deepEqual(sent.map((row) => row.send_to), [ESTIMATOR]);
+    assert.equal(sent[0].transaction_id, 'estimator:');
   });
 });
 

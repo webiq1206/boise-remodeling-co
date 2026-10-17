@@ -87,6 +87,17 @@ export function isEstimatorCompletionKey(dedupeKey?: string): boolean {
   return !!dedupeKey && (dedupeKey.startsWith("intake:") || dedupeKey.startsWith("estimator:"));
 }
 
+/**
+ * Project id shared by intake:${site}:${id} and estimator:${id}.
+ * Empty when this finish has no accepted lead to attach.
+ */
+export function completionLeadId(dedupeKey?: string): string | undefined {
+  if (!dedupeKey || !isEstimatorCompletionKey(dedupeKey)) return undefined;
+  const body = dedupeKey.slice(dedupeKey.indexOf(":") + 1);
+  const id = body.slice(body.lastIndexOf(":") + 1).trim();
+  return id || undefined;
+}
+
 function alreadySent(storageKey?: string): boolean {
   if (!storageKey) return false;
   if (sentLeadKeys.has(storageKey)) return true;
@@ -113,21 +124,28 @@ type ConversionDispatch = {
 };
 
 function dispatchesFor(ctx: LeadContext, dedupeKey?: string): ConversionDispatch[] {
-  if (isEstimatorCompletionKey(dedupeKey)) {
-    return [
+  if (dedupeKey && isEstimatorCompletionKey(dedupeKey)) {
+    const items: ConversionDispatch[] = [
       { storageKey: `google_ads_estimator:${dedupeKey}`, params: googleAdsEstimatorParams(ctx, dedupeKey) },
-      { storageKey: `google_ads_lead:${dedupeKey}`, params: googleAdsLeadParams(ctx, dedupeKey) },
     ];
+    const leadId = completionLeadId(dedupeKey);
+    if (leadId) {
+      items.push({ storageKey: `google_ads_lead:${leadId}`, params: googleAdsLeadParams(ctx, leadId) });
+    }
+    return items;
   }
   return [{ storageKey: dedupeKey ? `google_ads_lead:${dedupeKey}` : undefined, params: googleAdsLeadParams(ctx, dedupeKey) }];
 }
 
 /**
- * Fires Google Ads conversions once per dedupe key (per page load and, where
- * storage allows, per browser session). An intake: or estimator: key is an
- * estimator finish that also submits a lead, so it sends both labels with
- * transaction_id set to that key. Any other key is a consultation inquiry and
- * sends the form label only. A missing gtag retries for about five seconds.
+ * Fires Google Ads conversions once per logical event (per page load and,
+ * where storage allows, per browser session). An intake: or estimator: key
+ * sends "P5 Estimator Completed" once for that completion key. When the key
+ * carries a project id, the form label fires once for that id, so an intake
+ * confirm and a later estimate submit on the same project share one form
+ * conversion. A finish with no project id sends only the estimator label.
+ * Any other key is a consultation inquiry and sends the form label only.
+ * A missing gtag retries for about five seconds.
  * Returns true when at least one conversion was sent.
  */
 export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: string, retryCount = 0): boolean {
