@@ -136,11 +136,12 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
     });
   };
 
-  push('/', withBrandPageMetadata({
+  const homeMetadata = withBrandPageMetadata({
     title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.'),
+    description: fitDescription('Home remodeling contractors in Boise, Meridian, Eagle, Nampa, Treasure Valley. Kitchen, bath, whole-home remodels. Budget guidance. Free in-home consultation.'),
     alternates: { canonical: buildCanonical('/') },
-  }, '/'));
+  }, '/');
+  push('/', homeMetadata);
 
   for (const service of SERVICES) {
     push(`/services/${service.slug}`, withBrandPageMetadata(buildPageMetadata({
@@ -222,9 +223,11 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   }
 
   assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
-  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa. Design-build kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation.';
-  assert.equal(homeMeta.length, 160);
+  const homeMeta = 'Home remodeling contractors in Boise, Meridian, Eagle, Nampa, Treasure Valley. Kitchen, bath, whole-home remodels. Budget guidance. Free in-home consultation.';
+  assert.equal(homeMeta.length, 158);
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
+  assert.equal(homeMetadata.openGraph?.description, homeMeta);
+  assert.equal(homeMetadata.twitter?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
   const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
   assert.equal(eagleMeta.length, 160);
