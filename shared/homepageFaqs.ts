@@ -1,3 +1,5 @@
+import { publishFoundingCopy } from '@/shared/foundingClaim';
+
 export interface HomepageFaq {
   q: string;
   a: string;
@@ -6,7 +8,7 @@ export interface HomepageFaq {
 export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
     q: "Remodeling contractors in Boise",
-    a: "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes.",
+    a: publishFoundingCopy("Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes."),
   },
   {
     q: "How are you different from other remodeling companies in the Treasure Valley?",

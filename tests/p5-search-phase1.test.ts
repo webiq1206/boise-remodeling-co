@@ -229,17 +229,17 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
-  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
-  assert.equal(eagleMeta.length, 160);
+  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
   assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
   assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
-  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
-  assert.equal(boiseMeta.length, 160);
+  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
   assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
-  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /founded in 2020 and part of P5/);
-  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
-  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler since 2020/);
+  const about = rows.find((row) => row.path === '/about');
+  assert.equal(about?.description, 'Design-build remodeler and part of P5. Kitchen, bathroom. Free in-home visit, written scope, workmanship guarantee, Ada and Canyon permitting.');
+  assert.match(about?.description ?? '', /Kitchen, bathroom/);
+  assert.equal(about?.title, 'Design-build remodeler | Boise Remodeling Co');
+  assert.doesNotMatch(`${about?.title} ${about?.description} ${eagleMeta} ${boiseMeta}`, /2020|founded in|since 2020|Est\. /);
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {

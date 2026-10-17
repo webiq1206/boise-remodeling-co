@@ -9,6 +9,7 @@ import {
   getBaseUrl,
   getDefaultOgImage,
 } from './seo';
+import { publishFoundingCopy } from '@/shared/foundingClaim';
 
 
 export type PageMetaKind =
@@ -261,8 +262,8 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
 
   // The root layout template appends "| Boise Remodeling Co"; ensure the child
   // title never carries the brand itself (prevents duplicated brand in <title>).
-  title = fitTitle(stripBrandSuffix(title));
-  description = fitDescription(description);
+  title = publishFoundingCopy(fitTitle(stripBrandSuffix(title)));
+  description = publishFoundingCopy(fitDescription(description));
 
   const ogImage = getDefaultOgImage();
 
