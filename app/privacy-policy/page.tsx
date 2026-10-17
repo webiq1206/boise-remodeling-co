@@ -97,7 +97,7 @@ export default function PrivacyPolicyPage() {
 
             <h2 id="cookies-analytics-advertising">Cookies, analytics and advertising</h2>
             <p>
-              When you tap Call or Text on our site, Google Ads is told that the tap happened and on which page, so we can count calls and texts that come from our ads. We don't send Google your name, phone number or the content of your call or message.
+              When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, phone number or what you say or write. Google Analytics also records the tap, including the number tapped, which is our business number. If your call goes through a Google forwarding number, Google connects the call and can see the calling number and call length, but not what's said.
             </p>
 
             <h2 id="document-section-5">Data Security</h2>

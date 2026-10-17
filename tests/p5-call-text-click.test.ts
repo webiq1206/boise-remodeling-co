@@ -106,6 +106,19 @@ test("analytics off and denied consent send no click conversion", () => {
   assert.equal(denied.length, 0);
 });
 
+test("the privacy page states the tap, analytics, and forwarding facts", () => {
+  const privacy = readFileSync(new URL("../app/privacy-policy/page.tsx", import.meta.url), "utf8");
+  const text = [
+    "When you tap Call or Text on our site, Google Ads is told that the tap happened, on which page, and the ad click identifier Google's tag saved if you arrived from one of our ads, so we can count calls and texts that come from our ads. The tap itself doesn't send Google your name, phone number or what you say or write.",
+    "Google Analytics also records the tap, including the number tapped, which is our business number.",
+    "If your call goes through a Google forwarding number, Google connects the call and can see the calling number and call length, but not what's said.",
+  ].join(" ");
+  assert.equal(privacy.includes(text), true);
+  const section = privacy.slice(privacy.indexOf('id="cookies-analytics-advertising"'));
+  const beforeNext = section.slice(0, section.indexOf('id="document-section-5"'));
+  assert.equal(beforeNext.includes(text), true);
+});
+
 test("the existing click listener stays single-bound and GA4 click events stay in place", () => {
   const clicks = readFileSync(new URL("../components/ConversionTracking.tsx", import.meta.url), "utf8");
   assert.equal(clicks.match(/addEventListener\(\s*'click'/g)?.length, 1);
