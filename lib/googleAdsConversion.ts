@@ -11,6 +11,10 @@ export const GOOGLE_ADS_ID = "AW-18354188204";
 export const GOOGLE_ADS_LEAD_LABEL = "AW-18354188204/LE2vCPXstO8cEKzf-q9E";
 /** "P5 Website Call (60s+)": swaps the visible number for a Google forwarding number. */
 export const GOOGLE_ADS_WEBSITE_CALL_LABEL = "AW-18354188204/YHR0CIaPz_ccEKzf-q9E";
+/** Click on a tel: link. One conversion per click, not a forwarded-number swap. */
+export const GOOGLE_ADS_CALL_CLICK_LABEL = "AW-18354188204/ng9fCPiOhaAdEKzf-q9E";
+/** Click on an sms: link. */
+export const GOOGLE_ADS_TEXT_CLICK_LABEL = "AW-18354188204/lTxsCOqahaAdEKzf-q9E";
 export const GOOGLE_ADS_PHONE_DISPLAY = "(208) 477-1169";
 /** sessionStorage key written by GoogleAnalytics.tsx on the first page view. */
 export const ENTRY_PATH_KEY = "p5_entry_path";
@@ -96,4 +100,41 @@ export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: 
   }
   gtag("event", "conversion", googleAdsLeadParams(ctx, dedupeKey));
   return true;
+}
+
+const handledContactClicks = new WeakSet<object>();
+
+/**
+ * One Ads conversion for one tel: or sms: click. The same click event cannot
+ * fire twice. A later click is a new event and fires again. gtag may still be
+ * loading, so a missing tag retries without a second conversion.
+ */
+export function trackGoogleAdsContactClick(method: "call" | "text", retryCount = 0): boolean {
+  if (typeof window === "undefined") return false;
+  const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  if (typeof gtag !== "function") {
+    if (retryCount < 10) {
+      window.setTimeout(() => trackGoogleAdsContactClick(method, retryCount + 1), 500);
+    }
+    return false;
+  }
+  const sendTo = method === "call" ? GOOGLE_ADS_CALL_CLICK_LABEL : GOOGLE_ADS_TEXT_CLICK_LABEL;
+  try {
+    gtag("event", "conversion", { send_to: sendTo });
+  } catch {
+    return false;
+  }
+  return true;
+}
+
+/** Delegated tel:/sms:/mailto: click. Ads conversions are call and text only. */
+export function trackDelegatedContactClick(event: { target: EventTarget | null }): void {
+  if (handledContactClicks.has(event)) return;
+  handledContactClicks.add(event);
+  const target = event.target as { closest?: (selector: string) => { getAttribute: (name: string) => string | null } | null } | null;
+  const link = target?.closest?.("a[href]");
+  if (!link) return;
+  const href = link.getAttribute("href") || "";
+  if (href.startsWith("tel:")) trackGoogleAdsContactClick("call");
+  else if (href.startsWith("sms:")) trackGoogleAdsContactClick("text");
 }

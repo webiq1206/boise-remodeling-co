@@ -92,8 +92,10 @@ export function Navigation() {
           scrolled && "shadow-sm",
         )}
       >
-        <nav className="container flex h-[60px] items-center justify-between gap-4 px-4 md:px-6">
-          <Logo />
+        <nav className="container flex h-[60px] items-center justify-between gap-2 px-4 md:gap-4 md:px-6">
+          <div className="min-w-0 flex-1 overflow-hidden [&_img]:h-auto [&_img]:max-w-full">
+            <Logo />
+          </div>
 
           <div className="hidden min-[1180px]:flex items-center gap-0">
             {NAV_LINKS.map((link) => {
@@ -157,7 +159,23 @@ export function Navigation() {
 
           {/* Mobile menu - Radix Dialog gives focus trap, Escape, scroll-lock,
               inert background, and auto aria-expanded/aria-controls on the trigger. */}
-          <div className="flex min-[1180px]:hidden items-center gap-2">
+          <div className="flex min-[1180px]:hidden shrink-0 items-center gap-1">
+            <a
+              href={SITE_CONFIG.phoneHref}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-foreground"
+              aria-label={`Call ${SITE_CONFIG.phone}`}
+              data-testid="link-call-mobile-header"
+            >
+              <Phone className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+            </a>
+            <a
+              href={SITE_CONFIG.phoneSmsHref}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-foreground"
+              aria-label={`Text ${SITE_CONFIG.phone}`}
+              data-testid="link-text-mobile-header"
+            >
+              <MessageSquare className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+            </a>
             <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
               <Dialog.Trigger asChild>
                 {/* The shared icon size is 36px, which suits dense admin
