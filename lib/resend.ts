@@ -14,12 +14,37 @@ async function getUncachableResendClient() {
   return getUncachableEmailClient();
 }
 
-/** The lead's own number. A 10-digit US number is dialed as tel:+1... */
-export function customerTelHref(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
+const PHONE_SEPARATORS = /[\s().-]/g;
+
+/**
+ * A dialable customer number, or null when the field is not one number.
+ * Separators are spaces, dashes, dots, and parentheses.
+ * 10 digits, or 11 digits starting with 1, become tel:+1XXXXXXXXXX.
+ * A leading + with only digits and separators, 8 to 15 digits, becomes tel:+digits.
+ */
+export function customerTelHref(phone: string): string | null {
+  const trimmed = phone.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith("+")) {
+    const rest = trimmed.slice(1);
+    if (!/^[\d\s().-]+$/.test(rest)) return null;
+    const digits = rest.replace(PHONE_SEPARATORS, "");
+    if (digits.length < 8 || digits.length > 15) return null;
+    return `tel:+${digits}`;
+  }
+  if (!/^[\d\s().-]+$/.test(trimmed)) return null;
+  const digits = trimmed.replace(PHONE_SEPARATORS, "");
+  if (digits.startsWith("011")) return null;
   if (digits.length === 10) return `tel:+1${digits}`;
-  if (digits.length === 11 && digits.startsWith("1")) return `tel:+${digits}`;
-  return digits ? `tel:+${digits}` : "tel:";
+  if (digits.length === 11 && digits.startsWith("1")) return `tel:+1${digits.slice(1)}`;
+  return null;
+}
+
+/** Link the number when it is dialable. Otherwise the same text, with no href. */
+export function customerPhoneHtml(phone: string): string {
+  const text = escapeHtml(phone);
+  const href = customerTelHref(phone);
+  return href ? `<a href="${href}">${text}</a>` : text;
 }
 
 const BLOCKED_EMAIL_DOMAINS = ['timberandlove.com'];
@@ -163,7 +188,7 @@ export async function sendAdminNotificationEmail(data: {
         <table class="info-table">
           <tr><td class="label">Name:</td><td class="value">${escapeHtml(data.customerName)}</td></tr>
           <tr><td class="label">Email:</td><td class="value"><a href="mailto:${escapeHtml(data.customerEmail)}">${escapeHtml(data.customerEmail)}</a></td></tr>
-          <tr><td class="label">Phone:</td><td class="value"><a href="${customerTelHref(data.customerPhone)}">${escapeHtml(data.customerPhone)}</a></td></tr>
+          <tr><td class="label">Phone:</td><td class="value">${customerPhoneHtml(data.customerPhone)}</td></tr>
           <tr><td class="label">Address:</td><td class="value">${escapeHtml(data.address)}, ${escapeHtml(data.city)}, Idaho</td></tr>
           ${data.propertySize ? `<tr><td class="label">Property Size:</td><td class="value">${data.propertySize.toLocaleString()} sq ft</td></tr>` : ''}
         </table>
