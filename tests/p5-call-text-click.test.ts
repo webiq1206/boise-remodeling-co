@@ -69,6 +69,29 @@ test("one tel click fires the call label once, and a later click fires it again"
   assert.equal((calls[2][2] as { send_to: string }).send_to, "AW-18354188204/lTxsCOqahaAdEKzf-q9E");
 });
 
+test("call and text conversions set no user_data and send no personal data", () => {
+  const phone = "+12084771169";
+  const calls = withBrowser(() => {
+    trackDelegatedContactClick({ target: link(`tel:${phone}`) });
+    trackDelegatedContactClick({ target: link("sms:2084771169?body=Call%20Sam%20at%20hello@boiseremodeling.co") });
+  });
+  assert.equal(calls.length, 2);
+  for (const call of calls) {
+    assert.deepEqual(call.slice(0, 2), ["event", "conversion"]);
+    assert.deepEqual(Object.keys(call[2] as object), ["send_to"]);
+  }
+  assert.equal(calls.some((call) => call[0] === "set" || call[1] === "user_data"), false);
+  const serialized = JSON.stringify(calls);
+  for (const personal of [phone, "2084771169", "hello@boiseremodeling.co", "Sam", "user_data"]) {
+    assert.equal(serialized.includes(personal), false, personal);
+  }
+  const ads = readFileSync(new URL("../lib/googleAdsConversion.ts", import.meta.url), "utf8");
+  const clickHelpers = ads.slice(ads.indexOf("export function trackGoogleAdsContactClick"));
+  assert.equal(clickHelpers.includes("user_data"), false);
+  assert.equal(/gtag\(\s*["']set["']/.test(clickHelpers), false);
+  assert.match(clickHelpers, /gtag\("event", "conversion", \{\s*send_to:/);
+});
+
 test("analytics off and denied consent send no click conversion", () => {
   const disabled = withBrowser(() => {
     trackDelegatedContactClick({ target: link("tel:+12084771169") });
