@@ -102,6 +102,10 @@ export default function PrivacyPolicyPage() {
             <p>
               We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. When you submit an inquiry, we may send Meta the type of project you choose, a project-inquiry label, an inquiry id, the web address of the page you are on, your IP address, your browser's user agent, and the Meta cookies _fbp and _fbc so it can match the inquiry to an ad. Meta processes this under its own privacy policy (<a href="https://www.facebook.com/privacy/policy" className="text-primary hover:underline">https://www.facebook.com/privacy/policy</a>).
             </p>
+            <p>
+              {/* CLARITY-PLACEHOLDER pending Larry. Microsoft Clarity loads in production from components/MicrosoftClarity.tsx (project x5wrjdadlb), mounted at app/layout.tsx. Replace this paragraph with Larry's sentence. */}
+              [Placeholder, wording pending Larry: Microsoft Clarity loads on this site.]
+            </p>
 
             <h2 id="document-section-5">Data Security</h2>
             <p>
