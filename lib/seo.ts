@@ -408,9 +408,10 @@ export const CITY_SEO_DATA: Record<string, {
     population: '24,011',
     founded: '1992',
     zipCodes: ['83634'],
-    // Indian Creek is the creek, not a Kuna neighborhood. Bernie Fisher Park
-    // replaces Indian Creek Plaza, which is in downtown Caldwell.
-    neighborhoods: ['Black Cat', 'Crimson Point', 'Ten Mile Creek'],
+    // Crimson Point leads so a generated intro does not open on Black Cat Road.
+    // Ten Mile Creek is a waterway, not a neighborhood. Indian Creek is the creek.
+    // Bernie Fisher Park replaces Indian Creek Plaza, which is in Caldwell.
+    neighborhoods: ['Crimson Point', 'Black Cat'],
     landmarks: ['Kuna Caves', 'Swan Falls Dam', 'Bernie Fisher Park'],
     climate: 'semi-arid high desert climate with hot summers and cold winters',
     coordinates: { lat: 43.4913, lng: -116.4201 },
@@ -475,9 +476,10 @@ export const CITY_SEO_DATA: Record<string, {
     population: '65,359',
     founded: '1883',
     zipCodes: ['83605', '83607'],
-    // Indian Creek is the creek through downtown, not a Caldwell neighborhood.
+    // Wilson leads so a generated intro does not open on Cleveland Boulevard.
+    // Indian Creek is the creek through downtown, not a neighborhood.
     // Indian Creek Plaza stays: it is in Caldwell.
-    neighborhoods: ['Cleveland Blvd', 'Ustick', 'Wilson'],
+    neighborhoods: ['Wilson', 'Ustick', 'Cleveland Blvd'],
     landmarks: ['Indian Creek Plaza', 'Caldwell Night Rodeo', 'College of Idaho'],
     climate: 'semi-arid high desert with four distinct seasons',
     coordinates: { lat: 43.6629, lng: -116.6874 },
