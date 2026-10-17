@@ -14,6 +14,14 @@ async function getUncachableResendClient() {
   return getUncachableEmailClient();
 }
 
+/** The lead's own number. A 10-digit US number is dialed as tel:+1... */
+export function customerTelHref(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) return `tel:+1${digits}`;
+  if (digits.length === 11 && digits.startsWith("1")) return `tel:+${digits}`;
+  return digits ? `tel:+${digits}` : "tel:";
+}
+
 const BLOCKED_EMAIL_DOMAINS = ['timberandlove.com'];
 
 function isBlockedEmail(email: string): boolean {
@@ -155,7 +163,7 @@ export async function sendAdminNotificationEmail(data: {
         <table class="info-table">
           <tr><td class="label">Name:</td><td class="value">${escapeHtml(data.customerName)}</td></tr>
           <tr><td class="label">Email:</td><td class="value"><a href="mailto:${escapeHtml(data.customerEmail)}">${escapeHtml(data.customerEmail)}</a></td></tr>
-          <tr><td class="label">Phone:</td><td class="value"><a href="${SITE_CONFIG.phoneHref}">${escapeHtml(data.customerPhone)}</a></td></tr>
+          <tr><td class="label">Phone:</td><td class="value"><a href="${customerTelHref(data.customerPhone)}">${escapeHtml(data.customerPhone)}</a></td></tr>
           <tr><td class="label">Address:</td><td class="value">${escapeHtml(data.address)}, ${escapeHtml(data.city)}, Idaho</td></tr>
           ${data.propertySize ? `<tr><td class="label">Property Size:</td><td class="value">${data.propertySize.toLocaleString()} sq ft</td></tr>` : ''}
         </table>
