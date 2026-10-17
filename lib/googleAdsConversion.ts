@@ -1,3 +1,5 @@
+import { marketingConsent } from "@/lib/p5/marketingAttribution";
+
 /**
  * Google Ads conversion helpers shared by every lead path on this site.
  *
@@ -12,6 +14,10 @@ export const GOOGLE_ADS_LEAD_LABEL = "AW-18354188204/LE2vCPXstO8cEKzf-q9E";
 /** "P5 Website Call (60s+)": swaps the visible number for a Google forwarding number. */
 export const GOOGLE_ADS_WEBSITE_CALL_LABEL = "AW-18354188204/YHR0CIaPz_ccEKzf-q9E";
 export const GOOGLE_ADS_PHONE_DISPLAY = "(208) 477-1169";
+/** Click on a tel: link. Separate from the forwarding-number call conversion. */
+export const GOOGLE_ADS_CALL_CLICK_LABEL = "AW-18354188204/ng9fCPiOhaAdEKzf-q9E";
+/** Click on an sms: link. */
+export const GOOGLE_ADS_TEXT_CLICK_LABEL = "AW-18354188204/lTxsCOqahaAdEKzf-q9E";
 /** sessionStorage key written by GoogleAnalytics.tsx on the first page view. */
 export const ENTRY_PATH_KEY = "p5_entry_path";
 
@@ -96,4 +102,49 @@ export function trackGoogleAdsLeadConversion(ctx: LeadContext = {}, dedupeKey?: 
   }
   gtag("event", "conversion", googleAdsLeadParams(ctx, dedupeKey));
   return true;
+}
+
+const clickedEvents = new WeakSet<object>();
+
+/** Same gates as the Google tag bootstrap, plus a denied marketing consent. */
+function googleTagAllowed(): boolean {
+  if (typeof window === "undefined") return false;
+  if (typeof navigator !== "undefined" && navigator.webdriver === true) return false;
+  try {
+    if (window.sessionStorage?.getItem("p5_analytics_disabled") === "1") return false;
+  } catch {
+    /* A blocked store does not by itself stop the tag. */
+  }
+  const host = window.location?.hostname?.toLowerCase() ?? "";
+  if (host !== "boiseremodeling.co" && host !== "www.boiseremodeling.co") return false;
+  return marketingConsent() !== "denied";
+}
+
+export function trackGoogleAdsContactClick(method: "call" | "text", retryCount = 0): boolean {
+  if (!googleTagAllowed()) return false;
+  const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag;
+  if (typeof gtag !== "function") {
+    if (retryCount < 10) {
+      window.setTimeout(() => trackGoogleAdsContactClick(method, retryCount + 1), 500);
+    }
+    return false;
+  }
+  gtag("event", "conversion", {
+    send_to: method === "call" ? GOOGLE_ADS_CALL_CLICK_LABEL : GOOGLE_ADS_TEXT_CLICK_LABEL,
+  });
+  return true;
+}
+
+/** One Ads conversion per click event. A later click is a new event and fires again. */
+export function trackDelegatedContactClick(event: { target: EventTarget | null }): void {
+  if (!event || clickedEvents.has(event)) return;
+  const target = event.target as { closest?: (selector: string) => { getAttribute?: (name: string) => string | null } | null } | null;
+  const href = target?.closest?.("a[href]")?.getAttribute?.("href") || "";
+  if (href.startsWith("tel:")) {
+    clickedEvents.add(event);
+    trackGoogleAdsContactClick("call");
+  } else if (href.startsWith("sms:")) {
+    clickedEvents.add(event);
+    trackGoogleAdsContactClick("text");
+  }
 }

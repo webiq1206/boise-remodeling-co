@@ -1,0 +1,100 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import {
+  GOOGLE_ADS_CALL_CLICK_LABEL,
+  GOOGLE_ADS_TEXT_CLICK_LABEL,
+  trackDelegatedContactClick,
+} from "../lib/googleAdsConversion.ts";
+
+function restore(name: "window" | "navigator", prior: PropertyDescriptor | undefined) {
+  if (prior) Object.defineProperty(globalThis, name, prior);
+  else delete (globalThis as Record<string, unknown>)[name];
+}
+
+function withBrowser(
+  run: (calls: unknown[][]) => void,
+  options: { disabled?: boolean; denied?: boolean; hostname?: string } = {},
+) {
+  const priorWindow = Object.getOwnPropertyDescriptor(globalThis, "window");
+  const priorNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  const calls: unknown[][] = [];
+  const fakeWindow = {
+    location: { hostname: options.hostname ?? "boiseremodeling.co" },
+    sessionStorage: {
+      getItem: (key: string) => (options.disabled && key === "p5_analytics_disabled" ? "1" : null),
+    },
+    dataLayer: options.denied ? [["consent", "update", { ad_storage: "denied", analytics_storage: "denied", ad_user_data: "denied" }]] : [],
+    gtag: (...args: unknown[]) => calls.push(args),
+    setTimeout,
+  };
+  Object.defineProperty(globalThis, "window", { value: fakeWindow, configurable: true });
+  Object.defineProperty(globalThis, "navigator", {
+    value: { webdriver: false, doNotTrack: "0", globalPrivacyControl: false },
+    configurable: true,
+  });
+  try {
+    run(calls);
+  } finally {
+    restore("window", priorWindow);
+    restore("navigator", priorNavigator);
+  }
+  return calls;
+}
+
+function link(href: string) {
+  return {
+    closest(selector: string) {
+      return selector === "a[href]" ? { getAttribute: (name: string) => (name === "href" ? href : null) } : null;
+    },
+  };
+}
+
+test("one tel click fires the call label once, and a later click fires it again", () => {
+  const calls = withBrowser(() => {
+    const first = { target: link("tel:+12084771169") };
+    trackDelegatedContactClick(first);
+    trackDelegatedContactClick(first);
+    trackDelegatedContactClick({ target: link("tel:+12084771169") });
+    const sms = { target: link("sms:2084771169") };
+    trackDelegatedContactClick(sms);
+    trackDelegatedContactClick(sms);
+    trackDelegatedContactClick({ target: link("mailto:hello@boiseremodeling.co") });
+  });
+  assert.equal(calls.length, 3);
+  assert.deepEqual(calls[0], ["event", "conversion", { send_to: GOOGLE_ADS_CALL_CLICK_LABEL }]);
+  assert.equal((calls[0][2] as { send_to: string }).send_to, "AW-18354188204/ng9fCPiOhaAdEKzf-q9E");
+  assert.deepEqual(calls[1], calls[0]);
+  assert.deepEqual(calls[2], ["event", "conversion", { send_to: GOOGLE_ADS_TEXT_CLICK_LABEL }]);
+  assert.equal((calls[2][2] as { send_to: string }).send_to, "AW-18354188204/lTxsCOqahaAdEKzf-q9E");
+});
+
+test("analytics off and denied consent send no click conversion", () => {
+  const disabled = withBrowser(() => {
+    trackDelegatedContactClick({ target: link("tel:+12084771169") });
+    trackDelegatedContactClick({ target: link("sms:2084771169") });
+  }, { disabled: true });
+  assert.equal(disabled.length, 0);
+
+  const denied = withBrowser(() => {
+    trackDelegatedContactClick({ target: link("tel:+12084771169") });
+    trackDelegatedContactClick({ target: link("sms:2084771169") });
+  }, { denied: true });
+  assert.equal(denied.length, 0);
+});
+
+test("the existing click listener stays single-bound and GA4 click events stay in place", () => {
+  const clicks = readFileSync(new URL("../components/ConversionTracking.tsx", import.meta.url), "utf8");
+  assert.equal(clicks.match(/addEventListener\(\s*'click'/g)?.length, 1);
+  assert.match(clicks, /removeEventListener\(\s*'click'/);
+  assert.match(clicks, /trackDelegatedContactClick\(e\)/);
+  assert.match(clicks, /trackEvent\('contact_click', \{ method: 'phone', link_url: href \}\)/);
+  assert.match(clicks, /trackEvent\('contact_click', \{ method: 'sms', link_url: href \}\)/);
+  assert.match(clicks, /trackEvent\('contact_click', \{ method: 'email', link_url: href \}\)/);
+  assert.equal(/trackEvent\(['"]conversion/.test(clicks), false);
+  const ads = readFileSync(new URL("../lib/googleAdsConversion.ts", import.meta.url), "utf8");
+  assert.equal(ads.includes("addEventListener"), false);
+  const estimator = readFileSync(new URL("../components/P5Estimator.tsx", import.meta.url), "utf8");
+  assert.equal(estimator.includes("GOOGLE_ADS_CALL_CLICK_LABEL"), false);
+  assert.equal(estimator.includes("trackDelegatedContactClick"), false);
+});

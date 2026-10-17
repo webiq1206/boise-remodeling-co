@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { trackEvent } from '@/lib/analytics';
+import { trackDelegatedContactClick } from '@/lib/googleAdsConversion';
 
 /**
  * Site-wide conversion tracking for call/text/email intent. Uses a single
@@ -23,6 +24,7 @@ export function ConversionTracking() {
       } else if (href.startsWith('mailto:')) {
         trackEvent('contact_click', { method: 'email', link_url: href });
       }
+      trackDelegatedContactClick(e);
     };
     document.addEventListener('click', onClick, { capture: true });
     return () => document.removeEventListener('click', onClick, { capture: true });
