@@ -90,6 +90,7 @@ test('one primary Ads dispatch per successful lead key, including lazy tag loadi
   fake.gtag=(...args:unknown[])=>calls.push(args);timers.shift()!();
   assert.equal(trackGoogleAdsLeadConversion({},'intake:offline-test'),false);
   assert.equal(calls.length,1);assert.equal(calls[0][1],'conversion');
+  assert.equal((calls[0][2] as any).send_to,'AW-18354188204/cEzmCPOagKAdEKzf-q9E');
   assert.equal((calls[0][2] as any).transaction_id,'intake:offline-test');
  }finally{if(prior)Object.defineProperty(globalThis,'window',prior);else delete (globalThis as any).window;}
 });
