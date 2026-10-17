@@ -6,6 +6,8 @@ import {schemaTime} from './schemaTime';
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
+import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
+import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 
 interface SchemaContext {
   '@context': string;
@@ -181,7 +183,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
       name: area,
       ...(CITY_WIKIPEDIA[area] ? { sameAs: CITY_WIKIPEDIA[area] } : {}),
     })),
-    ...(BUSINESS_INFO.reviewCount > 0
+    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -192,7 +194,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
           },
         }
       : {}),
-    foundingDate: BUSINESS_INFO.founded,
+    ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     slogan: 'Boise\'s Design-Build Remodeling Company',
     paymentAccepted: 'Cash, Credit Card, Check, Financing',
     currenciesAccepted: 'USD',
@@ -305,8 +307,8 @@ export function generateOrganizationSchema(): SchemaContext {
       '@type': 'ImageObject',
       url: LOGO_URL,
     },
-    description: 'Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Licensed, insured, and committed to excellence.',
-    foundingDate: BUSINESS_INFO.founded,
+    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Licensed, insured, and committed to excellence.'),
+    ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     // founder is gated: only emitted once a real named founder is supplied in
     // BUSINESS_INFO.founderName (see seo-audit/trust-signal-map.md).
     ...(BUSINESS_INFO.founderName
@@ -352,10 +354,10 @@ export function generateReviewSchema(reviews: Array<{
     '@type': [...CONTRACTOR_TYPES],
     '@id': LOCALBUSINESS_ID,
     name: BUSINESS_INFO.name,
-    // AggregateRating is gated on a real, populated review count. Emitting a
-    // zero/empty rating would publish a misleading 0-star signal, so it is only
-    // included once BUSINESS_INFO.rating/reviewCount reflect genuine reviews.
-    ...(BUSINESS_INFO.reviewCount > 0
+    // Ratings and reviews publish only when SHOW_TESTIMONIALS is on and the
+    // count is a real populated number. A zero count would publish a
+    // misleading 0-star signal, so it stays omitted.
+    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -366,21 +368,25 @@ export function generateReviewSchema(reviews: Array<{
           },
         }
       : {}),
-    review: reviews.map(review => ({
-      '@type': 'Review',
-      author: {
-        '@type': 'Person',
-        name: review.author,
-      },
-      ...(review.date ? { datePublished: review.date } : {}),
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: review.rating,
-        bestRating: 5,
-        worstRating: 1,
-      },
-      reviewBody: review.text,
-    })),
+    ...(SHOW_TESTIMONIALS
+      ? {
+          review: reviews.map(review => ({
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: review.author,
+            },
+            ...(review.date ? { datePublished: review.date } : {}),
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: review.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+            reviewBody: review.text,
+          })),
+        }
+      : {}),
   };
 }
 

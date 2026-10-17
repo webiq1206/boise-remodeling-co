@@ -7,6 +7,7 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
 
 export const SITE_TAGLINE = "Treasure Valley design-build, built on clarity and craftsmanship";
 
@@ -104,14 +105,18 @@ export const PROOF_STATS = {
  * trust signals the business carries. No review counts or ratings until real
  * ones exist. Keep labels concise so the strip stays on one desktop row.
  */
-export const TRUST_ITEMS = [
+const TRUST_ITEM_SOURCE = [
   `Est. ${PROOF_STATS.established}`,
   `${PROOF_STATS.projectsCompleted} Projects`,
   "Bonded · Insured",
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
-];
+] as const;
+
+export const TRUST_ITEMS: readonly string[] = SHOW_FOUNDING_YEAR
+  ? TRUST_ITEM_SOURCE
+  : TRUST_ITEM_SOURCE.filter((item) => !/^est\.?\s*2020$/i.test(item));
 
 export const PROMISE_ITEMS = [
   {
