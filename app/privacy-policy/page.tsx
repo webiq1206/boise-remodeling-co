@@ -54,10 +54,10 @@ export default function PrivacyPolicyPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container px-4">
-          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
+          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"cookies-analytics-advertising","label":"Cookies, analytics and advertising"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
 
             <p className="lead text-muted-foreground">
-              Last updated: January 2024
+              Last updated: October 2026
             </p>
 
             <h2 id="document-section-1">Introduction</h2>
@@ -94,6 +94,14 @@ export default function PrivacyPolicyPage() {
               <li>Professional advisors as needed</li>
               <li>Law enforcement when required by law</li>
             </ul>
+
+            <h2 id="cookies-analytics-advertising">Cookies, analytics and advertising</h2>
+            <p>
+              We use Google Analytics 4 (GA4) to understand how visitors use this site, such as pages viewed, referring site, approximate location, browser and device type. We use Google Ads conversion tracking to measure which of our ads lead to calls, form submissions and completed estimates, and Google may use cookies to show our ads to people who have visited this site (remarketing). These tools set cookies and receive information about your visit, including your IP address, which Google processes under its own privacy policy (<a href="https://policies.google.com/privacy" className="text-primary hover:underline">https://policies.google.com/privacy</a>). We do not send your name, email, phone number or project details to Google. You can opt out of personalized Google ads at <a href="https://adssettings.google.com" className="text-primary hover:underline">https://adssettings.google.com</a>, use the Google Analytics opt-out add-on at <a href="https://tools.google.com/dlpage/gaoptout" className="text-primary hover:underline">https://tools.google.com/dlpage/gaoptout</a>, or block or delete cookies in your browser; the site will still work.
+            </p>
+            <p>
+              We also use the Meta Pixel to measure visits and inquiries that come from our Facebook and Instagram ads.
+            </p>
 
             <h2 id="document-section-5">Data Security</h2>
             <p>
