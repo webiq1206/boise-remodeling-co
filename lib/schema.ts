@@ -4,7 +4,7 @@ import {schemaTime} from './schemaTime';
  * Creates structured data for Google rich snippets and search features
  */
 
-import { BUSINESS_INFO, CITY_SEO_DATA, getBaseUrl } from './seo';
+import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
 
 interface SchemaContext {
@@ -39,6 +39,13 @@ export const WEBSITE_ID = `${baseUrl}/#website`;
  */
 const P5_ORIGIN = 'https://p5homeco.com';
 export const P5_ORG_ID = `${P5_ORIGIN}/#organization`;
+/** Shared person node. The @id lives on p5homeco.com so every brand merges to one Nick Perkins. */
+export const NICK_PERKINS_ID = `${P5_ORIGIN}/#nick-perkins`;
+/**
+ * OpenStreetMap Nominatim geocode of 4031 W Wapoot St, Meridian, ID 83646.
+ * Not the Meridian city-center pin in CITY_SEO_DATA.
+ */
+const SERVICE_AREA_GEO = { latitude: 43.6515, longitude: -116.4444 } as const;
 export const P5_PARENT_ORGANIZATION = {
   '@type': 'Organization',
   '@id': P5_ORG_ID,
@@ -86,8 +93,8 @@ const CONTRACTOR_TYPES = ['HomeAndConstructionBusiness', 'GeneralContractor'] as
 
 /**
  * The registered Meridian NAP. This is a service-area business with no
- * storefront: visible pages still show city and state only. JSON-LD carries
- * the full postal address so the entity matches the citation record.
+ * storefront. Visible pages and JSON-LD both carry the full street so the
+ * entity matches the citation record.
  * A page about another city puts that city in areaServed, never in this address.
  */
 function publicPostalAddress() {
@@ -98,6 +105,17 @@ function publicPostalAddress() {
     addressRegion: 'ID',
     postalCode: BUSINESS_INFO.address.postalCode,
     addressCountry: 'US',
+  };
+}
+
+/** The shared public representative. worksFor points at P5, not a second business. */
+function publicEmployee() {
+  return {
+    '@type': 'Person' as const,
+    '@id': NICK_PERKINS_ID,
+    name: 'Nick Perkins',
+    jobTitle: 'Public representative',
+    worksFor: { '@id': P5_ORG_ID },
   };
 }
 
@@ -119,9 +137,6 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
   // per-city coordinates under one @id confuses entity disambiguation, so geo
   // is always the HQ; the service area is expressed via `areaServed`. The
   // optional `city` only customizes the human-readable description.
-  // HQ geo matches the NAP locality (Meridian) - previously pointed at Kuna.
-  const coordinates = CITY_SEO_DATA.Meridian.coordinates;
-
   return {
     '@context': 'https://schema.org',
     '@type': [...CONTRACTOR_TYPES],
@@ -136,11 +151,12 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     telephone: BUSINESS_INFO.phone,
     email: BUSINESS_INFO.email,
     contactPoint: publicRepresentative(),
+    employee: publicEmployee(),
     address: publicPostalAddress(),
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: coordinates.lat,
-      longitude: coordinates.lng,
+      latitude: SERVICE_AREA_GEO.latitude,
+      longitude: SERVICE_AREA_GEO.longitude,
     },
     openingHoursSpecification: Object.entries(BUSINESS_INFO.hours).map(([day, hours]) => ({
       '@type': 'OpeningHoursSpecification',
@@ -293,6 +309,7 @@ export function generateOrganizationSchema(): SchemaContext {
       : {}),
     telephone: BUSINESS_INFO.phone,
     email: BUSINESS_INFO.email,
+    employee: publicEmployee(),
     address: publicPostalAddress(),
     knowsAbout: [
       'kitchen remodeling',

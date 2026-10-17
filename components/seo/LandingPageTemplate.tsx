@@ -191,7 +191,8 @@ export function LandingPageTemplate({
 
   return (
     <div className="flex flex-col pb-20 md:pb-0">
-      {/* Approved editorial hero */}
+      {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
+      {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
       <InteriorHero imageSrc={heroImageUrl} imageAlt={contentImageAlt(heroImageUrl)} layout="split">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>

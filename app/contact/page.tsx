@@ -33,7 +33,7 @@ import { areaPath } from '@/lib/seo-routes';
 import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
-import { SITE_CONFIG } from '@/shared/siteConfig';
+import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight,Mail,MapPin,MessageSquare,Phone } from 'lucide-react';
@@ -249,7 +249,7 @@ export default function ContactPage() {
                   <em className="brc-accent">connect</em>
                 </>
               }
-              description="Call, email, or visit - we respond within one business day and never use high-pressure sales tactics."
+              description="Call, text, or email. We come to you. We respond within one business day and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
             <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
@@ -296,6 +296,8 @@ export default function ContactPage() {
                   subtext={SITE_CONFIG.address.serviceArea}
                 >
                   <address className="not-italic leading-relaxed">
+                    {publicFooterLine()}
+                    <br />
                     Based in {SITE_CONFIG.address.cityState}
                     <br />
                     Serving the Treasure Valley

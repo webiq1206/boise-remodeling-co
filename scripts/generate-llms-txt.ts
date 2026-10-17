@@ -22,7 +22,12 @@ import { BLOG_POSTS } from '../shared/blogContent';
 
 const BASE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 const url = (p: string) => `${BASE}${p}`;
-const today = new Date().toISOString().slice(0, 10);
+const today = '2026-10-16';
+const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
+const CONTACT_BLOCK =
+  `Public representative: ${SITE_CONFIG.publicRepresentative}. Service-area business based at ` +
+  `${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.state} ${SITE_CONFIG.address.postalCode} ` +
+  `(not a staffed storefront). Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
 const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
@@ -48,6 +53,7 @@ function buildShort(): string {
   const lines: string[] = [];
   lines.push(`# ${SITE_CONFIG.name}`, '');
   lines.push(`> ${SUMMARY}`, '');
+  lines.push(CONTACT_BLOCK, '');
   lines.push(POSITIONING, '');
 
   lines.push('## Services', '');
@@ -55,7 +61,7 @@ function buildShort(): string {
     lines.push(`- [${s.name}](${url(`/services/${s.slug}`)}): ${s.shortDescription}`);
   }
   lines.push(
-    `- [RE-10 / Inspection Repairs](${url('/re-10-repairs-boise')}): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.`,
+    `- [RE-10 repairs (Boise Handyman Co)](${HANDYMAN_RE10}): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.`,
   );
   lines.push(
     `- [Estimate From Your Plans](${url('/remodel-plans-boise')}): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules on the sheets. Free, no obligation, and the homeowner confirms every measurement before anything is priced.`,
@@ -82,7 +88,14 @@ function buildShort(): string {
   lines.push('');
 
   lines.push('## Blog category hubs', '');
-  for (const h of CONTENT_HUBS) lines.push(`- [${h.title}](${url(`/blog/category/${h.hubSlug}`)})`);
+  for (const h of CONTENT_HUBS) {
+    // This hub 307-redirects to /areas. Link the destination.
+    if (h.hubSlug === 'treasure-valley-locations') {
+      lines.push(`- [${h.title}](${url('/areas')})`);
+      continue;
+    }
+    lines.push(`- [${h.title}](${url(`/blog/category/${h.hubSlug}`)})`);
+  }
   lines.push('');
 
   lines.push('## About and contact', '');
@@ -109,6 +122,7 @@ function buildFull(): string {
   const lines: string[] = [];
   lines.push(`# ${SITE_CONFIG.name} - Full Reference`, '');
   lines.push(`> ${SUMMARY}`, '');
+  lines.push(CONTACT_BLOCK, '');
 
   lines.push('## About', '');
   lines.push(
@@ -127,7 +141,7 @@ function buildFull(): string {
   lines.push('- Founded: 2020');
   lines.push('- Parent company: P5 Home Co (https://p5homeco.com)');
   lines.push('- Service model: One accountable team for design, permits, and construction');
-  lines.push(`- Contact: ${url('/contact')}`);
+  lines.push(`- Contact: ${SITE_CONFIG.email} (${url('/contact')})`);
   lines.push(`- Remodel estimator: ${url('/estimate')}`, '');
 
   lines.push('## Service area', '');
@@ -165,7 +179,13 @@ function buildFull(): string {
   lines.push('');
 
   lines.push('## Blog category hubs (long-tail questions support the pillars)', '');
-  for (const h of CONTENT_HUBS) lines.push(`- ${h.title}: /blog/category/${h.hubSlug}`);
+  for (const h of CONTENT_HUBS) {
+    if (h.hubSlug === 'treasure-valley-locations') {
+      lines.push(`- ${h.title}: /areas`);
+      continue;
+    }
+    lines.push(`- ${h.title}: /blog/category/${h.hubSlug}`);
+  }
   lines.push('', `${BLOG_POSTS.length} articles across these hubs. Index: /blog`, '');
 
   lines.push('## Planning resources', '');
@@ -196,7 +216,7 @@ function buildFull(): string {
   lines.push(
     '- What is an RE-10? The Idaho inspection response form a buyer uses to request repairs ' +
       'before closing. We review the report, price the requested items in writing, complete the ' +
-      'approved work and document it for the transaction file: /re-10-repairs-boise',
+      `approved work and document it for the transaction file: ${HANDYMAN_RE10}`,
     '',
   );
 

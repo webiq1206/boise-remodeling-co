@@ -37,21 +37,17 @@
 }
 
 /* ─── Scroll-reveal progressive enhancement ───
-   Default (no JS): content is fully visible.
-   The pre-paint `js` class (added in <head>) opts in to the hidden
-   initial state only when JavaScript is present, so there is no
-   flash-of-hidden-content and no-JS visitors/crawlers see everything. */
+   Content stays visible in the server HTML. The pre-paint `js` class must
+   not set opacity 0: that hid above-the-fold heroes until the observer ran
+   and made LCP wait on entrance-animation JavaScript. */
 .reveal-init {
   opacity: 1;
   transform: none;
 }
 
 .js .reveal-init {
-  opacity: 0;
-  transform: translateY(28px);
-  transition: opacity 0.75s cubic-bezier(.2, .7, .2, 1),
-    transform 0.75s cubic-bezier(.2, .7, .2, 1);
-  will-change: opacity, transform;
+  opacity: 1;
+  transform: none;
 }
 
 .js .reveal-init.reveal-visible {
@@ -361,8 +357,8 @@
     animation: pulse-accent 2s ease-in-out infinite;
   }
 
-  @keyframes hero-reveal { from { transform: scale(1.06); opacity: .6; } to { transform: scale(1); opacity: 1; } }
-  .animate-hero-reveal { animation: hero-reveal 1300ms ease both; }
+  /* Hero photos paint at full opacity. A scale-and-fade here held LCP until the animation finished. */
+  .animate-hero-reveal { animation: none; }
   @media (prefers-reduced-motion: reduce) { .animate-hero-reveal { animation: none; } }
 
   @keyframes fade-up {
@@ -972,11 +968,18 @@ body[data-hide-mobile-nav-bar="true"] [data-mobile-nav-bar] {
   will-change: auto;
 }
 .js .reveal-init.reveal-visible {
-  animation: p5-content-arrive 500ms ease-out;
+  animation: none;
 }
-@keyframes p5-content-arrive {
-  from { opacity: .85; transform: translateY(12px); }
-  to { opacity: 1; transform: none; }
+/* Heroes are server HTML. No entrance animation may fade or move them. */
+.f-hero,
+.f-hero > img,
+.interior-hero,
+.interior-hero-image,
+.interior-hero-image img,
+.interior-hero-copy,
+.interior-hero-copy h1 {
+  opacity: 1;
+  animation: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .js .reveal-init.reveal-visible { animation: none; }

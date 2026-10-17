@@ -297,12 +297,13 @@ export default function RemodelPlansPage() {
             </Link>{" "}
             covers what projects run in the Treasure Valley. Buying or selling and working from an
             inspection list instead? That is{" "}
-            <Link
-              href="/re-10-repairs-boise"
+            <a
+              href="https://boisehandyman.co/re-10-repairs-boise"
               className="underline underline-offset-4 hover:text-foreground"
+              rel="noopener noreferrer"
             >
-              RE-10 and inspection repairs
-            </Link>
+              RE-10 repairs (Boise Handyman Co)
+            </a>
             . For the work itself, see{" "}
             <Link
               href="/services/whole-home-remodel"
