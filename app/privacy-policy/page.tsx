@@ -54,10 +54,10 @@ export default function PrivacyPolicyPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container px-4">
-          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
+          <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"advertising","label":"Advertising"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
 
             <p className="lead text-muted-foreground">
-              Last updated: January 2024
+              Last updated: October 2026
             </p>
 
             <h2 id="document-section-1">Introduction</h2>
@@ -94,6 +94,20 @@ export default function PrivacyPolicyPage() {
               <li>Professional advisors as needed</li>
               <li>Law enforcement when required by law</li>
             </ul>
+
+            <h2 id="advertising">Advertising</h2>
+            <p>
+              We use Google tags to measure visits and ads. We do not currently send your name, email, phone number or project details to Google.
+            </p>
+            <p>
+              Google's tag also adds visitors to remarketing lists, and Google may use this data to show you relevant ads on other websites (remarketing).
+            </p>
+            <p>
+              You can opt out of Google advertising in <a href="https://adssettings.google.com" className="text-primary hover:underline">Google Ads Settings</a>, and you can opt out of Google Analytics with the <a href="https://tools.google.com/dlpage/gaoptout" className="text-primary hover:underline">Google Analytics Opt-out Browser Add-on</a>.
+            </p>
+            <p>
+              We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. When you submit an inquiry, we may send Meta a Lead event with the project type, the category project inquiry, the page address, an inquiry id, your IP address, your browser user agent, and the Meta cookies _fbp and _fbc when those cookies are present, so it can match the inquiry to an ad. Meta processes this under its own privacy policy (<a href="https://www.facebook.com/privacy/policy" className="text-primary hover:underline">https://www.facebook.com/privacy/policy</a>).
+            </p>
 
             <h2 id="document-section-5">Data Security</h2>
             <p>
