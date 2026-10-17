@@ -94,8 +94,8 @@ test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is o
   assert.match(unknownCity, /Free in-home consultation/);
 });
 
-test('the open graph page preview stays the current brand card until Ada supplies a no-year file', () => {
+test('the open graph page preview is Ada year-free card', () => {
   const hash = createHash('sha256').update(readFileSync('public/brand/page-preview.png')).digest('hex');
-  assert.equal(hash, '8f4cdbece88584fbb30097582e81da9459b460c34b9b9fb7dfeae4667e655278');
+  assert.equal(hash, 'da5ff48bfb7d52e90a20b3dfc84707960cf78f05234f7754e9e8ebe6dc3bebea');
 });
 
