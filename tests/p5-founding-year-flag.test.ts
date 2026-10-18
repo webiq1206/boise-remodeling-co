@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { withBrandPageMetadata } from '../lib/brand-page-metadata.ts';
 import { buildPageMetadata } from '../lib/page-metadata.ts';
 import { generateLocalBusinessSchema, generateOrganizationSchema } from '../lib/schema.ts';
+import { generateMetaDescription } from '../lib/seo.ts';
 import { GBP_DESCRIPTION } from '../shared/gbpProfile.ts';
 import { HOMEPAGE_FAQS } from '../shared/homepageFaqs.ts';
-import { publishFoundingCopy, SHOW_FOUNDING_YEAR } from '../shared/publicClaims.ts';
+import { publishFoundingCopy, SHOW_FOUNDING_YEAR, SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '../shared/publicClaims.ts';
 import { TRUST_ITEMS } from '../shared/siteContent.ts';
 
 const CLAIM = /since\s+2020|founded\s+in\s+2020|founded\s*:?\s*2020|est\.?\s*2020/i;
@@ -74,3 +76,26 @@ test('founding-year sentences stay in source while the flag is off', () => {
   assert.match(llms, /Founded: 2020/);
   assert.match(prompt, /EST 2020/);
 });
+
+test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is off', () => {
+  assert.equal(SHOW_UNPROVEN_SATISFACTION_GUARANTEE, false);
+  const source = readFileSync('lib/seo.ts', 'utf8');
+  assert.match(source, /Satisfaction guaranteed/);
+  assert.match(source, /& satisfaction guaranteed/);
+  const service = generateMetaDescription({ serviceName: 'Kitchen Remodel', serviceSlug: 'kitchen-remodel' });
+  const unknownCity = generateMetaDescription({
+    serviceName: 'Kitchen Remodel',
+    serviceSlug: 'kitchen-remodel',
+    city: 'NotACity',
+  });
+  assert.equal(/satisfaction guaranteed/i.test(service), false);
+  assert.match(service, /Idaho Registered Contractor #8381215, bonded & insured/);
+  assert.equal(/satisfaction guaranteed/i.test(unknownCity), false);
+  assert.match(unknownCity, /Free in-home consultation/);
+});
+
+test('the open graph page preview is Ada year-free card', () => {
+  const hash = createHash('sha256').update(readFileSync('public/brand/page-preview.png')).digest('hex');
+  assert.equal(hash, 'da5ff48bfb7d52e90a20b3dfc84707960cf78f05234f7754e9e8ebe6dc3bebea');
+});
+

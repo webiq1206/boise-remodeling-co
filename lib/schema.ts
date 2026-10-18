@@ -55,19 +55,10 @@ export const P5_PARENT_ORGANIZATION = {
   url: P5_ORIGIN,
 } as const;
 /**
- * THE SEAL ON ITS OWN CHARCOAL DISC, NOT THE TRANSPARENT BONE ONE.
- *
- * This URL goes into `Organization.logo` and every `ImageObject` below, which
- * means Google renders it on surfaces we do not control and which are usually
- * white. The dark/ seal is bone ink (#F7F5F3) on transparency, so on a white
- * knowledge panel it would be an invisible square. The `any/` variant carries
- * its own charcoal disc and reads correctly on any background, which is exactly
- * what the brand kit says the `any/` set is for.
- *
- * 512px square: comfortably above Google's 112px floor, and square suits the
- * panel and rich-result crops better than a wide wordmark would.
+ * Year-free square mark. The seal still reads EST 2020, so schema logo uses
+ * this icon instead. Square, and above Google's 112px floor.
  */
-const LOGO_URL = `${baseUrl}/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png`;
+const LOGO_URL = `${baseUrl}/brand/search-icon-180.png`;
 
 /**
  * Generate LocalBusiness schema for homepage and location pages
@@ -161,6 +152,17 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     '@id': LOCALBUSINESS_ID,
     url: baseUrl,
     parentOrganization: P5_PARENT_ORGANIZATION,
+    hasCredential: {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'registration',
+      name: 'Idaho Registered Contractor',
+      identifier: '8381215',
+      recognizedBy: {
+        '@type': 'GovernmentOrganization',
+        name: 'Idaho Division of Occupational and Professional Licenses',
+        url: 'https://dopl.idaho.gov/con/',
+      },
+    },
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     contactPoint: publicRepresentative(),
@@ -307,7 +309,7 @@ export function generateOrganizationSchema(): SchemaContext {
       '@type': 'ImageObject',
       url: LOGO_URL,
     },
-    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Licensed, insured, and committed to excellence.'),
+    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Idaho Registered Contractor #8381215, bonded, and insured, and committed to excellence.'),
     ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     // founder is gated: only emitted once a real named founder is supplied in
     // BUSINESS_INFO.founderName (see seo-audit/trust-signal-map.md).

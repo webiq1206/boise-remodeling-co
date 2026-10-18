@@ -137,7 +137,7 @@ export default function SubcontractorContractsPage() {
       </div>
 
       <Dialog open={!!signingContract} onOpenChange={() => setSigningContract(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-clarity-mask="true">
           <DialogHeader>
             <DialogTitle>{signingContract?.title}</DialogTitle>
             <DialogDescription>

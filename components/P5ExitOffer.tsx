@@ -97,7 +97,7 @@ export const P5ExitOffer = forwardRef<ExitOfferHandle, Props>(function P5ExitOff
     <h2 id={`${id}-title`}>Prefer to talk about your project?</h2>
     <p id={`${id}-desc`}>Call us, or leave your number and we’ll call you.</p>
     {number && <a href={`tel:+1${number}`} aria-label={`Call ${brand.name} at ${brand.phone}`}>Call us</a>}
-    {state==='saved' ? <p role="status">Your callback request is saved. {notified?'The team notification was accepted.':'The team notification has not been confirmed.'} You can continue your form or leave.</p> : <form onSubmit={event=>void requestCallback(event)} noValidate>
+    {state==='saved' ? <p role="status">Your callback request is saved. {notified?'The team notification was accepted.':'The team notification has not been confirmed.'} You can continue your form or leave.</p> : <form data-clarity-mask="true" onSubmit={event=>void requestCallback(event)} noValidate>
       <label htmlFor={`${id}-phone`}>Your phone number</label>
       <input ref={phoneInput} id={`${id}-phone`} type="tel" inputMode="tel" autoComplete="tel" value={phone} readOnly={Boolean(requestPhone.current)} onChange={event=>{setPhone(event.target.value);setError('');}} aria-invalid={Boolean(error)} aria-describedby={`${id}-consent${error?` ${id}-error`:''}`} required maxLength={30}/>
       <p id={`${id}-consent`} className={styles.consent}>By requesting a call, you ask {brand.name} to call this number about your project. This does not sign you up for marketing.</p>

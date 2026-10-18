@@ -38,9 +38,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'Four core project types for Boise homes: kitchens, bathrooms, whole-home renovations, and room additions. Each is managed design-build, so one team owns design, permits, and construction, with a written scope before work begins and a dedicated project manager.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. The company holds its license, bond, and insurance, and we'll provide Idaho contractor license details upon request. Every finished Boise project also comes with a written workmanship guarantee.",
+          "Yes. The company is an Idaho Registered Contractor #8381215, bonded, and insured. Every finished Boise project also comes with a written workmanship guarantee.",
       },
       {
         question: 'How do I start a project?',
@@ -74,9 +74,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'Kitchen and bath remodels, renovations of the whole home, and room additions. For Meridian homeowners each project runs design-build, meaning one team carries it from design through construction, with a written progress update every Friday.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes, we're a licensed, bonded, insured remodeler. Ask and we'll share our Idaho contractor license details, and a workmanship guarantee is part of every completed Meridian job.",
+          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured.",
       },
       {
         question: 'How do I start a project?',
@@ -110,9 +110,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'Remodeled kitchens and baths, whole-house renovations, and room additions are our core Eagle work, each run design-build so one team answers for design, permitting, and the build.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          'We are: licensed, bonded, and insured. Eagle homeowners can request our Idaho contractor license details at any time, and each finished project carries a written workmanship guarantee.',
+          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured, and each finished project carries a written workmanship guarantee.",
       },
       {
         question: 'How do I start a project?',
@@ -146,9 +146,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'In Nampa we remodel kitchens and bathrooms, renovate whole homes, and build room additions. Every project is design-build, with one team responsible for the drawings, the permit, and the construction.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're licensed, bonded, and insured; just ask for our Idaho contractor license details. Permits for your Nampa remodel are pulled in-house as part of our contract.",
+          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured. Permits for your Nampa remodel are pulled in-house as part of our contract.",
       },
       {
         question: 'How do I start a project?',
@@ -183,9 +183,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'Kuna projects we take on: remodeled kitchens, remodeled bathrooms, whole-home renovations, and room additions. All of them are managed design-build by one team, with a written scope before construction.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          'Yes, fully licensed, bonded and insured. Kuna clients can get our Idaho contractor license details on request, and our workmanship guarantee applies at completion.',
+          "Yes. We're an Idaho Registered Contractor #8381215, bonded and insured, and our workmanship guarantee applies at completion.",
       },
       {
         question: 'How do I start a project?',
@@ -219,9 +219,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'We remodel Star kitchens and bathrooms, take on whole-home renovations, and design and build room additions, managed design-build by one team from first sketch to finished room.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          'Yes. We carry a license, a bond, and insurance, and any Star homeowner can have our Idaho contractor license details upon request.',
+          "Yes. We're an Idaho Registered Contractor #8381215, and we carry a bond and insurance.",
       },
       {
         question: 'How do I start a project?',
@@ -255,9 +255,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'Middleton homeowners hire us for kitchen and bath remodels, whole-house renovations, and added rooms. One design-build team manages the whole job, with a dedicated project manager as your contact.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes: licensed, bonded, and insured. Our Idaho contractor license details are available to Middleton clients upon request, and Middleton's permit portal references Idaho Code 54-5209 for the registration number on building permits.",
+          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured, and Middleton's permit portal references Idaho Code 54-5209 for the registration number on building permits.",
       },
       {
         question: 'How do I start a project?',
@@ -292,9 +292,9 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
           'Caldwell remodels we manage include kitchen remodels, bath remodels, full-house renovations, and room additions, every one delivered design-build so a single team handles design, permits, and construction.',
       },
       {
-        question: 'Are you licensed and insured?',
+        question: 'Are you a registered contractor and insured?',
         answer:
-          'Yes. We are licensed, bonded, and insured, and Caldwell homeowners can ask for our Idaho contractor license details whenever they like.',
+          'Yes. We are an Idaho Registered Contractor #8381215, bonded, and insured.',
       },
       {
         question: 'How do I start a project?',

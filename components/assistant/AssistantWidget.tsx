@@ -204,6 +204,7 @@ export function AssistantWidget() {
       {open && (
         <div
           data-testid="assistant-panel"
+          data-clarity-mask="true"
           role="dialog"
           aria-label="Estimating assistant chat"
           className="fixed z-[150] bottom-0 right-0 left-0 md:bottom-6 md:right-6 md:left-auto md:w-[400px] flex flex-col rounded-t-lg md:rounded-lg border border-border bg-background shadow-2xl max-h-[85vh] md:max-h-[600px] h-[70vh] md:h-[600px]"
@@ -242,6 +243,7 @@ export function AssistantWidget() {
           </div>
 
           <form
+            data-clarity-mask="true"
             className="border-t border-border p-3 flex items-end gap-2 shrink-0"
             onSubmit={(e) => {
               e.preventDefault();

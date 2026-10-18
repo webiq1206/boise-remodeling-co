@@ -82,6 +82,7 @@ export default function AdminContractsPage() {
             {editingTemplate ? (
               <>
                 <Textarea
+                  data-clarity-mask="true"
                   rows={12}
                   value={templateBody}
                   onChange={(e) => setTemplateBody(e.target.value)}

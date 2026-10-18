@@ -868,7 +868,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                 Add Note
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent data-clarity-mask="true">
               <DialogHeader>
                 <DialogTitle>Add Note</DialogTitle>
                 <DialogDescription>
@@ -1425,7 +1425,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
                     <Pencil className="h-3 w-3" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-80 space-y-2" align="start">
+                <PopoverContent className="w-80 space-y-2" align="start" data-clarity-mask="true">
                   <Label className="text-xs">Street address (must start with a house number)</Label>
                   <Input
                     value={addressDraft}
@@ -1710,7 +1710,7 @@ function AdminDashboardContent({ embedded = false }: { embedded?: boolean }) {
             </div>
           </CardHeader>
           <CardContent className="p-3 md:p-4 space-y-3 md:space-y-4">
-            <div className="relative">
+            <div className="relative" data-clarity-mask="true">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name, email, phone, address, or city..."

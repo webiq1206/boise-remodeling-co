@@ -150,6 +150,7 @@ export default function AdminTakeoffPage() {
               {rateCount > 0 ? ` The book currently holds ${rateCount} rate${rateCount === 1 ? "" : "s"}.` : ""}
             </p>
             <textarea
+              data-clarity-mask="true"
               data-testid="takeoff-input"
               value={raw}
               onChange={(e) => setRaw(e.target.value)}

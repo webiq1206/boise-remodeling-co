@@ -28,7 +28,8 @@ const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
   `Public representative: ${SITE_CONFIG.publicRepresentative}. Service-area business based at ` +
   `${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.state} ${SITE_CONFIG.address.postalCode} ` +
-  `(not a staffed storefront). Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}.`;
+  `(not a staffed storefront). Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
+  `Idaho Registered Contractor #8381215, bonded and insured.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
 const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
@@ -206,6 +207,9 @@ function buildFull(): string {
     '- How long does a remodel take? Design and selections typically run three to eight weeks, ' +
       'permitting one to four depending on jurisdiction, and construction from two to three ' +
       'weeks for a bathroom to several months for a whole-home renovation or addition.',
+  );
+  lines.push(
+    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
   );
   lines.push(
     '- Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of ' +
