@@ -60,6 +60,11 @@ export function AssistantWidget() {
   const pathname = usePathname();
   const formInView = useFormInView(pathname, true);
   const [open, setOpen] = useState(false);
+  useEffect(() => {
+    const openFromBar = () => setOpen(true);
+    window.addEventListener("p5:assistant-open", openFromBar);
+    return () => window.removeEventListener("p5:assistant-open", openFromBar);
+  }, []);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [transcript, setTranscript] = useState<Transcript | null>(null);
   const [draft, setDraft] = useState("");
@@ -195,7 +200,7 @@ export function AssistantWidget() {
             trackEvent(ASSISTANT_EVENTS.opened, { page: pathname });
           }}
           aria-label="Chat with the estimating assistant"
-          className="fixed z-[90] bottom-[calc(96px+env(safe-area-inset-bottom))] right-4 lg:bottom-6 lg:right-6 flex h-13 w-13 items-center justify-center rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform p-3.5"
+          className="fixed z-[90] bottom-[calc(96px+env(safe-area-inset-bottom))] right-4 lg:bottom-6 lg:right-6 hidden min-[1180px]:flex h-13 w-13 items-center justify-center rounded-full bg-foreground text-background shadow-lg hover:scale-105 transition-transform p-3.5"
         >
           <MessageCircle className="h-6 w-6" aria-hidden />
         </button>

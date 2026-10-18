@@ -100,3 +100,119 @@
    display tracking must not override it. */
 .approved-shell :is(h2,h3,h4,h5,h6)[class~="tracking-[0.12em]"] { letter-spacing: 0.12em; }
 .approved-shell :is(h2,h3,h4,h5,h6)[class~="tracking-[0.16em]"] { letter-spacing: 0.16em; }
+
+/* ─── Design quality pass 2026-10-18 ───
+   Reviewed live on a phone and a desktop. The phone experience is rebuilt around
+   one idea per screen: photograph-first heroes with one line of copy, running
+   text in the sans, one accordion scale, numbered cells that read as a list,
+   city links as a rule list, a compact footer, and the chat launcher moved into
+   the sticky bar. Desktop keeps its layout. */
+
+/* Phone hero: the photograph leads, copy sits over its lower third, one action. */
+@media (max-width: 700px) {
+  .approved-shell .family-site .f-hero {
+    display: flex; align-items: flex-end; position: relative; isolation: isolate;
+    grid-template-columns: none; height: auto; min-height: calc(100svh - 70px); max-height: none;
+    background: #1c1f1e;
+  }
+  .approved-shell .family-site .f-hero > img {
+    position: absolute; inset: 0; z-index: -1; grid-area: auto;
+    width: 100%; height: 100%; min-height: 0; max-height: none;
+    object-fit: cover; object-position: 62% 40%;
+  }
+  .approved-shell .family-site .f-hero-shade {
+    display: block; position: absolute; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(23,30,27,.08) 0%, rgba(23,30,27,.34) 40%, rgba(23,30,27,.88) 74%, rgba(23,30,27,.97) 100%);
+  }
+  .approved-shell .family-site .f-hero-copy { grid-area: auto; width: calc(100% - 40px); margin: 0 auto; padding: 44vh 0 34px; }
+  .approved-shell .family-site .f-hero .f-eyebrow { font-size: 11px; margin-bottom: 14px !important; max-width: none; }
+  .approved-shell .family-site .f-hero h1 { font-size: clamp(40px, 10.5vw, 54px); line-height: 1.02; margin-bottom: 14px; }
+  .approved-shell .family-site .f-hero-copy > p.f-hero-summary { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .approved-shell .family-site .f-hero-copy > p:not(.f-eyebrow):not(.f-hero-summary) { font-size: 17px; line-height: 1.6; max-width: 34ch; color: #eceae3; }
+  .approved-shell .family-site .f-hero .estimator-promise,
+  .approved-shell .family-site .f-hero .f-hero-stamp,
+  .approved-shell .family-site .f-hero-foot { display: none; }
+  .approved-shell .family-site .f-actions { margin-top: 22px; gap: 12px; }
+  .approved-shell .family-site .f-actions .f-button { width: 100%; min-width: 0; min-height: 56px; }
+}
+.approved-shell .family-site .f-hero-stamp { font-size: 10px; letter-spacing: .14em; opacity: .62; margin-bottom: 12px !important; }
+
+/* The answer-first block: a two-column fact block instead of a wall of search copy. */
+.approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) {
+  display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); column-gap: clamp(32px, 6vw, 96px);
+  align-items: start; padding-block: clamp(56px, 7vw, 96px);
+}
+.approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > .f-eyebrow { grid-column: 1 / -1; grid-row: 1; }
+.approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > h2 { grid-column: 1; grid-row: 2; font-size: clamp(34px, 3.4vw, 48px); line-height: 1.05; }
+.approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > h2 + p { grid-column: 1; grid-row: 3; margin-top: 18px; max-width: 40ch; font-size: 17px; line-height: 1.65; color: #2c302f; }
+.approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > p + p { grid-column: 2; grid-row: 2 / 4; margin-top: 6px; max-width: 58ch; font-size: 15px; line-height: 1.8; color: #62605a; }
+.approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > ul { grid-column: 1 / -1; grid-row: 4; margin-top: 40px; }
+@media (max-width: 820px) {
+  .approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) { grid-template-columns: 1fr; padding-block: 56px; }
+  .approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > * { grid-column: 1 !important; grid-row: auto !important; }
+  .approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > h2 { font-size: 32px; }
+  .approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > h2 + p { max-width: none; font-size: 16px; }
+  .approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > p + p { margin-top: 14px; font-size: 15px; }
+  .approved-shell .family-site section.f-section.f-container:not(.f-two):not(.f-area):not(:has(.f-section-top)):has(> h2 + p) > ul { margin-top: 28px; }
+}
+
+/* Numbered matrix cells read as a list on phones: number beside the title, no orphan. */
+@media (max-width: 820px) {
+  .approved-shell .ed-matrix { grid-template-columns: 1fr; border-left: 0; }
+  .approved-shell .ed-matrix > * { border-right: 0; padding: 18px 0; min-height: 0; }
+  .approved-shell .ed-matrix > li.flex { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); column-gap: 6px; align-items: baseline; }
+  .approved-shell .ed-matrix > li.flex > .ed-small { grid-column: 1; grid-row: 1; }
+  .approved-shell .ed-matrix > li.flex > .ed-h4 { grid-column: 2; grid-row: 1; margin-top: 0 !important; padding-top: 0 !important; font-size: 1.1875rem; }
+  .approved-shell .ed-matrix > li.flex > .ed-body { grid-column: 2; grid-row: 2; margin-top: 4px; }
+  .approved-shell .ed-matrix > li.flex > span:not(.ed-small) { grid-column: 2; }
+}
+
+/* One accordion scale across the family. */
+.approved-shell .f-accordion [data-slot=accordion-trigger] { font-size: 23px; line-height: 1.25; padding: 20px 0; }
+@media (max-width: 700px) {
+  .approved-shell .f-accordion [data-slot=accordion-trigger] { font-size: 21px; padding: 18px 0; }
+  .approved-shell .f-accordion [data-slot=accordion-content] { font-size: 15px; }
+}
+/* Article sections render open; the summary row keeps a quiet plus/minus so a reader can fold them. */
+.approved-shell .guide-section-summary > span { display: none; }
+.approved-shell .guide-section-summary > div::after { content: "+"; flex: none; margin-left: 16px; font-family: var(--font-manrope), Arial, sans-serif; font-size: 22px; line-height: 1; color: var(--ed-accent); }
+.approved-shell details[open] > .guide-section-summary > div::after { content: "\2212"; }
+
+/* The sans carries running text; the serif is for display and a single lede. */
+.approved-shell { --ed-fs-lede: clamp(1.1875rem, 1.3vw, 1.3125rem); }
+
+/* City and section links as a two-column rule list. */
+.approved-shell .ed-rule-list { list-style: none; margin: 32px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid var(--ed-line); }
+.approved-shell .ed-rule-list > li { border-bottom: 1px solid var(--ed-line); }
+.approved-shell .ed-rule-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 50px; padding: 10px 0; font-size: 15px; font-weight: 500; line-height: 1.4; color: inherit; text-decoration: none; transition: color var(--ed-dur) var(--ed-ease); }
+.approved-shell .ed-rule-link:hover, .approved-shell .ed-rule-link:focus-visible { color: var(--ed-accent); }
+.approved-shell .ed-rule-link svg { flex-shrink: 0; color: var(--ed-accent); }
+@media (max-width: 560px) { .approved-shell .ed-rule-list { grid-template-columns: 1fr; } }
+
+/* Jump links: one horizontal row of full labels, square like the rest of the family. */
+.approved-shell [data-testid="guide-jump-chips"] > div { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.approved-shell [data-testid="guide-jump-chips"] > div::-webkit-scrollbar { display: none; }
+.approved-shell [data-testid="guide-jump-chips"] a { flex: none; scroll-snap-align: start; white-space: nowrap; border-radius: 0; }
+
+/* Footer: one screen on a phone. */
+@media (max-width: 1023px) {
+  .approved-shell footer .container { padding-top: 40px; padding-bottom: 24px; }
+  .approved-shell footer .container > div:first-child { gap: 0; }
+  .approved-shell footer .space-y-1 > a { min-height: 44px; }
+  .approved-shell footer .space-y-1 > p { font-size: 12px; line-height: 1.5; padding-block: 6px 10px; }
+  .approved-shell footer [class*="mt-12"] { margin-top: 18px; }
+  .approved-shell footer [class*="py-6"] { padding-top: 12px; padding-bottom: 12px; }
+  .approved-shell footer [class*="items-baseline"] { row-gap: 0; column-gap: 14px; }
+  .approved-shell footer [class*="items-baseline"] a { min-height: 44px; }
+  .approved-shell footer details summary { min-height: 48px; }
+  .approved-shell footer .text-xs, .approved-shell footer .text-xs p { font-size: 11.5px; line-height: 1.55; }
+}
+
+/* Numbered cells of every matrix (li or div) read as a list on phones; accordion titles sit left. */
+@media (max-width: 820px) {
+  .approved-shell .ed-matrix > .flex.flex-col { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); column-gap: 6px; align-items: baseline; }
+  .approved-shell .ed-matrix > .flex.flex-col > .ed-small { grid-column: 1; grid-row: 1; }
+  .approved-shell .ed-matrix > .flex.flex-col > .ed-h4 { grid-column: 2; grid-row: 1; margin-top: 0 !important; padding-top: 0 !important; min-height: 0 !important; font-size: 1.1875rem; }
+  .approved-shell .ed-matrix > .flex.flex-col > .ed-body { grid-column: 2; grid-row: 2; margin-top: 4px; }
+}
+.approved-shell .f-accordion [data-slot=accordion-trigger] > span:not(.f-number) { text-align: left; }

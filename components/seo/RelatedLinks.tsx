@@ -53,22 +53,6 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
   if (variant === 'service' && serviceSlug) {
     return (
       <div className="space-y-10">
-        <div>
-        <h2 className="ed-h2-sm ed-statement-wide mb-8">
-          {SERVICES.find((s) => s.slug === serviceSlug)?.name} by city
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {CITIES.map((city) => (
-            <Link
-              key={city.slug}
-              href={cityServicePath(serviceSlug, city.slug)}
-              className="ed-body flex min-h-11 items-center border-b py-3 text-[0.9375rem] transition-colors hover:[color:var(--ed-accent)] lg:min-h-0 [border-color:var(--ed-line)]"
-            >
-              {city.name}, Idaho
-            </Link>
-          ))}
-          </div>
-        </div>
         <ExploreFurther serviceSlug={serviceSlug} />
       </div>
     );

@@ -1,6 +1,5 @@
 import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing';
-import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
@@ -183,6 +182,7 @@ export function LandingPageTemplate({
   faqs,
   related,
 }: LandingPageTemplateProps) {
+  void showEstimatePrompt;
   const eyebrow = breadcrumbs[breadcrumbs.length - 2]?.name;
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
@@ -423,10 +423,10 @@ export function LandingPageTemplate({
                       </div>
                     ))}
                     {section.links && section.links.length > 0 && (
-                      <ul className="mt-6 flex list-none flex-wrap gap-x-8 gap-y-3 p-0">
+                      <ul className="ed-rule-list mt-8">
                         {section.links.map((link) => (
                           <li key={link.href}>
-                            <Link href={link.href} className="ed-link ed-link-accent min-h-11 lg:min-h-0">
+                            <Link href={link.href} className="ed-rule-link">
                               {link.label}
                               <ArrowRight className="h-4 w-4" aria-hidden="true" />
                             </Link>
@@ -491,13 +491,6 @@ export function LandingPageTemplate({
         </Section>
       )}
 
-      {/* ─── Estimator prompt ─── */}
-      {showEstimatePrompt && (
-        <EstimatePromptBand
-          title={<>What might your <em className="not-italic" style={accent}>project</em> cost?</>}
-          description="Get a preliminary planning range based on real Treasure Valley remodel costs, with no obligation."
-        />
-      )}
 
       {/* ─── FAQ: the parent site's split ─── */}
       <Section surface="bone" spacing="xl" edge>

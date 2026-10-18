@@ -62,7 +62,7 @@ function renderSectionBody(
 
 export function SectionedArticle({
   html,
-  defaultOpenCount = 3,
+  defaultOpenCount = 99,
   testId = 'article-content',
   forceExpanded = false,
   inlineFigures = [],
