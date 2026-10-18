@@ -126,14 +126,14 @@ export function generatePageTitle(params: ServiceSEOParams): string {
 }
 
 const CITY_DESCRIPTION_VARIANTS: Record<string, string> = {
-  Kuna: "Kuna's trusted design-build",
+  Kuna: "Kuna's design-build",
   Boise: "Boise's design-build",
-  Meridian: "Meridian's trusted",
+  Meridian: "Meridian's",
   Eagle: "Eagle's preferred",
   Star: "Star's reliable",
   Middleton: "Middleton's expert",
-  Nampa: "Nampa's trusted",
-  Caldwell: "Caldwell's trusted",
+  Nampa: "Nampa's",
+  Caldwell: "Caldwell's",
 };
 
 const CITY_CTA_VARIANTS: Record<string, string> = {
@@ -162,7 +162,7 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   
   if (city && serviceName) {
     const serviceLC = serviceName.toLowerCase();
-    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || `${city}'s trusted`;
+    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || `${city}'s`;
     const ctaVariant = CITY_CTA_VARIANTS[city] || (SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? "Satisfaction guaranteed" : "Free in-home consultation");
     return `${cityVariant} ${serviceLC} team. Idaho Registered Contractor #8381215. ${ctaVariant}. Call ${phone}.`;
   }
@@ -217,7 +217,7 @@ export function generateCityServiceDescription(
 ): string {
   const phone = SITE_CONFIG.phone;
   const serviceLC = serviceName.toLowerCase();
-  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || `${cityName}'s trusted`;
+  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || `${cityName}'s`;
   const cityData = CITY_SEO_DATA[cityName as keyof typeof CITY_SEO_DATA];
   const neighborhood = cityData?.neighborhoods?.[0];
 

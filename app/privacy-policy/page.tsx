@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
           <InteriorDocument heading={<h1>Privacy Policy for Boise Remodeling Co Services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"cookies-analytics-advertising","label":"Cookies, analytics and advertising"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
 
             <p className="lead text-muted-foreground">
-              Last updated: January 2024
+              Last updated: October 17, 2026
             </p>
 
             <h2 id="document-section-1">Introduction</h2>
@@ -106,7 +106,7 @@ export default function PrivacyPolicyPage() {
               We also use the Meta Pixel and Meta's Conversions API to measure visits and inquiries from our Facebook and Instagram ads. The pixel records a page view. Meta's pixel may also record which buttons you click and basic information about the page, such as its title. Depending on Meta's settings, the pixel may also collect contact details you type into a form, in hashed form. When you submit an inquiry, our server may send Meta the Lead event with the type of project you chose and an inquiry category, the page address, the event time, a matching event id, your IP address, your browser user agent, and the Meta cookies _fbp and _fbc, so it can match the inquiry to an ad. Meta processes this under its own privacy policy (<a href="https://www.facebook.com/privacy/policy" className="text-primary hover:underline">https://www.facebook.com/privacy/policy</a>).
             </p>
             <p>
-              If you arrive from one of our ads or a link with campaign tags, our site saves the ad click identifier from that link (gclid, gbraid or wbraid) and the campaign tags in your browser for up to 30 days. If you then send an inquiry, we keep them with your inquiry in our customer records so we can tell which ad or campaign led to it.
+              If you arrive from one of our ads or a link with campaign tags, our site keeps the ad click identifier and campaign tags from that link in your browser only until you close the tab.
             </p>
 
             <h2 id="document-section-5">Data Security</h2>
