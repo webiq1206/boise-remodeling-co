@@ -163,7 +163,7 @@
   .approved-shell .ed-matrix > li.flex { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); column-gap: 6px; align-items: baseline; }
   .approved-shell .ed-matrix > li.flex > .ed-small { grid-column: 1; grid-row: 1; }
   .approved-shell .ed-matrix > li.flex > .ed-h4 { grid-column: 2; grid-row: 1; margin-top: 0 !important; padding-top: 0 !important; font-size: 1.1875rem; }
-  .approved-shell .ed-matrix > li.flex > .ed-body { grid-column: 2; grid-row: 2; margin-top: 4px; }
+  .approved-shell .ed-matrix > li.flex > .ed-body { grid-column: 2; grid-row: 2; margin-top: 8px; }
   .approved-shell .ed-matrix > li.flex > span:not(.ed-small) { grid-column: 2; }
 }
 
@@ -175,8 +175,6 @@
 }
 /* Article sections render open; the summary row keeps a quiet plus/minus so a reader can fold them. */
 .approved-shell .guide-section-summary > span { display: none; }
-.approved-shell .guide-section-summary > div::after { content: "+"; flex: none; margin-left: 16px; font-family: var(--font-manrope), Arial, sans-serif; font-size: 22px; line-height: 1; color: var(--ed-accent); }
-.approved-shell details[open] > .guide-section-summary > div::after { content: "\2212"; }
 
 /* The sans carries running text; the serif is for display and a single lede. */
 .approved-shell { --ed-fs-lede: clamp(1.1875rem, 1.3vw, 1.3125rem); }
@@ -213,6 +211,25 @@
   .approved-shell .ed-matrix > .flex.flex-col { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); column-gap: 6px; align-items: baseline; }
   .approved-shell .ed-matrix > .flex.flex-col > .ed-small { grid-column: 1; grid-row: 1; }
   .approved-shell .ed-matrix > .flex.flex-col > .ed-h4 { grid-column: 2; grid-row: 1; margin-top: 0 !important; padding-top: 0 !important; min-height: 0 !important; font-size: 1.1875rem; }
-  .approved-shell .ed-matrix > .flex.flex-col > .ed-body { grid-column: 2; grid-row: 2; margin-top: 4px; }
+  .approved-shell .ed-matrix > .flex.flex-col > .ed-body { grid-column: 2; grid-row: 2; margin-top: 8px; }
 }
 .approved-shell .f-accordion [data-slot=accordion-trigger] > span:not(.f-number) { text-align: left; }
+
+/* ─── Phone vertical rhythm 2026-10-18 ───
+   Measured every gap between heading, lede, body, button and section at 390px
+   and reviewed the outliers by eye. Rules below give the few places where a
+   heading sat flush against its copy a consistent breath, and keep the article
+   jump links on one scrolling row. */
+.approved-shell .interior-eyebrow { margin-bottom: 12px; }
+.approved-shell :is(.ed-h2, .ed-h2-sm, h2.ed-statement) + p:not([class*="mt-"]):not(.ed-eyebrow) { margin-top: 16px; }
+.approved-shell :is(.ed-h3, .ed-h4, h3.ed-h4, h3.font-serif, h3.font-medium) + p:not([class*="mt-"]) { margin-top: 8px; }
+.approved-shell .ed-h4 + .ed-body { margin-top: 8px; }
+.approved-shell .ed-lede + a:not([class*="mt-"]) { display: inline-flex; margin-top: 14px; }
+.approved-shell .f-scene-copy h3 + p, .approved-shell .f-section-top h2 + p { margin-top: 12px; }
+.approved-shell footer .text-xs [class*="flex-wrap"] { row-gap: 10px; }
+.approved-shell [data-testid="guide-jump-chips"] > div { flex-wrap: nowrap; }
+.approved-shell [data-testid="guide-jump-chips"] a { max-width: 78vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block; line-height: 40px; }
+/* Open article sections: the marker sits on the heading's first line, not above it. */
+.approved-shell .guide-section-summary > div { align-items: center; }
+.approved-shell .guide-section-summary { padding-block: 22px 14px; }
+.approved-shell :is(h2,h3)[class*="mb-1"] + p, .approved-shell :is(h2,h3) + p[class*="mt-1"] { margin-top: 8px; }
