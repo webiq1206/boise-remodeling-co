@@ -7,3 +7,6 @@
 
 .review-surface{border:0;outline:1px solid #2c302f30;overflow:hidden}
 .family-site h1 em,.family-site h2 em{color:inherit}.family-site .f-hero h1 em,.family-site .f-value h2 em,.family-site .f-contact h2 em{color:var(--f-accent)}
+
+/* Design audit 2026-10-17: the contact band's secondary link had no styles and ran into the button; hero paragraphs and the answer-first sections ran together. */
+.f-contact .estimate-secondary{display:flex;width:fit-content;align-items:center;gap:14px;margin-top:18px;padding-block:10px;font-size:14px;font-weight:600;line-height:1.5;color:inherit}.f-contact .estimate-secondary:hover{text-decoration:underline;text-underline-offset:5px}.f-contact .estimate-secondary svg{flex-shrink:0}.f-hero-copy>p:not(.f-eyebrow)+p:not(.f-eyebrow){margin-top:16px}.family-site .f-section.f-container>h2+p{margin-top:22px}.family-site .f-section.f-container>p{max-width:70ch}.family-site .f-section.f-container>p+p{margin-top:16px}.family-site .f-section.f-container>ul{list-style:none;padding:0;margin:28px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:0 28px}.family-site .f-section.f-container>ul>li{border-top:1px solid #2c302f26}.family-site .f-section.f-container>ul>li>a{display:flex;align-items:center;min-height:48px;font-size:15px;font-weight:500}

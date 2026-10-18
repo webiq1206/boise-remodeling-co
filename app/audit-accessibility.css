@@ -46,3 +46,57 @@
 .approved-shell .brc-text-link,
 .approved-shell a[href$="contact.vcf"] { display:inline-flex; align-items:center; min-height:32px; }
 .approved-shell .blog-content .callout.warning .callout-label { color:var(--audit-accent-ink); }
+
+/* ─── Design audit 2026-10-17 ───
+   Measured on every public page at 390px and 1440px. Family-wide corrections:
+   small headings no longer inherit display tracking, tracked labels sit at
+   12px, phone tap targets reach 44px, the required mark clears 4.5:1 on bone,
+   and legal documents no longer scroll sideways on a phone. */
+
+/* Display tracking (-0.035em) is for statement headings. Card titles, accordion
+   questions and list headings at body sizes were inheriting it from the shell
+   rule and their letters touched. */
+.approved-shell :is(h2,h3,h4,h5,h6):is(.ed-h4,.text-xs,.text-sm,.text-base,.text-lg,.text-xl,.font-normal,.flex),
+.approved-shell :is(.ed-card,.ed-matrix,.ed-inset,.f-footer) :is(h3,h4) { letter-spacing: -0.01em; }
+
+/* Tracked uppercase labels and links: 11px was under the legibility floor on phones. */
+.approved-shell { --ed-fs-eyebrow: 0.75rem; }
+.approved-shell .f-eyebrow { font-size: 12px; }
+.approved-shell .f-scene-copy .f-eyebrow { font-size: 11px; }
+.approved-shell .f-hero-foot { font-size: 11px; }
+
+/* The required mark and error text measured 2.8:1 on the bone form ground. */
+.approved-shell :is(.ed-on-bone,.ed-on-muted,.ed-on-dark,.ed-on-deep) { --destructive: 10 52% 38%; }
+
+/* Legal documents: the phone layout stacks the grid as a flex column but kept
+   align-items:start, so the main column shrink-wrapped to its max-content
+   width (368px inside a 302px shell) and the page scrolled sideways. */
+@media (max-width: 700px) {
+  .approved-shell .interior-document-grid { align-items: stretch; }
+  .approved-shell .interior-document-main { width: 100%; max-width: 100%; }
+}
+.approved-shell .interior-document-main :is(ul,ol) { list-style: disc; padding-left: 1.3em; margin: 0.75em 0 1.25em; }
+.approved-shell .interior-document-main :is(ul,ol) li { margin: 0.45em 0; }
+.approved-shell .interior-document-main a { overflow-wrap: anywhere; }
+
+/* Phone tap targets. Footer links become 44px flex boxes; breadcrumb and hero
+   links get padding plus a matching negative margin so the layout does not move.
+   Inline links inside running text are left alone, as WCAG allows. */
+@media (pointer: coarse) {
+  .approved-shell :is(.brc-text-link, [data-testid="link-save-contact"], a[href$="contact.vcf"], .interior-estimate-link, a.min-h-9, .min-h-9.rounded-full, .rounded-xl.border > a.inline-flex) { min-height: 44px; }
+  /* Topic links in the article sidebar card wrap as whole units rather than mid-link. */
+  .approved-shell .rounded-lg.border > a.text-sm { display: inline-flex; align-items: center; min-height: 44px; }
+  .approved-shell footer :is(a, button):not(p a):not(.inline-flex):not(.flex):not(.f-button):not(.button):not([class*="min-h-"]) { display: inline-flex; align-items: center; min-height: 44px; }
+  .approved-shell :is(nav[aria-label="Breadcrumb"], .interior-article-header) :is(a, button):not(.inline-flex):not(.flex):not(.f-button):not(.button):not([class*="min-h-"]):not(p a) { padding-block: 12px; margin-block: -12px; }
+  /* Stacked hero links take real padding: a negative margin here would overlap their hit areas. */
+  .approved-shell .interior-hero-copy :is(a, button):not(.inline-flex):not(.flex):not(.f-button):not(.button):not([class*="min-h-"]):not(p a) { padding-block: 11px; }
+}
+
+/* Forms sit on bone cards inside plain sections, so the required mark and
+   error copy take the darker destructive tone wherever a form renders. */
+.approved-shell :is(form, .marketing-card) { --destructive: 10 52% 38%; }
+
+/* Tracked uppercase footer headings declare their own tracking; the shell's
+   display tracking must not override it. */
+.approved-shell :is(h2,h3,h4,h5,h6)[class~="tracking-[0.12em]"] { letter-spacing: 0.12em; }
+.approved-shell :is(h2,h3,h4,h5,h6)[class~="tracking-[0.16em]"] { letter-spacing: 0.16em; }
