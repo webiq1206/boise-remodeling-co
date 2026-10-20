@@ -90,7 +90,7 @@ export default function AboutPage() {
   return (
     <InteriorPage kind="about"><>
       <JsonLd data={schemas} />
-      <div className="flex flex-col pb-20 md:pb-0">
+      <div className="flex flex-col ">
         {/* Approved editorial hero */}
         <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.leadership} imageAlt="Boise Remodeling Co design-build team at a finished kitchen project">
             <HeroBreadcrumbs />
@@ -303,7 +303,7 @@ export default function AboutPage() {
               description={`We serve homeowners in ${TREASURE_VALLEY_CITIES}, and surrounding communities.`}
               className="max-w-3xl"
             />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 min-[1180px]:grid-cols-4 gap-4">
               {CITIES.map((city, i) => (
                 <Reveal key={city.slug} delay={Math.min(i, 7) * 50}>
                   <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />

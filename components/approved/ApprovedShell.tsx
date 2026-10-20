@@ -7,5 +7,5 @@ import {isEstimatorPath} from '@/lib/p5/estimatorRoutes';
 export function ApprovedShell({children}:{children:ReactNode}){
  const path=usePathname()||'/';
  const application=isEstimatorPath(path)||/^\/(admin|portal|subcontractor|design-studio|login|dealer|installer)(\/|$)/.test(path);
- return application?<>{children}</>:<div className="approved-shell">{children}</div>;
+ return application?<>{children}</>:<div className="approved-shell site-remodeling">{children}</div>;
 }

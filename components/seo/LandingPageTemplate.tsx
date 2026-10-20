@@ -121,22 +121,6 @@ function HeroBreadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   );
 }
 
-/**
- * Splits a benefit string into a bold lead phrase and a muted supporting caption.
- * Priority: split on first comma; fallback: split after first 4 words if string > 6 words.
- */
-function splitBenefit(text: string): { lead: string; body: string } {
-  const commaIdx = text.indexOf(',');
-  if (commaIdx > 0 && commaIdx < text.length - 1) {
-    return { lead: text.slice(0, commaIdx).trim(), body: text.slice(commaIdx + 1).trim() };
-  }
-  const words = text.split(' ');
-  if (words.length > 6) {
-    return { lead: words.slice(0, 4).join(' '), body: words.slice(4).join(' ') };
-  }
-  return { lead: text, body: '' };
-}
-
 const accent = { color: 'var(--ed-accent)' } as const;
 const line = { borderColor: 'var(--ed-line)' } as const;
 
@@ -192,7 +176,7 @@ export function LandingPageTemplate({
   const showTimelineBelow = !!timeline && !costGuidance;
 
   return (
-    <div className="flex flex-col pb-20 md:pb-0">
+    <div className="flex flex-col ">
       {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
       {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
       <InteriorHero imageSrc={heroImageUrl} imageAlt={contentImageAlt(heroImageUrl)} layout="split">
@@ -272,18 +256,16 @@ export function LandingPageTemplate({
             <Reveal delay={60}>
               <ul
                 className="ed-matrix mt-[clamp(40px,5vw,72px)] list-none p-0"
-                style={{ ['--ed-cols' as string]: benefits.length === 4 ? 4 : Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '200px' }}
+                style={{ ['--ed-cols' as string]: benefits.length === 4 ? 4 : Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '0' }}
               >
-                {benefits.map((item, i) => {
-                  const { lead, body } = splitBenefit(item);
-                  return (
-                    <li key={item} className="flex flex-col">
-                      <span className="ed-small" style={accent}>{String(i + 1).padStart(2, '0')}</span>
-                      <p className="ed-h4 mt-auto pt-8">{lead}</p>
-                      {body && <p className="ed-body mt-2 text-[0.875rem]">{body}</p>}
-                    </li>
-                  );
-                })}
+                {/* Each benefit is one sentence and renders whole. Splitting it at a
+                    comma or after four words cut titles mid-phrase. (BRC-32, BCONC-06, BHC-12) */}
+                {benefits.map((item, i) => (
+                  <li key={item} className="flex flex-col">
+                    <span className="ed-small" style={accent}>{String(i + 1).padStart(2, '0')}</span>
+                    <p className="ed-h4 mt-5 text-pretty">{item}</p>
+                  </li>
+                ))}
               </ul>
             </Reveal>
           </div>
@@ -292,9 +274,8 @@ export function LandingPageTemplate({
 
       {/* ─── Full-bleed image breather ─── */}
       {breatherImage && (
-        <section className="relative h-[clamp(220px,32vw,400px)] overflow-hidden" aria-hidden>
+        <section className="relative h-[clamp(220px,28vw,360px)] overflow-hidden" aria-hidden>
           <Image src={breatherImage} alt="" fill sizes="100vw" className="object-cover img-brand-grade" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-inverse/10 to-background/80" />
           <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
         </section>
       )}
@@ -412,7 +393,7 @@ export function LandingPageTemplate({
                   <Reveal key={section.heading} delay={Math.min(i, 4) * 60}>
                     <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28">{section.heading}</h2>
                     {section.paragraphs?.map((p, j) => (
-                      <p key={j} className={j === 0 ? 'ed-lede mt-6 max-w-[52ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
+                      <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
                     ))}
                     {section.subsections?.map((sub) => (
                       <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
