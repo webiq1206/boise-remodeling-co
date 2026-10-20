@@ -116,7 +116,7 @@ export default function RemodelPlansPage() {
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Button variant="brand" asChild>
-            <Link href="#plans-estimator">
+            <Link href="#plans-wizard">
               Upload your plans <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
@@ -270,7 +270,7 @@ export default function RemodelPlansPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Button variant="brand" asChild>
-              <Link href="#plans-estimator">
+              <Link href="#plans-wizard">
                 Upload your plans <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
