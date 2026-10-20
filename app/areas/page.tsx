@@ -46,7 +46,7 @@ export default function AreasHubPage() {
   return (
     <InteriorPage kind="areas"><>
       <JsonLd data={schemas} />
-      <div className="flex flex-col pb-20 md:pb-0">
+      <div className="flex flex-col ">
         <PageHeroBand
           imageSrc={SITE_IMAGES.hero}
           imageAlt="Remodeled Treasure Valley home interior with kitchen and living space"
@@ -80,7 +80,7 @@ export default function AreasHubPage() {
               description="Kitchen, bath, whole-home, and addition remodeling across Ada and Canyon County."
               align="left"
             />
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-5 sm:grid-cols-2 min-[1180px]:grid-cols-4">
               {CITIES.map((city, i) => (
                 <Reveal key={city.slug} delay={i * 40}>
                   <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />

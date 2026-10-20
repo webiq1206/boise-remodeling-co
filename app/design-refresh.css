@@ -81,3 +81,115 @@
 @media (min-width: 821px) and (max-width: 1100px) {
   .approved-shell :is(.ed-split, .ed-split-narrow):has(.grid[class*="grid-cols-3"], .grid[class*="grid-cols-2"], .ed-matrix) { grid-template-columns: minmax(0, 1fr); gap: 32px; }
 }
+
+/* ---------- Phase 2: the shared design system ---------- */
+
+/* Accordions. components/ui/accordion.tsx now renders data-slot attributes, so
+   the family's accordion rules apply. Titles read from the left and take the
+   free width between the number and the chevron. (BRC-03, BHC-23, BCONC-05, BCC-17) */
+.approved-shell [data-slot=accordion-trigger] { text-align: left; }
+.approved-shell [data-slot=accordion-trigger] > span:not(.f-number):not(.process-index) { flex: 1; min-width: 0; text-align: left; }
+.approved-shell .f-accordion .f-number { flex: none; min-width: 2.5rem; }
+
+/* Footer clearance for the sticky bar lives here and nowhere else: page
+   wrappers no longer pad themselves, and the footer pads only while the bar
+   can show (below 1180px). The last footer line sits about 24px above the bar.
+   (BRC-05, BRC-06, BCONC-07, BCONC-38, BHC-03, BCC-04) */
+@media (max-width: 1179px) {
+  .approved-shell .site-footer > .container { padding-bottom: 24px; }
+  .approved-shell .site-footer { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (min-width: 768px) and (max-width: 1179px) {
+  .approved-shell .site-footer { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+}
+/* Cabinet's bar is 12px taller (larger buttons), so its footer clears 12px more. */
+@media (max-width: 767px) {
+  .site-cabinet .site-footer { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (min-width: 768px) and (max-width: 1179px) {
+  .site-cabinet .site-footer { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* Tablet range: a compact floating bar at the right, not a phone bar stretched
+   across the screen. (BHC-26, BCC-30, BRC-47) */
+@media (min-width: 768px) and (max-width: 1179px) {
+  .approved-shell [data-mobile-nav-bar] {
+    left: auto; right: 16px; bottom: 16px;
+    width: min(520px, calc(100% - 32px));
+    border: 1px solid rgba(251, 250, 246, .16);
+    box-shadow: 0 12px 32px rgba(28, 31, 30, .28);
+  }
+  .approved-shell .site-footer > .container { width: 88%; max-width: none; padding-inline: 0; }
+}
+
+/* Section rhythm at desktop widths. Phone values are unchanged. Two neighbouring
+   sections on the same ground share one gap and a hairline instead of doubling
+   their padding. (BRC-07, BHC-09, BCC-15) */
+@media (min-width: 1024px) {
+  .approved-shell { --ed-pad: clamp(64px, 5.5vw, 80px); --ed-pad-lg: clamp(72px, 6.5vw, 96px); }
+  .approved-shell .family-site .f-section { padding-block: 88px; }
+}
+.approved-shell .ed-on-dark + .ed-on-dark,
+.approved-shell :is(.ed-on-deep, .ed-on-bone, .ed-on-muted):not(.ed-photo-copy) + :is(.ed-on-deep, .ed-on-bone, .ed-on-muted):not(.ed-photo-copy) {
+  padding-top: clamp(40px, 4vw, 56px);
+  border-top: 1px solid var(--ed-line, rgba(44, 48, 47, .12));
+}
+/* Home pages: the budget band is the first <section> in its wrapper, so the
+   "first section clears the header" rule gave it 109px of hero padding in the
+   middle of the page. It takes the normal band padding, or the shared-ground
+   gap when it follows the bone FAQ (Handyman). */
+.approved-shell #budget.ed-section-lg { padding-top: var(--ed-pad-lg); }
+.approved-shell .family-site:has(> .ed-on-bone:last-child) + #budget.ed-on-bone:not(.ed-photo-copy) {
+  padding-top: clamp(40px, 4vw, 56px);
+}
+/* Home pages: consecutive paper sections ("Good work" then "A clear plan"). */
+.approved-shell .family-site .f-section.f-section + .f-section {
+  padding-top: clamp(40px, 4vw, 56px);
+  border-top: 1px solid rgba(44, 48, 47, .12);
+}
+
+/* Article rail: the contents list is never height-capped on its own. The
+   sticky rail scrolls as one when the list and the estimate card are taller
+   than the screen. (BHC-10, BCONC-19, BRC-21, BCC-48) */
+@media (min-width: 1024px) {
+  .article-rail {
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    padding: 4px 8px 4px 4px;
+    margin: -4px -8px -4px -4px;
+  }
+}
+@media (min-width: 1024px) and (max-width: 1179px) {
+  .article-rail { max-height: calc(100vh - 7rem - 96px); }
+}
+
+/* Typography: balanced headings, no one-word last lines in running text, and
+   lining figures in the display serif so "P5" never reads as "P" plus a
+   low five. (P5-21 and the plan's typography item) */
+.approved-shell :is(h1, h2, h3, h4, .ed-h2, .ed-h3, .ed-h4) { text-wrap: balance; font-variant-numeric: lining-nums; }
+.approved-shell :is(p, li, blockquote, figcaption) { text-wrap: pretty; }
+.approved-shell :is([data-slot=accordion-trigger], .ed-lede) { font-variant-numeric: lining-nums; }
+
+/* Cabinet desktop nav, 1180 to 1365px: one line per item. The phone number
+   collapses to its icon until there is room for it. (BCC-57) */
+.site-cabinet [data-approved-navigation] nav li > :is(a, button) { white-space: nowrap; }
+@media (min-width: 1180px) and (max-width: 1365px) {
+  .site-cabinet [data-approved-navigation] nav li > :is(a, button) { padding-inline: 8px; }
+  .site-cabinet [data-approved-navigation] > nav { gap: 14px; }
+  .site-cabinet [data-header-phone] .header-phone-number { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .site-cabinet [data-header-phone] .header-phone-icon { display: block; }
+}
+
+/* Cabinet home: the estimator reads as its own tool band on the bone ground,
+   with one card instead of a card inside an outlined box, and same-ground
+   sections no longer stack 100px + 100px. (BCC-15) */
+.site-cabinet .approved-estimate { background: #f1ede4; box-shadow: 0 0 0 100vmax #f1ede4; clip-path: inset(0 -100vmax); }
+@media (min-width: 1024px) {
+  .site-cabinet .cabinet-approved .section { padding-block: 88px; }
+  .site-cabinet .approved-native-estimator { max-width: 880px; margin-inline: auto; border-color: transparent; background: transparent; }
+}
+@media (max-width: 700px) {
+  .site-cabinet .cabinet-approved .section { padding-block: 56px; }
+}

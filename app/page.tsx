@@ -58,7 +58,7 @@ export const metadata: Metadata = withBrandPageMetadata(({
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col pb-20 md:pb-0 bg-background">
+    <div className="flex flex-col bg-background">
       {/* PAGE ORDER IS THE SALES CONVERSATION, IN THE ORDER A HOMEOWNER HAS IT.
 
           1. Hero            who we are, and the one action we want

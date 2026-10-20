@@ -45,7 +45,7 @@ export default function TestimonialsPage() {
   ];
 
   return (
-    <InteriorPage kind="testimonials"><div className="flex flex-col pb-20 md:pb-0">
+    <InteriorPage kind="testimonials"><div className="flex flex-col ">
       <JsonLd data={schemas} />
 
       <PageHeroBand

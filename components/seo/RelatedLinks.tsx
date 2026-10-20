@@ -121,11 +121,11 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
               </li>
             ))}
           </ul>
-          <div className="mt-8 border-t pt-6" style={{ borderColor: "var(--ed-line)" }}>
+          <div className="mt-8 flex flex-wrap gap-x-10 gap-y-4 border-t pt-6" style={{ borderColor: "var(--ed-line)" }}>
             <Link href={servicePath(serviceSlug)} className="ed-link">
               All {SERVICES.find((s) => s.slug === serviceSlug)?.name} areas →
             </Link>
-            <Link href={areaPath(citySlug)} className="ed-link mt-4 block w-fit">
+            <Link href={areaPath(citySlug)} className="ed-link">
               Remodeling in {CITIES.find((c) => c.slug === citySlug)?.name} →
             </Link>
           </div>
