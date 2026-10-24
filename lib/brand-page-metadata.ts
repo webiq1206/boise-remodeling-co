@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {publishFoundingCopy} from '../shared/publicClaims.ts';
 import {ESTIMATOR_BRAND as brand} from './p5/brand.ts';
 
 /** Branded sharing previews are the owner's preference. Product/article schema
@@ -51,9 +52,9 @@ function pagePath(meta:Metadata,hint?:string):string{
 }
 export function withBrandPageMetadata(meta:Metadata,routeHint?:string):Metadata{
  const override=routeHint==='__layout__'?undefined:COPY[brand.id]?.[pagePath(meta,routeHint)];
- const original=titleText(meta);
- const title=override?`${override.title} | ${brand.name}`:original.includes(brand.name)?original:`${original} | ${brand.name}`;
- const description=override?.description||meta.description||undefined;
+ const original=publishFoundingCopy(titleText(meta));
+ const title=override?`${publishFoundingCopy(override.title)} | ${brand.name}`:original.includes(brand.name)?original:`${original} | ${brand.name}`;
+ const description=publishFoundingCopy(override?.description||meta.description||'')||undefined;
  const image={url:BRAND_PAGE_IMAGE,width:1200,height:630,alt:`${brand.name} brand seal`};
  const icons=routeHint==='__layout__'?{
   ...(typeof meta.icons==='object'&&!Array.isArray(meta.icons)&&!(meta.icons instanceof URL)?meta.icons:{}),

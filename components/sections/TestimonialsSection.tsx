@@ -7,7 +7,7 @@ import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Button } from "@/components/ui/button";
-import { TESTIMONIALS } from "@/shared/testimonialsData";
+import { SHOW_TESTIMONIALS, TESTIMONIALS } from "@/shared/testimonialsData";
 import { CITIES, SERVICES } from "@/shared/contentData";
 
 function serviceLabel(slug: string) {
@@ -34,12 +34,9 @@ interface TestimonialsSectionProps {
 }
 
 export function TestimonialsSection({ limit = 4, showViewAll = true }: TestimonialsSectionProps) {
-  const items = TESTIMONIALS.slice(0, limit);
+  const items = SHOW_TESTIMONIALS ? TESTIMONIALS.slice(0, limit) : [];
   const [featured, ...rest] = items;
 
-  // No real reviews yet - render nothing rather than an empty-looking
-  // section (a heading and a "Read all reviews" button with no reviews
-  // under them). This activates automatically once TESTIMONIALS is populated.
   if (items.length === 0) return null;
 
   return (
@@ -47,7 +44,6 @@ export function TestimonialsSection({ limit = 4, showViewAll = true }: Testimoni
       <div className="container px-4">
         <SectionHeader
           align="center"
-          eyebrow="Homeowner reviews"
           title={
             <>
               Trusted for{" "}
@@ -97,7 +93,7 @@ export function TestimonialsSection({ limit = 4, showViewAll = true }: Testimoni
         {showViewAll && (
           <div className="mt-10 text-center">
             <Button variant="brandOutline" asChild>
-              <Link href="/testimonials">Read all reviews</Link>
+              <Link href="/testimonials">Design ideas</Link>
             </Button>
           </div>
         )}

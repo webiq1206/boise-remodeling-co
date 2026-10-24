@@ -103,7 +103,7 @@ export default function GuidesIndexPage() {
           </h2>
           <div className="ed-cards-3 gap-6">
             {pillarGuides.map((guide) => (
-              <MarketingCard key={guide.slug} className="p-0 flex flex-col h-full overflow-hidden">
+              <MarketingCard key={guide.slug} padding="none" className="flex flex-col h-full overflow-hidden">
                 <div className="relative aspect-[16/9] overflow-hidden">
                   <Image
                     src={getBlogHeroImage(guide.slug, guide.heroImage)}
@@ -143,7 +143,7 @@ export default function GuidesIndexPage() {
           </p>
           <div className="ed-cards-3 gap-4">
             {locationGuides.map((guide) => (
-              <MarketingCard key={guide.slug} className="p-0 flex flex-col h-full overflow-hidden">
+              <MarketingCard key={guide.slug} padding="none" className="flex flex-col h-full overflow-hidden">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
                     src={getBlogHeroImage(guide.slug, guide.heroImage)}
@@ -156,13 +156,13 @@ export default function GuidesIndexPage() {
                 <div className="p-5 flex flex-col flex-1">
                   <MapPin className="h-4 w-4 text-accent-legible mb-2" />
                   <h3 className="font-normal text-base mb-1">{guide.title}</h3>
-                  <p className="text-sm text-muted-foreground flex-1 mb-2 line-clamp-2">
+                  <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                     {guide.excerpt}
                   </p>
                   <GuideCardStats guide={guide} />
                   <Link
                     href={guidePath(guide.slug)}
-                    className="text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 lg:min-h-0"
+                    className="mt-auto text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 lg:min-h-0"
                   >
                     Read
                     <ArrowRight className="ml-1 h-3 w-3" />

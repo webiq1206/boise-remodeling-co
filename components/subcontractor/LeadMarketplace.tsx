@@ -1706,7 +1706,7 @@ function SubcontractorPortalContent() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="relative">
+            <div className="relative" data-clarity-mask="true">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by city, service type..."
@@ -2079,7 +2079,7 @@ function SubcontractorPortalContent() {
 
       {/* Agreement Dialog */}
       <Dialog open={showAgreement} onOpenChange={setShowAgreement}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" data-clarity-mask="true">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Shield className="h-5 w-5" />

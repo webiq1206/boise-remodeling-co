@@ -60,7 +60,8 @@ test('the one-business-day reply stays, and the text line follows it', () => {
 
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
   assert.match(contact, /Prefer to text\? Message us instead/);
-  assert.match(contact, /Mon – Fri 7 am – 6 pm · Sat 8 am – 4 pm/);
+  assert.match(contact, /Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT/);
+  assert.doesNotMatch(contact, /Mon – Fri 7 am|Sat 8 am/);
   assert.match(readFileSync('shared/siteContent.ts', 'utf8'), /"Response within one business day"/);
   for (const file of ['app/page.tsx', 'app/contact/page.tsx', 'components/ConsultationForm.tsx']) {
     const source = readFileSync(file, 'utf8');

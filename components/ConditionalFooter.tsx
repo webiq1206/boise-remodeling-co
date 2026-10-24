@@ -2,14 +2,26 @@
 
 import { usePathname } from "next/navigation";
 import { Footer } from "@/components/Footer";
-import { isPortalPath } from "@/lib/portalRoutes";
+import { RegistrationLine } from "@/components/RegistrationLine";
 import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
+import { isPortalPath } from "@/lib/portalRoutes";
 
 export function ConditionalFooter() {
   const pathname = usePathname();
   if (isPortalPath(pathname)) return null;
-  // The estimator owns the whole screen as a one-page app; a footer below it
-  // would be the one thing on the page that forces a scroll.
-  if (isEstimatorPath(pathname)) return null;
+  // The estimator owns the screen. The marketing footer stays off it. The
+  // registration line is a fixed strip the frame measures and sits above, so
+  // the words stay visible and are not covered.
+  if (isEstimatorPath(pathname)) {
+    return (
+      <div
+        data-registration-footer
+        className="fixed inset-x-0 bottom-0 z-[96] overflow-visible bg-inverse px-4 pt-3 text-center text-xs leading-5 text-inverse-muted"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <RegistrationLine plain />
+      </div>
+    );
+  }
   return <Footer />;
 }

@@ -115,7 +115,7 @@ export default function ServicesIndexPage() {
               </p>
             </Reveal>
           </div>
-          <div className="mt-[clamp(40px,5vw,72px)] grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-[clamp(40px,5vw,72px)] grid gap-4 sm:grid-cols-2 min-[1180px]:grid-cols-4">
             {CITIES.map((city, i) => (
               <Reveal key={city.slug} delay={Math.min(i, 7) * 40}>
                 <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />

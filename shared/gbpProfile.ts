@@ -5,6 +5,7 @@
  */
 
 import { SITE_CONFIG, textReplyLine } from '@/shared/siteConfig';
+import { publishFoundingCopy } from '@/shared/publicClaims';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 
@@ -26,12 +27,12 @@ export const GBP_NAP = {
   serviceAreaLabel: SITE_CONFIG.address.serviceArea,
   founded: '2020',
   hours: {
-    monday: '7:00 AM - 6:00 PM',
-    tuesday: '7:00 AM - 6:00 PM',
-    wednesday: '7:00 AM - 6:00 PM',
-    thursday: '7:00 AM - 6:00 PM',
-    friday: '7:00 AM - 6:00 PM',
-    saturday: '8:00 AM - 4:00 PM',
+    monday: '9:00 AM - 6:00 PM',
+    tuesday: '9:00 AM - 6:00 PM',
+    wednesday: '9:00 AM - 6:00 PM',
+    thursday: '9:00 AM - 6:00 PM',
+    friday: '9:00 AM - 6:00 PM',
+    saturday: '9:00 AM - 4:00 PM',
     sunday: 'Closed',
   },
 } as const;
@@ -58,8 +59,9 @@ export const GBP_CATEGORIES = {
   ],
 } as const;
 
-export const GBP_DESCRIPTION =
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.';
+export const GBP_DESCRIPTION = publishFoundingCopy(
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+);
 
 export const GBP_LINKS = {
   website: SITE,
@@ -384,9 +386,9 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
     answer: `Guest baths typically plan $18,000–$45,000; primary baths $35,000–$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
   },
   {
-    question: 'Are you licensed and insured?',
+    question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is bonded and insured for residential remodeling across the Treasure Valley. Idaho contractor license details are available upon request.',
+      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.',
   },
   {
     question: 'Do you build ADUs?',

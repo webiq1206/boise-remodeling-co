@@ -17,7 +17,7 @@ Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The sit
 
 ## Trustworthiness - 5/10
 - Good: real phone, email, consistent NAP, privacy/terms pages, no-pressure positioning, honest "planning range not bid" disclaimers (genuinely above-average candor).
-- Bad: `licenses: ['License details available upon request']` - worse than saying nothing; it raises the question and refuses the answer.
+- Published: `licenses: ['Idaho Registered Contractor #8381215']`. Do not put the number back behind "available upon request".
 - **Idaho fact worth using**: Idaho requires general contractors to *register* (not license). Competitors hide behind vague "licensed and insured" claims. Publishing the actual registration number (format RCE-#####) plus insurance carrier/bond details would exceed local norms and is exactly the kind of verifiable fact engines reward.
 - **Fix**: owner supplies the Idaho contractor registration number → footer + /about + `BUSINESS_INFO.licenses` + future `hasCredential` schema. Also reconcile public-record association with Timber and Love Inc (RCE-42326) - if Boise Remodeling Co operates under or alongside that registration, state the relationship plainly on /about; ambiguity between two contractor identities is a trust leak that a diligent homeowner (or AI engine) will find in permit records.
 

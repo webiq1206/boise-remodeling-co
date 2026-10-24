@@ -1,6 +1,6 @@
 # Boise Remodeling Co — Brand Kit
 
-Custom Remodeling · Boise & the Treasure Valley, Idaho · Est. 2020
+Custom Remodeling · Boise & the Treasure Valley, Idaho
 
 Part of the Boise trades brand system. The system-wide rules live in
 [`../../BRAND-SYSTEM.md`](../../BRAND-SYSTEM.md) — **this file covers only what is specific to Boise Remodeling Co.**

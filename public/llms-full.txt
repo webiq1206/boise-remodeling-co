@@ -1,15 +1,14 @@
 # Boise Remodeling Co - Full Reference
 
-> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. Serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell. Phone (208) 477-1169.
+> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Part of P5 Home Co. Serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell. Phone (208) 477-1169.
 
-Public representative: Nick Perkins. Service-area business based at 4031 W Wapoot St, Meridian, ID 83646 (not a staffed storefront). Phone (208) 477-1169. Email hello@boiseremodeling.co.
+Public representative: Nick Perkins. Service-area business based at 4031 W Wapoot St, Meridian, ID 83646 (not a staffed storefront). Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215, bonded and insured.
 
 ## About
 
-Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means design direction, estimating, permitting and construction are delivered by one team under one contract, which removes the handoff between a designer and a general contractor and keeps the drawings and the budget on the same schedule. Every project includes a written scope before construction, a dedicated project manager, a written progress update every Friday, and a workmanship guarantee at completion.
+Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means design direction, estimating, permitting and construction are delivered by one team under one contract, which removes the handoff between a designer and a general contractor and keeps the drawings and the budget on the same schedule. Every project includes a written scope before construction, a dedicated project manager, a written progress update every Friday, and a workmanship guarantee at completion.
 
 - Business type: Residential design-build remodeling contractor
-- Founded: 2020
 - Parent company: P5 Home Co (https://p5homeco.com)
 - Service model: One accountable team for design, permits, and construction
 - Contact: hello@boiseremodeling.co (https://boiseremodeling.co/contact)
@@ -97,6 +96,7 @@ Neighborhood guides:
 
 - How much does a remodel cost in Boise? It depends on the room, the scope (refresh versus full gut and layout change) and the finish level far more than on square footage. The estimator gives a planning range in about a minute; the cost guide at /guides/boise-remodeling-cost-guide explains what moves the number.
 - How long does a remodel take? Design and selections typically run three to eight weeks, permitting one to four depending on jurisdiction, and construction from two to three weeks for a bathroom to several months for a whole-home renovation or addition.
+- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.
 - Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of the design-build contract, including the inspections that go with them.
 - Can I live in the house during the remodel? Usually, for kitchens, bathrooms and single rooms, with dust barriers and a daily cleanup routine. Whole-home projects sometimes phase the work so part of the house stays livable.
 - What is an RE-10? The Idaho inspection response form a buyer uses to request repairs before closing. We review the report, price the requested items in writing, complete the approved work and document it for the transaction file: https://boisehandyman.co/re-10-repairs-boise
