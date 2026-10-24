@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -177,4 +178,27 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
   assert.match(template, /testimonialsForPublish\(proof\?\.testimonials\)/);
   assert.equal(template.includes('proof.testimonials.map'), false);
   assert.equal(template.includes('proof?.testimonials.map'), false);
+});
+
+
+test('review bundle guard still rejects foreign reviews when ripgrep is unavailable', () => {
+  const directory = mkdtempSync(join(tmpdir(), 'review-bundle-'));
+  const script = fileURLToPath(new URL('../scripts/grep-client-reviews.mjs', import.meta.url));
+  try {
+    mkdirSync(join(directory, '.next/static/nested'), { recursive: true });
+    const bundle = join(directory, '.next/static/nested/chunk.js');
+    const scan = () => spawnSync(process.execPath, [script], {
+      cwd: directory, env: { ...process.env, PATH: join(directory, 'no-executables') }, encoding: 'utf8',
+    });
+    writeFileSync(bundle, 'Approved remodeling copy');
+    assert.equal(scan().status, 0);
+    for (const phrase of ['Lawn Care', 'taking care of our yard', 'Best Christmas light installation', 'recommended them to all our neighbors', 'beautiful patio in our backyard']) {
+      writeFileSync(bundle, phrase);
+      const result = scan();
+      assert.equal(result.status, 1, phrase);
+      assert.match(result.stderr, /client bundle contains forbidden review text/);
+    }
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
 });
