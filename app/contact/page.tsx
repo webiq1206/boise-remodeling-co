@@ -8,6 +8,7 @@ import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { SectionHeader } from '@/components/marketing/SectionHeader';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
+import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { SaveContactLink } from '@/components/SaveContactLink';
 import { StatementBandSection } from '@/components/sections/StatementBandSection';
@@ -32,6 +33,7 @@ import { areaPath } from '@/lib/seo-routes';
 import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import { TextReplyAnswer, TextReplyLine } from '@/components/TextReplyLine';
 import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
@@ -85,7 +87,7 @@ interface ContactChannelProps {
   href?: string;
   external?: boolean;
   children: React.ReactNode;
-  subtext: string;
+  subtext: React.ReactNode;
   featured?: boolean;
   /** Rendered below the card, outside any link wrapper (e.g. save-to-contacts). */
   companion?: React.ReactNode;
@@ -222,11 +224,12 @@ export default function ContactPage() {
                     Tell us about your{' '}
                     <em className="brc-accent">home</em>.
                   </h2>
-                  <p className="text-base leading-relaxed mb-8 text-muted-foreground">
+                  <p className="text-base leading-relaxed text-muted-foreground">
                     Send a few details and we will reach out within one business day to schedule
                     your free 60 to 90 minute in-home visit - planning guidance, design direction,
                     and no obligation.
                   </p>
+                  <TextReplyLine className="text-base leading-relaxed mb-8 mt-3 text-muted-foreground" />
                 </Reveal>
               </div>
               <MarketingCard className="interior-contact-form p-4 sm:p-7 md:p-10" padding="lg">
@@ -251,6 +254,7 @@ export default function ContactPage() {
               description="Call, text, or email. We come to you. We respond within one business day and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
+            <TextReplyLine className="text-base leading-relaxed mb-8 max-w-3xl text-muted-foreground" />
             <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
               <Reveal className="sm:col-span-2">
                 <ContactChannel
@@ -283,7 +287,12 @@ export default function ContactPage() {
                 <ContactChannel
                   icon={<Mail className="h-5 w-5" strokeWidth={1.5} />}
                   label="Email us"
-                  subtext="Response within one business day"
+                  subtext={
+                    <>
+                      Response within one business day
+                      <TextReplyLine as="span" className="mt-1.5 block" />
+                    </>
+                  }
                 >
                   <EmailLink className="text-base hover:text-foreground/70 transition-colors" />
                 </ContactChannel>
@@ -321,8 +330,8 @@ export default function ContactPage() {
           <div className="grid md:grid-cols-2 overflow-hidden">
             <div className="relative min-h-[260px] md:min-h-[520px] overflow-hidden bg-inverse order-2 md:order-1">
               <Image
-                src={SITE_IMAGES.leadership}
-                alt="Boise Remodeling Co team at a finished kitchen project"
+                src={SITE_IMAGES.aboutKitchen}
+                alt="Warm open kitchen with white oak cabinets, a large island and black-framed windows"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover img-brand-grade"
@@ -332,14 +341,6 @@ export default function ContactPage() {
                 className="absolute inset-0 pointer-events-none"
                 style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.028 }}
               />
-              <div className="absolute bottom-0 left-0 p-8 md:p-12">
-                <p className="ed-eyebrow" style={{ color: "rgb(255 255 255 / 0.72)" }}>Your free visit includes</p>
-                <p className="font-sans font-light text-xl md:text-2xl text-inverse-foreground">
-                  No pressure.
-                  <br />
-                  No pitch. Just answers.
-                </p>
-              </div>
             </div>
 
             <div className="section-y-sm px-8 md:px-14 lg:px-16 bg-card border-l border-border order-1 md:order-2">
@@ -360,7 +361,12 @@ export default function ContactPage() {
                     <li key={bullet}>
                       <div className="flex items-start gap-3 py-4">
                         <Check className="h-4 w-4 text-accent-legible flex-shrink-0 mt-0.5" />
-                        <span className="text-base text-foreground">{bullet}</span>
+                        <span className="text-base text-foreground">
+                          {bullet}
+                          {bullet === "Response within one business day" ? (
+                            <TextReplyLine as="span" className="mt-1.5 block text-muted-foreground" />
+                          ) : null}
+                        </span>
                       </div>
                       {i < CONSULT_BULLETS.length - 1 && (
                         <Hairline spaced={false} className="my-0" />
@@ -396,7 +402,7 @@ export default function ContactPage() {
                       {faq.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-sm leading-relaxed pb-6 text-muted-foreground">
-                      {faq.answer}
+                      {faq.answer.includes("Prefer to text?") ? <TextReplyAnswer answer={faq.answer} /> : <RegistrationText text={faq.answer} />}
                     </AccordionContent>
                   </AccordionItem>
                 ))}

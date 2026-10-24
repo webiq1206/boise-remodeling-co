@@ -219,10 +219,10 @@ const ENTRIES = {
     source: "city-service",
   },
   "whole-home-remodel-timeline": {
-    hero: cs("whole-home-remodel", "star"),
-    alt: "Whole-home remodel showing phased construction in a Star-area residence",
-    topicTags: ["whole-home", "timeline", "star"],
-    source: "city-service",
+    hero: "/images/blog/whole-home-rough-in.webp",
+    alt: "Interior stripped to the studs with new wiring and floor protection during a whole-home renovation",
+    topicTags: ["whole-home", "timeline", "boise"],
+    source: "blog",
   },
   "living-through-a-remodel": {
     hero: gal("whole-home-before"),

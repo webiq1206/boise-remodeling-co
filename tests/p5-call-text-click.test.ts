@@ -190,7 +190,7 @@ test("Clarity masks the form containers and Meta autoconfig is off before init",
   ];
   for (const file of files) {
     const source = readFileSync(new URL(file, root), "utf8");
-    assert.equal(source.includes('data-clarity-mask="true"'), true, file);
+    assert.match(source, /data-clarity-mask="[Tt]rue"/, file);
   }
   const consult = readFileSync(new URL("components/ConsultationForm.tsx", root), "utf8");
   assert.match(consult, /<form\s+data-clarity-mask="true"/);

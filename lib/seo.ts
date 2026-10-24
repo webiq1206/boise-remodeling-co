@@ -7,6 +7,11 @@
 import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
+import {
+  publicPreviewPath,
+  SHOW_FOUNDED_YEAR,
+  SHOW_UNPROVEN_TOP_RATED,
+} from '@/shared/foundingClaim';
 
 interface SEOMetaData {
   title: string;
@@ -157,7 +162,8 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   const phone = SITE_CONFIG.phone;
   
   if (params.isHomePage) {
-    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured, top-rated. Call ${phone}.`;
+    const ratingClaim = SHOW_UNPROVEN_TOP_RATED ? ', top-rated' : '';
+    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured${ratingClaim}. Call ${phone}.`;
   }
   
   if (city && serviceName) {
@@ -306,7 +312,8 @@ export const DEFAULT_OG_IMAGE_PATH = '/images/og-default.png';
  * Absolute URL for the default Open Graph image.
  */
 export function getDefaultOgImage(): string {
-  return `${getBaseUrl().replace(/\/$/, '')}${DEFAULT_OG_IMAGE_PATH}`;
+  const path = SHOW_FOUNDED_YEAR ? DEFAULT_OG_IMAGE_PATH : publicPreviewPath();
+  return `${getBaseUrl().replace(/\/$/, '')}${path}`;
 }
 
 /**
@@ -389,7 +396,7 @@ export function generateSEOMetadata(params: ServiceSEOParams): SEOMetaData {
     ogDescription: description,
     // A 1200x630 card, not the square seal: this feeds summary_large_image,
     // where a square logo gets letterboxed or cropped to a sliver.
-    ogImage: `${baseUrl}/images/og-default.png`,
+    ogImage: getDefaultOgImage(),
     twitterCard: 'summary_large_image',
   };
 }

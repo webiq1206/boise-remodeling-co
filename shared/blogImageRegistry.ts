@@ -244,8 +244,8 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
     source: 'blog',
   },
   'whole-home-remodel-timeline': {
-    hero: '/images/blog/whole-home-remodel-timeline.webp',
-    alt: 'Whole-home renovation in progress, an interior stripped to the studs with new wiring and floor protection in a Boise house',
+    hero: '/images/blog/whole-home-rough-in.webp',
+    alt: 'Interior stripped to the studs with new wiring and floor protection during a whole-home renovation',
     topicTags: ["whole-home","timeline","boise"],
     source: 'blog',
   },

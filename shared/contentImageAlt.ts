@@ -40,6 +40,10 @@ const PATH_ALT: Record<string, string> = {
   '/images/kitchen-in-progress.webp': 'Kitchen during a remodel, with open cabinets and work underway',
   '/images/process-design-review.webp': 'People reviewing drawings and material samples at a table',
   '/images/hero-remodel-interior.webp': 'Open kitchen and living space with warm wood and stone',
+  '/images/about-oak-kitchen.webp':
+    'Warm open kitchen with white oak cabinets, a large island and black-framed windows',
+  '/images/blog/whole-home-rough-in.webp':
+    'Interior stripped to the studs with new wiring and floor protection during a whole-home renovation',
 };
 
 export function contentImageAlt(src: string | undefined, fallback = 'Photograph of a home interior'): string {

@@ -286,6 +286,7 @@ export function TextField({
         {optionalHint && !required ? <span className="text-inverse-muted/70">Optional</span> : null}
       </label>
       <input
+        data-clarity-mask="True"
         id={fieldId}
         type={type}
         value={value}
