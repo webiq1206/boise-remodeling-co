@@ -41,8 +41,9 @@ test('interior CSS follows the original family and system layers', () => {
   assert.ok(styles.indexOf('./approved-interiors.css') < styles.indexOf('./audit-accessibility.css'), 'accessibility corrections override the presentation layers');
 });
 
-test('contact hero puts the estimate before the secondary consultation link', () => {
+test('contact hero requests a quote on the visit form before the consultation link', () => {
   const source = read('app/contact/page.tsx');
-  assert.match(source, /interior-contact-actions[\s\S]*?<InteriorEstimateLink\s*\/>[\s\S]*?href="#consult"/);
-  assert.match(read('components/approved/InteriorLayout.tsx'), /href="\/estimate"/);
+  assert.match(source, /interior-contact-actions[\s\S]*?<InteriorEstimateLink label="Request a quote" href="\/contact#consult"\s*\/>[\s\S]*?href="#consult"/);
+  assert.doesNotMatch(source, /Get my online estimate|href="\/estimate"/);
+  assert.match(read('components/approved/InteriorLayout.tsx'), /href='\/estimate'/);
 });

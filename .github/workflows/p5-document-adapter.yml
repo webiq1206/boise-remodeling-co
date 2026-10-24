@@ -2,9 +2,9 @@ name: P5 document adapter verification
 on:
   push:
     branches: [main, fix/shared-document-service-hardening-20260917]
-    paths: ['lib/p5/**', 'scripts/*document*', 'tests/p5-*.test.ts', '.github/workflows/p5-document-adapter.yml']
+    paths: ['lib/p5/**', 'scripts/*document*', 'scripts/grep-client-reviews.mjs', 'tests/client-review-guard.test.mjs', 'tests/p5-*.test.ts', '.github/workflows/p5-document-adapter.yml']
   pull_request:
-    paths: ['lib/p5/**', 'scripts/*document*', 'tests/p5-*.test.ts', '.github/workflows/p5-document-adapter.yml']
+    paths: ['lib/p5/**', 'scripts/*document*', 'scripts/grep-client-reviews.mjs', 'tests/client-review-guard.test.mjs', 'tests/p5-*.test.ts', '.github/workflows/p5-document-adapter.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -45,6 +45,7 @@ jobs:
       - name: Production build with remote mode disabled
         run: |
           set -o pipefail
+          node --test tests/client-review-guard.test.mjs
           npm run build 2>&1 | tee document-adapter-verification/build.log
       - name: Confirm maintained source remains unchanged
         run: |

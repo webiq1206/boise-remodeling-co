@@ -18,11 +18,19 @@ test('every sitemap page shows the registration line, plain text on the estimate
   assert.ok(paths.includes('/estimate'));
   for (const path of paths) {
     const mode = registrationPresentation(path);
+    // BOT-05 omits contractor #8381215 on the bathroom service page only.
+    if (path === '/services/bathroom-remodel') {
+      assert.equal(mode, 'hidden', path);
+      continue;
+    }
     assert.notEqual(mode, 'hidden', path);
     if (path === '/estimate' || path.startsWith('/estimate/')) {
       assert.equal(mode, 'plain', path);
     }
   }
+  assert.equal(registrationPresentation('/services/bathroom-remodel'), 'hidden');
+  assert.equal(registrationPresentation('/services/bathroom-remodel/'), 'hidden');
+  assert.equal(registrationPresentation('/services/bathroom-remodel/boise'), 'link');
   assert.equal(registrationPresentation('/'), 'link');
   assert.equal(registrationPresentation('/areas/boise'), 'link');
   assert.equal(registrationPresentation('/estimate'), 'plain');
@@ -41,6 +49,10 @@ test('the footer links the registration line and the funnel prints it as plain t
   assert.equal(linked.includes('License details available upon request'), false);
   assert.equal(/8381215\s*\(/.test(linked), false);
   assert.equal(linked.includes('Easy Home'), false);
+
+  const hiddenFooter = renderToStaticMarkup(React.createElement(Footer, { hideRegistration: true }));
+  assert.equal(hiddenFooter.includes('8381215'), false);
+  assert.equal(hiddenFooter.includes('Idaho Registered Contractor'), false);
 
   const plain = renderToStaticMarkup(React.createElement(RegistrationLine, { plain: true }));
   assert.equal(plain.includes(REGISTRATION_LINE), true);
