@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
  * Progress beacon for estimators and lead forms. Idempotent upsert keyed by the
  * browser's pseudonymous session id; the client sends it on step changes, on a
  * slow heartbeat, and via sendBeacon when the page is hidden. Every call also
- * gives the abandonment sweep a chance to run (throttled), so the feature needs
- * no external scheduler to send summaries.
+ * gives the session sweep a chance to run (throttled) so old rows expire
+ * without a separate scheduler. The sweep does not email partial completions.
  */
 const schema = z.object({
   sessionId: z.string().regex(SESSION_ID_RE),
