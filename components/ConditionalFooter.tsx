@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Footer } from "@/components/Footer";
-import { RegistrationLine } from "@/components/RegistrationLine";
+import { RegistrationLine, registrationPresentation } from "@/components/RegistrationLine";
 import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
 import { isPortalPath } from "@/lib/portalRoutes";
 
@@ -23,5 +23,5 @@ export function ConditionalFooter() {
       </div>
     );
   }
-  return <Footer />;
+  return <Footer hideRegistration={registrationPresentation(pathname) === "hidden"} />;
 }
