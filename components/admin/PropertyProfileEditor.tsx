@@ -86,7 +86,7 @@ export function PropertyProfileEditor({
   }
 
   return (
-    <Card data-testid="property-profile-editor">
+    <Card data-testid="property-profile-editor" data-clarity-mask="true">
       <CardHeader>
         <CardTitle className="text-base">Property data</CardTitle>
         <p className="text-xs text-muted-foreground">

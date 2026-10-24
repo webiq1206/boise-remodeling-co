@@ -416,7 +416,7 @@ export function AdminSubcontractorPanel() {
 
       {/* Add Credits Dialog */}
       <Dialog open={!!creditDialogSub} onOpenChange={(open) => { if (!open) { setCreditDialogSub(null); setCreditAmount(""); setCreditDescription(""); } }}>
-        <DialogContent className="max-w-sm" data-testid="modal-add-credits">
+        <DialogContent className="max-w-sm" data-testid="modal-add-credits" data-clarity-mask="true">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <DollarSign className="h-5 w-5" />

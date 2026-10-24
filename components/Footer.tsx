@@ -1,6 +1,5 @@
 
 import { BusinessPhoneLink } from "@/components/BusinessPhoneContact";
-import { RegistrationLink } from "@/components/RegistrationLink";
 import { EmailLink } from "@/components/EmailLink";
 import { SaveContactLink } from "@/components/SaveContactLink";
 import { ApprovedBrand } from "@/components/approved/ApprovedBrand";
@@ -10,6 +9,7 @@ import { areaPath,servicePath } from "@/lib/seo-routes";
 import { CITIES,SERVICES } from "@/shared/contentData";
 import { CONTENT_HUBS,guidePath } from "@/shared/contentHubs";
 import { GUIDE_PAGES } from "@/shared/guideContent";
+import { RegistrationLine } from "@/components/RegistrationLine";
 import { publicFooterLine, SITE_CONFIG } from "@/shared/siteConfig";
 import { SITE_TAGLINE } from "@/shared/siteContent";
 import { ChevronDown,Facebook } from "lucide-react";
@@ -119,7 +119,7 @@ export function Footer() {
   const groups = buildFooterGroups();
 
   return (
-    <footer className="bg-inverse text-inverse-foreground pb-[calc(96px+env(safe-area-inset-bottom))] lg:pb-0">
+    <footer className="site-footer bg-inverse text-inverse-foreground">
       <div className="container px-4 py-16 md:py-20">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.35fr_repeat(3,1fr)] lg:gap-0 lg:divide-x lg:divide-inverse-foreground/10 [&>*]:lg:px-8 [&>*:first-child]:lg:pl-0 [&>*:last-child]:lg:pr-0">
           <div className="pb-2 lg:pb-0">
@@ -200,8 +200,8 @@ export function Footer() {
         <div className="flex flex-col gap-4 pt-5 text-xs text-inverse-muted sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             <span>&copy; {currentYear} Boise Remodeling Co. All rights reserved.</span>
-            <span>
-              <RegistrationLink className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" />
+            <span className="basis-full overflow-visible whitespace-normal break-words">
+              <RegistrationLine />
             </span>
             {/* Required parent-company disclosure. This brand is a DBA of
                 P5 Home Co LLC, not a separate company. */}

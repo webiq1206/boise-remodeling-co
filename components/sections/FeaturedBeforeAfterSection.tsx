@@ -28,7 +28,7 @@ export function FeaturedBeforeAfterSection({
           className="mb-8 max-w-3xl"
         />
         <Reveal>
-          <MarketingCard className="overflow-hidden p-0">
+          <MarketingCard padding="none" className="overflow-hidden">
             <ProjectInspirationImage
               beforeSrc={project.beforeImageUrl}
               afterSrc={project.afterImageUrl}

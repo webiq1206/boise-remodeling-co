@@ -7,7 +7,8 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { SHOW_FOUNDED_YEAR, SHOW_UNPROVEN_PROJECT_COUNT } from "@/shared/foundingClaim";
+import { SHOW_UNPROVEN_PROJECT_COUNT } from "@/shared/foundingClaim";
+import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
 
 export const SITE_TAGLINE = "Treasure Valley design-build, built on clarity and craftsmanship";
 
@@ -105,15 +106,17 @@ export const PROOF_STATS = {
  * trust signals the business carries. No review counts or ratings until real
  * ones exist. Keep labels concise so the strip stays on one desktop row.
  */
-export const TRUST_ITEMS = [
+const TRUST_ITEM_SOURCE = [
   `Est. ${PROOF_STATS.established}`,
   `${PROOF_STATS.projectsCompleted} Projects`,
   "Bonded · Insured",
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
-].filter((item) => {
-  if (!SHOW_FOUNDED_YEAR && item === `Est. ${PROOF_STATS.established}`) return false;
+] as const;
+
+export const TRUST_ITEMS: readonly string[] = TRUST_ITEM_SOURCE.filter((item) => {
+  if (!SHOW_FOUNDING_YEAR && /^est\.?\s*2020$/i.test(item)) return false;
   if (!SHOW_UNPROVEN_PROJECT_COUNT && item === `${PROOF_STATS.projectsCompleted} Projects`) return false;
   return true;
 });

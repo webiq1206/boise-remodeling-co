@@ -6,7 +6,8 @@ import {schemaTime} from './schemaTime';
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
-import { publicFoundedYear, publicLogoPath, publishFoundingCopy } from '@/shared/foundingClaim';
+import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
+import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 
 interface SchemaContext {
   '@context': string;
@@ -54,22 +55,10 @@ export const P5_PARENT_ORGANIZATION = {
   url: P5_ORIGIN,
 } as const;
 /**
- * THE SEAL ON ITS OWN CHARCOAL DISC, NOT THE TRANSPARENT BONE ONE.
- *
- * This URL goes into `Organization.logo` and every `ImageObject` below, which
- * means Google renders it on surfaces we do not control and which are usually
- * white. The dark/ seal is bone ink (#F7F5F3) on transparency, so on a white
- * knowledge panel it would be an invisible square. The `any/` variant carries
- * its own charcoal disc and reads correctly on any background, which is exactly
- * what the brand kit says the `any/` set is for.
- *
- * 512px square: comfortably above Google's 112px floor, and square suits the
- * panel and rich-result crops better than a wide wordmark would.
- *
- * While SHOW_FOUNDED_YEAR is off, the seal is withheld because its lower arc
- * reads EST 2020. The icon is the existing square mark without that year.
+ * Year-free square mark. The seal still reads EST 2020, so schema logo uses
+ * this icon instead. Square, and above Google's 112px floor.
  */
-const LOGO_URL = `${baseUrl}${publicLogoPath()}`;
+const LOGO_URL = `${baseUrl}/brand/search-icon-180.png`;
 
 /**
  * Generate LocalBusiness schema for homepage and location pages
@@ -196,7 +185,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
       name: area,
       ...(CITY_WIKIPEDIA[area] ? { sameAs: CITY_WIKIPEDIA[area] } : {}),
     })),
-    ...(BUSINESS_INFO.reviewCount > 0
+    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -207,7 +196,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
           },
         }
       : {}),
-    ...(publicFoundedYear() ? { foundingDate: publicFoundedYear() } : {}),
+    ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     slogan: 'Boise\'s Design-Build Remodeling Company',
     paymentAccepted: 'Cash, Credit Card, Check, Financing',
     currenciesAccepted: 'USD',
@@ -320,8 +309,8 @@ export function generateOrganizationSchema(): SchemaContext {
       '@type': 'ImageObject',
       url: LOGO_URL,
     },
-    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Idaho Registered Contractor #8381215, insured, and committed to excellence.'),
-    ...(publicFoundedYear() ? { foundingDate: publicFoundedYear() } : {}),
+    description: publishFoundingCopy('Design-build remodeling contractor serving the Treasure Valley since 2020. Kitchen remodels, bathrooms, additions, and whole-home renovations. Idaho Registered Contractor #8381215, bonded, and insured, and committed to excellence.'),
+    ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     // founder is gated: only emitted once a real named founder is supplied in
     // BUSINESS_INFO.founderName (see seo-audit/trust-signal-map.md).
     ...(BUSINESS_INFO.founderName
@@ -367,10 +356,10 @@ export function generateReviewSchema(reviews: Array<{
     '@type': [...CONTRACTOR_TYPES],
     '@id': LOCALBUSINESS_ID,
     name: BUSINESS_INFO.name,
-    // AggregateRating is gated on a real, populated review count. Emitting a
-    // zero/empty rating would publish a misleading 0-star signal, so it is only
-    // included once BUSINESS_INFO.rating/reviewCount reflect genuine reviews.
-    ...(BUSINESS_INFO.reviewCount > 0
+    // Ratings and reviews publish only when SHOW_TESTIMONIALS is on and the
+    // count is a real populated number. A zero count would publish a
+    // misleading 0-star signal, so it stays omitted.
+    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
             '@type': 'AggregateRating',
@@ -381,21 +370,25 @@ export function generateReviewSchema(reviews: Array<{
           },
         }
       : {}),
-    review: reviews.map(review => ({
-      '@type': 'Review',
-      author: {
-        '@type': 'Person',
-        name: review.author,
-      },
-      ...(review.date ? { datePublished: review.date } : {}),
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: review.rating,
-        bestRating: 5,
-        worstRating: 1,
-      },
-      reviewBody: review.text,
-    })),
+    ...(SHOW_TESTIMONIALS
+      ? {
+          review: reviews.map(review => ({
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: review.author,
+            },
+            ...(review.date ? { datePublished: review.date } : {}),
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: review.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+            reviewBody: review.text,
+          })),
+        }
+      : {}),
   };
 }
 

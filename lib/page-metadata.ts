@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import {
   generateCityServiceDescription,
@@ -9,7 +10,6 @@ import {
   getBaseUrl,
   getDefaultOgImage,
 } from './seo';
-import { publishFoundingCopy } from '@/shared/foundingClaim';
 
 
 export type PageMetaKind =
@@ -262,8 +262,8 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
 
   // The root layout template appends "| Boise Remodeling Co"; ensure the child
   // title never carries the brand itself (prevents duplicated brand in <title>).
-  title = publishFoundingCopy(fitTitle(stripBrandSuffix(title)));
-  description = publishFoundingCopy(fitDescription(description));
+  title = fitTitle(stripBrandSuffix(publishFoundingCopy(title)));
+  description = fitDescription(publishFoundingCopy(description));
 
   const ogImage = getDefaultOgImage();
 

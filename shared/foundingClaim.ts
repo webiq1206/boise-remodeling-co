@@ -3,11 +3,12 @@
  * filed 09/25/2025. The year stays in the repo. Public pages, meta, llms
  * files, and JSON-LD omit it while this flag is false.
  */
-export const SHOW_FOUNDED_YEAR = false;
+import { SHOW_FOUNDING_YEAR } from './publicClaims';
+export { publishFoundingCopy, SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from './publicClaims';
+export const SHOW_FOUNDED_YEAR = SHOW_FOUNDING_YEAR;
 
 /** Unproven marketing claims. Source strings stay. Public copy omits them while these are false. */
 export const SHOW_UNPROVEN_TOP_RATED = false;
-export const SHOW_UNPROVEN_SATISFACTION_GUARANTEE = false;
 export const SHOW_UNPROVEN_PROJECT_COUNT = false;
 
 export const FOUNDED_YEAR = '2020';
@@ -29,23 +30,4 @@ export function publicLogoPath(): string {
 
 export function publicPreviewPath(): string {
   return SHOW_FOUNDED_YEAR ? SEAL_PREVIEW_PATH : PUBLIC_PREVIEW_PATH;
-}
-
-/** Publish a string that may contain the unproven 2020 founding claim. */
-export function publishFoundingCopy(text: string): string {
-  if (SHOW_FOUNDED_YEAR || !text) return text;
-  return text
-    .replace(/\bEst\. 2020\b/g, '')
-    .replace(/, founded in 2020 and part of P5/g, ' and part of P5')
-    .replace(/ founded in 2020 and part of P5/g, ' and part of P5')
-    .replace(/\bfounded in 2020 and part of P5/g, 'part of P5')
-    .replace(/\bsince 2020\b/g, '')
-    .replace(/Founded in 2020\. /g, '')
-    .replace(/Founded in 2020, /g, '')
-    .replace(/Founded 2020, /g, '')
-    .replace(/, founded 2020,/g, ',')
-    .replace(/\. part of P5/g, '. Part of P5')
-    .replace(/[ \t]{2,}/g, ' ')
-    .replace(/\s+([,.])/g, '$1')
-    .trim();
 }

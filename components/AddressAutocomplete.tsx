@@ -227,7 +227,7 @@ export function AddressAutocomplete({
     [ariaDescribedBy, error ? errorId : null].filter(Boolean).join(" ") || undefined;
 
   return (
-    <div ref={containerRef} className={cn("space-y-3", className)}>
+    <div ref={containerRef} className={cn("space-y-3", className)} data-clarity-mask="true">
       <div className="relative">
         <Input
           id={id}

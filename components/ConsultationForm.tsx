@@ -318,7 +318,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
       : null;
 
     return (
-      <div className="flex flex-col items-start py-2 space-y-4" data-testid="consultation-success">
+      <div className="flex flex-col items-start py-2 space-y-4" data-testid="consultation-success" data-clarity-mask="true">
         {/* Stacked emblem confirms the brand on the request-received state */}
         <img
           src="/brand/svg/icon/boise-remodeling-co-icon-bone.svg"
@@ -328,7 +328,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
           height={48}
           className="h-12 w-12"
         />
-        <div>
+        <div data-clarity-mask="true">
           <h3
             ref={successHeadingRef}
             tabIndex={-1}
@@ -406,6 +406,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         submitted={success}
       />
       <form
+        data-clarity-mask="true"
         onSubmit={form.handleSubmit((data) => {
           setSubmitted(data);
           mutation.mutate(data);

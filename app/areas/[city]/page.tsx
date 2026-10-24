@@ -3,6 +3,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import type { LandingProof,LandingSection } from '@/components/seo/LandingPageTemplate';
 import { LandingPageTemplate } from '@/components/seo/LandingPageTemplate';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { publishFoundingCopy } from '@/shared/publicClaims';
 import {
 landingAreaBusinessSchema,
 landingBreadcrumbs,
@@ -12,7 +13,6 @@ import { buildPageMetadata } from '@/lib/page-metadata';
 import { permitGuidance, permitSource } from '@/lib/permitGuidance';
 import { generateSpeakableSchema } from '@/lib/schema';
 import { CITY_SEO_DATA } from '@/lib/seo';
-import { publishFoundingCopy } from '@/shared/foundingClaim';
 import { areaPath,CITY_SLUGS,getCityBySlug } from '@/lib/seo-routes';
 import { getAreaImageSet } from '@/shared/cityServiceImages';
 import { getCountyLabel,SERVICES } from '@/shared/contentData';
@@ -50,7 +50,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
   const county = getCountyLabel(city.county);
   const path = areaPath(city.slug);
   const answerFirst = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
-    ? `Boise Remodeling Co is a design-build remodeling contractor in ${city.name}, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. The first figures are budget ranges, not quotes. `
+    ? `${publishFoundingCopy(`Boise Remodeling Co is a design-build remodeling contractor in ${city.name}, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. The first figures are budget ranges, not quotes.`)} `
     : '';
   const overview = publishFoundingCopy(`${answerFirst}${getAreaIntro(city)}`);
   const images = getAreaImageSet(city.slug);

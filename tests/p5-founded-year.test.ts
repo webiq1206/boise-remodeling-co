@@ -42,7 +42,7 @@ test('the 2020 founding year stays in source and stays off the public flag', () 
   assert.equal(TRUST_ITEMS.includes(`Est. ${PROOF_STATS.established}`), false);
   const aboutSource = readFileSync('app/about/page.tsx', 'utf8');
   assert.match(aboutSource, /founded in 2020/);
-  assert.match(aboutSource, /since <em className="brc-accent">2020<\/em>/);
+  assert.match(aboutSource, /since\{\x27 \x27\}\s*<em className="brc-accent">2020<\/em>/);
   assert.match(readFileSync('lib/page-metadata.ts', 'utf8'), /founded 2020/);
   assert.match(readFileSync('shared/gbpProfile.ts', 'utf8'), /Founded in 2020/);
 });

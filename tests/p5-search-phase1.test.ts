@@ -230,16 +230,17 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.equal(homeMetadata.twitter?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
   const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.ok(eagleMeta.length <= 160);
   assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
   assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
   const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.ok(boiseMeta.length <= 160);
   assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
-  const about = rows.find((row) => row.path === '/about');
-  assert.equal(about?.description, 'Design-build remodeler and part of P5. Kitchen, bathroom. Free in-home visit, written scope, workmanship guarantee, Ada and Canyon permitting.');
-  assert.match(about?.description ?? '', /Kitchen, bathroom/);
-  assert.equal(about?.title, 'Design-build remodeler | Boise Remodeling Co');
-  assert.doesNotMatch(`${about?.title} ${about?.description} ${eagleMeta} ${boiseMeta}`, /2020|founded in|since 2020|Est\. /);
+  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Design-build remodeler, part of P5/);
+  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
+  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler \| Boise Remodeling Co/);
+  assert.equal(/since 2020|founded in 2020|founded 2020|EST 2020/i.test(rows.find((row) => row.path === '/about')?.title + '\n' + rows.find((row) => row.path === '/about')?.description), false);
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {

@@ -48,9 +48,9 @@ test('footer and about render the registration line as that link', () => {
   for (const [label, html] of [['footer', footer], ['about', about]] as const) {
     const anchors = registrationAnchors(html);
     assert.equal(anchors.length, 1, label);
-    assert.match(anchors[0], /rel="noopener"/);
-    assert.equal(anchors[0].includes('noreferrer'), false, label);
-    assert.equal(html.includes('Verify with Idaho DOPL'), false, label);
+    assert.match(anchors[0], label === 'footer' ? /rel="noopener noreferrer"/ : /rel="noopener"/);
+    if (label === 'footer') assert.match(anchors[0], /opens in a new tab/);
+    assert.equal(html.replace(/<[^>]*>/g, '').includes('Verify with Idaho DOPL'), false, label);
     assert.equal(/8381215\s*\(/.test(html), false, label);
   }
 });

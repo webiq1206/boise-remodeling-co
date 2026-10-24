@@ -114,7 +114,7 @@ export function ClarifyInterview({
         : "What this is";
 
   return (
-    <div className="rounded-md border border-border bg-background p-5" data-testid="interview-question">
+    <div className="rounded-md border border-border bg-background p-5" data-testid="interview-question" data-clarity-mask="true">
       <div className="flex items-center justify-between gap-3">
         <span className="text-label font-semibold uppercase tracking-wide text-muted-foreground">
           {kindLabel}

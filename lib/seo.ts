@@ -4,12 +4,12 @@
  * for service and location pages
  */
 
+import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
 import {
   publicPreviewPath,
   SHOW_FOUNDED_YEAR,
-  SHOW_UNPROVEN_SATISFACTION_GUARANTEE,
   SHOW_UNPROVEN_TOP_RATED,
 } from '@/shared/foundingClaim';
 
@@ -131,20 +131,20 @@ export function generatePageTitle(params: ServiceSEOParams): string {
 }
 
 const CITY_DESCRIPTION_VARIANTS: Record<string, string> = {
-  Kuna: "Kuna design-build",
+  Kuna: "Kuna's design-build",
   Boise: "Boise's design-build",
-  Meridian: "Meridian",
+  Meridian: "Meridian's",
   Eagle: "Eagle's preferred",
   Star: "Star's reliable",
   Middleton: "Middleton's expert",
-  Nampa: "Nampa",
-  Caldwell: "Caldwell",
+  Nampa: "Nampa's",
+  Caldwell: "Caldwell's",
 };
 
 const CITY_CTA_VARIANTS: Record<string, string> = {
   Kuna: "Free in-home consultation",
   Boise: "Treasure Valley design-build",
-  Meridian: "Permits handled in-house",
+  Meridian: "Bonded and insured",
   Eagle: "Clear written scope",
   Star: "Weekly project updates",
   Middleton: "Workmanship guarantee",
@@ -162,15 +162,15 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   const phone = SITE_CONFIG.phone;
   
   if (params.isHomePage) {
-    const topRated = SHOW_UNPROVEN_TOP_RATED ? ", top-rated" : "";
-    return `Design-build remodeling contractor serving Boise, Meridian, Eagle & the Treasure Valley. Idaho Registered Contractor #8381215, insured${topRated}. Call ${phone} for your free consultation!`;
+    const ratingClaim = SHOW_UNPROVEN_TOP_RATED ? ', top-rated' : '';
+    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured${ratingClaim}. Call ${phone}.`;
   }
   
   if (city && serviceName) {
     const serviceLC = serviceName.toLowerCase();
-    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || city;
+    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || `${city}'s`;
     const ctaVariant = CITY_CTA_VARIANTS[city] || (SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? "Satisfaction guaranteed" : "Free in-home consultation");
-    return `${cityVariant} ${serviceLC} team. Idaho Registered Contractor #8381215 & insured. ${ctaVariant}. Call ${phone} for a free consultation!`;
+    return `${cityVariant} ${serviceLC} team. Idaho Registered Contractor #8381215. ${ctaVariant}. Call ${phone}.`;
   }
   
   if (city) {
@@ -178,12 +178,12 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   }
   
   if (!serviceName) {
-    return `Professional remodeling contractor in Boise & Treasure Valley. Idaho Registered Contractor #8381215, insured. Call ${phone} for a free consultation.`;
+    return `Professional remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured. Call ${phone}.`;
   }
   
   const serviceLC = serviceName.toLowerCase();
   const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
-  return `Expert ${serviceLC} in Boise & the Treasure Valley. Idaho Registered Contractor #8381215, insured${guarantee}. Call ${phone} for a free consultation!`;
+  return `Expert ${serviceLC} in Boise & the Treasure Valley. Idaho Registered Contractor #8381215, bonded & insured${guarantee}. Call ${phone} for a free consultation!`;
 }
 
 /**
@@ -223,24 +223,24 @@ export function generateCityServiceDescription(
 ): string {
   const phone = SITE_CONFIG.phone;
   const serviceLC = serviceName.toLowerCase();
-  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || "Local";
+  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || `${cityName}'s`;
   const cityData = CITY_SEO_DATA[cityName as keyof typeof CITY_SEO_DATA];
   const neighborhood = cityData?.neighborhoods?.[0];
 
   if (neighborhood) {
-    const withNeighborhood = `${cityVariant} ${serviceLC}. Serving ${neighborhood} & all ${cityName}. Idaho Registered Contractor #8381215 & insured. Call ${phone}!`;
+    const withNeighborhood = `${cityVariant} ${serviceLC}. Serving ${neighborhood} & all ${cityName}. Idaho Registered Contractor #8381215. Call ${phone}!`;
     if (withNeighborhood.length <= 160) return withNeighborhood;
   }
 
   if (shortDescription) {
-    const desc = `${cityVariant} ${serviceLC}. ${shortDescription}. Idaho Registered Contractor #8381215 & insured. Call ${phone}!`;
+    const desc = `${cityVariant} ${serviceLC}. ${shortDescription}. Idaho Registered Contractor #8381215. Call ${phone}!`;
     if (desc.length <= 160) return desc;
   }
 
-  const base = `${cityVariant} ${serviceLC} in ${cityName}, ID. Idaho Registered Contractor #8381215 & insured. Call ${phone} for a free quote!`;
+  const base = `${cityVariant} ${serviceLC} in ${cityName}, ID. Idaho Registered Contractor #8381215. Call ${phone}!`;
   if (base.length <= 160) return base;
 
-  return `${serviceLC} in ${cityName}, ID. Insured pros, Idaho Registered Contractor #8381215. Call ${phone} for a free quote today!`;
+  return `${serviceLC} in ${cityName}, ID. Idaho Registered Contractor #8381215. Call ${phone}.`;
 }
 
 /**
@@ -532,12 +532,12 @@ export const BUSINESS_INFO = {
     country: 'United States',
   },
   hours: {
-    monday: '7:00 AM - 6:00 PM',
-    tuesday: '7:00 AM - 6:00 PM',
-    wednesday: '7:00 AM - 6:00 PM',
-    thursday: '7:00 AM - 6:00 PM',
-    friday: '7:00 AM - 6:00 PM',
-    saturday: '8:00 AM - 4:00 PM',
+    monday: '9:00 AM - 6:00 PM',
+    tuesday: '9:00 AM - 6:00 PM',
+    wednesday: '9:00 AM - 6:00 PM',
+    thursday: '9:00 AM - 6:00 PM',
+    friday: '9:00 AM - 6:00 PM',
+    saturday: '9:00 AM - 4:00 PM',
     sunday: 'Closed',
   },
   founded: '2020',
@@ -545,7 +545,7 @@ export const BUSINESS_INFO = {
   serviceRadius: '35 miles',
   licenses: ['Idaho Registered Contractor #8381215'],
   certifications: ['Design-Build Remodeling', 'Bonded & Insured'],
-  insurance: 'Idaho Registered Contractor #8381215 & Insured',
+  insurance: 'Bonded and insured',
   rating: 0,
   reviewCount: 0,
   yearlyServicesCompleted: 0,
