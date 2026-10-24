@@ -32,6 +32,6 @@ export const CONTACT_FAQS: { question: string; answer: string }[] = [
   {
     question: "How do I get a cost estimate for my project?",
     answer:
-      "Use our online project estimator for a preliminary planning range, then book a free in-home visit for a written scope tailored to your home.",
+      "Book a free in-home visit for a preliminary planning range and a written scope tailored to your home. Photos ahead of the visit help us prepare.",
   },
 ];

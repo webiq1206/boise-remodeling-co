@@ -42,7 +42,7 @@ import Link from 'next/link';
 
 
 const SPEAKABLE_SUMMARY =
-  'Contact Boise Remodeling Co for a free consultation. Schedule a free 60 to 90 minute in-home visit, call our team, or use the project estimator to explore a planning range for your remodel.';
+  'Contact Boise Remodeling Co for a free consultation. Schedule a free 60 to 90 minute in-home visit, call our team, or request a quote and share photos so we can prepare a planning range for your remodel.';
 
 function HeroBreadcrumbs() {
   const items = [
@@ -184,8 +184,8 @@ export default function ContactPage() {
               <em className="brc-accent">Co</em>
             </h1>
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-6">
-              Schedule a free 60 to 90 minute in-home visit, call our team, or use the project
-              estimator to explore a planning range for your remodel.
+              Schedule a free 60 to 90 minute in-home visit, call our team, or request a quote
+              and share photos so we can prepare a planning range for your remodel.
             </p>
             <BusinessPhoneContact
               layout="stack"
@@ -201,7 +201,7 @@ export default function ContactPage() {
             >
               Prefer to text? Message us instead
             </a>
-            <div className="interior-contact-actions"><InteriorEstimateLink/><a href="#consult" className="interior-text-link">Request a consultation</a></div>
+            <div className="interior-contact-actions"><InteriorEstimateLink label="Request a quote" href="/contact#consult"/><a href="#consult" className="interior-text-link">Request a consultation</a></div>
             <dl className="ed-hero-facts">
               {HERO_STATS.map((stat) => (
                 <div key={stat.label}>
