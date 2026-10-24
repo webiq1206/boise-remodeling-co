@@ -1,45 +1,9 @@
 name: P5 interface and metadata verification
 on:
-  push:
-    branches: [fix/p5-interface-completion-20260917]
-  pull_request:
-    paths:
-      - 'app/**'
-      - 'components/**'
-      - 'hooks/**'
-      - 'lib/brand-page-metadata.ts'
-      - 'lib/page-metadata.ts'
-      - 'lib/seo.ts'
-      - 'lib/seo-keywords.ts'
-      - 'lib/seo-routes.ts'
-      - 'lib/siteUrls.ts'
-      - 'lib/schema.ts'
-      - 'lib/schemaTime.ts'
-      - 'lib/landing-schema.ts'
-      - 'shared/ctaCopy.ts'
-      - 'shared/seoContent.ts'
-      - 'shared/siteContent.ts'
-      - 'shared/contentData.ts'
-      - 'shared/contentHubs.ts'
-      - 'shared/contentImageAlt.ts'
-      - 'shared/guideContent.ts'
-      - 'shared/guideResources.ts'
-      - 'shared/homepageFaqs.ts'
-      - 'shared/blogContent.ts'
-      - 'shared/blogImageRegistry.ts'
-      - 'shared/blogOgImages.ts'
-      - 'shared/gbpProfile.ts'
-      - 'shared/resourcePdfContent.ts'
-      - 'shared/content/**'
-      - 'data/internal-links.json'
-      - 'public/llms.txt'
-      - 'public/llms-full.txt'
-      - 'public/brand/**'
-      - 'lib/p5/adaptive.ts'
-      - 'tests/p5-brand*.test.ts'
-      - 'scripts/verify-p5-mobile-seo.mjs'
-      - '.github/workflows/p5-mobile-seo.yml'
   workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, labeled, reopened]
+    branches: [main]
 permissions:
   contents: read
 concurrency:
@@ -47,6 +11,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   verify:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'full-ci')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
