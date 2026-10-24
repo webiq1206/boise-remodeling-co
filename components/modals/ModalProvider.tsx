@@ -33,7 +33,7 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       {children}
 
       <Dialog open={open === "consult"} onOpenChange={(v) => !v && close()}>
-        <DialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto" data-clarity-mask="true">
           <DialogHeader>
             <DialogTitle className="font-sans font-light text-xl text-foreground">
               Schedule your free in-home visit
@@ -50,7 +50,9 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
           header (not a dialog inside a dialog): it owns the screen with its
           own scroll area and bottom-anchored input, and Exit returns here. */}
       {open === "estimate" && (
-        <EstimateCalculator inModal sectionId="estimate-modal" onExit={close} onBookVisit={() => setOpen("consult")} />
+        <div data-clarity-mask="true" style={{ display: "contents" }}>
+          <EstimateCalculator inModal sectionId="estimate-modal" onExit={close} onBookVisit={() => setOpen("consult")} />
+        </div>
       )}
     </ModalsContext.Provider>
   );

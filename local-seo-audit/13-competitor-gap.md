@@ -25,7 +25,7 @@ Based on live SERP verification (June 10, 2026) for "kitchen remodeling Boise", 
 
 ### Where competitors win today
 1. **Reviews**: Renaissance 55+, Exquisite 86 (Houzz), Pristine 46 vs **our 0**. This is the entire Local Pack game and it is gated on GBP verification (02/08 plans).
-2. **Published credentials**: PlanPro and Ellett print their RCE registration numbers on-page; CCH leads with NARI awards. We print "license details available upon request". Direct confirmation of the 11-eeat-audit.md recommendation.
+2. **Published credentials**: PlanPro and Ellett print their RCE registration numbers on-page; CCH leads with NARI awards. We print Idaho Registered Contractor #8381215. Direct confirmation of the 11-eeat-audit.md recommendation.
 3. **Named humans**: Pristine's "Zach", Freimark's founder, PlanPro's principal appear in content and reviews. Our site had zero named people until this pass (founder section added).
 4. **Houzz presence**: the Meridian kitchen/bath SERP is heavily mediated by Houzz pack pages (88 pros listed). We are not on Houzz at all. Tier-2 citation priority confirmed.
 5. **Video**: Renaissance embeds an ADU build video. We have none.

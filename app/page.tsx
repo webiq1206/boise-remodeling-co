@@ -10,7 +10,8 @@ import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical,fitDescription } from "@/lib/page-metadata";
 import { CONSULT_BULLETS,SITE_TAGLINE } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
-import { Check } from "lucide-react";
+import { SITE_CONFIG } from "@/shared/siteConfig";
+import { ArrowUpRight, Check } from "lucide-react";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Image from "next/image";
@@ -57,7 +58,7 @@ export const metadata: Metadata = withBrandPageMetadata(({
 
 export default function HomePage() {
   return (
-    <div className="flex flex-col pb-20 md:pb-0 bg-background">
+    <div className="flex flex-col bg-background">
       {/* PAGE ORDER IS THE SALES CONVERSATION, IN THE ORDER A HOMEOWNER HAS IT.
 
           1. Hero            who we are, and the one action we want
@@ -81,6 +82,7 @@ export default function HomePage() {
       <HomePageSchema />
       <ApprovedHome hero={<ApprovedHomeHero />} />
       <BudgetInclusionsSection />
+      <div id="contact" className="scroll-mt-24" aria-hidden="true" />
       <Section id="consult" divider className="scroll-mt-16 relative overflow-hidden pb-28 md:pb-28">
         {/* Warm, dimmed lifestyle photo grounds the closing section. Directional
             scrims keep the left-column copy legible and fade the edges into the
@@ -136,6 +138,16 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
+                <div className="mt-6 grid border-t" style={{ borderColor: "var(--ed-line)" }}>
+                  <a href={SITE_CONFIG.phoneHref} className="flex min-h-12 items-center justify-between gap-4 border-b text-[0.9375rem] font-medium transition-colors hover:[color:var(--ed-accent)]" style={{ borderColor: "var(--ed-line)" }}>
+                    Call {SITE_CONFIG.phone}
+                    <ArrowUpRight className="h-4 w-4 shrink-0" style={{ color: "var(--ed-accent)" }} aria-hidden="true" />
+                  </a>
+                  <a href={SITE_CONFIG.phoneSmsHref} className="flex min-h-12 items-center justify-between gap-4 border-b text-[0.9375rem] font-medium transition-colors hover:[color:var(--ed-accent)]" style={{ borderColor: "var(--ed-line)" }}>
+                    Send a text
+                    <ArrowUpRight className="h-4 w-4 shrink-0" style={{ color: "var(--ed-accent)" }} aria-hidden="true" />
+                  </a>
+                </div>
               </Reveal>
             </div>
             <MarketingCard className="shadow-2xl" padding="lg">

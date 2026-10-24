@@ -99,7 +99,7 @@ export function HeroSection() {
           item is the same brand accent the eyebrow labels use. */}
       <div className="bg-accent-legible/[0.07] border-t border-accent-legible/25 py-8 md:py-10">
         <div className="container px-4">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 max-w-5xl mx-auto border-l border-t border-accent-legible/20">
+          <div className={`grid grid-cols-2 md:grid-cols-3 ${TRUST_ITEMS.length > 5 ? 'lg:grid-cols-6' : 'lg:grid-cols-5'} max-w-5xl mx-auto border-l border-t border-accent-legible/20`}>
             {TRUST_ITEMS.map((item, i) => (
               <div
                 key={item}

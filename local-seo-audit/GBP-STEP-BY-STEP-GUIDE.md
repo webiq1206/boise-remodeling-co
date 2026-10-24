@@ -24,12 +24,12 @@ Use these exact details everywhere — on Google, Yelp, Facebook, Instagram, Bin
 
 | Day | Hours |
 |-----|-------|
-| Monday | 7:00 AM - 6:00 PM |
-| Tuesday | 7:00 AM - 6:00 PM |
-| Wednesday | 7:00 AM - 6:00 PM |
-| Thursday | 7:00 AM - 6:00 PM |
-| Friday | 7:00 AM - 6:00 PM |
-| Saturday | 8:00 AM - 4:00 PM |
+| Monday | 9:00 AM - 6:00 PM |
+| Tuesday | 9:00 AM - 6:00 PM |
+| Wednesday | 9:00 AM - 6:00 PM |
+| Thursday | 9:00 AM - 6:00 PM |
+| Friday | 9:00 AM - 6:00 PM |
+| Saturday | 9:00 AM - 4:00 PM |
 | Sunday | Closed |
 
 ---
@@ -351,8 +351,8 @@ As of 2026, planning ranges run roughly $15,000 for a cosmetic refresh, $35,000-
 **Q5: How much does a bathroom remodel cost?**  
 Guest baths typically plan $18,000-$45,000; primary baths $35,000-$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide
 
-**Q6: Are you licensed and insured?**  
-Yes. Boise Remodeling Co is bonded and insured for residential remodeling across the Treasure Valley. Idaho contractor license details are available upon request.
+**Q6: Are you a registered contractor and insured?**  
+Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.
 
 **Q7: Do you build ADUs?**  
 Yes - attached, detached, and garage-conversion ADUs. Planning ranges from $90,000 for garage conversions to $180,000-$300,000+ for detached new builds. Guide: https://boiseremodeling.co/guides/boise-adu-guide
@@ -506,7 +506,7 @@ Either way, thank you again for choosing Boise Remodeling Co.
 ### Step 7.1 — Google messaging
 
 1. Confirm messaging is ON.
-2. Check messages daily during business hours (Mon-Fri 7-6, Sat 8-4).
+2. Check messages daily during business hours (Mon-Fri 9-6, Sat 9-4 MT).
 3. Confirm welcome message is set (see Phase 3, Step 3.1).
 
 ### Step 7.2 — Bing Places

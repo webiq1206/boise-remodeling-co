@@ -338,6 +338,15 @@ export function Navigation() {
           >
             <Phone className="h-5 w-5" strokeWidth={1.5} /><span className="text-xs font-medium">Call</span>
           </a>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("p5:assistant-open"))}
+            className="flex min-h-14 w-[76px] shrink-0 flex-col gap-1 items-center justify-center rounded-sm border border-border text-foreground hover-elevate active-elevate-2"
+            aria-label="Chat with our estimating assistant"
+            data-testid="button-chat-mobile"
+          >
+            <MessageSquare className="h-5 w-5" strokeWidth={1.5} /><span className="text-xs font-medium">Chat</span>
+          </button>
           <NavEstimateButton
             variant="brand"
             surface="mobile-sticky"

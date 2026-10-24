@@ -45,7 +45,7 @@ export default function EstimatePage() {
   ];
 
   return (
-    <>
+    <div data-clarity-mask="true" style={{ display: "contents" }}>
       <JsonLd data={schemas} />
       <h1 className="sr-only">Remodel Cost Estimator</h1>
 
@@ -54,6 +54,6 @@ export default function EstimatePage() {
           own scroll area and a bottom-anchored input, so nothing here scrolls
           into unrelated content. */}
       <EstimateCalculator fitViewport />
-    </>
+    </div>
   );
 }

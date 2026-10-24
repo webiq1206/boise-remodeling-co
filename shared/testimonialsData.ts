@@ -8,12 +8,19 @@ export interface TestimonialItem {
 
 /**
  * No real customer reviews exist yet. Do not fill this with fabricated
- * names/quotes to make the testimonials UI look populated - every consumer
- * of this array (TestimonialsSection, the /api/testimonials fallback) is
- * built to render nothing when it is empty, so the feature activates
- * automatically the day real reviews are added here.
+ * names or quotes. SHOW_TESTIMONIALS stays false until genuine reviews
+ * exist. The stored rows stay in the database. Public pages, schema, and
+ * /api/testimonials publish nothing while the flag is off.
  */
+export const SHOW_TESTIMONIALS = false;
+
 export const TESTIMONIALS: TestimonialItem[] = [];
+
+/** Quotes and ratings that may be shown. Empty while the flag is off. */
+export function testimonialsForPublish<T>(items: readonly T[] | undefined | null): T[] {
+  if (!SHOW_TESTIMONIALS || !items || items.length === 0) return [];
+  return [...items];
+}
 
 /**
  * Return testimonials that match a specific service + city, used to embed
@@ -24,12 +31,12 @@ export function getTestimonialsFor(
   serviceSlug: string,
   citySlug: string,
 ): TestimonialItem[] {
-  return TESTIMONIALS.filter(
+  return testimonialsForPublish(TESTIMONIALS).filter(
     (t) => t.serviceType === serviceSlug && t.city === citySlug,
   );
 }
 
 /** Return all testimonials for a city (any service). Used on area pages. */
 export function getTestimonialsForCity(citySlug: string): TestimonialItem[] {
-  return TESTIMONIALS.filter((t) => t.city === citySlug);
+  return testimonialsForPublish(TESTIMONIALS).filter((t) => t.city === citySlug);
 }
