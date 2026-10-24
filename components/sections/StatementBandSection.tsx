@@ -8,7 +8,7 @@ export function StatementBandSection() {
       <Image
         src={SITE_IMAGES.statementBand}
         unoptimized // The 110 KB source is already compressed for this photographic band.
-        alt="Warm open-concept great room and kitchen remodel in the Treasure Valley, Idaho"
+        alt="Warm great room and kitchen with a wood dining table, a stone fireplace, and light wood floors in the Treasure Valley, Idaho"
         fill
         loading="lazy"
         quality={65}

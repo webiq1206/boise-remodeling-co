@@ -28,7 +28,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.bathroom.after,
     title: "Primary Bathroom Renovation",
     description:
-      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
+      "Bathroom with tile, fixtures, storage, and a comfortable daily routine.",
   },
   {
     serviceType: "whole-home-remodel",
@@ -37,7 +37,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.wholeHome.after,
     title: "Whole-Home Remodel",
     description:
-      "Whole-home design inspiration exploring coordinated finishes and connected living spaces.",
+      "Whole-home interior with coordinated finishes and connected living spaces.",
   },
   {
     serviceType: "room-addition",
@@ -46,7 +46,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.addition.after,
     title: "Master Suite Addition",
     description:
-      "Addition design inspiration. A buildable layout depends on the existing home, site, and engineering.",
+      "A buildable layout depends on the existing home, site, and engineering.",
   },
   {
     serviceType: "basement-finish",
@@ -55,7 +55,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.basement.after,
     title: "Basement Finish",
     description:
-      "Basement design inspiration exploring comfortable living space, finishes, and lighting.",
+      "Basement living space with finishes and lighting.",
   },
   {
     serviceType: "outdoor-living",
@@ -64,7 +64,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.outdoor.after,
     title: "Outdoor Living Transformation",
     description:
-      "Outdoor living inspiration exploring seating, shelter, and materials for time outside.",
+      "Seating, shelter, and materials for time outside.",
   },
   {
     serviceType: "adu",
@@ -73,7 +73,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.aduBoise.after,
     title: "Detached ADU Build",
     description:
-      "Representative remodeling design inspiration, tailored to your home during design.",
+      "A detached building shaped to the lot during design.",
   },
   {
     serviceType: "aging-in-place",
@@ -82,7 +82,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.agingBoise.after,
     title: "Accessible Primary Bath",
     description:
-      "Accessible-home design inspiration. Clearances and safety features require a property-specific assessment.",
+      "Clearances and safety features require a property-specific assessment.",
   },
   {
     serviceType: "kitchen-remodel",
@@ -91,7 +91,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.kitchenMeridian.after,
     title: "Meridian Kitchen Refresh",
     description:
-      "Kitchen design inspiration exploring cabinetry, work surfaces, storage, and lighting.",
+      "Kitchen with cabinetry, work surfaces, storage, and lighting.",
   },
   {
     serviceType: "kitchen-remodel",
@@ -100,7 +100,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.kitchenEagle.after,
     title: "Eagle Foothills Kitchen",
     description:
-      "Kitchen design inspiration exploring cabinetry, work surfaces, storage, and lighting.",
+      "Kitchen with cabinetry, work surfaces, storage, and lighting.",
   },
   {
     serviceType: "bathroom-remodel",
@@ -109,7 +109,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.hallBathBoise.after,
     title: "Hall Bath Shower Conversion",
     description:
-      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
+      "Bathroom with tile, fixtures, storage, and a comfortable daily routine.",
   },
   {
     serviceType: "bathroom-remodel",
@@ -118,7 +118,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.bathroomNampa.after,
     title: "Nampa Primary Bath Remodel",
     description:
-      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
+      "Bathroom with tile, fixtures, storage, and a comfortable daily routine.",
   },
   {
     serviceType: "whole-home-remodel",
@@ -127,7 +127,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.wholeHomeMeridian.after,
     title: "Meridian Open Main Floor",
     description:
-      "Whole-home design inspiration exploring coordinated finishes and connected living spaces.",
+      "Whole-home interior with coordinated finishes and connected living spaces.",
   },
   {
     serviceType: "room-addition",
@@ -136,7 +136,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.additionEagle.after,
     title: "Eagle Rear Addition",
     description:
-      "Addition design inspiration. A buildable layout depends on the existing home, site, and engineering.",
+      "A buildable layout depends on the existing home, site, and engineering.",
   },
   {
     serviceType: "room-addition",
@@ -145,7 +145,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.additionMeridian.after,
     title: "Meridian Sunroom Bump-Out",
     description:
-      "Addition design inspiration. A buildable layout depends on the existing home, site, and engineering.",
+      "A buildable layout depends on the existing home, site, and engineering.",
   },
   {
     serviceType: "basement-finish",
@@ -154,7 +154,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.basementMeridian.after,
     title: "Meridian Basement Media Room",
     description:
-      "Basement design inspiration exploring comfortable living space, finishes, and lighting.",
+      "Basement living space with finishes and lighting.",
   },
   {
     serviceType: "basement-finish",
@@ -163,7 +163,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.basementNampa.after,
     title: "Nampa Basement Finish",
     description:
-      "Basement design inspiration exploring comfortable living space, finishes, and lighting.",
+      "Basement living space with finishes and lighting.",
   },
   {
     serviceType: "outdoor-living",
@@ -172,7 +172,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.outdoorEagle.after,
     title: "Eagle Covered Patio",
     description:
-      "Outdoor living inspiration exploring seating, shelter, and materials for time outside.",
+      "Seating, shelter, and materials for time outside.",
   },
   {
     serviceType: "outdoor-living",
@@ -181,7 +181,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.outdoorMeridian.after,
     title: "Meridian Outdoor Kitchen",
     description:
-      "Outdoor living inspiration exploring seating, shelter, and materials for time outside.",
+      "Seating, shelter, and materials for time outside.",
   },
   {
     serviceType: "aging-in-place",
@@ -190,7 +190,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.agingMeridian.after,
     title: "Meridian Zero-Threshold Bath",
     description:
-      "Accessible-home design inspiration. Clearances and safety features require a property-specific assessment.",
+      "Clearances and safety features require a property-specific assessment.",
   },
 ];
 

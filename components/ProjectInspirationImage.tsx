@@ -21,10 +21,8 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
         <BeforeAfterSlider
           beforeSrc={beforeSrc}
           afterSrc={afterSrc}
-          beforeAlt="Representative kitchen before the design refresh, with oak cabinets and the original appliance layout"
-          afterAlt="Design concept for the same kitchen, with white shaker cabinets, quartz counters and oak flooring"
-          beforeLabel="Original concept"
-          afterLabel="Refresh concept"
+          beforeAlt="Kitchen with oak cabinets, dark counters, and the original appliance layout"
+          afterAlt="Kitchen with white shaker cabinets, a farmhouse sink, quartz counters, and oak flooring"
           aspectClass="aspect-[3/2]"
           sizes={sizes}
         />
@@ -32,7 +30,7 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
       <div className={`relative overflow-hidden ${aspectClass}`}>
         {/* These local WebP assets are already compressed. Serve them directly
             so gallery loading does not depend on an on-demand encoding job. */}
-        <Image unoptimized={afterSrc.startsWith("/images/") && afterSrc.endsWith(".webp")} src={afterSrc} alt={`Design inspiration: ${afterAlt.replace(/^After: /, "")}`} fill sizes={sizes} quality={80} className="object-cover" />
+        <Image unoptimized={afterSrc.startsWith("/images/") && afterSrc.endsWith(".webp")} src={afterSrc} alt={afterAlt.replace(/^(?:Design inspiration|Before|After):\s*/, "")} fill sizes={sizes} quality={80} className="object-cover" />
       </div>
       )}
       {caption && (

@@ -22,8 +22,8 @@ export function BeforeAfterSlider({
   afterSrc,
   beforeAlt,
   afterAlt,
-  beforeLabel = "Before",
-  afterLabel = "After",
+  beforeLabel = "",
+  afterLabel = "",
   caption,
   className = "",
   aspectClass = "aspect-[4/3]",
@@ -154,13 +154,16 @@ export function BeforeAfterSlider({
         />
       </div>
 
-      {/* Corner labels */}
-      <div className="absolute top-3 left-3 md:top-4 md:left-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none max-w-[43%] whitespace-normal break-words text-center">
-        {beforeLabel}
-      </div>
-      <div className="absolute top-3 right-3 md:top-4 md:right-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none max-w-[43%] whitespace-normal break-words text-center">
-        {afterLabel}
-      </div>
+      {beforeLabel ? (
+        <div className="absolute top-3 left-3 md:top-4 md:left-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none max-w-[43%] whitespace-normal break-words text-center">
+          {beforeLabel}
+        </div>
+      ) : null}
+      {afterLabel ? (
+        <div className="absolute top-3 right-3 md:top-4 md:right-4 px-2.5 py-1 rounded-sm bg-inverse text-inverse-foreground text-caption tracking-[0.12em] uppercase font-normal pointer-events-none max-w-[43%] whitespace-normal break-words text-center">
+          {afterLabel}
+        </div>
+      ) : null}
 
       {/* Divider line + drag handle */}
       <div
@@ -172,7 +175,7 @@ export function BeforeAfterSlider({
           style={{ left: `clamp(24px, ${pos}%, calc(100% - 24px))` }}
           type="button"
           role="slider"
-          aria-label="Compare before and after"
+          aria-label="Compare the two photos"
           aria-orientation="horizontal"
           aria-describedby={instructionsId}
           aria-valuemin={0}

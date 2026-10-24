@@ -47,7 +47,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodel-cost-per-square-foot-boise': {
     hero: '/images/blog/remodel-cost-per-square-foot-boise.webp',
-    alt: 'Bright open-concept living and dining space in a remodeled Boise home with light oak floors',
+    alt: 'Bright open living and dining space in a Boise home with light oak floors',
     topicTags: ["cost","whole-home","boise"],
     source: 'blog',
   },
@@ -71,7 +71,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'kitchen-layout-ideas-boise-homes': {
     hero: '/images/blog/kitchen-layout-ideas-boise-homes.webp',
-    alt: 'Large open-concept kitchen with a central island and walk-in pantry in a remodeled Boise home',
+    alt: 'Large open kitchen with a central island and walk-in pantry in a Boise home',
     topicTags: ["kitchen","layout","boise"],
     source: 'blog',
   },
@@ -89,13 +89,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'kitchen-remodel-roi': {
     hero: '/images/blog/kitchen-remodel-roi.webp',
-    alt: "Updated transitional kitchen with an island and quality finishes illustrating strong remodel return on investment in a Boise home",
+    alt: "Updated transitional kitchen with an island and quality finishes in a Boise home",
     topicTags: ["kitchen","roi","boise"],
     source: 'blog',
   },
   'open-concept-kitchen-remodeling': {
     hero: '/images/blog/open-concept-kitchen-remodeling.webp',
-    alt: 'Open-concept kitchen with a large central island flowing into the living area after wall removal in an upscale Boise home',
+    alt: 'Open kitchen with a large central island flowing into the living area after wall removal in an upscale Boise home',
     topicTags: ["kitchen","open-concept","boise"],
     source: 'blog',
   },
@@ -167,7 +167,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'bathroom-remodel-roi': {
     hero: '/images/blog/bathroom-remodel-roi.webp',
-    alt: "Updated bathroom with a walk-in shower and quality vanity illustrating strong remodel return on investment in a Boise home",
+    alt: "Updated bathroom with a walk-in shower and quality vanity in a Boise home",
     topicTags: ["bathroom","roi","boise"],
     source: 'blog',
   },
@@ -263,7 +263,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodeling-mistakes-to-avoid': {
     hero: '/images/blog/remodeling-mistakes-to-avoid.webp',
-    alt: 'Completed whole-home remodel with a cohesive open-concept living and dining area and quality transitional finishes in a Boise home',
+    alt: 'Whole-home interior with a cohesive open living and dining area and quality transitional finishes in a Boise home',
     topicTags: ["whole-home","planning","boise"],
     source: 'blog',
   },

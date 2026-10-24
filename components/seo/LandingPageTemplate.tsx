@@ -428,7 +428,6 @@ export function LandingPageTemplate({
         <Section surface="deep" spacing="xl" edge>
           <div className="ed-shell">
             <Reveal>
-              <p className="ed-eyebrow">Design inspiration</p>
               <h2 className="ed-h2 ed-statement-wide">
                 Remodeling <em className="not-italic" style={accent}>possibilities</em>
               </h2>
