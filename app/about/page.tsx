@@ -22,7 +22,7 @@ generateWebPageSchema,
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
-import { HERO_STATS,PRINCIPLES,TRUST_ITEMS } from '@/shared/siteContent';
+import { HERO_STATS,PRINCIPLES,visibleTrustItems } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight } from 'lucide-react';
 import Image from 'next/image';
@@ -184,7 +184,7 @@ export default function AboutPage() {
                   . We are bonded and insured for residential remodeling work across the Treasure Valley.
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3">
-                  {TRUST_ITEMS.map((item) => (
+                  {visibleTrustItems().map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
                       <Check className="h-4 w-4 text-accent-legible flex-shrink-0 mt-0.5" />
                       <span>{item}</span>

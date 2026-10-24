@@ -32,7 +32,7 @@ Benchmarking against established Treasure Valley design-build remodelers (resear
 | **Named people / E-E-A-T** | Renaissance (Chad & Shelley), Apex (John & Theresa), Ethos (Sarah) | BRC has **no named people** |
 | **Reviews & ratings** | Strite 114 reviews; multiple 4.9–5.0 Houzz | BRC `rating: 0, reviewCount: 0` |
 | **Awards / associations** | NARI CotY, Best of Houzz, "Idaho's Best Remodeler" | BRC has none surfaced |
-| **Longevity proof** | 1975 / 1997 / 2004 founding dates touted | BRC founded 2017 (fine) but doesn't emphasize track record/volume |
+| **Longevity proof** | 1975 / 1997 / 2004 founding dates touted | BRC founding year: leave blank until documented. Does not emphasize track record/volume |
 | **Warranty specificity** | Boyd "3-year warranty" | BRC "written workmanship guarantee" (unspecified term) |
 | **Showroom / tangible** | Apex showroom | BRC virtual-only (acceptable for design-build) |
 | **Third-party profiles** | Houzz/GuildQuality/Google heavily used | BRC `sameAs` = FB/IG only |
