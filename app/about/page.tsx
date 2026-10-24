@@ -1,4 +1,5 @@
 import { InteriorHero,InteriorPage } from '@/components/approved/InteriorLayout';
+import { RegistrationLink } from '@/components/RegistrationLink';
 import { DisplayNum,formatStepNumber,Section } from '@/components/marketing';
 import { AreaCard } from '@/components/marketing/AreaCard';
 import { Hairline } from '@/components/marketing/Hairline';
@@ -92,7 +93,7 @@ export default function AboutPage() {
       <JsonLd data={schemas} />
       <div className="flex flex-col ">
         {/* Approved editorial hero */}
-        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.leadership} imageAlt="Boise Remodeling Co design-build team at a finished kitchen project">
+        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.aboutKitchen} imageAlt="Warm open kitchen with white oak cabinets, a large island and black-framed windows">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
@@ -179,8 +180,8 @@ export default function AboutPage() {
                   className="mb-8 max-w-none"
                 />
                 <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                  Idaho Registered Contractor #8381215. We are bonded and insured for residential
-                  remodeling work across the Treasure Valley.
+                  <RegistrationLink className="text-foreground underline underline-offset-2 hover:text-accent-legible" />
+                  . We are bonded and insured for residential remodeling work across the Treasure Valley.
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3">
                   {visibleTrustItems().map((item) => (

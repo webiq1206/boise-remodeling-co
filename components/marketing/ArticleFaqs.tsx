@@ -1,3 +1,4 @@
+import { RegistrationText } from "@/components/RegistrationLink";
 import {
   Accordion,
   AccordionContent,
@@ -45,7 +46,7 @@ export function ArticleFaqs({
               {faq.question}
             </AccordionTrigger>
             <AccordionContent className="text-body leading-relaxed pb-6 text-foreground/90">
-              {faq.answer}
+              <RegistrationText text={faq.answer} />
             </AccordionContent>
           </AccordionItem>
         ))}

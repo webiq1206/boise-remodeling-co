@@ -4,8 +4,12 @@
  * files, and JSON-LD omit it while this flag is false.
  */
 import { SHOW_FOUNDING_YEAR } from './publicClaims';
-export { publishFoundingCopy } from './publicClaims';
+export { publishFoundingCopy, SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from './publicClaims';
 export const SHOW_FOUNDED_YEAR = SHOW_FOUNDING_YEAR;
+
+/** Unproven marketing claims. Source strings stay. Public copy omits them while these are false. */
+export const SHOW_UNPROVEN_TOP_RATED = false;
+export const SHOW_UNPROVEN_PROJECT_COUNT = false;
 
 export const FOUNDED_YEAR = '2020';
 

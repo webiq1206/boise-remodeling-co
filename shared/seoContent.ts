@@ -148,7 +148,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Consultation', description: 'We assess your bath, discuss storage and accessibility needs, and outline a planning range.' },
       { title: 'Selections and scope', description: 'Finishes and fixtures are documented before demolition.' },
-      { title: 'Build', description: 'Licensed trades coordinate waterproofing, tile, and trim with weekly updates.' },
+      { title: 'Build', description: 'Our crew and trade partners coordinate waterproofing, tile, and trim with weekly updates.' },
       { title: 'Final walkthrough', description: 'We review every detail with you before sign-off.' },
     ],
     faqs: BATHROOM_NEAR_ME_FAQS,

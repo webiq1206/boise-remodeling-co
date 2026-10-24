@@ -7,7 +7,11 @@
 import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
-import { publicPreviewPath, SHOW_FOUNDED_YEAR } from '@/shared/foundingClaim';
+import {
+  publicPreviewPath,
+  SHOW_FOUNDED_YEAR,
+  SHOW_UNPROVEN_TOP_RATED,
+} from '@/shared/foundingClaim';
 
 interface SEOMetaData {
   title: string;
@@ -158,7 +162,8 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   const phone = SITE_CONFIG.phone;
   
   if (params.isHomePage) {
-    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured, top-rated. Call ${phone}.`;
+    const ratingClaim = SHOW_UNPROVEN_TOP_RATED ? ', top-rated' : '';
+    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured${ratingClaim}. Call ${phone}.`;
   }
   
   if (city && serviceName) {
