@@ -129,9 +129,13 @@ export function trackGoogleAdsContactClick(method: "call" | "text", retryCount =
     }
     return false;
   }
-  gtag("event", "conversion", {
-    send_to: method === "call" ? GOOGLE_ADS_CALL_CLICK_LABEL : GOOGLE_ADS_TEXT_CLICK_LABEL,
-  });
+  try {
+    gtag("event", "conversion", {
+      send_to: method === "call" ? GOOGLE_ADS_CALL_CLICK_LABEL : GOOGLE_ADS_TEXT_CLICK_LABEL,
+    });
+  } catch {
+    return false;
+  }
   return true;
 }
 

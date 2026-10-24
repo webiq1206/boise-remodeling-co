@@ -5,6 +5,7 @@ import {
   GOOGLE_ADS_CALL_CLICK_LABEL,
   GOOGLE_ADS_TEXT_CLICK_LABEL,
   trackDelegatedContactClick,
+  trackGoogleAdsContactClick,
 } from "../lib/googleAdsConversion.ts";
 
 function restore(name: "window" | "navigator", prior: PropertyDescriptor | undefined) {
@@ -220,3 +221,43 @@ test("the existing click listener stays single-bound and GA4 click events stay i
   assert.equal(estimator.includes("GOOGLE_ADS_CALL_CLICK_LABEL"), false);
   assert.equal(estimator.includes("trackDelegatedContactClick"), false);
 });
+
+import { SITE_CONFIG } from "../shared/siteConfig.ts";
+test("call and text controls use the site phone and the listener stays in the existing click path", () => {
+  assert.equal(SITE_CONFIG.phoneHref, "tel:+12084771169");
+  assert.equal(SITE_CONFIG.phoneSmsHref, "sms:2084771169");
+  const nav = readFileSync(new URL("../components/Navigation.tsx", import.meta.url), "utf8");
+  const headerAt = nav.indexOf('data-testid="link-call-mobile-header"');
+  const textAt = nav.indexOf('data-testid="link-text-mobile-header"');
+  const drawerAt = nav.indexOf('data-testid="mobile-nav-drawer"');
+  assert.ok(headerAt > 0 && textAt > headerAt && headerAt < drawerAt);
+  assert.ok(nav.slice(headerAt - 200, headerAt).includes("SITE_CONFIG.phoneHref"));
+  assert.ok(nav.slice(textAt - 200, textAt).includes("SITE_CONFIG.phoneSmsHref"));
+  const clicks = readFileSync(new URL("../components/ConversionTracking.tsx", import.meta.url), "utf8");
+  assert.match(clicks, /trackEvent\('contact_click'/);
+  assert.equal(/trackEvent\(['"]conversion/.test(clicks), false);
+  assert.match(clicks, /trackDelegatedContactClick\(e\)/);
+  const estimate = readFileSync(new URL("../components/estimate/EstimateContactBar.tsx", import.meta.url), "utf8");
+  assert.match(estimate, /SITE_CONFIG\.phoneHref/);
+  assert.match(estimate, /SITE_CONFIG\.phoneSmsHref/);
+  assert.match(estimate, /data-site-header/);
+  const layout = readFileSync(new URL("../app/estimate/layout.tsx", import.meta.url), "utf8");
+  assert.match(layout, /EstimateContactBar/);
+});
+
+ test("a delayed tag sends once and a throwing tag cannot break contact links", () => {
+  withBrowser(() => {
+   const timers: Array<() => void> = [];
+   const browser = window as unknown as {gtag?: (...args: unknown[]) => void; setTimeout: (fn: () => void) => number};
+   browser.gtag = undefined;
+   browser.setTimeout = fn => { timers.push(fn); return timers.length; };
+   assert.equal(trackGoogleAdsContactClick("call"), false);
+   assert.equal(timers.length, 1);
+   const calls: unknown[][] = [];
+   browser.gtag = (...args) => calls.push(args);
+   timers.shift()!();
+   assert.deepEqual(calls, [["event", "conversion", {send_to: GOOGLE_ADS_CALL_CLICK_LABEL}]]);
+   browser.gtag = () => { throw new Error("tag unavailable"); };
+   assert.equal(trackGoogleAdsContactClick("text"), false);
+  });
+ });
