@@ -4,8 +4,8 @@
  * Operator checklists: local-seo-audit/02-gbp-plan.md
  */
 
+import { SITE_CONFIG, textReplyLine } from '@/shared/siteConfig';
 import { publishFoundingCopy } from '@/shared/publicClaims';
-import { SITE_CONFIG } from '@/shared/siteConfig';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 
@@ -86,7 +86,7 @@ export const GBP_ATTRIBUTES = {
 
 export const GBP_MESSAGING = {
   welcomeMessage:
-    'Thanks for reaching out to Boise Remodeling Co. We respond within one business day. For faster help, call (208) 477-1169 or schedule a visit at boiseremodeling.co/contact',
+    `Thanks for reaching out to Boise Remodeling Co. We respond within one business day. ${textReplyLine()} For faster help, call (208) 477-1169 or schedule a visit at boiseremodeling.co/contact`,
 } as const;
 
 export interface GbpService {
@@ -413,7 +413,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   },
   {
     question: 'How do I get started?',
-    answer: `Call (208) 477-1169, text us at the same number, or schedule online: ${SITE}/contact. We respond within one business day.`,
+    answer: `Call (208) 477-1169, text us at the same number, or schedule online: ${SITE}/contact. We respond within one business day. ${textReplyLine()}`,
   },
 ];
 
