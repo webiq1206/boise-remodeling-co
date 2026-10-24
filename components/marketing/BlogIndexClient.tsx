@@ -55,7 +55,7 @@ export function BlogIndexClient() {
   const [featured, ...rest] = filtered;
 
   return (
-    <div className="flex flex-col pb-20 md:pb-0">
+    <div className="flex flex-col ">
       <Section spacing="default" className="pt-10 md:pt-12">
         <div className="container px-4">
           <div className="max-w-6xl mx-auto">

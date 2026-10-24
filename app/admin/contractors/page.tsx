@@ -146,7 +146,7 @@ export default function AdminContractorsPage() {
             <CardHeader>
               <CardTitle className="text-base">Reject Document</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3" data-clarity-mask="true">
               <Textarea
                 placeholder="Rejection reason..."
                 value={rejectionReason}

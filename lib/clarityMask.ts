@@ -53,7 +53,7 @@ export function applyClarityMask(root: MaskableNode | null | undefined): void {
     const type = (input.getAttribute?.("type") || "").toLowerCase();
     if (!PARENT_MASK_INPUT_TYPES.has(type)) continue;
     if (hasMaskedAncestor(input)) continue;
-    if (input.parentElement) stamp(input.parentElement);
+    if (input.parentElement && !input.parentElement.matches?.("body,html")) stamp(input.parentElement);
   }
 }
 
@@ -96,7 +96,7 @@ export function clarityFieldMaskScript(): string {
         var type=(input.getAttribute("type")||"").toLowerCase();
         if(!PARENT_TYPES[type]) continue;
         if(maskedAncestor(input)) continue;
-        if(input.parentElement) input.parentElement.setAttribute(ATTR, VALUE);
+        if(input.parentElement && !input.parentElement.matches("body,html")) input.parentElement.setAttribute(ATTR, VALUE);
       }
     }
     function start(){

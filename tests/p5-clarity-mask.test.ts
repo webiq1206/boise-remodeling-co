@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import test from 'node:test';
+import { runInNewContext } from 'node:vm';
 import {
   applyClarityMask,
   CLARITY_FIELD_SELECTOR,
@@ -200,3 +201,18 @@ test('the assistant transcript container is masked', () => {
   assert.match(tag, /role="log"/);
   assert.match(tag, /data-clarity-mask="True"/);
 });
+
+ test('unwrapped controls never mask the document body or html', () => {
+  for (const tag of ['body', 'html']) {
+   for (const type of ['checkbox', 'radio', 'range', 'button']) {
+    for (const serialized of [false, true]) {
+     const input = el('input', [], { type });
+     const root = el(tag, [input]);
+     if (serialized) runInNewContext(clarityFieldMaskScript(), { document: Object.assign(root, { documentElement: root }) });
+     else applyClarityMask(root);
+     assert.equal(root.attrs.has(CLARITY_MASK_ATTRIBUTE), false);
+     assert.equal(input.attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
+    }
+   }
+  }
+ });

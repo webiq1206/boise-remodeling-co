@@ -328,7 +328,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
           height={48}
           className="h-12 w-12"
         />
-        <div>
+        <div data-clarity-mask="true">
           <h3
             ref={successHeadingRef}
             tabIndex={-1}
@@ -406,6 +406,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         submitted={success}
       />
       <form
+        data-clarity-mask="true"
         onSubmit={form.handleSubmit((data) => {
           setSubmitted(data);
           mutation.mutate(data);

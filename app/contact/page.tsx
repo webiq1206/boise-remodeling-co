@@ -3,7 +3,6 @@ import { BusinessPhoneContact } from '@/components/BusinessPhoneContact';
 import { ConsultationForm } from '@/components/ConsultationForm';
 import { EmailLink } from '@/components/EmailLink';
 import { Section } from '@/components/marketing';
-import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { Hairline } from '@/components/marketing/Hairline';
 import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { SectionHeader } from '@/components/marketing/SectionHeader';
@@ -171,7 +170,7 @@ export default function ContactPage() {
   return (
     <InteriorPage kind="contact"><>
       <JsonLd data={schemas} />
-      <div className="flex flex-col pb-20 md:pb-0">
+      <div className="flex flex-col ">
         {/* Approved editorial hero */}
         <InteriorHero layout="contact" imageSrc={SITE_IMAGES.hero} imageAlt="Modern luxury home interior remodel in Boise Idaho Treasure Valley">
             <HeroBreadcrumbs />
@@ -230,7 +229,7 @@ export default function ContactPage() {
                   </p>
                 </Reveal>
               </div>
-              <MarketingCard className="md:col-span-3 p-4 sm:p-7 md:p-10" padding="lg">
+              <MarketingCard className="interior-contact-form p-4 sm:p-7 md:p-10" padding="lg">
                 <ConsultationForm />
               </MarketingCard>
             </div>
@@ -258,7 +257,7 @@ export default function ContactPage() {
                   icon={<Phone className="h-5 w-5" strokeWidth={1.5} />}
                   label="Call us"
                   href={SITE_CONFIG.phoneHref}
-                  subtext="Mon – Fri 7 am – 6 pm · Sat 8 am – 4 pm"
+                  subtext="Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT"
                   featured
                   companion={
                     <SaveContactLink className="text-sm text-muted-foreground hover:text-foreground transition-colors" />
@@ -408,16 +407,6 @@ export default function ContactPage() {
 
         <StatementBandSection />
 
-        <EstimatePromptBand
-          title={
-            <>
-              Prefer a number before you{' '}
-              <em className="brc-accent">call</em>?
-            </>
-          }
-          description="Use our online project estimator for a preliminary Treasure Valley planning range - then schedule your free in-home visit when you're ready for a written scope."
-          variant="canvas"
-        />
 
         {/* ─── Service areas ─── */}
         <Section divider>

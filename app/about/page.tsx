@@ -10,6 +10,7 @@ import { StatementBandSection } from '@/components/sections/StatementBandSection
 import { WhyChooseUsSection } from '@/components/sections/WhyChooseUsSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
+import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { GRAIN_URL } from '@/lib/grain';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import {
@@ -76,7 +77,7 @@ export default function AboutPage() {
     generateWebPageSchema({
       title: 'About Boise Remodeling Co',
       description:
-        'Treasure Valley design-build remodeling company. Licensed, insured, and committed to clear communication.',
+        'Treasure Valley design-build remodeling company. Idaho Registered Contractor #8381215, insured, and committed to clear communication.',
       url: '/about',
       speakable: true,
     }),
@@ -89,7 +90,7 @@ export default function AboutPage() {
   return (
     <InteriorPage kind="about"><>
       <JsonLd data={schemas} />
-      <div className="flex flex-col pb-20 md:pb-0">
+      <div className="flex flex-col ">
         {/* Approved editorial hero */}
         <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.leadership} imageAlt="Boise Remodeling Co design-build team at a finished kitchen project">
             <HeroBreadcrumbs />
@@ -98,13 +99,19 @@ export default function AboutPage() {
             </p>
             <p className="ed-eyebrow" style={{ color: "rgb(255 255 255 / 0.72)" }}>About us</p>
             <h1 className="ed-display ed-statement-display text-inverse-foreground mb-8">
-              Boise Remodeling Co, design-build since{' '}
-              <em className="brc-accent">2020</em>
+              {SHOW_FOUNDING_YEAR ? (
+                <>
+                  Boise Remodeling Co, design-build since{' '}
+                  <em className="brc-accent">2020</em>
+                </>
+              ) : (
+                <>Boise Remodeling Co, design-build</>
+              )}
             </h1>
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
-              Boise Remodeling Co is a design-build remodeler founded in 2020 and part of P5. A free
-              in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon
-              permitting is part of the project. The first figures are budget ranges, not quotes.
+              {publishFoundingCopy(
+                'Boise Remodeling Co is a design-build remodeler founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes.',
+              )}
             </p>
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
               We are a locally owned design-build remodeling company serving the Treasure Valley.
@@ -172,8 +179,8 @@ export default function AboutPage() {
                   className="mb-8 max-w-none"
                 />
                 <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                  Idaho contractor license information is available upon request. We are bonded and
-                  insured for residential remodeling work across the Treasure Valley.
+                  Idaho Registered Contractor #8381215. We are bonded and insured for residential
+                  remodeling work across the Treasure Valley.
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3">
                   {TRUST_ITEMS.map((item) => (
@@ -189,10 +196,9 @@ export default function AboutPage() {
                     One accountable team
                   </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    Boise Remodeling Co has run design-build remodels across the Treasure Valley
-                    since 2020. One team leads every project from the first in-home visit through
-                    Ada and Canyon County permitting to the final walkthrough, and stands behind a
-                    written scope before construction and a workmanship guarantee on our labor.
+                    {publishFoundingCopy(
+                      'Boise Remodeling Co has run design-build remodels across the Treasure Valley since 2020. One team leads every project from the first in-home visit through Ada and Canyon County permitting to the final walkthrough, and stands behind a written scope before construction and a workmanship guarantee on our labor.',
+                    )}
                   </p>
                   <p className="text-sm text-muted-foreground leading-relaxed mt-4">
                     New to remodeling? Start with our guide to{' '}
@@ -297,7 +303,7 @@ export default function AboutPage() {
               description={`We serve homeowners in ${TREASURE_VALLEY_CITIES}, and surrounding communities.`}
               className="max-w-3xl"
             />
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid sm:grid-cols-2 min-[1180px]:grid-cols-4 gap-4">
               {CITIES.map((city, i) => (
                 <Reveal key={city.slug} delay={Math.min(i, 7) * 50}>
                   <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />
