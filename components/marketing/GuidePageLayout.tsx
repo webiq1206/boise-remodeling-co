@@ -53,7 +53,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
   );
 
   return (
-    <div className="flex flex-col pb-20 md:pb-0">
+    <div className="flex flex-col ">
 
       <Section spacing="sm" className="pt-8 md:pt-10 pb-0">
         <div className="container px-4 max-w-6xl mx-auto">
@@ -166,7 +166,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
               </div>
             </div>
 
-            <aside className="hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">
+            <aside className="article-rail hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">
               <ArticleSidebar tocHeadings={tocHeadings} />
             </aside>
           </div>

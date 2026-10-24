@@ -59,7 +59,7 @@ test('the 2020 founding year stays in source and stays off the public flag', () 
   assert.deepEqual(visibleTrustItems(false), TRUST_ITEMS);
   const aboutSource = readFileSync('app/about/page.tsx', 'utf8');
   assert.match(aboutSource, /founded in 2020/);
-  assert.match(aboutSource, /since <em className="brc-accent">2020<\/em>/);
+  assert.match(aboutSource, /since\{\x27 \x27\}\s*<em className="brc-accent">2020<\/em>/);
   assert.match(readFileSync('lib/page-metadata.ts', 'utf8'), /founded 2020/);
   assert.match(readFileSync('shared/gbpProfile.ts', 'utf8'), /Founded in 2020/);
 });
@@ -136,7 +136,7 @@ test('published pages, schema, and llms files do not render the 2020 founding cl
 
 test('with the founding flag off, schema JSON has no seal URL', () => {
   assert.equal(SHOW_FOUNDED_YEAR, false);
-  const icon = '/brand/png/icon/boise-remodeling-co-icon-charcoal-512px.png';
+  const icon = '/brand/search-icon-180.png';
   const seal = '/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png';
   assert.equal(publicLogoPath(), icon);
   assert.equal(existsSync(`public${icon}`), true);
@@ -182,7 +182,7 @@ test('the founding flag adds at most one trust badge', () => {
   }
 });
 
-test('operator docs leave the founding year and bonded claim blank', () => {
+test('operator docs leave the founding year blank and preserve confirmed registration', () => {
   const files = [
     'local-seo-audit/gbp-operator-runbook.md',
     'local-seo-audit/GBP-STEP-BY-STEP-GUIDE.md',
@@ -194,9 +194,11 @@ test('operator docs leave the founding year and bonded claim blank', () => {
     const text = readFileSync(file, 'utf8');
     assert.match(text, /leave blank until documented/);
     assert.equal(/\b2017\b/.test(text), false, `${file} still names 2017`);
-    assert.equal(/bonded and insured|bonded & insured/i.test(text), false, `${file} still tells an operator to enter Bonded`);
+
     assert.equal(/Founded in 2017|Founded 2017|Opening date: 2017/.test(text), false, file);
   }
+  const guide = readFileSync('local-seo-audit/GBP-STEP-BY-STEP-GUIDE.md', 'utf8');
+  assert.match(guide, /Idaho Registered Contractor #8381215, bonded, and insured/);
   const gap = readFileSync('seo-audit/competitor-gap-analysis.md', 'utf8');
   assert.equal(/BRC founded 2017/.test(gap), false);
   assert.match(gap, /leave blank until documented/);

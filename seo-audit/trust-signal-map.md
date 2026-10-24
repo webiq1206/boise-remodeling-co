@@ -7,7 +7,7 @@ Existing / weak / missing trust signals and recommendations.
 | Signal | Where | Strength |
 |---|---|---|
 | Licensed & insured (claim) | meta, about, schema description | medium |
-| Bonded | leave blank until documented | |
+| Bonded & insured | `certifications`, footer | medium |
 | Workmanship guarantee | about, FAQs, benefits | medium |
 | Permits handled in-house (Ada/Canyon) | FAQs, copy | medium |
 | Founding year | leave blank until documented | |

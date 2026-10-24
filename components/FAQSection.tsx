@@ -9,9 +9,6 @@ import {
 } from "@/components/ui/accordion";
 import { Section } from "@/components/marketing/Section";
 import { Button } from "@/components/ui/button";
-import { EstimateCTA } from "@/components/modals/EstimateCTA";
-import { ConsultCTA } from "@/components/modals/ConsultCTA";
-import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
 import { HOMEPAGE_FAQS } from "@/shared/homepageFaqs";
 
 export { HOMEPAGE_FAQS };
@@ -47,10 +44,6 @@ export function FAQSection() {
                 matter
               </em>
             </h2>
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-              <EstimateCTA variant="brand" className="w-full sm:w-auto">{CTA_PRIMARY}</EstimateCTA>
-              <ConsultCTA variant="brandOutline" className="w-full sm:w-auto">{CTA_SECONDARY}</ConsultCTA>
-            </div>
           </div>
 
           <div>

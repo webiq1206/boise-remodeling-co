@@ -28,7 +28,7 @@ export function ApprovedHomeHero() {
           <br />
           <em>Love where you live.</em>
         </h1>
-        <p>{contractorDescription()}</p>
+        <p className="f-hero-summary">{contractorDescription()}</p>
         <p>{b.intro}</p>
         <div className="f-actions">
           <a className="f-button" href="/estimate">

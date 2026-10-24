@@ -6,11 +6,10 @@ Use after verification completes. Copy-paste content from `npm run gbp:print` or
 
 ### Core fields
 - [ ] Opening date: leave blank until documented
-- [ ] Bonded: leave blank until documented
 - [ ] Phone: (208) 477-1169
 - [ ] Website: https://boiseremodeling.co
 - [ ] Appointment link: https://boiseremodeling.co/contact
-- [ ] Hours: Mon–Fri 7–6, Sat 8–4, Sun closed
+- [ ] Hours: Mon–Fri 9–6, Sat 9–4 MT, Sun closed
 - [ ] Social: Facebook + Instagram (URLs in GBP_SOCIAL)
 
 ### Categories (in order)

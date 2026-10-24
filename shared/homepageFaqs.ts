@@ -1,4 +1,4 @@
-import { publishFoundingCopy } from '@/shared/foundingClaim';
+import { publishFoundingCopy } from '@/shared/publicClaims';
 
 export interface HomepageFaq {
   q: string;

@@ -4,9 +4,8 @@
  * Operator checklists: local-seo-audit/02-gbp-plan.md
  */
 
-import { SHOW_FOUNDED_YEAR } from '@/shared/foundingClaim';
+import { SHOW_FOUNDING_YEAR as SHOW_FOUNDED_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
-import { publishFoundingCopy } from '@/shared/foundingClaim';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 
@@ -28,12 +27,12 @@ export const GBP_NAP = {
   serviceAreaLabel: SITE_CONFIG.address.serviceArea,
   founded: '2020',
   hours: {
-    monday: '7:00 AM - 6:00 PM',
-    tuesday: '7:00 AM - 6:00 PM',
-    wednesday: '7:00 AM - 6:00 PM',
-    thursday: '7:00 AM - 6:00 PM',
-    friday: '7:00 AM - 6:00 PM',
-    saturday: '8:00 AM - 4:00 PM',
+    monday: '9:00 AM - 6:00 PM',
+    tuesday: '9:00 AM - 6:00 PM',
+    wednesday: '9:00 AM - 6:00 PM',
+    thursday: '9:00 AM - 6:00 PM',
+    friday: '9:00 AM - 6:00 PM',
+    saturday: '9:00 AM - 4:00 PM',
     sunday: 'Closed',
   },
 } as const;
@@ -394,9 +393,9 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
     answer: `Guest baths typically plan $18,000–$45,000; primary baths $35,000–$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
   },
   {
-    question: 'Are you licensed and insured?',
+    question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is bonded and insured for residential remodeling across the Treasure Valley. Idaho contractor license details are available upon request.',
+      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.',
   },
   {
     question: 'Do you build ADUs?',

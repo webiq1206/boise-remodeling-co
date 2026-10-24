@@ -701,7 +701,7 @@ export default function PurchaseHistoryPage() {
         <Card className="mb-6">
           <CardContent className="py-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
+              <div className="relative flex-1" data-clarity-mask="true">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by name, email, phone, city..."

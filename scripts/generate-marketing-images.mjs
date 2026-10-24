@@ -30,7 +30,14 @@ if (!apiKey) {
 }
 
 const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-const styleSuffix = config.styleSuffix;
+const claims = fs.readFileSync(path.join(root, "shared/publicClaims.ts"), "utf8");
+const showFoundingYear = /export const SHOW_FOUNDING_YEAR = true/.test(claims);
+const styleSuffix = showFoundingYear
+  ? config.styleSuffix
+  : config.styleSuffix
+      .replace(/(?:\s*·\s*|\s+)est\.?\s*2020\b/gi, "")
+      .replace(/\s+,/g, ",")
+      .replace(/[ \t]{2,}/g, " ");
 const cameraLocks = config.cameraLocks ?? {};
 
 function resolvePrompt(raw) {

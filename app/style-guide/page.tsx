@@ -16,7 +16,7 @@ export const metadata: Metadata = withBrandPageMetadata(({
 
 export default function StyleGuidePage() {
   return (
-    <div className="flex flex-col pb-20">
+    <div className="flex flex-col">
       <Section spacing="sm">
         <div className="container px-4 max-w-4xl">
           <PageHeader

@@ -54,7 +54,7 @@ export default function AdaCanyonPermitFlowPage() {
   ];
 
   return (
-    <InteriorPage kind="resources"><div className="flex flex-col pb-20">
+    <InteriorPage kind="resources"><div className="flex flex-col">
       <JsonLd data={schemas} />
       <Section spacing="default" className="pt-28 md:pt-32">
         <InteriorDocument heading={<h1 className="text-3xl md:text-4xl font-serif tracking-tight text-foreground mb-4">

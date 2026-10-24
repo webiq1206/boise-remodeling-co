@@ -53,22 +53,6 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
   if (variant === 'service' && serviceSlug) {
     return (
       <div className="space-y-10">
-        <div>
-        <h2 className="ed-h2-sm ed-statement-wide mb-8">
-          {SERVICES.find((s) => s.slug === serviceSlug)?.name} by city
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {CITIES.map((city) => (
-            <Link
-              key={city.slug}
-              href={cityServicePath(serviceSlug, city.slug)}
-              className="ed-body flex min-h-11 items-center border-b py-3 text-[0.9375rem] transition-colors hover:[color:var(--ed-accent)] lg:min-h-0 [border-color:var(--ed-line)]"
-            >
-              {city.name}, Idaho
-            </Link>
-          ))}
-          </div>
-        </div>
         <ExploreFurther serviceSlug={serviceSlug} />
       </div>
     );
@@ -137,11 +121,11 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
               </li>
             ))}
           </ul>
-          <div className="mt-8 border-t pt-6" style={{ borderColor: "var(--ed-line)" }}>
+          <div className="mt-8 flex flex-wrap gap-x-10 gap-y-4 border-t pt-6" style={{ borderColor: "var(--ed-line)" }}>
             <Link href={servicePath(serviceSlug)} className="ed-link">
               All {SERVICES.find((s) => s.slug === serviceSlug)?.name} areas →
             </Link>
-            <Link href={areaPath(citySlug)} className="ed-link mt-4 block w-fit">
+            <Link href={areaPath(citySlug)} className="ed-link">
               Remodeling in {CITIES.find((c) => c.slug === citySlug)?.name} →
             </Link>
           </div>

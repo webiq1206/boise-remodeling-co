@@ -7,7 +7,7 @@ import {
   HeartHandshake,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { SHOW_FOUNDED_YEAR } from "@/shared/foundingClaim";
+import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
 
 export const SITE_TAGLINE = "Treasure Valley design-build, built on clarity and craftsmanship";
 
@@ -100,7 +100,13 @@ export const PROOF_STATS = {
   projectsCompleted: "100+",
 } as const;
 
-const TRUST_ITEM_BASE = [
+/**
+ * Post-hero proof bar. Leads with the two credibility stats, then the genuine
+ * trust signals the business carries. No review counts or ratings until real
+ * ones exist. Keep labels concise so the strip stays on one desktop row.
+ */
+const TRUST_ITEM_SOURCE = [
+  `Est. ${PROOF_STATS.established}`,
   `${PROOF_STATS.projectsCompleted} Projects`,
   "Bonded · Insured",
   "Permits In-House",
@@ -108,17 +114,10 @@ const TRUST_ITEM_BASE = [
   "Free In-Home Visit",
 ] as const;
 
-/**
- * Post-hero proof bar. The founding flag adds at most one badge, `Est. YYYY`.
- * The other founding phrases stay in the guard test and are never badges.
- * Keep labels concise so the strip stays on one desktop row.
- */
-export function visibleTrustItems(showYear: boolean = SHOW_FOUNDED_YEAR): string[] {
-  const items: string[] = [...TRUST_ITEM_BASE];
-  if (showYear) items.unshift(`Est. ${PROOF_STATS.established}`);
-  return items;
+export function visibleTrustItems(showYear: boolean = SHOW_FOUNDING_YEAR): string[] {
+  const base = TRUST_ITEM_SOURCE.filter((item) => !/^est\.?\s*2020$/i.test(item));
+  return showYear ? [`Est. ${PROOF_STATS.established}`, ...base] : base;
 }
-
 export const TRUST_ITEMS = visibleTrustItems();
 
 export const PROMISE_ITEMS = [
@@ -153,7 +152,7 @@ export interface ClientPriority {
 export const CLIENT_PRIORITIES: ClientPriority[] = [
   {
     title: "Trust and credibility",
-    body: "Licensed, bonded, and insured with permits handled in-house and a written scope before work begins.",
+    body: "Idaho Registered Contractor #8381215, bonded and insured, with permits handled in-house and a written scope before work begins.",
     icon: ShieldCheck,
   },
   {
