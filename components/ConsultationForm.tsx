@@ -319,7 +319,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
       : null;
 
     return (
-      <div className="flex flex-col items-start py-2 space-y-4" data-testid="consultation-success" data-clarity-mask="true">
+      <div className="flex flex-col items-start py-2 space-y-4" data-testid="consultation-success" data-clarity-mask="True">
         {/* Stacked emblem confirms the brand on the request-received state */}
         <img
           src="/brand/svg/icon/boise-remodeling-co-icon-bone.svg"
@@ -420,6 +420,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         <div className="absolute -left-[10000px]" aria-hidden="true">
           <label htmlFor="consult-website">Website</label>
           <input
+            data-clarity-mask="True"
             id="consult-website"
             name="website"
             tabIndex={-1}

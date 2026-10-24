@@ -126,6 +126,7 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
                 <label className="sr-only" htmlFor="recovery-phone">Your phone number</label>
                 <input
+                  data-clarity-mask="True"
                   id="recovery-phone"
                   type="tel"
                   inputMode="tel"
@@ -145,6 +146,7 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
               </div>
               <label className="sr-only" htmlFor="recovery-name">Your name (optional)</label>
               <input
+                data-clarity-mask="True"
                 id="recovery-name"
                 type="text"
                 autoComplete="name"

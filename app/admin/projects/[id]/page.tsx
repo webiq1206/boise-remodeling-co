@@ -386,6 +386,7 @@ export default function AdminProjectDetailPage() {
 
           <TabsContent value="documents" className="mt-4 space-y-4">
             <input
+              data-clarity-mask="True"
               ref={docInputRef}
               type="file"
               accept=".pdf,image/*"

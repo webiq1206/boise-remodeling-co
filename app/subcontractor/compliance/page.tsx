@@ -151,6 +151,7 @@ export default function SubcontractorCompliancePage() {
               />
             </div>
             <input
+              data-clarity-mask="True"
               ref={coiInputRef}
               type="file"
               accept=".pdf,image/*"
@@ -203,6 +204,7 @@ export default function SubcontractorCompliancePage() {
               </div>
             )}
             <input
+              data-clarity-mask="True"
               ref={w9InputRef}
               type="file"
               accept=".pdf,image/*"
