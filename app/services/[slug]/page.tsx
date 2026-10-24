@@ -15,6 +15,11 @@ import { generateSpeakableSchema } from '@/lib/schema';
 import { SERVICE_SLUGS,getServiceBySlug,servicePath } from '@/lib/seo-routes';
 import { CITIES } from '@/shared/contentData';
 import { getFeaturedGalleryProject } from '@/shared/galleryData';
+import {
+  BATHROOM_NEAR_ME_PROCESS,
+  BATHROOM_NEAR_ME_SECTIONS,
+  BATHROOM_NEAR_ME_TIMELINE,
+} from '@/shared/content/bathroomNearMePage';
 import { SERVICE_SEO_CONTENT } from '@/shared/seoContent';
 import { getServiceImageSet } from '@/shared/serviceBackgrounds';
 import { notFound } from 'next/navigation';
@@ -46,12 +51,16 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   if (!service || !content) notFound();
 
   const path = servicePath(service.slug);
+  const isBathroomNearMe = service.slug === 'bathroom-remodel';
   const faqs = content.faqs;
   const images = getServiceImageSet(service.slug);
   const featuredProject = getFeaturedGalleryProject(service.slug);
   const serviceLC = service.name.toLowerCase();
 
-  const sections: LandingSection[] = [
+  // Bathroom parent page: no dollar modules. City pages keep costGuidance.
+  const sections: LandingSection[] = isBathroomNearMe
+    ? BATHROOM_NEAR_ME_SECTIONS
+    : [
     ...(content.costGuidance
       ? [
           {
@@ -106,7 +115,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         breatherImageUrl={images.breather}
         processImageUrl={images.process}
         manifestPath={path}
-        planningFrom={service.planningFrom}
+        planningFrom={isBathroomNearMe ? undefined : service.planningFrom}
         breadcrumbs={[
           { name: 'Home', href: '/' },
           { name: 'Services', href: '/services' },
@@ -114,8 +123,8 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         ]}
         benefits={content.benefits}
         inclusions={content.inclusions}
-        timeline={content.timeline}
-        processSteps={content.processSteps}
+        timeline={isBathroomNearMe ? BATHROOM_NEAR_ME_TIMELINE : content.timeline}
+        processSteps={isBathroomNearMe ? BATHROOM_NEAR_ME_PROCESS : content.processSteps}
         sections={sections}
         featuredProject={featuredProject}
         showEstimatePrompt
