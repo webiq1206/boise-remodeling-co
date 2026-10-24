@@ -5,7 +5,7 @@ Use after verification completes. Copy-paste content from `npm run gbp:print` or
 ## Phases 2–9 — Full profile (one sitting, ~2 hours)
 
 ### Core fields
-- [ ] Opening date: 2017
+- [ ] Opening date: leave blank until documented
 - [ ] Phone: (208) 477-1169
 - [ ] Website: https://boiseremodeling.co
 - [ ] Appointment link: https://boiseremodeling.co/contact

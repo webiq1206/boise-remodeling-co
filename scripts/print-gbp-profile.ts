@@ -11,7 +11,7 @@ import {
   GBP_DESCRIPTION,
   GBP_LINKS,
   GBP_MESSAGING,
-  GBP_NAP,
+  publicGbpNap,
   GBP_PHOTO_CHECKLIST,
   GBP_POSTS_STARTER,
   GBP_PRODUCTS,
@@ -24,7 +24,7 @@ const section = process.argv[2] ?? 'all';
 
 function printNap() {
   console.log('\n=== NAP ===');
-  console.log(JSON.stringify(GBP_NAP, null, 2));
+  console.log(JSON.stringify(publicGbpNap(), null, 2));
   console.log('\nService areas:');
   GBP_SERVICE_AREAS.forEach((a) => console.log(`  - ${a}`));
   console.log('\nCategories:');

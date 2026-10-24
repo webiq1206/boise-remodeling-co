@@ -4,8 +4,8 @@
  * Operator checklists: local-seo-audit/02-gbp-plan.md
  */
 
+import { SHOW_FOUNDING_YEAR as SHOW_FOUNDED_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG, textReplyLine } from '@/shared/siteConfig';
-import { publishFoundingCopy } from '@/shared/publicClaims';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 
@@ -36,6 +36,13 @@ export const GBP_NAP = {
     sunday: 'Closed',
   },
 } as const;
+
+/** Operator paste. The founded year stays on GBP_NAP and is omitted here while the flag is off. */
+export function publicGbpNap() {
+  if (SHOW_FOUNDED_YEAR) return GBP_NAP;
+  const { founded: _year, ...rest } = GBP_NAP;
+  return rest;
+}
 
 export const GBP_SERVICE_AREAS = [
   'Boise, ID',

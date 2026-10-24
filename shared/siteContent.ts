@@ -114,9 +114,11 @@ const TRUST_ITEM_SOURCE = [
   "Free In-Home Visit",
 ] as const;
 
-export const TRUST_ITEMS: readonly string[] = SHOW_FOUNDING_YEAR
-  ? TRUST_ITEM_SOURCE
-  : TRUST_ITEM_SOURCE.filter((item) => !/^est\.?\s*2020$/i.test(item));
+export function visibleTrustItems(showYear: boolean = SHOW_FOUNDING_YEAR): string[] {
+  const base = TRUST_ITEM_SOURCE.filter((item) => !/^est\.?\s*2020$/i.test(item));
+  return showYear ? [`Est. ${PROOF_STATS.established}`, ...base] : base;
+}
+export const TRUST_ITEMS = visibleTrustItems();
 
 export const PROMISE_ITEMS = [
   {
