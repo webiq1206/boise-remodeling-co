@@ -161,7 +161,7 @@ Plan about 2 hours. Have project photos ready on your computer.
 5. Turn **Google messaging ON**.
 6. Set messaging welcome message to:
 
-> Thanks for reaching out to Boise Remodeling Co. We respond within one business day. For faster help, call (208) 477-1169 or schedule a visit at boiseremodeling.co/contact
+> Thanks for reaching out to Boise Remodeling Co. We respond within one business day. Prefer to text? Text (208) 477-1169. We reply in minutes during business hours (Mon–Fri 9–6, Sat 9–4 MT). For faster help, call (208) 477-1169 or schedule a visit at boiseremodeling.co/contact
 
 ### Step 3.2 — Link social profiles
 
@@ -370,7 +370,7 @@ Yes. Financing is available through partners including GreenSky and Mosaic with 
 Timelines depend on scope. A refresh may take 4-6 weeks; a full gut with layout changes often runs 10-16 weeks. We provide a week-by-week schedule before demo day. Process guide: https://boiseremodeling.co/guides/boise-remodeling-process-guide
 
 **Q12: How do I get started?**  
-Call (208) 477-1169, text us at the same number, or schedule online: https://boiseremodeling.co/contact. We respond within one business day.
+Call (208) 477-1169, text us at the same number, or schedule online: https://boiseremodeling.co/contact. We respond within one business day. Prefer to text? Text (208) 477-1169. We reply in minutes during business hours (Mon–Fri 9–6, Sat 9–4 MT).
 
 ---
 
