@@ -1,6 +1,11 @@
 /**
- * The two staff emails for estimator recovery. Both carry every non-sensitive
- * fact about the session and say plainly when there is no contact information.
+ * Staff copy for estimator recovery.
+ *
+ * `buildCallbackEmail` is sent when a visitor asks for a call back.
+ * `buildAbandonmentEmail` is the partial-completion summary (`[Partial] ...
+ * drop-off`). The sweep does not send it while
+ * `SEND_PARTIAL_COMPLETION_EMAILS` is false. Completed-form lead mail is
+ * built elsewhere and is unaffected.
  */
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import type { EstimatorSession } from "@/shared/schema";
