@@ -14,7 +14,7 @@ export const wholeHomeRemodelTimeline: BlogPostData = {
   publishedAt: '2026-07-11',
   updatedAt: '2026-07-11',
   tags: ['whole home', 'timeline', 'process', 'boise'],
-  heroImage: '/images/blog/whole-home-remodel-timeline.webp',
+  heroImage: '/images/blog/whole-home-rough-in.webp',
   primaryKeyword: 'whole home remodel timeline',
   secondaryKeywords: [
     'how long does a whole home remodel take',

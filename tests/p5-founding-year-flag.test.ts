@@ -74,7 +74,8 @@ test('founding-year sentences stay in source while the flag is off', () => {
   assert.match(readFileSync('shared/siteContent.ts', 'utf8'), /Est\. \$\{PROOF_STATS\.established\}/);
   assert.match(llms, /since 2020/);
   assert.match(llms, /Founded: 2020/);
-  assert.match(prompt, /EST 2020/);
+  assert.doesNotMatch(prompt, /EST 2020|t-shirt|black tee/i);
+  assert.match(prompt, /No people, no text, no logos/);
 });
 
 test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is off', () => {
@@ -98,4 +99,3 @@ test('the open graph page preview is Ada year-free card', () => {
   const hash = createHash('sha256').update(readFileSync('public/brand/page-preview.png')).digest('hex');
   assert.equal(hash, 'da5ff48bfb7d52e90a20b3dfc84707960cf78f05234f7754e9e8ebe6dc3bebea');
 });
-

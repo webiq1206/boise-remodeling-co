@@ -22,7 +22,7 @@ Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The sit
 - **Fix**: owner supplies the Idaho contractor registration number → footer + /about + `BUSINESS_INFO.licenses` + future `hasCredential` schema. Also reconcile public-record association with Timber and Love Inc (RCE-42326) - if Boise Remodeling Co operates under or alongside that registration, state the relationship plainly on /about; ambiguity between two contractor identities is a trust leak that a diligent homeowner (or AI engine) will find in permit records.
 
 ## Page-by-page EEAT actions
-- **/about (Critical)**: founder section (#team), license/registration display, history timeline (founded 2017 → today), insurance specifics, photo of team/vehicle
+- **/about (Critical)**: founder section (#team), license/registration display, history timeline (leave blank until documented), insurance specifics, photo of team/vehicle
 - **/testimonials (High)**: dates + cities + project types on all entries; Google review embeds post-GBP
 - **Guides (High)**: Person author + dateModified on every expanded guide
 - **Footer (Medium)**: registration number + "Bonded & Insured" with bond/carrier detail

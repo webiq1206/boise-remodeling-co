@@ -1,4 +1,5 @@
 import { InteriorHero,InteriorPage } from '@/components/approved/InteriorLayout';
+import { RegistrationLink } from '@/components/RegistrationLink';
 import { DisplayNum,formatStepNumber,Section } from '@/components/marketing';
 import { AreaCard } from '@/components/marketing/AreaCard';
 import { Hairline } from '@/components/marketing/Hairline';
@@ -21,7 +22,7 @@ generateWebPageSchema,
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
-import { HERO_STATS,PRINCIPLES,TRUST_ITEMS } from '@/shared/siteContent';
+import { HERO_STATS,PRINCIPLES,visibleTrustItems } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight } from 'lucide-react';
 import Image from 'next/image';
@@ -92,7 +93,7 @@ export default function AboutPage() {
       <JsonLd data={schemas} />
       <div className="flex flex-col ">
         {/* Approved editorial hero */}
-        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.leadership} imageAlt="Boise Remodeling Co design-build team at a finished kitchen project">
+        <InteriorHero layout="editorial" imageSrc={SITE_IMAGES.aboutKitchen} imageAlt="Warm open kitchen with white oak cabinets, a large island and black-framed windows">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
@@ -179,11 +180,11 @@ export default function AboutPage() {
                   className="mb-8 max-w-none"
                 />
                 <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                  Idaho Registered Contractor #8381215. We are bonded and insured for residential
-                  remodeling work across the Treasure Valley.
+                  <RegistrationLink className="text-foreground underline underline-offset-2 hover:text-accent-legible" />
+                  . We are bonded and insured for residential remodeling work across the Treasure Valley.
                 </p>
                 <ul className="grid sm:grid-cols-2 gap-3">
-                  {TRUST_ITEMS.map((item) => (
+                  {visibleTrustItems().map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
                       <Check className="h-4 w-4 text-accent-legible flex-shrink-0 mt-0.5" />
                       <span>{item}</span>

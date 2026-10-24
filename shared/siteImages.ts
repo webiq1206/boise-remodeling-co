@@ -26,8 +26,8 @@ export const SITE_IMAGES = {
   processInProgress: "/images/kitchen-in-progress.webp",
   /** Full-bleed brand statement band. */
   statementBand: "/images/statement-great-room.webp",
-  /** About/contact split panels and about hero. */
-  leadership: "/images/leadership-team.webp",
+  /** About hero and the contact visit panel. */
+  aboutKitchen: "/images/about-oak-kitchen.webp",
   /** Consultation section background (homepage). */
   consultBg: "/images/consult-lifestyle.webp",
   /** Budget section subtle texture - island detail crop. */
