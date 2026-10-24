@@ -114,7 +114,7 @@ function FooterGroup({ title, links }: { title: string; links: FooterLink[] }) {
   );
 }
 
-export function Footer() {
+export function Footer({ hideRegistration = false }: { hideRegistration?: boolean }) {
   const currentYear = new Date().getFullYear();
   const groups = buildFooterGroups();
 
@@ -200,9 +200,11 @@ export function Footer() {
         <div className="flex flex-col gap-4 pt-5 text-xs text-inverse-muted sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-wrap gap-x-4 gap-y-2">
             <span>&copy; {currentYear} Boise Remodeling Co. All rights reserved.</span>
-            <span className="basis-full overflow-visible whitespace-normal break-words">
-              <RegistrationLine />
-            </span>
+            {hideRegistration ? null : (
+              <span className="basis-full overflow-visible whitespace-normal break-words">
+                <RegistrationLine />
+              </span>
+            )}
             {/* Required parent-company disclosure. This brand is a DBA of
                 P5 Home Co LLC, not a separate company. */}
             <span>
