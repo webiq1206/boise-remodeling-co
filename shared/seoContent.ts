@@ -4,6 +4,12 @@ import { getCountyLabel } from './contentData';
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
 import { AREA_CITY_COPY } from './content/areaCopy';
 import { getCityServiceCopy } from './content/cityServiceCopy';
+import {
+  BATHROOM_NEAR_ME_FAQS,
+  BATHROOM_NEAR_ME_H1,
+  BATHROOM_NEAR_ME_KEYWORD,
+  BATHROOM_NEAR_ME_OVERVIEW,
+} from './content/bathroomNearMePage';
 
 export interface FAQItem {
   question: string;
@@ -120,10 +126,9 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   'bathroom-remodel': {
     slug: 'bathroom-remodel',
     name: 'Bathroom Remodel',
-    headline: 'Bathroom Remodeling in the Treasure Valley',
-    primaryKeyword: 'bathroom remodeling boise idaho',
-    overview:
-      'Bathroom remodels should feel calm, functional, and built to last. We design primary baths, guest baths, and powder rooms with clear expectations, proactive communication, and finishes chosen for Idaho homes.',
+    headline: BATHROOM_NEAR_ME_H1,
+    primaryKeyword: BATHROOM_NEAR_ME_KEYWORD,
+    overview: BATHROOM_NEAR_ME_OVERVIEW,
     benefits: [
       'Design-build accountability from layout through tile and fixtures',
       'Waterproofing and plumbing scope defined in writing',
@@ -137,6 +142,8 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Plumbing and electrical updates as scoped',
       'Daily protection of adjacent living spaces',
     ],
+    // City pages still render this duration. The parent route overrides it
+    // with BATHROOM_NEAR_ME_TIMELINE until ops confirms a week count. [VERIFY]
     timeline: 'Typical bathroom remodels complete in 3 to 5 weeks after permits, depending on custom materials and layout changes.',
     processSteps: [
       { title: 'Consultation', description: 'We assess your bath, discuss storage and accessibility needs, and outline a planning range.' },
@@ -144,45 +151,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       { title: 'Build', description: 'Our crew and trade partners coordinate waterproofing, tile, and trim with weekly updates.' },
       { title: 'Final walkthrough', description: 'We review every detail with you before sign-off.' },
     ],
-    faqs: [
-      {
-        question: 'How long does a bathroom remodel take?',
-        answer: 'Most projects run 3 to 5 weeks from permit approval. Larger primary baths with layout changes may take longer.',
-      },
-      {
-        question: 'Can you remodel a bathroom without moving plumbing?',
-        answer: 'Yes. Cosmetic and mid-scope updates can keep existing plumbing locations. We will recommend layout changes only when they add real value.',
-      },
-      {
-        question: 'Do you work in both Ada and Canyon County?',
-        answer: 'Yes. We serve Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell, and surrounding Treasure Valley communities.',
-      },
-      {
-        question: 'How much does a bathroom remodel cost in Boise?',
-        answer:
-          'Guest and hall bath remodels often plan $18,000 to $45,000; primary baths with curbless showers, double vanities, or layout changes commonly run $35,000 to $85,000 or more. Your written scope confirms the number after an in-home visit.',
-      },
-      {
-        question: 'Do I need a permit for a bathroom remodel in Idaho?',
-        answer:
-          'Like-for-like fixture swaps usually do not require permits. Moving plumbing, adding circuits, changing layout, or altering structure does. We confirm the permit path for your address and handle Ada or Canyon County submissions in-house.',
-      },
-      {
-        question: 'What is a curbless shower and is it worth it?',
-        answer:
-          'A curbless shower has no step or threshold, which looks cleaner and works for aging-in-place. It requires recessing the floor and careful waterproofing and slope, so it is easiest to plan during a full remodel rather than as a retrofit.',
-      },
-      {
-        question: 'How do you prevent water damage and mold in a remodeled bathroom?',
-        answer:
-          'Waterproofing membrane systems behind tile, correct shower slope, and properly sized ventilation are all defined in the written scope and inspected during construction. Ventilation matters in our dry climate more than most homeowners expect.',
-      },
-      {
-        question: 'Can you make a bathroom work for aging in place without looking clinical?',
-        answer:
-          'Yes. Curbless entries, blocking for future grab bars, comfort-height vanities, and slip-resistant tile can be designed into a bathroom that looks like a spa, not a hospital.',
-      },
-    ],
+    faqs: BATHROOM_NEAR_ME_FAQS,
     costGuidance: {
       heading: 'Bathroom remodel cost in the Treasure Valley',
       paragraphs: [

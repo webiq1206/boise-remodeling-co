@@ -1,4 +1,8 @@
 import type { Metadata } from 'next';
+import {
+  BATHROOM_NEAR_ME_DESCRIPTION,
+  BATHROOM_NEAR_ME_TITLE,
+} from '@/shared/content/bathroomNearMePage';
 import { publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import {
@@ -125,7 +129,7 @@ export function stripBrandSuffix(title: string): string {
  */
 const SERVICE_TITLE_OVERRIDES: Record<string, string> = {
   'kitchen-remodel': 'Kitchen remodeling in Boise',
-  'bathroom-remodel': 'Treasure Valley Bathroom Remodeling',
+  'bathroom-remodel': BATHROOM_NEAR_ME_TITLE,
   'whole-home-remodel': 'Treasure Valley Whole-Home Remodeling',
   'room-addition': 'Room additions in Boise',
   adu: 'Treasure Valley ADUs & Guest Houses',
@@ -177,6 +181,11 @@ const AREA_ANSWER: Record<string, { title: string; description: string }> = {
 };
 
 const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
+  'bathroom-remodel': {
+    title: BATHROOM_NEAR_ME_TITLE,
+    // Near-me meta. No registration number, no prices, no week count.
+    description: BATHROOM_NEAR_ME_DESCRIPTION,
+  },
   'kitchen-remodel': {
     title: 'Kitchen remodeling in Boise',
     description:
