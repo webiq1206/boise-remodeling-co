@@ -8,7 +8,15 @@ export const REGISTRATION_LINE = "Idaho Registered Contractor #8381215";
 export const DOPL_LICENSE_SEARCH = "https://edopl.idaho.gov/OnlineServices/?link=PubSearch";
 
 /** Sitemap pages link the line. Estimator funnel pages keep the same words as plain text. */
+function withoutTrailingSlash(pathname: string | null | undefined): string {
+  if (!pathname) return "";
+  if (pathname.length > 1 && pathname.endsWith("/")) return pathname.slice(0, -1);
+  return pathname;
+}
+
 export function registrationPresentation(pathname: string | null | undefined): "link" | "plain" | "hidden" {
+  // BOT-05: the bathroom service page does not state contractor #8381215.
+  if (withoutTrailingSlash(pathname) === "/services/bathroom-remodel") return "hidden";
   if (isPortalPath(pathname)) return "hidden";
   if (isEstimatorPath(pathname)) return "plain";
   return "link";

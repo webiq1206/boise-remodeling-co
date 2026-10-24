@@ -17,7 +17,7 @@ export const HERO_SUBHEAD =
   "One accountable design-build team from first visit to final walkthrough.";
 
 export const HERO_STATS = [
-  { num: "60 sec", label: "Instant planning range" },
+  { num: "After photos", label: "Planning range after visit" },
   { num: "Free", label: "In-home visit" },
   { num: "Written", label: "Scope before build" },
 ] as const;
