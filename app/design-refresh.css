@@ -194,68 +194,55 @@
   .site-cabinet .cabinet-approved .section { padding-block: 56px; }
 }
 
-/* Home conversion: Call, Chat, and a short request on paper, with the
-   photograph beside the form on a desktop and a short band on a phone.
-   These rules beat the photograph-overlay hero (44vh copy, flex-end,
-   full-viewport height) because that layout pushed the actions under the fold. */
-.approved-shell.site-remodeling .family-site .f-hero.fold-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
-  align-items: stretch;
+/* The photograph and headline fill the first screen. The short request is
+   the next section, so a phone does not open on the form. Height stays auto
+   so text zoom can grow the hero past one viewport. */
+.approved-shell.site-remodeling .family-site .f-hero {
+  display: flex;
+  align-items: flex-end;
   height: auto;
-  min-height: 0;
+  min-height: calc(100svh - 84px);
   max-height: none;
-  background: #fbfaf6;
-  color: #2c302f;
-  position: relative;
-  isolation: isolate;
-}
-.approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo {
-  order: 2;
-  min-height: 100%;
   background: #1c1f1e;
+  color: #fbfaf6;
 }
-.approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo img {
-  position: static;
-  inset: auto;
+.approved-shell.site-remodeling .family-site .f-hero > img {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   width: 100%;
   height: 100%;
-  min-height: 640px;
+  min-height: 0;
   max-height: none;
   object-fit: cover;
   object-position: 62% 40%;
 }
-.approved-shell.site-remodeling .family-site .fold-hero .fold-hero-copy {
-  grid-area: auto;
-  width: auto;
-  max-width: none;
-  margin: 0;
-  padding: 88px 48px 48px 6vw;
+.approved-shell.site-remodeling .family-site .f-hero-shade {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(23,30,27,.08) 0%, rgba(23,30,27,.34) 40%, rgba(23,30,27,.88) 74%, rgba(23,30,27,.97) 100%);
+}
+.approved-shell.site-remodeling .family-site .f-hero-copy {
+  width: min(1260px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 28vh 0 40px;
+}
+.approved-shell.site-remodeling .family-site .f-hero h1 {
+  color: #fbfaf6;
+  font-size: clamp(40px, 6vw, 84px);
+  line-height: 1.02;
+}
+.approved-shell.site-remodeling .fold-request {
   background: #fbfaf6;
   color: #2c302f;
+  padding: 36px 0 56px;
 }
-.approved-shell.site-remodeling .family-site .fold-hero .f-eyebrow {
-  color: #4c5f50;
-  margin-bottom: 12px !important;
+.approved-shell.site-remodeling .fold-request .f-container {
+  width: min(720px, calc(100% - 48px));
 }
-.approved-shell.site-remodeling .family-site .fold-hero h1 {
-  color: #2c302f;
-  font-size: clamp(42px, 3.5vw, 56px);
-  line-height: 1.02;
-  margin-bottom: 12px;
-}
-.approved-shell.site-remodeling .family-site .fold-hero h1 em {
-  color: #9aa098;
-}
-.approved-shell.site-remodeling .family-site .fold-hero .f-hero-summary {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-}
-.approved-shell.site-remodeling .family-site .fold-hero .fold-lede {
+.approved-shell.site-remodeling .fold-request .fold-lede {
   color: #2c302f;
   font-size: 17px;
   line-height: 1.5;
@@ -435,38 +422,19 @@
 }
 
 @media (max-width: 1179px) {
-  .approved-shell.site-remodeling .family-site .f-hero.fold-hero {
-    display: block;
-    min-height: 0;
+  .approved-shell.site-remodeling .family-site .f-hero {
+    min-height: calc(100svh - 76px);
     height: auto;
-    padding-top: 0;
-    background: #fbfaf6;
   }
-  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo,
-  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo img {
-    height: 56px;
-    min-height: 0;
-    max-height: 56px;
+  .approved-shell.site-remodeling .family-site .f-hero h1 {
+    font-size: clamp(40px, 10.5vw, 54px);
   }
-  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo { overflow: hidden; }
-  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-copy {
-    width: calc(100% - 48px);
-    margin: 0 auto;
-    padding: 8px 0 20px;
-  }
-  .approved-shell.site-remodeling .family-site .fold-hero h1 {
-    font-size: 34px;
-    line-height: 1.02;
-    margin-bottom: 8px;
-  }
-  .approved-shell.site-remodeling .family-site .fold-hero .f-eyebrow { margin-bottom: 8px !important; }
-  .approved-shell.site-remodeling .family-site .fold-hero .fold-lede {
+  .approved-shell.site-remodeling .fold-request .fold-lede {
     font-size: 15px;
     line-height: 1.4;
     margin-bottom: 10px;
     max-width: none;
   }
-  .approved-shell.site-remodeling .fold-actions { margin-bottom: 10px; }
   .approved-shell.site-remodeling .fold-form { gap: 6px 10px; }
   .approved-shell.site-remodeling .fold-form input { min-height: 42px; }
   .approved-shell.site-remodeling .family-site section.fold-story {
@@ -491,6 +459,7 @@
   }
 }
 @media (max-width: 700px) {
+  .approved-shell.site-remodeling .family-site .f-hero { min-height: calc(100svh - 70px); }
   .approved-shell.site-remodeling .family-site .f-container { width: calc(100% - 48px); }
 }
 
