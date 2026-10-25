@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
 import { isPortalPath } from "@/lib/portalRoutes";
 import { cn } from "@/lib/utils";
-import { CTA_QUOTE } from "@/shared/ctaCopy";
+const REQUEST_LABEL = "Request a call";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Contact,Menu,MessageSquare,Phone,X } from "lucide-react";
@@ -93,7 +93,7 @@ export function Navigation() {
         )}
       >
         <nav className="container flex h-[60px] items-center justify-between gap-2 px-4 md:gap-4 md:px-6">
-          <div className="min-w-0 flex-1 overflow-hidden [&_img]:h-auto [&_img]:max-w-full">
+          <div className="min-w-0 flex-1 [&_img]:h-auto [&_img]:max-w-full">
             <Logo />
           </div>
 
@@ -153,7 +153,7 @@ export function Navigation() {
               </SaveContactLink>
             </div>
             <NavEstimateButton variant="brand" size="sm" className="min-h-11">
-              {CTA_QUOTE}
+              {REQUEST_LABEL}
             </NavEstimateButton>
           </div>
 
@@ -162,17 +162,18 @@ export function Navigation() {
           <div className="flex min-[1180px]:hidden shrink-0 items-center gap-1">
             <a
               href={SITE_CONFIG.phoneHref}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-foreground"
-              aria-label={`Call ${SITE_CONFIG.phone}`}
               data-testid="link-call-mobile-header"
+              className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-sm border border-white/30 px-2.5 text-[13px] font-medium text-foreground"
+              aria-label={`Call ${SITE_CONFIG.phone}`}
             >
-              <Phone className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+              <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden />
+              Call
             </a>
             <a
               href={SITE_CONFIG.phoneSmsHref}
+              data-testid="link-text-mobile-header"
               className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-foreground"
               aria-label={`Text ${SITE_CONFIG.phone}`}
-              data-testid="link-text-mobile-header"
             >
               <MessageSquare className="h-5 w-5" strokeWidth={1.5} aria-hidden />
             </a>
@@ -305,7 +306,7 @@ export function Navigation() {
                       className="mt-3 w-full"
                       onExtraClick={() => setMobileOpen(false)}
                     >
-                      {CTA_QUOTE}
+                      {REQUEST_LABEL}
                     </NavEstimateButton>
                   </div>
                 </Dialog.Content>
@@ -353,7 +354,7 @@ export function Navigation() {
             className="min-h-14 flex-1 text-base"
             data-testid="button-begin-conversation-mobile"
           >
-            {CTA_QUOTE}
+            {REQUEST_LABEL}
           </NavEstimateButton>
         </div>
       </div>

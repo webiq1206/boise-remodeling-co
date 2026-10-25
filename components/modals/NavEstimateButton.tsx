@@ -22,8 +22,8 @@ interface NavEstimateButtonProps extends Omit<ButtonProps, "onClick" | "asChild"
 }
 
 /**
- * Header and mobile-bar estimate entry: homepage scrolls to #calculator;
- * every other page goes to the dedicated /estimate page.
+ * Header and mobile bar. The short request form is the primary lead.
+ * Every page returns home to that form.
  */
 export function NavEstimateButton({
   asLink = false,
@@ -34,8 +34,7 @@ export function NavEstimateButton({
   ...props
 }: NavEstimateButtonProps) {
   const pathname = usePathname();
-  const onHome = pathname === "/";
-  const href = onHome ? "/#calculator" : "/estimate";
+  const href = "/#request";
   const { variant: _v, size: _s, ...linkAttrs } = props as Record<string, unknown>;
 
   const handleClick = () => {

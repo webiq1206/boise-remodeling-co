@@ -193,3 +193,419 @@
 @media (max-width: 700px) {
   .site-cabinet .cabinet-approved .section { padding-block: 56px; }
 }
+
+/* Home conversion: Call, Chat, and a short request on paper, with the
+   photograph beside the form on a desktop and a short band on a phone.
+   These rules beat the photograph-overlay hero (44vh copy, flex-end,
+   full-viewport height) because that layout pushed the actions under the fold. */
+.approved-shell.site-remodeling .family-site .f-hero.fold-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(280px, 0.92fr);
+  align-items: stretch;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  background: #fbfaf6;
+  color: #2c302f;
+  position: relative;
+  isolation: isolate;
+}
+.approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo {
+  order: 2;
+  min-height: 100%;
+  background: #1c1f1e;
+}
+.approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo img {
+  position: static;
+  inset: auto;
+  width: 100%;
+  height: 100%;
+  min-height: 640px;
+  max-height: none;
+  object-fit: cover;
+  object-position: 62% 40%;
+}
+.approved-shell.site-remodeling .family-site .fold-hero .fold-hero-copy {
+  grid-area: auto;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 88px 48px 48px 6vw;
+  background: #fbfaf6;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .family-site .fold-hero .f-eyebrow {
+  color: #4c5f50;
+  margin-bottom: 12px !important;
+}
+.approved-shell.site-remodeling .family-site .fold-hero h1 {
+  color: #2c302f;
+  font-size: clamp(42px, 3.5vw, 56px);
+  line-height: 1.02;
+  margin-bottom: 12px;
+}
+.approved-shell.site-remodeling .family-site .fold-hero h1 em {
+  color: #9aa098;
+}
+.approved-shell.site-remodeling .family-site .fold-hero .f-hero-summary {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.approved-shell.site-remodeling .family-site .fold-hero .fold-lede {
+  color: #2c302f;
+  font-size: 17px;
+  line-height: 1.5;
+  max-width: 38ch;
+  margin: 0 0 18px;
+}
+.approved-shell.site-remodeling .fold-actions {
+  display: flex;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+.approved-shell.site-remodeling .fold-call,
+.approved-shell.site-remodeling .fold-chat,
+.approved-shell.site-remodeling .fold-submit,
+.approved-shell.site-remodeling .fold-optional-open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 2px;
+  font: 600 15px/1 var(--font-manrope), Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .fold-call,
+.approved-shell.site-remodeling .fold-submit {
+  background: #2c302f;
+  color: #fbfaf6;
+  border: 1px solid #2c302f;
+}
+.approved-shell.site-remodeling .fold-chat,
+.approved-shell.site-remodeling .fold-optional-open {
+  background: transparent;
+  color: #2c302f;
+  border: 1px solid #2c302f;
+}
+.approved-shell.site-remodeling .fold-call,
+.approved-shell.site-remodeling .fold-chat { flex: 1; }
+.approved-shell.site-remodeling .fold-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0;
+}
+.approved-shell.site-remodeling .fold-form > :first-child,
+.approved-shell.site-remodeling .fold-form > :nth-child(n + 4) {
+  grid-column: 1 / -1;
+}
+.approved-shell.site-remodeling .fold-form-title {
+  margin: 0;
+  font: 600 13px/1.4 var(--font-manrope), Arial, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4c5f50;
+}
+.approved-shell.site-remodeling .fold-form label {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+.approved-shell.site-remodeling .fold-form label span,
+.approved-shell.site-remodeling .fold-file-note {
+  font: 600 13px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .fold-form input,
+.approved-shell.site-remodeling .fold-form textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #2c302f33;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  font: 16px/1.4 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .fold-form input::placeholder { color: #62605a; }
+.approved-shell.site-remodeling .fold-file input { padding: 8px; }
+.approved-shell.site-remodeling .fold-file-note {
+  margin: 0;
+  font-weight: 500;
+  color: #62605a;
+}
+.approved-shell.site-remodeling .fold-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.approved-shell.site-remodeling .fold-files li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .fold-files button {
+  min-height: 32px;
+  padding: 0 8px;
+  background: transparent;
+  border: 0;
+  color: #4c5f50;
+  font: 600 13px/1 var(--font-manrope), Arial, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-shell.site-remodeling .fold-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.approved-shell.site-remodeling .fold-error {
+  margin: 0;
+  color: #8a3b2b;
+  font-size: 14px;
+}
+.approved-shell.site-remodeling .fold-submit { width: 100%; }
+.approved-shell.site-remodeling .fold-submit:disabled { opacity: 0.6; }
+.approved-shell.site-remodeling .fold-secondary {
+  justify-self: start;
+  color: #2c302f;
+  font: 600 14px/1.4 var(--font-manrope), Arial, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-shell.site-remodeling .fold-success {
+  margin: 8px 0 0;
+  color: #2c302f;
+  font-size: 17px;
+}
+.approved-shell.site-remodeling .fold-optional {
+  background: #f1ede4;
+  color: #2c302f;
+  padding: 72px 0;
+}
+.approved-shell.site-remodeling .fold-optional h2 {
+  font-size: clamp(36px, 4vw, 56px);
+  margin-bottom: 14px;
+}
+.approved-shell.site-remodeling .fold-optional p { max-width: 42em; color: #2c302f; }
+.approved-shell.site-remodeling .fold-optional-open { margin-top: 22px; }
+.approved-shell.site-remodeling .family-site section.fold-story {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  column-gap: clamp(28px, 4vw, 64px);
+  align-items: center;
+}
+.approved-shell.site-remodeling .family-site section.fold-story > img {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+}
+
+@media (max-width: 1179px) {
+  .approved-shell.site-remodeling .family-site .f-hero.fold-hero {
+    display: block;
+    min-height: 0;
+    height: auto;
+    padding-top: 0;
+    background: #fbfaf6;
+  }
+  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo,
+  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo img {
+    height: 96px;
+    min-height: 0;
+    max-height: 96px;
+  }
+  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo { overflow: hidden; }
+  .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-copy {
+    width: calc(100% - 48px);
+    margin: 0 auto;
+    padding: 12px 0 24px;
+  }
+  .approved-shell.site-remodeling .family-site .fold-hero h1 {
+    font-size: 34px;
+    line-height: 1.02;
+    margin-bottom: 8px;
+  }
+  .approved-shell.site-remodeling .family-site .fold-hero .f-eyebrow { margin-bottom: 8px !important; }
+  .approved-shell.site-remodeling .family-site .fold-hero .fold-lede {
+    font-size: 15px;
+    line-height: 1.45;
+    margin-bottom: 12px;
+  }
+  .approved-shell.site-remodeling .fold-actions { margin-bottom: 10px; }
+  .approved-shell.site-remodeling .fold-form { gap: 8px 10px; }
+  .approved-shell.site-remodeling .fold-form input { min-height: 42px; }
+  .approved-shell.site-remodeling .family-site section.fold-story {
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+  }
+  .approved-shell.site-remodeling .family-site section.fold-story > img { height: 220px; }
+  .approved-shell.site-remodeling [data-approved-navigation] .approved-brand { gap: 8px; }
+  .approved-shell.site-remodeling [data-approved-navigation] .approved-brand-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .approved-shell.site-remodeling [data-approved-navigation] .approved-original-wordmark {
+    width: 128px;
+    max-width: 34vw;
+    height: auto;
+    max-height: 22px;
+  }
+  .approved-shell.site-remodeling [data-approved-navigation] .approved-endorsement {
+    font-size: 8px;
+    letter-spacing: 0.04em;
+  }
+}
+@media (max-width: 700px) {
+  .approved-shell.site-remodeling .family-site .f-container { width: calc(100% - 48px); }
+}
+
+/* Chat opens as the visible screen on a phone: light paper, starting at the
+   top, with the composer pinned to the visual viewport so the keyboard and
+   the autofill bar cannot cover the field. Desktop stays a docked panel. */
+.assistant-sheet {
+  position: fixed;
+  z-index: 240;
+  left: 0;
+  right: 0;
+  top: var(--assistant-top, 0px);
+  height: var(--assistant-height, 100dvh);
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  background: #fbfaf6;
+  color: #2c302f;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  overscroll-behavior: contain;
+}
+.assistant-sheet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: none;
+  padding: 12px 12px 12px 16px;
+  border-bottom: 1px solid #2c302f22;
+  background: #fbfaf6;
+}
+.assistant-sheet-title { margin: 0; font: 600 15px/1.3 var(--font-manrope), Arial, sans-serif; color: #2c302f; }
+.assistant-sheet-sub { margin: 2px 0 0; font-size: 13px; color: #62605a; }
+.assistant-sheet-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: #2c302f;
+}
+.assistant-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #fbfaf6;
+}
+.assistant-row-user { display: flex; justify-content: flex-end; }
+.assistant-row-assistant { display: flex; justify-content: flex-start; }
+.assistant-bubble-user,
+.assistant-bubble-assistant,
+.assistant-bubble-notice {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+.assistant-bubble-user { background: #2c302f; color: #fbfaf6; }
+.assistant-bubble-assistant { background: #f1ede4; color: #2c302f; }
+.assistant-bubble-notice { background: #fff; color: #62605a; border: 1px solid #2c302f22; }
+.assistant-typing { display: flex; gap: 6px; padding-left: 4px; }
+.assistant-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #62605a;
+}
+.assistant-continue {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid #2c302f33;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  font: 600 14px/1.3 var(--font-manrope), Arial, sans-serif;
+}
+.assistant-continue:disabled { opacity: 0.4; }
+.assistant-composer {
+  flex: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid #2c302f22;
+  background: #fbfaf6;
+}
+.assistant-field {
+  flex: 1;
+  resize: none;
+  max-height: 112px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #2c302f33;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  font: 16px/1.4 var(--font-manrope), Arial, sans-serif;
+}
+.assistant-field::placeholder { color: #62605a; }
+.assistant-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 2px;
+  background: #2c302f;
+  color: #fbfaf6;
+}
+.assistant-send:disabled { opacity: 0.4; }
+body[data-assistant-open="true"] [data-mobile-nav-bar] { display: none !important; }
+
+@media (min-width: 1180px) {
+  .assistant-sheet {
+    top: auto;
+    bottom: 24px;
+    right: 24px;
+    left: auto;
+    width: 400px;
+    height: min(640px, calc(100dvh - 120px));
+    border: 1px solid #2c302f22;
+    border-radius: 12px;
+    box-shadow: 0 18px 50px rgba(28, 31, 30, 0.18);
+  }
+}
