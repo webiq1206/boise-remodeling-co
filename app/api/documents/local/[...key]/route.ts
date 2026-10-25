@@ -17,6 +17,8 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ key:
       jpeg: "image/jpeg",
       png: "image/png",
       webp: "image/webp",
+      heic: "image/heic",
+      heif: "image/heif",
     };
 
     return new NextResponse(buffer, {

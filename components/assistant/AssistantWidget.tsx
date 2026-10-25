@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import { useFormInView } from "@/hooks/use-form-in-view";
 import Link from "next/link";
@@ -60,11 +61,44 @@ export function AssistantWidget() {
   const pathname = usePathname();
   const formInView = useFormInView(pathname, true);
   const [open, setOpen] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
+  const [sheet, setSheet] = useState({ top: 0, height: 0 });
   useEffect(() => {
     const openFromBar = () => setOpen(true);
     window.addEventListener("p5:assistant-open", openFromBar);
     return () => window.removeEventListener("p5:assistant-open", openFromBar);
   }, []);
+  useEffect(() => setPortalReady(true), []);
+  useEffect(() => {
+    if (!open) return;
+    const phoneQuery = window.matchMedia("(max-width: 1179px)");
+    const apply = () => {
+      const viewport = window.visualViewport;
+      setSheet({
+        top: viewport?.offsetTop ?? 0,
+        height: viewport?.height ?? window.innerHeight,
+      });
+      if (phoneQuery.matches) {
+        document.body.dataset.assistantOpen = "true";
+        document.body.style.overflow = "hidden";
+      } else {
+        delete document.body.dataset.assistantOpen;
+        document.body.style.overflow = "";
+      }
+    };
+    apply();
+    const viewport = window.visualViewport;
+    viewport?.addEventListener("resize", apply);
+    viewport?.addEventListener("scroll", apply);
+    phoneQuery.addEventListener("change", apply);
+    return () => {
+      viewport?.removeEventListener("resize", apply);
+      viewport?.removeEventListener("scroll", apply);
+      phoneQuery.removeEventListener("change", apply);
+      delete document.body.dataset.assistantOpen;
+      document.body.style.overflow = "";
+    };
+  }, [open]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [transcript, setTranscript] = useState<Transcript | null>(null);
   const [draft, setDraft] = useState("");
@@ -74,6 +108,9 @@ export function AssistantWidget() {
   const logRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const sentAnyRef = useRef(false);
+  useEffect(() => {
+    if (open) inputRef.current?.focus();
+  }, [open]);
 
   useEffect(() => {
     try {
@@ -206,50 +243,55 @@ export function AssistantWidget() {
         </button>
       )}
 
-      {open && (
+      {open && portalReady && createPortal(
         <div
           data-testid="assistant-panel"
           data-clarity-mask="true"
           role="dialog"
+          aria-modal="true"
           aria-label="Estimating assistant chat"
-          className="fixed z-[150] bottom-0 right-0 left-0 md:bottom-6 md:right-6 md:left-auto md:w-[400px] flex flex-col rounded-t-lg md:rounded-lg border border-border bg-background shadow-2xl max-h-[85vh] md:max-h-[600px] h-[70vh] md:h-[600px]"
+          className="assistant-sheet"
+          style={sheet.height > 0 ? ({
+            "--assistant-top": `${sheet.top}px`,
+            "--assistant-height": `${sheet.height}px`,
+          } as React.CSSProperties) : undefined}
         >
-          <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
+          <div className="assistant-sheet-bar">
             <div>
-              <p className="font-semibold text-sm">Estimating assistant</p>
-              <p className="text-xs text-muted-foreground">Project guidance, in plain English</p>
+              <p className="assistant-sheet-title">Estimating assistant</p>
+              <p className="assistant-sheet-sub">Project guidance, in plain English</p>
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              className="assistant-sheet-close"
             >
               <X className="h-5 w-5" aria-hidden />
             </button>
           </div>
 
-          <div ref={logRef} role="log" aria-live="polite" data-clarity-mask="True" className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+          <div ref={logRef} role="log" aria-live="polite" data-clarity-mask="True" className="assistant-log">
             <Bubble role="assistant" content={GREETING} />
             {messages.map((m, i) => (
               <Bubble key={i} role={m.role} content={m.content} notice={m.notice} />
             ))}
             {busy && (
-              <div className="flex items-center gap-1.5 text-muted-foreground text-sm pl-1" aria-label="Assistant is typing">
-                <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce [animation-delay:0ms]" />
-                <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce [animation-delay:150ms]" />
-                <span className="h-1.5 w-1.5 rounded-full bg-current animate-bounce [animation-delay:300ms]" />
+              <div className="assistant-typing" aria-label="Assistant is typing">
+                <span />
+                <span />
+                <span />
               </div>
             )}
-            <button type="button" disabled={busy} data-testid="button-assistant-continue" className="min-h-11 rounded-sm border border-border px-3 py-2 text-sm disabled:opacity-40" onClick={()=>{
+            <button type="button" disabled={busy} data-testid="button-assistant-continue" className="assistant-continue" onClick={()=>{
               try {continueAssistantProject(messages,draft);trackEvent(ASSISTANT_EVENTS.handoffEstimator,{});window.location.assign('/estimate');}
               catch(error){setMessages(prev=>[...prev,{role:'assistant',notice:true,content:error instanceof Error?error.message:'Your project could not be saved. Please retry.'}]);}
             }}>Continue project</button>
           </div>
 
           <form
-            data-clarity-mask="true"
-            className="border-t border-border p-3 flex items-end gap-2 shrink-0"
+            data-clarity-mask="True"
+            className="assistant-composer"
             onSubmit={(e) => {
               e.preventDefault();
               void send();
@@ -271,38 +313,30 @@ export function AssistantWidget() {
               maxLength={2000}
               placeholder="Ask about your project..."
               aria-label="Message the estimating assistant"
-              className="flex-1 resize-none rounded-sm border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring max-h-28"
+              className="assistant-field"
             />
             <button
               type="submit"
               data-testid="assistant-send"
               disabled={busy || !draft.trim()}
               aria-label="Send message"
-              className="rounded-sm bg-foreground text-background p-2.5 disabled:opacity-40 transition-opacity"
+              className="assistant-send"
             >
               <Send className="h-4 w-4" aria-hidden />
             </button>
           </form>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );
 }
 
 function Bubble({ role, content, notice }: { role: "user" | "assistant"; content: string; notice?: boolean }) {
+  const tone = role === "user" ? "assistant-bubble-user" : notice ? "assistant-bubble-notice" : "assistant-bubble-assistant";
   return (
-    <div className={role === "user" ? "flex justify-end" : "flex justify-start"}>
-      <div
-        className={
-          role === "user"
-            ? "max-w-[85%] rounded-lg bg-foreground text-background px-3.5 py-2.5 text-sm whitespace-pre-wrap"
-            : notice
-              ? "max-w-[85%] rounded-lg border border-border bg-muted/60 text-muted-foreground px-3.5 py-2.5 text-sm whitespace-pre-wrap"
-              : "max-w-[85%] rounded-lg bg-muted px-3.5 py-2.5 text-sm whitespace-pre-wrap"
-        }
-      >
-        {content}
-      </div>
+    <div className={role === "user" ? "assistant-row-user" : "assistant-row-assistant"}>
+      <div className={tone}>{content}</div>
     </div>
   );
 }

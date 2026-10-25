@@ -114,16 +114,37 @@ const bodySchema = z.object({
     return digits.length >= 10 && digits.length <= 15;
   }, "Invalid phone"),
   email: z.string().email(),
-  address: z.string().trim().min(5).max(300).refine((value) => HOUSE_NUMBER_REGEX.test(value)),
+  address: z.string().trim().max(300).optional(),
   zip: z.string().optional(),
   projectType: z.string().min(1),
-  message: z.string().optional(),
+  message: z.string().max(8000).optional(),
+  /* Home hero only. Address stays required on the full consultation form. */
+  requestKind: z.literal("short").optional(),
   propertyProfile: propertyProfileSchema,
   estimate: estimateSchema,
   /* Set by the client when the visitor already submitted the estimate gate,
      which already sent admin + customer emails via /api/estimate-lead.
      Prevents duplicate email sends when the same person submits both forms. */
   skipEmail: z.boolean().optional(),
+}).superRefine((data, ctx) => {
+  if (data.requestKind === "short") {
+    if ((data.message?.trim().length ?? 0) < 8) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["message"],
+        message: "Tell us what we should look at.",
+      });
+    }
+    return;
+  }
+  const address = data.address?.trim() ?? "";
+  if (address.length < 5 || !HOUSE_NUMBER_REGEX.test(address)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["address"],
+      message: "Please enter your property address",
+    });
+  }
 });
 
 /**
@@ -237,9 +258,152 @@ function verifyEstimate(
   };
 }
 
+const SHORT_FILE_TYPES = new Map<string, string>([
+  ["image/jpeg", "jpg"],
+  ["image/jpg", "jpg"],
+  ["image/png", "png"],
+  ["image/webp", "webp"],
+  ["image/heic", "heic"],
+  ["image/heif", "heif"],
+  ["application/pdf", "pdf"],
+]);
+const SHORT_FILE_EXT = new Map<string, string>([
+  ["jpg", "jpg"],
+  ["jpeg", "jpg"],
+  ["png", "png"],
+  ["webp", "webp"],
+  ["heic", "heic"],
+  ["heif", "heif"],
+  ["pdf", "pdf"],
+]);
+const SHORT_MAX_FILES = 4;
+const SHORT_MAX_FILE_BYTES = 8 * 1024 * 1024;
+
+function shortFileExt(file: File): string | null {
+  const fromType = SHORT_FILE_TYPES.get(file.type);
+  if (fromType) return fromType;
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+  return SHORT_FILE_EXT.get(ext) ?? null;
+}
+
+function shortSafeName(name: string, ext: string): string {
+  const base = name
+    .replace(/\.[^.]+$/, "")
+    .replace(/[^a-zA-Z0-9._-]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+  return `${base || "upload"}.${ext}`;
+}
+
+function absoluteStoredUrl(url: string): string {
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${SITE_CONFIG.siteUrl.replace(/\/$/, "")}${url.startsWith("/") ? url : `/${url}`}`;
+}
+
+function shortUploadMime(file: File, ext: string): string {
+  if (file.type) return file.type;
+  if (ext === "pdf") return "application/pdf";
+  if (ext === "jpg") return "image/jpeg";
+  return `image/${ext}`;
+}
+
+/**
+ * The home-page request form. Same lead record as /api/consultation JSON.
+ * Photos and plans are optional and are not accepted on the long consultation form.
+ */
+async function readShortMultipart(
+  request: NextRequest,
+): Promise<{ ok: true; body: Record<string, unknown> } | { ok: false; response: NextResponse }> {
+  const form = await request.formData();
+  const note = String(form.get("message") ?? "").trim();
+  if (note.length < 8) {
+    return {
+      ok: false,
+      response: NextResponse.json({ message: "Tell us what we should look at." }, { status: 400 }),
+    };
+  }
+  const files = form
+    .getAll("files")
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+  if (files.length > SHORT_MAX_FILES) {
+    return {
+      ok: false,
+      response: NextResponse.json({ message: "You can attach up to 4 photos or plans." }, { status: 400 }),
+    };
+  }
+  const links: string[] = [];
+  for (let index = 0; index < files.length; index += 1) {
+    const file = files[index];
+    const ext = shortFileExt(file);
+    if (!ext) {
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { message: "Photos and plans must be JPEG, PNG, WebP, HEIC, or PDF." },
+          { status: 400 },
+        ),
+      };
+    }
+    if (file.size > SHORT_MAX_FILE_BYTES) {
+      return {
+        ok: false,
+        response: NextResponse.json({ message: "Each photo or plan must be 8 MB or smaller." }, { status: 400 }),
+      };
+    }
+    const key = `requests/${crypto.randomUUID()}/${index}-${shortSafeName(file.name, ext)}`;
+    try {
+      const { uploadFile } = await import("@/lib/storage/blob");
+      const stored = await uploadFile(key, Buffer.from(await file.arrayBuffer()), shortUploadMime(file, ext));
+      links.push(absoluteStoredUrl(stored));
+    } catch (error) {
+      console.error("[consultation] short-request upload failed", error instanceof Error ? error.message : error);
+      return {
+        ok: false,
+        response: NextResponse.json(
+          { message: "We could not save that photo. Try again, or send the request without it." },
+          { status: 503 },
+        ),
+      };
+    }
+  }
+  let attribution: unknown;
+  const rawAttribution = String(form.get("attribution") ?? "").trim();
+  if (rawAttribution) {
+    try {
+      attribution = JSON.parse(rawAttribution);
+    } catch {
+      attribution = undefined;
+    }
+  }
+  const message = links.length > 0 ? `${note}\n\nPhotos and plans:\n${links.join("\n")}` : note;
+  return {
+    ok: true,
+    body: {
+      requestKind: "short",
+      inquiryId: String(form.get("inquiryId") ?? ""),
+      formStartedAt: Number(form.get("formStartedAt")),
+      website: String(form.get("website") ?? ""),
+      name: String(form.get("name") ?? ""),
+      phone: String(form.get("phone") ?? ""),
+      email: String(form.get("email") ?? ""),
+      projectType: "Home repair or remodel",
+      message,
+      ...(attribution ? { attribution } : {}),
+    },
+  };
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const raw = await request.json();
+    const contentType = request.headers.get("content-type") || "";
+    let raw: unknown;
+    if (contentType.includes("multipart/form-data")) {
+      const read = await readShortMultipart(request);
+      if (!read.ok) return read.response;
+      raw = read.body;
+    } else {
+      raw = await request.json();
+    }
     const parsed = bodySchema.safeParse(raw);
 
     if (!parsed.success) {
@@ -267,7 +431,7 @@ export async function POST(request: NextRequest) {
           name: data.name,
           email: data.email,
           phone: data.phone,
-          address: data.address,
+          address: data.address || "",
           projectType: data.projectType,
           website: data.website,
           formStartedAt: data.formStartedAt,
@@ -277,7 +441,7 @@ export async function POST(request: NextRequest) {
           phone: data.phone,
           email: data.email,
           zip: data.zip || "",
-          address: data.address,
+          address: data.address || "",
           city: (profile?.city as string) || null,
           propertyProfile: (data.propertyProfile as PropertyProfile | null) ?? null,
           ...(attribution?{attribution}:{}),
@@ -325,8 +489,8 @@ export async function POST(request: NextRequest) {
       name: data.name,
       phone: data.phone,
       email: data.email,
-      address: data.address,
-      zip: data.zip,
+      address: data.address || "",
+      zip: data.zip || "",
       projectType: data.projectType,
       message: data.message,
     };
@@ -392,8 +556,8 @@ export async function POST(request: NextRequest) {
           name: data.name,
           phone: data.phone,
           email: data.email,
-          address: data.address,
-          zip: data.zip,
+          address: data.address || "",
+          zip: data.zip || "",
           projectType: data.projectType,
           message: data.message,
         };

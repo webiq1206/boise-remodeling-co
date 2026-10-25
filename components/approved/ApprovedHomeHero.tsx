@@ -1,8 +1,7 @@
+import { TextReplyLine } from "@/components/TextReplyLine";
 import { contractorDescription } from "@/lib/schema";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { HeroConversion } from "./HeroConversion";
 import { brands } from "./family-content";
-
-const Arrow = () => <ArrowUpRight size={18} aria-hidden="true" />;
 
 /**
  * Server-rendered home hero. The image and H1 are in the first HTML response
@@ -11,17 +10,18 @@ const Arrow = () => <ArrowUpRight size={18} aria-hidden="true" />;
 export function ApprovedHomeHero() {
   const b = brands.remodeling;
   return (
-    <section className="f-hero">
-      <link rel="preload" as="image" href={b.hero} fetchPriority="high" />
-      <img
-        src={b.hero}
-        alt="Open kitchen and living space with warm wood and stone"
-        fetchPriority="high"
-        width="1600"
-        height="1000"
-      />
-      <div className="f-hero-shade" />
-      <div className="f-hero-copy">
+    <section className="f-hero fold-hero" id="request">
+      <div className="fold-hero-photo">
+        <link rel="preload" as="image" href={b.hero} fetchPriority="high" />
+        <img
+          src={b.hero}
+          alt="Open kitchen and living space with warm wood and stone"
+          fetchPriority="high"
+          width="1600"
+          height="1000"
+        />
+      </div>
+      <div className="f-hero-copy fold-hero-copy">
         <p className="f-eyebrow">{b.kicker}</p>
         <h1>
           Boise home remodeling.
@@ -29,20 +29,11 @@ export function ApprovedHomeHero() {
           <em>Love where you live.</em>
         </h1>
         <p className="f-hero-summary">{contractorDescription()}</p>
-        <p>{b.intro}</p>
-        <div className="f-actions">
-          <a className="f-button" href="/estimate">
-            {b.action}
-            <Arrow />
-          </a>
-          <a className="f-link" href="#services">
-            {b.secondary}
-            <ArrowRight size={18} />
-          </a>
-        </div>
-        <span className="estimator-promise">
-          Describe your project. Our team will review it and prepare your estimate.
-        </span>
+        <p className="fold-lede">
+          Tell us what to fix or renovate. We follow up within one business day.{" "}
+          <TextReplyLine as="span" className="fold-text-reply" />
+        </p>
+        <HeroConversion />
       </div>
     </section>
   );
