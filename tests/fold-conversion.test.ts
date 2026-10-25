@@ -23,6 +23,10 @@ test("the home hero leads with call, chat, and a short request", () => {
   assert.match(convert, /image\/heic/);
   assert.match(convert, /Send request/);
   assert.match(convert, /data-clarity-mask="True"/);
+  assert.match(convert, /name="email"[\s\S]{0,180}required/);
+  assert.match(convert, /type="email"/);
+  assert.match(convert, /!email\.includes\("@"\)/);
+  assert.match(route, /email: z\.string\(\)\.email\(\)/);
 });
 
 test("optional photos ride only the short multipart consultation path", () => {
