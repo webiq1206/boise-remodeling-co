@@ -11,11 +11,23 @@ const chat = readFileSync("components/assistant/AssistantWidget.tsx", "utf8");
 const css = readFileSync("app/design-refresh.css", "utf8");
 const nav = readFileSync("components/Navigation.tsx", "utf8");
 const sessions = readFileSync("server/services/estimatorSessions.ts", "utf8");
+const contactPage = readFileSync("app/contact/page.tsx", "utf8");
+const homePage = readFileSync("app/page.tsx", "utf8");
 
-test("the home hero leads with call, chat, and a short request", () => {
+test("the first screen is the photograph and headline, and the short request follows", () => {
   assert.equal(hero.includes("use client"), false);
-  assert.match(hero, /className="f-hero fold-hero"/);
-  assert.match(hero, /<HeroConversion/);
+  assert.match(hero, /<section className="f-hero">/);
+  assert.equal(hero.includes("fold-hero"), false);
+  const heroSection = hero.slice(hero.indexOf('<section className="f-hero">'), hero.indexOf("</section>"));
+  assert.match(heroSection, /<img/);
+  assert.match(heroSection, /<h1>/);
+  assert.equal(heroSection.includes("HeroConversion"), false);
+  assert.equal(heroSection.includes("fold-form"), false);
+  assert.match(hero, /<section className="fold-request" id="request"/);
+  assert.match(hero, /<HeroConversion \/>/);
+  assert.doesNotMatch(css, /max-height:\s*56px/);
+  assert.match(css, /min-height:\s*calc\(100svh - 84px\)/);
+  assert.match(css, /min-height:\s*calc\(100svh - 70px\)/);
   assert.match(convert, /className="fold-call"/);
   assert.match(convert, /className="fold-chat"/);
   assert.match(convert, /p5:assistant-open/);
@@ -27,6 +39,10 @@ test("the home hero leads with call, chat, and a short request", () => {
   assert.match(convert, /type="email"/);
   assert.match(convert, /!email\.includes\("@"\)/);
   assert.match(route, /email: z\.string\(\)\.email\(\)/);
+  assert.match(nav, /data-testid="link-call-mobile-header"/);
+  assert.match(nav, /data-testid="link-text-mobile-header"/);
+  assert.match(contactPage, /<ConsultationForm/);
+  assert.match(homePage, /<ConsultationForm/);
 });
 
 test("optional photos ride only the short multipart consultation path", () => {
