@@ -420,6 +420,17 @@
   height: 420px;
   object-fit: cover;
 }
+/* The Boise story copy is nested in a column, so the direct-child rules
+   (.f-section.f-container > h2 + p, and p + p) never reach it. Headings and
+   paragraphs are zeroed in the family layer, and this H2 sat flush on the
+   body. Match the sticky column: 25px under the heading, 22px on a phone,
+   and 16px between the body paragraphs. (t1082u, t1035u) */
+.approved-shell.site-remodeling .family-site section.fold-story h2 + p {
+  margin-top: 25px;
+}
+.approved-shell.site-remodeling .family-site section.fold-story p + p {
+  margin-top: 16px;
+}
 
 @media (max-width: 1179px) {
   .approved-shell.site-remodeling .family-site .f-hero {
@@ -461,6 +472,7 @@
 @media (max-width: 700px) {
   .approved-shell.site-remodeling .family-site .f-hero { min-height: calc(100svh - 70px); }
   .approved-shell.site-remodeling .family-site .f-container { width: calc(100% - 48px); }
+  .approved-shell.site-remodeling .family-site section.fold-story h2 + p { margin-top: 22px; }
 }
 
 /* Chat opens as the visible screen on a phone: light paper, starting at the
