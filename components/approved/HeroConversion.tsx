@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MessageSquare, Phone } from "lucide-react";
+import { TextReplyLine } from "@/components/TextReplyLine";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
 import {
   getOrCreateInquiryId,
@@ -108,9 +109,12 @@ export function HeroConversion() {
         </button>
       </div>
       {done ? (
-        <p className="fold-success" role="status">
-          Request received. We will call you within one business day.
-        </p>
+        <>
+          <p className="fold-success" role="status">
+            Request received. We will call you within one business day.
+          </p>
+          <TextReplyLine className="fold-text-reply" />
+        </>
       ) : (
         <form className="fold-form" data-clarity-mask="True" onSubmit={onSubmit} noValidate>
           <p className="fold-form-title">Request a call</p>

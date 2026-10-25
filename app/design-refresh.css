@@ -259,8 +259,19 @@
   color: #2c302f;
   font-size: 17px;
   line-height: 1.5;
-  max-width: 38ch;
+  max-width: 62ch;
   margin: 0 0 18px;
+}
+.approved-shell.site-remodeling .fold-text-reply {
+  color: #2c302f;
+  font-size: inherit;
+  line-height: inherit;
+}
+.approved-shell.site-remodeling .fold-text-reply a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 .approved-shell.site-remodeling .fold-actions {
   display: flex;
@@ -425,15 +436,15 @@
   }
   .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo,
   .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo img {
-    height: 96px;
+    height: 56px;
     min-height: 0;
-    max-height: 96px;
+    max-height: 56px;
   }
   .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-photo { overflow: hidden; }
   .approved-shell.site-remodeling .family-site .fold-hero .fold-hero-copy {
     width: calc(100% - 48px);
     margin: 0 auto;
-    padding: 12px 0 24px;
+    padding: 8px 0 20px;
   }
   .approved-shell.site-remodeling .family-site .fold-hero h1 {
     font-size: 34px;
@@ -443,11 +454,12 @@
   .approved-shell.site-remodeling .family-site .fold-hero .f-eyebrow { margin-bottom: 8px !important; }
   .approved-shell.site-remodeling .family-site .fold-hero .fold-lede {
     font-size: 15px;
-    line-height: 1.45;
-    margin-bottom: 12px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+    max-width: none;
   }
   .approved-shell.site-remodeling .fold-actions { margin-bottom: 10px; }
-  .approved-shell.site-remodeling .fold-form { gap: 8px 10px; }
+  .approved-shell.site-remodeling .fold-form { gap: 6px 10px; }
   .approved-shell.site-remodeling .fold-form input { min-height: 42px; }
   .approved-shell.site-remodeling .family-site section.fold-story {
     grid-template-columns: 1fr;

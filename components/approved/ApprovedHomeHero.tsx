@@ -1,3 +1,4 @@
+import { TextReplyLine } from "@/components/TextReplyLine";
 import { contractorDescription } from "@/lib/schema";
 import { HeroConversion } from "./HeroConversion";
 import { brands } from "./family-content";
@@ -29,7 +30,8 @@ export function ApprovedHomeHero() {
         </h1>
         <p className="f-hero-summary">{contractorDescription()}</p>
         <p className="fold-lede">
-          Tell us what to fix or renovate. We follow up within one business day.
+          Tell us what to fix or renovate. We follow up within one business day.{" "}
+          <TextReplyLine as="span" className="fold-text-reply" />
         </p>
         <HeroConversion />
       </div>
