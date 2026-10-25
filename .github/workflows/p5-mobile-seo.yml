@@ -64,6 +64,8 @@ jobs:
         run: node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts
       - run: npm run build
       - run: npx playwright install --with-deps chromium
+      - name: Optional intake fragment navigation regressions
+        run: node scripts/test-optional-intake-navigation.mjs
       - name: Production app responsive and public metadata audit
         run: |
           mkdir -p p5-mobile-seo-verification

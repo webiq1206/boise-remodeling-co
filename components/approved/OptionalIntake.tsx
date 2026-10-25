@@ -1,11 +1,34 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ApprovedEstimate } from "./ApprovedEstimate";
 
 /** The multi-step intake stays available, but it is not the first ask. */
 export function OptionalIntake() {
   const [open, setOpen] = useState(false);
+  const focusRequested = useRef(false);
+  const container = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const revealLegacyTarget = () => {
+      if (window.location.hash === "#calculator") {
+        focusRequested.current = true;
+        setOpen(true);
+      }
+    };
+    revealLegacyTarget();
+    window.addEventListener("hashchange", revealLegacyTarget);
+    return () => window.removeEventListener("hashchange", revealLegacyTarget);
+  }, []);
+  useEffect(() => {
+    if (!open || !focusRequested.current) return;
+    focusRequested.current = false;
+    const target = container.current?.querySelector<HTMLElement>("#calculator");
+    if (target) {
+      target.tabIndex = -1;
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ block: "start" });
+    }
+  }, [open]);
   if (!open) {
     return (
       <section className="fold-optional" id="planning-range">
@@ -16,7 +39,7 @@ export function OptionalIntake() {
             Call, chat, or the short request is enough for us to look at the work. This guided
             intake asks more questions, and you can skip it.
           </p>
-          <button type="button" className="fold-optional-open" onClick={() => setOpen(true)}>
+          <button type="button" className="fold-optional-open" onClick={() => { focusRequested.current = true; setOpen(true); }}>
             Open the optional intake
           </button>
         </div>
@@ -24,7 +47,7 @@ export function OptionalIntake() {
     );
   }
   return (
-    <div id="planning-range">
+    <div id="planning-range" ref={container}>
       <ApprovedEstimate />
     </div>
   );
