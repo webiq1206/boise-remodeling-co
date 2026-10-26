@@ -233,6 +233,37 @@
   color: #fbfaf6;
   font-size: clamp(40px, 6vw, 84px);
   line-height: 1.02;
+  margin-bottom: 22px;
+}
+.approved-shell.site-remodeling .family-site .f-hero-support {
+  max-width: 34em;
+  margin: 0;
+  color: #eceae3;
+  font-size: 17px;
+  line-height: 1.55;
+}
+/* Direct answer sits on the paper, under the hero, before the short request.
+   It does not overlay the photograph and it does not sit inside the form. */
+.approved-shell.site-remodeling .home-direct {
+  background: #fbfaf6;
+  color: #2c302f;
+  padding: 36px 0 4px;
+}
+.approved-shell.site-remodeling .home-direct .f-container {
+  width: min(720px, calc(100% - 48px));
+}
+.approved-shell.site-remodeling .home-direct p {
+  max-width: 62ch;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.65;
+}
+.approved-shell.site-remodeling .family-site .f-area > div a {
+  gap: 10px;
+  line-height: 1.35;
+}
+.approved-shell.site-remodeling .family-site .f-area > div a svg {
+  flex-shrink: 0;
 }
 .approved-shell.site-remodeling .fold-request {
   background: #fbfaf6;
@@ -438,7 +469,20 @@
     height: auto;
   }
   .approved-shell.site-remodeling .family-site .f-hero h1 {
-    font-size: clamp(40px, 10.5vw, 54px);
+    font-size: clamp(34px, 8.4vw, 46px);
+    margin-bottom: 18px;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-copy > p.f-hero-support {
+    max-width: none;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .approved-shell.site-remodeling .home-direct {
+    padding: 28px 0 0;
+  }
+  .approved-shell.site-remodeling .home-direct p {
+    font-size: 16px;
+    line-height: 1.6;
   }
   .approved-shell.site-remodeling .fold-request .fold-lede {
     font-size: 15px;
