@@ -35,7 +35,7 @@ const EstimateCalculator = dynamic(
 export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: "Home Remodeling Contractors, Boise, ID | Boise Remodeling Co" },
   description:
-    fitDescription("Design-build remodeling contractors for Boise and the Treasure Valley. Kitchen, bath, whole-home remodels. Clear budget guidance. Free in-home consultation."),
+    fitDescription("Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope."),
   alternates: {
     canonical: buildCanonical("/"),
     // Setting `alternates` replaces the root declaration, so the feed link has

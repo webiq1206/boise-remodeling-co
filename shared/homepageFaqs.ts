@@ -7,6 +7,18 @@ export interface HomepageFaq {
 
 export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
+    q: "What do home remodeling contractors typically handle?",
+    a: "Kitchen and bath remodels, room additions, ADUs, basements, outdoor living, and whole-home renovations when scoped. Exact inclusions are in your written scope before construction.",
+  },
+  {
+    q: "Do you serve areas near Boise?",
+    a: "Yes. Dedicated pages cover Meridian, Eagle, Nampa, Caldwell, Kuna, Star, and Middleton, plus Boise. Use the city page that matches your address, then book the free visit.",
+  },
+  {
+    q: "How is remodeling contractors near me different from a city page?",
+    a: "Near-me searches usually mean a local design-build team with clear next steps. City pages add local context; the homepage explains the company-wide process and services.",
+  },
+  {
     q: "Remodeling contractors in Boise",
     a: publishFoundingCopy("Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes."),
   },
