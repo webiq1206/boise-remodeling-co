@@ -34,6 +34,18 @@ export const SITE_IMAGES = {
   budgetDetail: "/images/budget-kitchen-detail.webp",
 } as const;
 
+/**
+ * Cohesive Eagle foothills whole-home featured set (exterior + rooms).
+ * Keep materials/windows consistent when regenerating any frame.
+ */
+export const FEATURED_EAGLE_IMAGES = {
+  exterior: "/images/gallery/featured-eagle-exterior.webp",
+  greatRoom: "/images/gallery/featured-eagle-great-room.webp",
+  kitchen: "/images/gallery/featured-eagle-kitchen.webp",
+  bath: "/images/gallery/featured-eagle-bath.webp",
+  outdoor: "/images/gallery/featured-eagle-outdoor.webp",
+} as const;
+
 export const GALLERY_IMAGES = {
   kitchen: {
     before: "/images/gallery/gallery-kitchen-before.webp",

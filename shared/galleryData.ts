@@ -1,3 +1,4 @@
+import { CITY_SERVICE_IMAGES } from "./cityServiceImages";
 import { GALLERY_IMAGES } from "./siteImages";
 
 export interface GalleryProject {
@@ -8,6 +9,19 @@ export interface GalleryProject {
   title: string;
   description: string;
 }
+
+const THIN_CITY_PROOF_SERVICES: { service: string; serviceType: string; label: string }[] = [
+  { service: "kitchen-remodel", serviceType: "kitchen-remodel", label: "Kitchen" },
+  { service: "bathroom-remodel", serviceType: "bathroom-remodel", label: "Bathroom" },
+  { service: "whole-home-remodel", serviceType: "whole-home-remodel", label: "Whole-home" },
+];
+
+const CITY_DISPLAY: Record<string, string> = {
+  kuna: "Kuna",
+  star: "Star",
+  middleton: "Middleton",
+  caldwell: "Caldwell",
+};
 
 // Representative generated design assets. Only the first kitchen has a reviewed
 // same-camera finish comparison. These are not completed customer projects.
@@ -202,14 +216,56 @@ export function getGalleryProjectsFor(
   serviceSlug: string,
   citySlug: string,
 ): GalleryProject[] {
-  return GALLERY_PROJECTS.filter(
+  const matched = GALLERY_PROJECTS.filter(
     (p) => p.serviceType === serviceSlug && p.city === citySlug,
   );
+  if (matched.length > 0) return matched;
+
+  const cityName = CITY_DISPLAY[citySlug];
+  const proofService = THIN_CITY_PROOF_SERVICES.find(
+    (entry) => entry.service === serviceSlug || entry.serviceType === serviceSlug,
+  );
+  if (!cityName || !proofService) return matched;
+
+  const src = CITY_SERVICE_IMAGES[`${proofService.service}/${citySlug}`];
+  if (!src) return matched;
+
+  return [
+    {
+      serviceType: proofService.serviceType,
+      city: citySlug,
+      beforeImageUrl: src,
+      afterImageUrl: src,
+      title: `${cityName} ${proofService.label} Design Inspiration`,
+      description: `Representative ${proofService.label.toLowerCase()} remodeling direction for ${cityName} homes. Final layouts and finishes are tailored during design.`,
+    },
+  ];
 }
 
 /** Return all gallery projects for a city (any service). Used on area pages. */
 export function getGalleryProjectsForCity(citySlug: string): GalleryProject[] {
-  return GALLERY_PROJECTS.filter((p) => p.city === citySlug);
+  const matched = GALLERY_PROJECTS.filter((p) => p.city === citySlug);
+  if (matched.length > 0) return matched;
+
+  // Thin cities without dedicated before/after pairs still get city-service
+  // stills so area pages are not text-only after the hero/breather/process.
+  const cityName = CITY_DISPLAY[citySlug];
+  if (!cityName) return matched;
+
+  return THIN_CITY_PROOF_SERVICES.flatMap(({ service, serviceType, label }) => {
+    const src = CITY_SERVICE_IMAGES[`${service}/${citySlug}`];
+    if (!src) return [];
+    return [
+      {
+        serviceType,
+        city: citySlug,
+        beforeImageUrl: src,
+        afterImageUrl: src,
+        title: `${cityName} ${label} Design Inspiration`,
+        description: `Representative ${label.toLowerCase()} remodeling direction for ${cityName} homes. Final layouts and finishes are tailored during design.`,
+      },
+    ];
+  });
 }
 
 /** Map service hub slugs to gallery serviceType values. */

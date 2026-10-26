@@ -68,7 +68,11 @@ export default function ServicesIndexPage() {
     <InteriorPage kind="services"><>
       <JsonLd data={[breadcrumbSchema, itemListSchema]} />
 
-      <InteriorHero layout="editorial">
+      <InteriorHero
+        layout="editorial"
+        imageSrc={getServiceBackground('whole-home-remodel')}
+        imageAlt={contentImageAlt(getServiceBackground('whole-home-remodel'))}
+      >
         <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services' }]} />
         <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>Our services</p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">

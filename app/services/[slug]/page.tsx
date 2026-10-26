@@ -129,6 +129,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         processSteps={isBathroomNearMe ? BATHROOM_NEAR_ME_PROCESS : content.processSteps}
         sections={sections}
         featuredProject={featuredProject}
+        serviceSlug={service.slug}
         showEstimatePrompt
         faqs={faqs}
         related={{ variant: 'service', serviceSlug: service.slug }}
