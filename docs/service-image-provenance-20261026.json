@@ -1,0 +1,18 @@
+[
+  {
+    "route": "/services/kitchen-remodel",
+    "publicPath": "/images/service-scenes/kitchen.webp",
+    "source": "p5-spacious-kitchen-design-concept-1080.webp",
+    "sha256": "f09cc7a69f6e71fc9d26fda7824304a7f5c0b0cb4393dc475c2ba2f747256370",
+    "provenance": "AI-generated architectural service imagery approved October26; not a completed P5 project or location-specific example",
+    "alt": "Ivory kitchen cabinetry with an oak island, stone backsplash and pendant lighting"
+  },
+  {
+    "route": "/services/bathroom-remodel",
+    "publicPath": "/images/service-scenes/bathroom.webp",
+    "source": "p5-bathroom-design-concept-1080.webp",
+    "sha256": "d360ee482568e24f0c067a1433222cd03d6c5a0495c6eba3c6b0a2d8dc69fa7d",
+    "provenance": "AI-generated architectural service imagery approved October26; not a completed P5 project or location-specific example",
+    "alt": "Oak double vanity, stone surfaces and a glass-enclosed shower in a sunlit bathroom"
+  }
+]

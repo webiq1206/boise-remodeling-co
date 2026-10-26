@@ -35,6 +35,7 @@ interface LandingPageTemplateProps {
   overview: string;
   breadcrumbs: BreadcrumbItem[];
   heroImageUrl?: string;
+  heroImageAlt?: string;
   breatherImageUrl?: string;
   processImageUrl?: string;
   manifestPath?: string;
@@ -149,6 +150,7 @@ export function LandingPageTemplate({
   overview,
   breadcrumbs,
   heroImageUrl,
+  heroImageAlt,
   breatherImageUrl,
   processImageUrl,
   manifestPath,
@@ -180,7 +182,7 @@ export function LandingPageTemplate({
     <div className="flex flex-col ">
       {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
       {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
-      <InteriorHero imageSrc={heroImageUrl} imageAlt={contentImageAlt(heroImageUrl)} layout="split">
+      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           {eyebrow && (
