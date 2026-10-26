@@ -1,3 +1,4 @@
+import { SERVICE_SCENES } from '@/shared/serviceSceneImages';
 import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
@@ -111,7 +112,8 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         h1={content.headline}
         speakableSummary={content.overview}
         overview={content.overview}
-        heroImageUrl={images.hero}
+        heroImageUrl={SERVICE_SCENES[service.slug]?.src ?? images.hero}
+        heroImageAlt={SERVICE_SCENES[service.slug]?.alt}
         breatherImageUrl={images.breather}
         processImageUrl={images.process}
         manifestPath={path}
