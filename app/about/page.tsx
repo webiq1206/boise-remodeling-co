@@ -29,7 +29,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const SPEAKABLE_SUMMARY =
-  'We are a locally owned design-build remodeling company serving the Treasure Valley. Our focus is clarity: written scope before construction, proactive weekly updates, permits handled in-house for Ada and Canyon County, and a written workmanship guarantee on our labor.';
+  'Boise Remodeling Co is the remodeling specialist in the P5 family. Share the spaces you want to change and your goals. Review the design and scope, then agree on the proposal, contract and schedule before construction.';
 
 function HeroBreadcrumbs() {
   const items = [
@@ -110,19 +110,11 @@ export default function AboutPage() {
               )}
             </h1>
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
-              {publishFoundingCopy(
-                'Boise Remodeling Co is a design-build remodeler founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes.',
-              )}
+              {SHOW_FOUNDING_YEAR ? 'Boise Remodeling Co is a design-build remodeler founded in 2020 and part of P5.' : 'Boise Remodeling Co is the remodeling specialist in the P5 family.'} Tell us which spaces you want to change, how you use them and what matters most to you.
             </p>
-            <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-4">
-              We are a locally owned design-build remodeling company serving the Treasure Valley.
-              Homeowners work with one accountable team from first in-home visit through final
-              walkthrough.
-            </p>
+
             <p className="text-base md:text-lg text-inverse-foreground/75 max-w-2xl leading-relaxed mb-8">
-              Our focus is clarity: written scope before construction, proactive weekly updates,
-              permits handled in-house for Ada and Canyon County, and a written workmanship
-              guarantee on our labor. Every detail, every decision - handled with intention.
+              Your inquiry starts a scope review, not a confirmed price or construction booking. We discuss the design and work with you, then agree on the proposal, contract and schedule before construction.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap [&>*]:w-full sm:[&>*]:w-auto mb-8">
               <EstimateCTA variant="brand">
@@ -176,7 +168,7 @@ export default function AboutPage() {
                       <em className="brc-accent">explained</em>
                     </>
                   }
-                  description="Design-build means your designer, estimator, and construction lead work together under one roof. Layout, selections, permits, and schedule stay aligned so your kitchen, bathroom, whole-home, or addition project does not drift between vendors."
+                  description="Share your goals for the rooms you want to change. Review the layout, selections and scope with us, then agree on the proposal, contract and schedule before construction. We clarify changes and decisions along the way and review the completed work with you at a walkthrough."
                   className="mb-8 max-w-none"
                 />
                 <p className="text-sm text-muted-foreground leading-relaxed mb-8">
