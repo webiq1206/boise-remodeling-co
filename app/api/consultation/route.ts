@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { after, NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { consultationRequests } from "@/shared/schema";
@@ -34,6 +34,7 @@ import {
 import { resolveQuotedRange } from "@/shared/costs/resolve";
 import { IMPLAUSIBLE_QUOTE_CEILING, logPricingAlert } from "@/server/services/pricingAlerts";
 import { forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
+import { forwardConsultationToP5Intake } from "@/server/services/p5IntakeBridge";
 import {
   acceptInquiry,
   InquiryRejectedError,
@@ -480,6 +481,30 @@ export async function POST(request: NextRequest) {
         conversionEligible: acceptance.conversionEligible,
         delivery: acceptance.needsDeliveryRetry ? "pending_retry" : "sent",
       });
+    }
+
+    // HubSpot contact, mapped deal, and lead_created mail live on p5 intake.
+    // Started as soon as the lead is durable so it overlaps Resend, and kept
+    // alive with after() so the visitor response does not wait on it.
+    // Failures stay inside the bridge and cannot change this status.
+    // Duplicate replays returned above, and InquiryRejectedError / 503 paths
+    // never reach here. The short multipart form uses this same accept path.
+    const location = (data.propertyProfile as { city?: string; zip?: string } | null) ?? null;
+    try {
+      const bridge = forwardConsultationToP5Intake({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+        city: location?.city,
+        zip: data.zip || location?.zip,
+        projectType: data.projectType,
+        message: data.message,
+        inquiryId: data.inquiryId,
+      });
+      after(() => bridge);
+    } catch (bridgeErr) {
+      console.error("[p5-intake] Could not schedule HubSpot bridge:", bridgeErr);
     }
 
     // Same complete record as the estimate-gate path, so a lead looks identical
