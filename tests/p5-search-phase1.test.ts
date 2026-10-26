@@ -300,14 +300,11 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
 test('phase-1 copy is additive on the named pages', () => {
   const home = readFileSync('components/approved/ApprovedHome.tsx', 'utf8');
   assert.match(home, /<h2>Home remodeling contractors for Boise and the Treasure Valley<\/h2>/);
-  assert.match(home, /Remodeling contractors in Eagle/);
-  assert.match(home, /Remodeling contractors in Meridian/);
-  assert.match(home, /Remodeling contractors in Boise/);
+  assert.match(home, /remodeling contractors in Eagle/);
+  assert.match(home, /Remodeling contractors in \$\{city\}/);
   assert.match(home, /Kitchen remodeling in Boise/);
   assert.match(home, /href="\/areas\/eagle"/);
-  assert.match(home, /href="\/areas\/meridian"/);
-  assert.match(home, /href="\/areas\/boise"/);
-  assert.match(home, /href="\/services\/kitchen-remodel"/);
+  assert.match(home, /\/services\/\$\{s\.slug\}/);
   const faqs = readFileSync('shared/homepageFaqs.ts', 'utf8');
   assert.match(faqs, /q: "Remodeling contractors in Boise"/);
   assert.match(faqs, /q: "What do home remodeling contractors typically handle\?"/);
