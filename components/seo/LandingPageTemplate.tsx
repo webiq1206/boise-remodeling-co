@@ -7,6 +7,7 @@ import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
+import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProjectRoomsSection';
 import {
 Accordion,
 AccordionContent,
@@ -15,6 +16,7 @@ AccordionTrigger,
 } from '@/components/ui/accordion';
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
+import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import type { GalleryProject } from '@/shared/galleryData';
@@ -23,6 +25,24 @@ import { ArrowRight,ChevronRight,Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { RelatedLinks } from './RelatedLinks';
+
+function LandingSectionBreather({ src, alt }: { src: string; alt: string }) {
+  return (
+    <figure className="my-2 overflow-hidden" style={{ border: '1px solid var(--ed-line)' }}>
+      <div className="relative aspect-[16/10] md:aspect-[21/9]">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          unoptimized={src.startsWith('/images/') && src.endsWith('.webp')}
+          sizes="(max-width: 768px) 100vw, 48rem"
+          className="object-cover img-brand-grade"
+          loading="lazy"
+        />
+      </div>
+    </figure>
+  );
+}
 
 interface BreadcrumbItem {
   name: string;
@@ -72,6 +92,8 @@ interface LandingPageTemplateProps {
   proofHeading?: string;
   /** Optional featured before/after for service hub pages. */
   featuredProject?: GalleryProject;
+  /** Service slug used to attach a multi-room featured project set when available. */
+  serviceSlug?: string;
   /** Show contextual estimator prompt band (default true on service/area pages). */
   showEstimatePrompt?: boolean;
   faqs: FAQItem[];
@@ -165,11 +187,13 @@ export function LandingPageTemplate({
   proof,
   proofHeading,
   featuredProject,
+  serviceSlug,
   showEstimatePrompt = false,
   faqs,
   related,
 }: LandingPageTemplateProps) {
   void showEstimatePrompt;
+  void proofHeading;
   const eyebrow = breadcrumbs[breadcrumbs.length - 2]?.name;
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
@@ -177,6 +201,15 @@ export function LandingPageTemplate({
   const breatherImage = breatherImageUrl ?? heroImageUrl;
   const processImage = processImageUrl ?? heroImageUrl;
   const showTimelineBelow = !!timeline && !costGuidance;
+  const featuredRooms = serviceSlug
+    ? getFeaturedProjectForService(serviceSlug)
+    : undefined;
+  const sectionBreatherPool = [
+    breatherImage,
+    processImage,
+    featuredProject?.afterImageUrl,
+    ...(proof?.projects?.map((p) => p.afterImageUrl) ?? []),
+  ].filter((src): src is string => Boolean(src));
 
   return (
     <div className="flex flex-col ">
@@ -288,6 +321,7 @@ export function LandingPageTemplate({
 
       {/* ─── Featured before/after (service hub) ─── */}
       {featuredProject && <FeaturedBeforeAfterSection project={featuredProject} />}
+      {featuredRooms && <FeaturedProjectRoomsSection project={featuredRooms} compact />}
 
       {/* ─── Process: the family's image panel, timeline leading ─── */}
       {processSteps && processSteps.length > 0 && (
@@ -392,34 +426,51 @@ export function LandingPageTemplate({
                 </Reveal>
               </aside>
               <div className="space-y-[clamp(48px,6vw,88px)]">
-                {sections.map((section, i) => (
-                  <Reveal key={section.heading} delay={Math.min(i, 4) * 60}>
-                    <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28">{section.heading}</h2>
-                    {section.paragraphs?.map((p, j) => (
-                      <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
-                    ))}
-                    {section.subsections?.map((sub) => (
-                      <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
-                        <h3 className="ed-h4">{sub.heading}</h3>
-                        {sub.paragraphs.map((p, k) => (
-                          <p key={k} className="ed-body mt-3 max-w-[62ch]">{p}</p>
+                {sections.map((section, i) => {
+                  const breatherSrc =
+                    sections.length >= 3 &&
+                    i > 0 &&
+                    i % 2 === 1 &&
+                    sectionBreatherPool.length > 0
+                      ? sectionBreatherPool[Math.floor(i / 2) % sectionBreatherPool.length]
+                      : undefined;
+                  return (
+                    <div key={section.heading}>
+                      {breatherSrc && (
+                        <LandingSectionBreather
+                          src={breatherSrc}
+                          alt={contentImageAlt(breatherSrc, 'Remodeling design inspiration')}
+                        />
+                      )}
+                      <Reveal delay={Math.min(i, 4) * 60}>
+                        <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28">{section.heading}</h2>
+                        {section.paragraphs?.map((p, j) => (
+                          <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
                         ))}
-                      </div>
-                    ))}
-                    {section.links && section.links.length > 0 && (
-                      <ul className="ed-rule-list mt-8">
-                        {section.links.map((link) => (
-                          <li key={link.href}>
-                            <Link href={link.href} className="ed-rule-link">
-                              {link.label}
-                              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                            </Link>
-                          </li>
+                        {section.subsections?.map((sub) => (
+                          <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
+                            <h3 className="ed-h4">{sub.heading}</h3>
+                            {sub.paragraphs.map((p, k) => (
+                              <p key={k} className="ed-body mt-3 max-w-[62ch]">{p}</p>
+                            ))}
+                          </div>
                         ))}
-                      </ul>
-                    )}
-                  </Reveal>
-                ))}
+                        {section.links && section.links.length > 0 && (
+                          <ul className="ed-rule-list mt-8">
+                            {section.links.map((link) => (
+                              <li key={link.href}>
+                                <Link href={link.href} className="ed-rule-link">
+                                  {link.label}
+                                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </Reveal>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

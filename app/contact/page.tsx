@@ -325,6 +325,8 @@ export default function ContactPage() {
           </div>
         </Section>
 
+        <StatementBandSection />
+
         {/* ─── What to expect split ─── */}
         <Section variant="canvas" spacing="none" divider className="p-0">
           <div className="grid md:grid-cols-2 overflow-hidden">

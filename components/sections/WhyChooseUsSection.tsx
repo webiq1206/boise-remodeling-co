@@ -62,7 +62,7 @@ export function WhyChooseUsSection({ limit }: WhyChooseUsSectionProps) {
                 long list. A photograph now fills it, so the evidence on the
                 right has a picture of the work on the left. */}
             <Reveal delay={60}>
-              <figure className="mt-10 hidden lg:block">
+              <figure className="mt-10">
                 <div className="relative aspect-[4/3] overflow-hidden" style={{ border: "1px solid var(--ed-line)" }}>
                   <Image
                     src={SITE_IMAGES.value}

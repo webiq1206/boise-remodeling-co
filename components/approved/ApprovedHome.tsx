@@ -5,6 +5,8 @@ import {ArrowUpRight} from 'lucide-react';
 import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
 import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/components/ui/accordion';
 import {FAQSection} from '@/components/FAQSection';
+import {FeaturedProjectRoomsSection} from '@/components/sections/FeaturedProjectRoomsSection';
+import {StatementBandSection} from '@/components/sections/StatementBandSection';
 import {brands,cities} from './family-content';
 import {OptionalIntake} from './OptionalIntake';
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
@@ -33,7 +35,10 @@ return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.acce
 
 
  <section className="f-value"><img src={b.valueImage} alt={b.id==='handyman'?'Finish carpentry and trim work':b.id==='construction'?'Coordinated framing and mechanical rough-in':b.id==='adu'?'A home and its surrounding property':'Kitchen counter with wood cabinets, a white countertop, and a tile backsplash'} loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">{b.id==='adu'?'A SOUND STARTING POINT':'WHERE YOUR MONEY GOES'}</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><a className="f-link" href="#request">Request a call<Arrow/></a></div></section>
- {approachBlock}{processBlock}
+ {approachBlock}
+ <StatementBandSection />
+ {processBlock}
+ <FeaturedProjectRoomsSection compact />
  <section className="f-image-pair f-container"><img src={b.services[1].image} alt={photoAlt(b.services[1].slug)} loading="lazy" width="1000" height="800"/><div><img src={b.services[2].image} alt={photoAlt(b.services[2].slug)} loading="lazy" width="900" height="675"/><p className="f-eyebrow">{b.id==='handyman'?'CARE IN THE SMALL DETAILS.':'A HOME THAT WORKS FOR YOU.'}</p><h3>{b.id==='handyman'?'You notice the difference. Every day.':'Thoughtful spaces. Everyday living.'}</h3></div></section>
  <section className="f-area f-section f-container"><p className="f-eyebrow">AT HOME IN IDAHO</p><h2>Local people.<br/><em>Valley-wide reach.</em></h2><p>Serving homeowners throughout the Treasure Valley.</p><div>{cities.map(city=><a key={city} href={b.id==='adu'?`${home}/contact`:`/areas/${city.toLowerCase().replaceAll(" ","-")}`}>{b.id==='adu'?city:`Remodeling contractors in ${city}`}<Arrow/></a>)}</div></section>
  <FAQSection/>

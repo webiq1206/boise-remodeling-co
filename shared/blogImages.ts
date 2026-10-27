@@ -3,9 +3,60 @@ import {
   HUB_HERO_IMAGES,
   type BlogImageEntry,
 } from './blogImageRegistry';
-import { SITE_IMAGES } from './siteImages';
+import { GALLERY_IMAGES, SITE_IMAGES } from './siteImages';
 
 const DEFAULT_BLOG_IMAGE = SITE_IMAGES.hero;
+
+/** Secondary mid-article figures by hub so long posts get visual relief. */
+const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
+  'remodeling-costs': [
+    { src: SITE_IMAGES.value, alt: 'Kitchen cabinetry and quartz materials during a Treasure Valley remodel' },
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'Representative kitchen design used for planning-range context' },
+  ],
+  'kitchen-remodeling': [
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'White shaker kitchen remodel with quartz counters' },
+    { src: GALLERY_IMAGES.kitchenMeridian.after, alt: 'Meridian kitchen remodel with island seating' },
+    { src: GALLERY_IMAGES.kitchenEagle.after, alt: 'Eagle kitchen remodel with foothills window light' },
+  ],
+  'bathroom-remodeling': [
+    { src: GALLERY_IMAGES.bathroom.after, alt: 'Primary bathroom remodel with walk-in shower' },
+    { src: GALLERY_IMAGES.hallBathBoise.after, alt: 'Representative Boise hall bath with a walk-in shower' },
+    { src: GALLERY_IMAGES.bathroomNampa.after, alt: 'Nampa primary bath remodel with double vanity' },
+  ],
+  'home-additions': [
+    { src: GALLERY_IMAGES.addition.after, alt: 'Representative master suite addition exterior' },
+    { src: GALLERY_IMAGES.additionEagle.after, alt: 'Eagle rear addition with matching roof line' },
+    { src: GALLERY_IMAGES.additionMeridian.after, alt: 'Meridian sunroom bump-out addition' },
+  ],
+  'whole-home-remodeling': [
+    { src: GALLERY_IMAGES.wholeHome.after, alt: 'Representative open-concept living and kitchen' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Representative Eagle foothills ranch exterior' },
+    { src: '/images/gallery/featured-eagle-kitchen.webp', alt: 'Representative kitchen with coordinated cabinet and counter finishes' },
+  ],
+  'contractor-selection': [
+    { src: SITE_IMAGES.process, alt: 'Remodel plans and finish samples reviewed before construction' },
+    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen remodel in progress with cabinets installed' },
+  ],
+  'remodeling-process': [
+    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen remodel in progress with floor protection' },
+    { src: SITE_IMAGES.process, alt: 'Design review with plans and material samples' },
+    { src: GALLERY_IMAGES.wholeHome.after, alt: 'Representative open living area' },
+  ],
+  'remodeling-roi': [
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'Updated kitchen finishes that support resale appeal' },
+    { src: GALLERY_IMAGES.bathroom.after, alt: 'Updated primary bath finishes for everyday use and resale' },
+  ],
+  'outdoor-living': [
+    { src: GALLERY_IMAGES.outdoor.after, alt: 'Covered patio outdoor living remodel' },
+    { src: GALLERY_IMAGES.outdoorEagle.after, alt: 'Eagle covered patio with outdoor fireplace' },
+    { src: '/images/gallery/featured-eagle-outdoor.webp', alt: 'Covered rear patio looking toward dry foothills' },
+  ],
+  'treasure-valley-locations': [
+    { src: '/images/areas/boise.webp', alt: 'Boise neighborhood street with established homes' },
+    { src: '/images/areas/eagle.webp', alt: 'Eagle residential street near the foothills' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Representative Treasure Valley ranch exterior' },
+  ],
+};
 
 export function getBlogImageEntry(slug: string): BlogImageEntry | undefined {
   return BLOG_IMAGE_REGISTRY[slug];
@@ -92,19 +143,33 @@ export function getArticleInlineFigures(
 
   const entry = BLOG_IMAGE_REGISTRY[slug];
   const primarySrc = entry?.hero ?? DEFAULT_BLOG_IMAGE;
-
-  // The article hero already establishes the setting. Avoid repeating it in the body.
+  const used = new Set<string>([primarySrc]);
   const figures: ArticleInlineFigurePlacement[] = [];
 
-  if (sectionCount >= 6 && hubSlug) {
+  const pushFigure = (afterSectionIndex: number, src: string, alt: string) => {
+    if (used.has(src)) return;
+    used.add(src);
+    figures.push({ afterSectionIndex, src, alt });
+  };
+
+  if (hubSlug) {
     const hubHero = getHubHeroImage(hubSlug);
-    if (hubHero !== primarySrc) {
-      figures.push({
-        afterSectionIndex: Math.floor(sectionCount / 2),
-        src: hubHero,
-        alt: Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
+    if (sectionCount >= 5) {
+      pushFigure(
+        Math.max(1, Math.floor(sectionCount / 3) - 1),
+        hubHero,
+        Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
           ?? INLINE_HUB_ALTS[hubSlug] ?? `${hubSlug.replace(/-/g, ' ')} imagery`,
-      });
+      );
+    }
+
+    const gallery = HUB_INLINE_GALLERY[hubSlug] ?? [];
+    const slots = sectionCount >= 8 ? [2, 4, 6] : sectionCount >= 6 ? [2, 4] : [Math.floor(sectionCount / 2)];
+    for (let i = 0; i < slots.length; i++) {
+      const candidate = gallery[i % Math.max(gallery.length, 1)];
+      if (!candidate) break;
+      const afterSectionIndex = Math.min(slots[i], sectionCount - 1);
+      pushFigure(afterSectionIndex, candidate.src, candidate.alt);
     }
   }
 
