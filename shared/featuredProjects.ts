@@ -38,7 +38,7 @@ export const FEATURED_EAGLE_WHOLE_HOME: FeaturedProjectSet = {
       key: "great-room",
       label: "Great room",
       src: FEATURED_EAGLE_IMAGES.greatRoom,
-      alt: "Open great room with fireplace, white oak floors, and a sight line into the remodeled kitchen",
+      alt: "Open great room with fireplace, white oak floors, and a sight line into the kitchen",
     },
     {
       key: "kitchen",
