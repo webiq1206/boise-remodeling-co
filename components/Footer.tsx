@@ -90,7 +90,7 @@ const SISTER_SITES: { name: string; href?: string }[] = [
   { name: "Boise Remodeling Co", href: "https://boiseremodeling.co" },
   { name: "Boise Handyman Co", href: "https://boisehandyman.co" },
   { name: "Boise Cabinet Co", href: "https://boisecabinet.co" },
-  { name: "Boise ADU Co (launching soon)" },
+  { name: "Boise ADU Co (website coming soon; requests through P5)" },
 ];
 
 /** Collapsed accordion on phones and tablets, a plain column from lg up. */

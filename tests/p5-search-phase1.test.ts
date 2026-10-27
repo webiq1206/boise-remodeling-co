@@ -252,7 +252,7 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   assert.match(footer, /Boise Construction Co/);
   assert.match(footer, /Boise Handyman Co/);
   assert.match(footer, /Boise Cabinet Co/);
-  assert.match(footer, /Boise ADU Co \(launching soon\)/);
+  assert.match(footer, /Boise ADU Co \(website coming soon; requests through P5\)/);
   assert.match(footer, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
   assert.match(footer, /RE-10 repairs \(Boise Handyman Co\)/);
   assert.equal(footer.includes('href: "/re-10-repairs-boise"'), false);

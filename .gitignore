@@ -37,3 +37,6 @@ tsconfig.tsbuildinfo
 !/scripts/test-p5-pricing-identity.mts
 !/scripts/test-p5-upload-adversarial.mts
 !/scripts/test-p5-document-adversarial.mts
+
+# Bounded CI evidence packaging is versioned verification code.
+!/scripts/prepare-ci-evidence.mjs
