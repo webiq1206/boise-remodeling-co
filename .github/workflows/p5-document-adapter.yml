@@ -52,9 +52,17 @@ jobs:
           # Existing prebuild scripts regenerate these assets, including PDF timestamps.
           # Keep every maintained source file protected against test-time mutation.
           git diff --exit-code -- . ':(exclude)public/downloads/*.pdf'
-      - uses: actions/upload-artifact@v4
+      - name: Offline evidence guard regressions
+        run: node --test tests/ci-evidence.test.mjs
+      - name: Package complete evidence within storage limit
+        id: evidence
         if: always()
+        run: node scripts/prepare-ci-evidence.mjs document
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.evidence.outputs.archive_ready == 'true'
         with:
           name: document-adapter-verification
-          path: document-adapter-verification
+          path: ci-evidence-artifacts/document.tar.gz
           retention-days: 14
+          compression-level: 0
+          if-no-files-found: error
