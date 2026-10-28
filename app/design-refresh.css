@@ -1226,24 +1226,36 @@ body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wi
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-title,
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-summary-chip,
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-step-copy,
-body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-reassure {
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-step-title,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-reassure,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-file,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-files,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-file-note {
   display: none;
 }
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-header {
-  padding-top: 8px;
-  padding-bottom: 6px;
+  padding-top: 6px;
+  padding-bottom: 4px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-progress {
+  margin-top: 0;
 }
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-body {
-  padding-top: 8px;
+  padding-top: 6px;
+  padding-bottom: 4px;
 }
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack {
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack input,
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack textarea {
   min-height: 44px;
   padding: 10px 12px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack textarea {
+  min-height: 44px;
+  height: 44px;
 }
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-bar {
   /* Keyboard replaces the home-indicator band; drop safe-area while lifted. */

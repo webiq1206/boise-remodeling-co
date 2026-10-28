@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 
+/** Established C10 design-review keyboard band (px). Never fall back below this. */
+const KEYBOARD_FALLBACK_FLOOR_PX = 280;
+
 /**
  * Pixels the on-screen keyboard (or other bottom chrome) currently covers.
  *
@@ -11,8 +14,9 @@ import { useEffect, useState } from "react";
  *
  * Playwright Chromium phone emulation often focuses a field without shrinking
  * visualViewport. When `data-estimate-keyboard` is set on a phone-width
- * viewport and no VV gap is reported, fall back to a typical ~280px band so
- * design-review keyboard sims still clear the bar.
+ * viewport and no VV gap is reported, fall back to a 280px band (never below
+ * that floor) so design-review keyboard sims clear the bar at every required
+ * short-phone size, including 320×568 and 360×640.
  */
 export function useKeyboardInset(): number {
   const [inset, setInset] = useState(0);
@@ -28,7 +32,7 @@ export function useKeyboardInset(): number {
       const focused = document.body.dataset.estimateKeyboard === "true";
       const phone = window.matchMedia("(max-width: 767px)").matches;
       if (focused && phone) {
-        setInset(Math.round(Math.min(280, window.innerHeight * 0.34)));
+        setInset(KEYBOARD_FALLBACK_FLOOR_PX);
         return;
       }
       setInset(0);

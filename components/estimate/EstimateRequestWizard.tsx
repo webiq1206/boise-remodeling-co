@@ -25,13 +25,16 @@ import {
 import { captureMarketingAttribution } from "@/lib/marketingAttributionBrowser";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 
-const STORAGE_KEY = "brc-estimate-request-v1";
+const STORAGE_KEY = "brc-estimate-request-v2";
 const MAX_FILES = 4;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 
+/* C10: one text field per step so short phones clear a 280px keyboard. */
 const STEPS = [
   { id: "project", label: "Project" },
-  { id: "contact", label: "Contact" },
+  { id: "name", label: "Name" },
+  { id: "phone", label: "Phone" },
+  { id: "email", label: "Email" },
   { id: "details", label: "Details" },
   { id: "review", label: "Review" },
 ] as const;
@@ -186,10 +189,10 @@ export function EstimateRequestWizard() {
 
   const canNext = useMemo(() => {
     if (draft.step === 0) return Boolean(draft.projectType);
-    if (draft.step === 1) {
-      return draft.name.trim().length >= 2 && digits(draft.phone).length >= 10 && draft.email.includes("@");
-    }
-    if (draft.step === 2) return draft.note.trim().length >= 8;
+    if (draft.step === 1) return draft.name.trim().length >= 2;
+    if (draft.step === 2) return digits(draft.phone).length >= 10;
+    if (draft.step === 3) return draft.email.includes("@");
+    if (draft.step === 4) return draft.note.trim().length >= 8;
     return true;
   }, [draft]);
 
@@ -217,8 +220,10 @@ export function EstimateRequestWizard() {
   function goNext() {
     if (!canNext) {
       if (draft.step === 0) setError("Choose a project type to continue.");
-      else if (draft.step === 1) setError("Enter your name, phone, and email.");
-      else if (draft.step === 2) setError("Add a short note about the work (at least a sentence).");
+      else if (draft.step === 1) setError("Enter your name.");
+      else if (draft.step === 2) setError("Enter a phone number with at least 10 digits.");
+      else if (draft.step === 3) setError("Enter an email address.");
+      else if (draft.step === 4) setError("Add a short note about the work (at least a sentence).");
       return;
     }
     if (draft.step < STEPS.length - 1) {
@@ -379,11 +384,9 @@ export function EstimateRequestWizard() {
             {draft.step === 1 && (
               <>
                 <h2 ref={headingRef} tabIndex={-1} className="estimate-wizard-step-title">
-                  How can we reach you?
+                  Your name
                 </h2>
-                <p className="estimate-wizard-step-copy">
-                  We reply within one business day. No obligation.
-                </p>
+                <p className="estimate-wizard-step-copy">We reply within one business day.</p>
                 <div className="estimate-field-stack">
                   <label>
                     <span>Name</span>
@@ -397,6 +400,17 @@ export function EstimateRequestWizard() {
                       maxLength={100}
                     />
                   </label>
+                </div>
+              </>
+            )}
+
+            {draft.step === 2 && (
+              <>
+                <h2 ref={headingRef} tabIndex={-1} className="estimate-wizard-step-title">
+                  Your phone
+                </h2>
+                <p className="estimate-wizard-step-copy">Best number for a quick call or text.</p>
+                <div className="estimate-field-stack">
                   <label>
                     <span>Phone</span>
                     <input
@@ -410,6 +424,17 @@ export function EstimateRequestWizard() {
                       required
                     />
                   </label>
+                </div>
+              </>
+            )}
+
+            {draft.step === 3 && (
+              <>
+                <h2 ref={headingRef} tabIndex={-1} className="estimate-wizard-step-title">
+                  Your email
+                </h2>
+                <p className="estimate-wizard-step-copy">For the written scope and follow-up.</p>
+                <div className="estimate-field-stack">
                   <label>
                     <span>Email</span>
                     <input
@@ -426,7 +451,7 @@ export function EstimateRequestWizard() {
               </>
             )}
 
-            {draft.step === 2 && (
+            {draft.step === 4 && (
               <>
                 <h2 ref={headingRef} tabIndex={-1} className="estimate-wizard-step-title">
                   What should we look at?
@@ -481,7 +506,7 @@ export function EstimateRequestWizard() {
               </>
             )}
 
-            {draft.step === 3 && (
+            {draft.step === 5 && (
               <>
                 <h2 ref={headingRef} tabIndex={-1} className="estimate-wizard-step-title">
                   Review your request
@@ -522,7 +547,7 @@ export function EstimateRequestWizard() {
                           {files.length} file{files.length === 1 ? "" : "s"} attached
                         </>
                       ) : null}
-                      <button type="button" className="estimate-edit" onClick={() => patch({ step: 2 })}>
+                      <button type="button" className="estimate-edit" onClick={() => patch({ step: 4 })}>
                         Edit
                       </button>
                     </dd>
