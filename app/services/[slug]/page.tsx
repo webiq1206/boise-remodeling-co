@@ -1,5 +1,6 @@
 import { SERVICE_SCENES } from '@/shared/serviceSceneImages';
 import { InteriorPage } from '@/components/approved/InteriorLayout';
+import { ServiceReferral } from '@/components/marketing/ServiceReferral';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
 LandingPageTemplate,
@@ -24,6 +25,27 @@ import {
 import { SERVICE_SEO_CONTENT } from '@/shared/seoContent';
 import { getServiceImageSet } from '@/shared/serviceBackgrounds';
 import { notFound } from 'next/navigation';
+
+/** D2: ADUs and room additions belong to Boise Construction Co. */
+const CONSTRUCTION_REFERRALS: Record<
+  string,
+  { title: string; body: string; ctaLabel: string; ctaHref: string; alsoNote?: string }
+> = {
+  adu: {
+    title: 'ADUs and guest houses',
+    body: 'Boise Construction Co handles accessory dwelling units and guest houses for Treasure Valley lots. Boise Remodeling Co focuses on kitchens, bathrooms and whole-home work inside the home you already have.',
+    ctaLabel: 'Talk with Boise Construction Co',
+    ctaHref: 'https://boiseconstruction.co/services/home-additions',
+    alsoNote:
+      'Boise ADU Co projects currently run through Boise Construction Co; its dedicated site is coming.',
+  },
+  'room-addition': {
+    title: 'Room additions',
+    body: 'New structure and the same permit path as other new construction, so room additions are handled by Boise Construction Co. Boise Remodeling Co stays focused on remodeling the rooms you already live in.',
+    ctaLabel: 'Talk with Boise Construction Co about additions',
+    ctaHref: 'https://boiseconstruction.co/services/home-additions',
+  },
+};
 
 export function generateStaticParams() {
   return SERVICE_SLUGS.map((slug) => ({ slug }));
@@ -51,6 +73,22 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   const content = SERVICE_SEO_CONTENT[params.slug];
   if (!service || !content) notFound();
 
+  const referral = CONSTRUCTION_REFERRALS[service.slug];
+  if (referral) {
+    return (
+      <InteriorPage kind="services">
+        <ServiceReferral
+          eyebrow="Referred within the P5 family"
+          title={referral.title}
+          body={referral.body}
+          ctaLabel={referral.ctaLabel}
+          ctaHref={referral.ctaHref}
+          alsoNote={referral.alsoNote}
+        />
+      </InteriorPage>
+    );
+  }
+
   const path = servicePath(service.slug);
   const isBathroomNearMe = service.slug === 'bathroom-remodel';
   const faqs = content.faqs;
@@ -69,7 +107,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
             paragraphs: content.costGuidance.paragraphs,
             links: [
               { label: 'Boise Remodeling Cost Guide', href: '/guides/boise-remodeling-cost-guide' },
-              { label: 'Get your planning range', href: '/#calculator' },
+              { label: 'Request a quote', href: '/#request' },
             ],
           },
         ]

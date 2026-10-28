@@ -195,13 +195,6 @@ export default function ContactPage() {
               saveClassName="text-sm text-inverse-foreground/80 hover:text-inverse-foreground transition-colors"
               phoneTestId="link-hero-phone"
             />
-            <a
-              href={SITE_CONFIG.phoneSmsHref}
-              className="block text-sm text-inverse-foreground/80 hover:text-inverse-foreground transition-colors mb-8"
-              data-testid="link-hero-text"
-            >
-              Prefer to text? Message us instead
-            </a>
             <div className="interior-contact-actions"><InteriorEstimateLink label="Request a quote" href="/contact#consult"/><a href="#consult" className="interior-text-link">Request a consultation</a></div>
             <dl className="ed-hero-facts">
               {HERO_STATS.map((stat) => (
@@ -254,7 +247,6 @@ export default function ContactPage() {
               description="Call, text, or email. We come to you. We respond within one business day and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
-            <TextReplyLine className="text-base leading-relaxed mb-8 max-w-3xl text-muted-foreground" />
             <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
               <Reveal className="sm:col-span-2">
                 <ContactChannel
@@ -287,12 +279,7 @@ export default function ContactPage() {
                 <ContactChannel
                   icon={<Mail className="h-5 w-5" strokeWidth={1.5} />}
                   label="Email us"
-                  subtext={
-                    <>
-                      Response within one business day
-                      <TextReplyLine as="span" className="mt-1.5 block" />
-                    </>
-                  }
+                  subtext="Response within one business day"
                 >
                   <EmailLink className="text-base hover:text-foreground/70 transition-colors" />
                 </ContactChannel>
@@ -365,9 +352,6 @@ export default function ContactPage() {
                         <Check className="h-4 w-4 text-accent-legible flex-shrink-0 mt-0.5" />
                         <span className="text-base text-foreground">
                           {bullet}
-                          {bullet === "Response within one business day" ? (
-                            <TextReplyLine as="span" className="mt-1.5 block text-muted-foreground" />
-                          ) : null}
                         </span>
                       </div>
                       {i < CONSULT_BULLETS.length - 1 && (

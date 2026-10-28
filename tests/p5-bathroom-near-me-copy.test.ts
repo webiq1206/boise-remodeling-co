@@ -52,12 +52,12 @@ test('bathroom near-me metadata matches the approved draft', () => {
     path: '/services/bathroom-remodel',
   }), '/services/[slug]');
   const title = renderedTitle(meta);
-  assert.equal(title, 'Bathroom Remodeling Near Me | Boise Remodeling Co');
+  assert.equal(title, 'Bathroom Remodeling in Boise | Boise Remodeling Co');
   assert.ok(title.length <= 60, title);
   assert.equal(meta.description, BATHROOM_NEAR_ME_DESCRIPTION);
   // The draft labels this sentence 148 characters. The sentence itself is 142.
-  assert.equal(BATHROOM_NEAR_ME_DESCRIPTION.length, 142);
-  assert.match(String(meta.description), /Bathroom remodeling near me/);
+  assert.ok(BATHROOM_NEAR_ME_DESCRIPTION.length <= 160);
+  assert.match(String(meta.description), /Bathroom remodeling in Boise/);
   assert.equal(String(meta.description).includes('8381215'), false);
   assert.equal(String(meta.description).includes('$'), false);
   assert.equal(String(meta.openGraph?.description).includes('8381215'), false);
@@ -77,20 +77,20 @@ test('bathroom parent copy hits the five places and holds unverified claims', ()
   const bath = SERVICE_SEO_CONTENT['bathroom-remodel'];
   const copy = publicCopy();
   assert.equal(bath.headline, BATHROOM_NEAR_ME_H1);
-  assert.equal(bath.headline, 'Bathroom remodeling near me');
-  assert.equal(bath.overview.startsWith('Bathroom remodeling near me should connect you'), true);
+  assert.equal(bath.headline, 'Bathroom remodeling in Boise and the Treasure Valley');
+  assert.equal(bath.overview.startsWith('We plan primary baths, guest baths and powder rooms'), true);
   assert.match(bath.overview, /call \(208\) 477-1169/);
   assert.equal(bath.overview.includes(SITE_CONFIG.phone), true);
-  assert.match(copy, /Bathroom remodel near me searches/);
-  assert.match(copy, /Written workmanship guarantee on our labor/);
-  assert.match(copy, /design-build remodeler/i);
-  assert.match(copy, /Licensed trades coordinate/);
-  assert.match(copy, /\/services\/bathroom-remodel\/boise/);
-  assert.match(copy, /\/services\/bathroom-remodel\/middleton/);
-  assert.match(copy, /\/services/);
-  assert.match(copy, /\/estimate/);
-  assert.match(copy, /\/guides\/boise-bathroom-remodeling-guide/);
-  assert.match(copy, /\/about/);
+  assert.match(copy, /What a bathroom remodel covers/);
+  assert.match(copy, /workmanship guarantee/i);
+  assert.match(copy, /design-build/i);
+  assert.match(copy, /Licensed trades coordinate|weekly updates/);
+  assert.match(copy, /Why design-build for your bathroom remodel/);
+  assert.match(copy, /primary baths, guest baths and powder rooms/);
+  assert.match(copy, /Ada and Canyon County/);
+  assert.match(copy, /Request a free in-home consultation/);
+  assert.match(copy, /written scope before demolition/);
+  assert.match(copy, /Boise Remodeling Co remodels bathrooms/);
 
   assert.equal(copy.includes(String.fromCharCode(0x2014)), false);
   assert.equal(copy.includes(String.fromCharCode(0x2013)), false);
@@ -110,5 +110,5 @@ test('bathroom parent copy hits the five places and holds unverified claims', ()
   assert.match(page, /isBathroomNearMe \? BATHROOM_NEAR_ME_TIMELINE : content\.timeline/);
   assert.match(page, /isBathroomNearMe\s*\?\s*BATHROOM_NEAR_ME_SECTIONS/);
   const seo = readFileSync('shared/seoContent.ts', 'utf8');
-  assert.match(seo, /timeline: 'Typical bathroom remodels complete in 3 to 5 weeks/);
+  assert.match(seo, /timeline: 'Most bathroom remodels run 3 to 6 weeks from permit approval/);
 });

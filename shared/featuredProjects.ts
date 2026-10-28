@@ -1,9 +1,10 @@
 /**
  * Multi-room featured project sets. Every room/exterior in a set must read as
  * the same property (materials, windows, landscape, lighting).
+ *
+ * Phase 10: Boise Remodeling Co uses one 1972 Boise Bench ranch across shots.
+ * Captions describe materials and work, not invented client project records (D9).
  */
-
-import { FEATURED_EAGLE_IMAGES } from "./siteImages";
 
 export interface FeaturedProjectRoom {
   key: string;
@@ -20,48 +21,53 @@ export interface FeaturedProjectSet {
   rooms: FeaturedProjectRoom[];
 }
 
-/** Eagle foothills whole-home remodel: cohesive exterior + interior set. */
-export const FEATURED_EAGLE_WHOLE_HOME: FeaturedProjectSet = {
-  id: "eagle-whole-home",
-  city: "eagle",
-  title: "Eagle Foothills Whole-Home Refresh",
+const BENCH = "/images/projects/boise-bench-ranch";
+
+/** Boise Bench ranch remodel set: one house, exterior and rooms. */
+export const FEATURED_BOISE_BENCH_RANCH: FeaturedProjectSet = {
+  id: "boise-bench-ranch",
+  city: "boise",
+  title: "Boise Bench ranch remodel concept",
   description:
-    "One Treasure Valley ranch carried from curb to kitchen, great room, primary bath, and covered patio with matching finishes and black-framed windows.",
+    "Concept design for a 1972 Bench ranch: sage-grey lap siding over brick, black-framed windows, white shaker kitchen with a sage island, and a primary bath with subway tile. Not a completed customer project.",
   rooms: [
     {
       key: "exterior",
       label: "Exterior",
-      src: FEATURED_EAGLE_IMAGES.exterior,
-      alt: "Modern craftsman ranch exterior in the Eagle foothills with taupe siding and black-framed windows",
-    },
-    {
-      key: "great-room",
-      label: "Great room",
-      src: FEATURED_EAGLE_IMAGES.greatRoom,
-      alt: "Open great room with fireplace, white oak floors, and a sight line into the kitchen",
+      src: `${BENCH}/exterior-after.webp`,
+      alt: "1972 Boise Bench ranch with sage-grey lap siding, brick wainscot, and black-framed windows",
     },
     {
       key: "kitchen",
       label: "Kitchen",
-      src: FEATURED_EAGLE_IMAGES.kitchen,
-      alt: "White shaker kitchen with quartz island and foothills view through black-framed windows",
+      src: `${BENCH}/kitchen-after.webp`,
+      alt: "White shaker kitchen with sage island, white quartz, brass hardware, and hickory floor",
     },
     {
       key: "bath",
       label: "Primary bath",
-      src: FEATURED_EAGLE_IMAGES.bath,
-      alt: "Primary bath with white oak vanity, glass shower, and matte black fixtures",
+      src: `${BENCH}/bath-after.webp`,
+      alt: "Primary bath with white shaker vanity, brass fixtures, and subway-tile shower",
     },
     {
-      key: "outdoor",
-      label: "Outdoor living",
-      src: FEATURED_EAGLE_IMAGES.outdoor,
-      alt: "Covered rear patio looking back at the same ranch with dry foothills beyond the fence",
+      key: "living",
+      label: "Living and dining",
+      src: `${BENCH}/living-after.webp`,
+      alt: "Open living and dining with hickory floor and black-framed windows to the front yard",
+    },
+    {
+      key: "exterior-before",
+      label: "Exterior before",
+      src: `${BENCH}/exterior-before.webp`,
+      alt: "Same Bench ranch before remodel with faded tan siding and brown aluminium windows",
     },
   ],
 };
 
-export const FEATURED_PROJECT_SETS: FeaturedProjectSet[] = [FEATURED_EAGLE_WHOLE_HOME];
+/** @deprecated Prefer FEATURED_BOISE_BENCH_RANCH; kept as alias for older imports. */
+export const FEATURED_EAGLE_WHOLE_HOME = FEATURED_BOISE_BENCH_RANCH;
+
+export const FEATURED_PROJECT_SETS: FeaturedProjectSet[] = [FEATURED_BOISE_BENCH_RANCH];
 
 export function getFeaturedProjectSet(id: string): FeaturedProjectSet | undefined {
   return FEATURED_PROJECT_SETS.find((set) => set.id === id);
@@ -70,6 +76,8 @@ export function getFeaturedProjectSet(id: string): FeaturedProjectSet | undefine
 export function getFeaturedProjectForService(
   serviceSlug: string,
 ): FeaturedProjectSet | undefined {
-  if (serviceSlug === "whole-home-remodel") return FEATURED_EAGLE_WHOLE_HOME;
+  if (serviceSlug === "whole-home-remodel" || serviceSlug === "kitchen-remodel" || serviceSlug === "bathroom-remodel") {
+    return FEATURED_BOISE_BENCH_RANCH;
+  }
   return undefined;
 }

@@ -39,12 +39,14 @@ export const SITE_IMAGES = {
  * Keep materials/windows consistent when regenerating any frame.
  */
 export const FEATURED_EAGLE_IMAGES = {
-  exterior: "/images/gallery/featured-eagle-exterior.webp",
-  greatRoom: "/images/gallery/featured-eagle-great-room.webp",
-  kitchen: "/images/gallery/featured-eagle-kitchen.webp",
-  bath: "/images/gallery/featured-eagle-bath.webp",
-  outdoor: "/images/gallery/featured-eagle-outdoor.webp",
+  exterior: "/images/projects/boise-bench-ranch/exterior-after.webp",
+  greatRoom: "/images/projects/boise-bench-ranch/living-after.webp",
+  kitchen: "/images/projects/boise-bench-ranch/kitchen-after.webp",
+  bath: "/images/projects/boise-bench-ranch/bath-after.webp",
+  outdoor: "/images/projects/boise-bench-ranch/exterior-before.webp",
 } as const;
+
+export const FEATURED_BOISE_BENCH_IMAGES = FEATURED_EAGLE_IMAGES;
 
 export const GALLERY_IMAGES = {
   kitchen: {

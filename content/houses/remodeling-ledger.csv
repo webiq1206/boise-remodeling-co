@@ -1,0 +1,6 @@
+file,shot,reference_used,check_passed_by,date,notes
+exterior-after.webp,exterior-after,master prompt,agent-visual,2026-10-28,Locked as master; Bench ranch cues present
+exterior-before.webp,exterior-before,exterior-after.webp,agent-visual,2026-10-28,Same geometry; aged siding and aluminium windows
+kitchen-after.webp,kitchen-after,exterior-after.webp,agent-visual,2026-10-28,White shaker + sage island + hickory
+bath-after.webp,bath-after,exterior-after.webp,agent-visual,2026-10-28,White shaker vanity + subway shower
+living-after.webp,living-after,exterior-after.webp + kitchen-after.webp,agent-visual,2026-10-28,Open living toward kitchen

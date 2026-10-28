@@ -51,7 +51,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     { path: '/estimate', label: 'Get an estimate', changeFrequency: 'monthly', priority: 0.9 },
     // /re-10-repairs-boise canonicals to boisehandyman.co, so it is not listed here.
     { path: '/remodel-plans-boise', label: 'Remodel plans', changeFrequency: 'monthly', priority: 0.9 },
-    { path: '/testimonials', label: SHOW_TESTIMONIALS ? 'Testimonials' : 'Design Ideas', changeFrequency: 'monthly', priority: 0.65 },
+    { path: '/design-ideas', label: SHOW_TESTIMONIALS ? 'Testimonials' : 'Design Ideas', changeFrequency: 'monthly', priority: 0.65 },
     { path: '/contact', label: 'Contact', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/resources', label: 'Resources', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/resources/ada-canyon-permit-flow', label: 'Ada vs Canyon County permit flow', changeFrequency: 'monthly', priority: 0.65 },

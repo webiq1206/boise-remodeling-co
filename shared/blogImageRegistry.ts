@@ -581,7 +581,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'north-end-remodeling-guide': {
     hero: '/images/blog/north-end-remodeling-guide.webp',
-    alt: 'Historic North End craftsman bungalows and period-appropriate remodels in Boise',
+    alt: 'Historic North End homes and period-appropriate remodels in Boise',
     topicTags: ["location","north-end","neighborhood","guide"],
     source: 'blog',
   },

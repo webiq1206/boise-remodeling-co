@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
 import { isPortalPath } from "@/lib/portalRoutes";
 import { cn } from "@/lib/utils";
-const REQUEST_LABEL = "Request a call";
+const REQUEST_LABEL = "Request a quote";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Contact,Menu,MessageSquare,Phone,X } from "lucide-react";
@@ -19,7 +19,7 @@ import { useEffect,useState } from "react";
 
 const NAV_LINKS = [
   { label: "Services", href: "/services" },
-  { label: "Design Ideas", href: "/testimonials" },
+  { label: "Design Ideas", href: "/design-ideas" },
   { label: "Areas", href: "/areas" },
   { label: "About", href: "/about" },
   { label: "Guides", href: "/guides" },

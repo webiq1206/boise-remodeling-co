@@ -77,12 +77,17 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does a kitchen remodel cost in the Treasure Valley?',
         answer:
-          'Investment depends on size, layout changes, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope tailored to your home.',
+          'Investment depends on size, layout changes, and finish level. Request a quote or schedule a free in-home visit for a written scope tailored to your home.',
       },
       {
         question: 'Can I use my kitchen during the remodel?',
         answer:
-          'For many projects, yes with temporary setups. We install dust barriers and protect adjacent rooms. We will be honest about timeline impacts during your consultation.',
+          'Most kitchens are out of use for several weeks of construction. We set up a temporary kitchen on request, install dust barriers, and protect adjacent rooms. Exact downtime is written into the schedule after the free visit.',
+      },
+      {
+        question: 'Is design included in the planning range?',
+        answer:
+          'Layout, design direction and finish selections are coordinated with the written scope. Optional 3D visualizations are a design upgrade discussed before we proceed.',
       },
       {
         question: 'Do you handle permits for kitchen remodels?',
@@ -144,7 +149,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     ],
     // City pages still render this duration. The parent route overrides it
     // with BATHROOM_NEAR_ME_TIMELINE until ops confirms a week count. [VERIFY]
-    timeline: 'Typical bathroom remodels complete in 3 to 5 weeks after permits, depending on custom materials and layout changes.',
+    timeline: 'Most bathroom remodels run 3 to 6 weeks from permit approval, depending on custom materials and layout changes.',
     processSteps: [
       { title: 'Consultation', description: 'We assess your bath, discuss storage and accessibility needs, and outline a planning range.' },
       { title: 'Selections and scope', description: 'Finishes and fixtures are documented before demolition.' },
@@ -232,8 +237,8 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'Whole-home remodel cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, whole-home remodels in the Boise area commonly plan $180,000 to $425,000 or more, driven by square footage, structural and layout changes, and finish level. Per-square-foot planning shorthand runs roughly $40 to $236 depending on scope depth.',
-        'These are planning ranges, not bids. A written master scope after your free in-home visit defines the real number, and phasing options can spread the investment across stages.',
+        'As of 2026, whole-home remodels in the Boise area commonly plan $180,000 to $425,000 or more, driven by square footage, structural and layout changes, and finish level. We quote a written master scope after the free in-home visit rather than a per-square-foot band.',
+        'These are planning ranges, not bids. Phasing options can spread the investment across stages while keeping finishes and systems consistent.',
       ],
     },
   },

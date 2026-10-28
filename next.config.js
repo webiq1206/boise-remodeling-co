@@ -33,6 +33,8 @@ const nextConfig = {
     // image slow to first paint. Every source in public/images is already WebP,
     // so WebP output is close to a passthrough and AVIF bought almost nothing.
     formats: ['image/webp'],
+    // F23: Next.js 16 requires images.qualities when quality is set explicitly.
+    qualities: [60, 70, 75, 80, 85, 90, 100],
     // Next defaults to 8 device widths x 8 image widths, so a single photo can
     // spawn a large matrix of on-demand encodes and cache misses. These trimmed
     // sets still cover phone / tablet / laptop / retina while cutting the number
@@ -110,12 +112,13 @@ const nextConfig = {
       // silently making the dedicated page unreachable from anywhere on the
       // site (nav, footer, every EstimateCTA click off the homepage) and
       // from search results.
-      '/portfolio': '/testimonials',
-      '/gallery': '/#gallery',
-      '/our-work': '/testimonials',
-      '/projects': '/testimonials',
-      '/reviews': '/testimonials',
-      '/our-reviews': '/testimonials',
+      '/portfolio': '/design-ideas',
+      '/gallery': '/design-ideas',
+      '/our-work': '/design-ideas',
+      '/projects': '/design-ideas',
+      '/reviews': '/design-ideas',
+      '/our-reviews': '/design-ideas',
+      '/testimonials': '/design-ideas',
       '/our-services': '/#services',
       '/all-services': '/',
       '/pricing': '/#calculator',

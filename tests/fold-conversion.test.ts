@@ -54,11 +54,11 @@ test("optional photos ride only the short multipart consultation path", () => {
 });
 
 test("the multi-step intake stays optional and the estimator is not the header ask", () => {
-  assert.match(home, /<OptionalIntake/);
+  assert.equal(home.includes("<OptionalIntake"), false);
   assert.equal(home.includes("<ApprovedEstimate"), false);
   assert.match(intake, /Open the optional intake/);
   assert.match(intake, /<ApprovedEstimate/);
-  assert.match(nav, /Request a call/);
+  assert.match(nav, /Request a quote/);
   assert.equal(nav.includes("Get an Estimate"), false);
 });
 
