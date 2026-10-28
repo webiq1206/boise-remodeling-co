@@ -1,0 +1,81 @@
+{
+  "sourceLibraryId": "libfile_4efa3eb963fc81919a6cd4c2c179b0e3",
+  "archiveSha256": "52ba70b766cd32a607675d11a4f1a36eb43697fe49f379b8ce4585c371316b6a",
+  "assets": [
+    {
+      "destination": "public/brand/approved-lockup-dark.svg",
+      "source": "remodeling/logos/Boise-Remodeling-Co_Logo_On-Light.svg",
+      "sha256": "b30385b73a55b15f84c74672fc130557813ce4bedcfa8722bbd41e7713cf4fb3"
+    },
+    {
+      "destination": "public/brand/p5-family-dark.svg",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light.svg",
+      "sha256": "8fe05f6eab6edac4e827d8ab2693b1f73753f730a1926ad2802cb5c85fa1f534"
+    },
+    {
+      "destination": "public/brand/approved-lockup-light.svg",
+      "source": "remodeling/logos/Boise-Remodeling-Co_Logo_On-Dark.svg",
+      "sha256": "28d44af4a6d92f9fe7a922276b93aa04f498bb3cc325f1c902ce7ee31429aa44"
+    },
+    {
+      "destination": "public/brand/p5-family-light.svg",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Dark.svg",
+      "sha256": "0245ff70a23007a7a1b383e74e8fd3bd747eefa7522eaf4e8bc929bf0e503078"
+    },
+    {
+      "destination": "public/favicon.svg",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light.svg",
+      "sha256": "8fe05f6eab6edac4e827d8ab2693b1f73753f730a1926ad2802cb5c85fa1f534"
+    },
+    {
+      "destination": "public/favicon.ico",
+      "source": "remodeling/icons/favicon.ico",
+      "sha256": "4af4cfac9cea4cc09b6c5a1bf52650c6e2e497509a2e411576feb982babed6c7"
+    },
+    {
+      "destination": "public/favicon-16.png",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light_16px.png",
+      "sha256": "3bfabba9d32d1be293bfa95297305055bbab2588978a36cf234571f4788af5f1"
+    },
+    {
+      "destination": "public/favicon-32.png",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light_32px.png",
+      "sha256": "5ce19f40ed5af38d479929fabd70f38192a490548cb858fbeb3a2d97cbcb29a6"
+    },
+    {
+      "destination": "public/icons/apple-touch-icon.png",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light_180px.png",
+      "sha256": "0e505645d57a561d80071d30e880c6f728fd89df7713de25b47981c9051acd56"
+    },
+    {
+      "destination": "public/apple-touch-icon.png",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light_180px.png",
+      "sha256": "0e505645d57a561d80071d30e880c6f728fd89df7713de25b47981c9051acd56"
+    },
+    {
+      "destination": "public/icons/icon-192.png",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light_192px.png",
+      "sha256": "7a439c239c0b8d6354b04b54a88fc9358532be9641894c8b3b2839f0c9f5b84b"
+    },
+    {
+      "destination": "public/icons/icon-512.png",
+      "source": "remodeling/icons/Boise-Remodeling-Co_P5-Icon_On-Light_512px.png",
+      "sha256": "9aabe457fc225c15086b9c460b990524e5dd295f4340df9b77c6178691ea4b3a"
+    },
+    {
+      "destination": "public/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "source": "remodeling/logos/Boise-Remodeling-Co_Logo_On-Light_1280px.png",
+      "sha256": "150bd5742ff1bab1c15bf520918132991cba2b218d63d0c291676136e2277f32"
+    },
+    {
+      "destination": "public/brand/png/wordmark/dark/boise-remodeling-co-wordmark-bone-accent-1200w.png",
+      "source": "remodeling/logos/Boise-Remodeling-Co_Logo_On-Dark_1280px.png",
+      "sha256": "feeba94d094e4aa37791ff70ed84a85ca34ce7daf1a619535441f200f0cdd1c7"
+    },
+    {
+      "destination": "public/family/remodeling-boise-remodeling-co-wordmark-bone-accent.svg",
+      "source": "remodeling/logos/Boise-Remodeling-Co_Logo_On-Dark.svg",
+      "sha256": "28d44af4a6d92f9fe7a922276b93aa04f498bb3cc325f1c902ce7ee31429aa44"
+    }
+  ]
+}

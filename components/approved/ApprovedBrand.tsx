@@ -1,8 +1,8 @@
 import {approvedBrand} from './brand';
-/** Original vector wordmark, unchanged. The family icon and endorsement are additive. */
+
+/** Approved October 2026 outlined lockup; preserve its original proportions. */
 export function ApprovedBrand({dark=true}:{dark?:boolean}){
  return <span className="approved-brand" role="img" aria-label={`${approvedBrand.name}, a P5 Home Company`}>
-  <img className="approved-brand-icon" src={`/brand/p5-family-${dark?'light':'dark'}.svg`} width={48} height={48} alt="" aria-hidden="true"/>
-  <span className="approved-brand-type"><img src={dark?approvedBrand.wordmarkLight:approvedBrand.wordmarkDark} className="approved-original-wordmark" alt="" aria-hidden="true" width={270} height={28}/><span className="approved-endorsement">A P5 Home Company</span></span>
+  <img className="approved-family-lockup" src={`/brand/approved-lockup-${dark?'light':'dark'}.svg`} alt="" aria-hidden="true"/>
  </span>;
 }
