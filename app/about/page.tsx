@@ -170,11 +170,12 @@ export default function AboutPage() {
           <Section divider>
             <div className="container px-4 grid gap-10 lg:grid-cols-2 lg:items-center max-w-5xl">
               <Image
-                src="/images/about/perkins-family-meridian-idaho.webp"
-                alt="Nick Perkins with his wife and five children at a pumpkin patch"
-                width={960}
-                height={720}
-                className="w-full h-auto rounded-sm"
+                src="/images/about/nick-perkins-portrait-crop.webp"
+                alt="Nick Perkins, founder of Boise Remodeling Co"
+                width={600}
+                height={600}
+                sizes="(max-width: 1024px) 100vw, 420px"
+                className="w-full max-w-sm h-auto rounded-sm justify-self-start"
               />
               <div>
                 <p className="ed-eyebrow">Who you are hiring</p>
