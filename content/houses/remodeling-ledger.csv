@@ -4,3 +4,7 @@ exterior-before.webp,exterior-before,exterior-after.webp,agent-visual,2026-10-28
 kitchen-after.webp,kitchen-after,exterior-after.webp,agent-visual,2026-10-28,White shaker + sage island + hickory
 bath-after.webp,bath-after,exterior-after.webp,agent-visual,2026-10-28,White shaker vanity + subway shower
 living-after.webp,living-after,exterior-after.webp + kitchen-after.webp,agent-visual,2026-10-28,Open living toward kitchen
+kitchen-in-progress.webp,kitchen-mid,kitchen-after.webp,agent-visual,2026-10-28,Quality-pass mid-remodel; Bench continuity
+services-adu.webp,adu-after,exterior-after.webp,agent-visual,2026-10-28,Quality-pass ADU exterior; no empty lot
+services-room-addition.webp,room-addition,exterior-after.webp,agent-visual,2026-10-28,Quality-pass rear addition exterior
+process-design-review.webp,process-materials,kitchen-after.webp,agent-visual,2026-10-28,Quality-pass materials only; no people

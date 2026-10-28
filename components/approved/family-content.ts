@@ -2,7 +2,7 @@ export type Service = { name:string; slug:string; summary:string; image:string; 
 export type Brand = { id:string; name:string; domain:string; accent:string; logo:string; hero:string; kicker:string; title:string[]; intro:string; action:string; secondary:string; proof:string[]; serviceTitle:string[]; serviceIntro:string; services:Service[]; valueTitle:string[]; value:string; valueImage:string; approach:[string,string][]; process:[string,string][]; faq:[string,string][]; contactTitle:string[]; contactText:string };
 const asset=(name:string)=>'/family/'+name;
 const constructionHero=asset('construction-custom-home-exterior.webp');
-const remodelHero=asset('remodeling-hero-remodel-interior.webp');
+const remodelHero=asset('remodeling-hero-boise-bench-kitchen.webp');
 const handymanHero=asset('handyman-hero-door-hinge-branded.webp');
 const aduHero=asset('p5-p5-adu.webp');
 const svc=(name:string,slug:string,summary:string,image:string,includes:string[],questions:string[],live?:string):Service=>({name,slug,summary,image,includes,questions,live});

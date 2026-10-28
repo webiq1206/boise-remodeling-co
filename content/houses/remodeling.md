@@ -49,3 +49,8 @@ Authorized: Phase 10 of the P5 Family Website Fix Plan (28 October 2026)
 
 ## Captions
 Caption for materials and work shown only. No client names, invented cities, dates or "completed" project records (D9).
+
+## Quality-pass (28 Oct 2026)
+- Retargeted high-traffic marketing slots to this Bench ranch set.
+- Regenerated ADU, room-addition, basement, outdoor, aging, bath service, process (no people), kitchen mid-remodel with exterior/kitchen/bath/living as references.
+- Captions remain materials/rooms only.
