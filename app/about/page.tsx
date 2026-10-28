@@ -80,22 +80,16 @@ export default function AboutPage() {
       <>
         <JsonLd data={schemas} />
         <div className="flex flex-col">
-          <InteriorHero
-            layout="editorial"
-            imageSrc="/images/about/perkins-family-meridian-idaho.webp"
-            imageAlt="Nick Perkins with his wife and five children at a pumpkin patch"
-          >
+          <InteriorHero layout="editorial">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
             </p>
-            <p className="ed-eyebrow" style={{ color: "rgb(255 255 255 / 0.72)" }}>
-              Real people. A higher standard.
-            </p>
-            <h1 className="ed-display ed-statement-display text-inverse-foreground mb-8">
+            <p className="ed-eyebrow">Real people. A higher standard.</p>
+            <h1 className="ed-display ed-statement-display mb-8">
               About Boise Remodeling <em className="brc-accent">Co</em>
             </h1>
-            <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-6">
+            <p className="text-base md:text-lg max-w-2xl leading-relaxed mb-6">
               Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four
               companies of P5 Home Co. It is run by Nick Perkins, a construction project manager with a
               bachelor&apos;s degree in Construction and more than a decade of work from small renovations
@@ -103,27 +97,39 @@ export default function AboutPage() {
               Valley, and named the company for his five children.{" "}
               <a
                 href="https://p5homeco.com/about"
-                className="underline underline-offset-2 hover:text-inverse-foreground"
+                className="underline underline-offset-2"
                 rel="noopener noreferrer"
               >
                 Read the full story on p5homeco.com/about
               </a>
               .
             </p>
-            <p className="text-sm text-inverse-foreground/80 max-w-2xl leading-relaxed mb-8">
+            <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed mb-8">
               P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
               Two-year workmanship warranty on remodels.
             </p>
             <div className="flex flex-wrap gap-3 mb-4">
-              <EstimateCTA variant="brand">
-                {CTA_PRIMARY}
-              </EstimateCTA>
+              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
               <SaveContactLink
                 showIcon
-                className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-white/30 px-4 text-sm text-inverse-foreground"
+                className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-border px-4 text-sm"
               />
             </div>
           </InteriorHero>
+
+          <Section divider className="pt-0">
+            <div className="container px-4 max-w-5xl">
+              <Image
+                src="/images/about/perkins-family-meridian-idaho.webp"
+                alt="Nick Perkins with his wife and five children at a pumpkin patch"
+                width={2560}
+                height={1920}
+                priority
+                sizes="(max-width: 1024px) 100vw, 1024px"
+                className="w-full h-auto rounded-sm"
+              />
+            </div>
+          </Section>
 
           <Section divider>
             <div className="container px-4 max-w-3xl">
