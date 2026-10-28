@@ -94,8 +94,7 @@ export default function AboutPage() {
               companies of P5 Home Co. It is run by Nick Perkins, a construction project manager with a
               bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
               decade of work from small renovations to multimillion-dollar custom homes. He founded P5 in
-              Colorado in 2020, moved to the Treasure Valley with his family in 2025, and named the company
-              for his five children.{" "}
+              Colorado in 2020 and moved to the Treasure Valley with his family in 2025.{" "}
               <a
                 href="https://p5homeco.com/about"
                 className="underline underline-offset-2"
