@@ -1,4 +1,4 @@
-.approved-shell{--approved-accent:#9AA098}
+.approved-shell{--approved-accent:#7D9479}
 /* Approved September 24. Original routes, content and application surfaces remain intact. */
 .approved-shell .family-site{padding-top:0!important}.approved-shell .f-hero h1,.approved-shell .cabinet-approved .hero h1{color:#fbfaf6}.approved-shell :is(.f-contact,.f-value,.finish-copy,.consultation-section,.craft-copy) :is(h2,h3){color:inherit}.approved-shell .estimator-promise{display:block;font-size:12px;line-height:1.6;margin-top:18px;max-width:38em;opacity:.85}
 .approved-shell{--background:48 38% 97.5%;--foreground:165 4% 18%;--heading:165 4% 18%;--card:42 32% 92%;--card-foreground:165 4% 18%;--card-border:42 10% 80%;--secondary:42 32% 92%;--secondary-foreground:165 4% 18%;--muted:42 32% 92%;--muted-foreground:100 4% 38%;--popover:48 38% 97.5%;--popover-foreground:165 4% 18%;--border:42 10% 80%;--input:48 38% 97.5%;--primary:165 4% 18%;--primary-foreground:48 38% 97.5%;--surface-greige:42 32% 92%;--surface-muted:42 32% 92%;--inverse:165 4% 18%;--inverse-foreground:48 38% 97.5%;--inverse-muted:42 12% 83%;--ed-ground:#fbfaf6;--ed-ink:#2c302f;--ed-muted-ink:#62645f;--ed-bone:#f1ede4;--ed-bone-ink:#2c302f;--ed-bone-hsl:42 32% 92%;--ed-bone-ink-hsl:165 4% 18%;--ed-line:#2c302f30;--ed-line-soft:#2c302f20;--ed-line-bone:#2c302f30;--ed-accent:var(--approved-accent);--ed-shell:min(88%,1260px);--ed-pad:clamp(64px,7.5vw,105px);--ed-pad-lg:clamp(70px,8vw,115px);background:#fbfaf6;color:#2c302f;color-scheme:light;font:16px/1.75 var(--font-manrope),Arial,sans-serif;min-height:100vh}
@@ -14,3 +14,18 @@
 @media(max-width:700px){.approved-shell{padding-bottom:calc(76px + env(safe-area-inset-bottom));--ed-shell:88%;--ed-pad:60px;--ed-pad-lg:64px}.approved-shell [data-approved-navigation]>nav{height:70px;padding-inline:20px;gap:12px}.approved-brand{gap:10px}.approved-brand-icon{width:36px;height:36px}.approved-original-wordmark{width:205px;max-height:26px}.approved-endorsement{font-size:10px;letter-spacing:.07em}.approved-brand-type{gap:7px}.approved-estimate{width:88%;padding-block:55px}.approved-estimate-intro{grid-template-columns:1fr;gap:24px}.approved-native-estimator{margin-inline:-6.82%}.approved-consult{grid-template-columns:1fr;padding:55px 6%;gap:35px}.approved-consult>div:first-child{position:static}.approved-shell .family-site h1{font-size:clamp(44px,12vw,58px)}.approved-shell .family-site .f-hero{height:auto;min-height:640px}.approved-shell .family-site .f-section{padding-block:58px}.approved-shell .f-accordion h3>button{font-size:27px}.approved-shell .f-tabs [role=tab]{font-size:13px;padding-inline:8px}.approved-shell footer .approved-original-wordmark{width:220px}.approved-shell [data-mobile-nav-bar] a,.approved-shell [data-mobile-nav-bar] button{font-size:13px}}
 @media(max-width:360px){.approved-shell [data-approved-navigation]>nav{padding-inline:16px;gap:8px}.approved-original-wordmark{width:175px}.approved-brand-icon{width:32px;height:32px}.approved-endorsement{font-size:9px}.approved-brand{gap:8px}}
 @media(prefers-reduced-motion:reduce){.approved-shell *{scroll-behavior:auto!important}}
+
+/* Approved full family lockup: no duplicate endorsement or independent scaling. */
+.approved-family-lockup{display:block;width:300px;max-width:100%;height:auto;object-fit:contain;object-position:left center}
+.approved-shell footer .approved-family-lockup{width:290px}
+@media(max-width:700px){.approved-family-lockup{width:min(250px,62vw)}}
+@media(max-width:360px){.approved-family-lockup{width:220px}}
+
+/* Functional accent text and focus on paper use a darker same-family tone. */
+.approved-shell{--approved-accent-ink:#4D6249}
+.approved-shell :is(h1,h2,h3,h4) em{color:var(--approved-accent-ink)}
+.approved-shell :focus-visible{outline-color:var(--approved-accent-ink)}
+.approved-shell :is([data-approved-navigation],footer,[data-mobile-nav-bar]) :focus-visible{outline-color:#FBFAF6}
+
+/* Hero lettering stays neutral over photography; brand accents remain in the lockup and details. */
+.approved-shell :is(.f-hero,.hero,.ed-hero) :is(h1,h2,h3) em{color:#FBFAF6}

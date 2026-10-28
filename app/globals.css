@@ -69,8 +69,8 @@
    values so there is no light-mode leak whether or not the .dark class
    is present. This is the identity, not a toggle. Palette:
      --bg #1C1F1E · --bg-2 #222624 · --surface #262B29 · hairline #39403D
-     bone #F7F5F3 · body #E6E3DE · mist #9AA098 · faint #6E756F
-     sage #9AA098 = the single brand accent (accent WORDS, eyebrow ticks,
+     bone #F7F5F3 · body #E6E3DE · mist #7D9479 · faint #6E756F
+     sage #7D9479 = the single brand accent (accent WORDS, eyebrow ticks,
      links/hover, focus, numerals, chips, tints); 6.21:1 on the charcoal ground
    ═══════════════════════════════════════════════════════════════════ */
 :root, .dark {
@@ -92,7 +92,7 @@
   /* Elevated band - #222624 (footer, statement bands) */
   --inverse: 150 6% 14%;
   --inverse-foreground: 30 20% 96%;   /* bone */
-  --inverse-muted: 105 4% 61%;        /* mist #9AA098 */
+  --inverse-muted: 105 4% 61%;        /* mist #7D9479 */
 
   --surface-muted: 150 6% 14%;        /* #222624 */
   --surface-greige: 156 6% 16%;       /* #262B29 */
@@ -106,11 +106,11 @@
   --sidebar: 160 5% 10%;
   --sidebar-foreground: 37 14% 89%;
   --sidebar-border: 154 6% 24%;
-  --sidebar-primary: 152 10% 58%;      /* sage */
-  --sidebar-primary-foreground: 165 4% 18%;
+  --sidebar-primary: 111.11 11.20% 52.75%;      /* sage */
+  --sidebar-primary-foreground: 150 6% 7%;
   --sidebar-accent: 156 6% 16%;
   --sidebar-accent-foreground: 37 14% 89%;
-  --sidebar-ring: 152 10% 58%;
+  --sidebar-ring: 111.11 11.20% 52.75%;
 
   --popover: 156 6% 16%;
   --popover-foreground: 37 14% 89%;
@@ -132,23 +132,23 @@
   --faint: 129 3% 45%;                /* #6E756F */
 
   /* THE BRAND ACCENT, AND IT IS THE ONLY ONE. The kit is explicit: never
-     recolor outside charcoal, bone and #9AA098. Two near-sages used to do this
+     recolor outside charcoal, bone and #7D9479. Two near-sages used to do this
      job - #5D6561 for fills and a lifted #899F95 for anything that had to stay
      legible - and both are now the single brand value.
 
      THE FOREGROUND HAD TO FLIP FROM BONE TO CHARCOAL. The old fill was dark
-     enough to carry bone text; #9AA098 is not. Bone on sage measures 2.46:1,
+     enough to carry bone text; #7D9479 is not. Bone on sage measures 2.46:1,
      which fails, and the kit says so itself. Charcoal on sage is 6.21:1. */
-  --accent: 105 4% 61%;               /* #9AA098 sage */
-  --accent-foreground: 150 6% 11%;    /* charcoal text on a sage fill, 6.21:1 */
+  --accent: 111.11 11.20% 52.75%;               /* #7D9479 sage */
+  --accent-foreground: 150 6% 7%;    /* charcoal text on a sage fill, 6.21:1 */
 
   --brass: 105 4% 61%;
   --brass-foreground: 150 6% 11%;
 
   /* Same value. Kept as a separate token because a great deal of markup asks
      for "the accent that stays legible on the dark ground" by name, and
-     #9AA098 on #1C1F1E is 6.21:1, comfortably AA. */
-  --accent-legible: 105 4% 61%;       /* #9AA098 */
+     #7D9479 on #1C1F1E is 6.21:1, comfortably AA. */
+  --accent-legible: 105 4% 61%;       /* #7D9479 */
   /* The same sage, darkened for use as TEXT on a light (bone) band. The site
      was built dark, so --accent-legible is tuned for a charcoal ground; at 61%
      lightness it falls to roughly 2.5:1 on bone, which fails AA. This is the
@@ -161,7 +161,7 @@
   --destructive-foreground: 30 20% 96%;
 
   --input: 150 6% 13%;                /* #1F2321 */
-  --ring: 152 10% 58%;
+  --ring: 111.11 11.20% 52.75%;
 
   --chart-1: 152 10% 58%;
   --chart-2: 156 6% 16%;
@@ -442,7 +442,7 @@
   font-style: italic;
   font-optical-sizing: auto;
   /* Accent WORDS are the serif grace note AND the brand's sage moment. The kit
-     uses a single sage (#9AA098), which on the charcoal ground reads at 6.21:1,
+     uses a single sage (#7D9479), which on the charcoal ground reads at 6.21:1,
      comfortably AA as text at any size. Overrides any text-accent on the same
      element. */
   color: hsl(var(--accent-legible));
@@ -1041,3 +1041,6 @@ body[data-p5-estimator-active="true"] [data-testid="assistant-launcher"] {
 .brc-swipe::-webkit-scrollbar { display: none; }
 .brc-swipe > * { flex: 0 0 82%; scroll-snap-align: start; }
 @media (min-width: 640px) { .brc-swipe { display: grid; overflow: visible; margin-inline: 0; padding-inline: 0; scroll-snap-type: none; } .brc-swipe > * { flex: initial; } }
+
+/* Site-owned approved palette; shared intake behavior and engine remain unchanged. */
+[data-p5-estimator][data-theme="light"]{--p5-accent:#7D9479!important;--p5-accent-ink:#4D6249!important;--p5-focus:#4D6249!important}

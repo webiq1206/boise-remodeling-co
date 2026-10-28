@@ -4,7 +4,7 @@ export const ESTIMATOR_BRAND = {
   "domain": "boiseremodeling.co",
   "legalName": null,
   "parentLegalName": "P5 Home Co, LLC",
-  "accent": "#9AA098",
+  "accent": "#7D9479",
   "services": [
     "kitchen",
     "bathroom",

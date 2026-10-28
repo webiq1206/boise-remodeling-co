@@ -95,7 +95,9 @@ test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is o
   assert.match(unknownCity, /Free in-home consultation/);
 });
 
-test('the open graph page preview is Ada year-free card', () => {
+test('the open graph page preview is the approved year-free family branding card', () => {
+  // Pixel-reviewed 2026-10-28: approved lockup on charcoal, with no founding year.
+  // Keep an exact image assertion so unreviewed raster claims cannot slip through.
   const hash = createHash('sha256').update(readFileSync('public/brand/page-preview.png')).digest('hex');
-  assert.equal(hash, 'da5ff48bfb7d52e90a20b3dfc84707960cf78f05234f7754e9e8ebe6dc3bebea');
+  assert.equal(hash, '8cb195c76f55ef10274d1ee281e83df872279b214d5e404d421354a894e24078');
 });
