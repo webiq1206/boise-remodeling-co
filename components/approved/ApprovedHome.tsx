@@ -43,12 +43,19 @@ return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.acce
   <a className="f-link" href="#request">Request a quote <Arrow/></a>
  </section>
  <section className="f-section f-container" id="who-you-are-hiring">
-  <div className="f-two" style={{alignItems:'center'}}>
-   <img src="/images/about/nick-perkins-portrait-crop.webp" alt="Nick Perkins, founder of Boise Remodeling Co" width="600" height="600" loading="lazy" style={{maxWidth:'280px',width:'100%',height:'auto',borderRadius:'2px'}}/>
+  <div className="f-two family-founder-block">
+   <img
+     className="family-people-photo"
+     src="/images/about/perkins-family-full.webp"
+     alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
+     width="2048"
+     height="2048"
+     loading="lazy"
+   />
    <div>
     <p className="f-eyebrow">WHO YOU ARE HIRING</p>
     <h2>Nick Perkins, founder.</h2>
-    <p>Construction project manager, bachelor&apos;s in Construction, more than a decade of custom homes, remodels and developments. Husband, father of five, Meridian.</p>
+    <p>Construction project manager with a bachelor&apos;s degree in Construction with an emphasis in Project Management, and more than a decade of custom homes, remodels and developments. Husband, father of five. The family moved to Meridian in 2025.</p>
     <p>&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</p>
     <a className="f-link" href="/about">Read Nick&apos;s story <Arrow/></a>
    </div>

@@ -673,3 +673,31 @@ body[data-assistant-open="true"] [data-mobile-nav-bar] { display: none !importan
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/*
+  Owner hard rule: never crop people out of photos on any breakpoint.
+  People photos must show full heads/bodies with natural headroom.
+*/
+.approved-shell.site-remodeling .family-people-photo,
+.approved-shell.site-remodeling .family-founder-block img,
+.approved-shell.site-remodeling #who-you-are-hiring img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center top !important;
+  border-radius: 2px;
+}
+.approved-shell.site-remodeling .family-founder-block {
+  align-items: start;
+}
+.approved-shell.site-remodeling #who-you-are-hiring .family-founder-block {
+  gap: clamp(28px, 6vw, 72px);
+}
+@media (max-width: 900px) {
+  .approved-shell.site-remodeling #who-you-are-hiring .family-founder-block {
+    grid-template-columns: 1fr;
+  }
+}

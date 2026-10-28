@@ -92,9 +92,10 @@ export default function AboutPage() {
             <p className="text-base md:text-lg max-w-2xl leading-relaxed mb-6">
               Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four
               companies of P5 Home Co. It is run by Nick Perkins, a construction project manager with a
-              bachelor&apos;s degree in Construction and more than a decade of work from small renovations
-              to multimillion-dollar custom homes. He founded P5 in Colorado in 2020, moved to the Treasure
-              Valley, and named the company for his five children.{" "}
+              bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
+              decade of work from small renovations to multimillion-dollar custom homes. He founded P5 in
+              Colorado in 2020, moved to the Treasure Valley with his family in 2025, and named the company
+              for his five children.{" "}
               <a
                 href="https://p5homeco.com/about"
                 className="underline underline-offset-2"
@@ -120,14 +121,15 @@ export default function AboutPage() {
           <Section divider className="pt-0">
             <div className="container px-4 max-w-5xl">
               <Image
-                src="/images/about/perkins-family-meridian-idaho.webp"
-                alt="Nick Perkins with his wife and five children at a pumpkin patch"
-                width={2560}
-                height={1920}
+                src="/images/about/perkins-family-full.webp"
+                alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
+                width={2048}
+                height={2048}
                 priority
                 sizes="(max-width: 1024px) 100vw, 1024px"
-                className="w-full h-auto rounded-sm"
+                className="family-people-photo w-full h-auto rounded-sm"
               />
+
             </div>
           </Section>
 
@@ -168,21 +170,22 @@ export default function AboutPage() {
           </Section>
 
           <Section divider>
-            <div className="container px-4 grid gap-10 lg:grid-cols-2 lg:items-center max-w-5xl">
+            <div className="container px-4 grid gap-10 lg:grid-cols-2 lg:items-start max-w-5xl family-founder-block">
               <Image
-                src="/images/about/nick-perkins-portrait-crop.webp"
-                alt="Nick Perkins, founder of Boise Remodeling Co"
-                width={600}
-                height={600}
-                sizes="(max-width: 1024px) 100vw, 420px"
-                className="w-full max-w-sm h-auto rounded-sm justify-self-start"
+                src="/images/about/perkins-family-full.webp"
+                alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
+                width={2048}
+                height={2048}
+                sizes="(max-width: 1024px) 100vw, 520px"
+                className="family-people-photo w-full h-auto rounded-sm"
               />
               <div>
                 <p className="ed-eyebrow">Who you are hiring</p>
                 <h2 className="ed-h2">Nick Perkins, founder.</h2>
                 <p className="ed-body mt-4">
-                  Construction project manager, bachelor&apos;s in Construction, more than a decade of
-                  custom homes, remodels and developments. Husband, father of five, Meridian.
+                  Construction project manager with a bachelor&apos;s degree in Construction with an
+                  emphasis in Project Management, and more than a decade of custom homes, remodels and
+                  developments. Husband, father of five. The family moved to Meridian in 2025.
                 </p>
                 <p className="ed-body mt-4">&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</p>
                 <p className="ed-body mt-4">
