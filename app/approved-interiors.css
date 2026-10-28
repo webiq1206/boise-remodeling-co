@@ -606,12 +606,13 @@
   min-height:0
 }
 .approved-interior .interior-hero-copy {
-  padding:42px 6%
+  padding:28px 6% 42px;
+  order:2
 }
 .approved-interior .interior-hero-copy h1 {
   font-size:clamp(40px,10.5vw,53px);
   max-width:none;
-  margin:20px 0 22px
+  margin:16px 0 18px
 }
 .approved-interior .interior-hero-copy :is(p,.ed-lede) {
   font-size:16px
@@ -619,9 +620,12 @@
 .approved-interior .interior-hero-copy nav {
   font-size:12px
 }
+/* Mobile first view: project photo plane under the brand header, then H1 + CTA.
+   Desktop split layout is unchanged (image stays in the right column above 700px). */
 .approved-interior .interior-hero-image {
+  order:-1;
   min-height:0;
-  height:300px;
+  height:clamp(200px,42vh,280px);
   width:100%
 }
 .approved-interior .interior-hero-editorial .interior-hero-copy,.approved-interior .interior-hero-text .interior-hero-copy {

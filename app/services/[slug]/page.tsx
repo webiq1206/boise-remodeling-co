@@ -75,6 +75,20 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
 
   const referral = CONSTRUCTION_REFERRALS[service.slug];
   if (referral) {
+    const referralImage =
+      service.slug === "adu"
+        ? {
+            imageSrc: "/images/services/adu.webp",
+            imageAlt:
+              "Finished detached ADU guest cottage with matching sage siding beside a Treasure Valley ranch home",
+          }
+        : service.slug === "room-addition"
+          ? {
+              imageSrc: "/images/services/room-addition.webp",
+              imageAlt:
+                "Completed rear room addition on a Boise Bench ranch with matching siding and black-framed slider",
+            }
+          : {};
     return (
       <InteriorPage kind="services">
         <ServiceReferral
@@ -84,6 +98,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
           ctaLabel={referral.ctaLabel}
           ctaHref={referral.ctaHref}
           alsoNote={referral.alsoNote}
+          {...referralImage}
         />
       </InteriorPage>
     );

@@ -4,6 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 /**
  * Short ownership handoff for services that live on a sister P5 company (D2).
  * One paragraph, the owning company name, and one outbound button.
+ * Optional imageSrc: finished project photo (required for ADU — never empty lot).
  */
 export function ServiceReferral({
   eyebrow,
@@ -12,6 +13,8 @@ export function ServiceReferral({
   ctaLabel,
   ctaHref,
   alsoNote,
+  imageSrc,
+  imageAlt,
 }: {
   eyebrow: string;
   title: string;
@@ -19,10 +22,24 @@ export function ServiceReferral({
   ctaLabel: string;
   ctaHref: string;
   alsoNote?: string;
+  imageSrc?: string;
+  imageAlt?: string;
 }) {
   const external = ctaHref.startsWith("http");
   return (
-    <section className="f-section f-container" style={{ maxWidth: "42rem", paddingTop: "4rem", paddingBottom: "5rem" }}>
+    <section className="f-section f-container" style={{ maxWidth: "42rem", paddingTop: "2.5rem", paddingBottom: "5rem" }}>
+      {imageSrc ? (
+        <figure className="referral-visual" style={{ margin: "0 0 1.75rem", borderRadius: "2px", overflow: "hidden" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageSrc}
+            alt={imageAlt || ""}
+            width={1280}
+            height={720}
+            style={{ display: "block", width: "100%", height: "auto" }}
+          />
+        </figure>
+      ) : null}
       <p className="f-eyebrow">{eyebrow}</p>
       <h1 className="ed-h1" style={{ marginTop: "0.75rem" }}>
         {title}

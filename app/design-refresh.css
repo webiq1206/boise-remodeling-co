@@ -490,8 +490,11 @@
     margin-bottom: 10px;
     max-width: none;
   }
-  .approved-shell.site-remodeling .fold-form { gap: 6px 10px; }
-  .approved-shell.site-remodeling .fold-form input { min-height: 42px; }
+  .approved-shell.site-remodeling .fold-form { gap: 8px 10px; }
+  .approved-shell.site-remodeling .fold-form input,
+  .approved-shell.site-remodeling .fold-form textarea {
+    min-height: 44px;
+  }
   .approved-shell.site-remodeling .family-site section.fold-story {
     grid-template-columns: 1fr;
     row-gap: 20px;
@@ -672,6 +675,16 @@ body[data-assistant-open="true"] [data-mobile-nav-bar] { display: none !importan
   color: #4c5f50;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+/* D5 short-form /estimate: ink on paper (AA), match homepage fold inputs */
+.approved-shell.site-remodeling .estimate-short-form-title {
+  color: #2c302f !important;
+  font: 300 clamp(36px, 5vw, 52px) / 1.08 var(--font-cormorant), Georgia, serif;
+  letter-spacing: -0.03em;
+}
+.approved-shell.site-remodeling .estimate-short-form .fold-form button[type="submit"],
+.approved-shell.site-remodeling .estimate-short-form .fold-submit {
+  min-height: 44px;
 }
 
 /*

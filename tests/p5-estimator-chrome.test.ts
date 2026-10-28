@@ -7,10 +7,11 @@ import {isEstimatorPath} from '../lib/p5/estimatorRoutes.ts';
 // marketing footer around a one-page app that already has its own brand bar, step progress and exit
 // control. The footer carried its own path list naming "/estimate" and "/estimate/p5-preview" but
 // not "/estimate/scope", which is the route customers actually use.
-test('every estimator route is recognised, including the one customers use',()=>{
-  for(const path of ['/estimate','/estimate/scope','/estimate/p5-preview','/estimate/anything-later'])
+test('nested estimator app routes skip chrome; short-form /estimate keeps marketing shell',()=>{
+  for(const path of ['/estimate/scope','/estimate/p5-preview','/estimate/anything-later'])
     assert.equal(isEstimatorPath(path),true,path);
-  for(const path of ['/','/services','/contact','/re-10-repairs-boise','/estimates','/estimate-x',null,undefined,''])
+  // D5: bare /estimate is the short marketing quote form, not the estimator app.
+  for(const path of ['/estimate','/','/services','/contact','/re-10-repairs-boise','/estimates','/estimate-x',null,undefined,''])
     assert.equal(isEstimatorPath(path),false,String(path));
 });
 // Each brand site wires its own chrome, and not every one has both components; the ones that do must

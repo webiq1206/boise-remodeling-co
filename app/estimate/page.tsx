@@ -50,15 +50,18 @@ export default function EstimatePage() {
     <InteriorPage kind="estimate">
       <>
         <JsonLd data={schemas} />
-        <section className="f-section f-container" style={{ maxWidth: "40rem", paddingTop: "3rem", paddingBottom: "5rem" }}>
+        <section
+          className="f-section f-container estimate-short-form"
+          style={{ maxWidth: "40rem", paddingTop: "3rem", paddingBottom: "5rem" }}
+        >
           <p className="f-eyebrow">SHORT REQUEST</p>
-          <h1 className="ed-h1" style={{ marginTop: "0.75rem" }}>
+          <h1 className="ed-h1 estimate-short-form-title" style={{ marginTop: "0.75rem", color: "#2c302f" }}>
             Request a remodel quote
           </h1>
-          <p className="ed-lede" style={{ marginTop: "1rem" }}>
+          <p className="ed-lede" style={{ marginTop: "1rem", color: "#2c302f" }}>
             Share your project type, city and what you want done. Attach photos if you have them. We reply within one business day with questions or a time to visit. You get a written scope before any price.
           </p>
-          <p className="ed-body" style={{ marginTop: "0.75rem" }}>
+          <p className="ed-body" style={{ marginTop: "0.75rem", color: "#2c302f" }}>
             Prefer to call?{" "}
             <a href={SITE_CONFIG.phoneHref} className="underline underline-offset-2">
               {SITE_CONFIG.phone}

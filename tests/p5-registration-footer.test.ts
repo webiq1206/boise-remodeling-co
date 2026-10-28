@@ -24,7 +24,8 @@ test('every sitemap page shows the registration line, plain text on the estimate
       continue;
     }
     assert.notEqual(mode, 'hidden', path);
-    if (path === '/estimate' || path.startsWith('/estimate/')) {
+    // Nested estimator app routes keep plain text; short-form /estimate is marketing chrome.
+    if (path.startsWith('/estimate/')) {
       assert.equal(mode, 'plain', path);
     }
   }
@@ -33,7 +34,7 @@ test('every sitemap page shows the registration line, plain text on the estimate
   assert.equal(registrationPresentation('/services/bathroom-remodel/boise'), 'link');
   assert.equal(registrationPresentation('/'), 'link');
   assert.equal(registrationPresentation('/areas/boise'), 'link');
-  assert.equal(registrationPresentation('/estimate'), 'plain');
+  assert.equal(registrationPresentation('/estimate'), 'link');
   assert.equal(registrationPresentation('/estimate/scope'), 'plain');
   assert.equal(registrationPresentation('/estimate/p5-preview'), 'plain');
 });

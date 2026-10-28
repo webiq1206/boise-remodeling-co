@@ -1,17 +1,14 @@
 /**
- * Which routes the estimator owns.
+ * Which routes the estimator app owns (skip marketing chrome).
  *
- * The estimator is a one-page app: it carries its own brand bar, its own step progress and its own
- * exit control. Marketing navigation and a marketing footer around it are chrome stacked on top of an
- * app that already has some, and on a phone they cost about a third of the screen before any content.
+ * Nested routes under `/estimate/` (scope, preview, etc.) are the one-page estimator app: they carry
+ * their own brand bar, step progress and exit control. Marketing navigation around those routes
+ * costs about a third of a phone screen before any content.
  *
- * This lives in the shared engine, with the estimator, because every brand site needs the same answer
- * and each one wires its own chrome. It is a list for the same reason isPortalPath is: the footer
- * carried a private copy naming "/estimate" and "/estimate/p5-preview" but not "/estimate/scope" -
- * the one route customers actually use - so every real estimate rendered a full marketing footer
- * below it (owner report 2026-09-23, mobile).
+ * `/estimate` itself is the D5 short marketing quote form (HeroConversion + fold-form). It must keep
+ * `.approved-shell.site-remodeling` so fold-form CSS, contrast tokens, and site chrome apply.
  */
 export function isEstimatorPath(pathname: string | null | undefined): boolean {
   if (!pathname) return false;
-  return pathname === '/estimate' || pathname.startsWith('/estimate/');
+  return pathname.startsWith('/estimate/');
 }
