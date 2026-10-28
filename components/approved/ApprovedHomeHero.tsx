@@ -1,14 +1,11 @@
-import { TextReplyLine } from "@/components/TextReplyLine";
 import { HeroConversion } from "./HeroConversion";
 import { brands } from "./family-content";
 import { SITE_CONFIG } from "@/shared/siteConfig";
-import Link from "next/link";
 
 /**
  * Server-rendered home hero. The image and H1 are in the first HTML response
  * with no entrance animation, so LCP does not wait on the client bundle.
- * Phase 7/8: keyword-first H1, one supporting sentence, one primary CTA inside
- * the first viewport on mobile, phone and trust line under it.
+ * C3: brand, one headline, one support line, one primary CTA in the first screen.
  */
 export function ApprovedHomeHero() {
   const b = brands.remodeling;
@@ -28,25 +25,22 @@ export function ApprovedHomeHero() {
           <p className="f-eyebrow">{b.kicker}</p>
           <h1>Design-build remodeling in Boise and the Treasure Valley</h1>
           <p className="f-hero-support">
-            One team designs, prices and builds your kitchen, bath or whole-home remodel, with the scope in writing before the price.
+            One team designs, prices and builds kitchens, baths and whole-home remodels.
           </p>
-          <div className="f-hero-cta-stack" style={{ marginTop: "1.25rem", display: "grid", gap: "0.75rem", maxWidth: "22rem" }}>
+          <div className="f-hero-cta-stack">
             <a
               href="#request"
-              className="inline-flex min-h-[52px] items-center justify-center rounded-sm bg-[var(--ed-ink,#2C302F)] px-5 text-[0.9375rem] font-medium text-[var(--ed-paper,#FBFAF6)]"
+              className="f-hero-cta-primary"
               data-cta="primary"
             >
               Request a quote
             </a>
-            <a href={SITE_CONFIG.phoneHref} className="text-[0.9375rem] font-medium underline-offset-2 hover:underline">
+            <a href={SITE_CONFIG.phoneHref} className="f-hero-cta-phone">
               Call or text {SITE_CONFIG.phone}
             </a>
-            <p className="text-[0.8125rem] opacity-90">
-              Idaho Registered Contractor #8381215. Two-year workmanship warranty.
+            <p className="f-hero-trust">
+              Idaho Registered Contractor #8381215. Two-year warranty.
             </p>
-            <Link href="#how-we-build" className="text-[0.875rem] underline-offset-2 hover:underline">
-              See how it works
-            </Link>
           </div>
         </div>
       </section>

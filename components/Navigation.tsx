@@ -1,5 +1,4 @@
 "use client";
-import { useP5MobileActions } from "@/components/P5MobileActions";
 import { ApprovedBrand } from "@/components/approved/ApprovedBrand";
 
 
@@ -40,7 +39,7 @@ function Logo() {
 
 export function Navigation() {
   const pathname = usePathname();
-  const mobileActionsVisible = useP5MobileActions(pathname);
+  // C7: bottom bar stays available on marketing pages (not gated until past hero).
   // Solid contrast over every hero; a shadow separates the header while scrolling.
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
@@ -92,7 +91,7 @@ export function Navigation() {
           scrolled && "shadow-sm",
         )}
       >
-        <nav className="container flex h-[60px] items-center justify-between gap-2 px-4 md:gap-4 md:px-6">
+        <nav className="container flex h-16 min-[640px]:h-[76px] items-center justify-between gap-2 px-4 md:gap-4 md:px-6">
           <div className="min-w-0 flex-1 [&_img]:h-auto [&_img]:max-w-full">
             <Logo />
           </div>
@@ -205,7 +204,7 @@ export function Navigation() {
                   </Dialog.Description>
 
                   {/* Header row */}
-                  <div className="flex items-center justify-between gap-3 px-4 h-[60px] border-b border-border/40 shrink-0 [&_img]:max-w-[65vw] [&_img]:object-contain [&_img]:object-left">
+                  <div className="flex items-center justify-between gap-3 px-4 h-16 min-[640px]:h-[76px] border-b border-border/40 shrink-0 [&_img]:max-w-[65vw] [&_img]:object-contain [&_img]:object-left">
                     <Logo />
                     <Dialog.Close asChild>
                       <Button
@@ -316,42 +315,33 @@ export function Navigation() {
         </nav>
       </header>
 
-      {/* Sticky bottom bar.
-          NOT ON A PAGE A WIZARD OWNS. The estimator and both document wizards
-          put their own Back/Continue bar at the bottom of a phone screen, and
-          this bar renders at z-100 against their z-30 - so it sat physically
-          on top of the Continue button, covering the primary action of the
-          primary conversion flow. The estimator already asks for this via an
-          IntersectionObserver, but an observer is a race on first paint and
-          the route is a fact, so the route decides. */}
+      {/* C7 mobile bottom CTA: one primary + one secondary, always available
+          on marketing pages (not deferred until past hero). Wizard pages own
+          their own bottom chrome, so this bar stays off those routes. */}
       {!wizardOwnsBottom && (
       <div
         data-mobile-nav-bar=""
-        data-p5-actions-ready={mobileActionsVisible}
-        className={cn("fixed left-0 right-0 bottom-0 z-[100] min-[1180px]:hidden pb-safe border-t bg-background border-border", (mobileOpen) && "invisible pointer-events-none")}
+        data-p5-actions-ready="true"
+        className={cn(
+          "fixed left-0 right-0 bottom-0 z-[100] min-[1180px]:hidden border-t bg-background border-border",
+          "pb-[max(12px,env(safe-area-inset-bottom))] pt-3 px-3",
+          mobileOpen && "invisible pointer-events-none",
+        )}
       >
-        <div className="flex items-stretch gap-2 p-2">
+        <div className="flex items-stretch gap-2">
           <a
             href={SITE_CONFIG.phoneHref}
-            className="flex min-h-14 w-[76px] shrink-0 flex-col gap-1 items-center justify-center rounded-sm border border-border text-foreground hover-elevate active-elevate-2"
+            className="inline-flex h-12 min-w-[5.5rem] shrink-0 items-center justify-center gap-2 rounded-sm border border-border px-4 text-base font-medium text-foreground"
             aria-label={`Call ${SITE_CONFIG.phone}`}
             data-testid="button-call-mobile"
           >
-            <Phone className="h-5 w-5" strokeWidth={1.5} /><span className="text-xs font-medium">Call</span>
+            <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+            Call
           </a>
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new Event("p5:assistant-open"))}
-            className="flex min-h-14 w-[76px] shrink-0 flex-col gap-1 items-center justify-center rounded-sm border border-border text-foreground hover-elevate active-elevate-2"
-            aria-label="Chat with our estimating assistant"
-            data-testid="button-chat-mobile"
-          >
-            <MessageSquare className="h-5 w-5" strokeWidth={1.5} /><span className="text-xs font-medium">Chat</span>
-          </button>
           <NavEstimateButton
             variant="brand"
             surface="mobile-sticky"
-            className="min-h-14 flex-1 text-base"
+            className="h-12 flex-1 text-base"
             data-testid="button-begin-conversation-mobile"
           >
             {REQUEST_LABEL}

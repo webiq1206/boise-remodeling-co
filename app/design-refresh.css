@@ -194,15 +194,89 @@
   .site-cabinet .cabinet-approved .section { padding-block: 56px; }
 }
 
-/* The photograph and headline fill the first screen. The short request is
-   the next section, so a phone does not open on the form. Height stays auto
-   so text zoom can grow the hero past one viewport. */
+/*
+  C6/B6 + C3/C7 (Standard 2.0): header 64 phone / 76 tablet+desktop; hero
+  budget = svh − header − bottom bar; never force a 620–640px floor that
+  overflows short phones. Padding uses the spacing scale (not vh fillers).
+*/
+.approved-shell.site-remodeling {
+  --site-header-h: 76px;
+  --site-bottom-bar-h: 0px;
+  --section-y: 96px;
+  --section-y-compact: 48px;
+}
+@media (max-width: 1023px) {
+  .approved-shell.site-remodeling {
+    --section-y: 80px;
+    --section-y-compact: 48px;
+  }
+}
+@media (max-width: 639px) {
+  .approved-shell.site-remodeling {
+    --site-header-h: 64px;
+    --section-y: 64px;
+    --section-y-compact: 32px;
+  }
+}
+@media (max-width: 1179px) {
+  /* B6 bar: 12 top + 48 button + 12 bottom (+ safe-area in the bar itself). */
+  .approved-shell.site-remodeling {
+    --site-bottom-bar-h: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.approved-shell.site-remodeling [data-approved-navigation] {
+  box-sizing: border-box;
+  height: var(--site-header-h);
+  max-height: var(--site-header-h);
+  overflow: hidden;
+}
+.approved-shell.site-remodeling [data-approved-navigation] > nav {
+  height: 100% !important;
+  max-height: 100%;
+  box-sizing: border-box;
+  padding-block: 0;
+}
+.approved-shell.site-remodeling [data-approved-navigation] .approved-family-lockup {
+  width: auto;
+  max-width: min(280px, 42vw);
+  max-height: 36px;
+  height: auto;
+}
+@media (max-width: 639px) {
+  .approved-shell.site-remodeling [data-approved-navigation] .approved-family-lockup {
+    max-width: min(200px, 48vw);
+    max-height: 28px;
+  }
+}
+
+.approved-shell.site-remodeling [data-mobile-nav-bar] {
+  box-sizing: border-box;
+  padding-top: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  padding-inline: 12px;
+}
+.approved-shell.site-remodeling [data-mobile-nav-bar] a,
+.approved-shell.site-remodeling [data-mobile-nav-bar] button {
+  min-height: 48px;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 2px;
+}
+
 .approved-shell.site-remodeling .family-site .f-hero {
   display: flex;
   align-items: flex-end;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
   height: auto;
-  min-height: calc(100svh - 84px);
+  /* C3: no 620px floor; may be shorter than the viewport. Sticky header is
+     in-flow, so only the fixed bottom bar needs reserved padding here. */
+  min-height: 0 !important;
   max-height: none;
+  padding-top: 0;
+  padding-bottom: var(--site-bottom-bar-h);
   background: #1c1f1e;
   color: #fbfaf6;
 }
@@ -227,13 +301,30 @@
 .approved-shell.site-remodeling .family-site .f-hero-copy {
   width: min(1260px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 28vh 0 40px;
+  /* C3 step 4: reduce padding; floor is --section-y for the tier. */
+  padding: var(--section-y) 0 var(--section-y-compact);
+}
+.approved-shell.site-remodeling .family-site .f-hero .f-eyebrow {
+  margin-bottom: 12px !important;
 }
 .approved-shell.site-remodeling .family-site .f-hero h1 {
   color: #fbfaf6;
-  font-size: clamp(40px, 6vw, 84px);
-  line-height: 1.02;
-  margin-bottom: 22px;
+  /* B3 Display: 36 / 52 / 64 — never below token, never above desktop 64. */
+  font-size: clamp(36px, 5.2vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+  margin-bottom: 16px;
+}
+/* Short desktop (e.g. 1280×720): widen wrap so Display stays ≤2 lines. */
+@media (min-width: 1180px) and (max-height: 800px) {
+  .approved-shell.site-remodeling .family-site .f-hero h1 {
+    max-width: 30ch;
+    margin-bottom: 12px;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+    margin-top: 20px;
+  }
 }
 .approved-shell.site-remodeling .family-site .f-hero-support {
   max-width: 34em;
@@ -241,6 +332,40 @@
   color: #eceae3;
   font-size: 17px;
   line-height: 1.55;
+}
+.approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+  max-width: 22rem;
+}
+.approved-shell.site-remodeling .family-site .f-hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 2px;
+  background: #fbfaf6;
+  color: #2c302f;
+  font: 600 16px/1 var(--font-manrope), Arial, sans-serif;
+  text-decoration: none;
+}
+.approved-shell.site-remodeling .family-site .f-hero-cta-phone {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #fbfaf6;
+  font: 600 16px/1.4 var(--font-manrope), Arial, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-shell.site-remodeling .family-site .f-hero-trust {
+  margin: 0;
+  color: #dddcd6;
+  font-size: 14px;
+  line-height: 1.45;
 }
 /* Direct answer sits on the paper, under the hero, before the short request.
    It does not overlay the photograph and it does not sit inside the form. */
@@ -465,17 +590,27 @@
 
 @media (max-width: 1179px) {
   .approved-shell.site-remodeling .family-site .f-hero {
-    min-height: calc(100svh - 76px);
+    min-height: 0 !important;
     height: auto;
   }
+  .approved-shell.site-remodeling .family-site .f-hero-copy {
+    width: calc(100% - 40px);
+    /* Keep ≥ --section-y; tighten bottom to compact token. */
+    padding: var(--section-y) 0 var(--section-y-compact);
+  }
   .approved-shell.site-remodeling .family-site .f-hero h1 {
-    font-size: clamp(34px, 8.4vw, 46px);
-    margin-bottom: 18px;
+    font-size: clamp(36px, 8vw, 52px);
+    margin-bottom: 12px;
+    max-width: 20ch;
   }
   .approved-shell.site-remodeling .family-site .f-hero-copy > p.f-hero-support {
     max-width: none;
     font-size: 16px;
     line-height: 1.5;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+    margin-top: 20px;
+    gap: 10px;
   }
   .approved-shell.site-remodeling .home-direct {
     padding: 28px 0 0;
@@ -500,26 +635,28 @@
     row-gap: 20px;
   }
   .approved-shell.site-remodeling .family-site section.fold-story > img { height: 220px; }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-brand { gap: 8px; }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-brand-icon {
-    width: 28px;
-    height: 28px;
-  }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-original-wordmark {
-    width: 128px;
-    max-width: 34vw;
-    height: auto;
-    max-height: 22px;
-  }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-endorsement {
-    font-size: 8px;
-    letter-spacing: 0.04em;
+  /* Footer clearance matches C7 bar (12+48+12 + safe-area). */
+  .approved-shell.site-remodeling .site-footer {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 }
 @media (max-width: 700px) {
-  .approved-shell.site-remodeling .family-site .f-hero { min-height: calc(100svh - 70px); }
+  .approved-shell.site-remodeling .family-site .f-hero { min-height: 0 !important; }
   .approved-shell.site-remodeling .family-site .f-container { width: calc(100% - 48px); }
   .approved-shell.site-remodeling .family-site section.fold-story h2 + p { margin-top: 22px; }
+}
+@media (max-width: 359px) {
+  /* Narrow phone: keep Display at B3 36; compact stacks further via wrap. */
+  .approved-shell.site-remodeling .family-site .f-hero .f-eyebrow {
+    margin-bottom: 8px !important;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero h1 {
+    margin-bottom: 10px;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+    margin-top: 16px;
+    gap: 8px;
+  }
 }
 
 /* Chat opens as the visible screen on a phone: light paper, starting at the
