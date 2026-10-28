@@ -65,7 +65,7 @@ export default function EstimatePage() {
             </a>
             . One number for every P5 company.
           </p>
-          <div style={{ marginTop: "2rem" }}>
+          <div className="fold-request" style={{ marginTop: "2rem", padding: 0 }}>
             <HeroConversion />
           </div>
           <p className="ed-body" style={{ marginTop: "2rem" }}>
@@ -73,7 +73,11 @@ export default function EstimatePage() {
             <Link href="/remodel-plans-boise" className="underline underline-offset-2">
               Upload remodel plans
             </Link>{" "}
-            for document intake (no on-screen price).
+            for document intake (no on-screen price). Planning ranges for kitchens and baths live in the{" "}
+            <Link href="/guides/boise-remodeling-cost-guide" className="underline underline-offset-2">
+              cost guide
+            </Link>
+            .
           </p>
         </section>
       </>

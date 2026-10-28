@@ -213,8 +213,8 @@ export function HeroConversion() {
           <button className="fold-submit" type="submit" disabled={busy}>
             {busy ? "Sending" : "Send request"}
           </button>
-          <a className="fold-secondary" href="#planning-range">
-            Prefer a guided planning range?
+          <a className="fold-secondary" href="/guides/boise-remodeling-cost-guide">
+            See planning ranges in the cost guide
           </a>
         </form>
       )}

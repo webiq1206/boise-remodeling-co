@@ -654,3 +654,22 @@ body[data-assistant-open="true"] [data-mobile-nav-bar] { display: none !importan
     box-shadow: 0 18px 50px rgba(28, 31, 30, 0.18);
   }
 }
+
+/* Standalone /estimate short form: keep the fold grid, but constrain width
+   and force the secondary cost-guide link onto its own row. */
+.approved-shell.site-remodeling .approved-interior .fold-request {
+  background: transparent;
+  padding: 0;
+}
+.approved-shell.site-remodeling .approved-interior .fold-convert {
+  max-width: 40rem;
+}
+.approved-shell.site-remodeling .fold-form .fold-secondary {
+  grid-column: 1 / -1;
+  display: inline-block;
+  margin-top: 4px;
+  font: 600 14px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #4c5f50;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
