@@ -1,9 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+} from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { TextReplyLine } from "@/components/TextReplyLine";
+import { useKeyboardInset } from "@/components/estimate/wizard/useKeyboardInset";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
 import {
@@ -108,6 +118,7 @@ export function EstimateRequestWizard() {
   const [startedAt] = useState(() => Date.now());
   const headingRef = useRef<HTMLHeadingElement>(null);
   const progressId = useId();
+  const keyboardInset = useKeyboardInset();
 
   useEffect(() => {
     setDraft(readDraft());
@@ -257,7 +268,7 @@ export function EstimateRequestWizard() {
     }
   }
 
-  function onKeyDown(event: React.KeyboardEvent) {
+  function onKeyDown(event: KeyboardEvent) {
     if (event.key !== "Enter" || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     const target = event.target as HTMLElement;
     if (target.tagName === "TEXTAREA") return;
@@ -278,6 +289,12 @@ export function EstimateRequestWizard() {
     <div
       className="estimate-wizard"
       data-testid="estimate-request-wizard"
+      data-keyboard-inset={keyboardInset > 0 ? String(keyboardInset) : undefined}
+      style={
+        {
+          ["--ew-keyboard-inset"]: `${keyboardInset}px`,
+        } as CSSProperties
+      }
       onKeyDown={onKeyDown}
     >
       <header className="estimate-wizard-header">

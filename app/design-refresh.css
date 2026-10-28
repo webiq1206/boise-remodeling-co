@@ -861,8 +861,10 @@ body[data-estimate-wizard="true"] .site-footer {
 .approved-shell.site-remodeling .estimate-wizard {
   --ew-header: var(--site-header-h, 64px);
   --ew-bar: calc(72px + env(safe-area-inset-bottom, 0px));
+  --ew-keyboard-inset: 0px;
   position: fixed;
-  inset: var(--ew-header) 0 0 0;
+  /* C10: lift the whole frame (incl. Back/Next) above the on-screen keyboard. */
+  inset: var(--ew-header) 0 var(--ew-keyboard-inset) 0;
   z-index: 110;
   display: flex;
   flex-direction: column;
@@ -1244,8 +1246,9 @@ body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-fi
   padding: 10px 12px;
 }
 body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-bar {
+  /* Keyboard replaces the home-indicator band; drop safe-area while lifted. */
   padding-top: 8px;
-  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: 8px;
 }
 
 /* Interior estimate page: wizard owns the viewport under the sticky header. */
