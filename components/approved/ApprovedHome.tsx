@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import {type CSSProperties, type ReactNode} from 'react';
 import {publishFoundingCopy} from '@/shared/publicClaims';
 import {ArrowUpRight} from 'lucide-react';
@@ -34,7 +35,7 @@ return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.acce
  <OptionalIntake/>
 
 
- <section className="f-value"><img src={b.valueImage} alt={b.id==='handyman'?'Finish carpentry and trim work':b.id==='construction'?'Coordinated framing and mechanical rough-in':b.id==='adu'?'A home and its surrounding property':'Kitchen counter with wood cabinets, a white countertop, and a tile backsplash'} loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">{b.id==='adu'?'A SOUND STARTING POINT':'WHERE YOUR MONEY GOES'}</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><a className="f-link" href="#request">Request a call<Arrow/></a></div></section>
+ <section className="f-value"><img src={b.valueImage} alt={b.id==='handyman'?'Finish carpentry and trim work':b.id==='construction'?'Coordinated framing and mechanical rough-in':b.id==='adu'?'A home and its surrounding property':'Kitchen counter with wood cabinets, a white countertop, and a tile backsplash'} loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">{b.id==='adu'?'A SOUND STARTING POINT':'WHERE YOUR MONEY GOES'}</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a call<Arrow/></Link></div></section>
  {approachBlock}
  <StatementBandSection />
  {processBlock}
