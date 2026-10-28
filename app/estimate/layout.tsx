@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { EstimateContactBar } from "@/components/estimate/EstimateContactBar";
+import { EstimateRouteChrome } from "@/components/estimate/EstimateRouteChrome";
 
 export default function EstimateLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <EstimateContactBar />
+      <EstimateRouteChrome />
       {children}
     </>
   );

@@ -38,6 +38,7 @@ export function ApprovedHomeHero() {
             <a href={SITE_CONFIG.phoneHref} className="f-hero-cta-phone">
               Call or text {SITE_CONFIG.phone}
             </a>
+            {/* C5: one true reassurance line near the primary CTA */}
             <p className="f-hero-trust">
               Idaho Registered Contractor #8381215. Two-year warranty.
             </p>

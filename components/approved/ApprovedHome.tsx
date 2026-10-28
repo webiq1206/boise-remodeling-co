@@ -6,6 +6,7 @@ import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/compo
 import {FAQSection} from '@/components/FAQSection';
 import {FeaturedProjectRoomsSection} from '@/components/sections/FeaturedProjectRoomsSection';
 import {StatementBandSection} from '@/components/sections/StatementBandSection';
+import {PlanningRangeExplorer} from './PlanningRangeExplorer';
 import {brands,cities} from './family-content';
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
 const PHOTO_ALT:Record<string,string>={
@@ -36,12 +37,7 @@ return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.acce
  </section>
  {processBlock}
  <section className="f-value"><img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><a className="f-link" href="#request">Request a quote<Arrow/></a></div></section>
- <section className="f-section f-container" id="planning-ranges">
-  <p className="f-eyebrow">PLANNING RANGES</p>
-  <h2>What Treasure Valley remodels typically plan.</h2>
-  <p>Kitchen: $37,000 to $110,000 for most full kitchens. Primary bath: $35,000 to $85,000. Whole-home: ask for a written master scope. Full bands live in the <a href="/guides/boise-remodeling-cost-guide">cost guide</a>.</p>
-  <a className="f-link" href="#request">Request a quote <Arrow/></a>
- </section>
+ <PlanningRangeExplorer />
  <section className="f-section f-container" id="who-you-are-hiring">
   <div className="f-two family-founder-block">
    <img

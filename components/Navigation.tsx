@@ -54,7 +54,8 @@ export function Navigation() {
      below), so naming its routes here would be a second copy of that list with nothing to do. */
   const wizardOwnsBottom =
     (pathname?.startsWith("/re-10") ?? false) ||
-    (pathname?.startsWith("/remodel-plans") ?? false);
+    (pathname?.startsWith("/remodel-plans") ?? false) ||
+    pathname === "/estimate";
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1180px)");

@@ -14,23 +14,7 @@ import { SITE_IMAGES } from "@/shared/siteImages";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { ArrowUpRight, Check } from "lucide-react";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Image from "next/image";
-
-const EstimateCalculator = dynamic(
-  () =>
-    import("@/components/EstimateCalculator").then((mod) => mod.EstimateCalculator),
-  {
-    loading: () => (
-      <div
-        id="calculator"
-        className="container px-4 py-16 text-center text-sm text-muted-foreground"
-      >
-        Loading estimate calculator...
-      </div>
-    ),
-  },
-);
 
 export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: "Design-Build Remodeling in Boise, Idaho | Boise Remodeling Co" },

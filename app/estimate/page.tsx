@@ -1,16 +1,14 @@
 import { withBrandPageMetadata } from "@/lib/brand-page-metadata";
 import type { Metadata } from "next";
-import { HeroConversion } from "@/components/approved/HeroConversion";
+import { EstimateRequestWizard } from "@/components/estimate/EstimateRequestWizard";
 import { InteriorPage } from "@/components/approved/InteriorLayout";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildCanonical, fitDescription } from "@/lib/page-metadata";
 import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
-import { SITE_CONFIG } from "@/shared/siteConfig";
-import Link from "next/link";
 
 /**
- * D5: the multi-step public estimator is replaced by a short request form.
- * Same lead path as consultation requests; no on-screen price.
+ * D2 / C10: short quote request as a step wizard (no on-screen price).
+ * Same lead path as consultation requests.
  */
 const TITLE = "Request a Remodel Quote";
 const DESCRIPTION = fitDescription(
@@ -50,39 +48,7 @@ export default function EstimatePage() {
     <InteriorPage kind="estimate">
       <>
         <JsonLd data={schemas} />
-        <section
-          className="f-section f-container estimate-short-form"
-          style={{ maxWidth: "40rem", paddingTop: "3rem", paddingBottom: "5rem" }}
-        >
-          <p className="f-eyebrow">SHORT REQUEST</p>
-          <h1 className="ed-h1 estimate-short-form-title" style={{ marginTop: "0.75rem", color: "#2c302f" }}>
-            Request a remodel quote
-          </h1>
-          <p className="ed-lede" style={{ marginTop: "1rem", color: "#2c302f" }}>
-            Share your project type, city and what you want done. Attach photos if you have them. We reply within one business day with questions or a time to visit. You get a written scope before any price.
-          </p>
-          <p className="ed-body" style={{ marginTop: "0.75rem", color: "#2c302f" }}>
-            Prefer to call?{" "}
-            <a href={SITE_CONFIG.phoneHref} className="underline underline-offset-2">
-              {SITE_CONFIG.phone}
-            </a>
-            . One number for every P5 company.
-          </p>
-          <div className="fold-request" style={{ marginTop: "2rem", padding: 0 }}>
-            <HeroConversion />
-          </div>
-          <p className="ed-body" style={{ marginTop: "2rem" }}>
-            Have stamped drawings?{" "}
-            <Link href="/remodel-plans-boise" className="underline underline-offset-2">
-              Upload remodel plans
-            </Link>{" "}
-            for document intake (no on-screen price). Planning ranges for kitchens and baths live in the{" "}
-            <Link href="/guides/boise-remodeling-cost-guide" className="underline underline-offset-2">
-              cost guide
-            </Link>
-            .
-          </p>
-        </section>
+        <EstimateRequestWizard />
       </>
     </InteriorPage>
   );

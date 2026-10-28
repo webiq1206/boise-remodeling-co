@@ -23,5 +23,7 @@ export function ConditionalFooter() {
       </div>
     );
   }
+  // Public /estimate short-request wizard owns the viewport; hide marketing footer.
+  if (pathname === "/estimate") return null;
   return <Footer hideRegistration={registrationPresentation(pathname) === "hidden"} />;
 }
