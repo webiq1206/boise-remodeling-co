@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 /**
  * Short ownership handoff for services that live on a sister P5 company (D2).
  * One paragraph, the owning company name, and one outbound button.
- * Optional imageSrc: finished project photo (required for ADU — never empty lot).
+ * Optional imageSrc: finished project photo (required for ADU - never empty lot).
  */
 export function ServiceReferral({
   eyebrow,

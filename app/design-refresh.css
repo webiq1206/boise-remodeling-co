@@ -309,7 +309,7 @@
 }
 .approved-shell.site-remodeling .family-site .f-hero h1 {
   color: #fbfaf6;
-  /* B3 Display: 36 / 52 / 64 — never below token, never above desktop 64. */
+  /* B3 Display: 36 / 52 / 64 - never below token, never above desktop 64. */
   font-size: clamp(36px, 5.2vw, 64px);
   line-height: 1.05;
   letter-spacing: -0.02em;

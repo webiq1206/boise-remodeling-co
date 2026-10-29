@@ -105,7 +105,7 @@ function buildShort(): string {
   lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.`));
   lines.push(`- [Contact](${url('/contact')})`);
   lines.push(`- [Free remodel estimator](${url('/estimate')})`);
-  lines.push(`- [Before and after projects](${url('/design-ideas')})`);
+  lines.push(`- [Remodeling design ideas](${url('/design-ideas')})`);
   lines.push(`- [Planning resources and worksheets](${url('/resources')})`, '');
 
   lines.push('## Optional', '');
@@ -233,7 +233,7 @@ function buildFull(): string {
   lines.push(`- Services: ${url('/services')}`);
   lines.push(`- Service areas: ${url('/areas')}`);
   lines.push(`- Remodel estimator: ${url('/estimate')}`);
-  lines.push(`- Before and after: ${url('/design-ideas')}`);
+  lines.push(`- Remodeling design ideas: ${url('/design-ideas')}`);
   lines.push(`- Blog: ${url('/blog')}`);
   lines.push(`- Guides: ${url('/guides')}`);
   lines.push(`- Resources: ${url('/resources')}`);

@@ -223,7 +223,7 @@ async function main() {
   await writeFile(
     path.join(OUT, "README.md"),
     [
-      "# Boise Remodeling Co — MF2 C10 keyboard evidence",
+      "# Boise Remodeling Co - MF2 C10 keyboard evidence",
       "",
       `**Captured:** ${summary.capturedAt}`,
       `**SHA:** ${summary.sha || "(set GIT_SHA)"}`,

@@ -108,7 +108,7 @@ Neighborhood guides:
 - Services: https://boiseremodeling.co/services
 - Service areas: https://boiseremodeling.co/areas
 - Remodel estimator: https://boiseremodeling.co/estimate
-- Before and after: https://boiseremodeling.co/testimonials
+- Remodeling design ideas: https://boiseremodeling.co/design-ideas
 - Blog: https://boiseremodeling.co/blog
 - Guides: https://boiseremodeling.co/guides
 - Resources: https://boiseremodeling.co/resources
