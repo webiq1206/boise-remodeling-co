@@ -18,9 +18,9 @@ export const HERO_SUBHEAD =
   "One accountable design-build team from first visit to final walkthrough.";
 
 export const HERO_STATS = [
-  { num: "Scope first", label: "Then a written proposal" },
-  { num: "Free", label: "In-home visit" },
-  { num: "Written", label: "Scope before build" },
+  { num: "60 to 90 minutes", label: "Free in-home visit" },
+  { num: "In writing", label: "Planning range" },
+  { num: "Within one business day", label: "Reply" },
 ] as const;
 
 export const DIFFERENTIATORS_HEADLINE = "Built for homeowners who want clarity, not chaos";

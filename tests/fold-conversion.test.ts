@@ -26,8 +26,14 @@ test("the first screen is the photograph and headline, and the short request fol
   assert.match(hero, /<section className="fold-request" id="request"/);
   assert.match(hero, /<HeroConversion \/>/);
   assert.doesNotMatch(css, /max-height:\s*56px/);
-  assert.match(css, /min-height:\s*calc\(100svh - 84px\)/);
-  assert.match(css, /min-height:\s*calc\(100svh - 70px\)/);
+  // C3/C6/C7: header + bottom-bar tokens; no forced 620–640px hero floor.
+  assert.match(css, /--site-header-h:\s*76px/);
+  assert.match(css, /--site-header-h:\s*64px/);
+  assert.match(css, /--site-bottom-bar-h:\s*calc\(72px/);
+  assert.match(css, /\.family-site \.f-hero \{[\s\S]*?min-height:\s*0 !important/);
+  assert.match(css, /\.f-hero-cta-primary/);
+  assert.match(nav, /data-p5-actions-ready="true"/);
+  assert.doesNotMatch(nav, /button-chat-mobile/);
   assert.match(convert, /className="fold-call"/);
   assert.match(convert, /className="fold-chat"/);
   assert.match(convert, /p5:assistant-open/);
@@ -54,11 +60,11 @@ test("optional photos ride only the short multipart consultation path", () => {
 });
 
 test("the multi-step intake stays optional and the estimator is not the header ask", () => {
-  assert.match(home, /<OptionalIntake/);
+  assert.equal(home.includes("<OptionalIntake"), false);
   assert.equal(home.includes("<ApprovedEstimate"), false);
   assert.match(intake, /Open the optional intake/);
   assert.match(intake, /<ApprovedEstimate/);
-  assert.match(nav, /Request a call/);
+  assert.match(nav, /Request a quote/);
   assert.equal(nav.includes("Get an Estimate"), false);
 });
 

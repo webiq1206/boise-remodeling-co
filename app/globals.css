@@ -69,7 +69,7 @@
    values so there is no light-mode leak whether or not the .dark class
    is present. This is the identity, not a toggle. Palette:
      --bg #1C1F1E · --bg-2 #222624 · --surface #262B29 · hairline #39403D
-     bone #F7F5F3 · body #E6E3DE · mist #7D9479 · faint #6E756F
+     bone #FBFAF6 · body #E6E3DE · mist #7D9479 · faint #6E756F
      sage #7D9479 = the single brand accent (accent WORDS, eyebrow ticks,
      links/hover, focus, numerals, chips, tints); 6.21:1 on the charcoal ground
    ═══════════════════════════════════════════════════════════════════ */
@@ -83,7 +83,7 @@
   /* Page base - charcoal #1C1F1E */
   --background: 160 5% 12%;
   --foreground: 40 32% 92%;  /* P5 bone #F1EDE4 */
-  --heading: 30 20% 96%;           /* bone #F7F5F3 */
+  --heading: 30 20% 96%;           /* bone #FBFAF6 */
   --border: 40 8% 27%;  /* hairline warmed toward bone, like P5's --line */
   --card: 156 6% 16%;              /* surface #262B29 */
   --card-foreground: 37 14% 89%;
@@ -116,7 +116,7 @@
   --popover-foreground: 37 14% 89%;
   --popover-border: 154 6% 24%;
 
-  /* Primary CTA - bone #F7F5F3 fill, charcoal #2C302F text */
+  /* Primary CTA - bone #FBFAF6 fill, charcoal #2C302F text */
   --primary: 30 20% 96%;
   --primary-foreground: 165 4% 18%;
 

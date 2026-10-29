@@ -252,13 +252,11 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   assert.match(footer, /Boise Construction Co/);
   assert.match(footer, /Boise Handyman Co/);
   assert.match(footer, /Boise Cabinet Co/);
-  assert.match(footer, /Boise ADU Co \(website coming soon; requests through P5\)/);
-  assert.match(footer, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
-  assert.match(footer, /RE-10 repairs \(Boise Handyman Co\)/);
+  assert.match(footer, /Boise ADU Co \(projects currently run through Boise Construction Co; its site is coming\)/);
   assert.equal(footer.includes('href: "/re-10-repairs-boise"'), false);
   assert.match(footer, /href="\/subcontractor"/);
   assert.equal(footer.includes('/api/login'), false);
-  assert.match(readFileSync('app/estimate/page.tsx', 'utf8'), /<h1 className="sr-only">Remodel Cost Estimator<\/h1>/);
+  assert.match(readFileSync('app/estimate/page.tsx', 'utf8'), /Request a remodel quote/);
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
   assert.match(contact, /Call, text, or email\. We come to you\./);
   assert.match(contact, /never use high-pressure sales tactics/);
@@ -274,9 +272,9 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   const hero = readFileSync('components/approved/ApprovedHomeHero.tsx', 'utf8');
   assert.equal(hero.includes('use client'), false);
   assert.match(hero, /fetchPriority="high"/);
-  assert.match(hero, /<h1>Home remodeling contractors in Boise<\/h1>/);
-  assert.match(hero, /Love where you live\. Design-build remodeling for Boise and the Treasure Valley\./);
-  assert.match(hero, /Home remodeling contractors in Boise should give you a clear plan before anyone opens a wall\./);
+  assert.match(hero, /<h1>Design-build remodeling in Boise and the Treasure Valley<\/h1>/);
+  assert.match(hero, /One team designs, prices and builds/);
+  assert.match(hero, /Request a quote/);
   assert.equal(hero.includes('<em>Love where you live.</em>'), false);
   const home = readFileSync('app/page.tsx', 'utf8');
   assert.match(home, /hero=\{<ApprovedHomeHero/);
@@ -299,24 +297,23 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
 
 test('phase-1 copy is additive on the named pages', () => {
   const home = readFileSync('components/approved/ApprovedHome.tsx', 'utf8');
-  assert.match(home, /<h2>Home remodeling contractors for Boise and the Treasure Valley<\/h2>/);
-  assert.match(home, /remodeling contractors in Eagle/);
+  assert.equal(home.includes('Home remodeling contractors for Boise and the Treasure Valley'), false);
   assert.match(home, /Remodeling contractors in \$\{city\}/);
   assert.match(home, /Kitchen remodeling in Boise/);
-  assert.match(home, /href="\/areas\/eagle"/);
+  assert.match(home, /who-you-are-hiring/);
   assert.match(home, /\/services\/\$\{s\.slug\}/);
   const faqs = readFileSync('shared/homepageFaqs.ts', 'utf8');
-  assert.match(faqs, /q: "Remodeling contractors in Boise"/);
+  assert.match(faqs, /q: "Can we live at home during the remodel\?"/);
   assert.match(faqs, /q: "What do home remodeling contractors typically handle\?"/);
   assert.match(faqs, /q: "Do you serve areas near Boise\?"/);
-  assert.match(faqs, /q: "How is remodeling contractors near me different from a city page\?"/);
+  assert.match(faqs, /q: "How long is the workmanship guarantee\?"/);
   const areas = readFileSync('app/areas/[city]/page.tsx', 'utf8');
   assert.match(areas, /href: '\/services\/kitchen-remodel'/);
   assert.match(areas, /href: '\/services\/bathroom-remodel'/);
   assert.match(areas, /href: '\/services\/room-addition'/);
   const re10 = readFileSync('app/re-10-repairs-boise/page.tsx', 'utf8');
   assert.match(re10, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
-  assert.match(re10, /RE10_DIRECT_ANSWER/);
+  assert.match(re10, /ServiceReferral|Handled by Boise Handyman Co/);
   const brand = readFileSync('components/approved/ApprovedBrand.tsx', 'utf8');
   assert.match(brand, /alt="" aria-hidden="true"/);
 });

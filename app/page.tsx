@@ -14,28 +14,12 @@ import { SITE_IMAGES } from "@/shared/siteImages";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { ArrowUpRight, Check } from "lucide-react";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 
-const EstimateCalculator = dynamic(
-  () =>
-    import("@/components/EstimateCalculator").then((mod) => mod.EstimateCalculator),
-  {
-    loading: () => (
-      <div
-        id="calculator"
-        className="container px-4 py-16 text-center text-sm text-muted-foreground"
-      >
-        Loading estimate calculator...
-      </div>
-    ),
-  },
-);
-
 export const metadata: Metadata = withBrandPageMetadata(({
-  title: { absolute: "Home Remodeling Contractors, Boise, ID | Boise Remodeling Co" },
+  title: { absolute: "Design-Build Remodeling in Boise, Idaho | Boise Remodeling Co" },
   description:
-    fitDescription("Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope."),
+    fitDescription("Design-build remodeling in Boise from one team that writes the scope before the price. Kitchens, baths and whole-home remodels. Free in-home visit."),
   alternates: {
     canonical: buildCanonical("/"),
     // Setting `alternates` replaces the root declaration, so the feed link has
@@ -136,12 +120,7 @@ export default function HomePage() {
                         style={{ color: "var(--ed-accent)" }}
                         aria-hidden="true"
                       />
-                      <span>
-                        {item}
-                        {item === "Response within one business day" ? (
-                          <TextReplyLine as="span" className="mt-1.5 block" />
-                        ) : null}
-                      </span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>

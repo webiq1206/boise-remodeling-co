@@ -111,13 +111,13 @@ export function HeroConversion() {
       {done ? (
         <>
           <p className="fold-success" role="status">
-            Request received. We will call you within one business day.
+            Request received. We reply within one business day with questions or a time to visit. You get a written scope before any price.
           </p>
           <TextReplyLine className="fold-text-reply" />
         </>
       ) : (
         <form className="fold-form" data-clarity-mask="True" onSubmit={onSubmit} noValidate>
-          <p className="fold-form-title">Request a call</p>
+          <p className="fold-form-title">Request a quote</p>
           <label>
             <span>Name</span>
             <input
@@ -213,8 +213,8 @@ export function HeroConversion() {
           <button className="fold-submit" type="submit" disabled={busy}>
             {busy ? "Sending" : "Send request"}
           </button>
-          <a className="fold-secondary" href="#planning-range">
-            Prefer a guided planning range?
+          <a className="fold-secondary" href="/guides/boise-remodeling-cost-guide">
+            See planning ranges in the cost guide
           </a>
         </form>
       )}

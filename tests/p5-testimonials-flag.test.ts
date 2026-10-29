@@ -158,20 +158,19 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
     text('../components/Navigation.tsx'),
     text('../components/Footer.tsx'),
     text('../components/sections/TestimonialsSection.tsx'),
-    text('../app/testimonials/page.tsx'),
+    text('../app/design-ideas/page.tsx'),
     text('../public/llms.txt'),
     text('../public/llms-full.txt'),
   ].join('\n');
   for (const phrase of BANNED) assert.equal(surfaces.includes(phrase), false, phrase);
 
-  const page = text('../app/testimonials/page.tsx');
-  assert.match(page, /Representative imagery, not completed customer projects/);
-  assert.match(page, /not photographs of specific completed customer projects/);
-  assert.match(page, /titleOverride: 'Remodeling Inspiration'/);
+  const page = text('../app/design-ideas/page.tsx');
+  assert.match(page, /Captioned for materials and layout, not invented project records/);
+  assert.match(page, /titleOverride: 'Remodeling Design Ideas'/);
   assert.equal(page.includes('Homeowner reviews'), false);
   assert.equal(page.includes('Project gallery'), false);
 
-  const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/testimonials');
+  const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/design-ideas');
   assert.equal(entry?.label, 'Design Ideas');
 
   const template = text('../components/seo/LandingPageTemplate.tsx');

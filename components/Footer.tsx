@@ -48,7 +48,7 @@ function buildFooterGroups(): { title: string; links: FooterLink[] }[] {
     },
     {
       title: "Company",
-      links: [{ label: "About", href: "/about" }, { label: "Design Ideas", href: "/testimonials" }, { label: "Why Choose Us", href: "/#why-choose-us" }, { label: "How We Build", href: "/#how-we-build" }, { label: "RE-10 repairs (Boise Handyman Co)", href: "https://boisehandyman.co/re-10-repairs-boise" }, { label: "Estimate From Plans", href: "/remodel-plans-boise" }, { label: "Contact", href: "/contact" }],
+      links: [{ label: "About", href: "/about" }, { label: "Design Ideas", href: "/design-ideas" }, { label: "Why Choose Us", href: "/#why-choose-us" }, { label: "How We Build", href: "/#how-we-build" }, { label: "Estimate From Plans", href: "/remodel-plans-boise" }, { label: "Contact", href: "/contact" }],
     },
     {
       title: "Resources",
@@ -90,7 +90,10 @@ const SISTER_SITES: { name: string; href?: string }[] = [
   { name: "Boise Remodeling Co", href: "https://boiseremodeling.co" },
   { name: "Boise Handyman Co", href: "https://boisehandyman.co" },
   { name: "Boise Cabinet Co", href: "https://boisecabinet.co" },
-  { name: "Boise ADU Co (website coming soon; requests through P5)" },
+  {
+    name: "Boise ADU Co (projects currently run through Boise Construction Co; its site is coming)",
+    href: "https://boiseconstruction.co/services/home-additions",
+  },
 ];
 
 /** Collapsed accordion on phones and tablets, a plain column from lg up. */

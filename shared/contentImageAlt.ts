@@ -38,7 +38,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/services/outdoor-living.webp': SERVICE_ALT['outdoor-living'],
   '/images/services/aging-in-place.webp': SERVICE_ALT['aging-in-place'],
   '/images/kitchen-in-progress.webp': 'Kitchen during a remodel, with open cabinets and work underway',
-  '/images/process-design-review.webp': 'People reviewing drawings and material samples at a table',
+  '/images/process-design-review.webp': 'Remodel plans and finish samples on a kitchen counter',
   '/images/hero-remodel-interior.webp': 'Open kitchen and living space with warm wood and stone',
   '/images/about-oak-kitchen.webp':
     'Warm open kitchen with white oak cabinets, a large island and black-framed windows',

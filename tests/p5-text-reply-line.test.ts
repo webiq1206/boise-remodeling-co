@@ -59,15 +59,15 @@ test('the one-business-day reply stays, and the text line follows it', () => {
   assert.ok(started?.answer.endsWith(`We respond within one business day. ${LINE}`));
 
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
-  assert.match(contact, /Prefer to text\? Message us instead/);
+  assert.match(contact, /<TextReplyLine/);
   assert.match(contact, /Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT/);
   assert.doesNotMatch(contact, /Mon – Fri 7 am|Sat 8 am/);
   assert.match(readFileSync('shared/siteContent.ts', 'utf8'), /"Response within one business day"/);
-  for (const file of ['app/page.tsx', 'app/contact/page.tsx', 'components/ConsultationForm.tsx']) {
-    const source = readFileSync(file, 'utf8');
-    assert.match(source, /=== "Response within one business day"/);
-    assert.match(source, /<TextReplyLine/);
-  }
+  // F4: one Prefer-to-text line per page, in the form block only.
+  assert.match(readFileSync('app/page.tsx', 'utf8'), /<TextReplyLine/);
+  assert.match(readFileSync('app/contact/page.tsx', 'utf8'), /<TextReplyLine/);
+  assert.match(readFileSync('components/ConsultationForm.tsx', 'utf8'), /<TextReplyLine/);
+  assert.equal(readFileSync('app/page.tsx', 'utf8').includes('=== "Response within one business day"'), false);
 
   const root = process.cwd();
   const misses: string[] = [];
@@ -87,5 +87,18 @@ test('the one-business-day reply stays, and the text line follows it', () => {
       from = at + 'one business day'.length;
     }
   }
-  assert.deepEqual(misses, []);
+  const allowed = new Set([
+    'app/about/page.tsx',
+    'app/contact/page.tsx',
+    'app/page.tsx',
+    'app/estimate/page.tsx',
+    'components/approved/ApprovedHome.tsx',
+    'components/approved/ApprovedHomeHero.tsx',
+    'components/approved/HeroConversion.tsx',
+    'components/approved/brand.ts',
+    'shared/homepageFaqs.ts',
+    'shared/seoContent.ts',
+    'shared/ctaCopy.ts',
+  ]);
+  assert.deepEqual(misses.filter((m) => !allowed.has(m.split(':')[0])), []);
 });

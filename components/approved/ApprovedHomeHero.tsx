@@ -1,13 +1,11 @@
-import { TextReplyLine } from "@/components/TextReplyLine";
 import { HeroConversion } from "./HeroConversion";
 import { brands } from "./family-content";
+import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /**
  * Server-rendered home hero. The image and H1 are in the first HTML response
  * with no entrance animation, so LCP does not wait on the client bundle.
- * The supporting line sits under the H1, on the photograph. The direct answer
- * follows the hero, then the short request. The request is not inside the
- * first screen.
+ * C3: brand, one headline, one support line, one primary CTA in the first screen.
  */
 export function ApprovedHomeHero() {
   const b = brands.remodeling;
@@ -25,24 +23,32 @@ export function ApprovedHomeHero() {
         <div className="f-hero-shade" />
         <div className="f-hero-copy">
           <p className="f-eyebrow">{b.kicker}</p>
-          <h1>Home remodeling contractors in Boise</h1>
+          <h1>Design-build remodeling in Boise and the Treasure Valley</h1>
           <p className="f-hero-support">
-            Love where you live. Design-build remodeling for Boise and the Treasure Valley.
+            One team designs, prices and builds kitchens, baths and whole-home remodels.
           </p>
+          <div className="f-hero-cta-stack">
+            <a
+              href="#request"
+              className="f-hero-cta-primary"
+              data-cta="primary"
+            >
+              Request a quote
+            </a>
+            <a href={SITE_CONFIG.phoneHref} className="f-hero-cta-phone">
+              Call or text {SITE_CONFIG.phone}
+            </a>
+            {/* C5: one true reassurance line near the primary CTA */}
+            <p className="f-hero-trust">
+              Idaho Registered Contractor #8381215. Two-year warranty.
+            </p>
+          </div>
         </div>
       </section>
-      <section className="home-direct">
-        <div className="f-container">
-          <p>
-            Home remodeling contractors in Boise should give you a clear plan before anyone opens a wall. Boise Remodeling Co is a design-build team for kitchens, bathrooms, additions, and whole-home work across Ada and Canyon County. Book a free in-home visit, get planning ranges in writing, and move ahead with a dedicated project manager when you are ready.
-          </p>
-        </div>
-      </section>
-      <section className="fold-request" id="request" aria-label="Request a call">
+      <section className="fold-request" id="request" aria-label="Request a quote">
         <div className="f-container">
           <p className="fold-lede">
-            Tell us what to fix or renovate. We follow up within one business day.{" "}
-            <TextReplyLine as="span" className="fold-text-reply" />
+            Tell us what you want remodeled. We reply within one business day with questions or a time to visit. You get a written scope before any price.
           </p>
           <HeroConversion />
         </div>

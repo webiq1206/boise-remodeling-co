@@ -16,7 +16,7 @@ interface SaveContactLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElem
 export function SaveContactLink({
   className,
   showIcon = false,
-  children = "Save to contacts",
+  children = "Save our contact",
   ...props
 }: SaveContactLinkProps) {
   return (

@@ -1,15 +1,14 @@
 'use client';
 import Link from 'next/link';
 import {type CSSProperties, type ReactNode} from 'react';
-import {publishFoundingCopy} from '@/shared/publicClaims';
 import {ArrowUpRight} from 'lucide-react';
 import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
 import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/components/ui/accordion';
 import {FAQSection} from '@/components/FAQSection';
 import {FeaturedProjectRoomsSection} from '@/components/sections/FeaturedProjectRoomsSection';
 import {StatementBandSection} from '@/components/sections/StatementBandSection';
+import {PlanningRangeExplorer} from './PlanningRangeExplorer';
 import {brands,cities} from './family-content';
-import {OptionalIntake} from './OptionalIntake';
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
 const PHOTO_ALT:Record<string,string>={
  'kitchen-remodel':'White kitchen with a wood island, brass lights, and a view to the living room',
@@ -30,17 +29,38 @@ export function ApprovedHome({hero}:{hero:ReactNode}){const b=brands['remodeling
 return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.accent} as CSSProperties}>
  {hero}
  <div className="f-proof">{b.proof.map((p,i)=><div key={p}><span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span><p>{p}</p></div>)}</div>
- <section className="f-section f-container fold-story" id="remodeling-contractors-boise"><img src={b.services[0].image} alt={photoAlt(b.services[0].slug)} width="1000" height="750" loading="lazy"/><div><p className="f-eyebrow">BOISE</p><h2>Home remodeling contractors for Boise and the Treasure Valley</h2><p>{publishFoundingCopy('Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes.')}</p><p>Eagle has its own page for <a href="/areas/eagle">remodeling contractors in Eagle</a>, including <a href="/services/kitchen-remodel/eagle">Eagle kitchen remodeling</a>.</p></div></section>
  <section className="f-section f-container" id="services"><div className="f-section-top"><div><p className="f-eyebrow">FIND YOUR STARTING POINT</p><h2><Title lines={b.serviceTitle}/></h2></div><p>{b.serviceIntro}</p></div><Tabs defaultValue={b.services[0].slug} className="f-explorer"><TabsList className="f-tabs">{b.services.slice(0,3).map(s=><TabsTrigger value={s.slug} key={s.slug}>{s.name}</TabsTrigger>)}</TabsList>{b.services.slice(0,3).map((s,i)=><TabsContent key={s.slug} value={s.slug}><div className="f-scene"><a className="f-scene-image" href={s.live || `/services/${s.slug}`} aria-label={s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':`Explore ${s.name.toLowerCase()}`}><img src={s.image} alt={photoAlt(s.slug)} loading="lazy" width="1000" height="750"/></a><div className="f-scene-copy"><p className="f-eyebrow"><span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span> / {b.name.replace('Boise ','')}</p><h3>{s.name}</h3><p>{s.summary}</p><ul>{s.includes.slice(0,2).map(t=><li key={t}>{t}</li>)}</ul><a className="f-link" href={s.live || `/services/${s.slug}`}>{s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':'Explore this service'} <Arrow/></a></div></div></TabsContent>)}</Tabs><a className="f-link f-browse-all" href={`${home}/services`}>View all services <Arrow/></a></section>
- <OptionalIntake/>
-
-
- <section className="f-value"><img src={b.valueImage} alt={b.id==='handyman'?'Finish carpentry and trim work':b.id==='construction'?'Coordinated framing and mechanical rough-in':b.id==='adu'?'A home and its surrounding property':'Kitchen counter with wood cabinets, a white countertop, and a tile backsplash'} loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">{b.id==='adu'?'A SOUND STARTING POINT':'WHERE YOUR MONEY GOES'}</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a call<Arrow/></Link></div></section>
+ <section className="f-section f-container" id="projects-honest">
+  <p className="f-eyebrow">OUR WORK</p>
+  <h2>Completed projects, when they are ready to publish.</h2>
+  <p>We publish only our own completed work, and our first projects as Boise Remodeling Co are finishing now. Ask us for references and we will connect you with past clients.</p>
+  <a className="f-link" href="/design-ideas">Browse design ideas <Arrow/></a>
+ </section>
+ {processBlock}
+ <section className="f-value"><img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div></section>
+ <PlanningRangeExplorer />
+ <section className="f-section f-container" id="who-you-are-hiring">
+  <div className="f-two family-founder-block">
+   <img
+     className="family-people-photo"
+     src="/images/about/perkins-family-full.webp"
+     alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
+     width="2048"
+     height="2048"
+     loading="lazy"
+   />
+   <div>
+    <p className="f-eyebrow">WHO YOU ARE HIRING</p>
+    <h2>Nick Perkins, founder.</h2>
+    <p>Construction project manager with a bachelor&apos;s degree in Construction with an emphasis in Project Management, and more than a decade of custom homes, remodels and developments. Husband, father of five. The family moved to Meridian in 2025.</p>
+    <p>&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</p>
+    <a className="f-link" href="/about">Read Nick&apos;s story <Arrow/></a>
+   </div>
+  </div>
+ </section>
  {approachBlock}
  <StatementBandSection />
- {processBlock}
  <FeaturedProjectRoomsSection compact />
- <section className="f-image-pair f-container"><img src={b.services[1].image} alt={photoAlt(b.services[1].slug)} loading="lazy" width="1000" height="800"/><div><img src={b.services[2].image} alt={photoAlt(b.services[2].slug)} loading="lazy" width="900" height="675"/><p className="f-eyebrow">{b.id==='handyman'?'CARE IN THE SMALL DETAILS.':'A HOME THAT WORKS FOR YOU.'}</p><h3>{b.id==='handyman'?'You notice the difference. Every day.':'Thoughtful spaces. Everyday living.'}</h3></div></section>
- <section className="f-area f-section f-container"><p className="f-eyebrow">AT HOME IN IDAHO</p><h2>Local people.<br/><em>Valley-wide reach.</em></h2><p>Serving homeowners throughout the Treasure Valley.</p><div>{cities.map(city=><a key={city} href={b.id==='adu'?`${home}/contact`:`/areas/${city.toLowerCase().replaceAll(" ","-")}`}>{b.id==='adu'?city:`Remodeling contractors in ${city}`}<Arrow/></a>)}</div></section>
+ <section className="f-area f-section f-container"><p className="f-eyebrow">AT HOME IN IDAHO</p><h2>Local people.<br/><em>Valley-wide reach.</em></h2><p>Serving homeowners throughout the Treasure Valley.</p><div>{cities.map(city=><a key={city} href={`/areas/${city.toLowerCase().replaceAll(" ","-")}`}>{`Remodeling contractors in ${city}`}<Arrow/></a>)}</div></section>
  <FAQSection/>
  </div>;}

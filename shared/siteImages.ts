@@ -6,29 +6,23 @@
 
 export const SITE_IMAGES = {
   /**
-   * Homepage hero - open-concept kitchen (navy island, brass fixtures) with a
-   * sight line into the sunlit living room; golden-hour light. Chosen over the
-   * previous hero-great-room.webp for a brighter, more impressive first
-   * impression. The blog registry keeps its own copy of this image at
-   * /images/blog/how-to-budget-remodel-boise.webp, so no double-use on page.
+   * Homepage / contact hero. Quality-pass retarget: Boise Bench ranch kitchen
+   * after (white shaker, sage island, hickory) for Phase 10 continuity.
    */
   hero: "/images/hero-remodel-interior.webp",
-  /** Design-build / plan review split panels. */
+  /** Design-build plan review - materials on counter, no people (quality-pass). */
   process: "/images/process-design-review.webp",
   /**
-   * "Where your money goes" value band. Craftsmanship and quality materials
-   * mid-install (custom cabinetry, quartz, staged white-oak flooring) - shows
-   * the budget landing in the home, not overhead. Distinct from `process` so
-   * the band no longer reuses the About page's plan-review photo.
+   * Value band - kitchen mid-remodel craftsmanship on the Bench ranch set.
    */
   value: "/images/value-craftsmanship-materials.webp",
-  /** Kitchen remodel in progress - process sections. */
+  /** Kitchen remodel in progress - same Bench ranch kitchen mid-job. */
   processInProgress: "/images/kitchen-in-progress.webp",
-  /** Full-bleed brand statement band. */
+  /** Full-bleed brand statement band - Bench ranch living after. */
   statementBand: "/images/statement-great-room.webp",
-  /** About hero and the contact visit panel. */
+  /** About / contact visit panel - Bench ranch kitchen after. */
   aboutKitchen: "/images/about-oak-kitchen.webp",
-  /** Consultation section background (homepage). */
+  /** Consultation section background - Bench ranch kitchen after. */
   consultBg: "/images/consult-lifestyle.webp",
   /** Budget section subtle texture - island detail crop. */
   budgetDetail: "/images/budget-kitchen-detail.webp",
@@ -39,12 +33,14 @@ export const SITE_IMAGES = {
  * Keep materials/windows consistent when regenerating any frame.
  */
 export const FEATURED_EAGLE_IMAGES = {
-  exterior: "/images/gallery/featured-eagle-exterior.webp",
-  greatRoom: "/images/gallery/featured-eagle-great-room.webp",
-  kitchen: "/images/gallery/featured-eagle-kitchen.webp",
-  bath: "/images/gallery/featured-eagle-bath.webp",
-  outdoor: "/images/gallery/featured-eagle-outdoor.webp",
+  exterior: "/images/projects/boise-bench-ranch/exterior-after.webp",
+  greatRoom: "/images/projects/boise-bench-ranch/living-after.webp",
+  kitchen: "/images/projects/boise-bench-ranch/kitchen-after.webp",
+  bath: "/images/projects/boise-bench-ranch/bath-after.webp",
+  outdoor: "/images/projects/boise-bench-ranch/exterior-before.webp",
 } as const;
+
+export const FEATURED_BOISE_BENCH_IMAGES = FEATURED_EAGLE_IMAGES;
 
 export const GALLERY_IMAGES = {
   kitchen: {

@@ -1,59 +1,55 @@
-import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
+import { withBrandPageMetadata } from "@/lib/brand-page-metadata";
 import type { Metadata } from "next";
-import { EstimateCalculator } from "@/components/EstimateCalculator";
+import { EstimateRequestWizard } from "@/components/estimate/EstimateRequestWizard";
+import { InteriorPage } from "@/components/approved/InteriorLayout";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { buildCanonical } from "@/lib/page-metadata";
+import { buildCanonical, fitDescription } from "@/lib/page-metadata";
 import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
-import { fitDescription } from '@/lib/page-metadata';
 
+/**
+ * D2 / C10: short quote request as a step wizard (no on-screen price).
+ * Same lead path as consultation requests.
+ */
+const TITLE = "Request a Remodel Quote";
+const DESCRIPTION = fitDescription(
+  "Request a remodel quote from Boise Remodeling Co. Share your project, city and photos. We reply within one business day with questions or a time to visit.",
+);
 
-
-const TITLE = "Remodel Cost Estimator";
-const DESCRIPTION =
-  fitDescription("Get a preliminary planning range for kitchen, bathroom, whole-home, addition, ADU, and basement remodels in Boise, Meridian, Eagle, Nampa, and the Treasure Valley. Free, no obligation.");
-
-export const metadata: Metadata = withBrandPageMetadata(({
-  title: { absolute: `${TITLE} | Boise Remodeling Co` },
-  description: DESCRIPTION,
-  alternates: { canonical: buildCanonical("/estimate") },
-  openGraph: {
-    title: TITLE,
+export const metadata: Metadata = withBrandPageMetadata(
+  {
+    title: { absolute: `${TITLE} | Boise Remodeling Co` },
     description: DESCRIPTION,
-    url: buildCanonical("/estimate"),
-    type: "website",
-    images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "Boise Remodeling Co" }],
+    alternates: { canonical: buildCanonical("/estimate") },
+    openGraph: {
+      title: TITLE,
+      description: DESCRIPTION,
+      url: buildCanonical("/estimate"),
+      type: "website",
+      images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "Boise Remodeling Co" }],
+    },
   },
-  twitter: {
-    card: "summary_large_image",
-    title: TITLE,
-    description: DESCRIPTION,
-    images: ["/images/og-default.png"],
-  },
-}), "/estimate");
+  "/estimate",
+);
 
 export default function EstimatePage() {
   const schemas = [
     generateWebPageSchema({
-      title: "Remodel Cost Estimator",
+      title: TITLE,
       description: DESCRIPTION,
       url: "/estimate",
     }),
     generateBreadcrumbSchema([
       { name: "Home", url: "/" },
-      { name: "Project Estimator", url: "/estimate" },
+      { name: "Request a quote", url: "/estimate" },
     ]),
   ];
 
   return (
-    <div data-clarity-mask="true" style={{ display: "contents" }}>
-      <JsonLd data={schemas} />
-      <h1 className="sr-only">Remodel Cost Estimator</h1>
-
-      {/* ONE SCREEN. The estimator is the page: the conversational app frame
-          mounts beneath the site header and owns everything below it, with its
-          own scroll area and a bottom-anchored input, so nothing here scrolls
-          into unrelated content. */}
-      <EstimateCalculator fitViewport />
-    </div>
+    <InteriorPage kind="estimate">
+      <>
+        <JsonLd data={schemas} />
+        <EstimateRequestWizard />
+      </>
+    </InteriorPage>
   );
 }

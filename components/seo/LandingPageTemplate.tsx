@@ -222,15 +222,16 @@ export function LandingPageTemplate({
             <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>{eyebrow}</p>
           )}
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
-          <p className="mt-8 max-w-[60ch] text-base md:text-lg leading-relaxed text-inverse-foreground/95">{overview}</p>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
+          {/* CTA immediately under H1 so mobile first view keeps brand + image + headline + action */}
+          <div className="mt-6 md:mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
             <EstimateCTA variant="brand">
               {CTA_PRIMARY} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </EstimateCTA>
             <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
           </div>
+          <p className="mt-6 md:mt-8 max-w-[60ch] text-base md:text-lg leading-relaxed text-inverse-foreground/95">{overview}</p>
           {planningFrom && (
-            <p className="mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-inverse-foreground/80">
+            <p className="mt-6 md:mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-inverse-foreground/80">
               <span className="ed-eyebrow !mb-0" style={{ color: 'rgb(255 255 255 / 0.72)' }}>Planning from</span>
               <span className="brc-display-num text-inverse-foreground text-[1.5rem] leading-none">{planningFrom}</span>
               <span className="ed-small text-inverse-foreground/70">Your exact range is confirmed at the free in-home visit</span>

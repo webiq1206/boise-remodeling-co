@@ -171,7 +171,7 @@ test("Clarity masks the form containers and Meta autoconfig is off before init",
     "components/estimate/recovery/AbandonmentPrompt.tsx",
     "components/assistant/AssistantWidget.tsx",
     "components/modals/ModalProvider.tsx",
-    "app/estimate/page.tsx",
+    "components/estimate/EstimateRequestWizard.tsx",
     "components/StripePaymentForm.tsx",
     "components/takeoff/ClarifyInterview.tsx",
     "components/admin/AdminLeadsPanel.tsx",
@@ -242,7 +242,9 @@ test("call and text controls use the site phone and the listener stays in the ex
   assert.match(estimate, /SITE_CONFIG\.phoneSmsHref/);
   assert.match(estimate, /data-site-header/);
   const layout = readFileSync(new URL("../app/estimate/layout.tsx", import.meta.url), "utf8");
-  assert.match(layout, /EstimateContactBar/);
+  assert.match(layout, /EstimateRouteChrome/);
+  const chrome = readFileSync(new URL("../components/estimate/EstimateRouteChrome.tsx", import.meta.url), "utf8");
+  assert.match(chrome, /EstimateContactBar/);
 });
 
  test("a delayed tag sends once and a throwing tag cannot break contact links", () => {

@@ -194,15 +194,89 @@
   .site-cabinet .cabinet-approved .section { padding-block: 56px; }
 }
 
-/* The photograph and headline fill the first screen. The short request is
-   the next section, so a phone does not open on the form. Height stays auto
-   so text zoom can grow the hero past one viewport. */
+/*
+  C6/B6 + C3/C7 (Standard 2.0): header 64 phone / 76 tablet+desktop; hero
+  budget = svh − header − bottom bar; never force a 620–640px floor that
+  overflows short phones. Padding uses the spacing scale (not vh fillers).
+*/
+.approved-shell.site-remodeling {
+  --site-header-h: 76px;
+  --site-bottom-bar-h: 0px;
+  --section-y: 96px;
+  --section-y-compact: 48px;
+}
+@media (max-width: 1023px) {
+  .approved-shell.site-remodeling {
+    --section-y: 80px;
+    --section-y-compact: 48px;
+  }
+}
+@media (max-width: 639px) {
+  .approved-shell.site-remodeling {
+    --site-header-h: 64px;
+    --section-y: 64px;
+    --section-y-compact: 32px;
+  }
+}
+@media (max-width: 1179px) {
+  /* B6 bar: 12 top + 48 button + 12 bottom (+ safe-area in the bar itself). */
+  .approved-shell.site-remodeling {
+    --site-bottom-bar-h: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.approved-shell.site-remodeling [data-approved-navigation] {
+  box-sizing: border-box;
+  height: var(--site-header-h);
+  max-height: var(--site-header-h);
+  overflow: hidden;
+}
+.approved-shell.site-remodeling [data-approved-navigation] > nav {
+  height: 100% !important;
+  max-height: 100%;
+  box-sizing: border-box;
+  padding-block: 0;
+}
+.approved-shell.site-remodeling [data-approved-navigation] .approved-family-lockup {
+  width: auto;
+  max-width: min(280px, 42vw);
+  max-height: 36px;
+  height: auto;
+}
+@media (max-width: 639px) {
+  .approved-shell.site-remodeling [data-approved-navigation] .approved-family-lockup {
+    max-width: min(200px, 48vw);
+    max-height: 28px;
+  }
+}
+
+.approved-shell.site-remodeling [data-mobile-nav-bar] {
+  box-sizing: border-box;
+  padding-top: 12px;
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  padding-inline: 12px;
+}
+.approved-shell.site-remodeling [data-mobile-nav-bar] a,
+.approved-shell.site-remodeling [data-mobile-nav-bar] button {
+  min-height: 48px;
+  height: 48px;
+  font-size: 16px;
+  border-radius: 2px;
+}
+
 .approved-shell.site-remodeling .family-site .f-hero {
   display: flex;
   align-items: flex-end;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
   height: auto;
-  min-height: calc(100svh - 84px);
+  /* C3: no 620px floor; may be shorter than the viewport. Sticky header is
+     in-flow, so only the fixed bottom bar needs reserved padding here. */
+  min-height: 0 !important;
   max-height: none;
+  padding-top: 0;
+  padding-bottom: var(--site-bottom-bar-h);
   background: #1c1f1e;
   color: #fbfaf6;
 }
@@ -227,13 +301,30 @@
 .approved-shell.site-remodeling .family-site .f-hero-copy {
   width: min(1260px, calc(100% - 48px));
   margin: 0 auto;
-  padding: 28vh 0 40px;
+  /* C3 step 4: reduce padding; floor is --section-y for the tier. */
+  padding: var(--section-y) 0 var(--section-y-compact);
+}
+.approved-shell.site-remodeling .family-site .f-hero .f-eyebrow {
+  margin-bottom: 12px !important;
 }
 .approved-shell.site-remodeling .family-site .f-hero h1 {
   color: #fbfaf6;
-  font-size: clamp(40px, 6vw, 84px);
-  line-height: 1.02;
-  margin-bottom: 22px;
+  /* B3 Display: 36 / 52 / 64 - never below token, never above desktop 64. */
+  font-size: clamp(36px, 5.2vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 22ch;
+  margin-bottom: 16px;
+}
+/* Short desktop (e.g. 1280×720): widen wrap so Display stays ≤2 lines. */
+@media (min-width: 1180px) and (max-height: 800px) {
+  .approved-shell.site-remodeling .family-site .f-hero h1 {
+    max-width: 30ch;
+    margin-bottom: 12px;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+    margin-top: 20px;
+  }
 }
 .approved-shell.site-remodeling .family-site .f-hero-support {
   max-width: 34em;
@@ -241,6 +332,40 @@
   color: #eceae3;
   font-size: 17px;
   line-height: 1.55;
+}
+.approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+  max-width: 22rem;
+}
+.approved-shell.site-remodeling .family-site .f-hero-cta-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  height: 48px;
+  padding: 0 24px;
+  border-radius: 2px;
+  background: #fbfaf6;
+  color: #2c302f;
+  font: 600 16px/1 var(--font-manrope), Arial, sans-serif;
+  text-decoration: none;
+}
+.approved-shell.site-remodeling .family-site .f-hero-cta-phone {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #fbfaf6;
+  font: 600 16px/1.4 var(--font-manrope), Arial, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-shell.site-remodeling .family-site .f-hero-trust {
+  margin: 0;
+  color: #dddcd6;
+  font-size: 14px;
+  line-height: 1.45;
 }
 /* Direct answer sits on the paper, under the hero, before the short request.
    It does not overlay the photograph and it does not sit inside the form. */
@@ -465,17 +590,27 @@
 
 @media (max-width: 1179px) {
   .approved-shell.site-remodeling .family-site .f-hero {
-    min-height: calc(100svh - 76px);
+    min-height: 0 !important;
     height: auto;
   }
+  .approved-shell.site-remodeling .family-site .f-hero-copy {
+    width: calc(100% - 40px);
+    /* Keep ≥ --section-y; tighten bottom to compact token. */
+    padding: var(--section-y) 0 var(--section-y-compact);
+  }
   .approved-shell.site-remodeling .family-site .f-hero h1 {
-    font-size: clamp(34px, 8.4vw, 46px);
-    margin-bottom: 18px;
+    font-size: clamp(36px, 8vw, 52px);
+    margin-bottom: 12px;
+    max-width: 20ch;
   }
   .approved-shell.site-remodeling .family-site .f-hero-copy > p.f-hero-support {
     max-width: none;
     font-size: 16px;
     line-height: 1.5;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+    margin-top: 20px;
+    gap: 10px;
   }
   .approved-shell.site-remodeling .home-direct {
     padding: 28px 0 0;
@@ -490,33 +625,38 @@
     margin-bottom: 10px;
     max-width: none;
   }
-  .approved-shell.site-remodeling .fold-form { gap: 6px 10px; }
-  .approved-shell.site-remodeling .fold-form input { min-height: 42px; }
+  .approved-shell.site-remodeling .fold-form { gap: 8px 10px; }
+  .approved-shell.site-remodeling .fold-form input,
+  .approved-shell.site-remodeling .fold-form textarea {
+    min-height: 44px;
+  }
   .approved-shell.site-remodeling .family-site section.fold-story {
     grid-template-columns: 1fr;
     row-gap: 20px;
   }
   .approved-shell.site-remodeling .family-site section.fold-story > img { height: 220px; }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-brand { gap: 8px; }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-brand-icon {
-    width: 28px;
-    height: 28px;
-  }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-original-wordmark {
-    width: 128px;
-    max-width: 34vw;
-    height: auto;
-    max-height: 22px;
-  }
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-endorsement {
-    font-size: 8px;
-    letter-spacing: 0.04em;
+  /* Footer clearance matches C7 bar (12+48+12 + safe-area). */
+  .approved-shell.site-remodeling .site-footer {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 }
 @media (max-width: 700px) {
-  .approved-shell.site-remodeling .family-site .f-hero { min-height: calc(100svh - 70px); }
+  .approved-shell.site-remodeling .family-site .f-hero { min-height: 0 !important; }
   .approved-shell.site-remodeling .family-site .f-container { width: calc(100% - 48px); }
   .approved-shell.site-remodeling .family-site section.fold-story h2 + p { margin-top: 22px; }
+}
+@media (max-width: 359px) {
+  /* Narrow phone: keep Display at B3 36; compact stacks further via wrap. */
+  .approved-shell.site-remodeling .family-site .f-hero .f-eyebrow {
+    margin-bottom: 8px !important;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero h1 {
+    margin-bottom: 10px;
+  }
+  .approved-shell.site-remodeling .family-site .f-hero-cta-stack {
+    margin-top: 16px;
+    gap: 8px;
+  }
 }
 
 /* Chat opens as the visible screen on a phone: light paper, starting at the
@@ -652,5 +792,565 @@ body[data-assistant-open="true"] [data-mobile-nav-bar] { display: none !importan
     border: 1px solid #2c302f22;
     border-radius: 12px;
     box-shadow: 0 18px 50px rgba(28, 31, 30, 0.18);
+  }
+}
+
+/* Standalone /estimate short form: keep the fold grid, but constrain width
+   and force the secondary cost-guide link onto its own row. */
+.approved-shell.site-remodeling .approved-interior .fold-request {
+  background: transparent;
+  padding: 0;
+}
+.approved-shell.site-remodeling .approved-interior .fold-convert {
+  max-width: 40rem;
+}
+.approved-shell.site-remodeling .fold-form .fold-secondary {
+  grid-column: 1 / -1;
+  display: inline-block;
+  margin-top: 4px;
+  font: 600 14px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #4c5f50;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* D5 short-form /estimate: ink on paper (AA), match homepage fold inputs */
+.approved-shell.site-remodeling .estimate-short-form-title {
+  color: #2c302f !important;
+  font: 300 clamp(36px, 5vw, 52px) / 1.08 var(--font-cormorant), Georgia, serif;
+  letter-spacing: -0.03em;
+}
+.approved-shell.site-remodeling .estimate-short-form .fold-form button[type="submit"],
+.approved-shell.site-remodeling .estimate-short-form .fold-submit {
+  min-height: 44px;
+}
+
+/*
+  Owner hard rule: never crop people out of photos on any breakpoint.
+  People photos must show full heads/bodies with natural headroom.
+*/
+.approved-shell.site-remodeling .family-people-photo,
+.approved-shell.site-remodeling .family-founder-block img,
+.approved-shell.site-remodeling #who-you-are-hiring img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto !important;
+  max-height: none !important;
+  object-fit: contain !important;
+  object-position: center top !important;
+  border-radius: 2px;
+}
+.approved-shell.site-remodeling .family-founder-block {
+  align-items: start;
+}
+.approved-shell.site-remodeling #who-you-are-hiring .family-founder-block {
+  gap: clamp(28px, 6vw, 72px);
+}
+@media (max-width: 900px) {
+  .approved-shell.site-remodeling #who-you-are-hiring .family-founder-block {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── v2.3 D2 / C10 estimate request wizard ─── */
+body[data-estimate-wizard="true"] [data-testid="assistant-launcher"],
+body[data-estimate-wizard="true"] .assistant-launcher,
+body[data-estimate-wizard="true"] .site-footer {
+  display: none !important;
+}
+.approved-shell.site-remodeling .estimate-wizard {
+  --ew-header: var(--site-header-h, 64px);
+  --ew-bar: calc(72px + env(safe-area-inset-bottom, 0px));
+  --ew-keyboard-inset: 0px;
+  position: fixed;
+  /* C10: lift the whole frame (incl. Back/Next) above the on-screen keyboard. */
+  inset: var(--ew-header) 0 var(--ew-keyboard-inset) 0;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+  background: #fbfaf6;
+  color: #2c302f;
+  font-family: var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .estimate-wizard-header {
+  flex: 0 0 auto;
+  padding: 12px 20px 10px;
+  border-bottom: 1px solid #2c302f20;
+  max-width: 40rem;
+  width: 100%;
+  margin-inline: auto;
+}
+.approved-shell.site-remodeling .estimate-wizard-eyebrow {
+  margin: 0;
+  font: 600 12px/1.3 var(--font-manrope), Arial, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4d6249;
+}
+.approved-shell.site-remodeling .estimate-wizard-title {
+  margin: 6px 0 0;
+  font: 300 clamp(26px, 5.5vw, 36px) / 1.08 var(--font-cormorant), Georgia, serif;
+  letter-spacing: -0.03em;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .estimate-wizard-progress {
+  margin-top: 12px;
+}
+.approved-shell.site-remodeling .estimate-wizard-progress-label {
+  display: block;
+  font: 600 13px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .estimate-wizard-progress-rail {
+  display: block;
+  margin-top: 8px;
+  height: 4px;
+  background: #2c302f18;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.approved-shell.site-remodeling .estimate-wizard-progress-rail > span {
+  display: block;
+  height: 100%;
+  background: #7d9479;
+  transition: width 300ms ease-out;
+}
+.approved-shell.site-remodeling .estimate-wizard-summary-chip {
+  margin: 10px 0 0;
+  display: inline-block;
+  padding: 6px 10px;
+  border: 1px solid #2c302f30;
+  border-radius: 2px;
+  font: 600 13px/1.3 var(--font-manrope), Arial, sans-serif;
+  color: #4d6249;
+  background: #f1ede4;
+}
+.approved-shell.site-remodeling .estimate-wizard-body {
+  flex: 1 1 auto;
+  overflow: hidden;
+  padding: 12px 20px 8px;
+  max-width: 40rem;
+  width: 100%;
+  margin-inline: auto;
+}
+.approved-shell.site-remodeling .estimate-wizard-step-title {
+  margin: 0;
+  font: 300 clamp(22px, 4.5vw, 30px) / 1.12 var(--font-cormorant), Georgia, serif;
+  letter-spacing: -0.02em;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .estimate-wizard-step-title:focus {
+  outline: none;
+}
+.approved-shell.site-remodeling .estimate-wizard-step-title:focus-visible {
+  outline: 2px solid #4d6249;
+  outline-offset: 4px;
+}
+.approved-shell.site-remodeling .estimate-wizard-step-copy {
+  margin: 8px 0 0;
+  font: 16px/1.5 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+  max-width: 42ch;
+}
+.approved-shell.site-remodeling .estimate-wizard-step-copy a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-shell.site-remodeling .estimate-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.approved-shell.site-remodeling .estimate-choice-card {
+  position: relative;
+  min-height: 48px;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid #2c302f33;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  cursor: pointer;
+  transition: border-color 200ms ease-out, background-color 200ms ease-out;
+}
+.approved-shell.site-remodeling .estimate-choice-card.is-selected {
+  border-color: #4d6249;
+  background: #7d947914;
+  box-shadow: inset 0 0 0 1px #4d6249;
+}
+.approved-shell.site-remodeling .estimate-choice-card-title {
+  display: block;
+  font: 600 16px/1.2 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .estimate-choice-card-sub {
+  display: block;
+  margin-top: 4px;
+  font: 13px/1.35 var(--font-manrope), Arial, sans-serif;
+  color: #62645f;
+}
+.approved-shell.site-remodeling .estimate-choice-card-check {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid #2c302f40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbfaf6;
+  background: transparent;
+}
+.approved-shell.site-remodeling .estimate-choice-card.is-selected .estimate-choice-card-check {
+  background: #4d6249;
+  border-color: #4d6249;
+}
+.approved-shell.site-remodeling .estimate-field-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+}
+.approved-shell.site-remodeling .estimate-field-stack label {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.approved-shell.site-remodeling .estimate-field-stack label > span,
+.approved-shell.site-remodeling .estimate-file-note {
+  font: 600 13px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .estimate-field-stack input,
+.approved-shell.site-remodeling .estimate-field-stack textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  border: 1px solid #2c302f33;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  font: 16px/1.4 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .estimate-field-stack textarea {
+  min-height: 88px;
+  resize: none;
+}
+.approved-shell.site-remodeling .estimate-files {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.approved-shell.site-remodeling .estimate-files li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  font: 14px/1.4 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .estimate-files button {
+  min-height: 44px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: #4d6249;
+  font: 600 13px/1 var(--font-manrope), Arial, sans-serif;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .estimate-review {
+  margin: 16px 0 0;
+  display: grid;
+  gap: 12px;
+}
+.approved-shell.site-remodeling .estimate-review > div {
+  border: 1px solid #2c302f20;
+  border-radius: 2px;
+  padding: 12px 14px;
+  background: #fff;
+}
+.approved-shell.site-remodeling .estimate-review dt {
+  font: 600 12px/1.3 var(--font-manrope), Arial, sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4d6249;
+}
+.approved-shell.site-remodeling .estimate-review dd {
+  margin: 6px 0 0;
+  font: 16px/1.45 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+  position: relative;
+  padding-right: 48px;
+}
+.approved-shell.site-remodeling .estimate-edit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  color: #4d6249;
+  font: 600 13px/1 var(--font-manrope), Arial, sans-serif;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .estimate-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.approved-shell.site-remodeling .estimate-wizard-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #8b3a3a55;
+  background: #f8eaea;
+  color: #2c302f;
+  font: 14px/1.4 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .estimate-wizard-bar {
+  flex: 0 0 auto;
+  border-top: 1px solid #2c302f20;
+  background: #fbfaf6;
+  padding: 10px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  max-width: 40rem;
+  width: 100%;
+  margin-inline: auto;
+}
+.approved-shell.site-remodeling .estimate-wizard-reassure {
+  margin: 0 0 8px;
+  text-align: center;
+  font: 13px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #4d6249;
+}
+.approved-shell.site-remodeling .estimate-wizard-bar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.approved-shell.site-remodeling .estimate-wizard-back,
+.approved-shell.site-remodeling .estimate-wizard-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 2px;
+  font: 600 16px/1 var(--font-manrope), Arial, sans-serif;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .estimate-wizard-back {
+  background: transparent;
+  color: #2c302f;
+  border: 1px solid #2c302f;
+}
+.approved-shell.site-remodeling .estimate-wizard-back-spacer {
+  width: 88px;
+  flex-shrink: 0;
+}
+.approved-shell.site-remodeling .estimate-wizard-next {
+  flex: 1;
+  background: #2c302f;
+  color: #fbfaf6;
+  border: 1px solid #2c302f;
+}
+.approved-shell.site-remodeling .estimate-wizard-next:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.approved-shell.site-remodeling .estimate-spin {
+  animation: estimate-spin 0.8s linear infinite;
+}
+@keyframes estimate-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .approved-shell.site-remodeling .estimate-wizard-progress-rail > span,
+  .approved-shell.site-remodeling .estimate-spin {
+    transition: none;
+    animation: none;
+  }
+}
+@media (max-width: 639px) {
+  .approved-shell.site-remodeling .estimate-choice-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .approved-shell.site-remodeling .estimate-choice-card-sub {
+    display: none;
+  }
+  .approved-shell.site-remodeling .estimate-wizard-header,
+  .approved-shell.site-remodeling .estimate-wizard-body,
+  .approved-shell.site-remodeling .estimate-wizard-bar {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .approved-shell.site-remodeling .estimate-wizard-reassure {
+    display: none;
+  }
+}
+@media (max-width: 359px) {
+  .approved-shell.site-remodeling .estimate-wizard-title {
+    font-size: 24px;
+  }
+  .approved-shell.site-remodeling .estimate-wizard-step-copy {
+    display: none;
+  }
+  .approved-shell.site-remodeling .estimate-choice-grid {
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .approved-shell.site-remodeling .estimate-choice-card {
+    padding: 10px 12px;
+  }
+  .approved-shell.site-remodeling .estimate-field-stack {
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .approved-shell.site-remodeling .estimate-field-stack input,
+  .approved-shell.site-remodeling .estimate-field-stack textarea {
+    min-height: 44px;
+    padding: 10px 12px;
+  }
+}
+
+/* C10: with the keyboard open, collapse non-essential chrome so fields + bar fit. */
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-eyebrow,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-title,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-summary-chip,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-step-copy,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-step-title,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-reassure,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-file,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-files,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-file-note {
+  display: none;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-header {
+  padding-top: 6px;
+  padding-bottom: 4px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-progress {
+  margin-top: 0;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-body {
+  padding-top: 6px;
+  padding-bottom: 4px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack {
+  gap: 8px;
+  margin-top: 6px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack input,
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack textarea {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-field-stack textarea {
+  min-height: 44px;
+  height: 44px;
+}
+body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wizard-bar {
+  /* Keyboard replaces the home-indicator band; drop safe-area while lifted. */
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+/* Interior estimate page: wizard owns the viewport under the sticky header. */
+.approved-shell.site-remodeling .interior-estimate {
+  min-height: 0;
+}
+
+/* ─── v2.3 C14 planning range explorer ─── */
+.approved-shell.site-remodeling .planning-range-explorer .planning-range-choices {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 28px;
+}
+.approved-shell.site-remodeling .planning-range-card {
+  position: relative;
+  min-height: 48px;
+  padding: 14px 16px;
+  text-align: left;
+  border: 1px solid #2c302f33;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  font: 600 16px/1.2 var(--font-manrope), Arial, sans-serif;
+  cursor: pointer;
+  transition: border-color 200ms ease-out, background-color 200ms ease-out;
+}
+.approved-shell.site-remodeling .planning-range-card.is-selected {
+  border-color: #4d6249;
+  background: #7d947914;
+  box-shadow: inset 0 0 0 1px #4d6249;
+}
+.approved-shell.site-remodeling .planning-range-card-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid #2c302f40;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fbfaf6;
+}
+.approved-shell.site-remodeling .planning-range-card.is-selected .planning-range-card-check {
+  background: #4d6249;
+  border-color: #4d6249;
+}
+.approved-shell.site-remodeling .planning-range-result {
+  margin-top: 24px;
+  padding: 24px;
+  background: #f1ede4;
+  border: 1px solid #2c302f20;
+  border-radius: 2px;
+  max-width: 42rem;
+}
+.approved-shell.site-remodeling .planning-range-result-label {
+  margin: 0;
+  font: 600 12px/1.3 var(--font-manrope), Arial, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #4d6249;
+}
+.approved-shell.site-remodeling .planning-range-result-figure {
+  margin: 10px 0 0;
+  font: 300 clamp(28px, 4vw, 40px) / 1.1 var(--font-cormorant), Georgia, serif;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .planning-range-result-detail,
+.approved-shell.site-remodeling .planning-range-result-source {
+  margin: 12px 0 0;
+  font: 16px/1.55 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+  max-width: 48ch;
+}
+.approved-shell.site-remodeling .planning-range-result-source a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.approved-shell.site-remodeling .planning-range-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  margin-top: 24px;
+}
+@media (max-width: 639px) {
+  .approved-shell.site-remodeling .planning-range-explorer .planning-range-choices {
+    grid-template-columns: 1fr;
   }
 }
