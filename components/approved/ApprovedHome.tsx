@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import {type CSSProperties, type ReactNode} from 'react';
 import {ArrowUpRight} from 'lucide-react';
 import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
@@ -36,7 +37,7 @@ return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.acce
   <a className="f-link" href="/design-ideas">Browse design ideas <Arrow/></a>
  </section>
  {processBlock}
- <section className="f-value"><img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><a className="f-link" href="#request">Request a quote<Arrow/></a></div></section>
+ <section className="f-value"><img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div></section>
  <PlanningRangeExplorer />
  <section className="f-section f-container" id="who-you-are-hiring">
   <div className="f-two family-founder-block">

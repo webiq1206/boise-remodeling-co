@@ -58,6 +58,7 @@ jobs:
           P5_TEST_BASE_URL=http://127.0.0.1:5000 node scripts/p5-exit-browser.mjs
           P5_TEST_BASE_URL=http://127.0.0.1:5000 P5_TEST_BROWSER=webkit node scripts/p5-exit-browser.mjs
           node scripts/p5-admin-pricing-browser.mjs
+          node scripts/test-request-history-browser.mjs
       - name: Offline evidence guard regressions
         run: node --test tests/ci-evidence.test.mjs
       - name: Package complete evidence within storage limit
