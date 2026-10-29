@@ -1,15 +1,21 @@
+import {ESTIMATOR_BRAND} from './brand.ts';
+
 /**
- * Which routes the estimator app owns (skip marketing chrome).
+ * Which routes the estimator owns.
  *
- * Nested routes under `/estimate/` (scope, preview, etc.) are the one-page estimator app: they carry
- * their own brand bar, step progress and exit control. Marketing navigation around those routes
- * costs about a third of a phone screen before any content.
+ * The estimator is a one-page app: it carries its own brand bar, its own step progress and its own
+ * exit control. Marketing navigation and a marketing footer around it are chrome stacked on top of an
+ * app that already has some, and on a phone they cost about a third of the screen before any content.
  *
- * `/estimate` itself is the D2 short quote-request wizard (EstimateRequestWizard). It keeps
- * marketing navigation (not the estimator app chrome) and `.approved-shell.site-remodeling`
- * tokens; Navigation hides the promotional bottom bar while the wizard owns the screen.
+ * This lives in the shared engine, with the estimator, because every brand site needs the same answer
+ * and each one wires its own chrome. It is a list for the same reason isPortalPath is: the footer
+ * carried a private copy naming "/estimate" and "/estimate/p5-preview" but not "/estimate/scope" -
+ * the one route customers actually use - so every real estimate rendered a full marketing footer
+ * below it (owner report 2026-09-23, mobile).
  */
-export function isEstimatorPath(pathname: string | null | undefined): boolean {
+export function isEstimatorPath(pathname: string | null | undefined, brandId:string=ESTIMATOR_BRAND.id): boolean {
   if (!pathname) return false;
-  return pathname.startsWith('/estimate/');
+  // Remodeling's public entry is its new short request wizard. Retained nested
+  // estimator routes still own their full-screen chrome on every site.
+  return (pathname === '/estimate' && brandId !== 'remodeling') || pathname.startsWith('/estimate/');
 }

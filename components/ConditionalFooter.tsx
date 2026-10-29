@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Footer } from "@/components/Footer";
 import { RegistrationLine, registrationPresentation } from "@/components/RegistrationLine";
 import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
+import { isShortRequestPath } from "@/lib/shortRequestRoutes";
 import { isPortalPath } from "@/lib/portalRoutes";
 
 export function ConditionalFooter() {
@@ -24,6 +25,6 @@ export function ConditionalFooter() {
     );
   }
   // Public /estimate short-request wizard owns the viewport; hide marketing footer.
-  if (pathname === "/estimate") return null;
+  if (isShortRequestPath(pathname)) return null;
   return <Footer hideRegistration={registrationPresentation(pathname) === "hidden"} />;
 }

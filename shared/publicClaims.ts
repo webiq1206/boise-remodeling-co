@@ -9,7 +9,7 @@ export const SHOW_FOUNDING_YEAR = false;
 export const SHOW_UNPROVEN_SATISFACTION_GUARANTEE = false;
 
 const FOUNDING_YEAR_CLAIM =
-  /,?\s*founded(?:\s+in)?\s*:?\s*2020\b(?:\s+and\b)?,?\s*/gi;
+  /,?\s*founded(?:\s+in(?:\s+Colorado\s+in)?)?\s*:?\s*2020\b(?:\s+and\b)?,?\s*/gi;
 
 /**
  * Drop "since 2020", "founded in 2020", "founded 2020", and "EST 2020"

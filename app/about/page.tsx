@@ -18,6 +18,7 @@ import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
 import { CITIES, TREASURE_VALLEY_CITIES } from "@/shared/contentData";
 import { CTA_PRIMARY } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
+import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
 import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -93,8 +94,8 @@ export default function AboutPage() {
               Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four
               companies of P5 Home Co. It is run by Nick Perkins, a construction project manager with a
               bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
-              decade of work from small renovations to multimillion-dollar custom homes. He founded P5 in
-              Colorado in 2020 and moved to the Treasure Valley with his family in 2025.{" "}
+              decade of work from small renovations to multimillion-dollar custom homes.{" "}
+              {SHOW_FOUNDING_YEAR ? 'He founded P5 in Colorado in 2020 and moved to the Treasure Valley with his family in 2025.' : 'He moved to the Treasure Valley with his family in 2025.'}{" "}
               <a
                 href="https://p5homeco.com/about"
                 className="underline underline-offset-2"

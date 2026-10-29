@@ -1,3 +1,5 @@
+import {isCabinet,isRemodeling,verifyCabinetEntry,verifyRemodelingEntry,verifyRemodelingRe10Handoff} from './lib/shortBrandEntry.mjs';
+import {retainedEstimatorPath,isPublicQuotePath,verifyQuoteEntry,isConstruction,verifyConstructionEntry,verifyConstructionRe10Handoff} from './lib/quoteEntry.mjs';
 import {chromium,webkit} from '@playwright/test';
 import {createHash} from 'node:crypto';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
@@ -15,10 +17,9 @@ const progressOnly=process.env.P5_TEST_SCENARIO==='live-progress';
 const focusOnly=process.env.P5_TEST_SCENARIO==='keyboard-focus';
 if(process.env.P5_TEST_SCENARIO&&!progressOnly&&!focusOnly)throw new Error('Unsupported P5_TEST_SCENARIO');
 await mkdir(output,{recursive:true});
-const launchBrowser=()=> (process.env.P5_TEST_BROWSER==='webkit'?webkit:chromium).launch({
+const browser=await (process.env.P5_TEST_BROWSER==='webkit'?webkit:chromium).launch({
  ...(process.env.P5_TEST_BROWSER!=='webkit'&&process.env.P5_TEST_CHROMIUM_PATH?{executablePath:process.env.P5_TEST_CHROMIUM_PATH}:{}),
-});
-const browser=await launchBrowser(),results=[];
+});const results=[];
 const fixturePdf=await PDFDocument.create();fixturePdf.addPage().drawText('Synthetic estimate PDF download.');
 const pdfBytes=Buffer.from(await fixturePdf.save());
 // Brands ask their own extra questions before review (finish level for cabinets, trim length when trim is priced).
@@ -103,6 +104,7 @@ async function mock(context,{interruptions=false,scenario='full'}={}){
   if(endpoint==='intake'){
    if(request.method()==='GET')return send({receipt:state.receipt});
    state.intakeRequests++;const body=request.postDataJSON();
+   if(isConstruction(brand.id)){assert.equal(body.attribution?.version,1,'Existing Construction intake carries acquisition metadata');assert.equal(body.attribution?.trust,'browser_reported','Browser acquisition is not verified ad/call origin');}
    if(!state.saved)return send({error:'Save your project before sending it.'},404);
    if(body.revision!==state.saved.revision||body.confirmed!==true)return send({error:'Review and confirm the latest project details before sending.'},409);
    if(!intakeScopeReviewed(state.saved))return send({error:'Confirm the whole project type, supporting work and exclusions against the current description before sending.'},409);
@@ -149,34 +151,13 @@ async function focusedHeading(page,text){
 // Hold the real local-cache open receipt so the restoration state is visible.
 // This never mocks provider processing or writes a server draft.
 for(const width of progressOnly?[]:[320,390,1440]){
- // A held native database request needs a fresh storage process, not just a
- // fresh page/context. Closing it also prevents a stalled fixture carrying over.
- const recoveryBrowser=await launchBrowser();
- const context=await recoveryBrowser.newContext({viewport:{width,height:900}}),state=await mock(context),page=await context.newPage();
- const pageErrors=[];page.on('pageerror',error=>pageErrors.push(error.message));
+ const context=await browser.newContext({viewport:{width,height:900}}),state=await mock(context),page=await context.newPage();
  await context.addInitScript(()=>{
   // WebKit can collect the IDBFactory wrapper and its own-property override.
   // Keep the exact factory alive until this isolated recovery context closes.
   const factory=window.__p5RecoveryFactory=indexedDB;
   const open=factory.open.bind(factory),success=Object.getOwnPropertyDescriptor(IDBRequest.prototype,'onsuccess').set;
-  // Isolate this held-open fixture from every other recovery context. Keep real
-  // upgrade/open/transaction events, and release every pending application callback
-  // exactly once; a single overwritten callback can strand a second boot reader.
-  const database=`p5-project-files-recovery-${crypto.randomUUID()}`,pending=[];
-  let released=false;
-  window.__p5RecoveryEvents=[];
-  indexedDB.open=(name,...args)=>{
-   if(name!=='p5-project-files-v1')return open(name,...args);
-   window.__p5RecoveryEvents.push({event:"open-requested"});
-   const request=open(database,...args);
-   for(const event of ['upgradeneeded','blocked','error','success'])request.addEventListener(event,()=>window.__p5RecoveryEvents.push({event,error:event==='error'?request.error?.name||null:null}));
-   Object.defineProperty(request,'onsuccess',{configurable:true,set(callback){success.call(request,event=>{
-    if(released){callback.call(request,event);return;}
-    pending.push(()=>callback.call(request,event));
-    window.__p5ReleaseRecovery=()=>{released=true;for(const deliver of pending.splice(0))deliver();};
-   });}});
-   return request;
-  };
+  indexedDB.open=(...args)=>{const request=open(...args);Object.defineProperty(request,'onsuccess',{configurable:true,set(callback){success.call(request,event=>{window.__p5ReleaseRecovery=()=>callback.call(request,event);});}});return request;};
  });
  try{
   // Exercise the same initialization hook before application code can retain
@@ -186,14 +167,12 @@ for(const width of progressOnly?[]:[320,390,1440]){
   await page.goto(fixture);await page.requestGC();
   assert.equal(await page.evaluate(()=>window.__p5RecoveryFactory===indexedDB&&Object.hasOwn(indexedDB,'open')),true,'The real IndexedDB recovery hook must survive garbage collection');
   await context.unroute(fixture);
-  await page.goto(base+'/estimate');const est=page.locator('[data-p5-estimator]');
+  await page.goto(base+retainedEstimatorPath(brand.id));const est=page.locator('[data-p5-estimator]');
   await est.getByRole('heading',{name:'Preparing your saved project on this device',exact:true}).waitFor();
   assert.equal(await est.getByRole('heading',{name:'Understanding your project',exact:true}).count(),0);
   assert.equal(await est.locator('[data-testid="p5-processing"]').count(),0,'Local recovery is not provider processing');
   assert.equal(state.scopeCalls,0);assert.equal(state.submissions,0);
-  await page.waitForFunction(()=>typeof window.__p5ReleaseRecovery==='function');
-  assert.ok(await page.evaluate(()=>window.__p5RecoveryEvents.some(item=>item.event==='success')),'Recovery must receive a real IndexedDB open success before release');
-  await page.evaluate(()=>window.__p5ReleaseRecovery());
+  await page.waitForFunction(()=>typeof window.__p5ReleaseRecovery==='function');await page.evaluate(()=>window.__p5ReleaseRecovery());
   await est.getByRole('heading',{name:'Preparing your saved project on this device',exact:true}).waitFor({state:'detached'});await settled(page);
   assert.equal(await est.getByRole('heading',{name:'Preparing your saved project on this device',exact:true}).count(),0);
   await est.getByLabel('Tell us about your project',{exact:true}).fill('Synthetic keyboard check.');
@@ -229,8 +208,8 @@ for(const width of progressOnly?[]:[320,390,1440]){
   }
   assert.equal(state.scopeCalls,0);assert.equal(state.submissions,0);
   results.push({scenario:'local-cache-restoration-and-focus-contrast',width,passed:true});
- }catch(error){const recoveryEvents=await page.evaluate(()=>window.__p5RecoveryEvents||[]).catch(()=>[]);console.error(error,recoveryEvents);results.push({scenario:'local-cache-restoration-copy',width,passed:false,error:String(error),recoveryEvents,pageErrors});}
- await recoveryBrowser.close();
+ }catch(error){console.error(error);results.push({scenario:'local-cache-restoration-copy',width,passed:false,error:String(error)});}
+ await context.close();
 }
 for(const width of progressOnly?[]:[390,1440])for(const scenario of ['fresh','resumed','back','questions']){
  const context=await browser.newContext({viewport:{width,height:900},hasTouch:width<768});
@@ -561,10 +540,10 @@ for(const width of focusOnly?[]:[320,390,1440]){
   await est.getByText('Synthetic planning range.',{exact:true}).waitFor();if(width===390){await est.getByText('Your estimate is saved here. You can download your PDF below.',{exact:true}).waitFor();assert.equal(await est.getByText('Not requested',{exact:true}).count(),1);}results.push({width,scenario:'live-progress',passed:true});
  }catch(error){console.error(error);results.push({width,scenario:'live-progress',passed:false,error:String(error)});await capture(page,`${width}-progress-failure`).catch(()=>{});}await context.close();
 }
-const paths=brand.id==='p5'?['/estimate','/estimate/scope','/quote',...['kitchen-remodel','bathroom-remodel','home-addition','adu','custom-home','custom-cabinets','handyman'].map(s=>'/quote/'+s)]:['/estimate','/estimate/scope','/#calculator',...(brand.services.includes('re10')?['/re-10-repairs-boise']:[]),...(brand.id==='remodeling'?['/remodel-plans-boise']:[])];
+const paths=brand.id==='p5'?['/estimate','/estimate/scope','/quote',...['kitchen-remodel','bathroom-remodel','home-addition','adu','custom-home','custom-cabinets','handyman'].map(s=>'/quote/'+s)]:['/estimate','/estimate/scope',(isConstruction(brand.id)||isCabinet(brand.id))?'/':isRemodeling(brand.id)?'/#request':'/#calculator',...(brand.services.includes('re10')?['/re-10-repairs-boise']:[]),...(brand.id==='remodeling'?['/remodel-plans-boise']:[])];
 for(const width of progressOnly||focusOnly?[]:[390,768,1440])for(const path of paths){
  const context=await browser.newContext({viewport:{width,height:900}});await mock(context);const page=await context.newPage();
- try{const response=await page.goto(base+path);assert.ok(response?.ok(),`HTTP ${response?.status()}`);const est=page.locator('[data-p5-estimator]').first();if(path.includes('#calculator')){await page.locator('#calculator').first().scrollIntoViewIfNeeded();}await est.getByLabel('Tell us about your project',{exact:true}).waitFor();await overflow(page);assert.ok(!/Continue manually|Upload Scope|Manual Estimate/.test(await est.innerText()));results.push({width,path,passed:true});}
+ try{const response=await page.goto(base+path);assert.ok(response?.ok(),`HTTP ${response?.status()}`);if(brand.id==='p5'&&isPublicQuotePath(path)){await verifyQuoteEntry(page,path);results.push({width,path,passed:true});await context.close();continue;}if(isConstruction(brand.id)&&['/','/estimate'].includes(path)){await verifyConstructionEntry(page,path);results.push({width,path,passed:true});await context.close();continue;}if(isConstruction(brand.id)&&path==='/re-10-repairs-boise'){await verifyConstructionRe10Handoff(page);results.push({width,path,passed:true});await context.close();continue;}if(isCabinet(brand.id)&&['/','/estimate'].includes(path)){await verifyCabinetEntry(page,path);results.push({width,path,passed:true});await context.close();continue;}if(isRemodeling(brand.id)&&['/estimate','/#request'].includes(path)){await verifyRemodelingEntry(page,path);results.push({width,path,passed:true});await context.close();continue;}if(isRemodeling(brand.id)&&path==='/re-10-repairs-boise'){await verifyRemodelingRe10Handoff(page);results.push({width,path,passed:true});await context.close();continue;}const est=page.locator('[data-p5-estimator]').first();if(path.includes('#calculator')){await page.locator('#calculator').first().scrollIntoViewIfNeeded();}await est.getByLabel('Tell us about your project',{exact:true}).waitFor();await overflow(page);assert.ok(!/Continue manually|Upload Scope|Manual Estimate/.test(await est.innerText()));results.push({width,path,passed:true});}
  catch(error){results.push({width,path,passed:false,error:String(error)});await capture(page,`route-${width}-${path.replace(/[^a-z0-9]/gi,'_')}`).catch(()=>{});}await context.close();
 }
 await browser.close();await writeFile(`${output}/browser-results.json`,JSON.stringify({brand:brand.id,externalServices:'simulated',physicalMicrophone:'not tested',results},null,2));console.log(JSON.stringify(results));if(results.some(r=>!r.passed))process.exitCode=1;

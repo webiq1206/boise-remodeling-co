@@ -387,6 +387,7 @@ export function EstimateRequestWizard() {
                   Your name
                 </h2>
                 <p className="estimate-wizard-step-copy">We reply within one business day.</p>
+                <TextReplyLine className="estimate-wizard-step-copy" />
                 <div className="estimate-field-stack">
                   <label>
                     <span>Name</span>
@@ -514,6 +515,7 @@ export function EstimateRequestWizard() {
                 <p className="estimate-wizard-step-copy">
                   Confirm the details, then send. Free to request. We reply within one business day.
                 </p>
+                <TextReplyLine className="estimate-wizard-step-copy" />
                 <dl className="estimate-review">
                   <div>
                     <dt>Project</dt>

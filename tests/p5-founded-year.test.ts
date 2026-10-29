@@ -41,8 +41,9 @@ test('the 2020 founding year stays in source and stays off the public flag', () 
   assert.equal(GBP_NAP.founded, '2020');
   assert.equal(TRUST_ITEMS.includes(`Est. ${PROOF_STATS.established}`), false);
   const aboutSource = readFileSync('app/about/page.tsx', 'utf8');
-  assert.match(aboutSource, /founded in 2020/);
-  assert.match(aboutSource, /since\{\x27 \x27\}\s*<em className="brc-accent">2020<\/em>/);
+  assert.match(aboutSource, /SHOW_FOUNDING_YEAR/);
+  assert.match(aboutSource, /founded P5 in Colorado in 2020/);
+
   assert.match(readFileSync('lib/page-metadata.ts', 'utf8'), /founded 2020/);
   assert.match(readFileSync('shared/gbpProfile.ts', 'utf8'), /Founded in 2020/);
 });
@@ -51,7 +52,8 @@ test('published pages, schema, and llms files do not render the 2020 founding cl
   const aboutHtml = renderToStaticMarkup(React.createElement(AboutPage));
   const heroHtml = renderToStaticMarkup(React.createElement(HeroSection));
   const homeHtml = renderToStaticMarkup(React.createElement(ApprovedHome, { hero: null }));
-  assert.match(aboutHtml, /Boise Remodeling Co, design-build/);
+  assert.match(aboutHtml, /About Boise Remodeling/);
+  assert.doesNotMatch(aboutHtml, /founded[^<.]{0,80}2020/i);
   assert.equal(PROOF_STATS.projectsCompleted, '100+');
   assert.equal(heroHtml.includes('100+ Projects'), false);
   assert.match(homeHtml, /Remodeling contractors in Boise/);

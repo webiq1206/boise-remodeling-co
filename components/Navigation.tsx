@@ -6,6 +6,7 @@ import { NavEstimateButton } from "@/components/modals/NavEstimateButton";
 import { SaveContactLink } from "@/components/SaveContactLink";
 import { Button } from "@/components/ui/button";
 import { isEstimatorPath } from "@/lib/p5/estimatorRoutes";
+import { isShortRequestPath } from "@/lib/shortRequestRoutes";
 import { isPortalPath } from "@/lib/portalRoutes";
 import { cn } from "@/lib/utils";
 const REQUEST_LABEL = "Request a quote";
@@ -55,7 +56,7 @@ export function Navigation() {
   const wizardOwnsBottom =
     (pathname?.startsWith("/re-10") ?? false) ||
     (pathname?.startsWith("/remodel-plans") ?? false) ||
-    pathname === "/estimate";
+    isShortRequestPath(pathname);
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 1180px)");

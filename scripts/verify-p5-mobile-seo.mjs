@@ -1,10 +1,10 @@
 import {chromium} from '@playwright/test';
 import {writeFile,mkdir} from 'node:fs/promises';
 import assert from 'node:assert/strict';
-const base=process.env.P5_TEST_ORIGIN||'http://127.0.0.1:5000';const out='p5-mobile-seo-verification';await mkdir(out,{recursive:true});
+const base=process.env.P5_TEST_ORIGIN||'http://127.0.0.1:5000';if(!['127.0.0.1','localhost'].includes(new URL(base).hostname))throw Error('Local isolated audit only');const out='p5-mobile-seo-verification';await mkdir(out,{recursive:true});
 const browser=await chromium.launch();const results={pages:[],mobile:[],errors:[],scope:'Built production app in Chromium emulation; not physical devices or a claim of live deployment.'};
 const delay=ms=>new Promise(r=>setTimeout(r,ms));
-const ctx=await browser.newContext({viewport:{width:390,height:844},hasTouch:true});const page=await ctx.newPage();page.setDefaultTimeout(15000);
+const ctx=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,serviceWorkers:'block'});await ctx.route('**/*',r=>{const u=new URL(r.request().url());return u.origin===new URL(base).origin&&!u.pathname.startsWith('/api/')&&r.request().method()==='GET'?r.continue():r.abort('blockedbyclient');});const page=await ctx.newPage();page.setDefaultTimeout(15000);
 const visible=locator=>locator.evaluateAll(els=>els.some(e=>{const s=getComputedStyle(e),r=e.getBoundingClientRect();return r.width>0&&r.height>0&&s.display!=='none'&&s.visibility!=='hidden'&&s.opacity!=='0';}));
 try{
  for(const width of [320,390,768,1440]){
@@ -12,9 +12,9 @@ try{
   const bar=page.locator('[data-mobile-nav-bar]');
   const top=await page.evaluate(()=>({scrollY,overflow:document.documentElement.scrollWidth>innerWidth+1}));
   assert.ok(top.scrollY<=1,`Homepage jumped to ${top.scrollY}`);assert.equal(top.overflow,false,`Horizontal overflow at ${width}px`);
-  assert.equal(await visible(bar),false,`Sticky CTA visible over hero at ${width}px`);
+  assert.equal(await visible(bar),width<1180,`Approved C7 first-screen CTA visibility at ${width}px`);
   await page.screenshot({path:`${out}/hero-${width}.png`});
-  if(width<768){
+  if(width<1180){
    let shown=false;
    for(let y=400;y<10000;y+=350){await page.evaluate(y=>scrollTo({top:y,behavior:'instant'}),y);await delay(100);if(await visible(bar)){shown=true;break;}}
    assert.ok(shown,`Mobile CTA never appears after the hero at ${width}px`);
@@ -22,8 +22,11 @@ try{
    assert.ok(controls.some(c=>c.href?.startsWith('tel:')&&c.text?.includes('Call')),'Missing labeled Call control');
    assert.ok(controls.every(c=>c.height>=44),'Mobile action too small');
    await page.screenshot({path:`${out}/actions-${width}.png`});
-   await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await delay(150);assert.equal(await visible(bar),false,'CTA stays visible after returning to hero');
-   results.mobile.push({width,hiddenOverHero:true,visibleAfterHero:true,callLabeled:true});
+   await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await delay(150);assert.equal(await visible(bar),true,'Approved mobile CTA remains available after returning to hero');
+   const primary=bar.locator('a[href="/#request"]');assert.equal(await primary.count(),1,'One primary quote destination');
+   assert.ok(await primary.evaluate(el=>{const r=el.getBoundingClientRect();return el.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));}),'Primary CTA is unobstructed');
+   await primary.click();await page.waitForURL(url=>url.hash==='#request');await page.locator('#request-form form').waitFor({state:'visible'});assert.equal(new URL(page.url()).hash,'#request','CTA targets the actual homepage request form');assert.ok(await page.locator('#request-form input[name="name"]').isVisible());
+   results.mobile.push({width,visibleOverHero:true,visibleAfterHero:true,callLabeled:true});
   }
  }
  const requested=new Set();async function sitemap(url){if(requested.has(url))return [];requested.add(url);const r=await page.request.get(url);if(!r.ok())return [];const body=await r.text();const urls=[...body.matchAll(/<loc>(.*?)<\/loc>/g)].map(m=>m[1].replaceAll('&amp;','&'));if(body.includes('<sitemapindex'))return (await Promise.all(urls.map(u=>sitemap(base+new URL(u).pathname)))).flat();return urls;}
@@ -39,6 +42,7 @@ try{
  }
  for(const field of ['title','description']){const used=new Map();for(const p of results.pages.filter(p=>!p.robots.includes('noindex'))){assert.ok(!used.has(p[field]),`Duplicate ${field}: ${p.route} and ${used.get(p[field])}`);used.set(p[field],p.route);}}
  for(const asset of ['/brand/page-preview.png','/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png','/brand/png/seal/any/boise-remodeling-co-seal-on-charcoal-512px.png','/brand/search-icon-96.png','/brand/search-icon-180.png'])assert.equal((await page.request.get(base+asset)).status(),200,`Missing image: ${asset}`);
+ assert.deepEqual(results.errors,[],'Every audited public route returns HTTP 200');
  results.completed=true;
  console.log(JSON.stringify({pages:results.pages.length,mobile:results.mobile,errors:results.errors}));
 }finally{await writeFile(`${out}/verification.json`,JSON.stringify(results,null,2));await browser.close();}

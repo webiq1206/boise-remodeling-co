@@ -20,6 +20,7 @@ test('SHOW_FOUNDING_YEAR is off and drops only the founding-year claims', () => 
     'Boise Remodeling Co is a design-build remodeling contractor in Boise, part of P5.',
   );
   assert.equal(publishFoundingCopy('Design-build remodeler since 2020'), 'Design-build remodeler');
+  assert.equal(publishFoundingCopy('Boise Remodeling Co, founded in Colorado in 2020 and part of P5.'), 'Boise Remodeling Co, part of P5.');
   assert.equal(
     publishFoundingCopy('BOISE, the arc lines, EST 2020, CO, and BOISE REMODELING'),
     'BOISE, the arc lines, CO, and BOISE REMODELING',
@@ -69,8 +70,8 @@ test('founding-year sentences stay in source while the flag is off', () => {
   assert.match(pageMetadata, /Founded in 2020/);
   assert.match(aboutCopy, /since 2020/);
   assert.match(aboutCopy, /founded in 2020/);
-  assert.match(aboutPage, /founded in 2020/);
-  assert.match(aboutPage, /since 2020/);
+  assert.match(aboutPage, /SHOW_FOUNDING_YEAR/);
+  assert.match(aboutPage, /founded P5 in Colorado in 2020/);
   assert.match(readFileSync('shared/siteContent.ts', 'utf8'), /Est\. \$\{PROOF_STATS\.established\}/);
   assert.match(llms, /since 2020/);
   assert.match(llms, /Founded: 2020/);
