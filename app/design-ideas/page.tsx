@@ -39,7 +39,7 @@ export default function DesignIdeasPage() {
       url: '/design-ideas',
       items: GALLERY_PROJECTS.map((p) => ({
         name: p.title,
-        url: `/design-ideas#${p.id}`,
+        url: '/design-ideas#gallery',
       })),
     }),
   ];
@@ -49,24 +49,22 @@ export default function DesignIdeasPage() {
       <>
         <JsonLd data={schemas} />
         <PageHeroBand
-          eyebrow="Design ideas"
-          title={
-            <>
-              Remodeling design ideas for{' '}
-              <em className="brc-accent">Boise</em> homes
-            </>
-          }
-          description="Browse kitchen, bath, whole-home and addition layouts. Images are captioned for materials and design, not as completed customer jobs."
-          imageSrc={GALLERY_IMAGES.kitchenAfter}
+          imageSrc={GALLERY_IMAGES.kitchen.after}
           imageAlt="White kitchen with wood island and brass lighting"
-          breadcrumbs={<Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Design Ideas' }]} />}
-          actions={
-            <>
-              <EstimateCTA>{CTA_PRIMARY}</EstimateCTA>
-              <ConsultCTA variant="outline">{CTA_SECONDARY}</ConsultCTA>
-            </>
-          }
-        />
+        >
+          <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Design Ideas' }]} />
+          <p className="ed-eyebrow mt-6">Design ideas</p>
+          <h1 className="ed-display ed-statement-display mb-8">
+            Remodeling design ideas for <em className="brc-accent">Boise</em> homes
+          </h1>
+          <p className="ed-body max-w-2xl mb-6">
+            Browse kitchen, bath, whole-home and addition layouts. Images are captioned for materials and design, not as completed customer jobs.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <EstimateCTA>{CTA_PRIMARY}</EstimateCTA>
+            <ConsultCTA variant="outline">{CTA_SECONDARY}</ConsultCTA>
+          </div>
+        </PageHeroBand>
         <Section divider>
           <div className="container px-4">
             <p className="ed-body max-w-3xl">
@@ -79,8 +77,8 @@ export default function DesignIdeasPage() {
           </div>
         </Section>
         <ProjectGallerySection />
-        <EstimatePromptBand />
-        <Section variant="charcoal" divider>
+        <EstimatePromptBand title="Tell us about your remodel" description="Share your project details so the team can discuss the scope and next steps." />
+        <Section variant="inverse" divider>
           <div className="container px-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="ed-eyebrow text-inverse-muted">Next step</p>
