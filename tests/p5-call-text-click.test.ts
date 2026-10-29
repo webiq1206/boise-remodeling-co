@@ -227,12 +227,18 @@ test("call and text controls use the site phone and the listener stays in the ex
   assert.equal(SITE_CONFIG.phoneHref, "tel:+12084771169");
   assert.equal(SITE_CONFIG.phoneSmsHref, "sms:2084771169");
   const nav = readFileSync(new URL("../components/Navigation.tsx", import.meta.url), "utf8");
-  const headerAt = nav.indexOf('data-testid="link-call-mobile-header"');
-  const textAt = nav.indexOf('data-testid="link-text-mobile-header"');
-  const drawerAt = nav.indexOf('data-testid="mobile-nav-drawer"');
-  assert.ok(headerAt > 0 && textAt > headerAt && headerAt < drawerAt);
-  assert.ok(nav.slice(headerAt - 200, headerAt).includes("SITE_CONFIG.phoneHref"));
-  assert.ok(nav.slice(textAt - 200, textAt).includes("SITE_CONFIG.phoneSmsHref"));
+  // Premium: Call lives on the bottom bar; Text stays in the drawer. No stacked header Call/Chat.
+  const bottomCallAt = nav.indexOf('data-testid="button-call-mobile"');
+  const drawerPhoneAt = nav.indexOf('data-testid="link-phone-mobile-menu"');
+  const drawerTextAt = nav.indexOf('data-testid="link-text-mobile-menu"');
+  assert.ok(bottomCallAt > 0);
+  assert.ok(drawerPhoneAt > 0 && drawerTextAt > drawerPhoneAt);
+  assert.ok(nav.includes('href={SITE_CONFIG.phoneHref}'));
+  assert.ok(nav.includes('href={SITE_CONFIG.phoneSmsHref}'));
+  assert.match(nav.slice(bottomCallAt - 400, bottomCallAt + 80), /SITE_CONFIG\.phoneHref/);
+  assert.match(nav.slice(drawerTextAt - 400, drawerTextAt + 80), /SITE_CONFIG\.phoneSmsHref/);
+  assert.equal(nav.includes('data-testid="link-call-mobile-header"'), false);
+  assert.equal(nav.includes('data-testid="link-text-mobile-header"'), false);
   const clicks = readFileSync(new URL("../components/ConversionTracking.tsx", import.meta.url), "utf8");
   assert.match(clicks, /trackEvent\('contact_click'/);
   assert.equal(/trackEvent\(['"]conversion/.test(clicks), false);

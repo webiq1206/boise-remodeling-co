@@ -16,11 +16,14 @@ const homePage = readFileSync("app/page.tsx", "utf8");
 
 test("the first screen is the photograph and headline, and the short request follows", () => {
   assert.equal(hero.includes("use client"), false);
-  assert.match(hero, /<section className="f-hero">/);
+  assert.match(hero, /<section className="f-hero"/);
   assert.equal(hero.includes("fold-hero"), false);
-  const heroSection = hero.slice(hero.indexOf('<section className="f-hero">'), hero.indexOf("</section>"));
+  const heroStart = hero.indexOf('<section className="f-hero"');
+  const heroSection = hero.slice(heroStart, hero.indexOf("</section>", heroStart));
   assert.match(heroSection, /<img/);
   assert.match(heroSection, /<h1>/);
+  assert.match(heroSection, /f-brand-mark/);
+  assert.match(heroSection, /Boise Remodeling Co/);
   assert.equal(heroSection.includes("HeroConversion"), false);
   assert.equal(heroSection.includes("fold-form"), false);
   assert.match(hero, /<section className="fold-request" id="request"/);
@@ -34,9 +37,10 @@ test("the first screen is the photograph and headline, and the short request fol
   assert.match(css, /\.f-hero-cta-primary/);
   assert.match(nav, /data-p5-actions-ready="true"/);
   assert.doesNotMatch(nav, /button-chat-mobile/);
-  assert.match(convert, /className="fold-call"/);
-  assert.match(convert, /className="fold-chat"/);
-  assert.match(convert, /p5:assistant-open/);
+  // Premium: no redundant Call/Chat chrome on the homepage fold form.
+  assert.doesNotMatch(convert, /className="fold-call"/);
+  assert.doesNotMatch(convert, /className="fold-chat"/);
+  assert.doesNotMatch(convert, /p5:assistant-open/);
   assert.match(convert, /type="file"/);
   assert.match(convert, /image\/heic/);
   assert.match(convert, /Send request/);
@@ -45,8 +49,11 @@ test("the first screen is the photograph and headline, and the short request fol
   assert.match(convert, /type="email"/);
   assert.match(convert, /!email\.includes\("@"\)/);
   assert.match(route, /email: z\.string\(\)\.email\(\)/);
-  assert.match(nav, /data-testid="link-call-mobile-header"/);
-  assert.match(nav, /data-testid="link-text-mobile-header"/);
+  // Mobile header is menu-only; Call lives on the bottom bar (not stacked).
+  assert.doesNotMatch(nav, /data-testid="link-call-mobile-header"/);
+  assert.doesNotMatch(nav, /data-testid="link-text-mobile-header"/);
+  assert.match(nav, /data-testid="button-call-mobile"/);
+  assert.match(nav, /data-testid="button-begin-conversation-mobile"/);
   assert.match(contactPage, /<ConsultationForm/);
   assert.match(homePage, /<ConsultationForm/);
 });

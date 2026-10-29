@@ -86,9 +86,11 @@ export default function AboutPage() {
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
             </p>
-            <p className="ed-eyebrow">Real people. A higher standard.</p>
+            <p className="ed-eyebrow">BOISE REMODELING CO · MERIDIAN, IDAHO</p>
             <h1 className="ed-display ed-statement-display mb-8">
-              About Boise Remodeling <em className="brc-accent">Co</em>
+              The family behind
+              <br />
+              <em className="brc-accent">the work.</em>
             </h1>
             <p className="text-base md:text-lg max-w-2xl leading-relaxed mb-6">
               Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four
@@ -129,9 +131,19 @@ export default function AboutPage() {
                 sizes="(max-width: 1024px) 100vw, 1024px"
                 className="family-people-photo w-full h-auto rounded-sm"
               />
-
             </div>
           </Section>
+
+          <figure className="about-photo-break">
+            <Image
+              src="/images/about-oak-kitchen.webp"
+              alt="Bright kitchen remodel with oak cabinets and a white island in the Treasure Valley"
+              width={1600}
+              height={1000}
+              sizes="100vw"
+              className="w-full h-auto"
+            />
+          </figure>
 
           <Section divider>
             <div className="container px-4 max-w-3xl">

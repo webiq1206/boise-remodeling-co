@@ -4,7 +4,7 @@ import { SITE_IMAGES } from "@/shared/siteImages";
 /** Full-bleed photography band to break long light section stretches. */
 export function StatementBandSection() {
   return (
-    <section className="relative h-48 md:h-64 overflow-hidden">
+    <section className="relative h-56 md:h-80 lg:h-[28rem] overflow-hidden premium-photo-band">
       <Image
         src={SITE_IMAGES.statementBand}
         unoptimized // The 110 KB source is already compressed for this photographic band.
@@ -13,9 +13,9 @@ export function StatementBandSection() {
         loading="lazy"
         quality={65}
         sizes="100vw"
-        className="object-cover img-brand-grade"
+        className="object-cover img-brand-grade premium-photo-band-img"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-inverse/10 to-background/70" />
+      <div className="absolute inset-0 bg-gradient-to-t from-background/55 via-inverse/5 to-background/40" />
     </section>
   );
 }

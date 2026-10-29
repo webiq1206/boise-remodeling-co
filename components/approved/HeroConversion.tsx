@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { MessageSquare, Phone } from "lucide-react";
 import { TextReplyLine } from "@/components/TextReplyLine";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
 import {
@@ -11,7 +10,6 @@ import {
   type AcceptedInquiryResponse,
 } from "@/lib/inquiryTracking";
 import { captureMarketingAttribution } from "@/lib/marketingAttributionBrowser";
-import { SITE_CONFIG } from "@/shared/siteConfig";
 
 const MAX_FILES = 4;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
@@ -20,6 +18,10 @@ function digits(value: string): string {
   return value.replace(/\D/g, "");
 }
 
+/**
+ * Homepage short quote fold: single elegant form (name, phone, email, note).
+ * No Call/Chat chrome here; the sticky mobile bar and header own those paths.
+ */
 export function HeroConversion() {
   const [startedAt] = useState(() => Date.now());
   const [name, setName] = useState("");
@@ -94,24 +96,11 @@ export function HeroConversion() {
 
   return (
     <div className="fold-convert" id="request-form">
-      <div className="fold-actions">
-        <a className="fold-call" href={SITE_CONFIG.phoneHref}>
-          <Phone size={18} aria-hidden="true" />
-          Call
-        </a>
-        <button
-          type="button"
-          className="fold-chat"
-          onClick={() => window.dispatchEvent(new Event("p5:assistant-open"))}
-        >
-          <MessageSquare size={18} aria-hidden="true" />
-          Chat
-        </button>
-      </div>
       {done ? (
         <>
           <p className="fold-success" role="status">
-            Request received. We reply within one business day with questions or a time to visit. You get a written scope before any price.
+            Request received. We reply within one business day with questions or a time to visit. You
+            get a written scope before any price.
           </p>
           <TextReplyLine className="fold-text-reply" />
         </>

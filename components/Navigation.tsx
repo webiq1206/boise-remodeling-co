@@ -160,24 +160,9 @@ export function Navigation() {
 
           {/* Mobile menu - Radix Dialog gives focus trap, Escape, scroll-lock,
               inert background, and auto aria-expanded/aria-controls on the trigger. */}
+          {/* Mobile header: menu only. Call + Request live on the bottom bar
+              (B6 / brand profile). Extra Call/Text here stacked redundant chrome. */}
           <div className="flex min-[1180px]:hidden shrink-0 items-center gap-1">
-            <a
-              href={SITE_CONFIG.phoneHref}
-              data-testid="link-call-mobile-header"
-              className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-sm border border-white/30 px-2.5 text-[13px] font-medium text-foreground"
-              aria-label={`Call ${SITE_CONFIG.phone}`}
-            >
-              <Phone className="h-4 w-4" strokeWidth={1.5} aria-hidden />
-              Call
-            </a>
-            <a
-              href={SITE_CONFIG.phoneSmsHref}
-              data-testid="link-text-mobile-header"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-sm text-foreground"
-              aria-label={`Text ${SITE_CONFIG.phone}`}
-            >
-              <MessageSquare className="h-5 w-5" strokeWidth={1.5} aria-hidden />
-            </a>
             <Dialog.Root open={mobileOpen} onOpenChange={setMobileOpen}>
               <Dialog.Trigger asChild>
                 {/* The shared icon size is 36px, which suits dense admin
