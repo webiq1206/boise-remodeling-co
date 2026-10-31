@@ -503,11 +503,16 @@ export function LandingPageTemplate({
             </Reveal>
 
             {proof?.projects && proof.projects.length > 0 && (
-              <div className="mt-[clamp(40px,5vw,72px)] grid gap-6 sm:grid-cols-2">
+              <div className="ed-possibilities mt-[clamp(40px,5vw,72px)]">
                 {proof.projects.map((project, index) => (
                   <Reveal key={project.title}>
                     <article className="flex h-full flex-col" style={{ border: '1px solid var(--ed-line)' }}>
-                      <ProjectInspirationImage afterSrc={imageSlots.proof[index] ?? project.afterImageUrl} afterAlt={project.title} />
+                      <ProjectInspirationImage
+                        afterSrc={imageSlots.proof[index] ?? project.afterImageUrl}
+                        afterAlt={project.title}
+                        aspectClass={proof.projects!.length === 1 ? 'aspect-[16/10] md:aspect-[21/9]' : undefined}
+                        sizes={proof.projects!.length === 1 ? '(max-width: 1023px) 100vw, 80vw' : undefined}
+                      />
                       <div className="p-6">
                         <h3 className="ed-h4">{project.title}</h3>
                         <p className="ed-body mt-2 text-[0.875rem]">{project.description}</p>

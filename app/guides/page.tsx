@@ -112,7 +112,7 @@ export default function GuidesIndexPage() {
           <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-6">
             Hub pillar guides
           </h2>
-          <div className="ed-cards-3 gap-6">
+          <div className="ed-cards-3 ed-cards-feature gap-6">
             {pillarGuides.map((guide) => (
               <MarketingCard key={guide.slug} padding="none" className="flex flex-col h-full overflow-hidden">
                 <div className="relative aspect-[16/9] overflow-hidden">
@@ -152,7 +152,7 @@ export default function GuidesIndexPage() {
             <Link href="/services/kitchen-remodel/eagle" className="text-accent-legible hover:underline">Eagle kitchen remodeling</Link>
             {' '}are on their own pages.
           </p>
-          <div className="ed-cards-3 gap-4">
+          <div className="ed-cards-3 ed-cards-feature gap-4">
             {locationGuides.map((guide) => (
               <MarketingCard key={guide.slug} padding="none" className="flex flex-col h-full overflow-hidden">
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -188,7 +188,8 @@ export default function GuidesIndexPage() {
           <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-6">
             Browse by topic
           </h2>
-          <div className="ed-cards-3 gap-4">
+          {/* Ten short text cards: two by five on tablets, five by two from 1280px. Never a lone last card. */}
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {sortedHubs.map((hub) => (
               <MarketingCard key={hub.hubSlug} className="p-5">
                 <h3 className="font-normal mb-1">{hub.title}</h3>
