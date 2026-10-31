@@ -53,28 +53,12 @@ function pagePath(meta:Metadata,hint?:string):string{
  if(value){try{return new URL(value,`https://${brand.domain}`).pathname.replace(/\/$/,'')||'/';}catch{}}
  return hint&&!hint.includes('[')&&hint!=='__layout__'?(hint.replace(/\/$/,'')||'/'):'';
 }
-/** Blog posts and guides share their own hero (or share card) when the page
- * supplies one; every other page, and any article without an image, keeps the
- * brand preview. Category hubs and the two indexes are not articles. */
-function isArticlePath(path:string):boolean{
- return /^\/(blog|guides)\/[^/]+$/.test(path)&&!path.startsWith('/blog/category');
-}
-function ownImages(meta:Metadata):{og:unknown[];twitter:unknown[]}|undefined{
- const og=meta.openGraph?.images;const list=(og?(Array.isArray(og)?og:[og]):[]).filter(Boolean);
- if(list.length===0)return undefined;
- const tw=meta.twitter?.images;const twList=(tw?(Array.isArray(tw)?tw:[tw]):[]).filter(Boolean);
- const first=list[0] as unknown;
- const firstUrl=typeof first==='string'||first instanceof URL?String(first):String((first as {url:string|URL}).url);
- return {og:list,twitter:twList.length>0?twList:[firstUrl]};
-}
 export function withBrandPageMetadata(meta:Metadata,routeHint?:string):Metadata{
- const path=pagePath(meta,routeHint);
- const override=routeHint==='__layout__'?undefined:COPY[brand.id]?.[path];
+ const override=routeHint==='__layout__'?undefined:COPY[brand.id]?.[pagePath(meta,routeHint)];
  const original=publishFoundingCopy(titleText(meta));
  const title=override?`${publishFoundingCopy(override.title)} | ${brand.name}`:original.includes(brand.name)?original:`${original} | ${brand.name}`;
  const description=publishFoundingCopy(override?.description||meta.description||'')||undefined;
  const image={url:BRAND_PAGE_IMAGE,width:1200,height:630,alt:brand.name};
- const article=isArticlePath(path)?ownImages(meta):undefined;
  const icons=routeHint==='__layout__'?{
   ...(typeof meta.icons==='object'&&!Array.isArray(meta.icons)&&!(meta.icons instanceof URL)?meta.icons:{}),
   icon:[{url:BRAND_SEARCH_ICON,sizes:'96x96',type:'image/png'}],
@@ -84,7 +68,7 @@ export function withBrandPageMetadata(meta:Metadata,routeHint?:string):Metadata{
   ...meta,
   ...(override?{title:{absolute:title},description}:{}),
   ...(icons?{icons}:{}),
-  openGraph:{...meta.openGraph,title,description,siteName:brand.name,images:article?article.og:[image]},
-  twitter:{...meta.twitter,card:'summary_large_image',title,description,images:article?article.twitter:[BRAND_PAGE_IMAGE]},
+  openGraph:{...meta.openGraph,title,description,siteName:brand.name,images:[image]},
+  twitter:{...meta.twitter,card:'summary_large_image',title,description,images:[BRAND_PAGE_IMAGE]},
  } as Metadata;
 }
