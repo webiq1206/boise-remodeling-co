@@ -209,7 +209,7 @@ export const ADA_CANYON_PERMIT_BLOCKS: PdfBlock[] = [
     type: 'bullets',
     items: [
       `Visual flowchart: ${SITE_CONFIG.siteUrl}/resources/ada-canyon-permit-flow`,
-      `Article: ${SITE_CONFIG.siteUrl}/blog/ada-vs-canyon-county-permit-timelines`,
+      `Online guide: ${SITE_CONFIG.siteUrl}/resources/ada-canyon-permit-flow`,
       `Process guide: ${SITE_CONFIG.siteUrl}/guides/boise-remodeling-process-guide`,
     ],
   },

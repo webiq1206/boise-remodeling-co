@@ -253,6 +253,26 @@ export function getCitySpecificSections(slug: string): ContentSection[] {
   return CITY_SNIPPETS[slug] ?? [];
 }
 
+/** Display name for the city that owns a location or neighborhood guide. */
+const CITY_NAMES: Record<string, string> = {
+  boise: 'Boise',
+  meridian: 'Meridian',
+  eagle: 'Eagle',
+  nampa: 'Nampa',
+  kuna: 'Kuna',
+  star: 'Star',
+  middleton: 'Middleton',
+  caldwell: 'Caldwell',
+};
+
+/**
+ * Phase 4: location and neighborhood guides are informational ("what to know
+ * about remodeling a home in X"), not a second commercial page for the city.
+ * The selling happens on /areas/<city>, which every guide links with a
+ * contextual anchor; the generic "Next steps" CTA block is gone, permit
+ * questions go to the permit-flow resource that owns the topic, and every fact
+ * comes from the city copy already in this file and in lib/seo.ts.
+ */
 export function buildLocationGuideSections(
   slug: string,
   cityName: string,
@@ -261,38 +281,44 @@ export function buildLocationGuideSections(
   housingNote: string,
   guideType: 'location' | 'neighborhood',
 ): ContentSection[] {
-  const countyGuide =
-    county === 'ada'
-      ? '<a href="/blog/ada-vs-canyon-county-permit-timelines">Ada vs Canyon permit timelines</a>'
-      : '<a href="/blog/ada-vs-canyon-county-permit-timelines">Canyon County permit timelines</a>';
+  const parentCity = CITY_NAMES[citySlug] ?? cityName;
+  const countyName = county === 'ada' ? 'Ada County' : 'Canyon County';
+  const isNeighborhood = guideType === 'neighborhood';
 
   return [
     {
-      h2: `Remodeling in ${cityName}`,
+      h2: `What to know about remodeling a home in ${cityName}`,
       paragraphs: [
         housingNote,
-        `This ${guideType === 'neighborhood' ? 'neighborhood' : 'city'} guide links local housing context, permits, and services - start with the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley hub</a> for valley-wide planning.`,
+        isNeighborhood
+          ? `This guide sits under the <a href="/guides/${citySlug}-remodeling-guide">${parentCity} remodeling guide</a> and the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley remodeling guide</a>. A ${parentCity} mailing address does not by itself settle which building department reviews the work, so confirm whether the property is inside city limits.`
+          : `${cityName} sits in ${countyName}. Valley-wide planning lives in the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley remodeling guide</a>; this page covers what is particular to ${cityName}.`,
       ],
     },
     ...getCitySpecificSections(slug),
     {
-      h2: 'Services and planning ranges',
+      h2: `Permits for a ${cityName} remodel`,
       paragraphs: [
-        `<a href="/services/kitchen-remodel/${citySlug}">Kitchen</a> · <a href="/services/bathroom-remodel/${citySlug}">Bathroom</a> · <a href="/services/whole-home-remodel/${citySlug}">Whole-home</a> · <a href="/services/room-addition/${citySlug}">Additions</a> · <a href="/areas/${citySlug}">${cityName} area page</a>.`,
-        `Planning bands: <a href="${PILLAR_COST}">Boise Remodeling Cost Guide</a>.`,
+        permitGuidanceHtml(parentCity),
+        `The <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit flow</a> shows each step from confirming the jurisdiction to final inspection, and what cosmetic work can skip.`,
       ],
     },
     {
-      h2: `Permits and property jurisdiction in ${cityName}`,
+      h2: `Budgeting a remodel in ${cityName}`,
       paragraphs: [
-        permitGuidanceHtml(cityName),
-        countyGuide,
+        `Planning ranges in ${cityName} follow the wider Treasure Valley market; finish level, layout changes and the age of the house move a budget more than the ZIP code does. The <a href="${PILLAR_COST}">Boise remodeling cost guide</a> has 2026 planning ranges by project type, and older homes deserve a contingency for what opens up behind the walls.`,
       ],
     },
     {
-      h2: 'Next steps',
+      h2: `Choosing a remodeler for a ${cityName} home`,
       paragraphs: [
-        '<a href="/#calculator">Estimator</a> · <a href="/contact">Schedule consultation</a> · <a href="/guides">All guides</a>.',
+        `Compare bids on the same written scope, ask who handles permits and inspections, and ask who your single point of contact will be. The <a href="/guides/choose-remodeling-contractor-boise">contractor selection guide</a> covers the questions, and the <a href="/guides/boise-remodeling-process-guide">remodeling process guide</a> covers what happens after you sign.`,
+      ],
+    },
+    {
+      h2: `Remodeling services in ${parentCity}`,
+      paragraphs: [
+        `When you are ready to talk about a specific project, the ${parentCity} page covers how we work locally: <a href="/areas/${citySlug}">remodeling contractors in ${parentCity}</a>. Service pages for the city: <a href="/services/kitchen-remodel/${citySlug}">kitchen remodeling in ${parentCity}</a>, <a href="/services/bathroom-remodel/${citySlug}">bathroom remodeling in ${parentCity}</a> and <a href="/services/whole-home-remodel/${citySlug}">whole-home remodeling in ${parentCity}</a>.`,
       ],
     },
   ];

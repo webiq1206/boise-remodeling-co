@@ -59,6 +59,14 @@ export default function ResourcesIndexPage() {
           </Link>
           . These are planning tools - not quotes or contracts.
         </p>
+        <section aria-labelledby="resources-answer" className="mb-8 max-w-2xl border-l-2 pl-5" style={{ borderColor: 'var(--ed-accent)' }}>
+          <h2 id="resources-answer" className="text-xl font-serif text-foreground mb-2">
+            What planning resources are on this page?
+          </h2>
+          <p className="text-base text-foreground" data-speakable="answer">
+            Three free tools for planning a Treasure Valley remodel: a budget worksheet to pressure-test your planning range, a kitchen and bath scope checklist so nothing is missed between design and construction, and a visual guide to the Ada and Canyon County permit flow. All of them download without an email, and none of them is a quote or a contract.
+          </p>
+        </section>
         <p className="text-base text-muted-foreground mb-4 max-w-2xl leading-relaxed">
           We built these worksheets from the same process we use on real Treasure Valley
           projects: a budget worksheet to pressure-test your planning range before you talk to
@@ -75,7 +83,7 @@ export default function ResourcesIndexPage() {
           and we will turn them into a written scope and an honest planning range for your home.
         </p>
 
-        <h2 id="document-section-1" className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-4">
+        <h2 id="document-section-1" className="text-xl font-serif text-foreground mb-4">
           PDF worksheets
         </h2>
         <div className="grid gap-4 lg:grid-cols-3 mb-12">
@@ -96,7 +104,7 @@ export default function ResourcesIndexPage() {
           ))}
         </div>
 
-        <h2 id="document-section-2" className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-4">
+        <h2 id="document-section-2" className="text-xl font-serif text-foreground mb-4">
           Visual guides
         </h2>
         <div className={visuals.length > 1 ? 'grid gap-4 md:grid-cols-2' : 'grid gap-4'}>

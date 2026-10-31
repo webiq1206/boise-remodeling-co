@@ -51,6 +51,7 @@ export const ADDITION_GUIDE_CONTENT = `
 
 <h2>5. Make it look like it was always there</h2>
 <p>The mark of a quality addition - and a common failing of cheap ones - is how well it <span class="sage">integrates with the existing home</span>. Rooflines, siding, windows, and proportions should match so it reads as original, and the new space should connect logically to the home's flow. Getting the design right is what makes an addition enhance the home rather than look bolted on.</p>
+<p>Roof lines, exterior materials and foundation tie-ins should be resolved in design before any price is presented as firm. A number given before those details are settled is a guess about the hardest part of the job.</p>
 <div class="callout note">
   <p class="callout-label">Key point</p>
   <p>Matching exterior materials and aligning the roofline is not a cosmetic afterthought - it protects resale value. A mismatched addition can hurt a home's appearance and appraised value even when the interior is beautiful.</p>

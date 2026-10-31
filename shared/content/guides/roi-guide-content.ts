@@ -12,6 +12,7 @@ export const ROI_GUIDE_CONTENT = `
 
 <h2>1. Which projects return the most</h2>
 <p>Some projects reliably return more than others because they address what buyers most notice and value. The strongest returns generally come from:</p>
+<p>Beyond kitchens and baths, our articles on <a href="/blog/addition-roi-remodeling">home addition ROI</a>, <a href="/blog/outdoor-living-roi">outdoor living ROI</a> and <a href="/blog/remodeling-before-selling">remodeling before selling</a> cover when added space, outdoor work and pre-sale updates pay back.</p>
 <div class="callout checklist">
   <p class="callout-label">Higher-return projects</p>
   <ul>

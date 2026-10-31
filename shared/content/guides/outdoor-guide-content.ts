@@ -12,6 +12,7 @@ export const OUTDOOR_GUIDE_CONTENT = `
 
 <h2>1. The range of outdoor living projects</h2>
 <p>Outdoor living covers a lot of ground. Match the project to how you want to spend time outside:</p>
+<p>Not sure where to start? Compare <a href="/blog/decks-vs-patios-boise">decks and patios</a> for your yard, see how <a href="/blog/outdoor-fireplaces-boise">outdoor fireplaces</a> extend the season, and plan the whole layout with our guide to <a href="/blog/outdoor-entertaining-spaces">outdoor entertaining spaces</a>.</p>
 <div class="callout checklist">
   <p class="callout-label">Popular projects</p>
   <ul>

@@ -53,6 +53,7 @@ export const CONTRACTOR_GUIDE_CONTENT = `
 
 <h2>5. What to expect at the consultation</h2>
 <p>The consultation is where the relationship starts - and your first chance to evaluate a contractor. A good one spends much of it <span class="sage">listening</span>: understanding your goals, looking at your space, and talking through possibilities and rough budget ranges. You usually will not get a firm price on the spot, because real pricing follows design. Come prepared with your goals, budget, inspiration, and questions. Our <a href="/blog/consultation-process-remodeling">What to Expect at a Consultation guide</a> shows how to get the most from it.</p>
+<p>Three questions are worth asking in that first meeting: who owns communication during construction, how change orders are priced, and what will be in writing before demo day. The answers tell you more than the bid total does.</p>
 
 <h2>6. Get it in writing before you sign</h2>
 <p>A clear, detailed contract protects both sides. Before you sign, make sure the agreement spells out the important terms in writing - vague contracts are one of the biggest sources of remodeling disputes.</p>

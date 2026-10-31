@@ -124,9 +124,16 @@ interface LandingPageTemplateProps {
   };
 }
 
+/** A paragraph with one contextual in-body link (phase 4 internal linking). */
+export interface LandingLinkedParagraph {
+  text: string;
+  link: { label: string; href: string };
+  after?: string;
+}
+
 export interface LandingSection {
   heading: string;
-  paragraphs?: string[];
+  paragraphs?: Array<string | LandingLinkedParagraph>;
   links?: { label: string; href: string }[];
   subsections?: { heading: string; paragraphs: string[] }[];
 }
@@ -519,7 +526,15 @@ export function LandingPageTemplate({
                       <Reveal delay={Math.min(i, 4) * 60}>
                         <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28">{section.heading}</h2>
                         {section.paragraphs?.map((p, j) => (
-                          <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>{p}</p>
+                          <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>
+                            {typeof p === 'string' ? p : (
+                              <>
+                                {p.text}{' '}
+                                <Link href={p.link.href} className="ed-link ed-link-accent underline underline-offset-2">{p.link.label}</Link>
+                                {p.after ?? '.'}
+                              </>
+                            )}
+                          </p>
                         ))}
                         {section.subsections?.map((sub) => (
                           <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>

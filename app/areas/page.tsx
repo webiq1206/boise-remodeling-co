@@ -10,6 +10,7 @@ import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { Reveal } from "@/components/Reveal";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { AnswerBlock } from "@/components/seo/AnswerBlock";
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildPageMetadata } from "@/lib/page-metadata";
 import {
@@ -71,6 +72,11 @@ export default function AreasHubPage() {
             <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
+
+        <AnswerBlock
+          question="Where does Boise Remodeling Co work?"
+          answer="Boise Remodeling Co remodels homes in eight Treasure Valley cities: Boise, Meridian, Eagle, Kuna and Star in Ada County, and Nampa, Middleton and Caldwell in Canyon County. Each city has its own page with local permit paths and housing notes, and every project runs through one design-build team with a written scope before construction."
+        />
 
         <Section surface="bone" spacing="xl">
           <div className="ed-shell">

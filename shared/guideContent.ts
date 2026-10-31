@@ -262,7 +262,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
   },
   {
     slug: 'boise-remodeling-guide',
-    title: 'Boise Remodeling Guide',
+    title: 'Boise Remodeling Guide: What to Know Before You Remodel',
     seoTitle: 'Boise Remodeling Guide | Neighborhoods & Services',
     metaDescription:
       'Remodeling in Boise: North End, Bench, Harris Ranch, costs, permits, and design-build services for kitchens, baths, whole-home, and additions.',
@@ -274,6 +274,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
     guideType: 'location',
     tags: ['boise', 'north end', 'bench'],
     publishedAt: '2026-05-01',
+    updatedAt: '2026-10-31',
     quickAnswer: BOISE_QUICK_ANSWER,
     keyTakeaways: BOISE_TAKEAWAYS,
     faqs: [
@@ -337,7 +338,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
     quickAnswer: BOISE_ADU_GUIDE_QUICK_ANSWER,
     keyTakeaways: BOISE_ADU_GUIDE_TAKEAWAYS,
     faqs: BOISE_ADU_GUIDE_FAQS,
-    linkedClusterSlugs: ['adu-guide-boise', 'garage-conversions', 'multigenerational-living-remodels'],
+    linkedClusterSlugs: ['garage-conversions', 'multigenerational-living-remodels'],
     linkedServices: ['adu'],
     linkedCities: ['boise', 'meridian', 'eagle', 'nampa'],
     relatedLinks: [

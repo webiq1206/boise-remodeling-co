@@ -4,6 +4,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import {
 LandingPageTemplate,
 type LandingSection,
+type LandingLinkedParagraph,
 } from '@/components/seo/LandingPageTemplate';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import {
@@ -37,6 +38,21 @@ const OWNERSHIP_PAGES = {
   adu: ADU_CONVERSION_PAGE,
   'room-addition': ROOM_ADDITION_PAGE,
 } as const;
+
+/**
+ * One contextual in-body link from each service parent into its cluster
+ * (phase 4): the posts sat at the generator's five-link floor.
+ */
+const SERVICE_CLUSTER_LINKS: Record<string, LandingLinkedParagraph> = {
+  'kitchen-remodel': { text: 'For what moves a kitchen budget line by line, read our guide to', link: { label: 'kitchen remodel costs in Boise', href: '/blog/kitchen-remodel-cost-boise' } },
+  'bathroom-remodel': { text: 'Before you settle on a layout, read our', link: { label: 'bathroom layout planning guide', href: '/blog/bathroom-layout-planning-guide' } },
+  'whole-home-remodel': { text: 'To get a whole-home project organized before the first visit, work through the', link: { label: 'whole-home remodel planning checklist', href: '/blog/whole-home-remodel-planning-checklist' } },
+  'room-addition': { text: 'If the new room is a bedroom, read what a legal bedroom needs in our guide to', link: { label: 'bedroom additions in Boise', href: '/blog/bedroom-additions' } },
+  adu: { text: 'If the garage is the candidate, start with our guide to', link: { label: 'garage conversions', href: '/blog/garage-conversions' } },
+  'basement-remodel': { text: 'For egress, moisture and layout detail, read our guide to', link: { label: 'basement finishing in Boise', href: '/blog/basement-finishing-boise' } },
+  'outdoor-living': { text: 'For roof types, snow loads and permits, read our guide to', link: { label: 'covered patios in Boise', href: '/blog/covered-patios-boise' } },
+  'aging-in-place': { text: 'For curbless showers, grab bars and clearances, read our guide to', link: { label: 'aging-in-place bathroom design', href: '/blog/aging-in-place-bathroom-design' } },
+};
 
 /** The parent page shows at most seven questions, visibly, and the schema matches. */
 const MAX_VISIBLE_FAQS = 7;
@@ -136,6 +152,13 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
     },
   ];
 
+  const clusterLink = SERVICE_CLUSTER_LINKS[service.slug];
+  const linkedSections: LandingSection[] = clusterLink
+    ? sections.map((section, i) =>
+        i === sections.length - 1 ? { ...section, paragraphs: [...(section.paragraphs ?? []), clusterLink] } : section,
+      )
+    : sections;
+
   const schemas = [
     landingBreadcrumbs([
       { name: 'Home', url: '/' },
@@ -169,7 +192,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         inclusions={ownership?.inclusions ?? content.inclusions}
         timeline={ownership?.timeline ?? (isBathroomNearMe ? BATHROOM_NEAR_ME_TIMELINE : content.timeline)}
         processSteps={isBathroomNearMe ? BATHROOM_NEAR_ME_PROCESS : content.processSteps}
-        sections={sections}
+        sections={linkedSections}
         featuredProject={featuredProject}
         serviceSlug={ownership ? undefined : service.slug}
         imageSubject={service.slug}

@@ -129,7 +129,7 @@ const sections: ContentSection[] = [
     paragraphs: [
       'Boise, Meridian, Eagle, Kuna, and Star fall under Ada County for most unincorporated and city-integrated permitting paths. Nampa, Middleton, and Caldwell are in Canyon County with different portals and review cadence.',
       'Cosmetic updates without structural or MEP changes may move quickly. Kitchen relocations, wall removals, and additions almost always require stamped plans and inspections.',
-      'We include permits in our design-build scope. See also <a href="/blog/ada-vs-canyon-county-permit-timelines">Ada vs Canyon County permit timelines</a>.',
+      'We include permits in our design-build scope. See also <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit timelines</a>.',
     ],
   },
   {

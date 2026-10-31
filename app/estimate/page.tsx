@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { EstimateRequestWizard } from "@/components/estimate/EstimateRequestWizard";
 import { InteriorPage } from "@/components/approved/InteriorLayout";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { AnswerBlock } from "@/components/seo/AnswerBlock";
 import { buildCanonical, fitDescription } from "@/lib/page-metadata";
 import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
 
@@ -49,6 +50,12 @@ export default function EstimatePage() {
       <>
         <JsonLd data={schemas} />
         <EstimateRequestWizard />
+        {/* Phase 4 answer block. It sits after the wizard, not above it, so step 1 keeps
+            its first-screen fit (C10); it is in the server HTML either way. */}
+        <AnswerBlock
+          question="How does a remodel quote request work?"
+          answer="Tell us what you want to change, where the home is and, if you have them, photos or plans. We reply within one business day with questions or a time for a free 60 to 90 minute in-home visit. After that visit you get a written scope and a planning range, not an instant price online."
+        />
       </>
     </InteriorPage>
   );

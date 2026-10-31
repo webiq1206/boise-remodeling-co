@@ -1,5 +1,6 @@
 import { buildSectionsHtml, CITIES_LIST, type ContentSection } from './wave1/snippets';
 import { buildClusterArticleSections } from './clusterArticleSections';
+import { IMPROVED_CLUSTER_POSTS } from './improvedClusterPosts';
 import {
   clusterLinksSection,
   hubTopicSections,
@@ -80,7 +81,20 @@ export interface ClusterConfig {
   extraRelatedLinks?: Array<{ url: string; anchor?: string }>;
 }
 
-export function buildClusterPost(config: ClusterConfig): BlogPostData {
+export function buildClusterPost(rawConfig: ClusterConfig): BlogPostData {
+  // Phase 4: a rewritten factory post replaces its template copy and metadata.
+  const improved = IMPROVED_CLUSTER_POSTS[rawConfig.slug];
+  const config: ClusterConfig = improved
+    ? {
+        ...rawConfig,
+        seoTitle: improved.seoTitle,
+        metaDescription: improved.metaDescription,
+        excerpt: improved.excerpt,
+        quickAnswer: improved.quickAnswer,
+        takeaways: improved.takeaways,
+        serviceUrl: improved.serviceUrl,
+      }
+    : rawConfig;
   const hub = getHubBySlug(config.hubSlug)!;
   const pillarUrl = guidePath(hub.pillarSlug);
   const serviceUrl = config.serviceUrl ?? '/services/kitchen-remodel';
@@ -143,6 +157,7 @@ export function buildClusterPost(config: ClusterConfig): BlogPostData {
     hubSlug: config.hubSlug,
     tags: config.tags,
     publishedAt: config.publishedAt ?? '2026-05-15',
+    ...(improved ? { updatedAt: '2026-10-31' } : {}),
     faqs,
     quickAnswer: config.quickAnswer,
     keyTakeaways: config.takeaways,
@@ -251,11 +266,11 @@ export function buildLocationGuide(config: LocationGuideConfig): GuidePageData {
   // housing intro. Kept to one callout so these shorter pages stay uncluttered.
   const permitBlurb =
     config.county === 'ada'
-      ? `${config.cityName} remodeling permits route through <strong>Ada County</strong> plan review. Structural changes, layout moves, and additions all require it - and a design-build contractor handles the submissions and inspections for you.`
-      : `${config.cityName} remodeling permits route through <strong>Canyon County</strong>, which uses different portals and a different review cadence than Ada County (Boise, Meridian). Your design-build contractor handles the submissions and inspections for you.`;
+      ? `${config.cityName} sits in <strong>Ada County</strong>. Property inside city limits starts with that city's building department; unincorporated property follows the county process. Structural changes, layout moves and additions all need permits, and a design-build contractor handles the submissions and inspections for you.`
+      : `${config.cityName} sits in <strong>Canyon County</strong>, which uses different portals and a different review cadence than Ada County. Property inside city limits starts with that city's building department. Your design-build contractor handles the submissions and inspections for you.`;
   const localCallout =
     `<div class="callout note"><p class="callout-label">${config.cityName} permit snapshot</p>` +
-    `<p>${permitBlurb} See <a href="/blog/ada-vs-canyon-county-permit-timelines">Ada vs Canyon County permit timelines</a>.</p></div>`;
+    `<p>${permitBlurb} See the <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit flow</a>.</p></div>`;
 
   return {
     slug: config.slug,
@@ -269,9 +284,8 @@ export function buildLocationGuide(config: LocationGuideConfig): GuidePageData {
     guideType: config.guideType,
     tags: [config.citySlug, config.cityName.toLowerCase(), 'idaho'],
     publishedAt: '2026-05-12',
-    // All location/neighborhood guides were substantively expanded in the
-    // June 2026 audit pass (local-seo-audit/05-content-plan.md).
-    updatedAt: '2026-06-10',
+    // Rewritten as informational guides in the phase 4 pass (October 2026).
+    updatedAt: '2026-10-31',
     quickAnswer: config.quickAnswer,
     keyTakeaways: config.takeaways,
     faqs: getLocationFaqs(config.cityName, config.citySlug, config.county),
