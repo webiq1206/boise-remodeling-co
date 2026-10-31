@@ -76,7 +76,7 @@
   min-height: 0;
 }
 .approved-shell .approved-interior .interior-hero-budget .interior-hero-copy {
-  padding-block: var(--space-12, 48px);
+  padding-block: var(--space-10, 40px);
 }
 .approved-shell .approved-interior .interior-hero-budget .interior-hero-image {
   min-height: 560px;
@@ -85,7 +85,7 @@
   margin: var(--space-4, 16px) 0 var(--space-4, 16px);
 }
 .approved-shell .approved-interior .interior-hero-copy p.interior-hero-support {
-  max-width: 46ch;
+  max-width: 52ch;
   margin: 0;
   color: #4f524d;
   font-family: var(--font-sans);
@@ -216,6 +216,10 @@
   }
   .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy h1 + p {
     margin-bottom: var(--space-4, 16px);
+    line-height: 1.6;
+  }
+  .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy .ed-eyebrow {
+    margin-top: var(--space-3, 12px);
   }
   .approved-shell .approved-interior .interior-hero-contact .interior-contact-actions {
     margin: var(--space-4, 16px) 0 var(--space-6, 24px);
