@@ -226,7 +226,7 @@ export default function ContactPage() {
                 </Reveal>
               </div>
               <MarketingCard className="interior-contact-form p-4 sm:p-7 md:p-10" padding="lg">
-                <ConsultationForm />
+                <ConsultationForm variant="short" />
               </MarketingCard>
             </div>
           </div>
@@ -361,8 +361,8 @@ export default function ContactPage() {
                   ))}
                 </ul>
                 <div className="flex flex-col sm:flex-row flex-wrap gap-3">
-                  <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
-                  <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
+                  <EstimateCTA size="lg">{CTA_PRIMARY}</EstimateCTA>
+                  <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
                 </div>
               </Reveal>
             </div>
@@ -457,8 +457,8 @@ export default function ContactPage() {
                   Or send us a text message
                 </a>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
-                  <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
-                  <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
+                  <EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA>
+                  <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
                 </div>
 
               </div></div>
