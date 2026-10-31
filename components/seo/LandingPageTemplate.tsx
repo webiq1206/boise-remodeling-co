@@ -1,7 +1,7 @@
+import { InteriorHeroActions } from '@/components/approved/InteriorHeroActions';
 import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing';
 import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
-import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import { RegistrationText } from '@/components/RegistrationLink';
@@ -19,7 +19,7 @@ import { contentImageAlt } from '@/shared/contentImageAlt';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
-import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import { CTA_PRIMARY } from '@/shared/ctaCopy';
 import type { GalleryProject } from '@/shared/galleryData';
 import type { FAQItem } from '@/shared/seoContent';
 import { ArrowRight,ChevronRight,Star } from 'lucide-react';
@@ -174,6 +174,25 @@ function HeroBreadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   );
 }
 
+/**
+ * The hero keeps one support line: the overview's first sentence. Everything
+ * after it opens the section below the hero, unchanged. A leading question
+ * ("Looking for a kitchen remodel in Nampa, Idaho?") carries its answer with
+ * it, so the support line never ends on a bare question.
+ */
+export function splitHeroCopy(overview: string): { lead: string; rest: string } {
+  const text = overview.trim();
+  // A sentence ends at . ! or ? followed by a space and a capital, never after a
+  // short abbreviation such as "St." or "Mt.".
+  const boundaries = [...text.matchAll(/[.!?](?=\s+[A-Z("'])/g)]
+    .map((m) => m.index ?? -1)
+    .filter((i) => i > 0 && !/\b(?:St|Mt|Dr|No|Ave|Rd|Ft|vs|e\.g|i\.e)$/.test(text.slice(0, i)));
+  if (boundaries.length === 0) return { lead: text, rest: '' };
+  let cut = boundaries[0];
+  if (text[cut] === '?' && boundaries.length > 1) cut = boundaries[1];
+  return { lead: text.slice(0, cut + 1), rest: text.slice(cut + 1).trim() };
+}
+
 const accent = { color: 'var(--ed-accent)' } as const;
 const line = { borderColor: 'var(--ed-line)' } as const;
 
@@ -256,7 +275,7 @@ export function LandingPageTemplate({
   };
   void showEstimatePrompt;
   void proofHeading;
-  const eyebrow = breadcrumbs[breadcrumbs.length - 2]?.name;
+  const heroCopy = splitHeroCopy(overview);
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
     publishedQuotes.length > 0 || (proof?.projects?.length ?? 0) > 0;
@@ -286,29 +305,30 @@ export function LandingPageTemplate({
     <div className="flex flex-col ">
       {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
       {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
-      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split">
+      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split" className="interior-hero-budget">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
-          {eyebrow && (
-            <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>{eyebrow}</p>
-          )}
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
-          {/* CTA immediately under H1 so mobile first view keeps brand + image + headline + action */}
-          <div className="mt-6 md:mt-10 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
-            <EstimateCTA variant="brand">
-              {CTA_PRIMARY} <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </EstimateCTA>
-            <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
-          </div>
-          <p className="mt-6 md:mt-8 max-w-[60ch] text-base md:text-lg leading-relaxed text-inverse-foreground/95">{overview}</p>
+          {/* Interior hero budget (phase 3): H1, one support line, the planning-from
+              chip, one primary action and the phone as a text link, so the whole
+              designed hero fits 1280x720 and sits above the bottom bar on phones.
+              The rest of the paragraph opens the section below, word for word. */}
+          {heroCopy.lead && <p className="interior-hero-support">{heroCopy.lead}</p>}
           {planningFrom && (
-            <p className="mt-6 md:mt-8 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-inverse-foreground/80">
-              <span className="ed-eyebrow !mb-0" style={{ color: 'rgb(255 255 255 / 0.72)' }}>Planning from</span>
-              <span className="brc-display-num text-inverse-foreground text-[1.5rem] leading-none">{planningFrom}</span>
-              <span className="ed-small text-inverse-foreground/70">Your exact range is confirmed at the free in-home visit</span>
+            <p className="interior-hero-chip">
+              <span>Planning from</span> <strong>{planningFrom}</strong>
             </p>
           )}
+          <InteriorHeroActions />
         </InteriorHero>
+      {(heroCopy.rest || planningFrom) && (
+        <div className="interior-hero-more">
+          <div className="ed-shell">
+            {heroCopy.rest && <p className="ed-lede">{heroCopy.rest}</p>}
+            {planningFrom && <p className="ed-small interior-hero-more-note">Your exact range is confirmed at the free in-home visit</p>}
+          </div>
+        </div>
+      )}
       {/* ─── The short answer: 40 to 60 words, right under the hero ─── */}
       {answer && (
         <Section surface="bone" spacing="lg" edge>
@@ -677,7 +697,7 @@ export function LandingPageTemplate({
             <Reveal delay={60}>
               <p className="ed-lede">Free 60 to 90 minute in-home visit.</p>
               <p className="ed-body mt-3">Planning guidance, design direction, no obligation.</p>
-              <div className="mt-8"><EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA></div>
+              <div className="mt-8"><EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA></div>
             </Reveal>
           </div>
         </div>

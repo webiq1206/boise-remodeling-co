@@ -69,7 +69,7 @@ export default function AreasHubPage() {
             <EstimateCTA variant="brand">
               {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
             </EstimateCTA>
-            <ConsultCTA variant="heroOutline">{CTA_SECONDARY}</ConsultCTA>
+            <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
 

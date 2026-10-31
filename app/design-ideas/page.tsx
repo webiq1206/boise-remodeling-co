@@ -63,7 +63,7 @@ export default function DesignIdeasPage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <EstimateCTA>{CTA_PRIMARY}</EstimateCTA>
-            <ConsultCTA variant="outline">{CTA_SECONDARY}</ConsultCTA>
+            <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
         <AnswerBlock

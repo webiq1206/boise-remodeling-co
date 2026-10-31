@@ -5,6 +5,7 @@ import { Section } from "@/components/marketing";
 import { AreaCard } from "@/components/marketing/AreaCard";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
+import { familyButtonClass } from "@/components/family/Button";
 import { Reveal } from "@/components/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { withBrandPageMetadata } from "@/lib/brand-page-metadata";
@@ -109,11 +110,11 @@ export default function AboutPage() {
               P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
               Two-year workmanship warranty on remodels.
             </p>
-            <div className="flex flex-wrap gap-3 mb-4">
-              <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-4">
+              <EstimateCTA size="lg">{CTA_PRIMARY}</EstimateCTA>
               <SaveContactLink
                 showIcon
-                className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-border px-4 text-sm"
+                className={familyButtonClass({ variant: 'tertiary' })}
               />
             </div>
           </InteriorHero>
@@ -232,7 +233,7 @@ export default function AboutPage() {
                     project range.
                   </p>
                   <div className="mt-8">
-                    <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
+                    <EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA>
                   </div>
                 </div>
               </div>
