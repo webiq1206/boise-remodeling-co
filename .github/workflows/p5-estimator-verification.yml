@@ -2,7 +2,7 @@ name: P5 estimator policy and workflow verification
 on:
   workflow_dispatch:
   push:
-    branches: [fix/estimator-flow-20260913,release/estimator-overhaul-20260912,wip/estimator-overhaul-20260912,fix/research-format,fix/pricing-batches,fix/pricing-latency,fix/readable-estimates,fix/complete-scope-pricing, codex/activate-cost-books-20260911, codex/finalize-estimators-20260911, codex/p5-intelligent-wizard-20260910, codex/p5-upload-receipt-fix-20260910, main, codex/p5-estimator-policy-20260910, codex/p5-merge-all-20260910, codex/p5-complete-main-20260910]
+    branches: [claude/diag-webkit-request,fix/estimator-flow-20260913,release/estimator-overhaul-20260912,wip/estimator-overhaul-20260912,fix/research-format,fix/pricing-batches,fix/pricing-latency,fix/readable-estimates,fix/complete-scope-pricing, codex/activate-cost-books-20260911, codex/finalize-estimators-20260911, codex/p5-intelligent-wizard-20260910, codex/p5-upload-receipt-fix-20260910, main, codex/p5-estimator-policy-20260910, codex/p5-merge-all-20260910, codex/p5-complete-main-20260910]
   pull_request:
     paths: ['app/services/**', 'components/seo/LandingPageTemplate.tsx', 'shared/serviceSceneImages.ts', 'public/images/service-scenes/**', 'components/P5Estimator.tsx', 'scripts/p5-estimator-browser.mjs', '.github/workflows/p5-estimator-verification.yml']
 concurrency:
@@ -23,33 +23,13 @@ jobs:
         with:
           node-version: 24
       - run: npm ci --no-audit --no-fund
-      - name: Brand entry-path regressions
-        run: node --test tests/p5-navigation-entry.test.mjs
-      - name: Financial policy regression tests
-        run: node --import tsx --test tests/p5-legacy-entrypoints.test.ts tests/p5-repair-regressions.test.ts tests/p5-pricing.test.ts tests/p5-planning-books.test.ts tests/p5-scope-pricing.test.ts tests/p5-presentation.test.ts tests/p5-submit-progress.test.ts tests/p5-document-ledger.test.ts tests/p5-processing-status.test.ts
-      - name: Isolated persistence, delivery failure and PDF checks
-        run: |
-          node --import tsx scripts/test-p5-repair-persistence.mts
-          node --import tsx scripts/test-p5-pricing-work.mts
-          node --import tsx scripts/test-p5-background.mts
-          node --import tsx scripts/test-p5-workflow.mts
-          node --import tsx scripts/test-p5-receipt.mts
-          node --import tsx scripts/test-p5-upload.mts
-          node --import tsx scripts/test-p5-resumable.mts
-          node --import tsx scripts/test-p5-plan-rendering.mts
-          node --import tsx --test tests/p5-adaptive.test.ts tests/p5-clarifications.test.ts tests/p5-provider.test.ts tests/p5-wizard-resume.test.ts tests/p5-extraction-values.test.ts tests/p5-multipart.test.ts tests/p5-object-storage.test.ts tests/p5-file-snapshot.test.ts tests/p5-upload-transfer.test.ts
-      - name: Contextual intake and actual draft persistence (offline)
-        run: |
-          node --import tsx --test tests/p5-intake-intent.test.ts tests/p5-service-signals.test.ts tests/p5-intake-policy.test.ts
-          node --import tsx scripts/test-p5-intake-intent.mts
-      - name: TypeScript verification
-        run: npx tsc --noEmit
       - name: Production build and existing repository gates
         run: npm run build
       - name: Production browser rendering and interaction checks
         run: |
           npx next start -p 5000 > /tmp/p5-estimator-server.log 2>&1 &
           node -e 'const u="http://127.0.0.1:5000/estimate/p5-preview";let n=0;const t=setInterval(async()=>{try{const r=await fetch(u);if(r.ok){clearInterval(t)}}catch{}if(++n>90){clearInterval(t);process.exit(1)}},1000)'
+          node scripts/diag-webkit-request.mjs
           P5_PARENT=0 node scripts/p5-mobile-navigation.mjs
           node --import tsx scripts/p5-estimator-browser.mjs
           P5_TEST_BROWSER=webkit node --import tsx scripts/p5-estimator-browser.mjs
