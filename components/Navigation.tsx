@@ -52,10 +52,12 @@ export function Navigation() {
   /* Pages whose own wizard owns the bottom of a phone screen. Kept beside the
      route rather than inferred, so adding a wizard page is one line here.
      The estimator is not listed: this header does not render there at all (see isEstimatorPath
-     below), so naming its routes here would be a second copy of that list with nothing to do. */
+     below), so naming its routes here would be a second copy of that list with nothing to do.
+     /remodel-plans-boise is not listed either: its plan reader is an inline card, not a fixed
+     control, so the page needs the standard bar (it was the one marketing page without it). The
+     bar already steps aside while a text field has focus (audit-accessibility.css). */
   const wizardOwnsBottom =
     (pathname?.startsWith("/re-10") ?? false) ||
-    (pathname?.startsWith("/remodel-plans") ?? false) ||
     isShortRequestPath(pathname);
   const [mobileOpen, setMobileOpen] = useState(false);
   useEffect(() => {

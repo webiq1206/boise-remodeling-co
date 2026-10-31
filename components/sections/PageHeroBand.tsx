@@ -8,7 +8,11 @@ interface PageHeroBandProps {
       sits at the bottom where this gradient is already at full strength, so
       the top two-thirds of the image can stay visible. */
   scrim?: number;
-  /** Shorter band on mobile, for pages whose real content is the tool below. */
+  /**
+   * For pages whose real content is the tool below: on phones the copy and its
+   * action come before the photograph, and the action sits right under the
+   * headline, so the first screen holds the H1 and the primary button.
+   */
   compact?: boolean;
   children: React.ReactNode;
 }
@@ -20,9 +24,10 @@ export function PageHeroBand({
   compact = false,
   children,
 }: PageHeroBandProps) {
-  return (
+  const hero = (
     <InteriorHero imageSrc={imageSrc} imageAlt={imageAlt} layout="editorial">
-        {children}
-      </InteriorHero>
+      {children}
+    </InteriorHero>
   );
+  return compact ? <div className="page-hero-compact">{hero}</div> : hero;
 }
