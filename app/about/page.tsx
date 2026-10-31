@@ -99,7 +99,7 @@ export default function AboutPage() {
               <a
                 href="https://p5homeco.com/about"
                 className="underline underline-offset-2"
-                rel="noopener noreferrer"
+                rel="noopener"
               >
                 Read the full story on p5homeco.com/about
               </a>

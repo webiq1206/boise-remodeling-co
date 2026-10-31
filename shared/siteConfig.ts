@@ -6,7 +6,7 @@
 const DEFAULT_PHONE = "(208) 477-1169";
 const DEFAULT_PHONE_TEL = "2084771169";
 
-/** tel: links use E.164. Visible copy stays on DEFAULT_PHONE. */
+/** tel: and sms: links use E.164 (+12084771169). Visible copy stays on DEFAULT_PHONE. */
 function companyTelHref(raw: string): string {
   const digits = raw.replace(/\D/g, "");
   if (digits.length === 10) return `tel:+1${digits}`;
@@ -30,7 +30,7 @@ export const SITE_CONFIG = {
   phone: process.env.NEXT_PUBLIC_PHONE ?? DEFAULT_PHONE,
   phoneTel: process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL,
   phoneHref: companyTelHref(process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL),
-  phoneSmsHref: `sms:${process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL}`,
+  phoneSmsHref: companyTelHref(process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL).replace(/^tel:/, "sms:"),
   email: process.env.NEXT_PUBLIC_EMAIL ?? DEFAULT_EMAIL,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL,
   /** Named public contact. Not a founder and not a staffed-office claim. */

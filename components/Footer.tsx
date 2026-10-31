@@ -71,7 +71,7 @@ function GroupLinks({ links }: { links: FooterLink[] }) {
       {links.map((link) => (
         <li key={link.href}>
           {link.href.startsWith("http") ? (
-            <a href={link.href} className={FOOTER_LINK_CLASS} rel="noopener noreferrer">
+            <a href={link.href} className={FOOTER_LINK_CLASS} rel="noopener">
               {link.label}
             </a>
           ) : (
@@ -190,7 +190,7 @@ export function Footer({ hideRegistration = false }: { hideRegistration?: boolea
             <span key={site.name} className="inline-flex items-baseline gap-x-2">
               {index > 0 && <span aria-hidden="true">·</span>}
               {site.href ? (
-                <a href={site.href} className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" rel="noopener noreferrer">
+                <a href={site.href} className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" rel="noopener">
                   {site.name}
                 </a>
               ) : (
