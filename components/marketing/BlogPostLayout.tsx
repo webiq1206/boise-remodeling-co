@@ -30,6 +30,7 @@ import { InlineEstimateCTA } from './InlineEstimateCTA';
 import { RelatedPostCards } from './RelatedPostCards';
 import { Section } from './Section';
 import { SectionedArticle } from './SectionedArticle';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 interface BlogPostLayoutProps {
   post: BlogPostData;
@@ -73,7 +74,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
           <header className="interior-article-header">
             <Chip className="mb-4">{hub?.categoryLabel ?? post.category}</Chip>
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
-              {post.title}
+              {toSentenceCase(post.title)}
             </h1>
             <p className="text-lg text-muted-foreground mb-5">{post.excerpt}</p>
             <div role="presentation" className="border-t border-border/60 mb-5" />

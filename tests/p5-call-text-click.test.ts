@@ -225,7 +225,7 @@ test("the existing click listener stays single-bound and GA4 click events stay i
 import { SITE_CONFIG } from "../shared/siteConfig.ts";
 test("call and text controls use the site phone and the listener stays in the existing click path", () => {
   assert.equal(SITE_CONFIG.phoneHref, "tel:+12084771169");
-  assert.equal(SITE_CONFIG.phoneSmsHref, "sms:2084771169");
+  assert.equal(SITE_CONFIG.phoneSmsHref, "sms:+12084771169");
   const nav = readFileSync(new URL("../components/Navigation.tsx", import.meta.url), "utf8");
   const headerAt = nav.indexOf('data-testid="link-call-mobile-header"');
   const textAt = nav.indexOf('data-testid="link-text-mobile-header"');

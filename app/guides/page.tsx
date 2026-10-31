@@ -12,6 +12,8 @@ estimateReadingTime,
 import { buildPageMetadata } from '@/lib/page-metadata';
 import { generateBreadcrumbSchema,generateWebPageSchema } from '@/lib/schema';
 import { getBlogHeroImage,getBlogImageAlt } from '@/shared/blogImages';
+import { contentImageAlt } from '@/shared/contentImageAlt';
+import { distinctHeroImage } from '@/shared/landingImages';
 import { CONTENT_HUBS,guidePath } from '@/shared/contentHubs';
 import { GUIDE_PAGES,type GuidePageData } from '@/shared/guideContent';
 import { ArrowRight,BookOpen,MapPin } from 'lucide-react';
@@ -64,6 +66,15 @@ export default function GuidesIndexPage() {
     { name: 'Guides', url: '/guides' },
   ]);
 
+  // The hero sat directly above a card showing the same render. Keep the
+  // cost-guide image only if no card on this page uses that picture.
+  const preferredHero = getBlogHeroImage('boise-remodeling-cost-guide');
+  const heroImage = distinctHeroImage(
+    preferredHero,
+    [...pillarGuides, ...locationGuides].map((guide) => getBlogHeroImage(guide.slug, guide.heroImage)),
+  );
+  const heroAlt = heroImage === preferredHero ? getBlogImageAlt('boise-remodeling-cost-guide') : contentImageAlt(heroImage);
+
   return (
     <InteriorPage kind="guides"><>
       <script
@@ -76,12 +87,12 @@ export default function GuidesIndexPage() {
       />
 
       <PageHeroBand
-        imageSrc={getBlogHeroImage('boise-remodeling-cost-guide')}
-        imageAlt={getBlogImageAlt('boise-remodeling-cost-guide')}
+        imageSrc={heroImage}
+        imageAlt={heroAlt}
       >
         <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Treasure Valley authority</p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
-          Remodeling Guides
+          Remodeling guides
         </h1>
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           In-depth guides for Boise, Meridian, Eagle, Nampa, and the entire Treasure Valley - costs,
@@ -101,7 +112,7 @@ export default function GuidesIndexPage() {
           <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-6">
             Hub pillar guides
           </h2>
-          <div className="ed-cards-3 gap-6">
+          <div className="ed-cards-3 ed-cards-feature gap-6">
             {pillarGuides.map((guide) => (
               <MarketingCard key={guide.slug} padding="none" className="flex flex-col h-full overflow-hidden">
                 <div className="relative aspect-[16/9] overflow-hidden">
@@ -141,7 +152,7 @@ export default function GuidesIndexPage() {
             <Link href="/services/kitchen-remodel/eagle" className="text-accent-legible hover:underline">Eagle kitchen remodeling</Link>
             {' '}are on their own pages.
           </p>
-          <div className="ed-cards-3 gap-4">
+          <div className="ed-cards-3 ed-cards-feature gap-4">
             {locationGuides.map((guide) => (
               <MarketingCard key={guide.slug} padding="none" className="flex flex-col h-full overflow-hidden">
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -177,7 +188,8 @@ export default function GuidesIndexPage() {
           <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-6">
             Browse by topic
           </h2>
-          <div className="ed-cards-3 gap-4">
+          {/* Ten short text cards: two by five on tablets, five by two from 1280px. Never a lone last card. */}
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {sortedHubs.map((hub) => (
               <MarketingCard key={hub.hubSlug} className="p-5">
                 <h3 className="font-normal mb-1">{hub.title}</h3>

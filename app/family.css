@@ -642,3 +642,39 @@ main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.
 .ed-photo-copy {
   --ed-muted-ink: color-mix(in srgb, hsl(var(--inverse-foreground)) 86%, hsl(var(--inverse)));
 }
+
+/*
+ * Featured-first card grid (add beside .ed-cards-3). Instead of stretching or
+ * centring a leftover last card, the FIRST card takes the spare width so every
+ * row is full: two columns on tablets (an odd count makes the first card full
+ * width), three on laptops (a remainder of one makes it full width, a
+ * remainder of two makes it two thirds). Used on /guides for 11 and 14 cards.
+ */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .ed-cards-3.ed-cards-feature > :nth-child(n) { grid-column: span 2; }
+  .ed-cards-3.ed-cards-feature:has(> :last-child:nth-child(odd)) > :first-child { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .ed-cards-3.ed-cards-feature > :nth-child(n) { grid-column: span 2; }
+  .ed-cards-3.ed-cards-feature:has(> :last-child:nth-child(3n + 2)) > :first-child { grid-column: span 4; }
+  .ed-cards-3.ed-cards-feature:has(> :last-child:nth-child(3n + 1)) > :first-child { grid-column: 1 / -1; }
+}
+@media (min-width: 640px) {
+  .ed-cards-3.ed-cards-feature > :first-child [class*="aspect-"] { aspect-ratio: 21 / 9; }
+}
+
+/*
+ * "Remodeling possibilities" project cards. One card runs full width (the
+ * template passes a landscape crop); an odd count opens with a row of three and
+ * continues in pairs; six runs three by two. No lone card, no empty half row.
+ */
+.ed-possibilities { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 768px) {
+  .ed-possibilities { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ed-possibilities > * { grid-column: span 3; }
+  .ed-possibilities:has(> :last-child:nth-child(odd):not(:first-child)) > :nth-child(-n + 3) { grid-column: span 2; }
+  .ed-possibilities > :only-child { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  .ed-possibilities:has(> :nth-child(6):last-child) > * { grid-column: span 2; }
+}

@@ -78,10 +78,15 @@ export const GBP_LINKS = {
   review: `${SITE}/review`,
 } as const;
 
-export const GBP_SOCIAL = {
-  facebook: 'https://www.facebook.com/boiseremodeling',
-  instagram: 'https://www.instagram.com/boiseremodeling',
-} as const;
+/**
+ * Owner decision (2026-10-31): the only social and Google profiles are P5 Home
+ * Co's own Facebook page and P5 Home Co's single Google Business Profile, which
+ * cover every brand. There is no Boise Remodeling Co Facebook or Instagram
+ * account, so nothing links to one and no schema sameAs names one. Fill this
+ * with the P5 Facebook page URL when the owner supplies it; empty renders no
+ * social icon anywhere.
+ */
+export const P5_FACEBOOK_URL = '';
 
 export const GBP_ATTRIBUTES = {
   onlineEstimates: true,
@@ -509,16 +514,6 @@ export const GBP_CITATION_FIXES = [
     url: 'https://www.promatcher.com/profile/BoiseRemodelingCo',
   },
   {
-    platform: 'Facebook',
-    action: 'Confirm NAP matches canonical record',
-    url: GBP_SOCIAL.facebook,
-  },
-  {
-    platform: 'Instagram',
-    action: 'Confirm NAP in bio matches canonical record',
-    url: GBP_SOCIAL.instagram,
-  },
-  {
     platform: 'MapQuest',
     action: 'Submit correction after Yelp is fixed',
     url: 'https://www.mapquest.com',
@@ -539,7 +534,7 @@ export const GBP_MONTHLY_SYNC = [
   'Upload 2–4 new project photos with city + project type captions',
   'Respond to all reviews within 48 hours',
   'Check Q&A for new homeowner questions',
-  'Verify NAP on Facebook, Instagram, Bing, Apple still matches GBP_NAP',
+  'Verify NAP on Bing and Apple still matches GBP_NAP',
   'Update BUSINESS_INFO.rating/reviewCount in lib/seo.ts if review count changed',
 ] as const;
 

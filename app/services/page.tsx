@@ -16,6 +16,7 @@ import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
 import { CITIES,SERVICES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { contentImageAlt } from '@/shared/contentImageAlt';
+import { distinctHeroImage } from '@/shared/landingImages';
 import { getServiceBackground } from '@/shared/serviceBackgrounds';
 import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -44,6 +45,15 @@ export const metadata: Metadata = withBrandPageMetadata(({
   },
 }), "/services");
 
+// The hero used the whole-home render that the Whole home card repeats one
+// section below. Any existing picture no service card uses takes its place.
+const SERVICES_HERO = distinctHeroImage(
+  getServiceBackground('whole-home-remodel'),
+  SERVICES.map((service) => getServiceBackground(service.slug)),
+  'whole-home-remodel',
+  ['/images/blog/whole-home-remodel-cost-boise.webp'],
+);
+
 export default function ServicesIndexPage() {
   const base = getBaseUrl().replace(/\/$/, '');
 
@@ -70,8 +80,8 @@ export default function ServicesIndexPage() {
 
       <InteriorHero
         layout="editorial"
-        imageSrc={getServiceBackground('whole-home-remodel')}
-        imageAlt={contentImageAlt(getServiceBackground('whole-home-remodel'))}
+        imageSrc={SERVICES_HERO}
+        imageAlt={contentImageAlt(SERVICES_HERO)}
       >
         <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Services' }]} />
         <p className="ed-eyebrow mt-8" style={{ color: 'rgb(255 255 255 / 0.72)' }}>Our services</p>

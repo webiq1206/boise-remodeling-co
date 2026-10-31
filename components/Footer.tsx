@@ -12,6 +12,7 @@ import { GUIDE_PAGES } from "@/shared/guideContent";
 import { RegistrationLine } from "@/components/RegistrationLine";
 import { publicFooterLine, SITE_CONFIG } from "@/shared/siteConfig";
 import { SITE_TAGLINE } from "@/shared/siteContent";
+import { P5_FACEBOOK_URL } from "@/shared/gbpProfile";
 import { ChevronDown,Facebook } from "lucide-react";
 import Link from "next/link";
 
@@ -71,7 +72,7 @@ function GroupLinks({ links }: { links: FooterLink[] }) {
       {links.map((link) => (
         <li key={link.href}>
           {link.href.startsWith("http") ? (
-            <a href={link.href} className={FOOTER_LINK_CLASS} rel="noopener noreferrer">
+            <a href={link.href} className={FOOTER_LINK_CLASS} rel="noopener">
               {link.label}
             </a>
           ) : (
@@ -110,7 +111,9 @@ function FooterGroup({ title, links }: { title: string; links: FooterLink[] }) {
         </div>
       </details>
       <div className="hidden lg:block">
-        <h3 className="mb-5 font-serif font-normal text-label uppercase tracking-[0.12em] text-inverse-muted">{title}</h3>
+        {/* A column label, not a document heading: footer groups are navigation, so
+            they stay out of the page outline (was an H3 on every page). */}
+        <p className="mb-5 font-serif font-normal text-label uppercase leading-[inherit] tracking-[0.12em] text-inverse-muted">{title}</p>
         <GroupLinks links={links} />
       </div>
     </div>
@@ -153,7 +156,10 @@ export function Footer({ hideRegistration = false }: { hideRegistration?: boolea
               <Button variant="brandInverseOutline" size="sm" asChild>
                 <SaveContactLink showIcon />
               </Button>
-              <a href="https://www.facebook.com/boiseremodeling" className="-m-3 flex min-h-[44px] min-w-[44px] items-center justify-center p-3 text-accent-legible transition-colors hover:text-inverse-foreground" rel="noopener noreferrer" target="_blank" aria-label="Boise Remodeling Co on Facebook" data-testid="link-footer-facebook"><Facebook className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" /></a>
+              {/* The only social profile is P5 Home Co's Facebook page; nothing renders until its URL is set. */}
+              {P5_FACEBOOK_URL ? (
+                <a href={P5_FACEBOOK_URL} className="-m-3 flex min-h-[44px] min-w-[44px] items-center justify-center p-3 text-accent-legible transition-colors hover:text-inverse-foreground" rel="noopener" target="_blank" aria-label="P5 Home Co on Facebook" data-testid="link-footer-facebook"><Facebook className="h-5 w-5" strokeWidth={1.5} aria-hidden="true" /></a>
+              ) : null}
             </div>
             <ul className="m-0 mt-8 list-none space-y-2.5 p-0">
               <FooterCTAs />
@@ -190,7 +196,7 @@ export function Footer({ hideRegistration = false }: { hideRegistration?: boolea
             <span key={site.name} className="inline-flex items-baseline gap-x-2">
               {index > 0 && <span aria-hidden="true">·</span>}
               {site.href ? (
-                <a href={site.href} className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" rel="noopener noreferrer">
+                <a href={site.href} className="underline underline-offset-2 transition-colors hover:text-inverse-foreground" rel="noopener">
                   {site.name}
                 </a>
               ) : (

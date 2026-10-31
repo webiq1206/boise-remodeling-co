@@ -1,6 +1,13 @@
 import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import { buildCanonicalRoutes, type Manifest } from "./lib";
+import { isCityServiceNoindex } from "../../lib/page-metadata";
+
+/** A /services/<service>/<city> path the sitemap leaves out (noindex). */
+function isNoindexedRoute(url: string): boolean {
+  const m = url.match(/^\/services\/([^/]+)\/([^/]+)$/);
+  return Boolean(m && isCityServiceNoindex(m[1], m[2]));
+}
 
 const ORPHAN_THRESHOLD = 1;
 const WEAK_THRESHOLD = 5;
@@ -24,7 +31,16 @@ function main() {
   const weak: Array<{ url: string; incoming: number }> = [];
   const broken: Array<{ from: string; to: string }> = [];
 
+  // Noindexed combos must receive no related links at all (they are expected
+  // to be "orphans" in this manifest; linking to them is the failure).
+  const linkedNoindex = Object.entries(manifest.incoming).filter(([url, count]) => isNoindexedRoute(url) && count > 0);
+  if (linkedNoindex.length > 0) {
+    console.error(`[audit:links] FAIL related links point at noindexed pages: ${linkedNoindex.map(([u, c]) => `${u} (${c})`).join(", ")}`);
+    process.exit(1);
+  }
+
   for (const [url, count] of Object.entries(manifest.incoming)) {
+    if (isNoindexedRoute(url)) continue;
     if (count < ORPHAN_THRESHOLD) orphans.push(url);
     else if (count < WEAK_THRESHOLD) weak.push({ url, incoming: count });
   }

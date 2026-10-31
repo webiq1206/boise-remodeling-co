@@ -41,9 +41,12 @@ test('interior CSS follows the original family and system layers', () => {
   assert.ok(styles.indexOf('./approved-interiors.css') < styles.indexOf('./audit-accessibility.css'), 'accessibility corrections override the presentation layers');
 });
 
-test('contact hero requests a quote on the visit form before the consultation link', () => {
+// Phase 1 (2026-10-31): one label for one action. The hero's second
+// "Request a consultation" link to the same form was removed on purpose.
+test('contact hero has one Request a quote action to the visit form', () => {
   const source = read('app/contact/page.tsx');
-  assert.match(source, /interior-contact-actions[\s\S]*?<InteriorEstimateLink label="Request a quote" href="\/contact#consult"\s*\/>[\s\S]*?href="#consult"/);
+  assert.match(source, /<div className="interior-contact-actions"><InteriorEstimateLink label=\{CTA_PRIMARY\} href="\/contact#consult"\/><\/div>/);
+  assert.doesNotMatch(source, /Request a consultation/);
   assert.doesNotMatch(source, /Get my online estimate|href="\/estimate"/);
   assert.match(read('components/approved/InteriorLayout.tsx'), /href='\/estimate'/);
 });

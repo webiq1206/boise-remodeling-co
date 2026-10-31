@@ -14,8 +14,9 @@ type MaskableNode = {
   parentElement?: MaskableNode | null;
 };
 
+/** Any casing of "true" counts: forms render "true", the script writes "True". */
 function isMasked(node: MaskableNode | null | undefined): boolean {
-  return node?.getAttribute?.(CLARITY_MASK_ATTRIBUTE) === CLARITY_MASK_VALUE;
+  return (node?.getAttribute?.(CLARITY_MASK_ATTRIBUTE) ?? "").toLowerCase() === "true";
 }
 
 function hasMaskedAncestor(node: MaskableNode): boolean {
@@ -27,8 +28,25 @@ function hasMaskedAncestor(node: MaskableNode): boolean {
   return false;
 }
 
+/**
+ * An element that already carries a mask is left exactly as rendered. Rewriting
+ * a server-rendered "true" to "True" before React hydrated was a hydration
+ * attribute mismatch on every page with the consultation form.
+ */
 function stamp(node: MaskableNode): void {
+  if (isMasked(node)) return;
   node.setAttribute?.(CLARITY_MASK_ATTRIBUTE, CLARITY_MASK_VALUE);
+}
+
+/**
+ * An aria-hidden mirror field (Radix renders a hidden native select beside its
+ * custom control) inside an already-masked ancestor is covered by that
+ * ancestor, because Clarity masks every descendant of a masked element.
+ * Stamping it anyway changed server-rendered HTML before React hydrated, which
+ * React reports as a hydration attribute mismatch on every page with a select.
+ */
+function isCoveredMirror(node: MaskableNode): boolean {
+  return node.getAttribute?.("aria-hidden") === "true" && hasMaskedAncestor(node);
 }
 
 /**
@@ -39,10 +57,10 @@ function stamp(node: MaskableNode): void {
 export function applyClarityMask(root: MaskableNode | null | undefined): void {
   if (!root) return;
   if (root.nodeType === 1 && typeof root.matches === "function" && root.matches(CLARITY_FIELD_SELECTOR)) {
-    stamp(root);
+    if (!isCoveredMirror(root)) stamp(root);
   }
   const matched = typeof root.querySelectorAll === "function" ? root.querySelectorAll(CLARITY_FIELD_SELECTOR) : [];
-  for (const node of matched) stamp(node);
+  for (const node of matched) if (!isCoveredMirror(node)) stamp(node);
 
   const inputs: MaskableNode[] = [];
   if (root.nodeType === 1 && typeof root.matches === "function" && root.matches("input")) inputs.push(root);
@@ -68,7 +86,10 @@ export function clarityFieldMaskScript(): string {
     var SELECTOR=${JSON.stringify(CLARITY_FIELD_SELECTOR)};
     var PARENT_TYPES={"checkbox":1,"radio":1,"range":1,"button":1};
     function masked(node){
-      return !!(node && node.getAttribute && node.getAttribute(ATTR)===VALUE);
+      return !!(node && node.getAttribute && String(node.getAttribute(ATTR)||"").toLowerCase()==="true");
+    }
+    function stamp(node){
+      if(!masked(node)) node.setAttribute(ATTR, VALUE);
     }
     function maskedAncestor(node){
       var parent=node.parentElement;
@@ -78,12 +99,15 @@ export function clarityFieldMaskScript(): string {
       }
       return false;
     }
+    function coveredMirror(node){
+      return node.getAttribute && node.getAttribute("aria-hidden")==="true" && maskedAncestor(node);
+    }
     function mask(root){
       if(!root) return;
-      if(root.nodeType===1 && root.matches && root.matches(SELECTOR)) root.setAttribute(ATTR, VALUE);
+      if(root.nodeType===1 && root.matches && root.matches(SELECTOR) && !coveredMirror(root)) stamp(root);
       if(root.querySelectorAll){
         var nodes=root.querySelectorAll(SELECTOR);
-        for(var i=0;i<nodes.length;i++) nodes[i].setAttribute(ATTR, VALUE);
+        for(var i=0;i<nodes.length;i++) if(!coveredMirror(nodes[i])) stamp(nodes[i]);
       }
       var inputs=[];
       if(root.matches && root.matches("input")) inputs.push(root);
@@ -96,7 +120,7 @@ export function clarityFieldMaskScript(): string {
         var type=(input.getAttribute("type")||"").toLowerCase();
         if(!PARENT_TYPES[type]) continue;
         if(maskedAncestor(input)) continue;
-        if(input.parentElement && !input.parentElement.matches("body,html")) input.parentElement.setAttribute(ATTR, VALUE);
+        if(input.parentElement && !input.parentElement.matches("body,html")) stamp(input.parentElement);
       }
     }
     function start(){

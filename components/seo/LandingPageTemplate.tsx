@@ -17,6 +17,7 @@ AccordionTrigger,
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
+import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import type { GalleryProject } from '@/shared/galleryData';
@@ -94,6 +95,11 @@ interface LandingPageTemplateProps {
   featuredProject?: GalleryProject;
   /** Service slug used to attach a multi-room featured project set when available. */
   serviceSlug?: string;
+  /**
+   * Subject (a service slug, or "general") whose existing images may replace a
+   * decorative image that is already on the page. Defaults to serviceSlug.
+   */
+  imageSubject?: string;
   /** Show contextual estimator prompt band (default true on service/area pages). */
   showEstimatePrompt?: boolean;
   faqs: FAQItem[];
@@ -118,6 +124,8 @@ export interface LandingProof {
     description: string;
     beforeImageUrl: string;
     afterImageUrl: string;
+    /** Gallery serviceType; picks a same-subject image if this one repeats. */
+    serviceType?: string;
   }[];
 }
 
@@ -188,6 +196,7 @@ export function LandingPageTemplate({
   proofHeading,
   featuredProject,
   serviceSlug,
+  imageSubject,
   showEstimatePrompt = false,
   faqs,
   related,
@@ -198,18 +207,27 @@ export function LandingPageTemplate({
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
     publishedQuotes.length > 0 || (proof?.projects?.length ?? 0) > 0;
-  const breatherImage = breatherImageUrl ?? heroImageUrl;
-  const processImage = processImageUrl ?? heroImageUrl;
+  const featuredRoomsForImages = serviceSlug ? getFeaturedProjectForService(serviceSlug) : undefined;
+  const breatherIndices = sectionBreatherIndices(sections?.length ?? 0);
+  // One appearance per picture on the page, never two copies in neighbouring
+  // sections. Identity is visual, because one render ships under many names.
+  const imageSlots = resolveLandingImages({
+    hero: heroImageUrl,
+    breather: breatherImageUrl ?? heroImageUrl,
+    process: processImageUrl ?? heroImageUrl,
+    showcase: [
+      featuredProject?.beforeImageUrl,
+      featuredProject?.afterImageUrl,
+      ...(featuredRoomsForImages?.rooms.map((room) => room.src) ?? []),
+    ].filter((src): src is string => Boolean(src)),
+    proof: proof?.projects?.map((p) => ({ src: p.afterImageUrl, subject: p.serviceType ? gallerySubject(p.serviceType) : undefined })) ?? [],
+    sectionSlots: breatherIndices.length,
+    subject: imageSubject ?? serviceSlug,
+  });
+  const breatherImage = imageSlots.breather;
+  const processImage = imageSlots.process;
   const showTimelineBelow = !!timeline && !costGuidance;
-  const featuredRooms = serviceSlug
-    ? getFeaturedProjectForService(serviceSlug)
-    : undefined;
-  const sectionBreatherPool = [
-    breatherImage,
-    processImage,
-    featuredProject?.afterImageUrl,
-    ...(proof?.projects?.map((p) => p.afterImageUrl) ?? []),
-  ].filter((src): src is string => Boolean(src));
+  const featuredRooms = featuredRoomsForImages;
 
   return (
     <div className="flex flex-col ">
@@ -428,13 +446,8 @@ export function LandingPageTemplate({
               </aside>
               <div className="space-y-[clamp(48px,6vw,88px)]">
                 {sections.map((section, i) => {
-                  const breatherSrc =
-                    sections.length >= 3 &&
-                    i > 0 &&
-                    i % 2 === 1 &&
-                    sectionBreatherPool.length > 0
-                      ? sectionBreatherPool[Math.floor(i / 2) % sectionBreatherPool.length]
-                      : undefined;
+                  const slot = breatherIndices.indexOf(i);
+                  const breatherSrc = slot >= 0 ? imageSlots.sectionBreathers[slot] : undefined;
                   return (
                     <div key={section.heading}>
                       {breatherSrc && (
@@ -490,11 +503,16 @@ export function LandingPageTemplate({
             </Reveal>
 
             {proof?.projects && proof.projects.length > 0 && (
-              <div className="mt-[clamp(40px,5vw,72px)] grid gap-6 sm:grid-cols-2">
-                {proof.projects.map((project) => (
+              <div className="ed-possibilities mt-[clamp(40px,5vw,72px)]">
+                {proof.projects.map((project, index) => (
                   <Reveal key={project.title}>
                     <article className="flex h-full flex-col" style={{ border: '1px solid var(--ed-line)' }}>
-                      <ProjectInspirationImage afterSrc={project.afterImageUrl} afterAlt={project.title} />
+                      <ProjectInspirationImage
+                        afterSrc={imageSlots.proof[index] ?? project.afterImageUrl}
+                        afterAlt={project.title}
+                        aspectClass={proof.projects!.length === 1 ? 'aspect-[16/10] md:aspect-[21/9]' : undefined}
+                        sizes={proof.projects!.length === 1 ? '(max-width: 1023px) 100vw, 80vw' : undefined}
+                      />
                       <div className="p-6">
                         <h3 className="ed-h4">{project.title}</h3>
                         <p className="ed-body mt-2 text-[0.875rem]">{project.description}</p>

@@ -57,7 +57,7 @@ export function ServiceReferral({
           <a
             href={ctaHref}
             className="inline-flex min-h-12 items-center gap-2 rounded-sm bg-[var(--ed-ink,#2C302F)] px-5 text-sm font-medium text-[var(--ed-paper,#FBFAF6)]"
-            rel="noopener noreferrer"
+            rel="noopener"
             data-cta="primary"
           >
             {ctaLabel}

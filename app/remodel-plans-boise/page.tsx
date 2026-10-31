@@ -300,7 +300,7 @@ export default function RemodelPlansPage() {
             <a
               href="https://boisehandyman.co/re-10-repairs-boise"
               className="underline underline-offset-4 hover:text-foreground"
-              rel="noopener noreferrer"
+              rel="noopener"
             >
               RE-10 repairs (Boise Handyman Co)
             </a>

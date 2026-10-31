@@ -730,3 +730,25 @@
 .approved-interior .interior-page-heading p {
   font-family: var(--font-manrope), Arial, sans-serif;
 }
+/* Task-page hero (PageHeroBand compact, /remodel-plans-boise): on phones the
+   copy leads and its action sits right under the H1, so "Upload your plans"
+   is in the first screen at 360x640 above the bottom bar; the photograph
+   follows the copy instead of pushing it below the fold. */
+@media(max-width:700px) {
+.approved-interior .page-hero-compact .interior-hero-copy {
+  display:flex;
+  flex-direction:column;
+  padding:24px 0 32px
+}
+.approved-interior .page-hero-compact .interior-hero-copy>.ed-lede {
+  order:2;
+  margin-top:24px
+}
+.approved-interior .page-hero-compact .interior-hero-copy>div:last-child {
+  order:1
+}
+.approved-interior .page-hero-compact .interior-hero-image {
+  order:3;
+  height:200px
+}
+}

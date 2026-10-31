@@ -8,7 +8,9 @@ import { buildCanonical,FEED_ALTERNATES } from '@/lib/page-metadata';
 import { generateBreadcrumbSchema,generateCollectionPageSchema } from '@/lib/schema';
 import { getBaseUrl } from '@/lib/seo';
 import { BLOG_POSTS } from '@/shared/blogContent';
-import { getAbsoluteImageUrl,getBlogImageAlt,getHubHeroImage } from '@/shared/blogImages';
+import { getAbsoluteImageUrl,getBlogImageAlt,getBlogThumbnail,getHubHeroImage } from '@/shared/blogImages';
+import { contentImageAlt } from '@/shared/contentImageAlt';
+import { distinctHeroImage,HUB_SUBJECT } from '@/shared/landingImages';
 import {
 categoryHubPath,
 CONTENT_HUBS,
@@ -20,6 +22,7 @@ import { ArrowRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound,redirect } from 'next/navigation';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -99,9 +102,18 @@ export default async function BlogCategoryHubPage(
     redirect(hub.hubSlug === 'treasure-valley-locations' ? '/areas' : '/blog');
   }
 
-  const hubHero = getHubHeroImage(params.hubSlug);
+  // The banner sits directly above the card grid; it must not repeat a card's picture.
+  const preferredHero = getHubHeroImage(params.hubSlug);
+  const hubHero = distinctHeroImage(
+    preferredHero,
+    posts.map((post) => getBlogThumbnail(post.slug, post.thumbnail)),
+    HUB_SUBJECT[params.hubSlug],
+  );
   const pillarSlug = hub.pillarSlug;
-  const hubAlt = pillarSlug ? getBlogImageAlt(pillarSlug) : `${hub.title} articles`;
+  const hubAlt =
+    hubHero === preferredHero
+      ? pillarSlug ? getBlogImageAlt(pillarSlug) : `${hub.title} articles`
+      : contentImageAlt(hubHero, `${hub.title} articles`);
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: 'Home', url: '/' },
@@ -144,7 +156,7 @@ export default async function BlogCategoryHubPage(
 
 
           <header className="interior-article-header"><h1 className="text-3xl md:text-4xl font-serif tracking-tight mb-4">
-            {hub.title}
+            {toSentenceCase(hub.title)}
           </h1>
           <p className="text-lg text-muted-foreground mb-4 max-w-2xl">{hub.description}</p>
           <p className="text-base text-muted-foreground mb-6 max-w-2xl leading-relaxed">

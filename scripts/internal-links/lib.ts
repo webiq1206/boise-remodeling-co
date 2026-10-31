@@ -2,6 +2,7 @@ import { BLOG_POSTS, type BlogPostData } from "../../shared/blogContent";
 import { GUIDE_PAGES } from "../../shared/guideContent";
 import { getHubBySlug, getHubPillarSlug, guidePath } from "../../shared/contentHubs";
 import { PRIORITY_SERVICES, CITIES, type ServiceData, type CityData } from "../../shared/contentData";
+import { isCityServiceNoindex } from "../../lib/page-metadata";
 
 export type PageType = "blog" | "guide" | "service" | "city" | "city-service";
 
@@ -290,6 +291,10 @@ function quotasFor(from: PageNode): Quota {
 
 function eligible(from: PageNode, to: PageNode): boolean {
   if (from.id === to.id) return false;
+  // Same index rule as the sitemap: a noindexed combo is never a link target.
+  if (to.type === "city-service" && to.serviceSlug && to.citySlug && isCityServiceNoindex(to.serviceSlug, to.citySlug)) {
+    return false;
+  }
 
   if (from.type === "city-service") {
     if (to.type === "city-service") {
