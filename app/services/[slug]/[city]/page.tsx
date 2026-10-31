@@ -89,6 +89,7 @@ export default async function CityServicePage(
             description: p.description,
             beforeImageUrl: p.beforeImageUrl,
             afterImageUrl: p.afterImageUrl,
+            serviceType: p.serviceType,
           })),
         }
       : undefined;
@@ -115,6 +116,7 @@ export default async function CityServicePage(
         heroImageUrl={images.hero}
         breatherImageUrl={images.breather}
         processImageUrl={images.process}
+        imageSubject={service.slug}
         manifestPath={path}
         planningFrom={service.planningFrom}
         breadcrumbs={[

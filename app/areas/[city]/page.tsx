@@ -120,6 +120,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
             description: p.description,
             beforeImageUrl: p.beforeImageUrl,
             afterImageUrl: p.afterImageUrl,
+            serviceType: p.serviceType,
           })),
         }
       : undefined;
@@ -156,6 +157,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         heroImageUrl={images.hero}
         breatherImageUrl={images.breather}
         processImageUrl={images.process}
+        imageSubject="general"
         manifestPath={path}
         breadcrumbs={[
           { name: 'Home', href: '/' },

@@ -12,6 +12,8 @@ estimateReadingTime,
 import { buildPageMetadata } from '@/lib/page-metadata';
 import { generateBreadcrumbSchema,generateWebPageSchema } from '@/lib/schema';
 import { getBlogHeroImage,getBlogImageAlt } from '@/shared/blogImages';
+import { contentImageAlt } from '@/shared/contentImageAlt';
+import { distinctHeroImage } from '@/shared/landingImages';
 import { CONTENT_HUBS,guidePath } from '@/shared/contentHubs';
 import { GUIDE_PAGES,type GuidePageData } from '@/shared/guideContent';
 import { ArrowRight,BookOpen,MapPin } from 'lucide-react';
@@ -64,6 +66,15 @@ export default function GuidesIndexPage() {
     { name: 'Guides', url: '/guides' },
   ]);
 
+  // The hero sat directly above a card showing the same render. Keep the
+  // cost-guide image only if no card on this page uses that picture.
+  const preferredHero = getBlogHeroImage('boise-remodeling-cost-guide');
+  const heroImage = distinctHeroImage(
+    preferredHero,
+    [...pillarGuides, ...locationGuides].map((guide) => getBlogHeroImage(guide.slug, guide.heroImage)),
+  );
+  const heroAlt = heroImage === preferredHero ? getBlogImageAlt('boise-remodeling-cost-guide') : contentImageAlt(heroImage);
+
   return (
     <InteriorPage kind="guides"><>
       <script
@@ -76,8 +87,8 @@ export default function GuidesIndexPage() {
       />
 
       <PageHeroBand
-        imageSrc={getBlogHeroImage('boise-remodeling-cost-guide')}
-        imageAlt={getBlogImageAlt('boise-remodeling-cost-guide')}
+        imageSrc={heroImage}
+        imageAlt={heroAlt}
       >
         <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Treasure Valley authority</p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
