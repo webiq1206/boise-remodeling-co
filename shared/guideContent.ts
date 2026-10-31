@@ -341,8 +341,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
     linkedServices: ['adu'],
     linkedCities: ['boise', 'meridian', 'eagle', 'nampa'],
     relatedLinks: [
-      { url: '/services/adu', anchor: 'ADU and guest house construction' },
-      { url: '/services/adu/boise', anchor: 'ADU builder in Boise' },
+      { url: '/services/adu', anchor: 'ADU conversions' },
       { url: '/guides/boise-home-addition-guide' },
       { url: '/guides/boise-remodeling-cost-guide' },
       { url: '/resources/ada-canyon-permit-flow' },

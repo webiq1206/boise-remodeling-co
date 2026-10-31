@@ -56,6 +56,14 @@ export const NOINDEX_CITY_SERVICE = new Set<string>([
   'adu/star',
   'adu/middleton',
   'adu/caldwell',
+  // Phase 4 (owner decision, 31 October 2026): Boise Construction Co owns new
+  // detached ADUs, and none of the eight ADU city pages has bespoke local copy
+  // (cityServiceCopy.ts carries no adu/* entry). The four that were still
+  // indexed join the others until bespoke local copy exists.
+  'adu/boise',
+  'adu/meridian',
+  'adu/eagle',
+  'adu/nampa',
 ]);
 
 export function isCityServiceNoindex(serviceSlug: string, citySlug: string): boolean {
@@ -131,13 +139,24 @@ const SERVICE_TITLE_OVERRIDES: Record<string, string> = {
   'kitchen-remodel': 'Kitchen remodeling in Boise',
   'bathroom-remodel': BATHROOM_NEAR_ME_TITLE,
   'whole-home-remodel': 'Treasure Valley Whole-Home Remodeling',
-  'room-addition': 'Room additions in Boise',
-  adu: 'Treasure Valley ADUs & Guest Houses',
+  // Parent versus Boise child (phase 4): the parent owns the service across the
+  // Treasure Valley, /services/<slug>/boise owns "<service> in Boise".
+  'room-addition': 'Room additions in the Treasure Valley',
+  adu: 'ADU conversions in the Treasure Valley',
   // Without an override these fall back to "<name> in the Treasure Valley",
   // which overruns the title budget and word-truncates to "... in the".
   'basement-remodel': 'Treasure Valley Basement Remodeling',
   'outdoor-living': 'Treasure Valley Decks & Outdoor Living',
-  'aging-in-place': 'Aging-in-Place Remodeling in Boise',
+  'aging-in-place': 'Aging-in-place remodeling in Idaho',
+};
+
+/**
+ * The Boise child owns "<service> in Boise" (phase 4). Sentence case, and
+ * within the 38-character child budget.
+ */
+const CITY_SERVICE_TITLE_OVERRIDES: Record<string, string> = {
+  'room-addition/boise': 'Room additions in Boise, Idaho',
+  'aging-in-place/boise': 'Aging-in-place remodeling in Boise, ID',
 };
 
 /**
@@ -192,9 +211,34 @@ const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
       'Design-build kitchen remodeling in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
   },
   'room-addition': {
-    title: 'Room additions in Boise',
+    title: 'Room additions in the Treasure Valley',
     description:
-      'Design-build room additions in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, and Ada and Canyon permitting. Budget ranges, not quotes.',
+      'Room additions in the Treasure Valley: bump-outs and in-footprint expansions with a written scope. New-footprint builds go to Boise Construction Co.',
+  },
+  'whole-home-remodel': {
+    title: 'Treasure Valley Whole-Home Remodeling',
+    description:
+      'Whole-home remodeling across the Treasure Valley: phased or full-house renovations run by one design-build team with a written scope and weekly updates.',
+  },
+  'basement-remodel': {
+    title: 'Treasure Valley Basement Remodeling',
+    description:
+      'Basement remodeling across the Treasure Valley: egress, framing, moisture control and finished lower-level suites, design-build with permits handled.',
+  },
+  'outdoor-living': {
+    title: 'Treasure Valley Decks & Outdoor Living',
+    description:
+      'Outdoor living spaces across the Treasure Valley: covered patios, outdoor kitchens, fireplaces and decks designed for freeze-thaw winters, design-build.',
+  },
+  adu: {
+    title: 'ADU conversions in the Treasure Valley',
+    description:
+      'ADU conversions in the Treasure Valley: garage, basement and attached units turned into living space, design-build, with a written scope and permits.',
+  },
+  'aging-in-place': {
+    title: 'Aging-in-place remodeling in Idaho',
+    description:
+      'Aging-in-place remodeling across the Treasure Valley: curbless showers, wider doorways, grab bars, lighting and single-level living. Free in-home visit.',
   },
 };
 
@@ -240,10 +284,13 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
       break;
     }
     case 'city-service':
-      title = generateCityServiceTitle(input.serviceName!, input.cityName!);
+      title =
+        CITY_SERVICE_TITLE_OVERRIDES[`${input.serviceSlug}/${input.citySlug}`] ??
+        generateCityServiceTitle(input.serviceName!, input.cityName!);
       description = generateCityServiceDescription(
         input.serviceName!,
         input.cityName!,
+        input.serviceSlug,
       );
       break;
     case 'about':

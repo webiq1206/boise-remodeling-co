@@ -19,8 +19,8 @@ export function InteriorHero({children,imageSrc,imageAlt='',layout='split',estim
 }
 
 /** Reusable secondary column, with the estimator as its single dominant action. */
-export function InteriorProjectAside({children}:{children?:ReactNode}) {
-  return <aside className="interior-project-aside"><p className="interior-eyebrow">YOUR PROJECT. REVIEWED BY OUR TEAM.</p><h2>Start with<br/><em>what you know.</em></h2><p>Describe your project and share plans or photos for our team to review.</p><InteriorEstimateLink/>{children}<a className="interior-text-link" href="/contact">Talk through the details<ArrowUpRight size={16} aria-hidden="true"/></a></aside>;
+export function InteriorProjectAside({children,heading}:{children?:ReactNode;heading?:ReactNode}) {
+  return <aside className="interior-project-aside"><p className="interior-eyebrow">YOUR PROJECT. REVIEWED BY OUR TEAM.</p><h2>{heading??<>Start with<br/><em>what you know.</em></>}</h2><p>Describe your project and share plans or photos for our team to review.</p><InteriorEstimateLink/>{children}<a className="interior-text-link" href="/contact">Talk through the details<ArrowUpRight size={16} aria-hidden="true"/></a></aside>;
 }
 
 export function InteriorDocument({heading,children,contents=[]}:{heading:ReactNode;children:ReactNode;contents?:{id:string;label:string}[]}) {

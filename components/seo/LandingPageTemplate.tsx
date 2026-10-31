@@ -103,6 +103,20 @@ interface LandingPageTemplateProps {
   /** Show contextual estimator prompt band (default true on service/area pages). */
   showEstimatePrompt?: boolean;
   faqs: FAQItem[];
+  /**
+   * What the page is about, for descriptive section headings (phase 4). The
+   * template used the same slogans on all 76 landing pages ("Plan the
+   * details.", "Why homeowners choose us", "Ready to begin?"); headings now
+   * name the subject: "What a kitchen remodel in Boise includes".
+   */
+  subject?: { noun: string; place?: string };
+  /** A 40 to 60 word direct answer, rendered right under the hero. */
+  answer?: { question: string; text: string };
+  /**
+   * 'visible' renders every question and answer as text (H3 plus paragraph)
+   * instead of the accordion, whose closed panels are not in the HTML.
+   */
+  faqDisplay?: 'accordion' | 'visible';
   related: {
     variant: 'service' | 'area' | 'city-service';
     serviceSlug?: string;
@@ -170,6 +184,24 @@ const line = { borderColor: 'var(--ed-line)' } as const;
  * design - these pages are dark-dominant like the rest of the site.
  */
 /** Anchor id for a long-form section heading, used by the sticky index. */
+/** "a kitchen remodel", "an aging-in-place remodel", "an ADU conversion". */
+function withArticle(noun: string): string {
+  const first = noun.trim().split(/[\s/-]+/)[0] ?? '';
+  const vowel = /^[A-Z]{2,}$/.test(first) ? /^[AEFHILMNORSX]/.test(first) : /^[aeiou]/i.test(first);
+  return `${vowel ? 'an' : 'a'} ${noun}`;
+}
+
+/** Heading text with its last word carried by the accent, as the slogans were. */
+function Accented({ text }: { text: string }) {
+  const cut = text.lastIndexOf(' ');
+  if (cut < 0) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, cut)} <em className="not-italic" style={accent}>{text.slice(cut + 1)}</em>
+    </>
+  );
+}
+
 function sectionId(heading: string): string {
   return 'section-' + heading.toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
@@ -199,8 +231,22 @@ export function LandingPageTemplate({
   imageSubject,
   showEstimatePrompt = false,
   faqs,
+  subject,
+  answer,
+  faqDisplay = 'accordion',
   related,
 }: LandingPageTemplateProps) {
+  const noun = subject?.noun ?? 'remodel';
+  const where = subject?.place ? ` in ${subject.place}` : '';
+  const headings = {
+    scope: `What ${withArticle(noun)}${where} includes`,
+    start: `Where to start ${withArticle(noun).replace(/^an? /, 'your ')}`,
+    benefits: `What you can count on during ${withArticle(noun)}${where}`,
+    process: `How ${withArticle(noun)}${where} works, step by step`,
+    proof: `Design ideas for ${withArticle(noun)}${where}`,
+    faq: `Questions about ${withArticle(noun)}${where}`,
+    cta: `Request a quote for your ${noun}`,
+  };
   void showEstimatePrompt;
   void proofHeading;
   const eyebrow = breadcrumbs[breadcrumbs.length - 2]?.name;
@@ -256,7 +302,21 @@ export function LandingPageTemplate({
             </p>
           )}
         </InteriorHero>
-<div className="interior-detail-body"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2>Plan the details.<br/><em>Know the next step.</em></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
+      {/* ─── The short answer: 40 to 60 words, right under the hero ─── */}
+      {answer && (
+        <Section surface="bone" spacing="lg" edge>
+          <div className="ed-shell">
+            <div className="ed-split ed-split-narrow">
+              <div>
+                <p className="ed-eyebrow">The short answer</p>
+                <h2 className="ed-h2-sm ed-statement">{answer.question}</h2>
+              </div>
+              <p className="ed-lede" data-speakable="answer">{answer.text}</p>
+            </div>
+          </div>
+        </Section>
+      )}
+<div className="interior-detail-body"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
 
       {/* ─── Cost and timeline expectation ───
           Cost guidance follows the concise scope and estimate sidebar. */}
@@ -305,7 +365,7 @@ export function LandingPageTemplate({
             <Reveal>
               <p className="ed-eyebrow">Why choose us</p>
               <h2 className="ed-h2 ed-statement-wide">
-                Why homeowners <em className="not-italic" style={accent}>choose us</em>
+                <Accented text={headings.benefits} />
               </h2>
             </Reveal>
             <Reveal delay={60}>
@@ -356,7 +416,7 @@ export function LandingPageTemplate({
               <Reveal>
                 <p className="ed-eyebrow">How it works</p>
                 <h2 className="ed-h2-sm ed-statement">
-                  Our <em className="not-italic" style={accent}>process</em>, step by step
+                  <Accented text={headings.process} />
                 </h2>
               </Reveal>
               <div className="ed-steps mt-[clamp(32px,4vw,56px)]">
@@ -498,7 +558,7 @@ export function LandingPageTemplate({
             <Reveal>
               <p className="ed-eyebrow">Design inspiration</p>
               <h2 className="ed-h2 ed-statement-wide">
-                Remodeling <em className="not-italic" style={accent}>possibilities</em>
+                <Accented text={headings.proof} />
               </h2>
             </Reveal>
 
@@ -553,19 +613,30 @@ export function LandingPageTemplate({
             <div className="lg:sticky lg:top-28 lg:self-start">
               <p className="ed-eyebrow">Common questions</p>
               <h2 className="ed-h2 ed-statement">
-                Frequently asked <em className="not-italic" style={accent}>questions</em>
+                <Accented text={headings.faq} />
               </h2>
             </div>
-            <Accordion type="single" collapsible className="w-full border-t" style={line}>
-              {faqs.map((faq, i) => (
-                <AccordionItem key={i} value={`faq-${i}`} className="border-0 border-b" style={line}>
-                  <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:[color:var(--ed-accent)]">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            {faqDisplay === 'visible' ? (
+              <div className="w-full border-t" style={line}>
+                {faqs.map((faq) => (
+                  <div key={faq.question} className="border-b py-6" style={line}>
+                    <h3 className="ed-h4 text-left">{faq.question}</h3>
+                    <p className="ed-body mt-3 text-[0.9375rem]"><RegistrationText text={faq.answer} /></p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <Accordion type="single" collapsible className="w-full border-t" style={line}>
+                {faqs.map((faq, i) => (
+                  <AccordionItem key={i} value={`faq-${i}`} className="border-0 border-b" style={line}>
+                    <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:[color:var(--ed-accent)]">
+                      {faq.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </div>
         </div>
       </Section>
@@ -585,7 +656,7 @@ export function LandingPageTemplate({
             <Reveal>
               <p className="ed-eyebrow ed-eyebrow-accent">Start your project</p>
               <h2 className="ed-h2 ed-statement">
-                Ready to <em className="not-italic" style={accent}>begin</em>?
+                <Accented text={headings.cta} />
               </h2>
             </Reveal>
             <Reveal delay={60}>

@@ -185,7 +185,7 @@ const additionSlugs = [
 const ADU_PILLAR_LINK = { url: '/guides/boise-adu-guide', anchor: 'Boise ADU Guide' };
 const ADDITION_EXTRA_LINKS: Record<string, Array<{ url: string; anchor?: string }>> = {
   'adu-guide-boise': [ADU_PILLAR_LINK, { url: '/services/adu/boise', anchor: 'ADU builder in Boise' }],
-  'garage-conversions': [ADU_PILLAR_LINK, { url: adu, anchor: 'ADU and guest house construction' }],
+  'garage-conversions': [ADU_PILLAR_LINK, { url: adu, anchor: 'ADU conversions' }],
   'multigenerational-living-remodels': [ADU_PILLAR_LINK],
   'primary-suite-additions': [{ url: ab, anchor: 'Room additions in Boise' }],
 };

@@ -102,12 +102,16 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
 });
 
 test('noindex ADU city pages stay out of the sitemap', () => {
-  for (const city of ['kuna', 'star', 'middleton', 'caldwell']) {
+  // Phase 4 owner decision (31 October 2026): Boise Construction Co owns new
+  // detached ADUs and no ADU city page has bespoke copy, so all eight ADU city
+  // pages are noindexed; the parent /services/adu stays indexed as ADU conversions.
+  for (const city of ['kuna', 'star', 'middleton', 'caldwell', 'boise', 'meridian', 'eagle', 'nampa']) {
     assert.equal(isCityServiceNoindex('adu', city), true);
     assert.equal(getAllSiteUrls().some((entry) => entry.path === `/services/adu/${city}`), false);
   }
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/adu'), true);
   for (const city of ['boise', 'meridian', 'eagle', 'nampa']) {
-    assert.equal(getAllSiteUrls().some((entry) => entry.path === `/services/adu/${city}`), true);
+    assert.equal(getAllSiteUrls().some((entry) => entry.path === `/services/room-addition/${city}`), true);
   }
 });
 
