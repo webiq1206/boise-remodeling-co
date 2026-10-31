@@ -110,7 +110,9 @@ function FooterGroup({ title, links }: { title: string; links: FooterLink[] }) {
         </div>
       </details>
       <div className="hidden lg:block">
-        <h3 className="mb-5 font-serif font-normal text-label uppercase tracking-[0.12em] text-inverse-muted">{title}</h3>
+        {/* A column label, not a document heading: footer groups are navigation, so
+            they stay out of the page outline (was an H3 on every page). */}
+        <p className="mb-5 font-serif font-normal text-label uppercase leading-[inherit] tracking-[0.12em] text-inverse-muted">{title}</p>
         <GroupLinks links={links} />
       </div>
     </div>
