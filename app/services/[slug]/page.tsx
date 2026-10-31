@@ -1,10 +1,10 @@
 import { SERVICE_SCENES } from '@/shared/serviceSceneImages';
 import { InteriorPage } from '@/components/approved/InteriorLayout';
-import { ServiceReferral } from '@/components/marketing/ServiceReferral';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
 LandingPageTemplate,
 type LandingSection,
+type LandingLinkedParagraph,
 } from '@/components/seo/LandingPageTemplate';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import {
@@ -24,29 +24,38 @@ import {
   BATHROOM_NEAR_ME_TIMELINE,
 } from '@/shared/content/bathroomNearMePage';
 import { SERVICE_SEO_CONTENT } from '@/shared/seoContent';
+import { ADU_CONVERSION_PAGE, ROOM_ADDITION_PAGE } from '@/shared/content/serviceOwnership';
 import { getServiceImageSet } from '@/shared/serviceBackgrounds';
 import { notFound } from 'next/navigation';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
-/** D2: ADUs and room additions belong to Boise Construction Co. */
-const CONSTRUCTION_REFERRALS: Record<
-  string,
-  { title: string; body: string; ctaLabel: string; ctaHref: string; alsoNote?: string }
-> = {
-  adu: {
-    title: 'ADUs and guest houses',
-    body: 'Boise Construction Co handles accessory dwelling units and guest houses for Treasure Valley lots. Boise Remodeling Co focuses on kitchens, bathrooms and whole-home work inside the home you already have.',
-    ctaLabel: 'Talk with Boise Construction Co',
-    ctaHref: 'https://boiseconstruction.co/services/home-additions',
-    alsoNote:
-      'Boise ADU Co projects currently run through Boise Construction Co; its dedicated site is coming.',
-  },
-  'room-addition': {
-    title: 'Room additions',
-    body: 'New structure and the same permit path as other new construction, so room additions are handled by Boise Construction Co. Boise Remodeling Co stays focused on remodeling the rooms you already live in.',
-    ctaLabel: 'Talk with Boise Construction Co about additions',
-    ctaHref: 'https://boiseconstruction.co/services/home-additions',
-  },
+/**
+ * Phase 4 ownership split with Boise Construction Co (owner decision): these
+ * two parents are the remodeling side of ADUs and additions, each with one
+ * followed handoff link to the Construction page that owns the rest.
+ */
+const OWNERSHIP_PAGES = {
+  adu: ADU_CONVERSION_PAGE,
+  'room-addition': ROOM_ADDITION_PAGE,
+} as const;
+
+/**
+ * One contextual in-body link from each service parent into its cluster
+ * (phase 4): the posts sat at the generator's five-link floor.
+ */
+const SERVICE_CLUSTER_LINKS: Record<string, LandingLinkedParagraph> = {
+  'kitchen-remodel': { text: 'For what moves a kitchen budget line by line, read our guide to', link: { label: 'kitchen remodel costs in Boise', href: '/blog/kitchen-remodel-cost-boise' } },
+  'bathroom-remodel': { text: 'Before you settle on a layout, read our', link: { label: 'bathroom layout planning guide', href: '/blog/bathroom-layout-planning-guide' } },
+  'whole-home-remodel': { text: 'To get a whole-home project organized before the first visit, work through the', link: { label: 'whole-home remodel planning checklist', href: '/blog/whole-home-remodel-planning-checklist' } },
+  'room-addition': { text: 'If the new room is a bedroom, read what a legal bedroom needs in our guide to', link: { label: 'bedroom additions in Boise', href: '/blog/bedroom-additions' } },
+  adu: { text: 'If the garage is the candidate, start with our guide to', link: { label: 'garage conversions', href: '/blog/garage-conversions' } },
+  'basement-remodel': { text: 'For egress, moisture and layout detail, read our guide to', link: { label: 'basement finishing in Boise', href: '/blog/basement-finishing-boise' } },
+  'outdoor-living': { text: 'For roof types, snow loads and permits, read our guide to', link: { label: 'covered patios in Boise', href: '/blog/covered-patios-boise' } },
+  'aging-in-place': { text: 'For curbless showers, grab bars and clearances, read our guide to', link: { label: 'aging-in-place bathroom design', href: '/blog/aging-in-place-bathroom-design' } },
 };
+
+/** The parent page shows at most seven questions, visibly, and the schema matches. */
+const MAX_VISIBLE_FAQS = 7;
 
 export function generateStaticParams() {
   return SERVICE_SLUGS.map((slug) => ({ slug }));
@@ -74,46 +83,43 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   const content = SERVICE_SEO_CONTENT[params.slug];
   if (!service || !content) notFound();
 
-  const referral = CONSTRUCTION_REFERRALS[service.slug];
-  if (referral) {
-    const referralImage =
-      service.slug === "adu"
-        ? {
-            imageSrc: "/images/services/adu.webp",
-            imageAlt:
-              "Finished detached ADU guest cottage with matching sage siding beside a Treasure Valley ranch home",
-          }
-        : service.slug === "room-addition"
-          ? {
-              imageSrc: "/images/services/room-addition.webp",
-              imageAlt:
-                "Completed rear room addition on a Boise Bench ranch with matching siding and black-framed slider",
-            }
-          : {};
-    return (
-      <InteriorPage kind="services">
-        <ServiceReferral
-          eyebrow="Referred within the P5 family"
-          title={referral.title}
-          body={referral.body}
-          ctaLabel={referral.ctaLabel}
-          ctaHref={referral.ctaHref}
-          alsoNote={referral.alsoNote}
-          {...referralImage}
-        />
-      </InteriorPage>
-    );
-  }
+  const ownership = OWNERSHIP_PAGES[service.slug as keyof typeof OWNERSHIP_PAGES];
 
   const path = servicePath(service.slug);
   const isBathroomNearMe = service.slug === 'bathroom-remodel';
-  const faqs = content.faqs;
+  const faqs = (ownership?.faqs ?? content.faqs).slice(0, MAX_VISIBLE_FAQS);
+  const overview = ownership?.overview ?? content.overview;
   const images = getServiceImageSet(service.slug);
-  const featuredProject = getFeaturedGalleryProject(service.slug);
+  // Ownership pages show no featured build: the gallery entries are a detached
+  // ADU and a new-footprint suite, which these pages hand to Boise Construction Co.
+  const featuredProject = ownership ? undefined : getFeaturedGalleryProject(service.slug);
   const serviceLC = service.name.toLowerCase();
 
-  // Bathroom parent page: no dollar modules. City pages keep costGuidance.
-  const sections: LandingSection[] = isBathroomNearMe
+  const ownershipLabel = service.slug === 'room-addition' ? 'Room additions' : toSentenceCase(content.noun ?? service.name);
+  // The ownership pages name what they now are in the breadcrumb, not the
+  // shared service label ("ADU / Guest House").
+  const crumbName = service.slug === 'adu' ? 'ADU conversions' : ownership ? 'Room additions' : service.name;
+  const ownershipCityLinks = CITIES.map((c) => ({
+    label: `${ownershipLabel} in ${c.name}`,
+    href: `/services/${service.slug}/${c.slug}`,
+  })).filter((link) => isIndexedPath(link.href)); // Same index rule as the sitemap.
+  const sections: LandingSection[] = ownership
+    ? [
+        ...ownership.sections,
+        ...(ownershipCityLinks.length > 0
+          ? [
+              {
+                heading: `${ownershipLabel} by city`,
+                paragraphs: [
+                  `Local pages cover the neighborhoods, permit path and planning details for each city we serve.`,
+                ],
+                links: ownershipCityLinks,
+              },
+            ]
+          : []),
+      ]
+    : // Bathroom parent page: no dollar modules. City pages keep costGuidance.
+      isBathroomNearMe
     ? BATHROOM_NEAR_ME_SECTIONS
     : [
     ...(content.costGuidance
@@ -149,13 +155,20 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
     },
   ];
 
+  const clusterLink = SERVICE_CLUSTER_LINKS[service.slug];
+  const linkedSections: LandingSection[] = clusterLink
+    ? sections.map((section, i) =>
+        i === sections.length - 1 ? { ...section, paragraphs: [...(section.paragraphs ?? []), clusterLink] } : section,
+      )
+    : sections;
+
   const schemas = [
     landingBreadcrumbs([
       { name: 'Home', url: '/' },
       { name: 'Services', url: '/services' },
-      { name: service.name, url: path },
+      { name: crumbName, url: path },
     ]),
-    landingServiceSchema(service.name, content.overview),
+    landingServiceSchema(content.noun ? toSentenceCase(content.noun) : service.name, overview),
     landingFAQSchema(faqs),
     generateSpeakableSchema({ path, name: content.headline }),
   ];
@@ -165,28 +178,32 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
       <JsonLd data={schemas} />
       <LandingPageTemplate
         h1={content.headline}
-        speakableSummary={content.overview}
-        overview={content.overview}
-        heroImageUrl={SERVICE_SCENES[service.slug]?.src ?? images.hero}
-        heroImageAlt={SERVICE_SCENES[service.slug]?.alt}
-        breatherImageUrl={images.breather}
+        speakableSummary={overview}
+        overview={overview}
+        heroImageUrl={ownership?.images?.hero ?? SERVICE_SCENES[service.slug]?.src ?? images.hero}
+        heroImageAlt={ownership?.images?.heroAlt ?? SERVICE_SCENES[service.slug]?.alt}
+        breatherImageUrl={ownership?.images?.breather ?? images.breather}
         processImageUrl={images.process}
         manifestPath={path}
-        planningFrom={isBathroomNearMe ? undefined : service.planningFrom}
+        planningFrom={ownership ? undefined : isBathroomNearMe ? undefined : service.planningFrom}
         breadcrumbs={[
           { name: 'Home', href: '/' },
           { name: 'Services', href: '/services' },
-          { name: service.name },
+          { name: crumbName },
         ]}
         benefits={content.benefits}
-        inclusions={content.inclusions}
-        timeline={isBathroomNearMe ? BATHROOM_NEAR_ME_TIMELINE : content.timeline}
+        inclusions={ownership?.inclusions ?? content.inclusions}
+        timeline={ownership?.timeline ?? (isBathroomNearMe ? BATHROOM_NEAR_ME_TIMELINE : content.timeline)}
         processSteps={isBathroomNearMe ? BATHROOM_NEAR_ME_PROCESS : content.processSteps}
-        sections={sections}
+        sections={linkedSections}
         featuredProject={featuredProject}
-        serviceSlug={service.slug}
+        serviceSlug={ownership ? undefined : service.slug}
+        imageSubject={service.slug}
         showEstimatePrompt
         faqs={faqs}
+        faqDisplay="visible"
+        subject={{ noun: content.noun ?? serviceLC }}
+        answer={content.answer}
         related={{ variant: 'service', serviceSlug: service.slug }}
       />
     </></InteriorPage>

@@ -15,6 +15,9 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { PermitFlowGraphic } from './PermitFlowGraphic';
 
+const PERMIT_ANSWER =
+  'Usually, if the work goes beyond cosmetic changes. Moving plumbing, removing walls, adding circuits or structural work needs plan review and inspections. Property inside city limits starts with that city\'s building department; unincorporated property follows the Ada or Canyon County process. Confirm fees, inspections and review times for the actual address.';
+
 const PERMIT_FLOW_DESCRIPTION =
   fitDescription('Visual guide to remodeling permits in Ada and Canyon County - jurisdiction, review steps, and inspections for Treasure Valley homeowners.');
 
@@ -72,10 +75,20 @@ export default function AdaCanyonPermitFlowPage() {
             Visual guide
           </p>
 
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl">
+          <p className="text-lg text-muted-foreground mb-6 max-w-2xl">
             A step-by-step view of how remodeling permits move through review and inspections in
             the Treasure Valley. Timelines vary by project scope.
           </p>
+
+          {/* Phase 4: this page owns "permit" for the site; posts link here. */}
+          <section aria-labelledby="permit-answer" className="mb-8 max-w-2xl border-l-2 pl-5" style={{ borderColor: 'var(--ed-accent)' }}>
+            <h2 id="permit-answer" className="text-xl font-serif text-foreground mb-2">
+              Do I need a permit to remodel in Ada or Canyon County?
+            </h2>
+            <p className="text-base text-foreground" data-speakable="answer">
+              {PERMIT_ANSWER}
+            </p>
+          </section>
 
           <div className="flex flex-wrap gap-3 mb-10">
             <a
@@ -87,10 +100,10 @@ export default function AdaCanyonPermitFlowPage() {
               Download PDF reference
             </a>
             <Link
-              href="/blog/ada-vs-canyon-county-permit-timelines"
+              href="/blog/boise-permit-guide"
               className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm hover:bg-muted/50"
             >
-              Read full article
+              Read the Boise permit guide
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -105,7 +118,19 @@ export default function AdaCanyonPermitFlowPage() {
             </p>
             <p>
               Design-build contracts should state who submits plans, pays fees, and schedules
-              inspections. Cosmetic work without layout changes may not need the full path below.
+              inspections. Cosmetic work without layout changes may not need the full path above.
+            </p>
+            <p>
+              <strong className="text-foreground">Cosmetic versus layout work:</strong> paint and
+              fixture swaps may need minimal review, while moving plumbing or removing walls requires
+              plan check in both counties.
+            </p>
+            <p>
+              <strong className="text-foreground">Canyon County is not Ada County:</strong> Canyon
+              County uses different portals, fees and comment cycles, so do not assume Ada County
+              timelines for a Nampa, Middleton or Caldwell address. A mailing city or county name
+              does not establish the permitting jurisdiction either: property inside city limits
+              starts with that city&apos;s building department.
             </p>
           </div>
 

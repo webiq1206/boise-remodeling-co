@@ -1,6 +1,7 @@
 /**
  * Topical authority registry - single source of truth for hubs and content manifest.
  */
+import MERGED_POSTS from './content/mergedPosts.json';
 
 export type ContentType = 'pillar' | 'cluster' | 'location' | 'neighborhood' | 'master';
 export type ContentStatus = 'planned' | 'draft' | 'published';
@@ -191,7 +192,7 @@ function guide(
 }
 
 /** Full content manifest (~94 pieces) */
-export const CONTENT_MANIFEST: ContentManifestEntry[] = [
+export const CONTENT_MANIFEST: ContentManifestEntry[] = ([
   // Hub 1 - Costs
   { slug: 'boise-remodeling-cost-guide', title: 'Boise Remodeling Cost Guide', ...hubPillar('remodeling-costs'), status: 'published' },
   cluster('kitchen-remodel-cost-boise', 'Kitchen Remodel Cost Boise', 'remodeling-costs', 'published', 'kitchen-remodel-cost-treasure-valley'),
@@ -307,7 +308,8 @@ export const CONTENT_MANIFEST: ContentManifestEntry[] = [
   guide('east-boise-remodeling-guide', 'East Boise Remodeling Guide', 'treasure-valley-locations', 'neighborhood'),
   guide('hidden-springs-remodeling-guide', 'Hidden Springs Remodeling Guide', 'treasure-valley-locations', 'neighborhood'),
   guide('eagle-foothills-remodeling-guide', 'Eagle Foothills Remodeling Guide', 'treasure-valley-locations', 'neighborhood'),
-];
+  // Phase 4: merged thin twins 301 to their long twin or guide and leave every list.
+] as ContentManifestEntry[]).filter((entry) => !(entry.slug in MERGED_POSTS));
 
 export function getHubBySlug(hubSlug: string): ContentHub | undefined {
   return CONTENT_HUBS.find((h) => h.hubSlug === hubSlug);

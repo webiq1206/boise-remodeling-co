@@ -42,13 +42,22 @@ export interface ServiceSEOContent {
    * Fix A). Ranges must stay consistent with the estimator and pillar guides.
    */
   costGuidance?: { heading: string; paragraphs: string[] };
+  /** Phase 4: the subject noun the landing template names its headings with. */
+  noun?: string;
+  /** Phase 4: a 40 to 60 word direct answer near the top of the parent page. */
+  answer?: { question: string; text: string };
 }
 
 export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   'kitchen-remodel': {
     slug: 'kitchen-remodel',
+    noun: 'kitchen remodel',
+    answer: {
+      question: 'What does a kitchen remodel in the Treasure Valley include and cost?',
+      text: 'A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of 2026, most mid-range Treasure Valley kitchens plan between $37,000 and $47,000, and most run 6 to 10 weeks from permit approval. Your exact range is confirmed after a free in-home visit.',
+    },
     name: 'Kitchen Remodel',
-    headline: 'Kitchen remodeling in Boise',
+    headline: 'Kitchen remodeling in Boise and the Treasure Valley',
     primaryKeyword: 'kitchen remodeling boise idaho',
     overview: publishFoundingCopy(
       'Boise Remodeling Co is a design-build kitchen remodeler in Boise and the Treasure Valley, founded in 2020 and part of P5. A free in-home visit includes a written scope. The first figures are budget ranges, not quotes. A well-planned kitchen remodel improves how your family cooks, gathers, and moves through the home. Boise Remodeling Co handles design, permitting, and construction under one roof so layout, cabinetry, lighting, and finishes stay aligned from first visit to final walkthrough.',
@@ -130,6 +139,11 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'bathroom-remodel': {
     slug: 'bathroom-remodel',
+    noun: 'bathroom remodel',
+    answer: {
+      question: 'What does a bathroom remodel in the Treasure Valley include?',
+      text: 'A bathroom remodel with Boise Remodeling Co plans the shower or tub, tile, vanity, ventilation, lighting and plumbing in one written scope before demolition. Most bathroom remodels run 3 to 6 weeks from permit approval. Permits are handled in-house for Ada and Canyon County addresses, and the first step is a free in-home consultation.',
+    },
     name: 'Bathroom Remodel',
     headline: BATHROOM_NEAR_ME_H1,
     primaryKeyword: BATHROOM_NEAR_ME_KEYWORD,
@@ -167,8 +181,13 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'whole-home-remodel': {
     slug: 'whole-home-remodel',
+    noun: 'whole-home remodel',
+    answer: {
+      question: 'What does a whole-home remodel in the Treasure Valley involve?',
+      text: 'A whole-home remodel brings several rooms, systems and finishes into one master plan run by one design-build team. As of 2026, Boise-area whole-home remodels commonly plan $180,000 to $425,000 or more, and most run 3 to 6 months of construction, with design, engineering and permits adding 6 to 12 weeks first.',
+    },
     name: 'Whole-Home Remodel',
-    headline: 'Whole-Home Remodeling in the Treasure Valley',
+    headline: 'Whole-home remodeling in the Treasure Valley',
     primaryKeyword: 'whole home remodeling boise idaho',
     overview:
       'Whole-home remodeling brings multiple rooms into one cohesive plan, open concepts, updated systems, new finishes, and better flow. Our design-build approach keeps one team accountable across phases so your home feels intentional, not piecemeal.',
@@ -244,16 +263,21 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'adu': {
     slug: 'adu',
+    noun: 'ADU conversion',
+    answer: {
+      question: 'What is an ADU conversion, and who builds new ADUs?',
+      text: 'An ADU conversion turns space you already have, a garage, a basement or an attached wing, into a self-contained living unit. Boise Remodeling Co designs and builds those conversions with permits handled in-house. As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. New detached ADUs are built by Boise Construction Co.',
+    },
     name: 'ADU / Guest House',
-    headline: 'ADU & Guest House Construction in the Treasure Valley',
+    headline: 'ADU conversions in the Treasure Valley',
     primaryKeyword: 'adu construction boise idaho',
     overview:
       'Accessory dwelling units add livable square footage, rental income potential, and long-term property value without leaving your lot. Boise Remodeling Co designs and builds detached and attached ADUs with full permit handling, structural planning, and interior finishes under one accountable design-build team.',
     benefits: [
-      'Single team from design through certificate of occupancy, no coordinating separate trades',
-      'Ada and Canyon County ADU permitting and setback requirements handled in-house',
+      'Single team from design through final inspection, no coordinating separate trades',
+      'Ada and Canyon County ADU permitting handled in-house',
       'Rental-ready finish packages designed for durability and appeal',
-      'Exterior materials and rooflines planned to complement your existing home',
+      'A conversion reuses the foundation and shell you already own',
     ],
     inclusions: [
       'Site feasibility evaluation and setback review',
@@ -321,8 +345,13 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'room-addition': {
     slug: 'room-addition',
+    noun: 'room addition',
+    answer: {
+      question: 'What room additions does Boise Remodeling Co handle?',
+      text: 'Boise Remodeling Co handles additions within or just beyond the existing footprint: bump-outs that extend a kitchen or bathroom a few feet, sometimes cantilevered to avoid a full foundation, and conversions of existing space into new rooms. New-footprint additions and second-story additions are built by Boise Construction Co, our P5 Home Co sibling.',
+    },
     name: 'Room Addition',
-    headline: 'Room additions in Boise',
+    headline: 'Room additions and bump-outs in the Treasure Valley',
     primaryKeyword: 'home additions boise idaho',
     overview: publishFoundingCopy(
       'Boise Remodeling Co builds room additions in Boise and the Treasure Valley as a design-build remodeler founded in 2020 and part of P5. A free in-home visit includes a written scope, and Ada and Canyon permitting is part of the project. The first figures are budget ranges, not quotes. Room additions expand living space without moving. We design attached additions, in-law suites, and bonus rooms that match your roof lines, foundation, and interior architecture, with permits and structural scope handled professionally.',
@@ -396,8 +425,13 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'basement-remodel': {
     slug: 'basement-remodel',
+    noun: 'basement remodel',
+    answer: {
+      question: 'What does finishing a basement in the Treasure Valley involve?',
+      text: 'Finishing a basement adds livable square footage without changing the footprint: egress, framing, insulation, moisture control, mechanicals and finishes, all permitted and inspected. As of 2026, Boise-area basements commonly plan $40,000 to $100,000 or more, and most run 6 to 12 weeks after permits, depending on egress work and any bathroom or kitchenette.',
+    },
     name: 'Basement Remodeling',
-    headline: 'Basement Remodeling & Finishing in the Treasure Valley',
+    headline: 'Basement remodeling and finishing in the Treasure Valley',
     primaryKeyword: 'basement remodel boise',
     overview:
       'A finished basement is the most cost-effective way to add livable square footage in the Treasure Valley, turning an unused lower level into a family room, guest suite, home office, gym, or income-generating apartment. Boise Remodeling Co handles the full basement remodel under one design-build team: egress, framing, insulation, moisture control, mechanicals, and finishes, all permitted and inspected.',
@@ -468,8 +502,13 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'outdoor-living': {
     slug: 'outdoor-living',
+    noun: 'outdoor living project',
+    answer: {
+      question: 'What outdoor living projects does Boise Remodeling Co build?',
+      text: 'Boise Remodeling Co designs and builds decks, covered patios, pergolas and outdoor kitchens as one design-build project, with footings and permits handled in-house. As of 2026, Boise-area outdoor living projects commonly plan $25,000 to $75,000 or more, and most run 3 to 8 weeks after permits, depending on size and covered structures.',
+    },
     name: 'Outdoor Living & Decks',
-    headline: 'Decks, Covered Patios & Outdoor Living in the Treasure Valley',
+    headline: 'Decks, covered patios and outdoor living in the Treasure Valley',
     primaryKeyword: 'deck builder boise',
     overview:
       'Outdoor living space is one of the highest-return ways to expand how you use your home in Idaho\'s climate. Boise Remodeling Co designs and builds decks, covered patios, pergolas, and outdoor kitchens as a single design-build project, coordinated with your home\'s architecture and permitted for Ada and Canyon County.',
@@ -535,8 +574,13 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
   },
   'aging-in-place': {
     slug: 'aging-in-place',
+    noun: 'aging-in-place remodel',
+    answer: {
+      question: 'What does an aging-in-place remodel include?',
+      text: 'An aging-in-place remodel makes a home safer to stay in as needs change: curbless showers, grab bars, comfort-height fixtures, wider doorways, zero-step entries and main-floor living. As of 2026, a full accessible or curbless bathroom in the Boise area plans $20,000 to $45,000, while targeted safety upgrades can take just a few days.',
+    },
     name: 'Aging-in-Place Remodeling',
-    headline: 'Aging-in-Place & Accessible Remodeling in the Treasure Valley',
+    headline: 'Aging-in-place remodeling in Boise and the Treasure Valley',
     primaryKeyword: 'aging in place remodel boise',
     overview:
       'Aging-in-place remodeling makes it possible to stay safely and comfortably in the home you love as your needs change. Boise Remodeling Co designs accessible, universal-design remodels, from curbless showers and grab bars to widened doorways, zero-step entries, and main-floor living, that look like the rest of your home rather than a clinic.',

@@ -270,7 +270,7 @@ const impactsExtra: ContentSection[] = [
     h2: 'Ada vs Canyon permit cost and time',
     paragraphs: [
       'Plan review fees and timelines differ. Structural additions almost always extend both counties’ schedules.',
-      '<a href="/blog/ada-vs-canyon-county-permit-timelines">Permit timeline article</a>.',
+      '<a href="/resources/ada-canyon-permit-flow">Permit timeline article</a>.',
     ],
   },
   {

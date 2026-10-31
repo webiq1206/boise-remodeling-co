@@ -7,6 +7,7 @@ import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { PageHeroBand } from '@/components/sections/PageHeroBand';
 import { ProjectGallerySection } from '@/components/sections/ProjectGallerySection';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { AnswerBlock } from '@/components/seo/AnswerBlock';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import {
@@ -65,6 +66,10 @@ export default function DesignIdeasPage() {
             <ConsultCTA variant="outline">{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
+        <AnswerBlock
+          question="What are these remodeling design ideas?"
+          answer="Representative remodeling concepts for Boise-area homes: kitchen refreshes, primary bath renovations, whole-home plans, basement finishes, additions and outdoor living. They are captioned for materials and layout, not presented as completed customer projects. Use them to collect what you like, then bring it to a free in-home visit, where your ideas become a written scope."
+        />
         <Section divider>
           <div className="container px-4">
             <p className="ed-body max-w-3xl">

@@ -1,5 +1,6 @@
 import { CITIES_LIST, PILLAR_COST, type ContentSection } from './wave1/snippets';
 import { getHubBySlug, guidePath } from '../contentHubs';
+import { IMPROVED_CLUSTER_POSTS } from './improvedClusterPosts';
 export interface ClusterArticleConfig {
   slug: string;
   title: string;
@@ -45,20 +46,6 @@ const SLUG_SECTIONS: Record<string, ContentSection[]> = {
       ],
     },
   ],
-  'ada-vs-canyon-county-permit-timelines': [
-    {
-      h2: 'Ada County review expectations',
-      paragraphs: [
-        'Boise, Meridian, Eagle, Kuna, and Star projects often route through Ada County for residential remodels with layout changes.',
-      ],
-    },
-    {
-      h2: 'Canyon County review expectations',
-      paragraphs: [
-        'Nampa, Middleton, and Caldwell use Canyon County portals with different fees and comment cycles - do not assume Ada timelines.',
-      ],
-    },
-  ],
 };
 
 function defaultTopicSections(title: string, hubSlug: string): ContentSection[] {
@@ -74,7 +61,7 @@ function defaultTopicSections(title: string, hubSlug: string): ContentSection[] 
       h2: 'Local permits and housing context',
       paragraphs: [
         'Ada and Canyon Counties use different portals. Older homes may need contingency when walls open.',
-        '<a href="/blog/ada-vs-canyon-county-permit-timelines">Compare permit timelines</a>.',
+        '<a href="/resources/ada-canyon-permit-flow">Compare permit timelines</a>.',
       ],
     },
   ];
@@ -85,7 +72,10 @@ export function buildClusterArticleSections(config: ClusterArticleConfig): Conte
   const pillarUrl = guidePath(hub.pillarSlug);
   const serviceUrl = config.serviceUrl ?? '/services/kitchen-remodel';
   const cityUrl = config.cityServiceUrl ?? '/services/kitchen-remodel/boise';
-  const topicSections = SLUG_SECTIONS[config.slug] ?? defaultTopicSections(config.title, config.hubSlug);
+  const topicSections =
+    IMPROVED_CLUSTER_POSTS[config.slug]?.sections ??
+    SLUG_SECTIONS[config.slug] ??
+    defaultTopicSections(config.title, config.hubSlug);
   const moreHref = config.hubSlug === 'treasure-valley-locations' ? '/areas' : `/blog/category/${config.hubSlug}`;
   const moreLabel = config.hubSlug === 'treasure-valley-locations' ? 'Service areas' : 'More articles';
 

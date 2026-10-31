@@ -130,17 +130,6 @@ export function generatePageTitle(params: ServiceSEOParams): string {
   return `${truncatedService} | Boise Remodeling Co`;
 }
 
-const CITY_DESCRIPTION_VARIANTS: Record<string, string> = {
-  Kuna: "Kuna's design-build",
-  Boise: "Boise's design-build",
-  Meridian: "Meridian's",
-  Eagle: "Eagle's preferred",
-  Star: "Star's reliable",
-  Middleton: "Middleton's expert",
-  Nampa: "Nampa's",
-  Caldwell: "Caldwell's",
-};
-
 const CITY_CTA_VARIANTS: Record<string, string> = {
   Kuna: "Free in-home consultation",
   Boise: "Treasure Valley design-build",
@@ -154,23 +143,21 @@ const CITY_CTA_VARIANTS: Record<string, string> = {
 
 /**
  * Generate SEO-optimized meta description
- * 150-160 characters with phone number, CTA, and unique value prop
- * Phone: (208) 477-1169
+ * Keyword first, no phone number and no exclamation mark (phase 4: the phone
+ * sits in the page and the header, never in a search snippet).
  */
 export function generateMetaDescription(params: ServiceSEOParams): string {
   const { serviceName, city } = params;
-  const phone = SITE_CONFIG.phone;
   
   if (params.isHomePage) {
     const ratingClaim = SHOW_UNPROVEN_TOP_RATED ? ', top-rated' : '';
-    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured${ratingClaim}. Call ${phone}.`;
+    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured${ratingClaim}. Free in-home visit.`;
   }
   
   if (city && serviceName) {
     const serviceLC = serviceName.toLowerCase();
-    const cityVariant = CITY_DESCRIPTION_VARIANTS[city] || `${city}'s`;
     const ctaVariant = CITY_CTA_VARIANTS[city] || (SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? "Satisfaction guaranteed" : "Free in-home consultation");
-    return `${cityVariant} ${serviceLC} team. Idaho Registered Contractor #8381215. ${ctaVariant}. Call ${phone}.`;
+    return `${serviceName} in ${city}, Idaho from one design-build team. Idaho Registered Contractor #8381215. ${ctaVariant}.`;
   }
   
   if (city) {
@@ -178,12 +165,12 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   }
   
   if (!serviceName) {
-    return `Professional remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured. Call ${phone}.`;
+    return `Design-build remodeling in Boise and the Treasure Valley. Idaho Registered Contractor #8381215, insured. Written scope and a free in-home visit.`;
   }
   
   const serviceLC = serviceName.toLowerCase();
   const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
-  return `Expert ${serviceLC} in Boise & the Treasure Valley. Idaho Registered Contractor #8381215, bonded & insured${guarantee}. Call ${phone} for a free consultation!`;
+  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, bonded & insured${guarantee}. Free in-home visit.`;
 }
 
 /**
@@ -213,34 +200,70 @@ export function generateCityServiceTitle(serviceName: string, cityName: string):
 }
 
 /**
- * Generate varied city-service meta description
- * Guaranteed under 160 characters
+ * City-service description, keyword first (phase 4). The old formula opened on
+ * "{City}'s {filler adjective}", ended "Call (208) 477-1169!" and repeated on
+ * all 64 pages. Now: "{Service} in {City}, Idaho: {scope}." then the license
+ * line (city pages carry the registration number; the parent pages do not),
+ * then the longest call to action that keeps the result within 140 to 155
+ * characters. No phone number and no exclamation mark: verify:content fails
+ * the build on either in any description.
  */
+const CITY_SERVICE_PHRASES: Record<string, { phrase: string; scope: string }> = {
+  'kitchen-remodel': { phrase: 'Kitchen remodeling', scope: 'layout, cabinets, counters and permits under one written scope' },
+  'bathroom-remodel': { phrase: 'Bathroom remodeling', scope: 'showers, tile, vanities and layout changes, design-build' },
+  'whole-home-remodel': { phrase: 'Whole-home remodeling', scope: 'phased or full renovations from one design-build team' },
+  'room-addition': { phrase: 'Room additions', scope: 'bump-outs and in-footprint expansions, design-build' },
+  adu: { phrase: 'ADU conversions', scope: 'garage, basement and attached units turned into living space' },
+  'basement-remodel': { phrase: 'Basement remodeling', scope: 'egress, framing, moisture control and finished suites' },
+  'outdoor-living': { phrase: 'Outdoor living spaces', scope: 'covered patios, decks and outdoor kitchens built for Idaho seasons' },
+  'aging-in-place': { phrase: 'Aging-in-place remodeling', scope: 'curbless showers, wider doors, lighting and one-level living' },
+};
+
+const CITY_SERVICE_LICENSE = 'Idaho Registered Contractor #8381215.';
+const CITY_SERVICE_CTAS = ['Book a free in-home visit.', 'Book a free visit.', 'Free in-home visit.', 'Book now.', ''];
+
+/**
+ * Per-page descriptions where the page has a local planning fact the template
+ * cannot know. Taken from the phase 4 proposals and checked against the copy
+ * already on the site (Eagle HOA design review: eagle-remodeling-guide and the
+ * Eagle city pages). Keyed `${serviceSlug}/${citySlug}`.
+ */
+export const CITY_SERVICE_DESCRIPTION_OVERRIDES: Record<string, string> = {
+  'kitchen-remodel/eagle':
+    'Kitchen remodeling in Eagle, Idaho: layout, cabinets, counters and permits under one written scope. HOA design review planned in from day one. Book now.',
+  'bathroom-remodel/eagle':
+    'Bathroom remodeling in Eagle, Idaho: showers, tile, vanities and layout changes, design-build. HOA design review planned in from day one. Book now.',
+  'whole-home-remodel/eagle':
+    'Whole-home remodeling in Eagle, Idaho: phased or full renovations from one design-build team. HOA design review planned in from day one. Book now.',
+  'room-addition/eagle':
+    'Room additions in Eagle, Idaho: bump-outs and in-footprint expansions, design-build. HOA design review planned in from day one. Book a free visit.',
+  'basement-remodel/eagle':
+    'Basement remodeling in Eagle, Idaho: egress, framing, moisture control and finished suites. HOA design review planned in from day one. Book a free visit.',
+  'outdoor-living/eagle':
+    'Outdoor living spaces in Eagle, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. HOA design review planned in from day one.',
+  'aging-in-place/eagle':
+    'Aging-in-place remodeling in Eagle, Idaho: curbless showers, wider doors, lighting, one-level living. HOA design review planned in from day one. Book now.',
+};
+
 export function generateCityServiceDescription(
   serviceName: string,
   cityName: string,
-  shortDescription?: string,
+  serviceSlug?: string,
 ): string {
-  const phone = SITE_CONFIG.phone;
-  const serviceLC = serviceName.toLowerCase();
-  const cityVariant = CITY_DESCRIPTION_VARIANTS[cityName] || `${cityName}'s`;
-  const cityData = CITY_SEO_DATA[cityName as keyof typeof CITY_SEO_DATA];
-  const neighborhood = cityData?.neighborhoods?.[0];
+  const citySlug = cityName.toLowerCase().replace(/\s+/g, '-');
+  const override = serviceSlug ? CITY_SERVICE_DESCRIPTION_OVERRIDES[`${serviceSlug}/${citySlug}`] : undefined;
+  if (override) return override;
 
-  if (neighborhood) {
-    const withNeighborhood = `${cityVariant} ${serviceLC}. Serving ${neighborhood} & all ${cityName}. Idaho Registered Contractor #8381215. Call ${phone}!`;
-    if (withNeighborhood.length <= 160) return withNeighborhood;
-  }
-
-  if (shortDescription) {
-    const desc = `${cityVariant} ${serviceLC}. ${shortDescription}. Idaho Registered Contractor #8381215. Call ${phone}!`;
-    if (desc.length <= 160) return desc;
-  }
-
-  const base = `${cityVariant} ${serviceLC} in ${cityName}, ID. Idaho Registered Contractor #8381215. Call ${phone}!`;
-  if (base.length <= 160) return base;
-
-  return `${serviceLC} in ${cityName}, ID. Idaho Registered Contractor #8381215. Call ${phone}.`;
+  const known = serviceSlug ? CITY_SERVICE_PHRASES[serviceSlug] : undefined;
+  const phrase = known?.phrase ?? serviceName;
+  const scope = known?.scope ?? 'design-build with a written scope before construction';
+  const lead = `${phrase} in ${cityName}, Idaho: ${scope}.`;
+  const candidates = CITY_SERVICE_CTAS.map((cta) => [lead, CITY_SERVICE_LICENSE, cta].filter(Boolean).join(' '));
+  return (
+    candidates.find((text) => text.length >= 140 && text.length <= 155) ??
+    candidates.find((text) => text.length <= 155) ??
+    `${lead} ${CITY_SERVICE_LICENSE}`
+  );
 }
 
 /**

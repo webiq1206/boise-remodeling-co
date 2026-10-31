@@ -28,6 +28,7 @@ SERVICE_SEO_CONTENT,
 } from '@/shared/seoContent';
 import { notFound } from 'next/navigation';
 import { toSentenceCase } from '@/shared/sentenceCase';
+import { ROOM_ADDITION_PAGE } from '@/shared/content/serviceOwnership';
 
 export function generateStaticParams() {
   return getAllCityServiceParams();
@@ -77,7 +78,12 @@ export default async function CityServicePage(
   const faqs = getCityServiceFaqs(content, city);
   const localNote = `For ${content.name.toLowerCase()} in ${city.name}, confirm the property jurisdiction and scope before applying. City addresses and unincorporated county parcels may use different building departments. Confirm required building and trade permits, inspections and review times for the actual address.`;
   const images = getCityServiceImageSet(service.slug, city.slug);
-  const sections = getCityServiceSections(content, city, seo);
+  const sections = [
+    ...getCityServiceSections(content, city, seo),
+    // Ownership split (phase 4): new-footprint and second-story additions are
+    // built by Boise Construction Co; this page keeps the remodeling side.
+    ...(service.slug === 'room-addition' ? [ROOM_ADDITION_PAGE.sections[2]] : []),
+  ];
 
   // Real before/after projects only. Written testimonials stay hidden until we
   // have genuine, verified reviews (no seeded quotes or star ratings).
@@ -135,6 +141,7 @@ export default async function CityServicePage(
         proofHeading={`Recent ${city.name} ${service.name.toLowerCase()} work`}
         showEstimatePrompt
         faqs={faqs}
+        subject={{ noun: content.noun ?? service.name.toLowerCase(), place: city.name }}
         related={{
           variant: 'city-service',
           serviceSlug: service.slug,
