@@ -8,6 +8,7 @@ import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
+import { P5_FACEBOOK_URL } from '@/shared/gbpProfile';
 
 interface SchemaContext {
   '@context': string;
@@ -53,6 +54,9 @@ export const P5_PARENT_ORGANIZATION = {
   '@id': P5_ORG_ID,
   name: 'P5 Home Co',
   url: P5_ORIGIN,
+  // P5 Home Co's Facebook page is the family's only social profile; listed
+  // here (on the parent, never on this brand) once the owner supplies it.
+  ...(P5_FACEBOOK_URL ? { sameAs: [P5_FACEBOOK_URL] } : {}),
 } as const;
 /**
  * Year-free square mark. The seal still reads EST 2020, so schema logo uses
@@ -253,7 +257,7 @@ export function generateServiceSchema(serviceName: string, serviceDescription: s
       email: BUSINESS_INFO.email,
       priceRange: '$$',
       address: publicPostalAddress(),
-      parentOrganization: { '@id': P5_ORG_ID },
+      parentOrganization: P5_PARENT_ORGANIZATION,
     },
     // The page city is the service area. It is not a second PostalAddress.
     areaServed: city ? {

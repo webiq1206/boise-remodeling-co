@@ -6,7 +6,7 @@
 
 import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
-import { GBP_SOCIAL, getExternalProfileUrls } from '@/shared/gbpProfile';
+import { getExternalProfileUrls } from '@/shared/gbpProfile';
 import {
   publicPreviewPath,
   SHOW_FOUNDED_YEAR,
@@ -549,11 +549,9 @@ export const BUSINESS_INFO = {
   rating: 0,
   reviewCount: 0,
   yearlyServicesCompleted: 0,
-  sameAs: [
-    GBP_SOCIAL.facebook,
-    GBP_SOCIAL.instagram,
-    ...getExternalProfileUrls(),
-  ],
+  // No brand social accounts exist (owner decision 2026-10-31); only listings
+  // configured through env vars, once they are live, are named here.
+  sameAs: [...getExternalProfileUrls()],
 };
 
 export type { SEOMetaData, ServiceSEOParams };
