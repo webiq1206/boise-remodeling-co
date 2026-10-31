@@ -245,16 +245,20 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {
   const footerLine = 'Public representative: Nick Perkins · 4031 W Wapoot St, Meridian, ID 83646 · Service-area business, not a staffed storefront';
-  const footer = readFileSync('components/Footer.tsx', 'utf8');
+  // Phase 2: the footer is the shared family SiteFooter; this site's facts live in lib/familyBrand.ts.
+  // The family row names every live family site; Boise ADU Co is left out until its own site exists.
+  const footer = readFileSync('lib/familyBrand.ts', 'utf8');
+  const sharedFooter = readFileSync('components/family/SiteFooter.tsx', 'utf8');
   assert.match(footer, /publicFooterLine\(\)/);
-  assert.match(footer, /<EmailLink/);
-  assert.match(footer, /Part of P5 Home Co/);
+  assert.match(footer, /email: SITE_CONFIG\.email/);
+  assert.match(sharedFooter, /href=\{\`mailto:\$\{brand\.email\}\`\}/);
+  assert.match(footer, /The P5 Home Co family/);
   assert.match(footer, /Boise Construction Co/);
   assert.match(footer, /Boise Handyman Co/);
   assert.match(footer, /Boise Cabinet Co/);
-  assert.match(footer, /Boise ADU Co \(projects currently run through Boise Construction Co; its site is coming\)/);
-  assert.equal(footer.includes('href: "/re-10-repairs-boise"'), false);
-  assert.match(footer, /href="\/subcontractor"/);
+  assert.equal(footer.includes("name: 'Boise ADU Co'"), false);
+  assert.equal(footer.includes("href: '/re-10-repairs-boise'"), false);
+  assert.match(footer, /href: '\/subcontractor'/);
   assert.equal(footer.includes('/api/login'), false);
   assert.match(readFileSync('app/estimate/page.tsx', 'utf8'), /Request a remodel quote/);
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
@@ -271,10 +275,14 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   assert.equal(existsSync('components/HubSpotScript.tsx'), false);
   const hero = readFileSync('components/approved/ApprovedHomeHero.tsx', 'utf8');
   assert.equal(hero.includes('use client'), false);
-  assert.match(hero, /fetchPriority="high"/);
-  assert.match(hero, /<h1>Design-build remodeling in Boise and the Treasure Valley<\/h1>/);
-  assert.match(hero, /One team designs, prices and builds/);
-  assert.match(hero, /Request a quote/);
+  assert.match(readFileSync('components/family/HeroPhoto.tsx', 'utf8'), /fetchPriority="high"/);
+  // Phase 2 hero (intended change): the October 8 composition on the shared HeroPhoto. The
+  // SEO phrase moves to the eyebrow; the accent line is still not "Love where you live." (#108).
+  assert.match(hero, /eyebrow="Design-build remodeling in Boise"/);
+  assert.match(hero, /title="Boise home remodeling\."/);
+  assert.match(hero, /We design, price and build kitchens, baths and whole-home remodels\./);
+  assert.match(hero, /FAMILY_BRAND\.cta\.label/);
+  assert.equal(hero.includes('Love where you live'), false);
   assert.equal(hero.includes('<em>Love where you live.</em>'), false);
   const home = readFileSync('app/page.tsx', 'utf8');
   assert.match(home, /hero=\{<ApprovedHomeHero/);

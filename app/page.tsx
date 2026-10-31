@@ -1,5 +1,6 @@
 import { ApprovedHome } from "@/components/approved/ApprovedHome";
 import { ApprovedHomeHero } from "@/components/approved/ApprovedHomeHero";
+import { HeroConversion } from "@/components/approved/HeroConversion";
 import { ConsultationForm } from "@/components/ConsultationForm";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Section } from "@/components/marketing/Section";
@@ -11,8 +12,7 @@ import { buildCanonical,fitDescription } from "@/lib/page-metadata";
 import { TextReplyLine } from "@/components/TextReplyLine";
 import { CONSULT_BULLETS,SITE_TAGLINE } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
-import { SITE_CONFIG } from "@/shared/siteConfig";
-import { ArrowUpRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 
@@ -46,7 +46,7 @@ export default function HomePage() {
     <div className="flex flex-col bg-background">
       {/* PAGE ORDER IS THE SALES CONVERSATION, IN THE ORDER A HOMEOWNER HAS IT.
 
-          1. Hero            who we are, and the one action we want
+          1. Hero            who we are, and the one action we want, then the proof strip
           2. Where the money goes   frames price before we quote one
           3. Estimator       the number - the question every visitor arrives with
           4. What's included what that number actually covers
@@ -56,7 +56,7 @@ export default function HomePage() {
           8. Process         what happens after they say yes
           9. Brand band      the emotional close
           10. FAQ            the last objections
-          11. Consultation   the ask
+          11. Final CTA band the ask: the short request (#request), the longer form one tap away
 
           The estimator sits third on purpose. It is the site's primary lead
           generator and the hero's own call to action points at it, so burying
@@ -124,21 +124,23 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
-                <div className="mt-6 grid border-t" style={{ borderColor: "var(--ed-line)" }}>
-                  <a href={SITE_CONFIG.phoneHref} className="flex min-h-12 items-center justify-between gap-4 border-b text-[0.9375rem] font-medium transition-colors hover:[color:var(--ed-accent)]" style={{ borderColor: "var(--ed-line)" }}>
-                    Call {SITE_CONFIG.phone}
-                    <ArrowUpRight className="h-4 w-4 shrink-0" style={{ color: "var(--ed-accent)" }} aria-hidden="true" />
-                  </a>
-                  <a href={SITE_CONFIG.phoneSmsHref} className="flex min-h-12 items-center justify-between gap-4 border-b text-[0.9375rem] font-medium transition-colors hover:[color:var(--ed-accent)]" style={{ borderColor: "var(--ed-line)" }}>
-                    Send a text
-                    <ArrowUpRight className="h-4 w-4 shrink-0" style={{ color: "var(--ed-accent)" }} aria-hidden="true" />
-                  </a>
-                </div>
               </Reveal>
             </div>
-            <MarketingCard className="shadow-2xl" padding="lg">
-              <ConsultationForm />
-            </MarketingCard>
+            {/* The short request moved here from under the hero (family hero template): the
+                hero, header and bottom bar all point at #request, and #request-form holds
+                the form. The longer consultation form stays one tap away for visitors who
+                want to give their address and project type first. */}
+            <div id="request" className="home-request" role="region" aria-label="Request a quote">
+              <MarketingCard className="shadow-2xl" padding="lg">
+                <HeroConversion />
+              </MarketingCard>
+              <details className="home-request-more">
+                <summary>Prefer the longer form, with your address and project type?</summary>
+                <div className="home-request-more-body">
+                  <ConsultationForm />
+                </div>
+              </details>
+            </div>
           </div>
         </div>
       </Section>
