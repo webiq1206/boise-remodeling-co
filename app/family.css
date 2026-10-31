@@ -672,7 +672,7 @@ main > div:first-of-type > div:first-of-type:not(section ~ div):not(.pt-0):not(.
 @media (min-width: 768px) {
   .ed-possibilities { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .ed-possibilities > * { grid-column: span 3; }
-  .ed-possibilities:has(> :last-child:nth-child(odd)) > :nth-child(-n + 3) { grid-column: span 2; }
+  .ed-possibilities:has(> :last-child:nth-child(odd):not(:first-child)) > :nth-child(-n + 3) { grid-column: span 2; }
   .ed-possibilities > :only-child { grid-column: 1 / -1; }
 }
 @media (min-width: 1024px) {

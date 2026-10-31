@@ -78,7 +78,7 @@ export default function ResourcesIndexPage() {
         <h2 id="document-section-1" className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-4">
           PDF worksheets
         </h2>
-        <div className="grid gap-4 md:grid-cols-3 mb-12">
+        <div className="grid gap-4 lg:grid-cols-3 mb-12">
           {pdfs.map((r) => (
             <MarketingCard key={r.id} className="p-5 flex flex-col h-full">
               <FileText className="h-5 w-5 text-accent-legible mb-3" />
