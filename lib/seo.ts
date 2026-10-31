@@ -170,7 +170,7 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   
   const serviceLC = serviceName.toLowerCase();
   const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
-  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, bonded and insured${guarantee}. Free in-home visit.`;
+  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, bonded & insured${guarantee}. Free in-home visit.`;
 }
 
 /**
