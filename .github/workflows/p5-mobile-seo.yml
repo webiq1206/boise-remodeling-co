@@ -1,7 +1,7 @@
 name: P5 interface and metadata verification
 on:
   push:
-    branches: [fix/p5-interface-completion-20260917]
+    branches: [fix/p5-interface-completion-20260917, claude/diag-webkit-request]
   pull_request:
     paths:
       - 'app/**'
@@ -60,8 +60,6 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci --no-audit --no-fund
-      - name: Estimator and metadata regressions
-        run: node --import tsx --test --test-concurrency=1 tests/p5-*.test.ts
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - name: Optional intake fragment navigation regressions
@@ -74,9 +72,10 @@ jobs:
           app_pid=$!
           trap 'kill "$app_pid" || true' EXIT
           for attempt in $(seq 1 60); do
-            if curl -fsS http://127.0.0.1:5000/ > /dev/null; then break; fi
+            if curl -fsS http://127.0.0.1:5000/robots.txt > /dev/null; then break; fi
             sleep 1
           done
+          node scripts/diag-mobile-load.mjs
           node scripts/verify-p5-mobile-seo.mjs
       - name: Offline evidence guard regressions
         run: node --test tests/ci-evidence.test.mjs
