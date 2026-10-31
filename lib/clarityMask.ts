@@ -14,8 +14,9 @@ type MaskableNode = {
   parentElement?: MaskableNode | null;
 };
 
+/** Any casing of "true" counts: forms render "true", the script writes "True". */
 function isMasked(node: MaskableNode | null | undefined): boolean {
-  return node?.getAttribute?.(CLARITY_MASK_ATTRIBUTE) === CLARITY_MASK_VALUE;
+  return (node?.getAttribute?.(CLARITY_MASK_ATTRIBUTE) ?? "").toLowerCase() === "true";
 }
 
 function hasMaskedAncestor(node: MaskableNode): boolean {
@@ -27,7 +28,13 @@ function hasMaskedAncestor(node: MaskableNode): boolean {
   return false;
 }
 
+/**
+ * An element that already carries a mask is left exactly as rendered. Rewriting
+ * a server-rendered "true" to "True" before React hydrated was a hydration
+ * attribute mismatch on every page with the consultation form.
+ */
 function stamp(node: MaskableNode): void {
+  if (isMasked(node)) return;
   node.setAttribute?.(CLARITY_MASK_ATTRIBUTE, CLARITY_MASK_VALUE);
 }
 
@@ -79,7 +86,10 @@ export function clarityFieldMaskScript(): string {
     var SELECTOR=${JSON.stringify(CLARITY_FIELD_SELECTOR)};
     var PARENT_TYPES={"checkbox":1,"radio":1,"range":1,"button":1};
     function masked(node){
-      return !!(node && node.getAttribute && node.getAttribute(ATTR)===VALUE);
+      return !!(node && node.getAttribute && String(node.getAttribute(ATTR)||"").toLowerCase()==="true");
+    }
+    function stamp(node){
+      if(!masked(node)) node.setAttribute(ATTR, VALUE);
     }
     function maskedAncestor(node){
       var parent=node.parentElement;
@@ -94,10 +104,10 @@ export function clarityFieldMaskScript(): string {
     }
     function mask(root){
       if(!root) return;
-      if(root.nodeType===1 && root.matches && root.matches(SELECTOR) && !coveredMirror(root)) root.setAttribute(ATTR, VALUE);
+      if(root.nodeType===1 && root.matches && root.matches(SELECTOR) && !coveredMirror(root)) stamp(root);
       if(root.querySelectorAll){
         var nodes=root.querySelectorAll(SELECTOR);
-        for(var i=0;i<nodes.length;i++) if(!coveredMirror(nodes[i])) nodes[i].setAttribute(ATTR, VALUE);
+        for(var i=0;i<nodes.length;i++) if(!coveredMirror(nodes[i])) stamp(nodes[i]);
       }
       var inputs=[];
       if(root.matches && root.matches("input")) inputs.push(root);
@@ -110,7 +120,7 @@ export function clarityFieldMaskScript(): string {
         var type=(input.getAttribute("type")||"").toLowerCase();
         if(!PARENT_TYPES[type]) continue;
         if(maskedAncestor(input)) continue;
-        if(input.parentElement && !input.parentElement.matches("body,html")) input.parentElement.setAttribute(ATTR, VALUE);
+        if(input.parentElement && !input.parentElement.matches("body,html")) stamp(input.parentElement);
       }
     }
     function start(){

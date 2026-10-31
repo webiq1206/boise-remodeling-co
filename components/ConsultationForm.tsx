@@ -409,10 +409,8 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
         engaged={form.formState.isDirty}
         submitted={success}
       />
-      {/* "True" exactly as the pre-hydration mask script writes it: a different
-          value here was rewritten before React hydrated (a hydration mismatch). */}
       <form
-        data-clarity-mask="True"
+        data-clarity-mask="true"
         onSubmit={form.handleSubmit((data) => {
           setSubmitted(data);
           mutation.mutate(data);

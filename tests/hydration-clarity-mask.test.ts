@@ -6,6 +6,7 @@ import { applyClarityMask, CLARITY_MASK_ATTRIBUTE, CLARITY_MASK_VALUE, clarityFi
 // The homepage and contact page logged a React hydration attribute mismatch:
 // the pre-hydration mask script rewrote the consultation form's "true" to
 // "True" and stamped Radix's hidden mirror <select>, both before hydration.
+// Forms keep rendering "true" (pinned in p5-call-text-click.test.ts).
 
 type Node = {
   nodeType: number; tag: string; children: Node[]; attrs: Map<string, string>; parentElement: Node | null;
@@ -44,9 +45,18 @@ test('a hidden mirror select inside a masked form is left as rendered', () => {
   assert.equal(lone.attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
 });
 
-test('the inline script applies the same mirror rule and the form renders the script value', () => {
-  assert.match(clarityFieldMaskScript(), /coveredMirror/);
-  const form = readFileSync(new URL('../components/ConsultationForm.tsx', import.meta.url), 'utf8');
-  const tag = form.slice(form.indexOf('<form'), form.indexOf('>', form.indexOf('<form')));
-  assert.match(tag, new RegExp(`${CLARITY_MASK_ATTRIBUTE}="${CLARITY_MASK_VALUE}"`));
+test('an element already masked in any casing is left exactly as rendered', () => {
+  const form = el('form', [el('input')], { [CLARITY_MASK_ATTRIBUTE]: 'true' });
+  applyClarityMask(form);
+  assert.equal(form.attrs.get(CLARITY_MASK_ATTRIBUTE), 'true');
+  assert.equal(form.children[0].attrs.get(CLARITY_MASK_ATTRIBUTE), CLARITY_MASK_VALUE);
+});
+
+test('the inline script applies the same rules', () => {
+  const script = clarityFieldMaskScript();
+  assert.match(script, /coveredMirror/);
+  assert.match(script, /toLowerCase\(\)==="true"/);
+  assert.match(script, /function stamp\(node\)\{\s*if\(!masked\(node\)\)/);
+  const source = readFileSync(new URL('../components/ConsultationForm.tsx', import.meta.url), 'utf8');
+  assert.match(source, /<form\s+data-clarity-mask="true"/);
 });
