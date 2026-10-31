@@ -2,7 +2,7 @@ import { ApprovedShell } from "@/components/approved/ApprovedShell";
 import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
-import { Navigation } from '@/components/Navigation'
+import { Navigation, SiteActionBar } from '@/components/Navigation'
 import { SkipLink } from '@/components/family/SkipLink'
 import { ConditionalFooter } from '@/components/ConditionalFooter'
 import { Toaster } from '@/components/ui/toaster'
@@ -145,6 +145,7 @@ export default function RootLayout({
               {children}
             </main>
             <ConditionalFooter />
+            <SiteActionBar />
           </div></ApprovedShell>
           <Toaster />
           <AssistantWidget />
