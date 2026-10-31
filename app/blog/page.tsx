@@ -50,7 +50,7 @@ export default function BlogPage() {
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Blog" }]} />
         <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Blog</p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
-          Remodeling Insights &amp; Ideas
+          Remodeling insights &amp; ideas
         </h1>
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           Honest advice for Idaho homeowners planning their next renovation - budgeting, timelines,

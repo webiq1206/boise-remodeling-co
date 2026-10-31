@@ -22,6 +22,7 @@ import { ArrowRight } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound,redirect } from 'next/navigation';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 function formatDate(dateString: string): string {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -155,7 +156,7 @@ export default async function BlogCategoryHubPage(
 
 
           <header className="interior-article-header"><h1 className="text-3xl md:text-4xl font-serif tracking-tight mb-4">
-            {hub.title}
+            {toSentenceCase(hub.title)}
           </h1>
           <p className="text-lg text-muted-foreground mb-4 max-w-2xl">{hub.description}</p>
           <p className="text-base text-muted-foreground mb-6 max-w-2xl leading-relaxed">

@@ -129,7 +129,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
 
   const h1 = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
     ? `Remodeling contractors in ${city.name}, Idaho`
-    : `Remodeling Contractor in ${city.name}, Idaho`;
+    : `Remodeling contractor in ${city.name}, Idaho`;
   const faqs = cityCopy?.faqs ?? [
     ...AREA_PAGE_FAQS,
     {

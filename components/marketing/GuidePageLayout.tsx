@@ -29,6 +29,7 @@ import { InlineEstimateCTA } from './InlineEstimateCTA';
 import { RelatedPostCards } from './RelatedPostCards';
 import { Section } from './Section';
 import { SectionedArticle } from './SectionedArticle';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 interface GuidePageLayoutProps {
   guide: GuidePageData;
@@ -68,7 +69,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
           <header className="interior-article-header">
             {hub && <Chip className="mb-4">{hub.categoryLabel}</Chip>}
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
-              {guide.title}
+              {toSentenceCase(guide.title)}
             </h1>
             <p className="text-lg text-muted-foreground mb-5">{guide.excerpt}</p>
             <div role="presentation" className="border-t border-border/60 mb-5" />

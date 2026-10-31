@@ -92,7 +92,7 @@ export default function GuidesIndexPage() {
       >
         <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Treasure Valley authority</p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
-          Remodeling Guides
+          Remodeling guides
         </h1>
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           In-depth guides for Boise, Meridian, Eagle, Nampa, and the entire Treasure Valley - costs,

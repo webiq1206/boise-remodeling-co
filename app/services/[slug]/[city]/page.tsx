@@ -27,6 +27,7 @@ getCityServiceSections,
 SERVICE_SEO_CONTENT,
 } from '@/shared/seoContent';
 import { notFound } from 'next/navigation';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 export function generateStaticParams() {
   return getAllCityServiceParams();
@@ -72,7 +73,7 @@ export default async function CityServicePage(
     : undefined;
 
   const overview = getCityServiceIntro(content, city, localFact);
-  const h1 = `${service.name} in ${city.name}, Idaho`;
+  const h1 = `${toSentenceCase(service.name)} in ${city.name}, Idaho`;
   const faqs = getCityServiceFaqs(content, city);
   const localNote = `For ${content.name.toLowerCase()} in ${city.name}, confirm the property jurisdiction and scope before applying. City addresses and unincorporated county parcels may use different building departments. Confirm required building and trade permits, inspections and review times for the actual address.`;
   const images = getCityServiceImageSet(service.slug, city.slug);
