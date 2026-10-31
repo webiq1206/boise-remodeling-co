@@ -4031,23 +4031,23 @@
       "url": "/services/adu/boise",
       "links": [
         {
-          "url": "/services/adu/kuna",
-          "anchor": "ADU / Guest House in Kuna",
-          "title": "ADU / Guest House in Kuna, Idaho",
-          "type": "city-service",
-          "score": 1.9
-        },
-        {
-          "url": "/services/adu/caldwell",
-          "anchor": "ADU / Guest House in Caldwell",
-          "title": "ADU / Guest House in Caldwell, Idaho",
+          "url": "/services/adu/eagle",
+          "anchor": "ADU / Guest House in Eagle",
+          "title": "ADU / Guest House in Eagle, Idaho",
           "type": "city-service",
           "score": 1.823
         },
         {
-          "url": "/services/adu/eagle",
-          "anchor": "ADU / Guest House in Eagle",
-          "title": "ADU / Guest House in Eagle, Idaho",
+          "url": "/services/adu/meridian",
+          "anchor": "ADU / Guest House in Meridian",
+          "title": "ADU / Guest House in Meridian, Idaho",
+          "type": "city-service",
+          "score": 1.823
+        },
+        {
+          "url": "/services/adu/nampa",
+          "anchor": "ADU / Guest House in Nampa",
+          "title": "ADU / Guest House in Nampa, Idaho",
           "type": "city-service",
           "score": 1.823
         },
@@ -4102,18 +4102,18 @@
           "score": 1.783
         },
         {
-          "url": "/services/adu/kuna",
-          "anchor": "ADU / Guest House in Kuna",
-          "title": "ADU / Guest House in Kuna, Idaho",
+          "url": "/services/adu/eagle",
+          "anchor": "ADU / Guest House in Eagle",
+          "title": "ADU / Guest House in Eagle, Idaho",
           "type": "city-service",
-          "score": 1.783
+          "score": 1.717
         },
         {
           "url": "/services/adu/meridian",
           "anchor": "ADU / Guest House in Meridian",
           "title": "ADU / Guest House in Meridian, Idaho",
           "type": "city-service",
-          "score": 1.757
+          "score": 1.717
         },
         {
           "url": "/services/adu",
@@ -4159,25 +4159,25 @@
       "url": "/services/adu/eagle",
       "links": [
         {
-          "url": "/services/adu/middleton",
-          "anchor": "ADU / Guest House in Middleton",
-          "title": "ADU / Guest House in Middleton, Idaho",
+          "url": "/services/adu/boise",
+          "anchor": "ADU / Guest House in Boise",
+          "title": "ADU / Guest House in Boise, Idaho",
           "type": "city-service",
-          "score": 1.757
+          "score": 1.743
         },
         {
           "url": "/services/adu/nampa",
           "anchor": "ADU / Guest House in Nampa",
           "title": "ADU / Guest House in Nampa, Idaho",
           "type": "city-service",
-          "score": 1.757
+          "score": 1.717
         },
         {
-          "url": "/services/adu/star",
-          "anchor": "ADU / Guest House in Star",
-          "title": "ADU / Guest House in Star, Idaho",
+          "url": "/services/adu/meridian",
+          "anchor": "ADU / Guest House in Meridian",
+          "title": "ADU / Guest House in Meridian, Idaho",
           "type": "city-service",
-          "score": 1.757
+          "score": 1.677
         },
         {
           "url": "/services/adu",
@@ -4223,32 +4223,25 @@
       "url": "/services/adu/kuna",
       "links": [
         {
-          "url": "/services/adu/star",
-          "anchor": "ADU / Guest House in Star",
-          "title": "ADU / Guest House in Star, Idaho",
-          "type": "city-service",
-          "score": 1.823
-        },
-        {
           "url": "/services/adu/boise",
           "anchor": "ADU / Guest House in Boise",
           "title": "ADU / Guest House in Boise, Idaho",
           "type": "city-service",
-          "score": 1.82
-        },
-        {
-          "url": "/services/adu/caldwell",
-          "anchor": "ADU / Guest House in Caldwell",
-          "title": "ADU / Guest House in Caldwell, Idaho",
-          "type": "city-service",
-          "score": 1.783
+          "score": 1.78
         },
         {
           "url": "/services/adu/eagle",
           "anchor": "ADU / Guest House in Eagle",
           "title": "ADU / Guest House in Eagle, Idaho",
           "type": "city-service",
-          "score": 1.783
+          "score": 1.743
+        },
+        {
+          "url": "/services/adu/nampa",
+          "anchor": "ADU / Guest House in Nampa",
+          "title": "ADU / Guest House in Nampa, Idaho",
+          "type": "city-service",
+          "score": 1.743
         },
         {
           "url": "/services/adu",
@@ -4277,6 +4270,13 @@
           "title": "Backyard Transformations",
           "type": "blog",
           "score": 0.11
+        },
+        {
+          "url": "/services/outdoor-living",
+          "anchor": "Outdoor Living & Decks",
+          "title": "Outdoor Living & Decks in Boise & Treasure Valley, Idaho",
+          "type": "service",
+          "score": 0.09
         }
       ]
     },
@@ -4287,25 +4287,25 @@
       "url": "/services/adu/meridian",
       "links": [
         {
-          "url": "/services/adu/kuna",
-          "anchor": "ADU / Guest House in Kuna",
-          "title": "ADU / Guest House in Kuna, Idaho",
+          "url": "/services/adu/boise",
+          "anchor": "ADU / Guest House in Boise",
+          "title": "ADU / Guest House in Boise, Idaho",
           "type": "city-service",
-          "score": 1.743
+          "score": 1.663
         },
         {
-          "url": "/services/adu/middleton",
-          "anchor": "ADU / Guest House in Middleton",
-          "title": "ADU / Guest House in Middleton, Idaho",
+          "url": "/services/adu/eagle",
+          "anchor": "ADU / Guest House in Eagle",
+          "title": "ADU / Guest House in Eagle, Idaho",
           "type": "city-service",
-          "score": 1.717
+          "score": 1.637
         },
         {
           "url": "/services/adu/nampa",
           "anchor": "ADU / Guest House in Nampa",
           "title": "ADU / Guest House in Nampa, Idaho",
           "type": "city-service",
-          "score": 1.717
+          "score": 1.637
         },
         {
           "url": "/services/adu",
@@ -4355,21 +4355,21 @@
           "anchor": "ADU / Guest House in Meridian",
           "title": "ADU / Guest House in Meridian, Idaho",
           "type": "city-service",
-          "score": 1.717
-        },
-        {
-          "url": "/services/adu/star",
-          "anchor": "ADU / Guest House in Star",
-          "title": "ADU / Guest House in Star, Idaho",
-          "type": "city-service",
-          "score": 1.717
+          "score": 1.637
         },
         {
           "url": "/services/adu/boise",
           "anchor": "ADU / Guest House in Boise",
           "title": "ADU / Guest House in Boise, Idaho",
           "type": "city-service",
-          "score": 1.703
+          "score": 1.623
+        },
+        {
+          "url": "/services/adu/eagle",
+          "anchor": "ADU / Guest House in Eagle",
+          "title": "ADU / Guest House in Eagle, Idaho",
+          "type": "city-service",
+          "score": 1.597
         },
         {
           "url": "/services/adu",
@@ -4415,25 +4415,25 @@
       "url": "/services/adu/nampa",
       "links": [
         {
-          "url": "/services/adu/kuna",
-          "anchor": "ADU / Guest House in Kuna",
-          "title": "ADU / Guest House in Kuna, Idaho",
+          "url": "/services/adu/meridian",
+          "anchor": "ADU / Guest House in Meridian",
+          "title": "ADU / Guest House in Meridian, Idaho",
           "type": "city-service",
-          "score": 1.703
+          "score": 1.597
         },
         {
-          "url": "/services/adu/caldwell",
-          "anchor": "ADU / Guest House in Caldwell",
-          "title": "ADU / Guest House in Caldwell, Idaho",
+          "url": "/services/adu/boise",
+          "anchor": "ADU / Guest House in Boise",
+          "title": "ADU / Guest House in Boise, Idaho",
           "type": "city-service",
-          "score": 1.677
+          "score": 1.583
         },
         {
           "url": "/services/adu/eagle",
           "anchor": "ADU / Guest House in Eagle",
           "title": "ADU / Guest House in Eagle, Idaho",
           "type": "city-service",
-          "score": 1.677
+          "score": 1.557
         },
         {
           "url": "/services/adu",
@@ -4479,25 +4479,25 @@
       "url": "/services/adu/star",
       "links": [
         {
-          "url": "/services/adu/meridian",
-          "anchor": "ADU / Guest House in Meridian",
-          "title": "ADU / Guest House in Meridian, Idaho",
-          "type": "city-service",
-          "score": 1.677
-        },
-        {
-          "url": "/services/adu/middleton",
-          "anchor": "ADU / Guest House in Middleton",
-          "title": "ADU / Guest House in Middleton, Idaho",
-          "type": "city-service",
-          "score": 1.677
-        },
-        {
           "url": "/services/adu/nampa",
           "anchor": "ADU / Guest House in Nampa",
           "title": "ADU / Guest House in Nampa, Idaho",
           "type": "city-service",
-          "score": 1.677
+          "score": 1.597
+        },
+        {
+          "url": "/services/adu/meridian",
+          "anchor": "ADU / Guest House in Meridian",
+          "title": "ADU / Guest House in Meridian, Idaho",
+          "type": "city-service",
+          "score": 1.557
+        },
+        {
+          "url": "/services/adu/boise",
+          "anchor": "ADU / Guest House in Boise",
+          "title": "ADU / Guest House in Boise, Idaho",
+          "type": "city-service",
+          "score": 1.543
         },
         {
           "url": "/services/adu",
@@ -8162,13 +8162,6 @@
           "score": 0.317
         },
         {
-          "url": "/services/adu/boise",
-          "anchor": "ADU / Guest House in Boise",
-          "title": "ADU / Guest House in Boise, Idaho",
-          "type": "city-service",
-          "score": 0.24
-        },
-        {
           "url": "/blog/preconstruction-guide",
           "anchor": "Preconstruction Guide",
           "title": "Preconstruction Guide",
@@ -8179,6 +8172,13 @@
           "url": "/services/bathroom-remodel/boise",
           "anchor": "Bathroom Remodel in Boise",
           "title": "Bathroom Remodel in Boise, Idaho",
+          "type": "city-service",
+          "score": 0.12
+        },
+        {
+          "url": "/services/outdoor-living/boise",
+          "anchor": "Outdoor Living & Decks in Boise",
+          "title": "Outdoor Living & Decks in Boise, Idaho",
           "type": "city-service",
           "score": 0.12
         }
@@ -8226,18 +8226,18 @@
           "score": 0.373
         },
         {
-          "url": "/services/adu/caldwell",
-          "anchor": "ADU / Guest House in Caldwell",
-          "title": "ADU / Guest House in Caldwell, Idaho",
-          "type": "city-service",
-          "score": 0.351
-        },
-        {
           "url": "/services/bathroom-remodel/caldwell",
           "anchor": "Bathroom Remodel in Caldwell",
           "title": "Bathroom Remodel in Caldwell, Idaho",
           "type": "city-service",
           "score": 0.331
+        },
+        {
+          "url": "/services/outdoor-living/caldwell",
+          "anchor": "Outdoor Living & Decks in Caldwell",
+          "title": "Outdoor Living & Decks in Caldwell, Idaho",
+          "type": "city-service",
+          "score": 0.291
         },
         {
           "url": "/blog/construction-phase-guide",
@@ -8290,18 +8290,18 @@
           "score": 0.386
         },
         {
-          "url": "/services/adu/eagle",
-          "anchor": "ADU / Guest House in Eagle",
-          "title": "ADU / Guest House in Eagle, Idaho",
-          "type": "city-service",
-          "score": 0.351
-        },
-        {
           "url": "/services/bathroom-remodel/eagle",
           "anchor": "Bathroom Remodel in Eagle",
           "title": "Bathroom Remodel in Eagle, Idaho",
           "type": "city-service",
           "score": 0.331
+        },
+        {
+          "url": "/services/outdoor-living/eagle",
+          "anchor": "Outdoor Living & Decks in Eagle",
+          "title": "Outdoor Living & Decks in Eagle, Idaho",
+          "type": "city-service",
+          "score": 0.291
         },
         {
           "url": "/blog/design-development-guide",
@@ -8354,13 +8354,6 @@
           "score": 0.317
         },
         {
-          "url": "/services/adu/kuna",
-          "anchor": "ADU / Guest House in Kuna",
-          "title": "ADU / Guest House in Kuna, Idaho",
-          "type": "city-service",
-          "score": 0.24
-        },
-        {
           "url": "/blog/remodeling-timeline-guide",
           "anchor": "Remodeling Timeline Guide",
           "title": "Remodeling Timeline Guide",
@@ -8373,6 +8366,13 @@
           "title": "Bathroom Remodel in Kuna, Idaho",
           "type": "city-service",
           "score": 0.16
+        },
+        {
+          "url": "/services/kitchen-remodel/kuna",
+          "anchor": "Kitchen Remodel in Kuna",
+          "title": "Kitchen Remodel in Kuna, Idaho",
+          "type": "city-service",
+          "score": 0.12
         }
       ]
     },
@@ -8411,13 +8411,6 @@
           "score": 0.423
         },
         {
-          "url": "/services/adu/meridian",
-          "anchor": "ADU / Guest House in Meridian",
-          "title": "ADU / Guest House in Meridian, Idaho",
-          "type": "city-service",
-          "score": 0.351
-        },
-        {
           "url": "/areas/eagle",
           "anchor": "Remodeling in Eagle",
           "title": "Remodeling Services in Eagle, Idaho",
@@ -8428,6 +8421,13 @@
           "url": "/services/bathroom-remodel/meridian",
           "anchor": "Bathroom Remodel in Meridian",
           "title": "Bathroom Remodel in Meridian, Idaho",
+          "type": "city-service",
+          "score": 0.331
+        },
+        {
+          "url": "/services/outdoor-living/meridian",
+          "anchor": "Outdoor Living & Decks in Meridian",
+          "title": "Outdoor Living & Decks in Meridian, Idaho",
           "type": "city-service",
           "score": 0.331
         },
@@ -8482,16 +8482,16 @@
           "score": 0.373
         },
         {
-          "url": "/services/adu/middleton",
-          "anchor": "ADU / Guest House in Middleton",
-          "title": "ADU / Guest House in Middleton, Idaho",
-          "type": "city-service",
-          "score": 0.351
-        },
-        {
           "url": "/services/bathroom-remodel/middleton",
           "anchor": "Bathroom Remodel in Middleton",
           "title": "Bathroom Remodel in Middleton, Idaho",
+          "type": "city-service",
+          "score": 0.331
+        },
+        {
+          "url": "/services/outdoor-living/middleton",
+          "anchor": "Outdoor Living & Decks in Middleton",
+          "title": "Outdoor Living & Decks in Middleton, Idaho",
           "type": "city-service",
           "score": 0.331
         },
@@ -8532,13 +8532,6 @@
           "score": 0.463
         },
         {
-          "url": "/services/adu/nampa",
-          "anchor": "ADU / Guest House in Nampa",
-          "title": "ADU / Guest House in Nampa, Idaho",
-          "type": "city-service",
-          "score": 0.351
-        },
-        {
           "url": "/areas/caldwell",
           "anchor": "Remodeling in Caldwell",
           "title": "Remodeling Services in Caldwell, Idaho",
@@ -8556,6 +8549,13 @@
           "url": "/services/bathroom-remodel/nampa",
           "anchor": "Bathroom Remodel in Nampa",
           "title": "Bathroom Remodel in Nampa, Idaho",
+          "type": "city-service",
+          "score": 0.331
+        },
+        {
+          "url": "/services/outdoor-living/nampa",
+          "anchor": "Outdoor Living & Decks in Nampa",
+          "title": "Outdoor Living & Decks in Nampa, Idaho",
           "type": "city-service",
           "score": 0.331
         },
@@ -8603,13 +8603,6 @@
           "score": 0.42
         },
         {
-          "url": "/services/adu/star",
-          "anchor": "ADU / Guest House in Star",
-          "title": "ADU / Guest House in Star, Idaho",
-          "type": "city-service",
-          "score": 0.391
-        },
-        {
           "url": "/services/bathroom-remodel/star",
           "anchor": "Bathroom Remodel in Star",
           "title": "Bathroom Remodel in Star, Idaho",
@@ -8622,6 +8615,13 @@
           "title": "Remodeling Services in Meridian, Idaho",
           "type": "city",
           "score": 0.333
+        },
+        {
+          "url": "/services/outdoor-living/star",
+          "anchor": "Outdoor Living & Decks in Star",
+          "title": "Outdoor Living & Decks in Star, Idaho",
+          "type": "city-service",
+          "score": 0.331
         },
         {
           "url": "/blog/construction-phase-guide",
@@ -8745,11 +8745,11 @@
           "score": 0.498
         },
         {
-          "url": "/services/adu/caldwell",
-          "anchor": "ADU / Guest House in Caldwell",
-          "title": "ADU / Guest House in Caldwell, Idaho",
+          "url": "/services/adu/nampa",
+          "anchor": "ADU / Guest House in Nampa",
+          "title": "ADU / Guest House in Nampa, Idaho",
           "type": "city-service",
-          "score": 0.107
+          "score": 0.067
         },
         {
           "url": "/guides/boise-remodeling-guide",
@@ -9072,9 +9072,9 @@
           "score": 0.118
         },
         {
-          "url": "/services/aging-in-place/nampa",
-          "anchor": "Aging-in-Place Remodeling in Nampa",
-          "title": "Aging-in-Place Remodeling in Nampa, Idaho",
+          "url": "/services/basement-remodel/nampa",
+          "anchor": "Basement Remodeling in Nampa",
+          "title": "Basement Remodeling in Nampa, Idaho",
           "type": "city-service",
           "score": -0.046
         }
@@ -9200,9 +9200,9 @@
           "score": 0.043
         },
         {
-          "url": "/services/basement-remodel/nampa",
-          "anchor": "Basement Remodeling in Nampa",
-          "title": "Basement Remodeling in Nampa, Idaho",
+          "url": "/services/basement-remodel/star",
+          "anchor": "Basement Remodeling in Star",
+          "title": "Basement Remodeling in Star, Idaho",
           "type": "city-service",
           "score": -0.029
         }
@@ -9328,11 +9328,11 @@
           "score": 0.037
         },
         {
-          "url": "/services/basement-remodel/star",
-          "anchor": "Basement Remodeling in Star",
-          "title": "Basement Remodeling in Star, Idaho",
+          "url": "/services/aging-in-place/eagle",
+          "anchor": "Aging-in-Place Remodeling in Eagle",
+          "title": "Aging-in-Place Remodeling in Eagle, Idaho",
           "type": "city-service",
-          "score": -0.078
+          "score": -0.118
         }
       ]
     },
@@ -9371,18 +9371,18 @@
           "score": 0.93
         },
         {
-          "url": "/services/aging-in-place/eagle",
-          "anchor": "Aging-in-Place Remodeling in Eagle",
-          "title": "Aging-in-Place Remodeling in Eagle, Idaho",
-          "type": "city-service",
-          "score": 0.045
-        },
-        {
           "url": "/blog/punch-list-guide",
           "anchor": "Punch List Guide",
           "title": "Punch List Guide",
           "type": "blog",
           "score": 0.011
+        },
+        {
+          "url": "/services/aging-in-place/eagle",
+          "anchor": "Aging-in-Place Remodeling in Eagle",
+          "title": "Aging-in-Place Remodeling in Eagle, Idaho",
+          "type": "city-service",
+          "score": 0.005
         },
         {
           "url": "/blog/preconstruction-guide",
@@ -9435,9 +9435,9 @@
           "score": 1.034
         },
         {
-          "url": "/services/aging-in-place/eagle",
-          "anchor": "Aging-in-Place Remodeling in Eagle",
-          "title": "Aging-in-Place Remodeling in Eagle, Idaho",
+          "url": "/services/basement-remodel/eagle",
+          "anchor": "Basement Remodeling in Eagle",
+          "title": "Basement Remodeling in Eagle, Idaho",
           "type": "city-service",
           "score": 0.005
         },
@@ -10029,7 +10029,7 @@
           "anchor": "Outdoor Living & Decks in Meridian",
           "title": "Outdoor Living & Decks in Meridian, Idaho",
           "type": "city-service",
-          "score": 0.126
+          "score": 0.086
         },
         {
           "url": "/guides/eagle-foothills-remodeling-guide",
@@ -10239,46 +10239,32 @@
       "url": "/services/adu",
       "links": [
         {
-          "url": "/services/adu/kuna",
-          "anchor": "ADU / Guest House in Kuna",
-          "title": "ADU / Guest House in Kuna, Idaho",
-          "type": "city-service",
-          "score": 1.7
-        },
-        {
           "url": "/services/adu/eagle",
           "anchor": "ADU / Guest House in Eagle",
           "title": "ADU / Guest House in Eagle, Idaho",
           "type": "city-service",
-          "score": 1.663
+          "score": 1.583
         },
         {
           "url": "/services/adu/meridian",
           "anchor": "ADU / Guest House in Meridian",
           "title": "ADU / Guest House in Meridian, Idaho",
           "type": "city-service",
-          "score": 1.663
-        },
-        {
-          "url": "/services/adu/middleton",
-          "anchor": "ADU / Guest House in Middleton",
-          "title": "ADU / Guest House in Middleton, Idaho",
-          "type": "city-service",
-          "score": 1.663
+          "score": 1.583
         },
         {
           "url": "/services/adu/nampa",
           "anchor": "ADU / Guest House in Nampa",
           "title": "ADU / Guest House in Nampa, Idaho",
           "type": "city-service",
-          "score": 1.663
+          "score": 1.583
         },
         {
-          "url": "/services/adu/star",
-          "anchor": "ADU / Guest House in Star",
-          "title": "ADU / Guest House in Star, Idaho",
+          "url": "/services/adu/boise",
+          "anchor": "ADU / Guest House in Boise",
+          "title": "ADU / Guest House in Boise, Idaho",
           "type": "city-service",
-          "score": 1.663
+          "score": 1.54
         },
         {
           "url": "/blog/adu-cost-boise",
@@ -10288,11 +10274,25 @@
           "score": -0.015
         },
         {
+          "url": "/guides/boise-adu-guide",
+          "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
+          "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
+          "type": "guide",
+          "score": -0.048
+        },
+        {
           "url": "/blog/garage-conversions",
           "anchor": "Garage Conversions in Boise: Add a Room Without Adding On",
           "title": "Garage Conversions in Boise: Add a Room Without Adding On",
           "type": "blog",
           "score": -0.067
+        },
+        {
+          "url": "/blog/multigenerational-living-remodels",
+          "anchor": "Mother-in-Law Suites & Multigenerational Living Remodels",
+          "title": "Mother-in-Law Suites & Multigenerational Living Remodels",
+          "type": "blog",
+          "score": -0.069
         }
       ]
     },
@@ -10395,16 +10395,16 @@
           "score": 1.629
         },
         {
-          "url": "/services/basement-remodel/eagle",
-          "anchor": "Basement Remodeling in Eagle",
-          "title": "Basement Remodeling in Eagle, Idaho",
+          "url": "/services/basement-remodel/meridian",
+          "anchor": "Basement Remodeling in Meridian",
+          "title": "Basement Remodeling in Meridian, Idaho",
           "type": "city-service",
           "score": 1.629
         },
         {
-          "url": "/services/basement-remodel/meridian",
-          "anchor": "Basement Remodeling in Meridian",
-          "title": "Basement Remodeling in Meridian, Idaho",
+          "url": "/services/basement-remodel/star",
+          "anchor": "Basement Remodeling in Star",
+          "title": "Basement Remodeling in Star, Idaho",
           "type": "city-service",
           "score": 1.629
         },
@@ -10495,13 +10495,6 @@
       "url": "/services/kitchen-remodel",
       "links": [
         {
-          "url": "/services/kitchen-remodel/kuna",
-          "anchor": "Kitchen Remodel in Kuna",
-          "title": "Kitchen Remodel in Kuna, Idaho",
-          "type": "city-service",
-          "score": 1.62
-        },
-        {
           "url": "/services/kitchen-remodel/middleton",
           "anchor": "Kitchen Remodel in Middleton",
           "title": "Kitchen Remodel in Middleton, Idaho",
@@ -10521,6 +10514,13 @@
           "title": "Kitchen Remodel in Star, Idaho",
           "type": "city-service",
           "score": 1.6
+        },
+        {
+          "url": "/services/kitchen-remodel/kuna",
+          "anchor": "Kitchen Remodel in Kuna",
+          "title": "Kitchen Remodel in Kuna, Idaho",
+          "type": "city-service",
+          "score": 1.58
         },
         {
           "url": "/services/kitchen-remodel/caldwell",
@@ -10559,34 +10559,6 @@
       "url": "/services/outdoor-living",
       "links": [
         {
-          "url": "/services/outdoor-living/middleton",
-          "anchor": "Outdoor Living & Decks in Middleton",
-          "title": "Outdoor Living & Decks in Middleton, Idaho",
-          "type": "city-service",
-          "score": 1.64
-        },
-        {
-          "url": "/services/outdoor-living/nampa",
-          "anchor": "Outdoor Living & Decks in Nampa",
-          "title": "Outdoor Living & Decks in Nampa, Idaho",
-          "type": "city-service",
-          "score": 1.64
-        },
-        {
-          "url": "/services/outdoor-living/star",
-          "anchor": "Outdoor Living & Decks in Star",
-          "title": "Outdoor Living & Decks in Star, Idaho",
-          "type": "city-service",
-          "score": 1.64
-        },
-        {
-          "url": "/services/outdoor-living/boise",
-          "anchor": "Outdoor Living & Decks in Boise",
-          "title": "Outdoor Living & Decks in Boise, Idaho",
-          "type": "city-service",
-          "score": 1.62
-        },
-        {
           "url": "/services/outdoor-living/kuna",
           "anchor": "Outdoor Living & Decks in Kuna",
           "title": "Outdoor Living & Decks in Kuna, Idaho",
@@ -10594,11 +10566,39 @@
           "score": 1.62
         },
         {
+          "url": "/services/outdoor-living/middleton",
+          "anchor": "Outdoor Living & Decks in Middleton",
+          "title": "Outdoor Living & Decks in Middleton, Idaho",
+          "type": "city-service",
+          "score": 1.6
+        },
+        {
+          "url": "/services/outdoor-living/nampa",
+          "anchor": "Outdoor Living & Decks in Nampa",
+          "title": "Outdoor Living & Decks in Nampa, Idaho",
+          "type": "city-service",
+          "score": 1.6
+        },
+        {
+          "url": "/services/outdoor-living/star",
+          "anchor": "Outdoor Living & Decks in Star",
+          "title": "Outdoor Living & Decks in Star, Idaho",
+          "type": "city-service",
+          "score": 1.6
+        },
+        {
+          "url": "/services/outdoor-living/boise",
+          "anchor": "Outdoor Living & Decks in Boise",
+          "title": "Outdoor Living & Decks in Boise, Idaho",
+          "type": "city-service",
+          "score": 1.58
+        },
+        {
           "url": "/services/outdoor-living/caldwell",
           "anchor": "Outdoor Living & Decks in Caldwell",
           "title": "Outdoor Living & Decks in Caldwell, Idaho",
           "type": "city-service",
-          "score": 1.6
+          "score": 1.56
         },
         {
           "url": "/blog/decks-vs-patios-boise",
@@ -10780,7 +10780,7 @@
     "/blog/primary-suite-additions": 5,
     "/blog/second-story-additions": 5,
     "/blog/bedroom-additions": 6,
-    "/blog/multigenerational-living-remodels": 5,
+    "/blog/multigenerational-living-remodels": 6,
     "/blog/home-addition-timeline-guide": 5,
     "/blog/whole-home-remodel-timeline": 6,
     "/blog/remodeling-vs-moving": 5,
@@ -10824,7 +10824,7 @@
     "/guides/boise-remodeling-cost-guide": 21,
     "/guides/treasure-valley-remodeling-guide": 18,
     "/guides/boise-remodeling-guide": 8,
-    "/guides/boise-adu-guide": 11,
+    "/guides/boise-adu-guide": 12,
     "/guides/boise-kitchen-remodeling-guide": 14,
     "/guides/boise-bathroom-remodeling-guide": 9,
     "/guides/boise-home-addition-guide": 12,
@@ -10852,7 +10852,7 @@
     "/services/room-addition": 18,
     "/services/adu": 13,
     "/services/basement-remodel": 15,
-    "/services/outdoor-living": 16,
+    "/services/outdoor-living": 17,
     "/services/aging-in-place": 17,
     "/areas/boise": 18,
     "/areas/meridian": 12,
@@ -10866,7 +10866,7 @@
     "/services/kitchen-remodel/meridian": 6,
     "/services/kitchen-remodel/eagle": 7,
     "/services/kitchen-remodel/nampa": 6,
-    "/services/kitchen-remodel/kuna": 8,
+    "/services/kitchen-remodel/kuna": 9,
     "/services/kitchen-remodel/star": 6,
     "/services/kitchen-remodel/middleton": 6,
     "/services/kitchen-remodel/caldwell": 7,
@@ -10894,34 +10894,34 @@
     "/services/room-addition/star": 5,
     "/services/room-addition/middleton": 5,
     "/services/room-addition/caldwell": 6,
-    "/services/adu/boise": 6,
-    "/services/adu/meridian": 5,
-    "/services/adu/eagle": 5,
-    "/services/adu/nampa": 5,
-    "/services/adu/kuna": 6,
-    "/services/adu/star": 5,
-    "/services/adu/middleton": 5,
-    "/services/adu/caldwell": 5,
+    "/services/adu/boise": 10,
+    "/services/adu/meridian": 7,
+    "/services/adu/eagle": 7,
+    "/services/adu/nampa": 7,
+    "/services/adu/kuna": 0,
+    "/services/adu/star": 0,
+    "/services/adu/middleton": 0,
+    "/services/adu/caldwell": 0,
     "/services/basement-remodel/boise": 7,
     "/services/basement-remodel/meridian": 6,
     "/services/basement-remodel/eagle": 6,
     "/services/basement-remodel/nampa": 5,
     "/services/basement-remodel/kuna": 6,
-    "/services/basement-remodel/star": 5,
+    "/services/basement-remodel/star": 6,
     "/services/basement-remodel/middleton": 5,
     "/services/basement-remodel/caldwell": 6,
-    "/services/outdoor-living/boise": 8,
-    "/services/outdoor-living/meridian": 5,
-    "/services/outdoor-living/eagle": 5,
-    "/services/outdoor-living/nampa": 5,
+    "/services/outdoor-living/boise": 9,
+    "/services/outdoor-living/meridian": 6,
+    "/services/outdoor-living/eagle": 6,
+    "/services/outdoor-living/nampa": 6,
     "/services/outdoor-living/kuna": 8,
-    "/services/outdoor-living/star": 5,
-    "/services/outdoor-living/middleton": 5,
-    "/services/outdoor-living/caldwell": 6,
+    "/services/outdoor-living/star": 6,
+    "/services/outdoor-living/middleton": 6,
+    "/services/outdoor-living/caldwell": 7,
     "/services/aging-in-place/boise": 8,
     "/services/aging-in-place/meridian": 6,
     "/services/aging-in-place/eagle": 6,
-    "/services/aging-in-place/nampa": 6,
+    "/services/aging-in-place/nampa": 5,
     "/services/aging-in-place/kuna": 7,
     "/services/aging-in-place/star": 6,
     "/services/aging-in-place/middleton": 6,

@@ -128,3 +128,19 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
 export function getAllSiteUrls(): SiteUrlEntry[] {
   return getSiteUrlGroups().flatMap((g) => g.entries);
 }
+
+let indexedPathSet: Set<string> | undefined;
+
+/**
+ * True when an internal path is one the sitemap lists, i.e. passes the same
+ * index rule (noindexed city x service combos and thin category hubs are out).
+ * Related and nearby link blocks filter on this so they never point equity at
+ * a page we have asked search engines not to index. External links, anchors on
+ * the current page and non-page targets (mailto:, tel:) are left alone.
+ */
+export function isIndexedPath(href: string): boolean {
+  if (!href.startsWith('/') || href.startsWith('//')) return true;
+  const path = href.split('#')[0].split('?')[0].replace(/\/$/, '') || '/';
+  indexedPathSet ??= new Set(getAllSiteUrls().map((entry) => entry.path));
+  return indexedPathSet.has(path);
+}

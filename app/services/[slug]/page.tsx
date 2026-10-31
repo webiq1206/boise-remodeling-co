@@ -13,6 +13,7 @@ landingFAQSchema,
 landingServiceSchema
 } from '@/lib/landing-schema';
 import { buildPageMetadata } from '@/lib/page-metadata';
+import { isIndexedPath } from '@/lib/siteUrls';
 import { generateSpeakableSchema } from '@/lib/schema';
 import { SERVICE_SLUGS,getServiceBySlug,servicePath } from '@/lib/seo-routes';
 import { CITIES } from '@/shared/contentData';
@@ -133,10 +134,11 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         `We provide ${serviceLC} services throughout the Treasure Valley, with dedicated local pages for each city we serve. Permit paths, housing stock, and HOA requirements differ between Ada and Canyon County communities, so each city page covers the details that matter where you live.`,
         `Choose your city below to see local ${serviceLC} guidance, or schedule a free in-home consultation to discuss your project directly.`,
       ],
+      // Same index rule as the sitemap: noindexed city combos are not linked.
       links: CITIES.map((c) => ({
         label: `${service.name} in ${c.name}`,
         href: `/services/${service.slug}/${c.slug}`,
-      })),
+      })).filter((link) => isIndexedPath(link.href)),
     },
     {
       heading: `Why design-build for your ${serviceLC}`,

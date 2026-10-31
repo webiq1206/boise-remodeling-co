@@ -1,6 +1,17 @@
 import Link from 'next/link';
 import { CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
+import { isIndexedPath } from '@/lib/siteUrls';
+
+/**
+ * A city x service link that respects the sitemap's index rule: a noindexed
+ * combo (the template ADU pages in the small cities) falls back to the indexed
+ * service page, so the card stays useful without pointing at a noindexed URL.
+ */
+function indexedCityServiceHref(serviceSlug: string, citySlug: string): string {
+  const href = cityServicePath(serviceSlug, citySlug);
+  return isIndexedPath(href) ? href : servicePath(serviceSlug);
+}
 
 interface RelatedLinksProps {
   serviceSlug?: string;
@@ -29,7 +40,7 @@ function ExploreFurther({ serviceSlug }: { serviceSlug?: string }) {
     { href: '/design-ideas', label: 'Explore remodeling design ideas' },
     { href: '/resources', label: 'Free remodel planning worksheets' },
     { href: '/guides/boise-remodeling-cost-guide', label: 'Boise Remodeling Cost Guide' },
-  ];
+  ].filter((link) => isIndexedPath(link.href));
   return (
     <div className="border-t pt-10" style={{ borderColor: "var(--ed-line)" }}>
       <h2 className="ed-h4 mb-6">Explore further</h2>
@@ -68,7 +79,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
           </h2>
           <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
             {SERVICES.map((service) => (
-              <Link key={service.slug} href={cityServicePath(service.slug, citySlug)}>
+              <Link key={service.slug} href={indexedCityServiceHref(service.slug, citySlug)}>
                 <div className="ed-card ed-card-link h-full">
                   <h3 className="ed-h4">{service.name}</h3>
                   <p className="ed-body mt-2 text-[0.875rem]">{service.shortDescription}</p>
@@ -83,8 +94,13 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
   }
 
   if (variant === 'city-service' && serviceSlug && citySlug) {
-    const otherCities = CITIES.filter((c) => c.slug !== citySlug).slice(0, 4);
-    const otherServices = SERVICES.filter((s) => s.slug !== serviceSlug).slice(0, 3);
+    // Same index rule as the sitemap: noindexed combos are never linked.
+    const otherCities = CITIES.filter(
+      (c) => c.slug !== citySlug && isIndexedPath(cityServicePath(serviceSlug, c.slug)),
+    ).slice(0, 4);
+    const otherServices = SERVICES.filter(
+      (s) => s.slug !== serviceSlug && isIndexedPath(cityServicePath(s.slug, citySlug)),
+    ).slice(0, 3);
     return (
       <div className="space-y-10">
       <div className="grid md:grid-cols-2 gap-10">

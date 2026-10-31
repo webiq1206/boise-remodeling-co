@@ -10,6 +10,7 @@ landingBreadcrumbs,
 landingFAQSchema,
 } from '@/lib/landing-schema';
 import { buildPageMetadata } from '@/lib/page-metadata';
+import { isIndexedPath } from '@/lib/siteUrls';
 import { permitGuidance, permitSource } from '@/lib/permitGuidance';
 import { generateSpeakableSchema } from '@/lib/schema';
 import { CITY_SEO_DATA } from '@/lib/seo';
@@ -73,10 +74,11 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
           : []),
       ],
       links: [
+        // Same index rule as the sitemap: a noindexed combo is not linked.
         ...SERVICES.map((s) => ({
           label: `${s.name} in ${city.name}`,
           href: `/services/${s.slug}/${city.slug}`,
-        })),
+        })).filter((link) => isIndexedPath(link.href)),
         { label: city.slug === 'boise' ? 'Kitchen remodeling' : 'Kitchen remodel', href: '/services/kitchen-remodel' },
         { label: city.slug === 'boise' ? 'Bathroom remodeling' : 'Bathroom remodel', href: '/services/bathroom-remodel' },
         { label: 'Room addition', href: '/services/room-addition' },
