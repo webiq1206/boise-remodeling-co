@@ -530,7 +530,7 @@ export function LandingPageTemplate({
                             {typeof p === 'string' ? p : (
                               <>
                                 {p.text}{' '}
-                                <Link href={p.link.href} className="ed-link ed-link-accent underline underline-offset-2">{p.link.label}</Link>
+                                <Link href={p.link.href} className="underline underline-offset-2 transition-colors hover:[color:var(--ed-accent)]">{p.link.label}</Link>
                                 {p.after ?? '.'}
                               </>
                             )}

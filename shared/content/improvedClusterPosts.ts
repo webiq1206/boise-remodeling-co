@@ -202,7 +202,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   'outdoor-living-roi': {
     seoTitle: 'Outdoor living ROI in Boise',
     metaDescription:
-      'Does outdoor living add value in Boise? How decks, covered patios and outdoor kitchens return value, why integration matters, and why enjoyment is the payoff.',
+      'Does outdoor living add value in Boise? How decks, covered patios and outdoor kitchens return value, why integration matters, and why use is the payoff.',
     excerpt: 'How outdoor living returns value in the Treasure Valley, and why the main payoff is often enjoyment.',
     quickAnswer:
       'A quality, well-integrated outdoor living space can add appeal and value, especially where outdoor living is prized, because it extends usable living and entertaining space. The return varies more than for interior projects and favors tasteful, well-built builds over elaborate personalized ones.',

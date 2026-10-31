@@ -96,6 +96,9 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   const serviceLC = service.name.toLowerCase();
 
   const ownershipLabel = service.slug === 'room-addition' ? 'Room additions' : toSentenceCase(content.noun ?? service.name);
+  // The ownership pages name what they now are in the breadcrumb, not the
+  // shared service label ("ADU / Guest House").
+  const crumbName = service.slug === 'adu' ? 'ADU conversions' : ownership ? 'Room additions' : service.name;
   const ownershipCityLinks = CITIES.map((c) => ({
     label: `${ownershipLabel} in ${c.name}`,
     href: `/services/${service.slug}/${c.slug}`,
@@ -163,7 +166,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
     landingBreadcrumbs([
       { name: 'Home', url: '/' },
       { name: 'Services', url: '/services' },
-      { name: service.name, url: path },
+      { name: crumbName, url: path },
     ]),
     landingServiceSchema(content.noun ? toSentenceCase(content.noun) : service.name, overview),
     landingFAQSchema(faqs),
@@ -186,7 +189,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         breadcrumbs={[
           { name: 'Home', href: '/' },
           { name: 'Services', href: '/services' },
-          { name: service.name },
+          { name: crumbName },
         ]}
         benefits={content.benefits}
         inclusions={ownership?.inclusions ?? content.inclusions}

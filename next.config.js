@@ -159,9 +159,14 @@ const nextConfig = {
       '/blog/kitchen-roi-remodeling': '/blog/kitchen-remodel-roi',
       '/blog/bathroom-roi-remodeling': '/blog/bathroom-remodel-roi',
     };
-    // Phase 4: thin twin posts merged into their long twin or guide (one hop).
+    // Phase 4: thin twin posts merged into their long twin or guide. One hop,
+    // and a literal 301 (as the plan specifies) rather than the 308 that
+    // `permanent: true` emits.
     for (const [slug, destination] of Object.entries(require('./shared/content/mergedPosts.json'))) {
-      blogRedirects[`/blog/${slug}`] = destination;
+      redirects.push(
+        { source: `/blog/${slug}`, destination, statusCode: 301 },
+        { source: `/blog/${slug}/`, destination, statusCode: 301 },
+      );
     }
     for (const [source, destination] of Object.entries(blogRedirects)) {
       redirects.push(...r(source, destination));
