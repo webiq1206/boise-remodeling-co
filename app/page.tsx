@@ -10,6 +10,7 @@ import { HomePageSchema } from "@/components/seo/HomePageSchema";
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical,fitDescription } from "@/lib/page-metadata";
 import { TextReplyLine } from "@/components/TextReplyLine";
+import { HashTargetRecovery } from "@/components/HashTargetRecovery";
 import { CONSULT_BULLETS,SITE_TAGLINE } from "@/shared/siteContent";
 import { SITE_IMAGES } from "@/shared/siteImages";
 import { Check } from "lucide-react";
@@ -44,6 +45,7 @@ export const metadata: Metadata = withBrandPageMetadata(({
 export default function HomePage() {
   return (
     <div className="flex flex-col bg-background">
+      <HashTargetRecovery />
       {/* PAGE ORDER IS THE SALES CONVERSATION, IN THE ORDER A HOMEOWNER HAS IT.
 
           1. Hero            who we are, and the one action we want, then the proof strip
