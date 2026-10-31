@@ -226,13 +226,18 @@ import { SITE_CONFIG } from "../shared/siteConfig.ts";
 test("call and text controls use the site phone and the listener stays in the existing click path", () => {
   assert.equal(SITE_CONFIG.phoneHref, "tel:+12084771169");
   assert.equal(SITE_CONFIG.phoneSmsHref, "sms:+12084771169");
-  const nav = readFileSync(new URL("../components/Navigation.tsx", import.meta.url), "utf8");
+  // Phase 2: the header is the shared family SiteHeader (call before text, then the menu
+  // drawer in its own MobileMenu), reading the phone hrefs from lib/familyBrand.ts.
+  const nav = readFileSync(new URL("../components/family/SiteHeader.tsx", import.meta.url), "utf8");
+  const menu = readFileSync(new URL("../components/family/MobileMenu.tsx", import.meta.url), "utf8");
   const headerAt = nav.indexOf('data-testid="link-call-mobile-header"');
   const textAt = nav.indexOf('data-testid="link-text-mobile-header"');
-  const drawerAt = nav.indexOf('data-testid="mobile-nav-drawer"');
-  assert.ok(headerAt > 0 && textAt > headerAt && headerAt < drawerAt);
-  assert.ok(nav.slice(headerAt - 200, headerAt).includes("SITE_CONFIG.phoneHref"));
-  assert.ok(nav.slice(textAt - 200, textAt).includes("SITE_CONFIG.phoneSmsHref"));
+  assert.ok(headerAt > 0 && textAt > headerAt);
+  assert.match(menu, /data-testid="mobile-nav-drawer"/);
+  assert.ok(nav.slice(headerAt - 200, headerAt).includes("brand.phone.telHref"));
+  assert.ok(nav.slice(textAt - 300, textAt).includes("brand.phone.smsHref"));
+  const brand = readFileSync(new URL("../lib/familyBrand.ts", import.meta.url), "utf8");
+  assert.match(brand, /telHref: SITE_CONFIG\.phoneHref, smsHref: SITE_CONFIG\.phoneSmsHref/);
   const clicks = readFileSync(new URL("../components/ConversionTracking.tsx", import.meta.url), "utf8");
   assert.match(clicks, /trackEvent\('contact_click'/);
   assert.equal(/trackEvent\(['"]conversion/.test(clicks), false);

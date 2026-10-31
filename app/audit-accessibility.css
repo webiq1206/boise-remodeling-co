@@ -7,7 +7,6 @@
 .approved-shell :is(a,button,input,select,textarea,summary):focus-visible { outline:3px solid currentColor; outline-offset:4px; }
 @media(max-width:1179px) {
   .approved-shell:has(input:focus,textarea:focus,select:focus,[contenteditable=true]:focus) [data-mobile-nav-bar] { visibility:hidden; pointer-events:none; }
-  .approved-shell { padding-bottom:env(safe-area-inset-bottom,0px); }
 }
 @media(prefers-reduced-motion:reduce) {
   .approved-shell *, .approved-shell *::before, .approved-shell *::after { animation:none!important; scroll-behavior:auto!important; transition:none!important; }

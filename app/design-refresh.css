@@ -91,36 +91,8 @@
 .approved-shell [data-slot=accordion-trigger] > span:not(.f-number):not(.process-index) { flex: 1; min-width: 0; text-align: left; }
 .approved-shell .f-accordion .f-number { flex: none; min-width: 2.5rem; }
 
-/* Footer clearance for the sticky bar lives here and nowhere else: page
-   wrappers no longer pad themselves, and the footer pads only while the bar
-   can show (below 1180px). The last footer line sits about 24px above the bar.
-   (BRC-05, BRC-06, BCONC-07, BCONC-38, BHC-03, BCC-04) */
-@media (max-width: 1179px) {
-  .approved-shell .site-footer > .container { padding-bottom: 24px; }
-  .approved-shell .site-footer { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
-}
-@media (min-width: 768px) and (max-width: 1179px) {
-  .approved-shell .site-footer { padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
-}
-/* Cabinet's bar is 12px taller (larger buttons), so its footer clears 12px more. */
-@media (max-width: 767px) {
-  .site-cabinet .site-footer { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
-}
-@media (min-width: 768px) and (max-width: 1179px) {
-  .site-cabinet .site-footer { padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)); }
-}
-
-/* Tablet range: a compact floating bar at the right, not a phone bar stretched
-   across the screen. (BHC-26, BCC-30, BRC-47) */
-@media (min-width: 768px) and (max-width: 1179px) {
-  .approved-shell [data-mobile-nav-bar] {
-    left: auto; right: 16px; bottom: 16px;
-    width: min(520px, calc(100% - 32px));
-    border: 1px solid rgba(251, 250, 246, .16);
-    box-shadow: 0 12px 32px rgba(28, 31, 30, .28);
-  }
-  .approved-shell .site-footer > .container { width: 88%; max-width: none; padding-inline: 0; }
-}
+/* The family chrome (styles/family-chrome.css) owns the header, the mobile action bar,
+   its clearance spacer and the footer; their old per-site rules were removed. */
 
 /* Section rhythm at desktop widths. Phone values are unchanged. Two neighbouring
    sections on the same ground share one gap and a hairline instead of doubling
@@ -223,45 +195,6 @@
   .approved-shell.site-remodeling {
     --site-bottom-bar-h: calc(72px + env(safe-area-inset-bottom, 0px));
   }
-}
-
-.approved-shell.site-remodeling [data-approved-navigation] {
-  box-sizing: border-box;
-  height: var(--site-header-h);
-  max-height: var(--site-header-h);
-  overflow: hidden;
-}
-.approved-shell.site-remodeling [data-approved-navigation] > nav {
-  height: 100% !important;
-  max-height: 100%;
-  box-sizing: border-box;
-  padding-block: 0;
-}
-.approved-shell.site-remodeling [data-approved-navigation] .approved-family-lockup {
-  width: auto;
-  max-width: min(280px, 42vw);
-  max-height: 36px;
-  height: auto;
-}
-@media (max-width: 639px) {
-  .approved-shell.site-remodeling [data-approved-navigation] .approved-family-lockup {
-    max-width: min(200px, 48vw);
-    max-height: 28px;
-  }
-}
-
-.approved-shell.site-remodeling [data-mobile-nav-bar] {
-  box-sizing: border-box;
-  padding-top: 12px;
-  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
-  padding-inline: 12px;
-}
-.approved-shell.site-remodeling [data-mobile-nav-bar] a,
-.approved-shell.site-remodeling [data-mobile-nav-bar] button {
-  min-height: 48px;
-  height: 48px;
-  font-size: 16px;
-  border-radius: 2px;
 }
 
 .approved-shell.site-remodeling .family-site .f-hero {
@@ -635,10 +568,6 @@
     row-gap: 20px;
   }
   .approved-shell.site-remodeling .family-site section.fold-story > img { height: 220px; }
-  /* Footer clearance matches C7 bar (12+48+12 + safe-area). */
-  .approved-shell.site-remodeling .site-footer {
-    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-  }
 }
 @media (max-width: 700px) {
   .approved-shell.site-remodeling .family-site .f-hero { min-height: 0 !important; }

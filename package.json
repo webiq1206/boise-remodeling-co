@@ -39,7 +39,7 @@
     "images:optimize": "node scripts/optimize-marketing-images-sharp.mjs",
     "verify:p5-shared": "node --import tsx --test tests/p5-shared-engine.test.ts tests/p5-review-schema.test.mjs",
     "verify:p5-intake": "node --import tsx --test tests/p5-intake-bridge.test.ts",
-    "prebuild": "npm run verify:db-safety && npm run verify:p5-shared && npm run verify:p5-intake && npm run verify:no-em-dash && npm run verify:estimate && npm run verify:cost-pricing && npm run verify:estimator-e2e && npm run verify:estimate-routes && npm run verify:assistant && npm run verify:documents && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:plans-delivery && npm run verify:disclosure && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run verify:section-links && npm run verify:redirect-collisions && npm run resources:generate && npm run verify:content && npm run verify:images && npm run verify:llms && npm run verify:estimator-recovery",
+    "prebuild": "npm run verify:db-safety && npm run verify:p5-shared && npm run verify:p5-intake && npm run verify:no-em-dash && npm run verify:family-chrome && npm run verify:estimate && npm run verify:cost-pricing && npm run verify:estimator-e2e && npm run verify:estimate-routes && npm run verify:assistant && npm run verify:documents && npm run verify:budget && npm run verify:no-appliance-costs && npm run verify:re10 && npm run verify:re10-delivery && npm run verify:plans && npm run verify:plans-delivery && npm run verify:disclosure && npm run verify:assessors && npm run links:generate && npm run audit:links && npm run verify:section-links && npm run verify:redirect-collisions && npm run resources:generate && npm run verify:content && npm run verify:images && npm run verify:llms && npm run verify:estimator-recovery",
     "backlink:score": "node backlink-engine/src/score.mjs",
     "backlink:run": "node backlink-engine/src/run.mjs",
     "backlink:preflight": "node backlink-engine/src/preflight.mjs",
@@ -58,7 +58,8 @@
     "verify:contrast": "node scripts/verify-contrast.mjs",
     "db:prepare": "node --env-file-if-exists=.env.local scripts/p5-prepare-database.mjs",
     "verify:db-safety": "node scripts/p5-schema-safety.mjs && node --test tests/p5-database-safety.test.mjs",
-    "predev": "npm run db:prepare -- --optional"
+    "predev": "npm run db:prepare -- --optional",
+    "verify:family-chrome": "node scripts/verify-family-chrome.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
