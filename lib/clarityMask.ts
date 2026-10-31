@@ -32,6 +32,17 @@ function stamp(node: MaskableNode): void {
 }
 
 /**
+ * An aria-hidden mirror field (Radix renders a hidden native select beside its
+ * custom control) inside an already-masked ancestor is covered by that
+ * ancestor, because Clarity masks every descendant of a masked element.
+ * Stamping it anyway changed server-rendered HTML before React hydrated, which
+ * React reports as a hydration attribute mismatch on every page with a select.
+ */
+function isCoveredMirror(node: MaskableNode): boolean {
+  return node.getAttribute?.("aria-hidden") === "true" && hasMaskedAncestor(node);
+}
+
+/**
  * Stamp every form, input, textarea, and select under root, including root.
  * A checkbox, radio, range, or button with no masked ancestor also stamps
  * its parent, which is where the visible label sits.
@@ -39,10 +50,10 @@ function stamp(node: MaskableNode): void {
 export function applyClarityMask(root: MaskableNode | null | undefined): void {
   if (!root) return;
   if (root.nodeType === 1 && typeof root.matches === "function" && root.matches(CLARITY_FIELD_SELECTOR)) {
-    stamp(root);
+    if (!isCoveredMirror(root)) stamp(root);
   }
   const matched = typeof root.querySelectorAll === "function" ? root.querySelectorAll(CLARITY_FIELD_SELECTOR) : [];
-  for (const node of matched) stamp(node);
+  for (const node of matched) if (!isCoveredMirror(node)) stamp(node);
 
   const inputs: MaskableNode[] = [];
   if (root.nodeType === 1 && typeof root.matches === "function" && root.matches("input")) inputs.push(root);
@@ -78,12 +89,15 @@ export function clarityFieldMaskScript(): string {
       }
       return false;
     }
+    function coveredMirror(node){
+      return node.getAttribute && node.getAttribute("aria-hidden")==="true" && maskedAncestor(node);
+    }
     function mask(root){
       if(!root) return;
-      if(root.nodeType===1 && root.matches && root.matches(SELECTOR)) root.setAttribute(ATTR, VALUE);
+      if(root.nodeType===1 && root.matches && root.matches(SELECTOR) && !coveredMirror(root)) root.setAttribute(ATTR, VALUE);
       if(root.querySelectorAll){
         var nodes=root.querySelectorAll(SELECTOR);
-        for(var i=0;i<nodes.length;i++) nodes[i].setAttribute(ATTR, VALUE);
+        for(var i=0;i<nodes.length;i++) if(!coveredMirror(nodes[i])) nodes[i].setAttribute(ATTR, VALUE);
       }
       var inputs=[];
       if(root.matches && root.matches("input")) inputs.push(root);
