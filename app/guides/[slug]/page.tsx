@@ -13,6 +13,7 @@ import { CONTENT_AUTHOR } from '@/shared/authors';
 import {
 getAbsoluteImageUrl,
 getBlogHeroImage,
+getBlogImageEntry,
 getBlogImageAlt,
 } from '@/shared/blogImages';
 import { getHubBySlug,guidePath } from '@/shared/contentHubs';
@@ -40,6 +41,8 @@ export async function generateMetadata(
   const heroPath = getBlogHeroImage(guide.slug, guide.heroImage);
   const imageUrl = getAbsoluteImageUrl(heroPath, getBaseUrl());
   const imageAlt = getBlogImageAlt(guide.slug);
+  // No image of its own: supply none, so the brand preview is the fallback.
+  const hasOwnImage = Boolean(guide.heroImage || getBlogImageEntry(guide.slug));
 
   return withBrandPageMetadata(await ({
     title,
@@ -51,13 +54,13 @@ export async function generateMetadata(
       url: buildCanonical(guidePath(guide.slug)),
       type: 'article',
       publishedTime: guide.publishedAt,
-      images: [{ url: imageUrl, alt: imageAlt }],
+      images: hasOwnImage ? [{ url: imageUrl, alt: imageAlt }] : undefined,
     },
     twitter: {
       card: 'summary_large_image',
       title,
       description,
-      images: [imageUrl],
+      images: hasOwnImage ? [imageUrl] : undefined,
     },
   }), "/guides/[slug]");
 }

@@ -14,6 +14,7 @@ import { BLOG_POSTS } from "@/shared/blogContent";
 import {
 getAbsoluteImageUrl,
 getBlogHeroImage,
+getBlogImageEntry,
 getBlogImageAlt,
 } from "@/shared/blogImages";
 import { getBlogOgImage } from "@/shared/blogOgImages";
@@ -52,6 +53,9 @@ export async function generateMetadata(
   // seal, 1200x630) when one exists; fall back to the featured hero image.
   const ogCard = getBlogOgImage(post.slug);
   const shareImageUrl = ogCard ? getAbsoluteImageUrl(ogCard, getBaseUrl()) : imageUrl;
+  // A post with no image of its own supplies none, so withBrandPageMetadata
+  // falls back to the brand preview instead of a generic site photo.
+  const hasOwnImage = Boolean(ogCard || post.heroImage || getBlogImageEntry(post.slug));
 
   return withBrandPageMetadata(await ({
     title,
@@ -66,13 +70,13 @@ export async function generateMetadata(
       url: buildCanonical(`/blog/${post.slug}`),
       type: "article",
       publishedTime: post.publishedAt,
-      images: [{ url: shareImageUrl, width: 1200, height: 630, alt: imageAlt }],
+      images: hasOwnImage ? [{ url: shareImageUrl, width: 1200, height: 630, alt: imageAlt }] : undefined,
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [shareImageUrl],
+      images: hasOwnImage ? [shareImageUrl] : undefined,
     },
   }), "/blog/[slug]");
 }
