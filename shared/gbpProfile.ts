@@ -82,11 +82,12 @@ export const GBP_LINKS = {
  * Owner decision (2026-10-31): the only social and Google profiles are P5 Home
  * Co's own Facebook page and P5 Home Co's single Google Business Profile, which
  * cover every brand. There is no Boise Remodeling Co Facebook or Instagram
- * account, so nothing links to one and no schema sameAs names one. Fill this
- * with the P5 Facebook page URL when the owner supplies it; empty renders no
- * social icon anywhere.
+ * account, so nothing links to one and no schema sameAs names one. This is the
+ * P5 Home Co page (confirmed by the owner, 2026-10-31: "P5 Home Co", category
+ * Contractor). It renders the footer link and sits only in the parent
+ * organization's sameAs, never in this brand's own.
  */
-export const P5_FACEBOOK_URL = '';
+export const P5_FACEBOOK_URL = 'https://www.facebook.com/1228704823655951';
 
 export const GBP_ATTRIBUTES = {
   onlineEstimates: true,

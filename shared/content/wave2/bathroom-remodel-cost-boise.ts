@@ -148,7 +148,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
 </table>
 
 <h2 id="permits">Do you need a permit for a bathroom remodel in Boise?</h2>
-<p>You need a permit when you move or add plumbing or electrical, or change the layout. Cosmetic swaps in the same footprint - a new vanity, toilet, or tile - generally do not require one. Ada County (Boise, Meridian, Eagle) and Canyon County (Nampa, Middleton, Caldwell) use different portals and timelines; we handle both in-house. See our <a href="/blog/ada-vs-canyon-county-permit-timelines">Ada vs Canyon County permit timelines</a>.</p>
+<p>You need a permit when you move or add plumbing or electrical, or change the layout. Cosmetic swaps in the same footprint - a new vanity, toilet, or tile - generally do not require one. Ada County (Boise, Meridian, Eagle) and Canyon County (Nampa, Middleton, Caldwell) use different portals and timelines; we handle both in-house. See our <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit timelines</a>.</p>
 
 <h2 id="aging-in-place">Aging-in-place and accessible bathrooms</h2>
 <p>Many Treasure Valley homeowners remodeling a primary bath now build in features that keep the home comfortable for decades: curbless showers, grab-bar blocking, comfort-height toilets, a bench seat, and slip-resistant tile. Designed well, these read as premium spa features rather than medical fixtures, and they protect resale value with the region’s aging population. Our <a href="/blog/aging-in-place-bathroom-design">aging-in-place bathroom design</a> guide covers what to build in now versus later.</p>

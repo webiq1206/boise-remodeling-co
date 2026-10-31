@@ -60,6 +60,7 @@ export const BATHROOM_GUIDE_CONTENT = `
 </ol>
 <div class="callout tip">
   <p class="callout-label">Tip</p>
+<p>For the calendar version of this process, phase by phase, see <a href="/blog/how-long-does-a-bathroom-remodel-take">how long a bathroom remodel takes</a>.</p>
   <p>Shower glass is usually measured only after the tile is set, then fabricated over one to two weeks - a normal, built-in wait. Finalizing selections before demo keeps everything else moving.</p>
 </div>
 

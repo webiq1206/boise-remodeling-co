@@ -55,7 +55,7 @@ export const P5_PARENT_ORGANIZATION = {
   name: 'P5 Home Co',
   url: P5_ORIGIN,
   // P5 Home Co's Facebook page is the family's only social profile; listed
-  // here (on the parent, never on this brand) once the owner supplies it.
+  // here on the parent, never on this brand.
   ...(P5_FACEBOOK_URL ? { sameAs: [P5_FACEBOOK_URL] } : {}),
 } as const;
 /**

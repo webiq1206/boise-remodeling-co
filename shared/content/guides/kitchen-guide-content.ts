@@ -42,6 +42,7 @@ export const KITCHEN_GUIDE_CONTENT = `
 
 <h2>3. Choose a layout that works</h2>
 <p>Layout is the foundation of a great kitchen - get it right and the room feels effortless; get it wrong and no finish will fix it. The classic principle is the <span class="sage">work triangle</span>: keep the sink, stove, and refrigerator close enough for efficient movement but not cramped, with no leg blocked by through-traffic. Modern kitchens layer work <em>zones</em> (prep, cook, cleanup, storage) on top of that idea.</p>
+<p>Working with a compact footprint? Our <a href="/blog/small-kitchen-remodel-ideas-boise">small kitchen remodel ideas</a> cover storage and layout moves for tight Boise kitchens, and the <a href="/blog/walk-in-pantry-design-guide">walk-in pantry design guide</a> covers where a pantry fits when the plan allows one.</p>
 <p>The common layouts - galley, L-shaped, U-shaped, island, and peninsula - each suit different spaces. Our <a href="/blog/kitchen-layout-ideas-boise-homes">Kitchen Layout Ideas for Boise Homes</a> guide walks through which fits ranches, bungalows, and newer builds.</p>
 <div class="callout note">
   <p class="callout-label">Key point</p>

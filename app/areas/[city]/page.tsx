@@ -69,9 +69,9 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
       paragraphs: [
         `Boise Remodeling Co is a full-service design-build remodeler serving ${city.name} and the surrounding ${county} area. Whether you are updating a single room or reimagining your whole home, every project runs through one accountable team - from the first in-home consultation and design, through permits, construction, and the final walkthrough.`,
         `Explore the specific services we provide for ${city.name} homeowners below. Each links to a dedicated ${city.name} service page with local details, typical scope, and planning guidance.`,
-        ...(city.slug === 'boise'
-          ? ['Kitchen remodeling and bathroom remodeling are listed with the Boise services below. Both stay design-build, with a written scope before construction.']
-          : []),
+        city.slug === 'boise'
+          ? 'Kitchen remodeling, bathroom remodeling and whole-home remodeling are listed with the Boise services below. All three stay design-build, with a written scope before construction.'
+          : `For how each service works across the whole valley, see kitchen remodeling, bathroom remodeling and whole-home remodeling at the end of the list.`,
       ],
       links: [
         // Same index rule as the sitemap: a noindexed combo is not linked.
@@ -79,9 +79,12 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
           label: `${s.name} in ${city.name}`,
           href: `/services/${s.slug}/${city.slug}`,
         })).filter((link) => isIndexedPath(link.href)),
-        { label: city.slug === 'boise' ? 'Kitchen remodeling' : 'Kitchen remodel', href: '/services/kitchen-remodel' },
-        { label: city.slug === 'boise' ? 'Bathroom remodeling' : 'Bathroom remodel', href: '/services/bathroom-remodel' },
-        { label: 'Room addition', href: '/services/room-addition' },
+        // Phase 4: the money service pages, with service anchors, from every
+        // area page, so the parents take the generic terms back from this page.
+        { label: 'Kitchen remodeling', href: '/services/kitchen-remodel' },
+        { label: 'Bathroom remodeling', href: '/services/bathroom-remodel' },
+        { label: 'Whole-home remodeling', href: '/services/whole-home-remodel' },
+        { label: 'Room additions and bump-outs', href: '/services/room-addition' },
       ],
     },
     {
@@ -178,6 +181,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         proofHeading={`Recent ${city.name} remodeling projects`}
         showEstimatePrompt
         faqs={faqs}
+        subject={{ noun: 'remodel', place: city.name }}
         related={{ variant: 'area', citySlug: city.slug }}
       />
     </></InteriorPage>

@@ -121,7 +121,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <tr><td>Appliances</td><td>Separate budget</td><td>Client-supplied; we coordinate rough-in and install</td></tr>
 </tbody>
 </table>
-<p>Cabinetry choice moves the total more than any other decision. Stock cabinets keep costs down but limit sizing; <a href="/blog/kitchen-cabinet-trends">semi-custom lines</a> balance flexibility and lead time; fully custom shops fit the odd ceiling lines common in North End and older Boise Bench homes but extend design time. For a deeper look at surfaces, see <a href="/blog/quartz-vs-quartzite-kitchen">quartz vs quartzite</a>.</p>
+<p>Cabinetry choice moves the total more than any other decision. Stock cabinets keep costs down but limit sizing; <a href="/blog/kitchen-cabinet-trends-boise">semi-custom lines</a> balance flexibility and lead time; fully custom shops fit the odd ceiling lines common in North End and older Boise Bench homes but extend design time. For a deeper look at surfaces, see <a href="/blog/quartz-vs-quartzite-countertops">quartz vs quartzite</a>.</p>
 
 <h2 id="cost-drivers">What drives kitchen remodel costs up</h2>
 <p>Two kitchens of the same size can differ by $40,000 based on a handful of decisions. The costliest drivers are structural and mechanical - the work you cannot see - not the finishes you can.</p>
@@ -162,7 +162,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <p>For a full week-by-week breakdown, see our <a href="/blog/kitchen-remodel-timeline-boise">kitchen remodel timeline</a>.</p>
 
 <h2 id="permits">Do you need a permit for a kitchen remodel in Boise?</h2>
-<p>You need a permit when you change the layout or touch plumbing, gas, or electrical - which describes most full remodels. Purely cosmetic work generally does not require one. Permitting differs by jurisdiction: Ada County cities (Boise, Meridian, Eagle, Kuna, Star) share many conventions, while Canyon County (Nampa, Middleton, Caldwell) uses different portals and timelines. We handle permits in-house so the schedule stays realistic - see our <a href="/blog/ada-vs-canyon-county-permit-timelines">Ada vs Canyon County permit timelines</a>.</p>
+<p>You need a permit when you change the layout or touch plumbing, gas, or electrical - which describes most full remodels. Purely cosmetic work generally does not require one. Permitting differs by jurisdiction: Ada County cities (Boise, Meridian, Eagle, Kuna, Star) share many conventions, while Canyon County (Nampa, Middleton, Caldwell) uses different portals and timelines. We handle permits in-house so the schedule stays realistic - see our <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit timelines</a>.</p>
 
 <h2 id="roi">Does a kitchen remodel add value to your home?</h2>
 <p>A well-executed kitchen remodel is one of the more dependable remodeling investments for Treasure Valley resale, both in dollars recouped and in how quickly a home sells. Mid-range remodels usually return a higher percentage than luxury ones, because buyers reward a fresh, functional kitchen more than they reward the most expensive finishes. If resale is a near-term goal, read <a href="/blog/kitchen-remodel-roi">kitchen remodel ROI</a> before you select finishes.</p>

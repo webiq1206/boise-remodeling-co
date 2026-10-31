@@ -184,7 +184,7 @@ export function hubTopicSections(hubSlug: string, topic: string): ContentSection
           h2: 'Permits and selections order',
           paragraphs: [
             'Submit permits when layout is stable; order long-lead items after rough-in requirements are known.',
-            '<a href="/blog/boise-permit-guide">Boise permit guide</a> · <a href="/blog/ada-vs-canyon-county-permit-timelines">County timelines</a>.',
+            '<a href="/blog/boise-permit-guide">Boise permit guide</a> · <a href="/resources/ada-canyon-permit-flow">County timelines</a>.',
           ],
         },
         {

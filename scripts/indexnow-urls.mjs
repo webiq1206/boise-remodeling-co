@@ -15,7 +15,7 @@ export const SERVICES = [
   'outdoor-living',
   'aging-in-place',
 ];
-export const NOINDEX_CITY_SERVICE = new Set(['adu/kuna', 'adu/star', 'adu/middleton', 'adu/caldwell']);
+export const NOINDEX_CITY_SERVICE = new Set(['adu/kuna', 'adu/star', 'adu/middleton', 'adu/caldwell', 'adu/boise', 'adu/meridian', 'adu/eagle', 'adu/nampa']);
 
 function addCityServices(urls) {
   for (const service of SERVICES) {

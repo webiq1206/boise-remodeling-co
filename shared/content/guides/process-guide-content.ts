@@ -47,6 +47,7 @@ export const PROCESS_GUIDE_CONTENT = `
 
 <h2>4. Selections and change orders</h2>
 <p>The single biggest thing you control is <span class="sage">making decisions before construction starts</span>. Selections made on paper during design are inexpensive; the same decisions made mid-construction become change orders that add cost and delay and ripple across trades.</p>
+<p>Before work proceeds, ask who approves changes and how updated costs and schedules are communicated. On a design-build project the answer should be one accountable team, with each change priced and scheduled in writing before it is built.</p>
 <div class="callout warning">
   <p class="callout-label">Avoid mid-project changes</p>
   <p>Every discretionary change after demo means a change order - added cost, added time, and sometimes redoing completed work. Finalize your selections up front and hold to them. The contingency in your budget is for genuine surprises, not second-guessing. See <a href="/blog/remodeling-mistakes-to-avoid">Remodeling Mistakes to Avoid</a>.</p>
@@ -54,6 +55,7 @@ export const PROCESS_GUIDE_CONTENT = `
 
 <h2>5. Punch list, walk-through, and warranty</h2>
 <p>A remodel is not done when the last tile is set. A thorough contractor completes a <strong>punch list</strong> - the final details caught in a walk-through - and stands behind the work with a <strong>warranty</strong>. Both should be defined in your contract from the start, so you know exactly how the project will be completed and supported.</p>
+<p>Our <a href="/blog/punch-list-guide">punch list guide</a> covers what belongs on the list and how the final walk-through runs, and the <a href="/blog/warranty-guide-remodeling">remodeling warranty guide</a> covers what a workmanship guarantee covers and what to get in writing.</p>
 
 <h2>6. Why the process matters when choosing a team</h2>
 <p>A clear, well-run process is one of the best signs of a contractor worth hiring. A <span class="sage">design-build</span> firm manages every phase above - design, selections, permits, and construction - under one roof, so one team is accountable from your first conversation to the final walk-through. See <a href="/blog/questions-to-ask-remodeling-contractor">Questions to Ask a Contractor</a>.</p>

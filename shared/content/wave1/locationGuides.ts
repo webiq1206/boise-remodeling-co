@@ -27,7 +27,7 @@ const tvSections: ContentSection[] = [
     h2: 'Ada County vs Canyon County',
     paragraphs: [
       'Boise, Meridian, Eagle, Kuna, and Star primarily use Ada County for many residential permits. Nampa, Middleton, and Caldwell are in Canyon County.',
-      '<a href="/blog/ada-vs-canyon-county-permit-timelines">Permit timeline comparison</a>',
+      '<a href="/resources/ada-canyon-permit-flow">Permit timeline comparison</a>',
     ],
   },
   {
@@ -68,37 +68,44 @@ const tvSections: ContentSection[] = [
 
 const boiseSections: ContentSection[] = [
   {
-    h2: 'Boise neighborhoods at a glance',
+    h2: 'What to know about remodeling a home in Boise',
     paragraphs: [
-      'North End bungalows, Bench ranches, Harris Ranch, and East Boise infill each need different structural and electrical strategies.',
-      'We coordinate Ada County permits for layout changes, additions, and structural kitchen/bath work.',
+      'Boise spans more housing eras than any other city in the valley: North End bungalows, Bench ranches, mid-century East Boise and master-planned Harris Ranch. The era of the house drives the structural, electrical and layout work a remodel needs more than anything else.',
+      'Property inside Boise city limits starts with the City of Boise building department; unincorporated property follows the Ada County process. Valley-wide planning lives in the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley remodeling guide</a>.',
     ],
   },
   {
     h2: 'North End and Bench',
     paragraphs: [
-      'Smaller footprints and galley kitchens are common - creative storage and panel upgrades matter when walls open.',
-      '<a href="/guides/north-end-remodeling-guide">North End guide</a> · <a href="/guides/boise-bench-remodeling-guide">Bench guide</a>.',
+      'Smaller footprints and galley kitchens are common, so creative storage and panel upgrades matter when walls open. Parts of the North End sit in Boise historic districts, where exterior changes need a certificate of appropriateness before a building permit.',
+      '<a href="/guides/north-end-remodeling-guide">North End remodeling guide</a> · <a href="/guides/boise-bench-remodeling-guide">Boise Bench remodeling guide</a>.',
     ],
   },
   {
-    h2: 'Harris Ranch and East Boise',
+    h2: 'Harris Ranch, East Boise and Hidden Springs',
     paragraphs: [
-      'Open kitchens, mudrooms, and primary suites are frequent. HOAs may review exterior materials.',
-      '<a href="/guides/harris-ranch-remodeling-guide">Harris Ranch</a> · <a href="/guides/east-boise-remodeling-guide">East Boise</a>.',
+      'Open kitchens, mudrooms and primary suites are frequent in newer neighborhoods, and community design review covers exterior materials in Harris Ranch and Hidden Springs. Older East Boise lots need setback and lot-coverage checks before an addition is priced.',
+      '<a href="/guides/harris-ranch-remodeling-guide">Harris Ranch</a> · <a href="/guides/east-boise-remodeling-guide">East Boise</a> · <a href="/guides/hidden-springs-remodeling-guide">Hidden Springs</a>.',
     ],
   },
   {
-    h2: 'Costs and services in Boise',
+    h2: 'Permits for a Boise remodel',
     paragraphs: [
-      'Kitchens often plan $37,000–$110,000+; master baths vary with layout and waterproofing.',
-      `<a href="${PILLAR_COST}">Cost guide</a> · <a href="/services/kitchen-remodel/boise">Kitchen</a> · <a href="/services/bathroom-remodel/boise">Bath</a> · <a href="/areas/boise">Area page</a>.`,
+      'Boise\'s homeowner guide exempts painting, floor covering, cabinets, countertops and wall coverings. A permit is needed once work exposes the framing, adds a wall, or moves a sink, and venting a new range hood takes its own mechanical permit.',
+      'The <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit flow</a> walks through each step, and the <a href="/blog/boise-permit-guide">Boise permit guide</a> covers common projects.',
+    ],
+  },
+  {
+    h2: 'Budgeting a Boise remodel',
+    paragraphs: [
+      'As of 2026, a mid-range Treasure Valley kitchen plans $37,000 to $47,000, and pre-1990 homes deserve a 10 to 15 percent contingency for wiring, plumbing or framing found behind the walls.',
+      `The <a href="${PILLAR_COST}">Boise remodeling cost guide</a> has planning ranges for every project type.`,
     ],
   },
   {
     h2: 'Boise planning checklist',
     list: [
-      'Confirm Ada County path for layout changes',
+      'Confirm the permit path for layout changes',
       'Hold contingency in pre-1990 homes',
       'Lock appliance rough-in before drywall',
       'Compare bids with identical scope',
@@ -106,9 +113,9 @@ const boiseSections: ContentSection[] = [
     paragraphs: [],
   },
   {
-    h2: 'Next steps in Boise',
+    h2: 'Remodeling services in Boise',
     paragraphs: [
-      '<a href="/contact">Consultation</a> · <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley hub</a>.',
+      'When you are ready to talk about a specific project, the Boise page covers how we work locally: <a href="/areas/boise">remodeling contractors in Boise</a>. Service pages: <a href="/services/kitchen-remodel/boise">kitchen remodeling in Boise</a>, <a href="/services/bathroom-remodel/boise">bathroom remodeling in Boise</a> and <a href="/services/whole-home-remodel/boise">whole-home remodeling in Boise</a>.',
     ],
   },
 ];
@@ -154,7 +161,7 @@ export const TV_QUICK_ANSWER =
   'The Treasure Valley covers Boise, Meridian, Eagle, Kuna, Star, Middleton, Nampa, and Caldwell - Ada and Canyon Counties use different permit paths. Pick your city guide, then the topic guide for your project.';
 
 export const BOISE_QUICK_ANSWER =
-  'Boise spans North End, Bench, Harris Ranch, and East Boise - each with different layout, electrical, and permit needs. Use neighborhood guides and our cost guide for planning.';
+  'Remodeling in Boise starts with the age of the house: North End bungalows and Bench ranches often need electrical and layout work, while newer Harris Ranch homes need finish upgrades. Property inside city limits is permitted by the City of Boise, and pre-1990 homes deserve a 10 to 15 percent contingency.';
 
 export const TV_TAKEAWAYS = [
   'Ada and Canyon Counties use different permit paths.',

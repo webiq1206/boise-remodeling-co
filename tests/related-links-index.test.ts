@@ -12,8 +12,9 @@ import { CITIES, SERVICES } from '../shared/contentData.ts';
 const hrefs = (html: string) => [...html.matchAll(/href="([^"]+)"/g)].map((m) => m[1]);
 
 test('the noindexed ADU combos are outside the sitemap index rule', () => {
-  for (const city of ['kuna', 'star', 'middleton', 'caldwell']) assert.equal(isIndexedPath(`/services/adu/${city}`), false);
-  assert.equal(isIndexedPath('/services/adu/boise'), true);
+  // Phase 4 owner decision: all eight ADU city pages are noindexed (no bespoke copy).
+  for (const city of ['kuna', 'star', 'middleton', 'caldwell', 'boise', 'meridian', 'eagle', 'nampa']) assert.equal(isIndexedPath(`/services/adu/${city}`), false);
+  assert.equal(isIndexedPath('/services/room-addition/boise'), true);
   assert.equal(isIndexedPath('/services/adu'), true);
 });
 
