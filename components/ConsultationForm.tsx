@@ -30,7 +30,7 @@ import { FINISH_LABELS, PROJECT_LABELS, formatPlanningCurrency } from "@/shared/
 import { DisplayNum } from "@/components/marketing";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
-import { CTA_FORM_SEND } from "@/shared/ctaCopy";
+import { CTA_FORM_MICROCOPY,CTA_FORM_SEND } from "@/shared/ctaCopy";
 import { TextReplyLine } from "@/components/TextReplyLine";
 import { CONSULT_BULLETS } from "@/shared/siteContent";
 import { SITE_CONFIG } from "@/shared/siteConfig";
@@ -740,7 +740,7 @@ export function ConsultationForm({ onRevise, showTrust = false }: ConsultationFo
             {!mutation.isPending && <ArrowRight className="h-4 w-4" />}
           </Button>
           <div className="text-xs text-muted-foreground sm:min-w-[14rem] sm:flex-1">
-            <p>No spam. We respond within one business day.</p>
+            <p>{CTA_FORM_MICROCOPY}</p>
             <TextReplyLine as="span" className="mt-1.5 block" />
           </div>
         </div>

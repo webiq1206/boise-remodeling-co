@@ -195,7 +195,7 @@ export default function ContactPage() {
               saveClassName="text-sm text-inverse-foreground/80 hover:text-inverse-foreground transition-colors"
               phoneTestId="link-hero-phone"
             />
-            <div className="interior-contact-actions"><InteriorEstimateLink label="Request a quote" href="/contact#consult"/><a href="#consult" className="interior-text-link">Request a consultation</a></div>
+            <div className="interior-contact-actions"><InteriorEstimateLink label={CTA_PRIMARY} href="/contact#consult"/></div>
             <dl className="ed-hero-facts">
               {HERO_STATS.map((stat) => (
                 <div key={stat.label}>
@@ -212,7 +212,7 @@ export default function ContactPage() {
             <div className="interior-contact-grid">
               <div className="interior-contact-intro">
                 <Reveal>
-                  <p className="ed-eyebrow">Request your visit</p>
+                  <p className="ed-eyebrow">{CTA_PRIMARY}</p>
                   <h2 className="ed-h2 ed-statement-wide">
                     Tell us about your{' '}
                     <em className="brc-accent">home</em>.
