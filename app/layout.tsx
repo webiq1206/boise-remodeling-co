@@ -3,6 +3,7 @@ import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { Navigation } from '@/components/Navigation'
+import { SkipLink } from '@/components/family/SkipLink'
 import { ConditionalFooter } from '@/components/ConditionalFooter'
 import { Toaster } from '@/components/ui/toaster'
 import { Providers } from '@/components/Providers'
@@ -26,6 +27,10 @@ import './approved-system.css'
 import './approved-interiors.css'
 import './audit-accessibility.css'
 import './design-refresh.css'
+// Shared P5 Home Co family tokens and chrome (header, menu, bar, footer, hero),
+// synced byte-identical across the family; brand values come from lib/familyBrand.ts.
+import '@/styles/family-tokens.css'
+import '@/styles/family-chrome.css'
 
 // P5 family typefaces, self-hosted from the same two OFL variable files P5 Home Co serves.
 const manrope = localFont({
@@ -133,12 +138,7 @@ export default function RootLayout({
         </noscript>
         <Providers>
           <ScrollToTop />
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-sm focus:bg-foreground focus:px-4 focus:py-2 focus:text-background focus:shadow-lg"
-          >
-            Skip to content
-          </a>
+          <SkipLink />
           <ApprovedShell><div className="flex flex-col min-h-screen">
             <Navigation />
             <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
