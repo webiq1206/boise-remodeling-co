@@ -1,8 +1,8 @@
 import {chromium,webkit} from '@playwright/test';
 const base='http://127.0.0.1:5000';const origin=new URL(base).origin;
-for(const [name,engine] of Object.entries({webkit,chromium})){
+for(const [name,engine] of Object.entries({webkit})){
  const browser=await engine.launch();
- for(const width of [390,1440]) for(let attempt=1;attempt<=3;attempt++){
+ for(const width of [390,1440]) for(let attempt=1;attempt<=8;attempt++){
   const context=await browser.newContext({viewport:{width,height:900}});
   await context.route('**/*',r=>{const u=new URL(r.request().url());return u.origin===origin&&!u.pathname.startsWith('/api/')&&r.request().method()==='GET'?r.continue():r.abort('blockedbyclient');});
   await context.addInitScript(()=>{
