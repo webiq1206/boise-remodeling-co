@@ -58,3 +58,170 @@
 .approved-shell .home-request-more-body {
   padding-top: var(--space-4);
 }
+
+/* B3 type roles: body copy is the sans face everywhere; the serif carries headings
+   and display only. The lede was a body paragraph set in Cormorant at 19px. */
+.approved-shell .ed-lede {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.55;
+}
+
+/* Interior hero budget (service, city-service and area pages, phase 3). The hero
+   holds the H1, one support line, the planning-from chip, the primary action and
+   the phone as a text link; the rest of the overview opens the band below it.
+   Target: the action inside 1280x720 and 1440x900, and above the bottom bar at
+   360x640 and 390x844. */
+.approved-shell .approved-interior .interior-hero-budget {
+  min-height: 0;
+}
+.approved-shell .approved-interior .interior-hero-budget .interior-hero-copy {
+  padding-block: var(--space-10, 40px);
+}
+.approved-shell .approved-interior .interior-hero-budget .interior-hero-image {
+  min-height: 560px;
+}
+.approved-shell .approved-interior .interior-hero-budget .interior-hero-copy h1 {
+  margin: var(--space-4, 16px) 0 var(--space-4, 16px);
+}
+.approved-shell .approved-interior .interior-hero-copy p.interior-hero-support {
+  max-width: 52ch;
+  margin: 0;
+  color: #4f524d;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+.approved-shell .approved-interior .interior-hero-copy p.interior-hero-chip {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2, 8px);
+  max-width: none;
+  margin: var(--space-4, 16px) 0 0;
+  padding: 6px 12px;
+  border: 1px solid rgb(44 48 47 / 0.22);
+  background: #fbfaf6;
+  color: #2c302f;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.3;
+}
+.approved-shell .approved-interior .interior-hero-chip > span {
+  color: #4f524d;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.approved-shell .approved-interior .interior-hero-chip > strong {
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.approved-shell .approved-interior .interior-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3, 12px) var(--space-6, 24px);
+  margin-top: var(--space-6, 24px);
+}
+.approved-shell .approved-interior .interior-hero-actions .interior-hero-call {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min, 44px);
+  color: #2c302f;
+  font: 500 15px/1.3 var(--font-sans);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
+.approved-shell .approved-interior .interior-hero-actions .interior-hero-call:hover {
+  text-decoration-thickness: 2px;
+}
+.approved-shell .interior-hero-more {
+  padding-block: clamp(40px, 5vw, 64px) var(--space-10, 40px);
+}
+/* The scope band that follows on city and area pages opens with its own 80px;
+   halve it so the overview reads as the top of that band, not a separate one. */
+.approved-shell .interior-hero-more + .interior-detail-body {
+  padding-top: var(--space-10, 40px);
+}
+.approved-shell .interior-hero-more .ed-lede {
+  max-width: 65ch;
+  color: #2c302f;
+  font-size: var(--fs-body);
+}
+.approved-shell .interior-hero-more .interior-hero-more-note {
+  margin-top: var(--space-3, 12px);
+}
+/* Phones: copy leads, the photograph follows, so the H1 and the action sit in the
+   first screen above the bottom bar (the task-page hero does the same). */
+@media (max-width: 700px) {
+  .approved-shell .approved-interior .interior-hero-budget .interior-hero-copy {
+    order: 1;
+    padding: var(--space-5, 20px) 6% var(--space-6, 24px);
+  }
+  .approved-shell .approved-interior .interior-hero-budget .interior-hero-copy h1 {
+    margin: var(--space-3, 12px) 0;
+  }
+  .approved-shell .approved-interior .interior-hero-budget .interior-hero-image {
+    order: 2;
+    min-height: 0;
+    height: clamp(180px, 30svh, 260px);
+  }
+  .approved-shell .approved-interior .interior-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1, 4px);
+    margin-top: var(--space-5, 20px);
+  }
+  .approved-shell .approved-interior .interior-hero-actions .fam-btn {
+    width: 100%;
+  }
+  .approved-shell .approved-interior .interior-hero-actions .interior-hero-call {
+    justify-content: center;
+  }
+}
+
+/* Page-content buttons are the family buttons (phase 3). A primary that runs full
+   width on phones and returns to its natural width from 640px. */
+@media (max-width: 639px) {
+  .approved-shell .fam-btn.fam-btn--block-phone {
+    display: flex;
+    width: 100%;
+  }
+}
+/* The interior estimate link keeps its layout hooks (full width in asides and the
+   document index) but takes the family button face. On the charcoal contact hero
+   it is the paper-filled primary. */
+.approved-shell .fam-btn.interior-estimate-link {
+  justify-content: center;
+  font-size: var(--fs-button);
+}
+.approved-shell .approved-interior .interior-hero-contact .fam-btn.interior-estimate-link {
+  border-color: var(--color-paper);
+  background: var(--color-paper);
+  color: var(--color-charcoal) !important;
+}
+/* Contact hero on phones: copy and the Request a quote action first, the photograph after. */
+@media (max-width: 700px) {
+  .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy {
+    order: 1;
+  }
+  .approved-shell .approved-interior .interior-hero-contact .interior-hero-image {
+    order: 2;
+    height: clamp(180px, 30svh, 260px);
+  }
+  .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy h1 {
+    margin-bottom: var(--space-4, 16px);
+  }
+  .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy h1 + p {
+    margin-bottom: var(--space-4, 16px);
+    line-height: 1.6;
+  }
+  .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy .ed-eyebrow {
+    margin-top: var(--space-3, 12px);
+  }
+  .approved-shell .approved-interior .interior-hero-contact .interior-contact-actions {
+    margin: var(--space-4, 16px) 0 var(--space-6, 24px);
+  }
+}

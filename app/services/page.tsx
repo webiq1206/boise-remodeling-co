@@ -151,8 +151,8 @@ export default function ServicesIndexPage() {
                 Book a free in-home visit or get a preliminary planning range for your project.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
-                <EstimateCTA variant="brand">{CTA_PRIMARY}</EstimateCTA>
-                <ConsultCTA variant="brandOutline">{CTA_SECONDARY}</ConsultCTA>
+                <EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA>
+                <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
               </div>
             </div>
           </div>

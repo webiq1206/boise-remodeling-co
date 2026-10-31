@@ -1,18 +1,21 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { familyButtonClass } from '@/components/family/Button';
+import { CTA_PRIMARY } from '@/shared/ctaCopy';
 
 /** Public-page layout. Application routes retain their dedicated interfaces. */
 export function InteriorPage({children,kind='detail'}:{children:ReactNode;kind?:string}) {
   return <div className={`approved-interior interior-${kind}`}>{children}</div>;
 }
 
-export function InteriorEstimateLink({label='Get my online estimate',href='/estimate'}:{label?:string;href?:string}) {
-  return <a className="interior-estimate-link" href={href}>{label}<ArrowUpRight size={18} aria-hidden="true"/></a>;
+/** The family primary button (charcoal, paper label, accent bar), one label for the one action. */
+export function InteriorEstimateLink({label=CTA_PRIMARY,href='/estimate'}:{label?:string;href?:string}) {
+  return <a className={familyButtonClass({variant:'primary',size:'lg',className:'interior-estimate-link'})} href={href}>{label}</a>;
 }
 
 /** The approved split-detail and editorial-introduction compositions. */
-export function InteriorHero({children,imageSrc,imageAlt='',layout='split',estimateAction=false}:{children:ReactNode;imageSrc?:string;imageAlt?:string;layout?:'split'|'editorial'|'contact';estimateAction?:boolean}) {
-  return <section className={`interior-hero interior-hero-${layout}${imageSrc?'':' interior-hero-text'}`}>
+export function InteriorHero({children,imageSrc,imageAlt='',layout='split',estimateAction=false,className}:{children:ReactNode;imageSrc?:string;imageAlt?:string;layout?:'split'|'editorial'|'contact';estimateAction?:boolean;className?:string}) {
+  return <section className={`interior-hero interior-hero-${layout}${imageSrc?'':' interior-hero-text'}${className?` ${className}`:''}`}>
     <div className="interior-hero-copy">{children}{estimateAction&&<div className="interior-hero-action"><InteriorEstimateLink/></div>}</div>
     {imageSrc&&<div className="interior-hero-image"><img src={imageSrc} alt={imageAlt} width={1400} height={1100} fetchPriority="high"/></div>}
   </section>;

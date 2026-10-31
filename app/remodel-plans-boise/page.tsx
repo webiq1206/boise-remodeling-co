@@ -6,7 +6,7 @@ import { SectionHeader } from "@/components/marketing/SectionHeader";
 import { PlansWizard } from "@/components/plans/PlansWizard";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { Button } from "@/components/ui/button";
+import { familyButtonClass } from "@/components/family/Button";
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical } from "@/lib/page-metadata";
 import {
@@ -27,7 +27,7 @@ PLANS_WHAT_WE_READ,
 } from "@/shared/content/plansContent";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { SITE_IMAGES } from "@/shared/siteImages";
-import { ArrowRight,Check,Phone,X } from "lucide-react";
+import { Check,Phone,X } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
@@ -115,16 +115,12 @@ export default function RemodelPlansPage() {
           typical house of the same size.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
-          <Button variant="brand" asChild>
-            <Link href="#plans-wizard">
-              Upload your plans <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-          <Button variant="brandInverseOutline" asChild>
-            <a href={SITE_CONFIG.phoneHref} data-testid="link-plans-call">
-              <Phone className="mr-2 h-4 w-4" /> {SITE_CONFIG.phone}
-            </a>
-          </Button>
+          <Link href="#plans-wizard" className={familyButtonClass({ variant: "primary", size: "lg" })}>
+            Upload your plans
+          </Link>
+          <a href={SITE_CONFIG.phoneHref} data-testid="link-plans-call" className={familyButtonClass({ variant: "secondary", size: "lg" })}>
+            <Phone className="h-4 w-4" aria-hidden="true" /> {SITE_CONFIG.phone}
+          </a>
         </div>
       </PageHeroBand>
 
@@ -269,16 +265,12 @@ export default function RemodelPlansPage() {
             {PLANS_PRICING_DISCLAIMER}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="brand" asChild>
-              <Link href="#plans-wizard">
-                Upload your plans <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <a href={SITE_CONFIG.phoneHref}>
-                <Phone className="mr-2 h-4 w-4" /> {SITE_CONFIG.phone}
-              </a>
-            </Button>
+            <Link href="#plans-wizard" className={familyButtonClass({ variant: "primary", size: "lg" })}>
+              Upload your plans
+            </Link>
+            <a href={SITE_CONFIG.phoneHref} className={familyButtonClass({ variant: "secondary", size: "lg" })}>
+              <Phone className="h-4 w-4" aria-hidden="true" /> {SITE_CONFIG.phone}
+            </a>
           </div>
 
           {/* Contextual outbound links, so this page is part of the cluster

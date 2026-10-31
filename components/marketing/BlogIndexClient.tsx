@@ -8,6 +8,7 @@ import { Section } from "@/components/marketing/Section";
 import { BlogCard } from "@/components/marketing/BlogCard";
 import { Chip } from "@/components/marketing/Chip";
 import { BLOG_POSTS } from "@/shared/blogContent";
+import { BLOG_PAGE_SIZE, blogPageCount, blogPagePath } from "@/lib/blogPagination";
 import {
   CONTENT_HUBS,
   categoryHubPath,
@@ -22,7 +23,47 @@ function formatDate(dateString: string): string {
   });
 }
 
-export function BlogIndexClient() {
+/**
+ * Page links under the grid: Previous, every page number, Next. Plain anchors in
+ * the server HTML, so crawlers reach every post through /blog/page/N.
+ */
+function BlogPagination({ page, pages }: { page: number; pages: number }) {
+  if (pages <= 1) return null;
+  const item = "inline-flex min-h-11 min-w-11 items-center justify-center px-3 text-sm";
+  return (
+    <nav aria-label="Blog pages" className="mt-12 flex flex-wrap items-center justify-center gap-2" data-testid="blog-pagination">
+      {page > 1 ? (
+        <Link href={blogPagePath(page - 1)} rel="prev" className={`${item} underline underline-offset-4`}>
+          Previous
+        </Link>
+      ) : null}
+      <ol className="flex flex-wrap items-center gap-1">
+        {Array.from({ length: pages }, (_, i) => i + 1).map((n) => (
+          <li key={n}>
+            {n === page ? (
+              <span aria-current="page" className={`${item} border border-foreground text-foreground`}>
+                <span className="sr-only">Page </span>
+                {n}
+              </span>
+            ) : (
+              <Link href={blogPagePath(n)} className={`${item} text-muted-foreground hover:text-foreground underline-offset-4 hover:underline`}>
+                <span className="sr-only">Page </span>
+                {n}
+              </Link>
+            )}
+          </li>
+        ))}
+      </ol>
+      {page < pages ? (
+        <Link href={blogPagePath(page + 1)} rel="next" className={`${item} underline underline-offset-4`}>
+          Next
+        </Link>
+      ) : null}
+    </nav>
+  );
+}
+
+export function BlogIndexClient({ page = 1 }: { page?: number }) {
   const sortedPosts = useMemo(
     () =>
       [...BLOG_POSTS].sort(
@@ -44,15 +85,20 @@ export function BlogIndexClient() {
 
   const [activeHub, setActiveHub] = useState<string | null>(null);
 
+  // A topic chip shows every post in that topic; otherwise the page shows its
+  // twelve. Page 1 leads with the newest post as the featured card.
+  const pages = blogPageCount(sortedPosts.length);
   const filtered = activeHub
     ? sortedPosts.filter((p) => p.hubSlug === activeHub)
-    : sortedPosts;
+    : sortedPosts.slice((page - 1) * BLOG_PAGE_SIZE, page * BLOG_PAGE_SIZE);
 
   const activeHubMeta = activeHub
     ? CONTENT_HUBS.find((h) => h.hubSlug === activeHub)
     : undefined;
 
-  const [featured, ...rest] = filtered;
+  const leadWithFeatured = Boolean(activeHub) || page === 1;
+  const featured = leadWithFeatured ? filtered[0] : undefined;
+  const rest = leadWithFeatured ? filtered.slice(1) : filtered;
 
   return (
     <div className="flex flex-col ">
@@ -122,6 +168,7 @@ export function BlogIndexClient() {
                     </div>
                   </>
                 )}
+                {!activeHub && <BlogPagination page={page} pages={pages} />}
               </>
             )}
           </div>

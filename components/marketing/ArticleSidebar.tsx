@@ -1,4 +1,4 @@
-import { ArrowRight, Calculator } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 import { MarketingCard } from './MarketingCard';
 import { GuideSidebarToc } from './GuideContentBlocks';
 import type { TocHeading } from '@/lib/content-utils';
@@ -35,9 +35,8 @@ export function ArticleSidebarCta({ description }: { description: string }) {
           <h3 className="font-normal text-sm text-inverse-foreground">Your estimate, online</h3>
         </div>
         <p className="text-sm text-inverse-muted">{description}</p>
-        <EstimateCTA variant="brand" size="sm" className="h-auto min-h-11 w-full gap-2 whitespace-normal px-3 py-3 text-center">
-          <span className="min-w-0 flex-1">{CTA_PRIMARY}</span>
-          <ArrowRight className="h-4 w-4 shrink-0" />
+        <EstimateCTA tone="dark" className="fam-btn--block">
+          {CTA_PRIMARY}
         </EstimateCTA>
         <BusinessPhoneContact
           layout="stack"

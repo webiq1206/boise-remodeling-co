@@ -1,4 +1,3 @@
-import { ArrowRight } from "lucide-react";
 import { Section } from "./Section";
 import { Reveal } from "@/components/Reveal";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
@@ -50,9 +49,8 @@ export function EstimatePromptBand({
           <Reveal delay={80}>
             <div className="flex flex-col items-start gap-6">
               <p className="ed-body">{description}</p>
-              <EstimateCTA variant="brand" size="lg" className="w-full sm:w-auto">
+              <EstimateCTA tone="dark" size="lg" block>
                 {CTA_PRIMARY}
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
               </EstimateCTA>
               <p className="ed-small">Free · Not a binding quote</p>
             </div>
