@@ -3,6 +3,21 @@
   styles live in styles/family-*.css and are never edited here.
 */
 
+/* B3 type scale. Page-opening H1s (interior and index heroes) use Display 36/52/64;
+   document, article, legal and sitemap H1s use H1 32/44/52. No H1 above 64px anywhere
+   (index pages ran to 82px). The older per-template rules set these sizes with clamps
+   that outgrew the scale, so the scale is bound here once, for every template. */
+.approved-shell main :is(.interior-hero-copy, .interior-hero-editorial, .interior-page-heading) h1 {
+  font-size: var(--fs-display) !important;
+  line-height: var(--lh-display) !important;
+  letter-spacing: var(--tracking-display) !important;
+}
+.approved-shell main :is(.interior-document-heading, .interior-article-header, .interior-legal, .interior-sitemap) h1 {
+  font-size: var(--fs-h1) !important;
+  line-height: var(--lh-h1) !important;
+  letter-spacing: var(--tracking-display) !important;
+}
+
 /* Final CTA band: the short request card, then the longer consultation form one tap away. */
 .approved-shell .home-request {
   display: grid;
