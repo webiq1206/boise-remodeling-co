@@ -68,7 +68,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Sign-off, then the warranty',
         paragraphs: [
-          'Once the punch list is complete, the project is signed off and the workmanship guarantee takes over. Boise Remodeling Co guarantees remodeling workmanship for two years and passes through manufacturer warranties on fixtures and cabinetry we install. Both the punch list and the warranty should be defined in your contract from the start, so you know exactly how the project will be completed and supported.',
+          'Once the punch list is complete, the project is signed off and the workmanship guarantee takes over; our <a href="/blog/warranty-guide-remodeling">remodeling warranty guide</a> covers what it includes. Boise Remodeling Co guarantees remodeling workmanship for two years and passes through manufacturer warranties on fixtures and cabinetry we install. Both the punch list and the warranty should be defined in your contract from the start, so you know exactly how the project will be completed and supported.',
         ],
       },
       {
@@ -323,7 +323,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Start with the yard and the house',
         paragraphs: [
-          'Decks and patios are the foundation of most outdoor living, and the best one is the one that connects naturally to how you use the house. Think about the flow from indoors to out, zones for cooking, dining and lounging, and how the materials relate to your home. Our <a href="' + OUTDOOR + '">outdoor living remodeling guide</a> covers planning the whole space.',
+          'Decks and patios are the foundation of most outdoor living, and the best one is the one that connects naturally to how you use the house. Think about the flow from indoors to out, zones for cooking, dining and lounging, and how the materials relate to your home. Our <a href="' + OUTDOOR + '">outdoor living remodeling guide</a> covers planning the whole space, and our guide to <a href="/blog/outdoor-entertaining-spaces">outdoor entertaining spaces</a> covers laying out those zones.',
         ],
       },
       {
