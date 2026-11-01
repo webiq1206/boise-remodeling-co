@@ -54,7 +54,7 @@ export default function PrivacyPolicyPage() {
       />
       <section className="py-16 md:py-24">
         <div className="container px-4">
-          <InteriorDocument heading={<h1>Privacy policy for Boise Remodeling Co services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information We Collect"},{"id":"document-section-3","label":"How We Use Your Information"},{"id":"document-section-4","label":"Information Sharing"},{"id":"cookies-analytics-advertising","label":"Cookies, analytics and advertising"},{"id":"document-section-5","label":"Data Security"},{"id":"document-section-6","label":"Your Rights"},{"id":"document-section-7","label":"Contact Us"}]}>
+          <InteriorDocument heading={<h1>Privacy policy for Boise Remodeling Co services</h1>} contents={[{"id":"document-section-1","label":"Introduction"},{"id":"document-section-2","label":"Information we collect"},{"id":"document-section-3","label":"How we use your information"},{"id":"document-section-4","label":"Information sharing"},{"id":"cookies-analytics-advertising","label":"Cookies, analytics and advertising"},{"id":"document-section-5","label":"Data security"},{"id":"document-section-6","label":"Your rights"},{"id":"document-section-7","label":"Contact us"}]}>
 
             <p className="lead text-muted-foreground">
               Last updated: October 17, 2026
@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
               Boise Remodeling Co ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
             </p>
 
-            <h2 id="document-section-2">Information We Collect</h2>
+            <h2 id="document-section-2">Information we collect</h2>
             <p>We may collect information about you in various ways, including:</p>
             <ul>
               <li><strong>Personal Data:</strong> Name, email address, phone number, and mailing address when you request a quote or contact us.</li>
@@ -74,7 +74,7 @@ export default function PrivacyPolicyPage() {
               <li><strong>Usage Data:</strong> Information about how you use our website, including pages visited and features used.</li>
             </ul>
 
-            <h2 id="document-section-3">How We Use Your Information</h2>
+            <h2 id="document-section-3">How we use your information</h2>
             <p>We use the information we collect to:</p>
             <ul>
               <li>Provide and maintain our services</li>
@@ -85,7 +85,7 @@ export default function PrivacyPolicyPage() {
               <li>Send marketing communications (with your consent)</li>
             </ul>
 
-            <h2 id="document-section-4">Information Sharing</h2>
+            <h2 id="document-section-4">Information sharing</h2>
             <p>
               We do not sell your personal information. We may share your information with:
             </p>
@@ -112,12 +112,12 @@ export default function PrivacyPolicyPage() {
               If you arrive from one of our ads or a link with campaign tags, our site keeps the ad click identifier and campaign tags from that link in your browser only until you close the tab.
             </p>
 
-            <h2 id="document-section-5">Data Security</h2>
+            <h2 id="document-section-5">Data security</h2>
             <p>
               We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
             </p>
 
-            <h2 id="document-section-6">Your Rights</h2>
+            <h2 id="document-section-6">Your rights</h2>
             <p>You have the right to:</p>
             <ul>
               <li>Access your personal information</li>
@@ -126,7 +126,7 @@ export default function PrivacyPolicyPage() {
               <li>Opt-out of marketing communications</li>
             </ul>
 
-            <h2 id="document-section-7">Contact Us</h2>
+            <h2 id="document-section-7">Contact us</h2>
             <p>
               If you have questions about this Privacy Policy, please contact us at:
             </p>

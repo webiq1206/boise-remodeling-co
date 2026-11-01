@@ -49,7 +49,7 @@ export default function SitemapPage() {
       <section className="py-16 md:py-24">
         <div className="container px-4">
           <div className="blog-content">
-            <InteriorDocument heading={<h1>Site Map</h1>} contents={[]}>
+            <InteriorDocument heading={<h1>Site map</h1>} contents={[]}>
 
               <p className="lead text-muted-foreground">{DESCRIPTION}</p>
             </InteriorDocument>

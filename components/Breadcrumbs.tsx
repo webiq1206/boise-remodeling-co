@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
@@ -27,11 +28,11 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
                      keeps its compact desktop rhythm. */
                   className="inline-flex items-center min-h-11 lg:min-h-0 hover:text-foreground transition-colors hover:underline"
                 >
-                  {item.name}
+                  {toSentenceCase(item.name)}
                 </Link>
               ) : (
                 <span className={isLast ? "text-foreground font-normal" : ""}>
-                  {item.name}
+                  {toSentenceCase(item.name)}
                 </span>
               )}
               

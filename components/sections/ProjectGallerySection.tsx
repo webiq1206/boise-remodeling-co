@@ -1,5 +1,6 @@
 "use client";
 
+import { toSentenceCase } from '@/shared/sentenceCase';
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
@@ -11,7 +12,7 @@ function ProjectMeta({ project, lead = false }: { project: GalleryProject; lead?
   return (
     <>
       <p className="ed-eyebrow ed-eyebrow-accent !mb-3">Design inspiration</p>
-      <h3 className={lead ? "ed-h3" : "ed-h4"}>{project.title}</h3>
+      <h3 className={lead ? "ed-h3" : "ed-h4"}>{toSentenceCase(project.title)}</h3>
       <p className={`ed-body mt-3 ${lead ? "" : "text-[0.875rem]"}`}>{project.description}</p>
     </>
   );

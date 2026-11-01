@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { publishFoundingCopy } from '@/shared/publicClaims';
 import type { ServiceData, CityData } from './contentData';
 import { getCountyLabel } from './contentData';
@@ -748,7 +749,7 @@ export function getCityServiceSections(
     ...(service.costGuidance
       ? [
           {
-            heading: `${service.name} cost in ${city.name}`,
+            heading: `${toSentenceCase(service.name)} cost in ${city.name}`,
             paragraphs: [
               `Planning ranges for ${city.name} match the broader Treasure Valley market. ${service.costGuidance.paragraphs[0]}`,
               service.costGuidance.paragraphs[1],
@@ -763,7 +764,7 @@ export function getCityServiceSections(
         ]
       : []),
     {
-      heading: `${service.name} across ${city.name} neighborhoods`,
+      heading: `${toSentenceCase(service.name)} across ${city.name} neighborhoods`,
       paragraphs: [
         neighborhoods.length
           ? `We design and build ${serviceLC} projects throughout ${city.name}, including ${neighborhoods.join(', ')}. Housing stock varies between these neighborhoods, so we tailor layouts, structural details, and finish selections to the age and style of your specific ${city.name} home.`
@@ -774,7 +775,7 @@ export function getCityServiceSections(
       ],
     },
     {
-      heading: `${service.name} permits and planning in ${county}`,
+      heading: `${toSentenceCase(service.name)} permits and planning in ${county}`,
       paragraphs: [
         `${service.name} projects in ${city.name} that change layout, structure, plumbing, or electrical require permits through ${county}. We build plan review and inspection timelines into your schedule from day one and handle submissions, fees, and inspections as part of the design-build contract.`,
         seo?.climate

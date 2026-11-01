@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
@@ -77,7 +78,7 @@ export function ServicesGrid() {
               </div>
               <div className="flex flex-col justify-center p-[clamp(28px,3.4vw,56px)]">
                 <p className="ed-eyebrow ed-eyebrow-accent">Most requested</p>
-                <h3 className="ed-h2-sm">{lead.name}</h3>
+                <h3 className="ed-h2-sm">{toSentenceCase(lead.name)}</h3>
                 <p className="ed-body mt-5">{lead.shortDescription}</p>
                 <p className="ed-small mt-7 flex items-baseline gap-3">
                   <span className="uppercase tracking-[0.16em]">Planning from</span>
@@ -109,7 +110,7 @@ export function ServicesGrid() {
                 style={{ borderBottom: "1px solid var(--ed-line)" }}
               >
                 <h3 className="ed-h3 transition-colors group-hover:[color:var(--ed-accent)]">
-                  {service.name}
+                  {toSentenceCase(service.name)}
                 </h3>
                 <p className="ed-body max-w-none">{service.shortDescription}</p>
                 <p className="ed-small flex items-baseline gap-2 whitespace-nowrap">

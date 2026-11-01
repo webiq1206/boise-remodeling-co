@@ -1,8 +1,9 @@
 /**
  * Sentence case for headings that are stored in title case (blog and guide
- * titles, hub names, service names inside city H1s). The house style is
- * sentence case; the stored titles stay as they are because they also feed
- * <title>, schema and cards, so only the rendered H1 is converted. The words
+ * titles, hub names, service names, project titles). The house style is
+ * sentence case for every heading on the site (owner decision C, 1 November
+ * 2026); the stored titles stay as they are because they also feed <title>,
+ * schema and link text, so only the rendered heading is converted. The words
  * themselves never change, only their capitals.
  *
  * Kept as written: proper nouns (places, the business name), acronyms (ADU,
@@ -13,6 +14,12 @@
 /** Multi-word proper nouns, longest first so "Boise Bench" wins over "Boise". */
 const PROPER_PHRASES = [
   'Boise Remodeling Co',
+  'Boise Construction Co',
+  'Boise Cabinet Co',
+  'Boise Handyman Co',
+  'Nick Perkins',
+  'Warm Springs',
+  'Garden City',
   'Treasure Valley',
   'Canyon County',
   'Ada County',
@@ -27,20 +34,31 @@ const PROPER_PHRASES = [
 
 const PROPER_WORDS = new Set([
   'Boise', 'Idaho', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell',
-  'Ada', 'Canyon', 'I',
+  'Ada', 'Canyon', 'I', 'Medicare', 'Medicaid',
 ]);
 
+/** Letters of a word for the proper-noun check, without a possessive ("Idaho's"). */
+function letters(word: string): string {
+  return word.replace(/['’]s$/i, '').replace(/[^A-Za-z]/g, '');
+}
+
 function isAcronym(word: string): boolean {
-  const letters = word.replace(/[^A-Za-z]/g, '');
-  return letters.length >= 2 && letters === letters.toUpperCase();
+  // "ADU", "ROI", and plurals such as "ADUs".
+  return /^[A-Z]{2,}s?$/.test(word.replace(/[^A-Za-z]/g, ''));
 }
 
 function lowerWord(word: string): string {
-  if (PROPER_WORDS.has(word.replace(/[^A-Za-z]/g, '')) || isAcronym(word)) return word;
-  // Hyphenated words lower each part unless that part is proper or an acronym.
-  return word
-    .split('-')
-    .map((part) => (PROPER_WORDS.has(part.replace(/[^A-Za-z]/g, '')) || isAcronym(part) ? part : part.toLowerCase()))
+  if (PROPER_WORDS.has(letters(word)) || isAcronym(word)) return word;
+  // Hyphenated words lower each part unless that part is proper, an acronym or
+  // a single shape letter ("L-shaped", "U-shaped").
+  const parts = word.split('-');
+  return parts
+    .map((part, i) => {
+      const bare = letters(part);
+      if (PROPER_WORDS.has(bare) || isAcronym(part)) return part;
+      if (bare.length === 1 && i < parts.length - 1 && part === part.toUpperCase()) return part;
+      return part.toLowerCase();
+    })
     .join('-');
 }
 
@@ -70,8 +88,9 @@ export function toSentenceCase(text: string): string {
     } else {
       result = lowerWord(token);
     }
-    // A clause ends at ":", "?" or "!" (not at "vs." or "St.").
-    startOfClause = /[:?!]["')\]]*$/.test(token);
+    // A clause ends at ":", "?" or "!" (not at "vs." or "St."). A list number
+    // ("2.", "3)") does not start the clause, so "2. Build" keeps its capital B.
+    startOfClause = /[:?!]["')\]]*$/.test(token) || (startOfClause && /^\d+[.)]$/.test(token));
     return result;
   });
   return out

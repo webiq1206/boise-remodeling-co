@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorHeroActions } from '@/components/approved/InteriorHeroActions';
 import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing';
@@ -160,10 +161,10 @@ function HeroBreadcrumbs({ items }: { items: BreadcrumbItem[] }) {
             <li key={index} className="flex items-center gap-1.5">
               {item.href && !isLast ? (
                 <Link href={item.href} className="hover:text-inverse-foreground transition-colors">
-                  {item.name}
+                  {toSentenceCase(item.name)}
                 </Link>
               ) : (
-                <span className={isLast ? 'text-inverse-foreground font-normal' : ''}>{item.name}</span>
+                <span className={isLast ? 'text-inverse-foreground font-normal' : ''}>{toSentenceCase(item.name)}</span>
               )}
               {!isLast && <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 opacity-40" />}
             </li>
@@ -609,7 +610,7 @@ export function LandingPageTemplate({
                         sizes={proof.projects!.length === 1 ? '(max-width: 1023px) 100vw, 80vw' : undefined}
                       />
                       <div className="p-6">
-                        <h3 className="ed-h4">{project.title}</h3>
+                        <h3 className="ed-h4">{toSentenceCase(project.title)}</h3>
                         <p className="ed-body mt-2 text-[0.875rem]">{project.description}</p>
                       </div>
                     </article>

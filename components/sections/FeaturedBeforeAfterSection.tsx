@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
@@ -38,7 +39,7 @@ export function FeaturedBeforeAfterSection({
             />
             <div className="p-6 md:p-8">
               <h3 className="font-serif font-normal text-lg text-foreground mb-2">
-                {project.title}
+                {toSentenceCase(project.title)}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {project.description}

@@ -30,3 +30,13 @@ test('rendered H1s change only capitals, never wording', () => {
     assert.equal(out[0], out[0].toUpperCase(), title);
   }
 });
+
+// Owner decision C (1 November 2026): every heading and menu label is sentence
+// case. Only letter case changes; names, places and acronyms keep capitals.
+test('sentence case keeps sister brands, possessive places, shape letters and list numbers', () => {
+  assert.equal(toSentenceCase('New Detached ADUs Are Built by Boise Construction Co'), 'New detached ADUs are built by Boise Construction Co');
+  assert.equal(toSentenceCase("2. Build for Idaho's Seasons"), "2. Build for Idaho's seasons");
+  assert.equal(toSentenceCase('The L-Shaped Layout'), 'The L-shaped layout');
+  assert.equal(toSentenceCase('Walk-In Pantry Design Guide'), 'Walk-in pantry design guide');
+  assert.equal(toSentenceCase('Nick Perkins, Founder'), 'Nick Perkins, founder');
+});

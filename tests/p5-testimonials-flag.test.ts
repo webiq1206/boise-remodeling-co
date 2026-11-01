@@ -171,7 +171,8 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
   assert.equal(page.includes('Project gallery'), false);
 
   const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/design-ideas');
-  assert.equal(entry?.label, 'Design Ideas');
+  // Sentence case since owner decision C (1 November 2026); still not "Testimonials".
+  assert.equal(entry?.label, 'Design ideas');
 
   const template = text('../components/seo/LandingPageTemplate.tsx');
   assert.match(template, /testimonialsForPublish\(proof\?\.testimonials\)/);

@@ -15,13 +15,14 @@ import { CONTENT_HUBS } from '@/shared/contentHubs';
 import { CITIES, SERVICES } from '@/shared/contentData';
 import { P5_FACEBOOK_URL } from '@/shared/gbpProfile';
 import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 const LOCKUP = { width: 412, height: 50 };
 
 /** The first three pillar guides, as the footer has always listed them. */
 const PILLAR_GUIDES = CONTENT_HUBS.filter((hub) => hub.priorityTier <= 2)
   .slice(0, 3)
-  .map((hub) => ({ label: hub.title, href: `/guides/${hub.pillarSlug}` }));
+  .map((hub) => ({ label: toSentenceCase(hub.title), href: `/guides/${hub.pillarSlug}` }));
 
 export const FAMILY_BRAND: FamilyBrand = {
   id: 'remodeling',
@@ -45,7 +46,7 @@ export const FAMILY_BRAND: FamilyBrand = {
   },
   nav: [
     { label: 'Services', href: '/services' },
-    { label: 'Design Ideas', href: '/design-ideas' },
+    { label: 'Design ideas', href: '/design-ideas' },
     { label: 'Areas', href: '/areas' },
     { label: 'About', href: '/about' },
     { label: 'Guides', href: '/guides' },
@@ -75,7 +76,8 @@ export const FAMILY_BRAND: FamilyBrand = {
       {
         title: 'Services',
         links: [
-          ...SERVICES.map((service) => ({ label: service.name, href: `/services/${service.slug}` })),
+          // Sentence case for menu labels (owner decision C, 1 November 2026).
+          ...SERVICES.map((service) => ({ label: toSentenceCase(service.name), href: `/services/${service.slug}` })),
           { label: 'All services', href: '/services' },
         ],
       },

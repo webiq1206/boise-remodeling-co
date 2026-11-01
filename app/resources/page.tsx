@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorDocument,InteriorPage } from '@/components/approved/InteriorLayout';
 import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { Section } from '@/components/marketing/Section';
@@ -90,7 +91,7 @@ export default function ResourcesIndexPage() {
           {pdfs.map((r) => (
             <MarketingCard key={r.id} className="p-5 flex flex-col h-full">
               <FileText className="h-5 w-5 text-accent-legible mb-3" />
-              <h3 className="font-normal mb-2">{r.title}</h3>
+              <h3 className="font-normal mb-2">{toSentenceCase(r.title)}</h3>
               <p className="text-sm text-muted-foreground flex-1 mb-4">{r.description}</p>
               <a
                 href={r.href}
@@ -111,7 +112,7 @@ export default function ResourcesIndexPage() {
           {visuals.map((r) => (
             <MarketingCard key={r.id} className="p-5 flex flex-col h-full">
               <Workflow className="h-5 w-5 text-accent-legible mb-3" />
-              <h3 className="font-normal mb-2">{r.title}</h3>
+              <h3 className="font-normal mb-2">{toSentenceCase(r.title)}</h3>
               <p className="text-sm text-muted-foreground flex-1 mb-4">{r.description}</p>
               <Link
                 href={r.href}

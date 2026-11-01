@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import {
@@ -78,7 +79,7 @@ export function FeaturedProjectRoomsSection({
             <Reveal>
               <p className="ed-eyebrow">{project.city.toUpperCase()}</p>
               <h2 className="ed-h2-sm ed-statement-wide mt-2">
-                {project.title}
+                {toSentenceCase(project.title)}
               </h2>
               <p className="ed-body mt-3 max-w-[52ch]">{project.description}</p>
             </Reveal>
