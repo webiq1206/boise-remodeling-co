@@ -2,6 +2,7 @@
 import {captureMarketingAttribution} from '@/lib/marketingAttributionBrowser';
 
 import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
+import { HeroConversion } from "@/components/approved/HeroConversion";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
 
 import { useEffect, useRef, useState } from "react";
@@ -23,7 +24,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { familyButtonClass } from "@/components/family/Button";
 import { cn } from "@/lib/utils";
 import { Check, CheckCircle2, ArrowRight, Phone, Plus, X, ChevronDown } from "lucide-react";
 import type { StoredEstimate } from "@/shared/estimateEngine";
@@ -70,24 +70,6 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-/**
- * The short request (contact page): name, phone, email and what the visitor
- * wants done. Same endpoint and payload as the full form, sent as the "short"
- * request kind the route already accepts (no address; it is collected at the
- * visit). Project type and address stay in the payload's shape, unused.
- */
-const shortFormSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name"),
-  phone: z.string().refine((value) => value.replace(/\D/g, "").length >= 10, "Please enter a phone number we can call or text"),
-  email: z.string().email("Please enter a valid email"),
-  address: z.string().optional(),
-  projectType: z.string().optional(),
-  message: z.string().trim().min(8, "Tell us a little about the work, at least a few words"),
-});
-
-/** Project type the short request files under, the same one the homepage short request uses. */
-const SHORT_REQUEST_PROJECT = "Home repair or remodel";
-
 const PROJECT_OPTIONS = [
   { value: "kitchen", label: "Kitchen Remodel" },
   { value: "bathroom", label: "Bathroom Remodel" },
@@ -112,12 +94,21 @@ interface ConsultationFormProps {
   onRevise?: () => void;
   /** Compact trust bullets above the form (used in the modal variant). */
   showTrust?: boolean;
-  /** "short": four fields and one send, sized to fit one phone screen (contact page). */
+  /**
+   * "short": the short request every "Request a quote" lands on (contact page). It is the same
+   * native form as the homepage request (components/approved/HeroConversion): name, phone and
+   * what they need, with "Have us call you" one tap away, through the same /api/consultation
+   * pipeline. "full" is the longer form with the property address and project type.
+   */
   variant?: "full" | "short";
 }
 
-export function ConsultationForm({ onRevise, showTrust = false, variant = "full" }: ConsultationFormProps = {}) {
-  const short = variant === "short";
+export function ConsultationForm({ variant = "full", ...props }: ConsultationFormProps = {}) {
+  if (variant === "short") return <HeroConversion blockId="contact-request-form" recovery />;
+  return <FullConsultationForm {...props} />;
+}
+
+function FullConsultationForm({ onRevise, showTrust = false }: Omit<ConsultationFormProps, "variant">) {
   const [estimate, setEstimate] = useState<StoredEstimate | null>(null);
   const [estimateChecked, setEstimateChecked] = useState(false);
   // The carried-over range is attached by default (no yes/no gate); the user
@@ -146,9 +137,7 @@ export function ConsultationForm({ onRevise, showTrust = false, variant = "full"
   }, []);
 
   const form = useForm<FormData>({
-    // The two schemas share one field shape; the short one only relaxes
-    // address and project type and requires the note.
-    resolver: zodResolver(short ? (shortFormSchema as unknown as typeof formSchema) : formSchema),
+    resolver: zodResolver(formSchema),
     // Validate each field on blur (and re-validate on change once touched) so
     // users get inline feedback instead of every error at once on submit.
     mode: "onTouched",
@@ -293,15 +282,8 @@ export function ConsultationForm({ onRevise, showTrust = false, variant = "full"
         formStartedAt,
         website,
         ...data,
-        ...(short
-          ? {
-              requestKind: "short" as const,
-              projectType: estimate && attached ? estimate.project : SHORT_REQUEST_PROJECT,
-              address: undefined,
-            }
-          : {}),
-        zip: short ? undefined : deriveZip(data.address),
-        propertyProfile: short ? null : propertyProfile,
+        zip: deriveZip(data.address),
+        propertyProfile,
         /* When the visitor already submitted the estimate gate, both the admin
            and customer confirmation emails were already sent by /api/estimate-lead.
            Sending them again from /api/consultation would be a duplicate. */
@@ -341,7 +323,7 @@ export function ConsultationForm({ onRevise, showTrust = false, variant = "full"
       setDeliveryDelayed(response.delivery === "pending_retry");
       sessionStorage.removeItem("brc_estimate");
         sessionStorage.removeItem("brc_consult_context");
-      trackAcceptedInquiry(response, short ? (estimate && attached ? estimate.project : SHORT_REQUEST_PROJECT) : variables.projectType);
+      trackAcceptedInquiry(response, variables.projectType);
       markEstimatorCompleted("consultation");
       rotateInquiryId();
     },
@@ -424,142 +406,6 @@ export function ConsultationForm({ onRevise, showTrust = false, variant = "full"
           </p>
         </div>
       </div>
-    );
-  }
-
-  if (short) {
-    const shortLabel = "text-sm font-medium text-foreground";
-    return (
-      <Form {...form}>
-        <EstimatorRecovery
-          flow="consultation"
-          currentStep={form.formState.isDirty ? "filling" : "form"}
-          currentStepIndex={form.formState.isDirty ? 1 : 0}
-          totalSteps={2}
-          lastCompletedStep={form.formState.isDirty ? "form" : undefined}
-          selections={{ project_type: SHORT_REQUEST_PROJECT }}
-          validationErrors={Object.keys(form.formState.errors)}
-          engaged={form.formState.isDirty}
-          submitted={success}
-        />
-        <form
-          data-clarity-mask="true"
-          onSubmit={form.handleSubmit((data) => {
-            setSubmitted(data);
-            mutation.mutate(data);
-          })}
-          className="consult-short space-y-4"
-          data-testid="form-consultation-short"
-          noValidate
-        >
-          <div className="absolute -left-[10000px]" aria-hidden="true">
-            <label htmlFor="consult-short-website">Website</label>
-            <input
-              data-clarity-mask="True"
-              id="consult-short-website"
-              name="website"
-              tabIndex={-1}
-              autoComplete="off"
-              value={website}
-              onChange={(event) => setWebsite(event.target.value)}
-            />
-          </div>
-          {estimate && attached && (
-            <p className="text-sm text-muted-foreground" data-testid="text-estimate-range">
-              Your planning range is attached:{" "}
-              <span className="text-foreground">
-                {formatPlanningCurrency(estimate.priceLow)} to {formatPlanningCurrency(estimate.priceHigh)}
-              </span>
-              .{" "}
-              <button
-                type="button"
-                onClick={() => setAttached(false)}
-                className="inline-flex min-h-11 items-center underline underline-offset-2 hover:text-foreground"
-                data-testid="button-drop-estimate"
-              >
-                Remove
-              </button>
-            </p>
-          )}
-          {mutation.isError && (
-            <div role="alert" className="rounded-sm p-3 text-sm bg-destructive/5 border border-destructive/20 text-destructive">
-              {(mutation.error as Error).message || "Something went wrong. Please try again."}
-            </div>
-          )}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className={shortLabel}>Name</FormLabel>
-                <FormControl>
-                  <Input autoComplete="name" aria-required="true" data-testid="input-name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={shortLabel}>Phone</FormLabel>
-                  <FormControl>
-                    <Input type="tel" inputMode="tel" autoComplete="tel" aria-required="true" data-testid="input-phone" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={shortLabel}>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" autoComplete="email" aria-required="true" data-testid="input-email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <FormField
-            control={form.control}
-            name="message"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className={shortLabel}>What do you want done?</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows={3}
-                    placeholder="Kitchen, bath, a whole floor, a list of repairs"
-                    aria-required="true"
-                    maxLength={2000}
-                    data-testid="textarea-message"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:items-center sm:gap-5">
-            <button
-              type="submit"
-              className={familyButtonClass({ variant: "primary", size: "lg", className: "fam-btn--block-phone" })}
-              disabled={mutation.isPending}
-              data-testid="button-submit-consultation"
-            >
-              {mutation.isPending ? "Sending" : CTA_FORM_SEND}
-            </button>
-            <p className="text-sm text-muted-foreground sm:flex-1">{CTA_FORM_MICROCOPY}</p>
-          </div>
-        </form>
-      </Form>
     );
   }
 

@@ -36,8 +36,13 @@ interface ForwardPayload {
   state?: string;
   zip?: string;
 
+  /** "call", "text" or "email": how the visitor asked to be reached (schema max 20). */
+  preferredContactMethod?: string;
+
   /* Project fields */
   projectTypes?: string[];
+  /** Step 2 timing, e.g. "1 to 3 months" (schema max 100). */
+  timeline?: string;
   budgetRange?: string;
   projectScope?: string;
   projectGoals?: string;
@@ -53,7 +58,12 @@ interface ForwardPayload {
      the whole group as JSON on the lead's sourcePayload column. */
 
   /** Complete structured record: selections, scope, assumptions, disclaimers. */
-  estimate?: Partial<LeadEstimateRecord> & {marketingAttribution?:Record<string,unknown>};
+  estimate?: Partial<LeadEstimateRecord> & {
+    marketingAttribution?: Record<string, unknown>;
+    /** Step 2 of the short request: "details", plus the inquiry it adds to. */
+    submissionKind?: "details";
+    requestRef?: string;
+  };
   /**
    * County parcel record: zoning, lot size, assessed value, owner and
    * occupancy. Passthrough on the dashboard side for the same reason as
@@ -73,6 +83,19 @@ interface ForwardPayload {
   estimateRange?: string;
 }
 
+/**
+ * The dashboard requires an email, and the short request's email is optional (a callback request
+ * never asks for one). A lead without one is forwarded with the same no-email placeholder chat
+ * leads have always carried (server/services/assistantLead.ts), keyed on the phone digits so two
+ * such leads stay distinct and the team can see at a glance that there is no address to write to.
+ */
+export function dashboardEmail(email: string | null | undefined, phone?: string | null, name?: string | null): string {
+  const clean = email?.trim();
+  if (clean) return clean;
+  const key = phone?.replace(/\D/g, "") || name?.trim() || "lead";
+  return `no-email+${encodeURIComponent(key)}@boiseremodeling.co`;
+}
+
 export function forwardToLeadDashboard(payload: ForwardPayload): void {
   void forwardToLeadDashboardAsync(payload);
 }
@@ -80,6 +103,8 @@ export function forwardToLeadDashboard(payload: ForwardPayload): void {
 export async function forwardToLeadDashboardAsync(payload: ForwardPayload): Promise<{
   sent: boolean;
   error?: string;
+  /** The dashboard answered 409: it already holds a lead for this email from the last minute. */
+  duplicate?: boolean;
 }> {
   const key = process.env.LEAD_DASHBOARD_KEY;
   if (!key) {
@@ -113,7 +138,7 @@ export async function forwardToLeadDashboardAsync(payload: ForwardPayload): Prom
     // 409 means the CRM already has this callback. Treat it as delivered.
     if (res.status === 409) {
       console.info("[lead-dashboard] Duplicate within 60s; CRM kept the existing lead.");
-      return { sent: true };
+      return { sent: true, duplicate: true };
     }
     if (!res.ok) {
       const detail = await res.text().catch(() => "");

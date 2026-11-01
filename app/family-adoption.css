@@ -234,3 +234,47 @@
     padding-inline: 0;
   }
 }
+
+/* #consult ("Schedule a free visit") shares the landing point of #request: the top of the form card. */
+.approved-shell .home-request {
+  position: relative;
+}
+.approved-shell .home-request-anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* Contact: the form card is first in the markup (it is the #consult landing point), the intro
+   follows it on a phone and sits to its left from 1024px. */
+.interior-contact-anchor {
+  min-width: 0;
+}
+@media (max-width: 1023px) {
+  .interior-contact-grid--form-first .interior-contact-intro {
+    margin: 40px 0 0;
+  }
+}
+@media (min-width: 1024px) {
+  .interior-contact-grid--form-first > .interior-contact-anchor {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .interior-contact-grid--form-first > .interior-contact-intro {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+/* Form landing points. The root scroll-padding already clears the sticky header (header height
+   plus 16px); the sitewide `:target { scroll-margin-top: 112px }` stacked on top of it and left
+   the form 112px further down, with the end of the section above showing over it. */
+.approved-shell #request,
+.approved-shell #consult,
+.approved-shell #request-form,
+.approved-shell #contact-request-form {
+  scroll-margin-top: 0;
+}
