@@ -4,11 +4,11 @@ import { Calendar } from "lucide-react";
 import { MarketingCard } from "./MarketingCard";
 import { TextLink } from "./TextLink";
 import { Chip } from "./Chip";
-import type { BlogPostData } from "@/shared/blogContent";
+import type { BlogIndexPost } from "@/lib/blogPages";
 import { getBlogImageAlt, getBlogThumbnail } from "@/shared/blogImages";
 
 export interface BlogCardProps {
-  post: BlogPostData;
+  post: BlogIndexPost;
   featured?: boolean;
   formatDate: (date: string) => string;
 }

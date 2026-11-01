@@ -1,3 +1,4 @@
+import { InteriorHeroActions } from "@/components/approved/InteriorHeroActions";
 import { InteriorHero, InteriorPage } from "@/components/approved/InteriorLayout";
 import { RegistrationLink } from "@/components/RegistrationLink";
 import { SaveContactLink } from "@/components/SaveContactLink";
@@ -82,42 +83,55 @@ export default function AboutPage() {
       <>
         <JsonLd data={schemas} />
         <div className="flex flex-col">
-          <InteriorHero layout="editorial">
+          {/* Interior hero budget (phase 5, the phase 3 pattern): the unchanged H1,
+              one support line, one primary "Request a quote" and the phone as a
+              text link, so the action is in the first screen above the bottom bar
+              on phones and inside 1280x720. The rest of the hero copy opens the
+              band below, word for word. */}
+          <InteriorHero layout="editorial" className="interior-hero-budget interior-hero-about">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
             </p>
-            <p className="ed-eyebrow">Real people. A higher standard.</p>
             <h1 className="ed-display ed-statement-display mb-8">
               About Boise Remodeling <em className="brc-accent">Co</em>
             </h1>
-            <p className="text-base md:text-lg max-w-2xl leading-relaxed mb-6">
+            <p className="interior-hero-support">
               Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four
-              companies of P5 Home Co. It is run by Nick Perkins, a construction project manager with a
-              bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
-              decade of work from small renovations to multimillion-dollar custom homes.{" "}
-              {SHOW_FOUNDING_YEAR ? 'He founded P5 in Colorado in 2020 and moved to the Treasure Valley with his family in 2025.' : 'He moved to the Treasure Valley with his family in 2025.'}{" "}
-              <a
-                href="https://p5homeco.com/about"
-                className="underline underline-offset-2"
-                rel="noopener"
-              >
-                Read the full story on p5homeco.com/about
-              </a>
-              .
+              companies of P5 Home Co.
             </p>
-            <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed mb-8">
-              P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
-              Two-year workmanship warranty on remodels.
-            </p>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mb-4">
-              <EstimateCTA size="lg">{CTA_PRIMARY}</EstimateCTA>
-              <SaveContactLink
-                showIcon
-                className={familyButtonClass({ variant: 'tertiary' })}
-              />
-            </div>
+            <InteriorHeroActions />
           </InteriorHero>
+
+          <div className="interior-hero-more">
+            <div className="ed-shell">
+              <p className="ed-eyebrow">Real people. A higher standard.</p>
+              <p className="ed-lede">
+                It is run by Nick Perkins, a construction project manager with a
+                bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
+                decade of work from small renovations to multimillion-dollar custom homes.{" "}
+                {SHOW_FOUNDING_YEAR ? 'He founded P5 in Colorado in 2020 and moved to the Treasure Valley with his family in 2025.' : 'He moved to the Treasure Valley with his family in 2025.'}{" "}
+                <a
+                  href="https://p5homeco.com/about"
+                  className="underline underline-offset-2"
+                  rel="noopener"
+                >
+                  Read the full story on p5homeco.com/about
+                </a>
+                .
+              </p>
+              <p className="ed-small interior-hero-more-note max-w-2xl">
+                P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
+                Two-year workmanship warranty on remodels.
+              </p>
+              <div className="mt-4">
+                <SaveContactLink
+                  showIcon
+                  className={familyButtonClass({ variant: 'tertiary' })}
+                />
+              </div>
+            </div>
+          </div>
 
           <Section divider className="pt-0">
             <div className="container px-4 max-w-5xl">

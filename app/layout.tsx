@@ -15,6 +15,7 @@ import {Suspense} from 'react'
 import { MetaPixel } from '@/components/MetaPixel'
 import { MicrosoftClarity } from '@/components/MicrosoftClarity'
 import { clarityFieldMaskScript } from '@/lib/clarityMask'
+import { thirdPartyGateScript } from '@/lib/thirdPartyGate'
 import Script from 'next/script'
 import { ConversionTracking } from '@/components/ConversionTracking'
 import { AssistantWidget } from '@/components/assistant/AssistantWidget'
@@ -153,6 +154,11 @@ export default function RootLayout({
         </Providers>
         <GoogleAnalytics />
         <Suspense fallback={null}><MarketingAttribution /></Suspense>
+        {/* Opens on the first interaction or 5s after load; the Meta Pixel and
+            Clarity network scripts wait behind it (gtag is exempt). */}
+        <Script id="third-party-gate" strategy="beforeInteractive">
+          {thirdPartyGateScript()}
+        </Script>
         <MetaPixel />
         <Script id="clarity-field-mask" strategy="beforeInteractive">
           {clarityFieldMaskScript()}

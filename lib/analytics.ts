@@ -28,8 +28,10 @@ function readCookie(name: string): string | undefined {
  * Fires a Meta (Facebook) standard event through BOTH the browser Pixel and the
  * server-side Conversions API, sharing one eventID so Meta deduplicates them
  * (counts the conversion once, but keeps the signal that ad blockers / ITP would
- * otherwise strip from the browser). The Pixel is loaded via components/MetaPixel
- * (lazyOnload). Both paths are best-effort no-ops when unavailable:
+ * otherwise strip from the browser). The Pixel is set up via components/MetaPixel:
+ * the fbq stub exists from hydration, so a call made before fbevents.js has
+ * loaded (it waits for the first interaction or 5s after load) is queued and
+ * sent when it arrives. Both paths are best-effort no-ops when unavailable:
  * fbq is guarded, and /api/meta-capi silently skips if the CAPI token is unset.
  *
  * Pass a standard event name (e.g. 'Lead'). `userData` (email/phone) is optional

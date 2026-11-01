@@ -1,6 +1,7 @@
 import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { BlogIndexClient } from "@/components/marketing/BlogIndexClient";
+import { blogIndexPosts } from "@/lib/blogPagination";
 import { EstimatePromptBand } from "@/components/marketing/EstimatePromptBand";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -65,7 +66,7 @@ export default function BlogPage() {
         </Link>
       </PageHeroBand>
 
-      <BlogIndexClient />
+      <BlogIndexClient posts={blogIndexPosts()} />
 
       <EstimatePromptBand
         eyebrow="Ready to plan"

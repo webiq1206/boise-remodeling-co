@@ -225,3 +225,12 @@
     margin: var(--space-4, 16px) 0 var(--space-6, 24px);
   }
 }
+
+/* About hero (phase 5): the same budget as the interior heroes, without a
+   photograph. The text-only hero is already inset to the 88% shell, so the phone
+   rule's 6% side padding is not added on top of it. */
+@media (max-width: 700px) {
+  .approved-shell .approved-interior .interior-hero-budget.interior-hero-text .interior-hero-copy {
+    padding-inline: 0;
+  }
+}
