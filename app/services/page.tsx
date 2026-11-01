@@ -106,7 +106,7 @@ export default function ServicesIndexPage() {
             <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>commit</em>
           </>
         }
-        description="Request a quote for kitchen, bath, whole-home or addition work. We reply within one business day, and the free in-home visit ends with a planning range and design direction."
+        description="Request a quote for kitchen, bath, whole-home or addition work. The free in-home visit ends with a planning range and design direction."
       />
 
       <Section surface="bone" spacing="xl" edge>

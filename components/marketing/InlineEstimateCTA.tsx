@@ -12,7 +12,7 @@ interface InlineEstimateCTAProps {
 /** Compact in-article estimator prompt for cost-related blog posts and guides. */
 export function InlineEstimateCTA({
   title = "Ready to talk through your project?",
-  description = "Request a quote. We reply within one business day, and the free in-home visit ends with a planning range and design direction.",
+  description = "Request a quote. The free in-home visit ends with a planning range and design direction.",
   className,
 }: InlineEstimateCTAProps) {
   return (

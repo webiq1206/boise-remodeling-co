@@ -224,7 +224,7 @@ export default function GuidesIndexPage() {
             <em className="brc-accent">number</em>
           </>
         }
-        description="After reading our guides, request a quote. We reply within one business day, and the free in-home visit ends with a planning range for your project."
+        description="After reading our guides, request a quote. The free in-home visit ends with a planning range for your project."
         variant="canvas"
       />
     </></InteriorPage>

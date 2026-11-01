@@ -157,14 +157,14 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
               )}
 
               <div className="lg:hidden mt-10">
-                <ArticleSidebarCta description="Tell us about the work. We reply within one business day, and the free in-home visit ends with a planning range and design direction." />
+                <ArticleSidebarCta description="Tell us about the work. The free in-home visit ends with a planning range and design direction." />
               </div>
             </div>
 
             <aside className="article-rail hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">
               <ArticleSidebar
                 tocHeadings={tocHeadings}
-                ctaDescription="Tell us about the work. We reply within one business day, and the free in-home visit ends with a planning range and design direction."
+                ctaDescription="Tell us about the work. The free in-home visit ends with a planning range and design direction."
               />
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-6 rounded-lg border border-border p-4">

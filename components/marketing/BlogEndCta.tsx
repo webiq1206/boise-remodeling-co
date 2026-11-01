@@ -30,7 +30,7 @@ export function BlogEndCta() {
       </div>
       <div>
       <p className="ed-body">
-        Request a quote and we reply within one business day to set up a free in-home visit.
+        Request a quote to set up a free in-home visit.
         No obligation, no pressure.
       </p>
       {/* One primary action (C5); the visit, call and text are tertiary text links. */}

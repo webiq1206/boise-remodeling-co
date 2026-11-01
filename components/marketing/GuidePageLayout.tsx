@@ -163,7 +163,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
               )}
 
               <div className="lg:hidden mt-10">
-                <ArticleSidebarCta description="Tell us about the work. We reply within one business day, and the free in-home visit ends with a planning range and design direction." />
+                <ArticleSidebarCta description="Tell us about the work. The free in-home visit ends with a planning range and design direction." />
               </div>
             </div>
 
