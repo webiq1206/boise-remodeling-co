@@ -25,6 +25,8 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ key:
       headers: {
         "Content-Type": mimeTypes[ext ?? ""] ?? "application/octet-stream",
         "Content-Disposition": `inline; filename="${key.split("/").pop()}"`,
+        // Served as the type its extension names, never sniffed into something else.
+        "X-Content-Type-Options": "nosniff",
       },
     });
   } catch (error) {

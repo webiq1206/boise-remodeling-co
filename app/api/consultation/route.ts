@@ -35,6 +35,10 @@ import { resolveQuotedRange } from "@/shared/costs/resolve";
 import { IMPLAUSIBLE_QUOTE_CEILING, logPricingAlert } from "@/server/services/pricingAlerts";
 import { dashboardEmail, forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
 import { forwardConsultationToP5Intake } from "@/server/services/p5IntakeBridge";
+import { issueRequestDetailsToken } from "@/server/services/requestDetailsToken";
+import { absoluteStoredUrl } from "@/server/services/requestFiles";
+import { MAX_REQUEST_FILES, checkRequestFile, safeRequestFileName } from "@/shared/requestFiles";
+import { SHORT_REQUEST_PROJECT_TYPE, UNSPECIFIED_PROJECT_TYPE } from "@/shared/requestDetails";
 import {
   acceptInquiry,
   InquiryRejectedError,
@@ -130,6 +134,8 @@ const bodySchema = z.object({
   /* Short request, "Have us call you": name and phone only, filed as a callback request. */
   callback: z.boolean().optional(),
   bestTime: z.string().trim().max(40).optional(),
+  /* Short request: names of the files the browser uploads right after this lead is saved. */
+  pendingFiles: z.array(z.string().max(120)).max(MAX_REQUEST_FILES).optional(),
   propertyProfile: propertyProfileSchema,
   estimate: estimateSchema,
   /* Set by the client when the visitor already submitted the estimate gate,
@@ -289,55 +295,6 @@ function verifyEstimate(
   };
 }
 
-const SHORT_FILE_TYPES = new Map<string, string>([
-  ["image/jpeg", "jpg"],
-  ["image/jpg", "jpg"],
-  ["image/png", "png"],
-  ["image/webp", "webp"],
-  ["image/heic", "heic"],
-  ["image/heif", "heif"],
-  ["application/pdf", "pdf"],
-]);
-const SHORT_FILE_EXT = new Map<string, string>([
-  ["jpg", "jpg"],
-  ["jpeg", "jpg"],
-  ["png", "png"],
-  ["webp", "webp"],
-  ["heic", "heic"],
-  ["heif", "heif"],
-  ["pdf", "pdf"],
-]);
-const SHORT_MAX_FILES = 4;
-const SHORT_MAX_FILE_BYTES = 8 * 1024 * 1024;
-
-function shortFileExt(file: File): string | null {
-  const fromType = SHORT_FILE_TYPES.get(file.type);
-  if (fromType) return fromType;
-  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
-  return SHORT_FILE_EXT.get(ext) ?? null;
-}
-
-function shortSafeName(name: string, ext: string): string {
-  const base = name
-    .replace(/\.[^.]+$/, "")
-    .replace(/[^a-zA-Z0-9._-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 48);
-  return `${base || "upload"}.${ext}`;
-}
-
-function absoluteStoredUrl(url: string): string {
-  if (url.startsWith("http://") || url.startsWith("https://")) return url;
-  return `${SITE_CONFIG.siteUrl.replace(/\/$/, "")}${url.startsWith("/") ? url : `/${url}`}`;
-}
-
-function shortUploadMime(file: File, ext: string): string {
-  if (file.type) return file.type;
-  if (ext === "pdf") return "application/pdf";
-  if (ext === "jpg") return "image/jpeg";
-  return `image/${ext}`;
-}
-
 const CONTACT_PREFERENCE_LABELS: Record<string, string> = {
   call: "Call me",
   text: "Text me",
@@ -347,6 +304,14 @@ const CONTACT_PREFERENCE_LABELS: Record<string, string> = {
 /**
  * The short request (homepage #request-form, contact page). Same lead record as /api/consultation
  * JSON. Photos and plans are optional and are not accepted on the long consultation form.
+ *
+ * Quote form v2: files no longer ride this request. The lead is saved first and answered with a
+ * request id and a short-lived token; the browser then uploads each file to
+ * /api/consultation/files and attaches them through /api/consultation/details, so a slow or
+ * failed upload can never cost the lead. This request carries only the file NAMES
+ * (pendingFiles), so the team can see what is on its way. A "files" part sent by a page loaded
+ * before v2 is still stored here, and one that cannot be stored is named in the notes instead of
+ * failing the request.
  *
  * "Have us call you" posts here too, as callback=1 with name, phone and an optional best time and
  * no description. Its notes open with a CALLBACK REQUEST line, so the team sees it in the
@@ -370,47 +335,39 @@ async function readShortMultipart(
   }
   const files = form
     .getAll("files")
-    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
-  if (files.length > SHORT_MAX_FILES) {
-    return {
-      ok: false,
-      response: NextResponse.json({ message: "You can attach up to 4 photos or plans." }, { status: 400 }),
-    };
-  }
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0)
+    .slice(0, MAX_REQUEST_FILES);
   const links: string[] = [];
+  const notStored: string[] = [];
+  const batch = crypto.randomUUID();
   for (let index = 0; index < files.length; index += 1) {
     const file = files[index];
-    const ext = shortFileExt(file);
-    if (!ext) {
-      return {
-        ok: false,
-        response: NextResponse.json(
-          { message: "Photos and plans must be JPEG, PNG, WebP, HEIC, or PDF." },
-          { status: 400 },
-        ),
-      };
+    const check = checkRequestFile({ name: file.name, type: file.type, size: file.size });
+    if (!check.ok) {
+      notStored.push(file.name.slice(0, 120));
+      continue;
     }
-    if (file.size > SHORT_MAX_FILE_BYTES) {
-      return {
-        ok: false,
-        response: NextResponse.json({ message: "Each photo or plan must be 8 MB or smaller." }, { status: 400 }),
-      };
-    }
-    const key = `requests/${crypto.randomUUID()}/${index}-${shortSafeName(file.name, ext)}`;
+    const key = `requests/${batch}/${index}-${safeRequestFileName(file.name, check.ext)}`;
     try {
       const { uploadFile } = await import("@/lib/storage/blob");
-      const stored = await uploadFile(key, Buffer.from(await file.arrayBuffer()), shortUploadMime(file, ext));
+      const stored = await uploadFile(key, Buffer.from(await file.arrayBuffer()), check.contentType);
       links.push(absoluteStoredUrl(stored));
     } catch (error) {
       console.error("[consultation] short-request upload failed", error instanceof Error ? error.message : error);
-      return {
-        ok: false,
-        response: NextResponse.json(
-          { message: "We could not save that photo. Try again, or send the request without it." },
-          { status: 503 },
-        ),
-      };
+      notStored.push(file.name.slice(0, 120));
     }
+  }
+  let pendingFiles: string[] = [];
+  try {
+    const parsed = JSON.parse(String(form.get("pendingFiles") ?? "[]"));
+    if (Array.isArray(parsed)) {
+      pendingFiles = parsed
+        .filter((name): name is string => typeof name === "string" && name.trim().length > 0)
+        .map((name) => name.trim().slice(0, 120))
+        .slice(0, MAX_REQUEST_FILES);
+    }
+  } catch {
+    pendingFiles = [];
   }
   let attribution: unknown;
   const rawAttribution = String(form.get("attribution") ?? "").trim();
@@ -430,6 +387,12 @@ async function readShortMultipart(
     parts.push(`Preferred contact: ${CONTACT_PREFERENCE_LABELS[preference]}`);
   }
   if (links.length > 0) parts.push(`Photos and plans:\n${links.join("\n")}`);
+  if (notStored.length > 0) parts.push(`Files that did not upload: ${notStored.join(", ")}`);
+  if (pendingFiles.length > 0) {
+    parts.push(
+      `Photos and files on the way (${pendingFiles.length}): ${pendingFiles.join(", ")}. Links follow in a separate "Details added" update.`,
+    );
+  }
   const message = parts.join("\n\n");
   return {
     ok: true,
@@ -441,8 +404,9 @@ async function readShortMultipart(
       name,
       phone,
       email: String(form.get("email") ?? "").trim(),
-      projectType: "Home repair or remodel",
+      projectType: SHORT_REQUEST_PROJECT_TYPE,
       message,
+      ...(pendingFiles.length ? { pendingFiles } : {}),
       ...(callback ? { callback: true, contactPreference: "call", ...(bestTime ? { bestTime } : {}) } : {}),
       ...(!callback && preference ? { contactPreference: preference } : {}),
       ...(String(form.get("skipEmail") ?? "") === "1" ? { skipEmail: true } : {}),
@@ -532,6 +496,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Short request: the id and short-lived token that let this browser upload its files and
+    // add step 2 details to this same lead (/api/consultation/files, /api/consultation/details).
+    const followUp =
+      data.requestKind === "short"
+        ? (() => {
+            const detailsToken = issueRequestDetailsToken(acceptance.rowId);
+            return detailsToken ? { requestId: acceptance.rowId, detailsToken } : {};
+          })()
+        : {};
+
     if (acceptance.duplicate) {
       return NextResponse.json({
         accepted: true,
@@ -539,6 +513,7 @@ export async function POST(request: NextRequest) {
         duplicate: true,
         conversionEligible: acceptance.conversionEligible,
         delivery: acceptance.needsDeliveryRetry ? "pending_retry" : "sent",
+        ...followUp,
       });
     }
 
@@ -557,9 +532,15 @@ export async function POST(request: NextRequest) {
         address: data.address,
         city: location?.city,
         zip: data.zip || location?.zip,
-        projectType: data.projectType,
+        // A short request does not ask the project type: p5 files it as "Not sure" so step 2,
+        // or the team, can set it (p5 fills a "Not sure" project type from a details post).
+        projectType: data.requestKind === "short" ? UNSPECIFIED_PROJECT_TYPE : data.projectType,
         message: data.message,
         inquiryId: data.inquiryId,
+        requestKind: data.callback ? "callback" : "quote",
+        contactPreference: data.contactPreference ?? null,
+        bestTime: data.callback ? data.bestTime || "Any time" : null,
+        submissionKind: "initial",
       });
       after(() => bridge);
     } catch (bridgeErr) {
@@ -595,6 +576,7 @@ export async function POST(request: NextRequest) {
       state: (data.propertyProfile as { city?: string; state?: string; zip?: string } | null)?.state || undefined,
       zip: data.zip || (data.propertyProfile as { city?: string; state?: string; zip?: string } | null)?.zip || undefined,
       projectTypes: data.projectType ? [data.projectType] : [],
+      ...(data.contactPreference ? { preferredContactMethod: data.contactPreference } : {}),
       budgetRange: resolveBudgetRange(undefined, estimate),
       projectScope: estimate
         ? `${PROJECT_LABELS[estimate.project].label} - ${formatUsd(estimate.priceLow)} to ${formatUsd(estimate.priceHigh)} (${estimate.confidence})`
@@ -723,6 +705,7 @@ export async function POST(request: NextRequest) {
       duplicate: acceptance.duplicate,
       conversionEligible: acceptance.conversionEligible,
       delivery: allDelivered ? "sent" : "pending_retry",
+      ...followUp,
     });
   } catch (err) {
     console.error("[consultation] Error:", err);

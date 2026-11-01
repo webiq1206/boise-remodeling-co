@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { and, count, eq, gte } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { consultationRequests } from "@/shared/schema";
+import type { StoredShortRequest } from "@/server/services/requestDetailsMerge";
 
 export type InquiryStage = "estimate_gate" | "consultation";
 
@@ -46,6 +47,8 @@ interface TestInquiryRow {
   fingerprint: string;
   conversionRecordedAt: Date | null;
   deliveryStatus: NonNullable<typeof consultationRequests.$inferInsert.deliveryStatus>;
+  /** What the route stored, so the details step can read and merge it like a database row. */
+  values: typeof consultationRequests.$inferInsert;
 }
 
 let isolatedTestAdapter:
@@ -155,6 +158,7 @@ export async function acceptInquiry(
         adminEmail: "pending",
         customerEmail: "pending",
       },
+      values: { ...values, inquiryId: input.inquiryId },
     };
     isolatedTestAdapter.rows.set(row.id, row);
     return {
@@ -329,5 +333,69 @@ export async function recordDeliveryStatus(
       deliveryLockedAt: null,
       updatedAt: new Date(),
     })
+    .where(eq(consultationRequests.id, rowId));
+}
+/**
+ * The stored short request, read back for step 2 ("Help us prepare") and the file uploads.
+ * Null when there is no such row (or no database), which the caller answers as an unknown request.
+ */
+export async function loadAcceptedRequest(rowId: string): Promise<StoredShortRequest | null> {
+  if (!rowId || rowId.length > 64) return null;
+  if (isolatedTestAdapter) {
+    const row = isolatedTestAdapter.rows.get(rowId);
+    return row ? storedFrom(row.id, row.values) : null;
+  }
+  if (!db) return null;
+  const rows = await db
+    .select({
+      id: consultationRequests.id,
+      inquiryId: consultationRequests.inquiryId,
+      name: consultationRequests.name,
+      phone: consultationRequests.phone,
+      email: consultationRequests.email,
+      address: consultationRequests.address,
+      zip: consultationRequests.zip,
+      city: consultationRequests.city,
+      projectType: consultationRequests.projectType,
+      message: consultationRequests.message,
+    })
+    .from(consultationRequests)
+    .where(eq(consultationRequests.id, rowId))
+    .limit(1);
+  return rows[0] ? storedFrom(rows[0].id, rows[0]) : null;
+}
+
+function storedFrom(
+  id: string,
+  values: { [K in keyof StoredShortRequest]?: string | null },
+): StoredShortRequest {
+  return {
+    id,
+    inquiryId: values.inquiryId ?? "",
+    name: values.name ?? "",
+    phone: values.phone ?? "",
+    email: values.email ?? "",
+    address: values.address ?? "",
+    zip: values.zip ?? "",
+    city: values.city ?? "",
+    projectType: values.projectType ?? "",
+    message: values.message ?? "",
+  };
+}
+
+/** Writes only the merged columns. Existing columns, so no schema change and no db:push. */
+export async function saveAcceptedRequest(
+  rowId: string,
+  patch: Partial<Pick<StoredShortRequest, "email" | "address" | "zip" | "projectType" | "message">>,
+): Promise<void> {
+  if (isolatedTestAdapter) {
+    const row = isolatedTestAdapter.rows.get(rowId);
+    if (row) row.values = { ...row.values, ...patch };
+    return;
+  }
+  if (!db) throw new Error("No database to save the request details to.");
+  await db
+    .update(consultationRequests)
+    .set({ ...patch, updatedAt: new Date() })
     .where(eq(consultationRequests.id, rowId));
 }

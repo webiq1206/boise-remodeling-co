@@ -1,0 +1,2187 @@
+{
+  "pages": [
+    {
+      "route": "/",
+      "title": "Home Remodeling Contractors, Boise, ID | Boise Remodeling Co",
+      "description": "Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope.",
+      "canonical": "https://boiseremodeling.co",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services",
+      "title": "Kitchen, Bath & Home Remodeling | Boise Remodeling Co",
+      "description": "Explore kitchen, bathroom and whole-home remodeling, additions and ADUs in Boise and the Treasure Valley. See the scope of our design-build services.",
+      "canonical": "https://boiseremodeling.co/services",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/about",
+      "title": "Design-build remodeler | Boise Remodeling Co",
+      "description": "Design-build remodeler, part of P5. Kitchen, bathroom. Free in-home visit, written scope, workmanship guarantee, Ada and Canyon permitting.",
+      "canonical": "https://boiseremodeling.co/about",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas",
+      "title": "Treasure Valley Service Areas | Boise Remodeling Co",
+      "description": "Design-build remodeling across the Treasure Valley: Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho.",
+      "canonical": "https://boiseremodeling.co/areas",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/estimate",
+      "title": "Request a Remodel Quote | Boise Remodeling Co",
+      "description": "Request a remodel quote from Boise Remodeling Co. Share your project, city and photos. We reply within one business day with questions or a time to visit.",
+      "canonical": "https://boiseremodeling.co/estimate",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/remodel-plans-boise",
+      "title": "Remodel Estimate From Your Plans | Boise Remodeling Co",
+      "description": "Upload your floor plans and get a remodeling budget built from your own drawings, not a guess at your square footage. Boise and the Treasure Valley. Free.",
+      "canonical": "https://boiseremodeling.co/remodel-plans-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/design-ideas",
+      "title": "Remodeling Design Ideas | Boise Remodeling Co",
+      "description": "Kitchen, bathroom, whole-home, and addition design inspiration for Treasure Valley homeowners. Captioned for materials and layout, not invented project records.",
+      "canonical": "https://boiseremodeling.co/design-ideas",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/contact",
+      "title": "Contact Our Boise Remodeling Team | Boise Remodeling Co",
+      "description": "Discuss your kitchen, bathroom or whole-home renovation with Boise Remodeling Co. Call our team or request a consultation for your Treasure Valley project.",
+      "canonical": "https://boiseremodeling.co/contact",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/resources",
+      "title": "Remodel Planning Resources | Boise Remodeling Co",
+      "description": "Free PDF worksheets and visual guides for Treasure Valley remodeling: budget worksheet, kitchen & bath checklist, Ada vs Canyon permits.",
+      "canonical": "https://boiseremodeling.co/resources",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/resources/ada-canyon-permit-flow",
+      "title": "Ada vs Canyon County Permit Flow | Boise Remodeling Co",
+      "description": "Visual guide to remodeling permits in Ada and Canyon County - jurisdiction, review steps, and inspections for Treasure Valley homeowners.",
+      "canonical": "https://boiseremodeling.co/resources/ada-canyon-permit-flow",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog",
+      "title": "Remodeling Insights & Ideas | Boise Remodeling Co",
+      "description": "Honest remodeling advice for Idaho homeowners: budgeting, timelines, permits, and design-build guidance from Boise Remodeling Co.",
+      "canonical": "https://boiseremodeling.co/blog",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides",
+      "title": "Remodeling Guides | Boise Remodeling Co",
+      "description": "Definitive Treasure Valley remodeling guides: costs, kitchens, baths, additions, contractor selection, ROI, outdoor living, and local city resources.",
+      "canonical": "https://boiseremodeling.co/guides",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/sitemap",
+      "title": "Site Map | Boise Remodeling Co",
+      "description": "Every page on the Boise Remodeling Co website in one place: services, service areas, guides, and articles.",
+      "canonical": "https://boiseremodeling.co/sitemap",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/privacy-policy",
+      "title": "Privacy Policy | Boise Remodeling Co",
+      "description": "Boise Remodeling Co privacy policy. How we protect your data when you request remodeling services across Boise and the Treasure Valley.",
+      "canonical": "https://boiseremodeling.co/privacy-policy",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/terms-of-service",
+      "title": "Terms of Service | Boise Remodeling Co",
+      "description": "Terms of service for Boise Remodeling Co. Your rights when using our remodeling and renovation services across Boise and the Treasure Valley.",
+      "canonical": "https://boiseremodeling.co/terms-of-service",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel",
+      "title": "Kitchen remodeling in Boise | Boise Remodeling Co",
+      "description": "Design-build kitchen remodeling in Boise. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel",
+      "title": "Bathroom Remodeling in Boise | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Boise and the Treasure Valley. Design-build bath remodels with a free in-home consultation and a written scope.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel",
+      "title": "Treasure Valley Whole-Home Remodeling | Boise Remodeling Co",
+      "description": "Whole-home remodeling across the Treasure Valley: phased or full-house renovations run by one design-build team with a written scope and weekly updates.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition",
+      "title": "Room additions in the Treasure Valley | Boise Remodeling Co",
+      "description": "Room additions in the Treasure Valley: bump-outs and in-footprint expansions with a written scope. New-footprint builds go to Boise Construction Co.",
+      "canonical": "https://boiseremodeling.co/services/room-addition",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/adu",
+      "title": "ADU conversions in the Treasure Valley | Boise Remodeling Co",
+      "description": "ADU conversions in the Treasure Valley: garage, basement and attached units turned into living space, design-build, with a written scope and permits.",
+      "canonical": "https://boiseremodeling.co/services/adu",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel",
+      "title": "Treasure Valley Basement Remodeling | Boise Remodeling Co",
+      "description": "Basement remodeling across the Treasure Valley: egress, framing, moisture control and finished lower-level suites, design-build with permits handled.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living",
+      "title": "Treasure Valley Decks & Outdoor Living | Boise Remodeling Co",
+      "description": "Outdoor living spaces across the Treasure Valley: covered patios, outdoor kitchens, fireplaces and decks designed for freeze-thaw winters, design-build.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place",
+      "title": "Aging-in-place remodeling in Idaho | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling across the Treasure Valley: curbless showers, wider doorways, grab bars, lighting and single-level living. Free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/boise",
+      "title": "Remodeling contractors in Boise, ID | Boise Remodeling Co",
+      "description": "Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes",
+      "canonical": "https://boiseremodeling.co/areas/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/meridian",
+      "title": "Remodeling contractors in Meridian | Boise Remodeling Co",
+      "description": "Design-build remodeling in Meridian, Idaho. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.",
+      "canonical": "https://boiseremodeling.co/areas/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/eagle",
+      "title": "Remodeling contractors in Eagle, ID | Boise Remodeling Co",
+      "description": "Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes",
+      "canonical": "https://boiseremodeling.co/areas/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/nampa",
+      "title": "Remodeling contractors in Nampa, ID | Boise Remodeling Co",
+      "description": "Design-build remodeling in Nampa, Idaho. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.",
+      "canonical": "https://boiseremodeling.co/areas/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/kuna",
+      "title": "Remodeling contractors in Kuna, ID | Boise Remodeling Co",
+      "description": "Design-build remodeling in Kuna, Idaho. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.",
+      "canonical": "https://boiseremodeling.co/areas/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/star",
+      "title": "Remodeling Contractor in Star, Idaho | Boise Remodeling Co",
+      "description": "Plan kitchen, bathroom and whole-home remodeling in Star, ID. Explore services, start an online estimate or request an in-home consultation.",
+      "canonical": "https://boiseremodeling.co/areas/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/middleton",
+      "title": "Remodeling Contractor in Middleton, ID | Boise Remodeling Co",
+      "description": "Plan kitchen, bathroom and whole-home remodeling in Middleton, ID. Explore services, start an online estimate or request an in-home consultation.",
+      "canonical": "https://boiseremodeling.co/areas/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/areas/caldwell",
+      "title": "Remodeling Contractor in Caldwell, ID | Boise Remodeling Co",
+      "description": "Plan kitchen, bathroom and whole-home remodeling in Caldwell, ID. Explore services, start an online estimate or request an in-home consultation.",
+      "canonical": "https://boiseremodeling.co/areas/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/boise",
+      "title": "Kitchen Remodel in Boise, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Boise, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/meridian",
+      "title": "Kitchen Remodel in Meridian, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Meridian, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/eagle",
+      "title": "Kitchen Remodel in Eagle, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Eagle, Idaho: layout, cabinets, counters and permits under one written scope. HOA design review planned in from day one. Book now.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/nampa",
+      "title": "Kitchen Remodel in Nampa, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Nampa, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/kuna",
+      "title": "Kitchen Remodel in Kuna, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Kuna, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/star",
+      "title": "Kitchen Remodel in Star, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Star, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/middleton",
+      "title": "Kitchen Remodel in Middleton, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Middleton, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/kitchen-remodel/caldwell",
+      "title": "Kitchen Remodel in Caldwell, Idaho | Boise Remodeling Co",
+      "description": "Kitchen remodeling in Caldwell, Idaho: layout, cabinets, counters and permits under one written scope. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/kitchen-remodel/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/boise",
+      "title": "Bathroom Remodel in Boise, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Boise, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/meridian",
+      "title": "Bathroom Remodel in Meridian, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Meridian, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/eagle",
+      "title": "Bathroom Remodel in Eagle, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Eagle, Idaho: showers, tile, vanities and layout changes, design-build. HOA design review planned in from day one. Book now.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/nampa",
+      "title": "Bathroom Remodel in Nampa, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Nampa, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/kuna",
+      "title": "Bathroom Remodel in Kuna, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Kuna, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/star",
+      "title": "Bathroom Remodel in Star, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Star, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/middleton",
+      "title": "Bathroom Remodel in Middleton, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Middleton, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/bathroom-remodel/caldwell",
+      "title": "Bathroom Remodel in Caldwell, Idaho | Boise Remodeling Co",
+      "description": "Bathroom remodeling in Caldwell, Idaho: showers, tile, vanities and layout changes, design-build. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/bathroom-remodel/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/boise",
+      "title": "Whole-Home Remodel in Boise, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Boise, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/meridian",
+      "title": "Whole-Home Remodel in Meridian, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Meridian, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/eagle",
+      "title": "Whole-Home Remodel in Eagle, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Eagle, Idaho: phased or full renovations from one design-build team. HOA design review planned in from day one. Book now.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/nampa",
+      "title": "Whole-Home Remodel in Nampa, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Nampa, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/kuna",
+      "title": "Whole-Home Remodel in Kuna, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Kuna, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/star",
+      "title": "Whole-Home Remodel in Star, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Star, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/middleton",
+      "title": "Whole-Home Remodel in Middleton, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Middleton, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/whole-home-remodel/caldwell",
+      "title": "Whole-Home Remodel in Caldwell, Idaho | Boise Remodeling Co",
+      "description": "Whole-home remodeling in Caldwell, Idaho: phased or full renovations from one design-build team. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/whole-home-remodel/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/boise",
+      "title": "Room additions in Boise, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Boise, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/meridian",
+      "title": "Room Addition in Meridian, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Meridian, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/eagle",
+      "title": "Room Addition in Eagle, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Eagle, Idaho: bump-outs and in-footprint expansions, design-build. HOA design review planned in from day one. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/nampa",
+      "title": "Room Addition in Nampa, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Nampa, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/kuna",
+      "title": "Room Addition in Kuna, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Kuna, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/star",
+      "title": "Room Addition in Star, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Star, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/middleton",
+      "title": "Room Addition in Middleton, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Middleton, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/room-addition/caldwell",
+      "title": "Room Addition in Caldwell, Idaho | Boise Remodeling Co",
+      "description": "Room additions in Caldwell, Idaho: bump-outs and in-footprint expansions, design-build. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/room-addition/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/boise",
+      "title": "Basement Remodeling in Boise, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Boise, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/meridian",
+      "title": "Basement Remodeling in Meridian, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Meridian, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/eagle",
+      "title": "Basement Remodeling in Eagle, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Eagle, Idaho: egress, framing, moisture control and finished suites. HOA design review planned in from day one. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/nampa",
+      "title": "Basement Remodeling in Nampa, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Nampa, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/kuna",
+      "title": "Basement Remodeling in Kuna, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Kuna, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/star",
+      "title": "Basement Remodeling in Star, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Star, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free in-home visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/middleton",
+      "title": "Basement Remodeling in Middleton, ID | Boise Remodeling Co",
+      "description": "Basement remodeling in Middleton, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/basement-remodel/caldwell",
+      "title": "Basement Remodeling in Caldwell, Idaho | Boise Remodeling Co",
+      "description": "Basement remodeling in Caldwell, Idaho: egress, framing, moisture control and finished suites. Idaho Registered Contractor #8381215. Book a free visit.",
+      "canonical": "https://boiseremodeling.co/services/basement-remodel/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/boise",
+      "title": "Outdoor Living & Decks in Boise, Idaho | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Boise, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/meridian",
+      "title": "Outdoor Living & Decks in Meridian, ID | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Meridian, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/eagle",
+      "title": "Outdoor Living & Decks in Eagle, Idaho | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Eagle, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. HOA design review planned in from day one.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/nampa",
+      "title": "Outdoor Living & Decks in Nampa, Idaho | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Nampa, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/kuna",
+      "title": "Outdoor Living & Decks in Kuna, Idaho | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Kuna, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/star",
+      "title": "Outdoor Living & Decks in Star, Idaho | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Star, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/middleton",
+      "title": "Outdoor Living in Middleton, Idaho | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Middleton, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/outdoor-living/caldwell",
+      "title": "Outdoor Living & Decks in Caldwell, ID | Boise Remodeling Co",
+      "description": "Outdoor living spaces in Caldwell, Idaho: covered patios, decks and outdoor kitchens built for Idaho seasons. Idaho Registered Contractor #8381215.",
+      "canonical": "https://boiseremodeling.co/services/outdoor-living/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/boise",
+      "title": "Aging-in-place remodeling in Boise, ID | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Boise, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/meridian",
+      "title": "Aging-in-Place in Meridian, Idaho | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Meridian, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/meridian",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/eagle",
+      "title": "Aging-in-Place Remodeling in Eagle, ID | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Eagle, Idaho: curbless showers, wider doors, lighting, one-level living. HOA design review planned in from day one. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/eagle",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/nampa",
+      "title": "Aging-in-Place Remodeling in Nampa, ID | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Nampa, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/nampa",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/kuna",
+      "title": "Aging-in-Place Remodeling in Kuna, ID | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Kuna, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/kuna",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/star",
+      "title": "Aging-in-Place Remodeling in Star, ID | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Star, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/star",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/middleton",
+      "title": "Aging-in-Place in Middleton, Idaho | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Middleton, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/middleton",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/services/aging-in-place/caldwell",
+      "title": "Aging-in-Place in Caldwell, Idaho | Boise Remodeling Co",
+      "description": "Aging-in-place remodeling in Caldwell, Idaho: curbless showers, wider doors, lighting and one-level living. Idaho Registered Contractor #8381215. Book now.",
+      "canonical": "https://boiseremodeling.co/services/aging-in-place/caldwell",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-remodeling-cost-guide",
+      "title": "Boise Remodeling Costs (2026) | Boise Remodeling Co",
+      "description": "Compare Boise kitchen, bathroom, whole-home and addition remodeling budgets. Plan your scope, allowances and contingency, and see what changes the price.",
+      "canonical": "https://boiseremodeling.co/guides/boise-remodeling-cost-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/treasure-valley-remodeling-guide",
+      "title": "Treasure Valley Remodeling Guide | Boise Remodeling Co",
+      "description": "Master guide to remodeling in the Treasure Valley: Boise, Meridian, Eagle, Kuna, Star, Middleton, Nampa, Caldwell - permits, housing stock, costs, and services.",
+      "canonical": "https://boiseremodeling.co/guides/treasure-valley-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-remodeling-guide",
+      "title": "Boise Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Boise: North End, Bench, Harris Ranch, costs, permits, and design-build services for kitchens, baths, whole-home, and additions.",
+      "canonical": "https://boiseremodeling.co/guides/boise-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-adu-guide",
+      "title": "Boise ADU Guide | Boise Remodeling Co",
+      "description": "Boise ADU guide: zoning rules, size limits, costs ($90k-$300k+), permits, and attached vs detached vs garage conversion for Treasure Valley lots.",
+      "canonical": "https://boiseremodeling.co/guides/boise-adu-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-kitchen-remodeling-guide",
+      "title": "Boise Kitchen Remodeling Guide | Boise Remodeling Co",
+      "description": "Definitive kitchen remodeling guide for Boise and the Treasure Valley: layouts, timelines, cabinets, ROI, and design-build planning.",
+      "canonical": "https://boiseremodeling.co/guides/boise-kitchen-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-bathroom-remodeling-guide",
+      "title": "Boise Bathroom Remodeling Guide | Boise Remodeling Co",
+      "description": "Master bath and guest bath remodeling in Boise: showers, layouts, aging-in-place, ROI, permits, and realistic Treasure Valley cost ranges.",
+      "canonical": "https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-home-addition-guide",
+      "title": "Boise Home Addition Guide | Boise Remodeling Co",
+      "description": "Room additions, second stories, ADUs, and garage conversions in Boise and the Treasure Valley: feasibility, permits, cost, and design-build planning.",
+      "canonical": "https://boiseremodeling.co/guides/boise-home-addition-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/whole-home-remodeling-guide",
+      "title": "Whole Home Remodeling Guide Boise | Boise Remodeling Co",
+      "description": "Whole-home renovations in Idaho: phasing, remodeling vs moving, living through construction, budgeting, and design-build coordination.",
+      "canonical": "https://boiseremodeling.co/guides/whole-home-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/choose-remodeling-contractor-boise",
+      "title": "Choose a Remodeling Contractor Boise | Boise Remodeling Co",
+      "description": "Vet remodeling contractors in Boise: design-build vs general contractor, bids, red flags, consultations, and written scope before you sign.",
+      "canonical": "https://boiseremodeling.co/guides/choose-remodeling-contractor-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-remodeling-process-guide",
+      "title": "Boise Remodeling Process Guide | Boise Remodeling Co",
+      "description": "End-to-end remodeling process in Idaho: preconstruction, design, permits, construction, punch list, and warranty - what to expect at each phase.",
+      "canonical": "https://boiseremodeling.co/guides/boise-remodeling-process-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/best-remodeling-roi-boise",
+      "title": "Best Remodeling ROI Boise | Boise Remodeling Co",
+      "description": "Which remodels return the most value in Boise, Meridian & Eagle resale markets? Compare kitchen, bath, addition, and energy ROI before you remodel.",
+      "canonical": "https://boiseremodeling.co/guides/best-remodeling-roi-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/outdoor-living-remodeling-guide",
+      "title": "Outdoor Living Remodeling Guide Boise | Boise Remodeling Co",
+      "description": "Outdoor kitchens, covered patios, decks vs patios, fireplaces, and backyard entertaining built for Idaho’s dry climate and freeze-thaw seasons.",
+      "canonical": "https://boiseremodeling.co/guides/outdoor-living-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/meridian-remodeling-guide",
+      "title": "Meridian Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Meridian, Idaho: Ada County permits, builder-grade subdivision upgrades, and design-build kitchen, bath, and whole-home services.",
+      "canonical": "https://boiseremodeling.co/guides/meridian-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/eagle-remodeling-guide",
+      "title": "Eagle Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Eagle, Idaho including the Foothills: HOA design review, premium finishes, additions, and master-suite expansions.",
+      "canonical": "https://boiseremodeling.co/guides/eagle-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/kuna-remodeling-guide",
+      "title": "Kuna Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Kuna, Idaho: Ada County permits, newer construction, ADU feasibility, and family-friendly kitchen and bath upgrades from a local team.",
+      "canonical": "https://boiseremodeling.co/guides/kuna-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/star-remodeling-guide",
+      "title": "Star Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Star, Idaho: Ada County permitting plus kitchen, bath, addition, and outdoor-living upgrades for this growing Treasure Valley town.",
+      "canonical": "https://boiseremodeling.co/guides/star-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/middleton-remodeling-guide",
+      "title": "Middleton Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Middleton, Idaho: Canyon County permits, local housing context, and design-build kitchen, bath, whole-home, and addition services.",
+      "canonical": "https://boiseremodeling.co/guides/middleton-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/nampa-remodeling-guide",
+      "title": "Nampa Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Nampa, Idaho: Canyon County permits, diverse housing stock, and design-build kitchen, bathroom, whole-home, and addition services.",
+      "canonical": "https://boiseremodeling.co/guides/nampa-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/caldwell-remodeling-guide",
+      "title": "Caldwell Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Caldwell, Idaho: Canyon County permits, historic and new-build housing context, and design-build kitchen, bath, whole-home, and addition services.",
+      "canonical": "https://boiseremodeling.co/guides/caldwell-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/north-end-remodeling-guide",
+      "title": "North End Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Boise's North End: sensitive kitchen and bath layouts, electrical upgrades, and scale-appropriate additions for historic bungalows.",
+      "canonical": "https://boiseremodeling.co/guides/north-end-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/boise-bench-remodeling-guide",
+      "title": "Boise Bench Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling on the Boise Bench: opening up mid-century ranch kitchens, modernizing primary baths, and upgrading windows and insulation.",
+      "canonical": "https://boiseremodeling.co/guides/boise-bench-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/harris-ranch-remodeling-guide",
+      "title": "Harris Ranch Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Harris Ranch, Boise: upgrading builder-grade finishes, adding kitchen islands and mudrooms, and expanding HOA-aware outdoor living.",
+      "canonical": "https://boiseremodeling.co/guides/harris-ranch-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/east-boise-remodeling-guide",
+      "title": "East Boise Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in East Boise: kitchen and bath upgrades through full additions for established homes and infill lots - confirm setbacks and zoning early.",
+      "canonical": "https://boiseremodeling.co/guides/east-boise-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/hidden-springs-remodeling-guide",
+      "title": "Hidden Springs Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in Hidden Springs in the Boise foothills: HOA design coordination, premium finishes, and additions that respect this master-planned community's",
+      "canonical": "https://boiseremodeling.co/guides/hidden-springs-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/guides/eagle-foothills-remodeling-guide",
+      "title": "Eagle Foothills Remodeling Guide | Boise Remodeling Co",
+      "description": "Remodeling in the Eagle Foothills: luxury finishes, hillside sites with views, structural planning, and longer design-development timelines.",
+      "canonical": "https://boiseremodeling.co/guides/eagle-foothills-remodeling-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/remodeling-costs",
+      "title": "Boise Remodeling Costs Articles | Boise Remodeling Co",
+      "description": "Planning ranges, cost drivers, and budgeting for Treasure Valley remodels. 8 in-depth articles on boise remodeling costs for Boise, Meridian, Eagle, Nampa…",
+      "canonical": "https://boiseremodeling.co/blog/category/remodeling-costs",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/kitchen-remodeling",
+      "title": "Kitchen Remodeling Articles | Boise Remodeling Co",
+      "description": "Layouts, timelines, materials, and ROI for kitchen remodels in Boise. 8 in-depth articles on kitchen remodeling for Boise, Meridian, Eagle, Nampa and…",
+      "canonical": "https://boiseremodeling.co/blog/category/kitchen-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/bathroom-remodeling",
+      "title": "Bathroom Remodeling Articles | Boise Remodeling Co",
+      "description": "Showers, layouts, aging-in-place, and bathroom ROI. 7 in-depth articles on bathroom remodeling for Boise, Meridian, Eagle, Nampa and Treasure Valley…",
+      "canonical": "https://boiseremodeling.co/blog/category/bathroom-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/home-additions",
+      "title": "Home Additions Articles | Boise Remodeling Co",
+      "description": "Second stories, suites, ADUs, and garage conversions. 8 in-depth articles on home additions for Boise, Meridian, Eagle, Nampa and Treasure Valley homeowners…",
+      "canonical": "https://boiseremodeling.co/blog/category/home-additions",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/whole-home-remodeling",
+      "title": "Whole Home Remodeling Articles | Boise Remodeling Co",
+      "description": "Phased renovations, remodeling vs moving, and living through construction. 5 in-depth articles on whole home remodeling for Boise, Meridian, Eagle, Nampa and…",
+      "canonical": "https://boiseremodeling.co/blog/category/whole-home-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/contractor-selection",
+      "title": "Contractor Selection Articles | Boise Remodeling Co",
+      "description": "How to vet, compare bids, and choose a design-build partner. 6 in-depth articles on contractor selection for Boise, Meridian, Eagle, Nampa and Treasure…",
+      "canonical": "https://boiseremodeling.co/blog/category/contractor-selection",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/remodeling-process",
+      "title": "Remodeling Process Articles | Boise Remodeling Co",
+      "description": "Permits, preconstruction, construction, punch list, and warranty. 5 in-depth articles on remodeling process for Boise, Meridian, Eagle, Nampa and Treasure…",
+      "canonical": "https://boiseremodeling.co/blog/category/remodeling-process",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/remodeling-roi",
+      "title": "ROI & Home Value Articles | Boise Remodeling Co",
+      "description": "Projects that return value in the Treasure Valley market. 7 in-depth articles on roi & home value for Boise, Meridian, Eagle, Nampa and Treasure Valley…",
+      "canonical": "https://boiseremodeling.co/blog/category/remodeling-roi",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/category/outdoor-living",
+      "title": "Outdoor Living Articles | Boise Remodeling Co",
+      "description": "Patios, outdoor kitchens, decks, and backyard entertaining. 5 in-depth articles on outdoor living for Boise, Meridian, Eagle, Nampa and Treasure Valley…",
+      "canonical": "https://boiseremodeling.co/blog/category/outdoor-living",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/kitchen-remodel-cost-boise",
+      "title": "Boise Kitchen Remodel Costs (2026) | Boise Remodeling Co",
+      "description": "Compare Boise kitchen remodel costs by scope and finish level. Review cabinet, countertop and labor budgets, project timelines and ways to manage costs.",
+      "canonical": "https://boiseremodeling.co/blog/kitchen-remodel-cost-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/bathroom-remodel-cost-boise",
+      "title": "Boise Bathroom Remodel Costs (2026) | Boise Remodeling Co",
+      "description": "Compare Boise bathroom remodel costs for showers, tile, vanities and layout changes. Review planning ranges, cost drivers and questions to ask before starting.",
+      "canonical": "https://boiseremodeling.co/blog/bathroom-remodel-cost-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/whole-home-remodel-cost-boise",
+      "title": "Whole Home Remodel Cost Boise (2026) | Boise Remodeling Co",
+      "description": "How much does a whole-home remodel cost in Boise? 2026 planning ranges, cost per square foot, phasing, contingency, timelines, and remodel-vs-move guidance",
+      "canonical": "https://boiseremodeling.co/blog/whole-home-remodel-cost-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/home-addition-cost-boise",
+      "title": "Boise Home Addition Costs (2026) | Boise Remodeling Co",
+      "description": "Plan a Boise home addition with cost ranges for bedrooms, suites and second stories. Review structural work, permits, site conditions and budget allowances.",
+      "canonical": "https://boiseremodeling.co/blog/home-addition-cost-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/remodel-cost-per-square-foot-boise",
+      "title": "Remodel Cost Per Square Foot Boise | Boise Remodeling Co",
+      "description": "What does it cost per square foot to remodel a home in Boise? 2026 ranges by project type, why the metric misleads, when it helps, and how to budget a Treasure",
+      "canonical": "https://boiseremodeling.co/blog/remodel-cost-per-square-foot-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/what-impacts-remodeling-costs-boise",
+      "title": "What Impacts Remodeling Costs in Boise | Boise Remodeling Co",
+      "description": "The nine factors that move remodeling costs most in Boise: scope, finishes, layout changes, systems, site conditions, permits, timeline, and contractor model.",
+      "canonical": "https://boiseremodeling.co/blog/what-impacts-remodeling-costs-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/how-to-budget-remodel-boise",
+      "title": "How to Budget for a Remodel in Boise | Boise Remodeling Co",
+      "description": "A step-by-step framework for budgeting a Boise remodel: set priorities, build the number with contingency and soft costs, plan for financing, and compare bids",
+      "canonical": "https://boiseremodeling.co/blog/how-to-budget-remodel-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/luxury-remodel-cost-boise",
+      "title": "Luxury Remodel Cost Boise & Eagle | Boise Remodeling Co",
+      "description": "What does a luxury remodel cost in Boise and Eagle? 2026 planning ranges for high-end kitchens, primary suites, and whole-home projects, what defines luxury",
+      "canonical": "https://boiseremodeling.co/blog/luxury-remodel-cost-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/questions-to-ask-remodeling-contractor",
+      "title": "Questions to Ask Remodeling Contractor | Boise Remodeling Co",
+      "description": "The essential questions to ask a remodeling contractor in Boise before you hire: licensing and insurance, process, communication, timeline, change orders",
+      "canonical": "https://boiseremodeling.co/blog/questions-to-ask-remodeling-contractor",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/remodeling-contractor-red-flags",
+      "title": "Remodeling Contractor Red Flags | Boise Remodeling Co",
+      "description": "Twelve remodeling contractor red flags every Boise homeowner should know: no license or insurance, large upfront deposits, no written contract, pressure",
+      "canonical": "https://boiseremodeling.co/blog/remodeling-contractor-red-flags",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/design-build-vs-general-contractor",
+      "title": "Design-Build vs General Contractor | Boise Remodeling Co",
+      "description": "Design-build vs. general contractor for a Boise remodel: how each model works, the pros and cons, cost and accountability differences, and how to choose the",
+      "canonical": "https://boiseremodeling.co/blog/design-build-vs-general-contractor",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/how-to-compare-remodeling-estimates",
+      "title": "How to Compare Remodeling Estimates | Boise Remodeling Co",
+      "description": "How to compare remodeling estimates the right way in Boise: align scope and allowances, check what is included and excluded, and choose on value instead of the",
+      "canonical": "https://boiseremodeling.co/blog/how-to-compare-remodeling-estimates",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/why-remodeling-bids-vary",
+      "title": "Why Remodeling Bids Vary So Much | Boise Remodeling Co",
+      "description": "Why do remodeling bids vary so much for the same project in Boise? The real reasons behind big price differences - scope, allowances, quality, overhead, and",
+      "canonical": "https://boiseremodeling.co/blog/why-remodeling-bids-vary",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/fixed-price-vs-cost-plus",
+      "title": "Fixed-Price vs Cost-Plus Remodeling | Boise Remodeling Co",
+      "description": "Fixed-price vs. cost-plus remodeling contracts explained: how each works, the pros and cons, who carries the risk, and which contract type is right for your",
+      "canonical": "https://boiseremodeling.co/blog/fixed-price-vs-cost-plus",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/kitchen-remodel-timeline-boise",
+      "title": "Kitchen Remodel Timeline Boise | Boise Remodeling Co",
+      "description": "How long does a kitchen remodel take in Boise? A phase-by-phase timeline from design to final walkthrough, what affects the schedule, and how to prepare for",
+      "canonical": "https://boiseremodeling.co/blog/kitchen-remodel-timeline-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/kitchen-layout-ideas-boise-homes",
+      "title": "Kitchen Layout Ideas for Boise Homes | Boise Remodeling Co",
+      "description": "The best kitchen layout ideas for Boise homes: galley, L-shaped, U-shaped, island, and open-concept layouts, the work-triangle rule, and which fits your home",
+      "canonical": "https://boiseremodeling.co/blog/kitchen-layout-ideas-boise-homes",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/kitchen-cabinet-trends-boise",
+      "title": "Kitchen Cabinet Trends for Boise Homes | Boise Remodeling Co",
+      "description": "The kitchen cabinet trends worth following in Boise homes: two-tone and painted cabinets, natural wood, door styles, hardware, and storage that stays timeless.",
+      "canonical": "https://boiseremodeling.co/blog/kitchen-cabinet-trends-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/quartz-vs-quartzite-countertops",
+      "title": "Quartz vs Quartzite Countertops | Boise Remodeling Co",
+      "description": "Quartz vs quartzite countertops compared: durability, maintenance, heat and scratch resistance, cost, and look - so Boise homeowners can choose the right",
+      "canonical": "https://boiseremodeling.co/blog/quartz-vs-quartzite-countertops",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/kitchen-island-design-guide",
+      "title": "Kitchen Island Design Guide | Boise Remodeling Co",
+      "description": "How to design a kitchen island that works: sizing and clearances, seating, storage, sinks and cooktops, electrical, and the mistakes to avoid - for Boise",
+      "canonical": "https://boiseremodeling.co/blog/kitchen-island-design-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/small-kitchen-remodel-ideas-boise",
+      "title": "Small Kitchen Remodel Ideas | Boise Remodeling Co",
+      "description": "Smart small kitchen remodel ideas for Boise homes: layouts that maximize space, storage tricks, light colors, and the upgrades that make a compact kitchen feel",
+      "canonical": "https://boiseremodeling.co/blog/small-kitchen-remodel-ideas-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/open-concept-kitchen-remodeling",
+      "title": "Open-Concept Kitchen Remodeling | Boise Remodeling Co",
+      "description": "What open-concept kitchen remodeling involves in Boise: removing walls, structural beams and permits, cost, ventilation and zoning, and whether it fits your",
+      "canonical": "https://boiseremodeling.co/blog/open-concept-kitchen-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/walk-in-shower-guide",
+      "title": "Walk-In Shower Guide (Boise Bathrooms) | Boise Remodeling Co",
+      "description": "A complete walk-in shower guide for Boise bathrooms: sizes and layouts, glass, tile, niches and benches, waterproofing, cost, and how it compares to a tub.",
+      "canonical": "https://boiseremodeling.co/blog/walk-in-shower-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/curbless-shower-guide",
+      "title": "Curbless Shower Guide | Boise Remodeling Co",
+      "description": "Everything about curbless showers for Boise bathrooms: how zero-threshold showers are built, drainage and waterproofing, accessibility, cost, and pros and cons.",
+      "canonical": "https://boiseremodeling.co/blog/curbless-shower-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/small-bathroom-remodel-ideas",
+      "title": "Small Bathroom Remodel Ideas | Boise Remodeling Co",
+      "description": "Smart small bathroom remodel ideas for Boise homes: space-saving layouts, storage, light colors, curbless showers, floating vanities, and the upgrades that",
+      "canonical": "https://boiseremodeling.co/blog/small-bathroom-remodel-ideas",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/aging-in-place-bathroom-design",
+      "title": "Aging-in-Place Bathroom Design | Boise Remodeling Co",
+      "description": "How to design an aging-in-place bathroom in Boise that is safe and beautiful: curbless showers, grab bars, comfort-height fixtures, lighting, and universal",
+      "canonical": "https://boiseremodeling.co/blog/aging-in-place-bathroom-design",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/luxury-bathroom-features",
+      "title": "Luxury Bathroom Features (Boise Guide) | Boise Remodeling Co",
+      "description": "The luxury bathroom features worth the investment in Boise homes: freestanding tubs, spa showers, heated floors, smart toilets, double vanities, and premium",
+      "canonical": "https://boiseremodeling.co/blog/luxury-bathroom-features",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/bathroom-layout-planning-guide",
+      "title": "Bathroom Layout Planning Guide (Boise) | Boise Remodeling Co",
+      "description": "A practical bathroom layout planning guide for Boise homes: standard clearances, the wet zone, plumbing placement, door swings, and layouts that work for every",
+      "canonical": "https://boiseremodeling.co/blog/bathroom-layout-planning-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/how-long-does-a-bathroom-remodel-take",
+      "title": "How Long Does a Bathroom Remodel Take? | Boise Remodeling Co",
+      "description": "How long a bathroom remodel takes in Boise: a realistic week-by-week timeline, what drives the schedule, and why design and ordering happen before demolition",
+      "canonical": "https://boiseremodeling.co/blog/how-long-does-a-bathroom-remodel-take",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/adu-cost-boise",
+      "title": "Boise ADU Costs (2026) | Boise Remodeling Co",
+      "description": "Compare Boise ADU costs for detached units, garage conversions and interior suites. Review utilities, site work, finish levels and permit considerations.",
+      "canonical": "https://boiseremodeling.co/blog/adu-cost-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/garage-conversions",
+      "title": "Garage Conversions in Boise | Boise Remodeling Co",
+      "description": "A complete guide to garage conversions in Boise: what they cost, permits and egress, insulation and HVAC, best uses, and how to turn a garage into livable",
+      "canonical": "https://boiseremodeling.co/blog/garage-conversions",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/basement-finishing-boise",
+      "title": "Basement Finishing in Boise | Boise Remodeling Co",
+      "description": "A complete guide to basement finishing in Boise: cost drivers, egress and permits, moisture control, ceiling height, and how to turn a basement into great",
+      "canonical": "https://boiseremodeling.co/blog/basement-finishing-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/primary-suite-additions",
+      "title": "Primary Suite Additions (Boise Guide) | Boise Remodeling Co",
+      "description": "What to know about primary (master) suite additions in Boise: cost, layout, ground-floor vs second-story, what a suite includes, and how to plan the addition",
+      "canonical": "https://boiseremodeling.co/blog/primary-suite-additions",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/second-story-additions",
+      "title": "Second-Story Additions in Boise | Boise Remodeling Co",
+      "description": "What to know about second-story additions in Boise: cost drivers, structural requirements, living through construction, full vs partial second floors, and when",
+      "canonical": "https://boiseremodeling.co/blog/second-story-additions",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/bedroom-additions",
+      "title": "Bedroom Additions in Boise | Boise Remodeling Co",
+      "description": "A guide to bedroom additions in Boise: what a legal bedroom requires, cost drivers, bump-out vs full addition, egress and closets, and how to plan the extra",
+      "canonical": "https://boiseremodeling.co/blog/bedroom-additions",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/multigenerational-living-remodels",
+      "title": "Mother-in-Law Suites | Boise Remodeling Co",
+      "description": "How to add a mother-in-law suite in Boise: in-law suite cost and ideas, ADUs vs suites, private entrances, accessibility, and balancing togetherness with",
+      "canonical": "https://boiseremodeling.co/blog/multigenerational-living-remodels",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/home-addition-timeline-guide",
+      "title": "Home Addition Timeline (Boise Guide) | Boise Remodeling Co",
+      "description": "A realistic home addition timeline for Boise: design and permitting, the construction phases week by week, what drives the schedule, and how additions differ",
+      "canonical": "https://boiseremodeling.co/blog/home-addition-timeline-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/whole-home-remodel-timeline",
+      "title": "Whole-Home Remodel Timeline (Boise) | Boise Remodeling Co",
+      "description": "A realistic whole-home remodel timeline for Boise: design and permitting, the phase-by-phase construction schedule, what drives the length, and whether to move",
+      "canonical": "https://boiseremodeling.co/blog/whole-home-remodel-timeline",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/remodeling-vs-moving",
+      "title": "Remodeling vs Moving | Boise Remodeling Co",
+      "description": "Remodeling vs moving: how to decide whether to renovate your Boise home or buy a new one - weighing cost, market, location, disruption, and whether your home",
+      "canonical": "https://boiseremodeling.co/blog/remodeling-vs-moving",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/living-through-a-remodel",
+      "title": "Living Through a Remodel | Boise Remodeling Co",
+      "description": "How to survive living through a remodel in Boise: setting up a temporary kitchen, containing dust, protecting belongings, managing kids and pets, and staying",
+      "canonical": "https://boiseremodeling.co/blog/living-through-a-remodel",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/remodeling-mistakes-to-avoid",
+      "title": "Remodeling Mistakes to Avoid | Boise Remodeling Co",
+      "description": "The most common remodeling mistakes to avoid: underbudgeting, skipping planning, choosing on price alone, changing your mind mid-project, and neglecting",
+      "canonical": "https://boiseremodeling.co/blog/remodeling-mistakes-to-avoid",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/whole-home-remodel-planning-checklist",
+      "title": "Whole-Home Remodel Planning Checklist | Boise Remodeling Co",
+      "description": "A step-by-step whole-home remodel planning checklist for Boise: set goals and budget, prioritize, choose a contractor, finalize design and selections, plan",
+      "canonical": "https://boiseremodeling.co/blog/whole-home-remodel-planning-checklist",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/consultation-process-remodeling",
+      "title": "What to Expect Remodeling Consultation | Boise Remodeling Co",
+      "description": "What happens at a remodeling consultation in Boise: what the contractor looks at, the questions they ask, what you should prepare, and how to get the most from",
+      "canonical": "https://boiseremodeling.co/blog/consultation-process-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/material-selection-guide",
+      "title": "Material Selection Guide for Remodels | Boise Remodeling Co",
+      "description": "How to choose remodel materials and finishes in Boise: balancing durability, cost, and style; where to splurge and save; coordinating selections; and avoiding",
+      "canonical": "https://boiseremodeling.co/blog/material-selection-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/boise-permit-guide",
+      "title": "Boise Remodeling Permits Guide | Boise Remodeling Co",
+      "description": "A plain-English guide to remodeling permits in Boise and the Treasure Valley: what needs a permit, why permits matter, the process, timelines, and who handles",
+      "canonical": "https://boiseremodeling.co/blog/boise-permit-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/kitchen-remodel-roi",
+      "title": "Does a Kitchen Remodel Add Value? | Boise Remodeling Co",
+      "description": "Does a kitchen remodel add value? How kitchen remodel ROI works in Boise, what returns to expect, which upgrades pay off most, and how to remodel for value and",
+      "canonical": "https://boiseremodeling.co/blog/kitchen-remodel-roi",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/bathroom-remodel-roi",
+      "title": "Does a Bathroom Remodel Add Value? | Boise Remodeling Co",
+      "description": "Does a bathroom remodel add value? How bathroom remodel ROI works in Boise, what returns to expect, which upgrades pay off, and whether to add a bathroom for",
+      "canonical": "https://boiseremodeling.co/blog/bathroom-remodel-roi",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/energy-efficiency-roi",
+      "title": "Energy-Efficiency ROI for Remodels | Boise Remodeling Co",
+      "description": "Which energy-efficiency upgrades pay off in Boise? How insulation, windows, HVAC, and air sealing deliver ROI through lower bills, comfort, and home value in",
+      "canonical": "https://boiseremodeling.co/blog/energy-efficiency-roi",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/exterior-remodeling-roi",
+      "title": "Exterior Remodeling ROI & Curb Appeal | Boise Remodeling Co",
+      "description": "Which exterior projects deliver the best ROI in Boise? How siding, entry doors, garage doors, paint, and landscaping boost curb appeal, first impressions, and",
+      "canonical": "https://boiseremodeling.co/blog/exterior-remodeling-roi",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/outdoor-kitchens-boise",
+      "title": "Outdoor Kitchens in Boise | Boise Remodeling Co",
+      "description": "A complete guide to outdoor kitchens in Boise: features and appliances, layout, materials that survive Idaho winters, utilities, cost, and how to design one",
+      "canonical": "https://boiseremodeling.co/blog/outdoor-kitchens-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/covered-patios-boise",
+      "title": "Covered Patios in Boise (Types & Cost) | Boise Remodeling Co",
+      "description": "A guide to covered patios in Boise: attached vs freestanding, roof styles, materials that handle Idaho snow and sun, permits, cost, and how a cover extends",
+      "canonical": "https://boiseremodeling.co/blog/covered-patios-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/walk-in-pantry-design-guide",
+      "title": "Walk-In Pantry Design Guide | Boise Remodeling Co",
+      "description": "Pantry layouts, shelving, and traffic flow for Idaho homes. Serving Boise, Meridian, Eagle, Nampa, and the Treasure Valley.",
+      "canonical": "https://boiseremodeling.co/blog/walk-in-pantry-design-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/punch-list-guide",
+      "title": "Remodel punch list: final walk-through | Boise Remodeling Co",
+      "description": "A remodel punch list is the final details caught in a walk-through. What belongs on it, who writes it, and how it connects to sign-off and the warranty.",
+      "canonical": "https://boiseremodeling.co/blog/punch-list-guide",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/warranty-guide-remodeling",
+      "title": "Remodeling warranty: what it covers | Boise Remodeling Co",
+      "description": "How a remodeling workmanship guarantee works: what it covers, how long it runs, how manufacturer warranties fit in, and what to get in writing first.",
+      "canonical": "https://boiseremodeling.co/blog/warranty-guide-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/addition-roi-remodeling",
+      "title": "Home addition ROI in Boise | Boise Remodeling Co",
+      "description": "When a home addition adds value in Boise: needs-driven space, permitted square footage, not over-improving the street, and how it compares with moving.",
+      "canonical": "https://boiseremodeling.co/blog/addition-roi-remodeling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/outdoor-living-roi",
+      "title": "Outdoor living ROI in Boise | Boise Remodeling Co",
+      "description": "Does outdoor living add value in Boise? How decks, covered patios and outdoor kitchens return value, why integration matters, and why use is the payoff.",
+      "canonical": "https://boiseremodeling.co/blog/outdoor-living-roi",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/remodeling-before-selling",
+      "title": "Remodeling before selling in Boise | Boise Remodeling Co",
+      "description": "Remodeling before you sell in Boise: which updates pay back, why mid-range beats luxury, fixing what buyers deduct for, and when not to remodel at all.",
+      "canonical": "https://boiseremodeling.co/blog/remodeling-before-selling",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/decks-vs-patios-boise",
+      "title": "Decks vs patios in Boise | Boise Remodeling Co",
+      "description": "Deck or patio in Boise? Compare composite and wood decking, hardscape that survives freeze-thaw, covers and permits, and how each fits your yard.",
+      "canonical": "https://boiseremodeling.co/blog/decks-vs-patios-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/outdoor-fireplaces-boise",
+      "title": "Outdoor fireplaces in Boise | Boise Remodeling Co",
+      "description": "Outdoor fireplaces and fire features for Boise homes: extending the season into cool evenings, pairing fire with a covered patio, materials and permits.",
+      "canonical": "https://boiseremodeling.co/blog/outdoor-fireplaces-boise",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    },
+    {
+      "route": "/blog/outdoor-entertaining-spaces",
+      "title": "Outdoor entertaining spaces, Boise | Boise Remodeling Co",
+      "description": "Plan an outdoor entertaining space in Boise: zones for cooking, dining and lounging, outdoor kitchens, covered patios, Idaho-rated materials and permits.",
+      "canonical": "https://boiseremodeling.co/blog/outdoor-entertaining-spaces",
+      "images": [
+        "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png"
+      ],
+      "twitter": "https://boiseremodeling.co/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
+      "robots": "index, follow",
+      "icon": "/favicon.ico"
+    }
+  ],
+  "mobile": [
+    {
+      "width": 320,
+      "visibleOverHero": true,
+      "visibleAfterHero": true,
+      "callLabeled": true
+    },
+    {
+      "width": 390,
+      "visibleOverHero": true,
+      "visibleAfterHero": true,
+      "callLabeled": true
+    },
+    {
+      "width": 768,
+      "visibleOverHero": true,
+      "visibleAfterHero": true,
+      "callLabeled": true
+    }
+  ],
+  "errors": [],
+  "scope": "Built production app in Chromium emulation; not physical devices or a claim of live deployment.",
+  "completed": true
+}

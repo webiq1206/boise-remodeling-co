@@ -407,7 +407,7 @@
   color: #2c302f;
   padding: 0;
 }
-.approved-shell.site-remodeling .fold-form input:not([type="radio"]):not(.fold-honeypot),
+.approved-shell.site-remodeling .fold-form input:not([type="radio"]):not([type="file"]):not(.fold-honeypot),
 .approved-shell.site-remodeling .fold-form textarea,
 .approved-shell.site-remodeling .fold-form select {
   width: 100%;
@@ -429,7 +429,6 @@
 }
 .approved-shell.site-remodeling .fold-form input::placeholder,
 .approved-shell.site-remodeling .fold-form textarea::placeholder { color: #62605a; }
-.approved-shell.site-remodeling .fold-file input { padding: 10px 8px; }
 .approved-shell.site-remodeling .fold-hint {
   margin: 0;
   font: 500 14px/1.45 var(--font-manrope), Arial, sans-serif;
@@ -610,6 +609,199 @@
   margin: 0;
   color: #2c302f;
   font-size: 17px;
+}
+/* Where the bottom bar shows, a control scrolled or tabbed into view clears it instead of
+   settling underneath it (the send button sat exactly under the bar at 1024px). */
+.approved-shell.site-remodeling :is(.fold-form, .fold-details) :is(input, textarea, select, button, a) {
+  scroll-margin-bottom: calc(var(--site-bottom-bar-h, 0px) + 16px);
+}
+/* Quote form v2: one friendly attachment tile instead of the raw file control, chips for the
+   chosen files, and step 2 ("Help us prepare") on the success screen. */
+.approved-shell.site-remodeling .fold-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 12px 14px;
+  border: 1px dashed #2c302f80;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .fold-tile:hover,
+.approved-shell.site-remodeling .fold-tile.is-dragging {
+  border-color: #2c302f;
+  background: #f6f4ee;
+}
+.approved-shell.site-remodeling .fold-tile:focus-within {
+  outline: 2px solid #2c302f;
+  outline-offset: 2px;
+}
+.approved-shell.site-remodeling .fold-tile-icon { flex-shrink: 0; }
+.approved-shell.site-remodeling .fold-tile-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.approved-shell.site-remodeling .fold-tile-title {
+  font: 600 15px/1.35 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .fold-tile-hint {
+  font: 500 13px/1.4 var(--font-manrope), Arial, sans-serif;
+  color: #555b56;
+}
+/* Visually hidden but focusable: keyboard users tab to it, and the whole tile opens the picker. */
+.approved-shell.site-remodeling .fold-form input.fold-tile-input,
+.approved-shell.site-remodeling .fold-details input.fold-tile-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  padding: 0;
+  margin: -1px;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.approved-shell.site-remodeling .fold-chips,
+.approved-shell.site-remodeling .fold-upload-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.approved-shell.site-remodeling .fold-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 4px 4px 4px 6px;
+  border: 1px solid #2c302f26;
+  border-radius: 2px;
+  background: #fff;
+}
+.approved-shell.site-remodeling .fold-chip-thumb {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 2px;
+  background: #ece9e1;
+}
+.approved-shell.site-remodeling .fold-chip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .fold-chip-text {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.approved-shell.site-remodeling .fold-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 600 14px/1.35 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .fold-chip-size {
+  font: 500 13px/1.35 var(--font-manrope), Arial, sans-serif;
+  color: #555b56;
+}
+.approved-shell.site-remodeling .fold-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2c302f;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .fold-chip-remove:focus-visible {
+  outline: 2px solid #2c302f;
+  outline-offset: -2px;
+}
+.approved-shell.site-remodeling .fold-attach-note { margin: 0; }
+.approved-shell.site-remodeling .fold-pills-wrap {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 560px) {
+  .approved-shell.site-remodeling .fold-pills-wrap { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.approved-shell.site-remodeling .fold-pills-wrap .fold-pill span { padding: 0 10px; }
+.approved-shell.site-remodeling .fold-uploads {
+  display: grid;
+  gap: 8px;
+  padding: 14px 0 0;
+  border-top: 1px solid #2c302f26;
+}
+.approved-shell.site-remodeling .fold-upload-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  min-width: 0;
+  font: 500 14px/1.45 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+}
+.approved-shell.site-remodeling .fold-upload-list .fold-chip-name { max-width: 100%; }
+.approved-shell.site-remodeling .fold-upload-state { color: #555b56; }
+.approved-shell.site-remodeling .fold-upload-list li[data-status="failed"] .fold-upload-state,
+.approved-shell.site-remodeling .fold-upload-fail { color: #8a3b2b; }
+.approved-shell.site-remodeling .fold-upload-fail { flex-basis: 100%; }
+.approved-shell.site-remodeling .fold-upload-fail .fold-secondary {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .fold-details {
+  display: grid;
+  gap: 16px;
+  margin: 8px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid #2c302f26;
+}
+.approved-shell.site-remodeling .fold-details-title {
+  margin: 0;
+  font: 600 18px/1.35 var(--font-manrope), Arial, sans-serif;
+  color: #2c302f;
+  outline: none;
+}
+.approved-shell.site-remodeling .fold-details input:not([type="radio"]):not(.fold-tile-input) {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid #2c302f66;
+  border-radius: 2px;
+  background: #fff;
+  color: #2c302f;
+  font: 16px/1.4 var(--font-manrope), Arial, sans-serif;
+}
+.approved-shell.site-remodeling .fold-details-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+}
+.approved-shell.site-remodeling .fold-details-actions .fold-submit { width: auto; flex: 1 1 220px; }
+.approved-shell.site-remodeling .fold-details-actions .fold-secondary {
+  min-height: 48px;
+  padding: 0 4px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
 }
 @media (min-width: 1024px) {
   .approved-shell.site-remodeling .fold-send {

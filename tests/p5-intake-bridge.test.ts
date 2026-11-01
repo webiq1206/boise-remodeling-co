@@ -98,6 +98,9 @@ test("intake body uses the fields the p5 route already reads", () => {
     city: "Boise",
     summary: "Visitor project: Room Addition\n\nAdd a bedroom over the garage.",
     externalLeadId: "boiseremodeling-consultation:11111111-1111-4111-8111-111111111111",
+    // Quote form v2 contract: the same id as external_id, and this is the first submission.
+    external_id: "boiseremodeling-consultation:11111111-1111-4111-8111-111111111111",
+    submission_kind: "initial",
   });
 });
 
