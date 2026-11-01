@@ -8,7 +8,7 @@ import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
-import { P5_FACEBOOK_URL } from '@/shared/gbpProfile';
+import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
 
 interface SchemaContext {
   '@context': string;
@@ -54,9 +54,9 @@ export const P5_PARENT_ORGANIZATION = {
   '@id': P5_ORG_ID,
   name: 'P5 Home Co',
   url: P5_ORIGIN,
-  // P5 Home Co's Facebook page is the family's only social profile; listed
-  // here on the parent, never on this brand.
-  ...(P5_FACEBOOK_URL ? { sameAs: [P5_FACEBOOK_URL] } : {}),
+  // P5 Home Co's Facebook page and its Google Business Profile are the
+  // family's only profiles; listed here on the parent, never on this brand.
+  sameAs: [P5_FACEBOOK_URL, P5_GBP_URL],
 } as const;
 /**
  * Year-free square mark. The seal still reads EST 2020, so schema logo uses

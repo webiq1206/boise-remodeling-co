@@ -89,6 +89,15 @@ export const GBP_LINKS = {
  */
 export const P5_FACEBOOK_URL = 'https://www.facebook.com/1228704823655951';
 
+/**
+ * Owner decision (2026-11-01): P5 Home Co's single Google Business Profile
+ * (category General contractor, knowledge graph id /g/11ntl1t7dc). It covers
+ * every brand, so like the Facebook page it sits only in the parent
+ * organization's sameAs, never in this brand's own: Boise Remodeling Co has no
+ * profile of its own to point at.
+ */
+export const P5_GBP_URL = 'https://www.google.com/search?kgmid=/g/11ntl1t7dc';
+
 export const GBP_ATTRIBUTES = {
   onlineEstimates: true,
   onsiteServices: true,
@@ -558,10 +567,14 @@ export function getGbpProfileUrl(): string | undefined {
   return url || undefined;
 }
 
-/** Optional third-party profile URLs for schema sameAs (set via env after listings go live). */
+/**
+ * Optional third-party profile URLs for this brand's own schema sameAs (set via
+ * env after listings go live). NEXT_PUBLIC_GBP_URL is deliberately NOT read
+ * here: the only Google profile is P5 Home Co's (P5_GBP_URL), which belongs on
+ * the parent organization, never on this brand.
+ */
 export function getExternalProfileUrls(): string[] {
   const keys = [
-    'NEXT_PUBLIC_GBP_URL',
     'NEXT_PUBLIC_BING_PLACES_URL',
     'NEXT_PUBLIC_APPLE_BUSINESS_URL',
     'NEXT_PUBLIC_YELP_URL',
