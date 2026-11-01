@@ -25,11 +25,16 @@ interface EstimateCTAProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>,
  * Tracked once here rather than at each of the ~20+ call sites, so every
  * "Request a quote" click - nav, hero, footer, service pages, result screens -
  * reports through the same event.
+ *
+ * One label, one destination: every "Request a quote" goes to the short
+ * request at /#request, the same place as the header and the bottom bar
+ * (FAMILY_BRAND.cta, pinned by scripts/verify-p5-mobile-seo.mjs). Links to the
+ * longer /estimate request use CTA_PROJECT_DETAILS instead.
  */
 export function EstimateCTA({ onExtraClick, children, variant, size, tone = "light", block = false, className, ...props }: EstimateCTAProps) {
   const secondary = /outline/i.test(variant ?? "");
   const pathname = usePathname();
-  const href = pathname === "/" ? "/#request" : "/estimate";
+  const href = "/#request";
 
   return (
     <a

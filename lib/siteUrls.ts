@@ -22,6 +22,7 @@ import {
 } from '@/shared/contentHubs';
 import { isCityServiceNoindex } from '@/lib/page-metadata';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 export type ChangeFrequency = 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
 
@@ -48,10 +49,10 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     { path: '/services', label: 'Services', changeFrequency: 'monthly', priority: 0.85 },
     { path: '/about', label: 'About', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/areas', label: 'Service areas', changeFrequency: 'monthly', priority: 0.75 },
-    { path: '/estimate', label: 'Get an estimate', changeFrequency: 'monthly', priority: 0.9 },
+    { path: '/estimate', label: 'Send project details', changeFrequency: 'monthly', priority: 0.9 },
     // /re-10-repairs-boise canonicals to boisehandyman.co, so it is not listed here.
     { path: '/remodel-plans-boise', label: 'Remodel plans', changeFrequency: 'monthly', priority: 0.9 },
-    { path: '/design-ideas', label: SHOW_TESTIMONIALS ? 'Testimonials' : 'Design Ideas', changeFrequency: 'monthly', priority: 0.65 },
+    { path: '/design-ideas', label: SHOW_TESTIMONIALS ? 'Testimonials' : 'Design ideas', changeFrequency: 'monthly', priority: 0.65 },
     { path: '/contact', label: 'Contact', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/resources', label: 'Resources', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/resources/ada-canyon-permit-flow', label: 'Ada vs Canyon County permit flow', changeFrequency: 'monthly', priority: 0.65 },
@@ -64,7 +65,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
 
   const services: SiteUrlEntry[] = SERVICES.map((s) => ({
     path: `/services/${s.slug}`,
-    label: s.name,
+    label: toSentenceCase(s.name),
     changeFrequency: 'monthly',
     priority: 0.85,
   }));
@@ -80,7 +81,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
   const cityServices: SiteUrlEntry[] = SERVICES.flatMap((s) =>
     CITIES.filter((c) => !isCityServiceNoindex(s.slug, c.slug)).map((c) => ({
       path: `/services/${s.slug}/${c.slug}`,
-      label: `${s.name} in ${c.name}`,
+      label: `${toSentenceCase(s.name)} in ${c.name}`,
       changeFrequency: 'monthly' as const,
       priority: 0.75,
     })),
@@ -88,7 +89,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
 
   const guides: SiteUrlEntry[] = GUIDE_PAGES.map((g) => ({
     path: guidePath(g.slug),
-    label: g.title,
+    label: toSentenceCase(g.title),
     changeFrequency: 'monthly',
     priority: 0.9,
     lastModified: new Date(g.updatedAt ?? g.publishedAt),
@@ -96,7 +97,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
 
   const blog: SiteUrlEntry[] = BLOG_POSTS.map((p) => ({
     path: `/blog/${p.slug}`,
-    label: p.title,
+    label: toSentenceCase(p.title),
     changeFrequency: 'yearly',
     priority: 0.6,
     lastModified: new Date(p.updatedAt ?? p.publishedAt),
@@ -107,7 +108,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     if (!isCategoryHubIndexable(hub.hubSlug, count)) return [];
     return [{
       path: categoryHubPath(hub.hubSlug),
-      label: hub.title,
+      label: toSentenceCase(hub.title),
       changeFrequency: 'weekly' as const,
       priority: 0.55,
     }];

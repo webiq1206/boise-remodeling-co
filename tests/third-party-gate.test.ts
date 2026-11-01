@@ -14,9 +14,12 @@ import {
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
-// Phase 5 rule: no third-party script before interaction except gtag. The
-// Meta Pixel and Clarity install their command stubs at once (calls queue) and
-// insert their network scripts only after the first interaction or 5s after load.
+// Owner decision 2026-11-01 (supersedes the phase 5 "nothing before
+// interaction" rule for Meta only): the Meta Pixel inserts fbevents.js at the
+// window load event, with no interaction wait and no 5 second wait, so paid-ad
+// Landing Page Views are counted. Clarity keeps waiting for the first
+// interaction or 5s after load. Both install their command stubs at once, so
+// calls queue from the first moment.
 
 type Listener = () => void;
 function browser(readyState = 'loading') {
@@ -97,9 +100,12 @@ test('without interaction the gate opens no sooner than 5 seconds after load', (
   assert.equal(ran, 1);
 });
 
-test('the Meta Pixel queues PageView at once and loads fbevents.js only through the gate', () => {
+const FBEVENTS = 'https://connect.facebook.net/en_US/fbevents.js';
+
+test('the Meta Pixel queues PageView at once and loads fbevents.js at the load event, not behind the gate', () => {
   const source = pixelScript();
-  const b = browser();
+  assert.doesNotMatch(source, new RegExp(THIRD_PARTY_GATE), 'the pixel loader does not go through the interaction gate');
+  const b = browser('loading');
   b.run(thirdPartyGateScript());
   b.run(source);
   const fbq = b.window.fbq as { queue: unknown[][] };
@@ -107,11 +113,21 @@ test('the Meta Pixel queues PageView at once and loads fbevents.js only through 
   const queued = Array.from(fbq.queue).map((args) => Array.from(args as ArrayLike<unknown>).slice(0, 2).join(':'));
   assert.deepEqual(queued.map((q) => q.split(':')[0]), ['set', 'init', 'track']);
   assert.equal(queued[2], 'track:PageView');
-  assert.deepEqual(b.inserted, [], 'fbevents.js is not requested before interaction');
+  assert.deepEqual(b.inserted, [], 'fbevents.js is not requested before the load event');
   (b.window.fbq as (...args: unknown[]) => void)('track', 'Lead', {}, { eventID: 'x' });
   assert.equal(fbq.queue.length, 4, 'a Lead fired before load is queued for fbevents.js');
+  b.fire('load');
+  assert.deepEqual(b.inserted, [FBEVENTS], 'fbevents.js loads at the load event with no interaction and no timer');
   b.fire('pointerdown');
-  assert.deepEqual(b.inserted, ['https://connect.facebook.net/en_US/fbevents.js']);
+  for (const timer of b.timers) timer.fn();
+  assert.deepEqual(b.inserted, [FBEVENTS], 'opening the gate later does not load it twice');
+});
+
+test('the Meta Pixel loads fbevents.js at once when the page has already loaded', () => {
+  const b = browser('complete');
+  b.run(thirdPartyGateScript());
+  b.run(pixelScript());
+  assert.deepEqual(b.inserted, [FBEVENTS]);
 });
 
 test('Clarity installs its stub at once and loads its tag only through the gate', () => {
@@ -123,6 +139,8 @@ test('Clarity installs its stub at once and loads its tag only through the gate'
   (b.window.clarity as (...args: unknown[]) => void)('set', 'page', 'about');
   assert.equal((b.window.clarity as unknown as { q: unknown[] }).q.length, 1);
   assert.deepEqual(b.inserted, []);
+  b.fire('load');
+  assert.deepEqual(b.inserted, [], 'Clarity does not load at the load event');
   b.fire('keydown');
   assert.equal(b.inserted.length, 1);
   assert.match(b.inserted[0], /^https:\/\/www\.clarity\.ms\/tag\/x5wrjdadlb\?ref=bwt$/);

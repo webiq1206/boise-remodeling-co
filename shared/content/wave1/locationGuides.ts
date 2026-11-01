@@ -61,7 +61,7 @@ const tvSections: ContentSection[] = [
   {
     h2: 'Next steps',
     paragraphs: [
-      '<a href="/#calculator">Estimator</a> · <a href="/contact">Consultation</a> · <a href="/areas">Service areas</a>.',
+      '<a href="/#request">Request a quote</a> · <a href="/contact">Consultation</a> · <a href="/areas">Service areas</a>.',
     ],
   },
 ];

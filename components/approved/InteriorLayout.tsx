@@ -1,7 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { familyButtonClass } from '@/components/family/Button';
-import { CTA_PRIMARY } from '@/shared/ctaCopy';
+import { CTA_PROJECT_DETAILS } from '@/shared/ctaCopy';
 
 /** Public-page layout. Application routes retain their dedicated interfaces. */
 export function InteriorPage({children,kind='detail'}:{children:ReactNode;kind?:string}) {
@@ -9,7 +9,8 @@ export function InteriorPage({children,kind='detail'}:{children:ReactNode;kind?:
 }
 
 /** The family primary button (charcoal, paper label, accent bar), one label for the one action. */
-export function InteriorEstimateLink({label=CTA_PRIMARY,href='/estimate'}:{label?:string;href?:string}) {
+// A link to /estimate never carries "Request a quote" (that label goes to /#request).
+export function InteriorEstimateLink({label=CTA_PROJECT_DETAILS,href='/estimate'}:{label?:string;href?:string}) {
   return <a className={familyButtonClass({variant:'primary',size:'lg',className:'interior-estimate-link'})} href={href}>{label}</a>;
 }
 

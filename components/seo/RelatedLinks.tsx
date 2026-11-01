@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import Link from 'next/link';
 import { CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
@@ -81,7 +82,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
             {SERVICES.map((service) => (
               <Link key={service.slug} href={indexedCityServiceHref(service.slug, citySlug)}>
                 <div className="ed-card ed-card-link h-full">
-                  <h3 className="ed-h4">{service.name}</h3>
+                  <h3 className="ed-h4">{toSentenceCase(service.name)}</h3>
                   <p className="ed-body mt-2 text-[0.875rem]">{service.shortDescription}</p>
                 </div>
               </Link>

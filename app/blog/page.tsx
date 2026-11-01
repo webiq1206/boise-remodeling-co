@@ -76,7 +76,7 @@ export default function BlogPage() {
             <em className="brc-accent">range</em>
           </>
         }
-        description="Read enough to know what you want? Use our project estimator for a preliminary Treasure Valley planning range, with no obligation."
+        description="Read enough to know what you want? Request a quote, and the free in-home visit ends with a planning range for your project. No obligation."
         variant="greige"
       />
     </></InteriorPage>

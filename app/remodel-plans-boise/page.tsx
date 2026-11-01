@@ -276,11 +276,11 @@ export default function RemodelPlansPage() {
           {/* Contextual outbound links, so this page is part of the cluster
               rather than a leaf nobody can navigate out of. */}
           <p className="mt-10 text-sm text-muted-foreground leading-relaxed">
-            No drawings yet? The{" "}
+            No drawings yet?{" "}
             <Link href="/estimate" className="underline underline-offset-4 hover:text-foreground">
-              online estimator
+              Send project details
             </Link>{" "}
-            prices from a few questions instead, and the{" "}
+            and photos instead, and the{" "}
             <Link
               href="/guides/boise-remodeling-cost-guide"
               className="underline underline-offset-4 hover:text-foreground"

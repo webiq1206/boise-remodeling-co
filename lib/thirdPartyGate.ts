@@ -1,16 +1,23 @@
 /**
- * Third-party tags wait for the visitor (phase 5 performance rule: nothing
- * third-party before interaction except gtag).
+ * When third-party network scripts load.
  *
- * The Meta Pixel and Microsoft Clarity used to request their network scripts
- * as soon as the page hydrated, competing with the page's own JavaScript on a
- * phone's main thread. Now each tag installs its command stub immediately (so
- * fbq(...) and clarity(...) calls queue from the first moment, exactly as the
- * vendors' own snippets do) and only the network script waits: it is inserted
- * on the first pointerdown, keydown, scroll or touchstart, or
- * THIRD_PARTY_FALLBACK_MS after the window load event, whichever comes first.
- * When the vendor script arrives it drains the queue, so a PageView or Lead
- * fired before it loaded is still sent.
+ * Owner decision (2026-11-01): the split is by what the tag is for.
+ *
+ * - Microsoft Clarity (and HubSpot, on the sites that run it) waits for the
+ *   visitor: its network script is inserted on the first pointerdown, keydown,
+ *   scroll or touchstart, or THIRD_PARTY_FALLBACK_MS after the window load
+ *   event, whichever comes first (afterInteraction below).
+ * - The Meta Pixel loads fbevents.js at the window load event, with no
+ *   interaction wait and no 5 second wait (afterWindowLoad below). Paid-ad
+ *   landing page views matter more than the small blocking-time saving: behind
+ *   the gate, a visitor who left within 5 seconds without touching the page
+ *   sent no PageView, so Meta under-counted Landing Page Views.
+ *
+ * Either way each tag installs its command stub immediately (so fbq(...) and
+ * clarity(...) calls queue from the first moment, exactly as the vendors' own
+ * snippets do) and only the network script is timed. When the vendor script
+ * arrives it drains the queue, so a PageView or Lead fired before it loaded is
+ * still sent.
  *
  * The gate is a tiny inline script installed beforeInteractive, so an
  * interaction that happens before hydration still opens it. Clarity masking
@@ -47,4 +54,14 @@ export function thirdPartyGateScript(): string {
  */
 export function afterInteraction(loader: string): string {
   return `(window.${THIRD_PARTY_GATE}||function(f){f()})(function(){${loader}});`;
+}
+
+/**
+ * Wrap a loader so it runs at the window load event (at once if the page has
+ * already loaded). No interaction wait and no fallback timer: the Meta Pixel
+ * uses this so a paid-ad visitor who never touches the page still sends a
+ * PageView, while fbevents.js still stays off the critical rendering path.
+ */
+export function afterWindowLoad(loader: string): string {
+  return `(function(w,d,f){if(d.readyState==="complete")f();else w.addEventListener("load",f,{once:true})})(window,document,function(){${loader}});`;
 }

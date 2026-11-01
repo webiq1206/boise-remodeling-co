@@ -154,8 +154,9 @@ export default function RootLayout({
         </Providers>
         <GoogleAnalytics />
         <Suspense fallback={null}><MarketingAttribution /></Suspense>
-        {/* Opens on the first interaction or 5s after load; the Meta Pixel and
-            Clarity network scripts wait behind it (gtag is exempt). */}
+        {/* Opens on the first interaction or 5s after load; the Clarity network
+            script waits behind it. The Meta Pixel loads fbevents.js at the
+            window load event instead (owner decision 2026-11-01); gtag is exempt. */}
         <Script id="third-party-gate" strategy="beforeInteractive">
           {thirdPartyGateScript()}
         </Script>

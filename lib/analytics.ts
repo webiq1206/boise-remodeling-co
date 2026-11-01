@@ -30,7 +30,7 @@ function readCookie(name: string): string | undefined {
  * (counts the conversion once, but keeps the signal that ad blockers / ITP would
  * otherwise strip from the browser). The Pixel is set up via components/MetaPixel:
  * the fbq stub exists from hydration, so a call made before fbevents.js has
- * loaded (it waits for the first interaction or 5s after load) is queued and
+ * loaded (it loads at the window load event) is queued and
  * sent when it arrives. Both paths are best-effort no-ops when unavailable:
  * fbq is guarded, and /api/meta-capi silently skips if the CAPI token is unset.
  *

@@ -1,3 +1,4 @@
+import { toSentenceCase } from '../sentenceCase';
 import { CITIES_LIST, PILLAR_COST, type ContentSection } from './wave1/snippets';
 import { getHubBySlug, guidePath } from '../contentHubs';
 import { IMPROVED_CLUSTER_POSTS } from './improvedClusterPosts';
@@ -48,6 +49,23 @@ const SLUG_SECTIONS: Record<string, ContentSection[]> = {
   ],
 };
 
+/**
+ * Sections added after the topic sections, keyed by slug. Walk-in pantry:
+ * Boise Cabinet Co owns pantry cabinetry (owner decision, 1 November 2026), so
+ * the post keeps the room and links the cabinetry to its owner with a plain,
+ * followed link. No canonical change: the post still ranks here.
+ */
+const EXTRA_SECTIONS: Record<string, ContentSection[]> = {
+  'walk-in-pantry-design-guide': [
+    {
+      h2: 'Pantry shelving and cabinetry',
+      paragraphs: [
+        'A walk-in pantry is part room, part storage. The room itself, its walls, door, lighting and outlets, is remodeling work. The shelving, tall cabinets and pull-outs inside it are cabinetry, which our sister company Boise Cabinet Co handles: see <a href="https://boisecabinet.co/cabinets/pantry">pantry cabinets from Boise Cabinet Co</a>.',
+      ],
+    },
+  ],
+};
+
 function defaultTopicSections(title: string, hubSlug: string): ContentSection[] {
   return [
     {
@@ -81,10 +99,11 @@ export function buildClusterArticleSections(config: ClusterArticleConfig): Conte
 
   return [
     {
-      h2: `About ${config.title}`,
+      h2: toSentenceCase(`About ${config.title}`),
       paragraphs: [config.excerpt, config.quickAnswer],
     },
     ...topicSections,
+    ...(EXTRA_SECTIONS[config.slug] ?? []),
     ...(config.extraSections ?? []),
     {
       h2: 'Full guide and cost planning',
@@ -101,7 +120,7 @@ export function buildClusterArticleSections(config: ClusterArticleConfig): Conte
     {
       h2: 'Next steps',
       paragraphs: [
-        '<a href="/#calculator">Estimator</a> · <a href="/contact">Schedule consultation</a>.',
+        '<a href="/#request">Request a quote</a> · <a href="/contact">Schedule consultation</a>.',
       ],
     },
   ];

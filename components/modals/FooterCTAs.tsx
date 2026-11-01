@@ -14,15 +14,9 @@ export function FooterCTAs() {
   return (
     <>
       <li>
-        {isHome ? (
-          <a href="/#calculator" className={cls}>
-            {CTA_PRIMARY}
-          </a>
-        ) : (
-          <a href="/estimate" className={cls}>
-            {CTA_PRIMARY}
-          </a>
-        )}
+        <a href="/#request" className={cls}>
+          {CTA_PRIMARY}
+        </a>
       </li>
       <li>
         {isHome ? (

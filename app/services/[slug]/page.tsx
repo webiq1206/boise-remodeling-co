@@ -135,7 +135,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         ]
       : []),
     {
-      heading: `${service.name} across the Treasure Valley`,
+      heading: `${toSentenceCase(service.name)} across the Treasure Valley`,
       paragraphs: [
         `We provide ${serviceLC} services throughout the Treasure Valley, with dedicated local pages for each city we serve. Permit paths, housing stock, and HOA requirements differ between Ada and Canyon County communities, so each city page covers the details that matter where you live.`,
         `Choose your city below to see local ${serviceLC} guidance, or schedule a free in-home consultation to discuss your project directly.`,

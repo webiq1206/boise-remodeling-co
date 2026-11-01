@@ -31,7 +31,7 @@ export default function DesignIdeasPage() {
   const schemas = [
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: 'Design Ideas', url: '/design-ideas' },
+      { name: 'Design ideas', url: '/design-ideas' },
     ]),
     generateCollectionPageSchema({
       title: 'Remodeling Design Ideas',
@@ -53,7 +53,7 @@ export default function DesignIdeasPage() {
           imageSrc={GALLERY_IMAGES.kitchen.after}
           imageAlt="White kitchen with wood island and brass lighting"
         >
-          <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Design Ideas' }]} />
+          <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Design ideas' }]} />
           <p className="ed-eyebrow mt-6">Design ideas</p>
           <h1 className="ed-display ed-statement-display mb-8">
             Remodeling design ideas for <em className="brc-accent">Boise</em> homes

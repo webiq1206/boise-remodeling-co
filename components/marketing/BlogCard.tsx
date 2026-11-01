@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar } from "lucide-react";
@@ -42,7 +43,7 @@ export function BlogCard({ post, featured = false, formatDate }: BlogCardProps) 
             </span>
           </div>
           <h2 className="font-serif text-2xl md:text-3xl tracking-tight text-foreground mb-3">
-            {post.title}
+            {toSentenceCase(post.title)}
           </h2>
           {hasSummary && <p className="text-muted-foreground leading-relaxed line-clamp-2 max-w-2xl">
             {post.excerpt}
@@ -76,7 +77,7 @@ export function BlogCard({ post, featured = false, formatDate }: BlogCardProps) 
           </span>
         </div>
         <h3 className="text-lg font-serif tracking-tight text-foreground text-balance mb-2">
-          {post.title}
+          {toSentenceCase(post.title)}
         </h3>
         {hasSummary && <p className="text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>}
         <TextLink href={href} className="mt-auto pt-4 relative z-10" showArrow>
