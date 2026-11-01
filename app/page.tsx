@@ -1,7 +1,8 @@
 import { ApprovedHome } from "@/components/approved/ApprovedHome";
 import { ApprovedHomeHero } from "@/components/approved/ApprovedHomeHero";
 import { HeroConversion } from "@/components/approved/HeroConversion";
-import { ConsultationForm } from "@/components/ConsultationForm";
+// Loaded after the page: the form sits in a closed disclosure (components/approved/LazyConsultationForm).
+import { ConsultationForm } from "@/components/approved/LazyConsultationForm";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Section } from "@/components/marketing/Section";
 import { Reveal } from "@/components/Reveal";
