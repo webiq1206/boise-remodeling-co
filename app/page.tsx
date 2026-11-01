@@ -58,7 +58,7 @@ export default function HomePage() {
           8. Process         what happens after they say yes
           9. Brand band      the emotional close
           10. FAQ            the last objections
-          11. Final CTA band the ask: the short request (#request), the longer form one tap away
+          11. Final CTA band the ask: the short request (#request, #consult), form first, the longer form one tap away
 
           The estimator sits third on purpose. It is the site's primary lead
           generator and the hero's own call to action points at it, so burying
@@ -70,7 +70,7 @@ export default function HomePage() {
       <ApprovedHome hero={<ApprovedHomeHero />} />
       <BudgetInclusionsSection />
       <div id="contact" className="scroll-mt-24" aria-hidden="true" />
-      <Section id="consult" divider className="scroll-mt-16 relative overflow-hidden pb-28 md:pb-28">
+      <Section divider className="relative overflow-hidden pb-28 md:pb-28">
         {/* Warm, dimmed lifestyle photo grounds the closing section. Directional
             scrims keep the left-column copy legible and fade the edges into the
             page ground; the form card floats above on its own shadow. */}
@@ -91,8 +91,25 @@ export default function HomePage() {
             card because a form needs a defined field to sit in - this is one of
             the places a card is actually the right answer. */}
         <div className="ed-shell relative z-10">
-          <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <div className="lg:sticky lg:top-28">
+          {/* Every "Request a quote" (header, bottom bar, hero, in-page buttons) lands on /#request,
+              and the form leads: it comes first in the markup, so a phone lands on its heading and
+              first field with the reassurance below it, and a desktop shows it beside the intro.
+              #consult ("Schedule a free visit") lands on the same form. The longer consultation
+              form stays one tap away below the short one. */}
+          <div className="home-consult-grid grid gap-[var(--ed-gutter)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+            <div id="request" className="home-request lg:col-start-2 lg:row-start-1" role="region" aria-label="Request a quote">
+              <span id="consult" className="home-request-anchor" aria-hidden="true" />
+              <MarketingCard className="shadow-2xl" padding="lg">
+                <HeroConversion />
+              </MarketingCard>
+              <details className="home-request-more">
+                <summary>Prefer the longer form, with your address and project type?</summary>
+                <div className="home-request-more-body">
+                  <ConsultationForm />
+                </div>
+              </details>
+            </div>
+            <div className="lg:col-start-1 lg:row-start-1 lg:sticky lg:top-28">
               <Reveal>
                 <p className="ed-eyebrow">Begin a conversation</p>
                 <h2 className="ed-h2 ed-statement">
@@ -127,21 +144,6 @@ export default function HomePage() {
                   ))}
                 </ul>
               </Reveal>
-            </div>
-            {/* The short request moved here from under the hero (family hero template): the
-                hero, header and bottom bar all point at #request, and #request-form holds
-                the form. The longer consultation form stays one tap away for visitors who
-                want to give their address and project type first. */}
-            <div id="request" className="home-request" role="region" aria-label="Request a quote">
-              <MarketingCard className="shadow-2xl" padding="lg">
-                <HeroConversion />
-              </MarketingCard>
-              <details className="home-request-more">
-                <summary>Prefer the longer form, with your address and project type?</summary>
-                <div className="home-request-more-body">
-                  <ConsultationForm />
-                </div>
-              </details>
             </div>
           </div>
         </div>

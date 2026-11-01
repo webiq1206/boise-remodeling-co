@@ -309,7 +309,7 @@ export function buildLeadNotes(
     section("CONTACT", [
       `Name: ${lead.name}`,
       `Phone: ${lead.phone}`,
-      `Email: ${lead.email}`,
+      `Email: ${lead.email || "Not given"}`,
       `Address: ${lead.address || "Not provided"}${lead.zip ? ` ${lead.zip}` : ""}`,
       `Stated budget: ${lead.budget || "Not provided"}`,
     ])

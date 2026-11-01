@@ -73,6 +73,19 @@ interface ForwardPayload {
   estimateRange?: string;
 }
 
+/**
+ * The dashboard requires an email, and the short request's email is optional (a callback request
+ * never asks for one). A lead without one is forwarded with the same no-email placeholder chat
+ * leads have always carried (server/services/assistantLead.ts), keyed on the phone digits so two
+ * such leads stay distinct and the team can see at a glance that there is no address to write to.
+ */
+export function dashboardEmail(email: string | null | undefined, phone?: string | null, name?: string | null): string {
+  const clean = email?.trim();
+  if (clean) return clean;
+  const key = phone?.replace(/\D/g, "") || name?.trim() || "lead";
+  return `no-email+${encodeURIComponent(key)}@boiseremodeling.co`;
+}
+
 export function forwardToLeadDashboard(payload: ForwardPayload): void {
   void forwardToLeadDashboardAsync(payload);
 }

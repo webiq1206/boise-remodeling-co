@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { consultationRequests } from "@/shared/schema";
 import { SITE_CONFIG } from "@/shared/siteConfig";
-import { forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
+import { dashboardEmail, forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
 import { getUncachableEmailClient } from "@/server/services/emailTransport";
 import {
   formatFromAddress,
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     if (crm === "failed" || crm === "pending") {
       const result = await forwardToLeadDashboardAsync({
         fullName: row.name,
-        email: row.email,
+        email: dashboardEmail(row.email, row.phone, row.name),
         phone: row.phone || undefined,
         propertyAddress: row.address || undefined,
         city: row.city || undefined,

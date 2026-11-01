@@ -1,5 +1,6 @@
 import { InteriorEstimateLink,InteriorHero,InteriorPage } from '@/components/approved/InteriorLayout';
 import { BusinessPhoneContact } from '@/components/BusinessPhoneContact';
+import { HashTargetRecovery } from '@/components/HashTargetRecovery';
 import { ConsultationForm } from '@/components/ConsultationForm';
 import { EmailLink } from '@/components/EmailLink';
 import { Section } from '@/components/marketing';
@@ -172,6 +173,7 @@ export default function ContactPage() {
   return (
     <InteriorPage kind="contact"><>
       <JsonLd data={schemas} />
+      <HashTargetRecovery />
       <div className="flex flex-col ">
         {/* Approved editorial hero */}
         <InteriorHero layout="contact" imageSrc={SITE_IMAGES.hero} imageAlt="Modern luxury home interior remodel in Boise Idaho Treasure Valley">
@@ -206,10 +208,18 @@ export default function ContactPage() {
             </dl>
           </InteriorHero>
 
-        {/* ─── Inline consultation form ─── */}
-        <Section id="consult" divider className="scroll-mt-24">
+        {/* ─── Inline request form ───
+            The hero's "Request a quote" (/contact#consult) lands on the form itself: #consult is
+            the form card, first in the markup, so a phone sees its heading and first field under
+            the header and the intro follows below it. Two columns from 1024px, intro on the left. */}
+        <Section divider>
           <div className="container px-4">
-            <div className="interior-contact-grid">
+            <div className="interior-contact-grid interior-contact-grid--form-first">
+              <div id="consult" className="interior-contact-anchor">
+                <MarketingCard className="interior-contact-form p-4 sm:p-7 md:p-10" padding="lg">
+                  <ConsultationForm variant="short" />
+                </MarketingCard>
+              </div>
               <div className="interior-contact-intro">
                 <Reveal>
                   <p className="ed-eyebrow">{CTA_PRIMARY}</p>
@@ -225,9 +235,6 @@ export default function ContactPage() {
                   <TextReplyLine className="text-base leading-relaxed mb-8 mt-3 text-muted-foreground" />
                 </Reveal>
               </div>
-              <MarketingCard className="interior-contact-form p-4 sm:p-7 md:p-10" padding="lg">
-                <ConsultationForm variant="short" />
-              </MarketingCard>
             </div>
           </div>
         </Section>

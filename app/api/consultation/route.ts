@@ -33,7 +33,7 @@ import {
 } from "@/shared/estimateEngine";
 import { resolveQuotedRange } from "@/shared/costs/resolve";
 import { IMPLAUSIBLE_QUOTE_CEILING, logPricingAlert } from "@/server/services/pricingAlerts";
-import { forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
+import { dashboardEmail, forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
 import { forwardConsultationToP5Intake } from "@/server/services/p5IntakeBridge";
 import {
   acceptInquiry,
@@ -114,13 +114,22 @@ const bodySchema = z.object({
     const digits = value.replace(/\D/g, "");
     return digits.length >= 10 && digits.length <= 15;
   }, "Invalid phone"),
-  email: z.string().email(),
+  /* Optional on the short request (and so on a callback request), required on the full
+     consultation form below. The lead dashboard needs one, so a lead without it is forwarded
+     with dashboardEmail()'s no-email placeholder, as chat leads always have been. */
+  email: z.string().email().or(z.literal("")).optional(),
   address: z.string().trim().max(300).optional(),
   zip: z.string().optional(),
   projectType: z.string().min(1),
   message: z.string().max(8000).optional(),
-  /* Home hero only. Address stays required on the full consultation form. */
+  /* The short request (homepage #request-form and the contact page). Address stays required on
+     the full consultation form. */
   requestKind: z.literal("short").optional(),
+  /* Short request: how the visitor wants us to reach them. */
+  contactPreference: z.enum(["call", "text", "email"]).optional(),
+  /* Short request, "Have us call you": name and phone only, filed as a callback request. */
+  callback: z.boolean().optional(),
+  bestTime: z.string().trim().max(40).optional(),
   propertyProfile: propertyProfileSchema,
   estimate: estimateSchema,
   /* Set by the client when the visitor already submitted the estimate gate,
@@ -129,14 +138,35 @@ const bodySchema = z.object({
   skipEmail: z.boolean().optional(),
 }).superRefine((data, ctx) => {
   if (data.requestKind === "short") {
-    if ((data.message?.trim().length ?? 0) < 8) {
+    if (!data.callback && (data.message?.trim().length ?? 0) < 8) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ["message"],
         message: "Tell us what we should look at.",
       });
     }
+    if (data.contactPreference === "email" && !data.email) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["email"],
+        message: "Add your email so we can email you back.",
+      });
+    }
     return;
+  }
+  if (data.callback) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["callback"],
+      message: "Callback requests use the short request.",
+    });
+  }
+  if (!data.email) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["email"],
+      message: "Please enter a valid email",
+    });
   }
   const address = data.address?.trim() ?? "";
   if (address.length < 5 || !HOUSE_NUMBER_REGEX.test(address)) {
@@ -308,16 +338,31 @@ function shortUploadMime(file: File, ext: string): string {
   return `image/${ext}`;
 }
 
+const CONTACT_PREFERENCE_LABELS: Record<string, string> = {
+  call: "Call me",
+  text: "Text me",
+  email: "Email me",
+};
+
 /**
- * The home-page request form. Same lead record as /api/consultation JSON.
- * Photos and plans are optional and are not accepted on the long consultation form.
+ * The short request (homepage #request-form, contact page). Same lead record as /api/consultation
+ * JSON. Photos and plans are optional and are not accepted on the long consultation form.
+ *
+ * "Have us call you" posts here too, as callback=1 with name, phone and an optional best time and
+ * no description. Its notes open with a CALLBACK REQUEST line, so the team sees it in the
+ * database row, the lead dashboard, the internal email and p5 intake alike.
  */
 async function readShortMultipart(
   request: NextRequest,
 ): Promise<{ ok: true; body: Record<string, unknown> } | { ok: false; response: NextResponse }> {
   const form = await request.formData();
   const note = String(form.get("message") ?? "").trim();
-  if (note.length < 8) {
+  const callback = String(form.get("callback") ?? "") === "1";
+  const name = String(form.get("name") ?? "");
+  const phone = String(form.get("phone") ?? "");
+  const preference = String(form.get("contactPreference") ?? "").trim();
+  const bestTime = String(form.get("bestTime") ?? "").trim().slice(0, 40);
+  if (!callback && note.length < 8) {
     return {
       ok: false,
       response: NextResponse.json({ message: "Tell us what we should look at." }, { status: 400 }),
@@ -376,7 +421,16 @@ async function readShortMultipart(
       attribution = undefined;
     }
   }
-  const message = links.length > 0 ? `${note}\n\nPhotos and plans:\n${links.join("\n")}` : note;
+  const parts: string[] = [];
+  if (callback) {
+    parts.push(`CALLBACK REQUEST: call ${name.trim()} at ${phone.trim()}. Best time: ${bestTime || "Any time"}.`);
+  }
+  if (note) parts.push(note);
+  if (!callback && CONTACT_PREFERENCE_LABELS[preference]) {
+    parts.push(`Preferred contact: ${CONTACT_PREFERENCE_LABELS[preference]}`);
+  }
+  if (links.length > 0) parts.push(`Photos and plans:\n${links.join("\n")}`);
+  const message = parts.join("\n\n");
   return {
     ok: true,
     body: {
@@ -384,11 +438,14 @@ async function readShortMultipart(
       inquiryId: String(form.get("inquiryId") ?? ""),
       formStartedAt: Number(form.get("formStartedAt")),
       website: String(form.get("website") ?? ""),
-      name: String(form.get("name") ?? ""),
-      phone: String(form.get("phone") ?? ""),
-      email: String(form.get("email") ?? ""),
+      name,
+      phone,
+      email: String(form.get("email") ?? "").trim(),
       projectType: "Home repair or remodel",
       message,
+      ...(callback ? { callback: true, contactPreference: "call", ...(bestTime ? { bestTime } : {}) } : {}),
+      ...(!callback && preference ? { contactPreference: preference } : {}),
+      ...(String(form.get("skipEmail") ?? "") === "1" ? { skipEmail: true } : {}),
       ...(attribution ? { attribution } : {}),
     },
   };
@@ -430,17 +487,19 @@ export async function POST(request: NextRequest) {
           inquiryId: data.inquiryId,
           stage: "consultation",
           name: data.name,
-          email: data.email,
+          email: data.email ?? "",
           phone: data.phone,
           address: data.address || "",
-          projectType: data.projectType,
+          // Duplicate key only: a callback and a written request from the same phone in the
+          // same week are two requests, not one.
+          projectType: data.callback ? "Callback request" : data.projectType,
           website: data.website,
           formStartedAt: data.formStartedAt,
         },
         {
           name: data.name,
           phone: data.phone,
-          email: data.email,
+          email: data.email ?? "",
           zip: data.zip || "",
           address: data.address || "",
           city: (profile?.city as string) || null,
@@ -493,7 +552,7 @@ export async function POST(request: NextRequest) {
     try {
       const bridge = forwardConsultationToP5Intake({
         name: data.name,
-        email: data.email,
+        email: data.email || null,
         phone: data.phone,
         address: data.address,
         city: location?.city,
@@ -513,7 +572,7 @@ export async function POST(request: NextRequest) {
     const crmLead = {
       name: data.name,
       phone: data.phone,
-      email: data.email,
+      email: data.email ?? "",
       address: data.address || "",
       zip: data.zip || "",
       projectType: data.projectType,
@@ -527,7 +586,7 @@ export async function POST(request: NextRequest) {
 
     const crmResult = await forwardToLeadDashboardAsync({
       fullName: data.name,
-      email: data.email,
+      email: dashboardEmail(data.email, data.phone, data.name),
       phone: data.phone,
       // Field names must match the dashboard's externalLeadSchema exactly; it
       // strips anything it does not recognise rather than erroring.
@@ -570,7 +629,8 @@ export async function POST(request: NextRequest) {
 
     const shouldSendEmail = !data.skipEmail;
     let adminEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail ? "sent" : "skipped";
-    let customerEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail ? "sent" : "skipped";
+    // No email given (optional on the short request): nothing to send the visitor a copy at.
+    let customerEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail && data.email ? "sent" : "skipped";
     let deliveryError = crmResult.error;
     if (shouldSendEmail) {
       try {
@@ -580,7 +640,7 @@ export async function POST(request: NextRequest) {
         const lead = {
           name: data.name,
           phone: data.phone,
-          email: data.email,
+          email: data.email ?? "",
           address: data.address || "",
           zip: data.zip || "",
           projectType: data.projectType,
@@ -596,9 +656,11 @@ export async function POST(request: NextRequest) {
         for (const adminEmail of adminEmails) {
           const adminResult = await client.emails.send({
             from,
-            replyTo: formatLeadReplyTo(data.name, data.email),
+            ...(data.email ? { replyTo: formatLeadReplyTo(data.name, data.email) } : {}),
             to: adminEmail,
-            subject: buildAdminSubject(lead, estimate),
+            subject: data.callback
+              ? `Callback request: ${data.name} · ${data.phone}`
+              : buildAdminSubject(lead, estimate),
             html: adminHtml,
             text: htmlToPlainText(adminHtml),
           });
@@ -615,15 +677,19 @@ export async function POST(request: NextRequest) {
         // ---- Customer / lead email ------------------------------------------
         // Includes the full estimate + every selection so the lead has it in
         // writing without ever logging in.
-        const customerHtml = buildCustomerEmailHtml(lead, estimate, unitCostOverrides);
-        const customerResult = await client.emails.send({
-          from,
-          replyTo: getReplyToAddress(),
-          to: data.email,
-          subject: buildCustomerSubject(lead, estimate),
-          html: customerHtml,
-          text: htmlToPlainText(customerHtml),
-        });
+        const customerResult = data.email
+          ? await (async () => {
+              const customerHtml = buildCustomerEmailHtml(lead, estimate, unitCostOverrides);
+              return client.emails.send({
+                from,
+                replyTo: getReplyToAddress(),
+                to: data.email as string,
+                subject: buildCustomerSubject(lead, estimate),
+                html: customerHtml,
+                text: htmlToPlainText(customerHtml),
+              });
+            })()
+          : null;
         if (customerResult?.error) {
           customerEmailStatus = "failed";
           deliveryError = deliveryError || JSON.stringify(customerResult.error);
@@ -634,7 +700,7 @@ export async function POST(request: NextRequest) {
         }
       } catch (emailErr) {
         adminEmailStatus = "failed";
-        customerEmailStatus = "failed";
+        if (data.email) customerEmailStatus = "failed";
         deliveryError = deliveryError || (emailErr instanceof Error ? emailErr.message : String(emailErr));
         console.error("[consultation] Email send failed:", emailErr);
       }
