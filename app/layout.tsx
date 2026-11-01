@@ -5,7 +5,7 @@ import localFont from 'next/font/local'
 import { Navigation, SiteActionBar } from '@/components/Navigation'
 import { SkipLink } from '@/components/family/SkipLink'
 import { ConditionalFooter } from '@/components/ConditionalFooter'
-import { Toaster } from '@/components/ui/toaster'
+import { DeferredToaster } from '@/components/ui/deferred-toaster'
 import { Providers } from '@/components/Providers'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { SITE_TAGLINE } from '@/shared/siteContent'
@@ -149,7 +149,7 @@ export default function RootLayout({
             <ConditionalFooter />
             <SiteActionBar />
           </div></ApprovedShell>
-          <Toaster />
+          <DeferredToaster />
           <AssistantWidget />
         </Providers>
         <GoogleAnalytics />

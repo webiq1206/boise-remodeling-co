@@ -6,7 +6,10 @@
 .approved-interior .interior-document-heading h1 em { color:var(--audit-accent-ink); }
 .approved-shell :is(a,button,input,select,textarea,summary):focus-visible { outline:3px solid currentColor; outline-offset:4px; }
 @media(max-width:1179px) {
-  .approved-shell:has(input:focus,textarea:focus,select:focus,[contenteditable=true]:focus) [data-mobile-nav-bar] { visibility:hidden; pointer-events:none; }
+  /* ApprovedShell sets data-field-focus while an input, textarea, select or
+     editable region inside it has focus. Not :has(): Chrome restyled the whole
+     page each time React touched an input under a :has() anchor this high. */
+  .approved-shell[data-field-focus] [data-mobile-nav-bar] { visibility:hidden; pointer-events:none; }
 }
 @media(prefers-reduced-motion:reduce) {
   .approved-shell *, .approved-shell *::before, .approved-shell *::after { animation:none!important; scroll-behavior:auto!important; transition:none!important; }

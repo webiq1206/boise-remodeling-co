@@ -1,24 +1,28 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ConsultationForm } from "@/components/ConsultationForm";
-import { EstimateCalculator } from "@/components/EstimateCalculator";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
 import { ModalsContext, type ModalType } from "./modalsContext";
 
+// Both modals load on first open. Every page mounts this provider, so a static
+// import put the dialog, the consultation form and its validation code into
+// the startup JavaScript of pages that never open either one.
+const ConsultDialog = dynamic(() => import("./ConsultDialog").then((m) => m.ConsultDialog), { ssr: false });
+const EstimateCalculator = dynamic(() => import("@/components/EstimateCalculator").then((m) => m.EstimateCalculator), { ssr: false });
+
 export function ModalProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState<ModalType>(null);
+  // Stays mounted after the first open so the dialog keeps its close animation.
+  const [consultMounted, setConsultMounted] = useState(false);
 
-  const openConsult = useCallback(() => setOpen("consult"), []);
+  const openConsult = useCallback(() => {
+    setConsultMounted(true);
+    setOpen("consult");
+  }, []);
   const openEstimate = useCallback(() => setOpen("estimate"), []);
   const close = useCallback(() => setOpen(null), []);
+  const revise = useCallback(() => setOpen("estimate"), []);
 
   // The global mobile Call/Text bar sits above the dialog overlay; hide it
   // while a conversion modal is open so it never covers the dialog. Ref-counted
@@ -32,26 +36,14 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
     <ModalsContext.Provider value={{ openConsult, openEstimate, close }}>
       {children}
 
-      <Dialog open={open === "consult"} onOpenChange={(v) => !v && close()}>
-        <DialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto" data-clarity-mask="true">
-          <DialogHeader>
-            <DialogTitle className="font-sans font-light text-xl text-foreground">
-              Schedule your free in-home visit
-            </DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              No obligation - we&apos;ll walk your space and give you an honest planning range.
-            </DialogDescription>
-          </DialogHeader>
-          <ConsultationForm onRevise={() => setOpen("estimate")} showTrust />
-        </DialogContent>
-      </Dialog>
+      {consultMounted && <ConsultDialog open={open === "consult"} onClose={close} onRevise={revise} />}
 
       {/* The estimator is its own full-screen experience beneath the site
           header (not a dialog inside a dialog): it owns the screen with its
           own scroll area and bottom-anchored input, and Exit returns here. */}
       {open === "estimate" && (
         <div data-clarity-mask="true" style={{ display: "contents" }}>
-          <EstimateCalculator inModal sectionId="estimate-modal" onExit={close} onBookVisit={() => setOpen("consult")} />
+          <EstimateCalculator inModal sectionId="estimate-modal" onExit={close} onBookVisit={openConsult} />
         </div>
       )}
     </ModalsContext.Provider>
