@@ -67,7 +67,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
           />
 
           <header className="interior-article-header">
-            {hub && <Chip className="mb-4">{hub.categoryLabel}</Chip>}
+            {hub && <Chip className="mb-4">{toSentenceCase(hub.categoryLabel)}</Chip>}
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {toSentenceCase(guide.title)}
             </h1>
@@ -163,7 +163,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
               )}
 
               <div className="lg:hidden mt-10">
-                <ArticleSidebarCta description="See what your project might cost with a preliminary Treasure Valley planning range." />
+                <ArticleSidebarCta description="Tell us about the work. We reply within one business day, and the free in-home visit ends with a planning range and design direction." />
               </div>
             </div>
 

@@ -8,6 +8,14 @@ export const CTA_PRIMARY = "Request a quote";
 export const CTA_PRIMARY_SHORT = "Request a quote";
 export const CTA_SECONDARY = "Schedule a free visit";
 export const CTA_QUOTE = "Request a Quote";
+/**
+ * Label for every link to /estimate. "Request a quote" has one destination,
+ * the short request at /#request (header, bottom bar and every other "Request
+ * a quote"). /estimate is the six-step request with photos: it shows no price
+ * and runs no estimator, so its links say what it does and promise no instant
+ * or online estimate.
+ */
+export const CTA_PROJECT_DETAILS = "Send project details";
 
 /**
  * Consultation form: a single, explicit send (no separate review step). Same

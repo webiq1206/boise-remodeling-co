@@ -30,8 +30,8 @@ export function BlogEndCta() {
       </div>
       <div>
       <p className="ed-body">
-        Get a preliminary planning range online, then book a free in-home visit when you&apos;re
-        ready. No obligation, no pressure.
+        Request a quote and we reply within one business day to set up a free in-home visit.
+        No obligation, no pressure.
       </p>
       {/* One primary action (C5); the visit, call and text are tertiary text links. */}
       <div className="mt-8 flex flex-col items-start gap-4">

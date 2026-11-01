@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorHero,InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { AreaCard } from '@/components/marketing/AreaCard';
@@ -96,7 +97,7 @@ export default function ServicesIndexPage() {
       </InteriorHero>
 
       {/* Approved photo-led service directory. */}
-      <section className="interior-service-grid" aria-label="All services">{SERVICES.map(service=><Link className="interior-service-card" href={servicePath(service.slug)} key={service.slug}><img src={getServiceBackground(service.slug)} alt={contentImageAlt(getServiceBackground(service.slug))} width={900} height={675} loading="lazy"/><div><h2>{service.name}</h2><ArrowRight size={18} aria-hidden="true"/></div><p>{service.shortDescription}</p><p className="interior-price">Planning from {service.planningFrom}</p></Link>)}</section>
+      <section className="interior-service-grid" aria-label="All services">{SERVICES.map(service=><Link className="interior-service-card" href={servicePath(service.slug)} key={service.slug}><img src={getServiceBackground(service.slug)} alt={contentImageAlt(getServiceBackground(service.slug))} width={900} height={675} loading="lazy"/><div><h2>{toSentenceCase(service.name)}</h2><ArrowRight size={18} aria-hidden="true"/></div><p>{service.shortDescription}</p><p className="interior-price">Planning from {service.planningFrom}</p></Link>)}</section>
 
       <EstimatePromptBand
         title={
@@ -105,7 +106,7 @@ export default function ServicesIndexPage() {
             <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>commit</em>
           </>
         }
-        description="Use our Treasure Valley project estimator to see a realistic planning range for kitchen, bath, whole-home and addition work - then book a free visit when you're ready."
+        description="Request a quote for kitchen, bath, whole-home or addition work. We reply within one business day, and the free in-home visit ends with a planning range and design direction."
       />
 
       <Section surface="bone" spacing="xl" edge>

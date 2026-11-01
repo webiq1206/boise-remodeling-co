@@ -72,7 +72,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
           />
 
           <header className="interior-article-header">
-            <Chip className="mb-4">{hub?.categoryLabel ?? post.category}</Chip>
+            <Chip className="mb-4">{toSentenceCase(hub?.categoryLabel ?? post.category)}</Chip>
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {toSentenceCase(post.title)}
             </h1>
@@ -115,7 +115,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
                       href={guidePath(pillarSlug)}
                       className="text-sm text-accent-legible hover:underline inline-flex items-center min-h-11 lg:min-h-0 font-normal"
                     >
-                      {hub.title}
+                      {toSentenceCase(hub.title)}
                       <ArrowRight className="ml-1 h-4 w-4" />
                     </Link>
                     {isCategoryHubIndexable(post.hubSlug, hubPosts.length) && (
@@ -157,14 +157,14 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
               )}
 
               <div className="lg:hidden mt-10">
-                <ArticleSidebarCta description="See what your project might cost with a preliminary Treasure Valley planning range." />
+                <ArticleSidebarCta description="Tell us about the work. We reply within one business day, and the free in-home visit ends with a planning range and design direction." />
               </div>
             </div>
 
             <aside className="article-rail hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">
               <ArticleSidebar
                 tocHeadings={tocHeadings}
-                ctaDescription="See what your project might cost with a preliminary Treasure Valley planning range."
+                ctaDescription="Tell us about the work. We reply within one business day, and the free in-home visit ends with a planning range and design direction."
               />
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-6 rounded-lg border border-border p-4">

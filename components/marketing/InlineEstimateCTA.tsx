@@ -11,8 +11,8 @@ interface InlineEstimateCTAProps {
 
 /** Compact in-article estimator prompt for cost-related blog posts and guides. */
 export function InlineEstimateCTA({
-  title = "See what your project might cost",
-  description = "Get a preliminary planning range based on real Treasure Valley remodel costs, with no obligation.",
+  title = "Ready to talk through your project?",
+  description = "Request a quote. We reply within one business day, and the free in-home visit ends with a planning range and design direction.",
   className,
 }: InlineEstimateCTAProps) {
   return (

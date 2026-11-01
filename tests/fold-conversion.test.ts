@@ -91,3 +91,22 @@ test("chat uses the visual viewport, a 16px field, and a light sheet", () => {
 test("partial completion emails stay off", () => {
   assert.match(sessions, /SEND_PARTIAL_COMPLETION_EMAILS[^\n]*= false/);
 });
+
+// One label, one destination (1 November 2026): every "Request a quote" goes to
+// the short request at /#request, like the header and the bottom bar. Links to
+// /estimate (the six-step request, no on-screen price) carry their own label,
+// which promises no instant or online estimate.
+test("every Request a quote goes to /#request and /estimate links never use that label", async () => {
+  const cta = readFileSync("components/modals/EstimateCTA.tsx", "utf8");
+  assert.match(cta, /const href = "\/#request";/);
+  assert.equal(cta.includes('"/estimate"'), false);
+  const { CTA_PRIMARY, CTA_PROJECT_DETAILS } = await import("../shared/ctaCopy.ts");
+  assert.equal(CTA_PRIMARY, "Request a quote");
+  assert.equal(/quote|estimate|instant|online/i.test(CTA_PROJECT_DETAILS), false);
+  const interior = readFileSync("components/approved/InteriorLayout.tsx", "utf8");
+  assert.match(interior, /label=CTA_PROJECT_DETAILS,href='\/estimate'/);
+  const footerCtas = readFileSync("components/modals/FooterCTAs.tsx", "utf8");
+  assert.equal(footerCtas.includes('href="/estimate"'), false);
+  const plans = readFileSync("app/remodel-plans-boise/page.tsx", "utf8");
+  assert.equal(plans.includes("online estimator"), false);
+});

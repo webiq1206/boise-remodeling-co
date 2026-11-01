@@ -1,3 +1,4 @@
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { MarketingCard } from '@/components/marketing/MarketingCard';
@@ -126,7 +127,7 @@ export default function GuidesIndexPage() {
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <BookOpen className="h-5 w-5 text-accent-legible mb-3" />
-                  <h3 className="font-normal text-lg mb-2">{guide.title}</h3>
+                  <h3 className="font-normal text-lg mb-2">{toSentenceCase(guide.title)}</h3>
                   <p className="text-sm text-muted-foreground flex-1 mb-3">{guide.excerpt}</p>
                   <GuideCardStats guide={guide} />
                   <Link
@@ -166,7 +167,7 @@ export default function GuidesIndexPage() {
                 </div>
                 <div className="p-5 flex flex-col flex-1">
                   <MapPin className="h-4 w-4 text-accent-legible mb-2" />
-                  <h3 className="font-normal text-base mb-1">{guide.title}</h3>
+                  <h3 className="font-normal text-base mb-1">{toSentenceCase(guide.title)}</h3>
                   <p className="text-sm text-muted-foreground mb-2 line-clamp-2">
                     {guide.excerpt}
                   </p>
@@ -192,7 +193,7 @@ export default function GuidesIndexPage() {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {sortedHubs.map((hub) => (
               <MarketingCard key={hub.hubSlug} className="p-5">
-                <h3 className="font-normal mb-1">{hub.title}</h3>
+                <h3 className="font-normal mb-1">{toSentenceCase(hub.title)}</h3>
                 <p className="text-sm text-muted-foreground mb-3">{hub.description}</p>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                   <Link
@@ -223,7 +224,7 @@ export default function GuidesIndexPage() {
             <em className="brc-accent">number</em>
           </>
         }
-        description="After reading our guides, use the project estimator for a preliminary Treasure Valley planning range - then book a free in-home visit when you're ready to move forward."
+        description="After reading our guides, request a quote. We reply within one business day, and the free in-home visit ends with a planning range for your project."
         variant="canvas"
       />
     </></InteriorPage>

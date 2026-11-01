@@ -32,7 +32,7 @@ export function ArticleSidebarCta({ description }: { description: string }) {
           <div className="flex items-center justify-center w-10 h-10 rounded-sm bg-accent-legible/15">
             <Calculator className="h-5 w-5 text-accent-legible" strokeWidth={1.5} />
           </div>
-          <h3 className="font-normal text-sm text-inverse-foreground">Your estimate, online</h3>
+          <h3 className="font-normal text-sm text-inverse-foreground">Talk through your project</h3>
         </div>
         <p className="text-sm text-inverse-muted">{description}</p>
         <EstimateCTA tone="dark" className="fam-btn--block">
