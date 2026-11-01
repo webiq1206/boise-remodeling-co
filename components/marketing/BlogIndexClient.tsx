@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/marketing/Section";
 import { BlogCard } from "@/components/marketing/BlogCard";
 import { Chip } from "@/components/marketing/Chip";
-import { BLOG_POSTS } from "@/shared/blogContent";
-import { BLOG_PAGE_SIZE, blogPageCount, blogPagePath } from "@/lib/blogPagination";
+// Posts arrive as card summaries from the server page (lib/blogPagination
+// blogIndexPosts). Importing BLOG_POSTS here shipped every article body, about
+// 290KB gzipped, to the browser on /blog and to every page that prefetched it.
+import { BLOG_PAGE_SIZE, blogPageCountFor, blogPagePath, type BlogIndexPost } from "@/lib/blogPages";
 import {
   CONTENT_HUBS,
   categoryHubPath,
@@ -63,13 +65,13 @@ function BlogPagination({ page, pages }: { page: number; pages: number }) {
   );
 }
 
-export function BlogIndexClient({ page = 1 }: { page?: number }) {
+export function BlogIndexClient({ posts, page = 1 }: { posts: BlogIndexPost[]; page?: number }) {
   const sortedPosts = useMemo(
     () =>
-      [...BLOG_POSTS].sort(
+      [...posts].sort(
         (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
       ),
-    []
+    [posts]
   );
 
   const indexableHubs = useMemo(
@@ -87,7 +89,7 @@ export function BlogIndexClient({ page = 1 }: { page?: number }) {
 
   // A topic chip shows every post in that topic; otherwise the page shows its
   // twelve. Page 1 leads with the newest post as the featured card.
-  const pages = blogPageCount(sortedPosts.length);
+  const pages = blogPageCountFor(sortedPosts.length);
   const filtered = activeHub
     ? sortedPosts.filter((p) => p.hubSlug === activeHub)
     : sortedPosts.slice((page - 1) * BLOG_PAGE_SIZE, page * BLOG_PAGE_SIZE);

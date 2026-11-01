@@ -28,7 +28,11 @@ import { cn } from "@/lib/utils";
 import { Check, CheckCircle2, ArrowRight, Phone, Plus, X, ChevronDown } from "lucide-react";
 import type { StoredEstimate } from "@/shared/estimateEngine";
 import { FINISH_LABELS, PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimateEngine";
-import { DisplayNum } from "@/components/marketing";
+// Direct path, not the components/marketing barrel: the barrel re-exports
+// BlogPostLayout, which pulls every blog post (about 850KB of source) into any
+// client bundle that imports it. This form is in the root layout via the
+// consult modal, so the barrel put all of it on every page.
+import { DisplayNum } from "@/components/marketing/DisplayNum";
 import { AddressAutocomplete } from "@/components/AddressAutocomplete";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { CTA_FORM_MICROCOPY,CTA_FORM_SEND } from "@/shared/ctaCopy";

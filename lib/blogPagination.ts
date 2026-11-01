@@ -1,4 +1,7 @@
 import { BLOG_POSTS, type BlogPostData } from '@/shared/blogContent';
+import { BLOG_PAGE_SIZE, blogPageCountFor, blogPagePath, type BlogIndexPost } from '@/lib/blogPages';
+
+export { BLOG_PAGE_SIZE, blogPagePath, type BlogIndexPost };
 
 /**
  * Blog index pagination. The index rendered every post on one page (about
@@ -6,18 +9,23 @@ import { BLOG_POSTS, type BlogPostData } from '@/shared/blogContent';
  * crawlable links: /blog is page 1, /blog/page/2 onward are the rest. Each
  * paginated page carries a self-referencing canonical.
  */
-export const BLOG_PAGE_SIZE = 12;
-
 export function sortedBlogPosts(): BlogPostData[] {
   return [...BLOG_POSTS].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
 }
 
 export function blogPageCount(total: number = BLOG_POSTS.length): number {
-  return Math.max(1, Math.ceil(total / BLOG_PAGE_SIZE));
+  return blogPageCountFor(total);
 }
 
-export function blogPagePath(page: number): string {
-  return page <= 1 ? '/blog' : `/blog/page/${page}`;
+/**
+ * Every post, newest first, as card summaries for the client index (the topic
+ * chips filter across all of them). Passed as props so the client bundle never
+ * carries the article bodies.
+ */
+export function blogIndexPosts(): BlogIndexPost[] {
+  return sortedBlogPosts().map(({ slug, title, excerpt, category, hubSlug, publishedAt, thumbnail }) => ({
+    slug, title, excerpt, category, hubSlug, publishedAt, ...(thumbnail ? { thumbnail } : {}),
+  }));
 }
 
 export function blogPostsForPage(page: number, posts: BlogPostData[] = sortedBlogPosts()): BlogPostData[] {

@@ -4,7 +4,7 @@ import { BlogIndexClient } from '@/components/marketing/BlogIndexClient';
 import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
-import { blogPageCount, blogPagePath, blogPaginatedPages, blogPostsForPage } from '@/lib/blogPagination';
+import { blogIndexPosts, blogPageCount, blogPagePath, blogPaginatedPages, blogPostsForPage } from '@/lib/blogPagination';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import { generateBreadcrumbSchema, generateCollectionPageSchema } from '@/lib/schema';
 import type { Metadata } from 'next';
@@ -82,7 +82,7 @@ export default async function BlogPaginatedPage(props: { params: Promise<{ page:
         </div>
       </section>
 
-      <BlogIndexClient page={page} />
+      <BlogIndexClient posts={blogIndexPosts()} page={page} />
 
       <EstimatePromptBand
         eyebrow="Ready to plan"
