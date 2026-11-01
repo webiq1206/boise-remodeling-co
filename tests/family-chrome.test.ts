@@ -5,6 +5,7 @@ import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ApprovedHomeHero } from '../components/approved/ApprovedHomeHero.tsx';
+import { HeroPhoto } from '../components/family/HeroPhoto.tsx';
 import { Footer } from '../components/Footer.tsx';
 import { DOPL_LICENSE_SEARCH } from '../components/RegistrationLine.tsx';
 import { matchesRoute, isActiveHref } from '../lib/family/types.ts';
@@ -110,6 +111,36 @@ test('the homepage hero is the family template with sourced proof', () => {
   assert.match(html, /Two-year workmanship warranty/);
   const kitchen = SERVICES.find((service) => service.slug === 'kitchen-remodel');
   assert.match(html, new RegExp(`Kitchen remodels planning from \\${kitchen?.planningFrom}`));
+});
+
+// The phone crop through /_next/image sometimes never got a response, which held
+// the load event open and timed out scripts/verify-p5-mobile-seo.mjs. Both hero
+// files are already sized WebP, so the hero serves them as is.
+test('the homepage hero serves its already-sized files as is, never through /_next/image', () => {
+  const html = renderToStaticMarkup(React.createElement(ApprovedHomeHero));
+  assert.equal(html.includes('/_next/image'), false);
+  const phone = '/family/remodeling-hero-kitchen-island-phone.webp';
+  const desktop = '/family/remodeling-hero-kitchen-island.webp';
+  assert.match(html, new RegExp(`<link rel="preload" as="image" href="${phone}" media="\\(max-width: 1023px\\)"`));
+  assert.match(html, new RegExp(`<link rel="preload" as="image" href="${desktop}" media="\\(min-width: 1024px\\)"`));
+  assert.match(html, new RegExp(`<source media="\\(max-width: 1023px\\)" srcSet="${phone}" width="760" height="1024"/>`));
+  assert.match(html, new RegExp(`<img [^>]*src="${desktop}"[^>]*class="fam-hero-img"`));
+  assert.equal(/imageSrcSet|sizes="100vw"/.test(html), false);
+});
+
+test('HeroPhoto still goes through the optimizer unless a file opts out', () => {
+  const props = {
+    image: { src: '/a.webp', width: 1536, height: 1024, alt: 'A' },
+    phoneImage: { src: '/b.webp', width: 760, height: 1024, unoptimized: true },
+    eyebrow: 'Eyebrow',
+    title: 'Title',
+    primary: { label: 'Go', href: '/' },
+  };
+  const html = renderToStaticMarkup(React.createElement(HeroPhoto, props));
+  assert.match(html, /<link rel="preload" as="image" href="\/b\.webp" media="\(max-width: 1023px\)"/);
+  assert.match(html, /<source media="\(max-width: 1023px\)" srcSet="\/b\.webp" width="760"/);
+  assert.match(html, /<link rel="preload" as="image" imageSrcSet="\/_next\/image\?url=%2Fa\.webp[^"]*" imageSizes="100vw" media="\(min-width: 1024px\)"/);
+  assert.match(html, /<img [^>]*srcSet="\/_next\/image\?url=%2Fa\.webp/);
 });
 
 test('the shared chrome matches its manifest and stays brand-agnostic', () => {
