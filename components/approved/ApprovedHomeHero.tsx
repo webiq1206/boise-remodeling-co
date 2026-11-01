@@ -21,12 +21,16 @@ const KITCHEN_PLANNING_FROM = SERVICES.find((service) => service.slug === "kitch
 export function ApprovedHomeHero() {
   return (
     <>
+      {/* Both files are already sized WebP (1536x1024 at 100 KB, 760x1024 at 41 KB), so they
+          are served as is. Through /_next/image the phone crop sometimes never got a response,
+          and every later request for it hung too, which held the page's load event open. */}
       <HeroPhoto
         image={{
           src: "/family/remodeling-hero-kitchen-island.webp",
           width: 1536,
           height: 1024,
           position: "62% 50%",
+          unoptimized: true,
           alt: "Representative open kitchen with a dark island, glass pendant lights and white cabinets",
         }}
         phoneImage={{
@@ -34,6 +38,7 @@ export function ApprovedHomeHero() {
           width: 760,
           height: 1024,
           position: "50% 30%",
+          unoptimized: true,
         }}
         eyebrow="Design-build remodeling in Boise"
         title="Boise home remodeling."

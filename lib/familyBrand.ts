@@ -13,7 +13,7 @@ import type { FamilyBrand } from '@/lib/family/types';
 import { DOPL_LICENSE_SEARCH, REGISTRATION_LINE } from '@/components/RegistrationLine';
 import { CONTENT_HUBS } from '@/shared/contentHubs';
 import { CITIES, SERVICES } from '@/shared/contentData';
-import { P5_FACEBOOK_URL } from '@/shared/gbpProfile';
+import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
 import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
 import { toSentenceCase } from '@/shared/sentenceCase';
 
@@ -139,4 +139,7 @@ export const FAMILY_BRAND: FamilyBrand = {
   },
   // P5 Home Co's Facebook page (shared/gbpProfile); nothing renders until its URL exists.
   parentFacebook: { href: P5_FACEBOOK_URL, label: 'P5 Home Co on Facebook' },
+  // P5 Home Co's one Google Business Profile (owner decision, 1 November 2026), linked beside
+  // its Facebook page and labelled for the parent. It stays out of this brand's own sameAs.
+  parentGoogle: { href: P5_GBP_URL, label: 'P5 Home Co on Google' },
 };

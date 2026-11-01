@@ -5,13 +5,14 @@ import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { ApprovedHomeHero } from '../components/approved/ApprovedHomeHero.tsx';
+import { HeroPhoto } from '../components/family/HeroPhoto.tsx';
 import { Footer } from '../components/Footer.tsx';
 import { DOPL_LICENSE_SEARCH } from '../components/RegistrationLine.tsx';
 import { matchesRoute, isActiveHref } from '../lib/family/types.ts';
 import { FAMILY_BRAND } from '../lib/familyBrand.ts';
 import { BUSINESS_VCARD_PATH } from '../lib/vcard.ts';
 import { SERVICES } from '../shared/contentData.ts';
-import { P5_FACEBOOK_URL } from '../shared/gbpProfile.ts';
+import { P5_FACEBOOK_URL, P5_GBP_URL } from '../shared/gbpProfile.ts';
 import { GUIDE_PAGES } from '../shared/guideContent.ts';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 
@@ -27,6 +28,7 @@ test('the brand config carries this site’s facts, one CTA and one destination'
   assert.equal(FAMILY_BRAND.phone.display, '(208) 477-1169');
   assert.equal(FAMILY_BRAND.saveContactHref, BUSINESS_VCARD_PATH);
   assert.equal(FAMILY_BRAND.parentFacebook.href, P5_FACEBOOK_URL);
+  assert.deepEqual(FAMILY_BRAND.parentGoogle, { href: P5_GBP_URL, label: 'P5 Home Co on Google' });
   assert.equal(FAMILY_BRAND.nap.line, publicFooterLine());
   assert.match(FAMILY_BRAND.nap.line, /4031 W Wapoot St, Meridian, ID 83646/);
   assert.equal(FAMILY_BRAND.registration.href, DOPL_LICENSE_SEARCH);
@@ -81,6 +83,10 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.match(html, /<a href="\/subcontractor" rel="nofollow">Subcontractor login<\/a>/);
   assert.equal((html.match(/>Idaho Registered Contractor #8381215<\/a>/g) ?? []).length, 1);
   assert.equal(html.includes('Boise ADU Co'), false);
+  // The parent's Facebook page and Google profile, once each.
+  assert.equal((html.match(/data-testid="link-footer-facebook"/g) ?? []).length, 1);
+  assert.equal((html.match(/data-testid="link-footer-google"/g) ?? []).length, 1);
+  assert.match(html, /<a href="https:\/\/www\.google\.com\/search\?kgmid=\/g\/11ntl1t7dc" rel="noopener" target="_blank" data-testid="link-footer-google">P5 Home Co on Google<\/a>/);
 });
 
 test('the homepage hero is the family template with sourced proof', () => {
@@ -105,6 +111,36 @@ test('the homepage hero is the family template with sourced proof', () => {
   assert.match(html, /Two-year workmanship warranty/);
   const kitchen = SERVICES.find((service) => service.slug === 'kitchen-remodel');
   assert.match(html, new RegExp(`Kitchen remodels planning from \\${kitchen?.planningFrom}`));
+});
+
+// The phone crop through /_next/image sometimes never got a response, which held
+// the load event open and timed out scripts/verify-p5-mobile-seo.mjs. Both hero
+// files are already sized WebP, so the hero serves them as is.
+test('the homepage hero serves its already-sized files as is, never through /_next/image', () => {
+  const html = renderToStaticMarkup(React.createElement(ApprovedHomeHero));
+  assert.equal(html.includes('/_next/image'), false);
+  const phone = '/family/remodeling-hero-kitchen-island-phone.webp';
+  const desktop = '/family/remodeling-hero-kitchen-island.webp';
+  assert.match(html, new RegExp(`<link rel="preload" as="image" href="${phone}" media="\\(max-width: 1023px\\)"`));
+  assert.match(html, new RegExp(`<link rel="preload" as="image" href="${desktop}" media="\\(min-width: 1024px\\)"`));
+  assert.match(html, new RegExp(`<source media="\\(max-width: 1023px\\)" srcSet="${phone}" width="760" height="1024"/>`));
+  assert.match(html, new RegExp(`<img [^>]*src="${desktop}"[^>]*class="fam-hero-img"`));
+  assert.equal(/imageSrcSet|sizes="100vw"/.test(html), false);
+});
+
+test('HeroPhoto still goes through the optimizer unless a file opts out', () => {
+  const props = {
+    image: { src: '/a.webp', width: 1536, height: 1024, alt: 'A' },
+    phoneImage: { src: '/b.webp', width: 760, height: 1024, unoptimized: true },
+    eyebrow: 'Eyebrow',
+    title: 'Title',
+    primary: { label: 'Go', href: '/' },
+  };
+  const html = renderToStaticMarkup(React.createElement(HeroPhoto, props));
+  assert.match(html, /<link rel="preload" as="image" href="\/b\.webp" media="\(max-width: 1023px\)"/);
+  assert.match(html, /<source media="\(max-width: 1023px\)" srcSet="\/b\.webp" width="760"/);
+  assert.match(html, /<link rel="preload" as="image" imageSrcSet="\/_next\/image\?url=%2Fa\.webp[^"]*" imageSizes="100vw" media="\(min-width: 1024px\)"/);
+  assert.match(html, /<img [^>]*srcSet="\/_next\/image\?url=%2Fa\.webp/);
 });
 
 test('the shared chrome matches its manifest and stays brand-agnostic', () => {
