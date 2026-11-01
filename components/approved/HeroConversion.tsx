@@ -282,7 +282,9 @@ export function HeroConversion({
   );
 
   return (
-    <div className="fold-convert" id={blockId}>
+    // data-family-bar-yield: the family mobile bar steps aside while the form, its success
+    // screen or Step 2 is on screen (components/family/MobileActionBar.tsx).
+    <div className="fold-convert" id={blockId} data-family-bar-yield="">
       {recovery && (
         <EstimatorRecovery
           flow="consultation"
