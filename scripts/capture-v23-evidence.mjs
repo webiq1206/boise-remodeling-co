@@ -47,7 +47,7 @@ async function main() {
       await shot(page, `home-proof-${vp.name}`);
 
       // interact: select bathroom band
-      await page.locator('.planning-range-card', { hasText: "Primary bath" }).click();
+      await page.locator('.fr-range-choice', { hasText: "Primary bath" }).click();
       await page.waitForTimeout(200);
       await shot(page, `home-proof-bath-${vp.name}`);
 

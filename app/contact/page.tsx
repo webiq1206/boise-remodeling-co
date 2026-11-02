@@ -176,7 +176,7 @@ export default function ContactPage() {
       <HashTargetRecovery />
       <div className="flex flex-col ">
         {/* Approved editorial hero */}
-        <InteriorHero layout="contact" imageSrc={SITE_IMAGES.hero} imageAlt="Modern luxury home interior remodel in Boise Idaho Treasure Valley">
+        <InteriorHero layout="contact" imageSrc={SITE_IMAGES.statementBand} imageAlt="Warm open-concept great room and kitchen remodel in the Treasure Valley, Idaho">
             <HeroBreadcrumbs />
             <p data-speakable="summary" className="sr-only">
               {SPEAKABLE_SUMMARY}
@@ -216,9 +216,9 @@ export default function ContactPage() {
           <div className="container px-4">
             <div className="interior-contact-grid interior-contact-grid--form-first">
               <div id="consult" className="interior-contact-anchor">
-                <MarketingCard className="interior-contact-form p-4 sm:p-7 md:p-10" padding="lg">
+                <div className="fr-request-card interior-contact-form" style={{ '--f-accent': '#7D9479' } as React.CSSProperties}>
                   <ConsultationForm variant="short" />
-                </MarketingCard>
+                </div>
               </div>
               <div className="interior-contact-intro">
                 <Reveal>

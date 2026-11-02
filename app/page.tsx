@@ -1,8 +1,6 @@
 import { ApprovedHome } from "@/components/approved/ApprovedHome";
 import { ApprovedHomeHero } from "@/components/approved/ApprovedHomeHero";
 import { HeroConversion } from "@/components/approved/HeroConversion";
-import { MarketingCard } from "@/components/marketing/MarketingCard";
-import { Section } from "@/components/marketing/Section";
 import { Reveal } from "@/components/Reveal";
 import { BudgetInclusionsSection } from "@/components/sections/BudgetInclusionsSection";
 import { HomePageSchema } from "@/components/seo/HomePageSchema";
@@ -11,10 +9,8 @@ import { buildCanonical,fitDescription } from "@/lib/page-metadata";
 import { TextReplyLine } from "@/components/TextReplyLine";
 import { HashTargetRecovery } from "@/components/HashTargetRecovery";
 import { CONSULT_BULLETS,SITE_TAGLINE } from "@/shared/siteContent";
-import { SITE_IMAGES } from "@/shared/siteImages";
 import { Check } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 
 export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: "Design-Build Remodeling in Boise, Idaho | Boise Remodeling Co" },
@@ -69,70 +65,31 @@ export default function HomePage() {
       <ApprovedHome hero={<ApprovedHomeHero />} />
       <BudgetInclusionsSection />
       <div id="contact" className="scroll-mt-24" aria-hidden="true" />
-      <Section divider className="relative overflow-hidden pb-28 md:pb-28">
-        {/* Warm, dimmed lifestyle photo grounds the closing section. Directional
-            scrims keep the left-column copy legible and fade the edges into the
-            page ground; the form card floats above on its own shadow. */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <Image
-            src={SITE_IMAGES.consultBg}
-            unoptimized
-            alt=""
-            fill
-            loading="lazy"
-            sizes="100vw"
-            className="object-cover opacity-[0.52] img-brand-grade"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/35" />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-transparent to-background" />
-        </div>
-        {/* The ask. Full measure, heading at h2 scale, the form kept in its
-            card because a form needs a defined field to sit in - this is one of
-            the places a card is actually the right answer. */}
-        <div className="ed-shell relative z-10">
-          {/* Every "Request a quote" (header, bottom bar, hero, in-page buttons) lands on /#request,
-              and the form leads: it comes first in the markup, so a phone lands on its heading and
-              first field with the reassurance below it, and a desktop shows it beside the intro.
-              #consult ("Schedule a free visit") lands on the same form. It is the only form here:
-              address, project type and timing are asked after the send, on the success screen
-              (Step 2), so a second, longer form would only compete with it. */}
-          <div className="home-consult-grid grid gap-[var(--ed-gutter)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+      {/* The ask. A bone band after the dark budget section, with the form as the one
+          bright object on the screen: white card, accent top rule, deep shadow. Every
+          "Request a quote" (header, bottom bar, hero, in-page buttons) lands on /#request;
+          #consult ("Schedule a free visit") lands on the same form. The form comes first in
+          the markup, so a phone lands on its heading and first field. */}
+      <section className="fr-request family-site family-remodeling" style={{ "--f-accent": "#7D9479" } as React.CSSProperties}>
+        <div className="f-section f-container">
+          <div className="fr-request-grid">
             <div id="request" className="home-request lg:col-start-2 lg:row-start-1" role="region" aria-label="Request a quote">
               <span id="consult" className="home-request-anchor" aria-hidden="true" />
-              <MarketingCard className="shadow-2xl" padding="lg">
+              <div className="fr-request-card">
                 <HeroConversion />
-              </MarketingCard>
+              </div>
             </div>
-            <div className="lg:col-start-1 lg:row-start-1 lg:sticky lg:top-28">
+            <div className="fr-request-copy lg:col-start-1 lg:row-start-1">
               <Reveal>
-                <p className="ed-eyebrow">Begin a conversation</p>
-                <h2 className="ed-h2 ed-statement">
-                  Tell us about your{" "}
-                  <em className="not-italic" style={{ color: "var(--ed-accent)" }}>
-                    home
-                  </em>
-                  .
-                </h2>
-                <p className="ed-lede mt-8 max-w-[40ch]">
-                  We will reach out within one business day to schedule your free
-                  60 to 90 minute in-home visit.
-                </p>
-                <TextReplyLine className="ed-body mt-4 max-w-[46ch]" />
-                <p className="ed-body mt-4">
-                  You will leave with planning guidance, design direction, and no
-                  obligation.
-                </p>
-                <ul
-                  className="mt-8 grid list-none gap-3 border-t p-0 pt-6"
-                  style={{ borderColor: "var(--ed-line)" }}
-                >
+                <p className="f-eyebrow">BEGIN A CONVERSATION</p>
+                <h2>Tell us about<br /><em style={{ color: "var(--f-accent)" }}>your home.</em></h2>
+                <p>We will reach out within one business day to schedule your free 60 to 90 minute in-home visit.</p>
+                <TextReplyLine className="fr-request-reply" />
+                <p>You will leave with planning guidance, design direction, and no obligation.</p>
+                <ul className="fr-request-list">
                   {CONSULT_BULLETS.map((item) => (
-                    <li key={item} className="ed-body flex items-start gap-3 text-[0.875rem]">
-                      <Check
-                        className="h-4 w-4 flex-shrink-0 mt-0.5"
-                        style={{ color: "var(--ed-accent)" }}
-                        aria-hidden="true"
-                      />
+                    <li key={item}>
+                      <Check className="h-4 w-4" aria-hidden="true" />
                       <span>{item}</span>
                     </li>
                   ))}
@@ -141,7 +98,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </Section>
+      </section>
     </div>
   );
 }

@@ -21,7 +21,6 @@ import { CITIES, TREASURE_VALLEY_CITIES } from "@/shared/contentData";
 import { CTA_PRIMARY } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
-import { Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -103,113 +102,119 @@ export default function AboutPage() {
             <InteriorHeroActions />
           </InteriorHero>
 
-          <div className="interior-hero-more">
+          {/* Who we are: the lede beside the one family photograph, capped to the copy's
+              height, instead of a 2048px square across the whole shell. */}
+          <Section divider className="pt-0">
             <div className="ed-shell">
-              <p className="ed-eyebrow">Real people. A higher standard.</p>
-              <p className="ed-lede">
-                It is run by Nick Perkins, a construction project manager with a
-                bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
-                decade of work from small renovations to multimillion-dollar custom homes.{" "}
-                {SHOW_FOUNDING_YEAR ? 'He founded P5 in Colorado in 2020 and moved to the Treasure Valley with his family in 2025.' : 'He moved to the Treasure Valley with his family in 2025.'}{" "}
-                <a
-                  href="https://p5homeco.com/about"
-                  className="underline underline-offset-2"
-                  rel="noopener"
-                >
-                  Read the full story on p5homeco.com/about
-                </a>
-                .
-              </p>
-              <p className="ed-small interior-hero-more-note max-w-2xl">
-                P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
-                Two-year workmanship warranty on remodels.
-              </p>
-              <div className="mt-4">
-                <SaveContactLink
-                  showIcon
-                  className={familyButtonClass({ variant: 'tertiary' })}
+              <div className="ed-split ed-split-narrow ed-split-center">
+                <Reveal>
+                  <p className="ed-eyebrow">Real people. A higher standard.</p>
+                  <p className="ed-lede">
+                    It is run by Nick Perkins, a construction project manager with a
+                    bachelor&apos;s degree in Construction with an emphasis in Project Management and more than a
+                    decade of work from small renovations to multimillion-dollar custom homes.{" "}
+                    {SHOW_FOUNDING_YEAR ? 'He founded P5 in Colorado in 2020 and moved to the Treasure Valley with his family in 2025.' : 'He moved to the Treasure Valley with his family in 2025.'}{" "}
+                    <a
+                      href="https://p5homeco.com/about"
+                      className="underline underline-offset-2"
+                      rel="noopener"
+                    >
+                      Read the full story on p5homeco.com/about
+                    </a>
+                    .
+                  </p>
+                  <p className="ed-small interior-hero-more-note mt-6 max-w-2xl">
+                    P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
+                    Two-year workmanship warranty on remodels.
+                  </p>
+                  <div className="mt-6">
+                    <SaveContactLink
+                      showIcon
+                      className={familyButtonClass({ variant: 'tertiary' })}
+                    />
+                  </div>
+                </Reveal>
+                <Image
+                  src="/images/about/perkins-family-full.webp"
+                  alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
+                  width={2048}
+                  height={2048}
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 640px"
+                  className="family-people-photo w-full h-auto rounded-sm"
                 />
               </div>
             </div>
-          </div>
-
-          <Section divider className="pt-0">
-            <div className="container px-4 max-w-5xl">
-              <Image
-                src="/images/about/perkins-family-full.webp"
-                alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
-                width={2048}
-                height={2048}
-                priority
-                sizes="(max-width: 1024px) 100vw, 1024px"
-                className="family-people-photo w-full h-auto rounded-sm"
-              />
-
-            </div>
           </Section>
 
+          {/* What we do: heading column beside the copy, so the paragraph has a measure
+              and the section has two halves instead of one narrow column. */}
           <Section divider>
-            <div className="container px-4 max-w-3xl">
-              <Reveal>
-                <p className="ed-eyebrow">What we do</p>
-                <h2 className="ed-h2">Kitchens, baths and whole homes.</h2>
-                <p className="ed-lede mt-4">
-                  Boise Remodeling Co remodels kitchens, bathrooms and whole homes with design, permits
-                  and construction under one contract. Room additions and ADUs are handled by Boise
-                  Construction Co. RE-10 inspection repairs are handled by Boise Handyman Co.
-                </p>
-                <p className="ed-body mt-4">
-                  Boise Remodeling Co is a trade name of P5 Home Co LLC, Idaho Registered Contractor
-                  #8381215. Your contract is with P5 Home Co LLC doing business as Boise Remodeling Co.
-                </p>
-                <p className="ed-body mt-4">
-                  <RegistrationLink className="underline underline-offset-2" />. Bonded and insured.
-                </p>
-              </Reveal>
+            <div className="ed-shell">
+              <div className="ed-split ed-split-narrow">
+                <div className="lg:sticky lg:top-28 lg:self-start">
+                  <p className="ed-eyebrow">What we do</p>
+                  <h2 className="ed-h2 ed-statement">Kitchens, baths and whole homes.</h2>
+                </div>
+                <Reveal>
+                  <p className="ed-lede">
+                    Boise Remodeling Co remodels kitchens, bathrooms and whole homes with design, permits
+                    and construction under one contract. Room additions and ADUs are handled by Boise
+                    Construction Co. RE-10 inspection repairs are handled by Boise Handyman Co.
+                  </p>
+                  <p className="ed-body mt-6">
+                    Boise Remodeling Co is a trade name of P5 Home Co LLC, Idaho Registered Contractor
+                    #8381215. Your contract is with P5 Home Co LLC doing business as Boise Remodeling Co.
+                  </p>
+                  <p className="ed-body mt-4">
+                    <RegistrationLink className="underline underline-offset-2" />. Bonded and insured.
+                  </p>
+                </Reveal>
+              </div>
             </div>
           </Section>
 
+          {/* Five commitments as a hairline matrix (five cells balance as three then two). */}
           <Section variant="greige" divider>
-            <div className="container px-4 max-w-3xl">
+            <div className="ed-shell">
               <p className="ed-eyebrow">On every remodel</p>
-              <h2 className="ed-h2">Five things you can count on.</h2>
-              <ul className="mt-8 grid list-none gap-4 p-0">
-                {COMPANY_ITEMS.map((item) => (
-                  <li key={item} className="flex items-start gap-3 ed-body">
-                    <Check className="h-4 w-4 mt-1 flex-shrink-0" style={{ color: "var(--ed-accent)" }} aria-hidden />
-                    <span>{item}</span>
+              <h2 className="ed-h2 ed-statement">Five things you can count on.</h2>
+              <ul className="ed-matrix mt-10 list-none p-0" style={{ "--ed-cell-h": "150px" } as React.CSSProperties}>
+                {COMPANY_ITEMS.map((item, i) => (
+                  <li key={item} className="flex flex-col gap-4">
+                    <span className="ed-step-n" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="ed-h4">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </Section>
 
+          {/* The founder, in words: the photograph already opened the page. */}
           <Section divider>
-            <div className="container px-4 grid gap-10 lg:grid-cols-2 lg:items-start max-w-5xl family-founder-block">
-              <Image
-                src="/images/about/perkins-family-full.webp"
-                alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
-                width={2048}
-                height={2048}
-                sizes="(max-width: 1024px) 100vw, 520px"
-                className="family-people-photo w-full h-auto rounded-sm"
-              />
-              <div>
-                <p className="ed-eyebrow">Who you are hiring</p>
-                <h2 className="ed-h2">Nick Perkins, founder.</h2>
-                <p className="ed-body mt-4">
-                  Construction project manager with a bachelor&apos;s degree in Construction with an
-                  emphasis in Project Management, and more than a decade of custom homes, remodels and
-                  developments. Husband, father of five. The family moved to Meridian in 2025.
-                </p>
-                <p className="ed-body mt-4">&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</p>
-                <p className="ed-body mt-4">
-                  Prefer to talk first? Call or text{" "}
-                  <a href={SITE_CONFIG.phoneHref} className="underline underline-offset-2">
-                    {SITE_CONFIG.phone}
-                  </a>
-                  . You will reach a person who does this work, not a call centre.
-                </p>
+            <div className="ed-shell">
+              <div className="ed-split ed-split-narrow">
+                <div className="lg:sticky lg:top-28 lg:self-start">
+                  <p className="ed-eyebrow">Who you are hiring</p>
+                  <h2 className="ed-h2 ed-statement">Nick Perkins, founder.</h2>
+                </div>
+                <div>
+                  <p className="ed-lede">
+                    Construction project manager with a bachelor&apos;s degree in Construction with an
+                    emphasis in Project Management, and more than a decade of custom homes, remodels and
+                    developments. Husband, father of five. The family moved to Meridian in 2025.
+                  </p>
+                  <blockquote className="mt-8 border-l-2 pl-6 ed-h3" style={{ borderColor: "var(--ed-accent)" }}>
+                    &ldquo;Work hard. Keep your word. Treat people right.&rdquo;
+                  </blockquote>
+                  <p className="ed-body mt-8">
+                    Prefer to talk first? Call or text{" "}
+                    <a href={SITE_CONFIG.phoneHref} className="underline underline-offset-2">
+                      {SITE_CONFIG.phone}
+                    </a>
+                    . You will reach a person who does this work, not a call centre.
+                  </p>
+                </div>
               </div>
             </div>
           </Section>
