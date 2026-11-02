@@ -6,7 +6,7 @@ import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/compo
 import {FAQSection} from '@/components/FAQSection';
 import {PlanningRangeExplorer} from './PlanningRangeExplorer';
 import {brands,cities,serviceExtras} from './family-content';
-import {FEATURED_BOISE_BENCH_RANCH} from '@/shared/featuredProjects';
+import {DesignGallery} from '@/components/sections/DesignGallery';
 
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
 
@@ -40,9 +40,6 @@ function Rows({items,numbered=false}:{items:[string,string][];numbered?:boolean}
  */
 export function ApprovedHome({hero}:{hero:ReactNode}){
  const b=brands['remodeling'];
- const project=FEATURED_BOISE_BENCH_RANCH;
- const room=(key:string)=>project.rooms.find(r=>r.key===key);
- const showcase=[room('kitchen'),room('living'),room('bath'),room('exterior')].filter(Boolean) as NonNullable<ReturnType<typeof room>>[];
 
  return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.accent} as CSSProperties}>
   {hero}
@@ -70,24 +67,23 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
    </div>
   </section>
 
-  {/* 2. Showcase: a single concept property, room by room, with the honesty note beside it. */}
-  <section className="f-section f-container" id="our-work">
-   <div className="fr-showcase">
-    <div className="f-sticky">
-     <p className="f-eyebrow">OUR WORK</p>
-     <h2>See what a remodel<br/><em>can become.</em></h2>
-     <p>{project.description}</p>
-     <p className="fr-note">We publish only our own completed work, and our first projects as Boise Remodeling Co are finishing now. Ask us for references and we will connect you with past clients.</p>
-     <p style={{marginTop:28}}><a className="f-link" href="/design-ideas">Browse design ideas <Arrow/></a></p>
-    </div>
-    <div className="fr-photo-grid">
-     {showcase.map((r,i)=><figure key={r.key} className={i===0||i===3?'fr-wide':undefined}>
-      <img src={r.src} alt={r.alt} loading="lazy" width={i===0||i===3?1600:800} height={i===0||i===3?900:600}/>
-      <figcaption>{r.label}</figcaption>
-     </figure>)}
-    </div>
-   </div>
-  </section>
+  {/* 2. The look: six photographs from the company's own campaign library. */}
+  <DesignGallery
+   id="our-work"
+   eyebrow="OUR WORK"
+   title="See what a remodel"
+   accent="can become."
+   intro="Warm white oak, quiet tile and light that lands well. Kitchens and baths planned around the way you actually use them, finished with the small details you notice every day."
+   photos={[
+    {src:'/family/drive/landscape-1-white-and-oak-kitchen-island.webp',alt:'White kitchen with a white oak island, cream counter stools and a plaster range hood',label:'Kitchen',wide:true},
+    {src:'/family/drive/square-1-kitchen-counter-detail.webp',alt:'Loaf of bread on a wood board on a white quartz counter beside a crock of wooden spoons',label:'Counter detail'},
+    {src:'/family/drive/square-2-powder-room-vessel-sink.webp',alt:'Powder room with a marble vessel sink, brass wall faucet and an oak-framed mirror',label:'Powder room'},
+    {src:'/family/drive/landscape-2-freestanding-soaking-tub.webp',alt:'Freestanding white soaking tub against a marble wall with a brass floor-mounted faucet',label:'Primary bath',wide:true},
+    {src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:'Floating white oak double vanity with round black mirrors beside a glass walk-in shower',label:'Double vanity',wide:true},
+    {src:'/family/drive/square-3-tiled-shower-bench.webp',alt:'Tiled shower bench with a rolled white towel, soap and hanging eucalyptus',label:'Shower bench'},
+   ]}
+   note="Design imagery showing the finish and feel we build toward. We publish only our own completed work, and our first projects as Boise Remodeling Co are finishing now. Ask us for references and we will connect you with past clients."
+  />
 
   {/* 3. The number, on its own band. */}
   <PlanningRangeExplorer />
