@@ -27,37 +27,6 @@
 .approved-shell .home-request .fold-convert {
   margin: 0;
 }
-.approved-shell .home-request-more {
-  border-top: 1px solid var(--color-border);
-}
-.approved-shell .home-request-more > summary {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--touch-min);
-  padding: var(--space-2) 0;
-  color: var(--color-ink);
-  font: 600 var(--fs-small) / 1.4 var(--font-sans);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  cursor: pointer;
-  list-style: none;
-}
-.approved-shell .home-request-more > summary::-webkit-details-marker {
-  display: none;
-}
-.approved-shell .home-request-more > summary::after {
-  content: '+';
-  margin-left: auto;
-  font: 400 22px / 1 var(--font-sans);
-  text-decoration: none;
-}
-.approved-shell .home-request-more[open] > summary::after {
-  content: '\2212';
-}
-.approved-shell .home-request-more-body {
-  padding-top: var(--space-4);
-}
 
 /* B3 type roles: body copy is the sans face everywhere; the serif carries headings
    and display only. The lede was a body paragraph set in Cormorant at 19px. */

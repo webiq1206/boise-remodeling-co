@@ -1,8 +1,6 @@
 import { ApprovedHome } from "@/components/approved/ApprovedHome";
 import { ApprovedHomeHero } from "@/components/approved/ApprovedHomeHero";
 import { HeroConversion } from "@/components/approved/HeroConversion";
-// Loaded after the page: the form sits in a closed disclosure (components/approved/LazyConsultationForm).
-import { ConsultationForm } from "@/components/approved/LazyConsultationForm";
 import { MarketingCard } from "@/components/marketing/MarketingCard";
 import { Section } from "@/components/marketing/Section";
 import { Reveal } from "@/components/Reveal";
@@ -95,20 +93,15 @@ export default function HomePage() {
           {/* Every "Request a quote" (header, bottom bar, hero, in-page buttons) lands on /#request,
               and the form leads: it comes first in the markup, so a phone lands on its heading and
               first field with the reassurance below it, and a desktop shows it beside the intro.
-              #consult ("Schedule a free visit") lands on the same form. The longer consultation
-              form stays one tap away below the short one. */}
+              #consult ("Schedule a free visit") lands on the same form. It is the only form here:
+              address, project type and timing are asked after the send, on the success screen
+              (Step 2), so a second, longer form would only compete with it. */}
           <div className="home-consult-grid grid gap-[var(--ed-gutter)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
             <div id="request" className="home-request lg:col-start-2 lg:row-start-1" role="region" aria-label="Request a quote">
               <span id="consult" className="home-request-anchor" aria-hidden="true" />
               <MarketingCard className="shadow-2xl" padding="lg">
                 <HeroConversion />
               </MarketingCard>
-              <details className="home-request-more">
-                <summary>Prefer the longer form, with your address and project type?</summary>
-                <div className="home-request-more-body">
-                  <ConsultationForm />
-                </div>
-              </details>
             </div>
             <div className="lg:col-start-1 lg:row-start-1 lg:sticky lg:top-28">
               <Reveal>
