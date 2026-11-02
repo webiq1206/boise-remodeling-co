@@ -34,7 +34,13 @@ test("the first screen is the photograph and headline, and the short request is 
   assert.match(brand, /cta: \{ label: 'Request a quote', href: '\/#request' \}/);
   assert.match(homePage, /<div id="request"/);
   assert.match(homePage, /<HeroConversion \/>/);
-  assert.ok(homePage.indexOf("<HeroConversion />") < homePage.indexOf("<ConsultationForm />"));
+  // Owner request (1 November 2026, "too many options might be cumbersome"): one form, not
+  // two. The longer consultation form used to
+  // sit in a closed "Prefer the longer form" disclosure under the short request; Step 2 on the
+  // success screen now asks for the address and project type, so the homepage carries only
+  // the short request. The long form lives on in the consult dialog.
+  assert.doesNotMatch(homePage, /<ConsultationForm/);
+  assert.doesNotMatch(homePage, /home-request-more/);
   assert.doesNotMatch(css, /max-height:\s*56px/);
   // C3/C6/C7: header + bottom-bar tokens the estimate wizard still reads.
   assert.match(css, /--site-header-h:\s*76px/);
@@ -67,7 +73,6 @@ test("the first screen is the photograph and headline, and the short request is 
   assert.match(header, /data-testid="link-call-mobile-header"/);
   assert.match(header, /data-testid="link-text-mobile-header"/);
   assert.match(contactPage, /<ConsultationForm/);
-  assert.match(homePage, /<ConsultationForm/);
 });
 
 // Owner request (1 November 2026): every Request a quote lands ON the form, the form is the
