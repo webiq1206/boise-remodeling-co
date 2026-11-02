@@ -20,7 +20,7 @@ generateWebPageSchema,
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
 import { CITIES,TREASURE_VALLEY_CITIES } from "@/shared/contentData";
 import { CTA_PRIMARY,CTA_SECONDARY } from "@/shared/ctaCopy";
-import { SITE_IMAGES } from "@/shared/siteImages";
+import { FEATURED_BOISE_BENCH_IMAGES } from "@/shared/siteImages";
 import { ArrowRight } from "lucide-react";
 
 export const metadata = withBrandPageMetadata((buildPageMetadata({
@@ -49,8 +49,8 @@ export default function AreasHubPage() {
       <JsonLd data={schemas} />
       <div className="flex flex-col ">
         <PageHeroBand
-          imageSrc={SITE_IMAGES.hero}
-          imageAlt="Remodeled Treasure Valley home interior with kitchen and living space"
+          imageSrc={FEATURED_BOISE_BENCH_IMAGES.exterior}
+          imageAlt="Remodeled 1972 Boise Bench ranch with sage-grey lap siding and black-framed windows"
         >
           <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Service Areas" }]} />
           <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>Treasure Valley</p>

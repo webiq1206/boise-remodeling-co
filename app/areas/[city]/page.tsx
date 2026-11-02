@@ -176,6 +176,13 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
           'Written workmanship guarantee',
         ]}
         localNote={localNote}
+        inclusions={[
+          `Kitchen remodeling in ${city.name}: layout, cabinetry, surfaces and lighting`,
+          `Bathroom remodeling in ${city.name}: showers, vanities, tile and waterproofing`,
+          `Whole-home remodeling across ${city.name}: one coordinated plan and schedule`,
+          'Room additions, basements and outdoor living where the home allows',
+          `${county} permits, inspections and scheduling handled in-house`,
+        ]}
         sections={sections}
         proof={proof}
         proofHeading={`Recent ${city.name} remodeling projects`}

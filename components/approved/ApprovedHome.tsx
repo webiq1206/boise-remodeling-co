@@ -2,14 +2,14 @@
 import Link from 'next/link';
 import {type CSSProperties, type ReactNode} from 'react';
 import {ArrowUpRight} from 'lucide-react';
-import {Tabs,TabsList,TabsTrigger,TabsContent} from '@/components/ui/tabs';
 import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/components/ui/accordion';
 import {FAQSection} from '@/components/FAQSection';
-import {FeaturedProjectRoomsSection} from '@/components/sections/FeaturedProjectRoomsSection';
-import {StatementBandSection} from '@/components/sections/StatementBandSection';
 import {PlanningRangeExplorer} from './PlanningRangeExplorer';
-import {brands,cities} from './family-content';
+import {brands,cities,serviceExtras} from './family-content';
+import {FEATURED_BOISE_BENCH_RANCH} from '@/shared/featuredProjects';
+
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
+
 const PHOTO_ALT:Record<string,string>={
  'kitchen-remodel':'White kitchen with a wood island, brass lights, and a view to the living room',
  'bathroom-remodel':'Bathroom with a freestanding tub, glass shower, and double wood vanity',
@@ -20,47 +20,126 @@ const PHOTO_ALT:Record<string,string>={
 };
 function photoAlt(slug:string){return PHOTO_ALT[slug]??'Photograph of a remodeling project';}
 function Title({lines}:{lines:string[]}){return <>{lines[0]}<br/><em>{lines[1]}</em></>}
-function Rows({items,numbered=false}:{items:[string,string][];numbered?:boolean}){return <Accordion type="single" collapsible defaultValue="0" className="f-accordion">{items.map(([title,copy],i)=><AccordionItem value={String(i)} key={title}><AccordionTrigger>{numbered&&<span className="f-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>}<span>{title}</span></AccordionTrigger><AccordionContent>{copy}</AccordionContent></AccordionItem>)}</Accordion>}
 
-export function ApprovedHome({hero}:{hero:ReactNode}){const b=brands['remodeling'];const home='';
- const processBlock=<section className="f-section f-container f-two" id="how-we-build"><div className="f-sticky"><p className="f-eyebrow">KNOW WHAT HAPPENS NEXT</p><h2>A clear plan.<br/><em>At every step.</em></h2><p>Good work starts with a shared understanding of the scope, the decisions, and the next step.</p></div><Rows items={b.process} numbered/></section>;
- const approachBlock=<section className="f-section f-container f-two" id="why-choose-us"><div className="f-sticky"><p className="f-eyebrow">THE WAY WE WORK</p><h2>Good work.<br/><em>A better experience.</em></h2><p>{b.id==='handyman'?'Small jobs deserve a clear quote, a dependable visit, and a tidy finish.':'Clear expectations, thoughtful decisions, and someone accountable for the work. That is the P5 standard.'}</p></div><Rows items={b.approach}/></section>;
+function Rows({items,numbered=false}:{items:[string,string][];numbered?:boolean}){
+ return <Accordion type="single" collapsible defaultValue="0" className="f-accordion">
+  {items.map(([title,copy],i)=><AccordionItem value={String(i)} key={title}>
+   <AccordionTrigger>{numbered&&<span className="f-number" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>}<span>{title}</span></AccordionTrigger>
+   <AccordionContent>{copy}</AccordionContent>
+  </AccordionItem>)}
+ </Accordion>;
+}
 
-return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.accent} as CSSProperties}>
- {hero}
- {/* The proof strip now renders with the hero (components/family/ProofStrip). */}
- <section className="f-section f-container" id="services"><div className="f-section-top"><div><p className="f-eyebrow">FIND YOUR STARTING POINT</p><h2><Title lines={b.serviceTitle}/></h2></div><p>{b.serviceIntro} {/* Phase 4: the three money service pages, linked with service anchors in static server markup. The tab panels stay exactly as before, so nothing above #request changes height after hydration. */}Start with {b.services.slice(0,3).map((s,i,all)=><span key={s.slug}>{i>0?(i===all.length-1?' or ':', '):''}<a className="underline underline-offset-2" href={s.live || `/services/${s.slug}`}>{s.name.toLowerCase()}</a></span>)}.</p></div><Tabs defaultValue={b.services[0].slug} className="f-explorer"><TabsList className="f-tabs">{b.services.slice(0,3).map(s=><TabsTrigger value={s.slug} key={s.slug}>{s.name}</TabsTrigger>)}</TabsList>{b.services.slice(0,3).map((s,i)=><TabsContent key={s.slug} value={s.slug}><div className="f-scene"><a className="f-scene-image" href={s.live || `/services/${s.slug}`} aria-label={s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':`Explore ${s.name.toLowerCase()}`}><img src={s.image} alt={photoAlt(s.slug)} loading="lazy" width="1000" height="750"/></a><div className="f-scene-copy"><p className="f-eyebrow"><span aria-hidden="true">{String(i + 1).padStart(2, "0")}</span> / {b.name.replace('Boise ','')}</p><h3>{s.name}</h3><p>{s.summary}</p><ul>{s.includes.slice(0,2).map(t=><li key={t}>{t}</li>)}</ul><a className="f-link" href={s.live || `/services/${s.slug}`}>{s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':'Explore this service'} <Arrow/></a></div></div></TabsContent>)}</Tabs><a className="f-link f-browse-all" href={`${home}/services`}>View all services <Arrow/></a></section>
- <section className="f-section f-container" id="projects-honest">
-  <p className="f-eyebrow">OUR WORK</p>
-  <h2>Completed projects, when they are ready to publish.</h2>
-  <p>We publish only our own completed work, and our first projects as Boise Remodeling Co are finishing now. Ask us for references and we will connect you with past clients.</p>
-  <a className="f-link" href="/design-ideas">Browse design ideas <Arrow/></a>
- </section>
- {processBlock}
- <section className="f-value"><img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/><div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div></section>
- <PlanningRangeExplorer />
- <section className="f-section f-container" id="who-you-are-hiring">
-  <div className="f-two family-founder-block">
-   <img
-     className="family-people-photo"
-     src="/images/about/perkins-family-full.webp"
-     alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
-     width="2048"
-     height="2048"
-     loading="lazy"
-   />
-   <div>
-    <p className="f-eyebrow">WHO YOU ARE HIRING</p>
-    <h2>Nick Perkins, founder.</h2>
-    <p>Construction project manager with a bachelor&apos;s degree in Construction with an emphasis in Project Management, and more than a decade of custom homes, remodels and developments. Husband, father of five. The family moved to Meridian in 2025.</p>
-    <p>&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</p>
-    <a className="f-link" href="/about">Read Nick&apos;s story <Arrow/></a>
+/**
+ * The homepage below the hero, in the order a homeowner has the conversation:
+ * what we do (picture cards), what it can look like (showcase), what it costs
+ * (planning ranges, on their own dark band so the number is the one thing on
+ * screen), what happens next (process), why the price is fair (value band),
+ * who you are hiring (founder), the way we work, where we work, and the last
+ * objections. The request form follows in app/page.tsx.
+ */
+export function ApprovedHome({hero}:{hero:ReactNode}){
+ const b=brands['remodeling'];
+ const project=FEATURED_BOISE_BENCH_RANCH;
+ const room=(key:string)=>project.rooms.find(r=>r.key===key);
+ const showcase=[room('kitchen'),room('living'),room('bath'),room('exterior')].filter(Boolean) as NonNullable<ReturnType<typeof room>>[];
+
+ return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.accent} as CSSProperties}>
+  {hero}
+
+  {/* 1. Services as picture cards: six rooms, one photograph each, sentence case. */}
+  <section className="f-section f-container" id="services">
+   <div className="f-section-top">
+    <div><p className="f-eyebrow">FIND YOUR STARTING POINT</p><h2><Title lines={b.serviceTitle}/></h2></div>
+    <p>{b.serviceIntro} Start with {b.services.slice(0,3).map((s,i,all)=><span key={s.slug}>{i>0?(i===all.length-1?' or ':', '):''}<a className="underline underline-offset-2" href={s.live || `/services/${s.slug}`}>{s.name.toLowerCase()}</a></span>)}.</p>
    </div>
-  </div>
- </section>
- {approachBlock}
- <StatementBandSection />
- <FeaturedProjectRoomsSection compact />
- <section className="f-area f-section f-container"><p className="f-eyebrow">AT HOME IN IDAHO</p><h2>Local people.<br/><em>Valley-wide reach.</em></h2><p>Serving homeowners throughout the Treasure Valley.</p><div>{cities.map(city=><a key={city} href={`/areas/${city.toLowerCase().replaceAll(" ","-")}`}>{`Remodeling contractors in ${city}`}<Arrow/></a>)}</div></section>
- <FAQSection/>
- </div>;}
+   <div className="fr-cards">
+    {b.services.map((s,i)=><a className="fr-card" key={s.slug} href={s.live || `/services/${s.slug}`} aria-label={s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':s.name}>
+     <span className="fr-card-media"><img src={s.image} alt={photoAlt(s.slug)} loading={i<3?'eager':'lazy'} width="1000" height="750"/></span>
+     <span className="fr-card-body">
+      <h3>{s.name}</h3>
+      <p>{s.summary}</p>
+      <span className="f-link">{s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':'Explore this service'} <Arrow/></span>
+     </span>
+    </a>)}
+   </div>
+   <div className="fr-cards-more">
+    <span>Also:</span>
+    {serviceExtras.remodeling.map(([label,href])=><a className="f-link" key={href} href={href}>{label} <Arrow/></a>)}
+    <a className="f-link" href="/services">View all services <Arrow/></a>
+   </div>
+  </section>
+
+  {/* 2. Showcase: a single concept property, room by room, with the honesty note beside it. */}
+  <section className="f-section f-container" id="our-work">
+   <div className="fr-showcase">
+    <div className="f-sticky">
+     <p className="f-eyebrow">OUR WORK</p>
+     <h2>See what a remodel<br/><em>can become.</em></h2>
+     <p>{project.description}</p>
+     <p className="fr-note">We publish only our own completed work, and our first projects as Boise Remodeling Co are finishing now. Ask us for references and we will connect you with past clients.</p>
+     <p style={{marginTop:28}}><a className="f-link" href="/design-ideas">Browse design ideas <Arrow/></a></p>
+    </div>
+    <div className="fr-photo-grid">
+     {showcase.map((r,i)=><figure key={r.key} className={i===0||i===3?'fr-wide':undefined}>
+      <img src={r.src} alt={r.alt} loading="lazy" width={i===0||i===3?1600:800} height={i===0||i===3?900:600}/>
+      <figcaption>{r.label}</figcaption>
+     </figure>)}
+    </div>
+   </div>
+  </section>
+
+  {/* 3. The number, on its own band. */}
+  <PlanningRangeExplorer />
+
+  {/* 4. What happens next. */}
+  <section className="f-section f-container f-two" id="how-we-build">
+   <div className="f-sticky"><p className="f-eyebrow">KNOW WHAT HAPPENS NEXT</p><h2>A clear plan.<br/><em>At every step.</em></h2><p>Good work starts with a shared understanding of the scope, the decisions, and the next step.</p></div>
+   <Rows items={b.process} numbered/>
+  </section>
+
+  {/* 5. Why the price is fair. */}
+  <section className="f-value">
+   <img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/>
+   <div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div>
+  </section>
+
+  {/* 6. Who you are hiring. */}
+  <section className="f-section f-container" id="who-you-are-hiring">
+   <div className="fr-founder">
+    <img className="family-people-photo" src="/images/about/perkins-family-full.webp" alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho" width="2048" height="2048" loading="lazy"/>
+    <div>
+     <p className="f-eyebrow">WHO YOU ARE HIRING</p>
+     <h2>Nick Perkins, founder.</h2>
+     <p>Construction project manager with a bachelor&apos;s degree in Construction with an emphasis in Project Management, and more than a decade of custom homes, remodels and developments. Husband, father of five. The family moved to Meridian in 2025.</p>
+     <blockquote>&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</blockquote>
+     <p><a className="f-link" href="/about">Read Nick&apos;s story <Arrow/></a></p>
+    </div>
+   </div>
+  </section>
+
+  {/* 7. A quiet ask halfway down, for the reader who is already convinced. */}
+  <section className="fr-cta-strip" aria-label="Request a quote">
+   <div className="f-container">
+    <div><h2>Ready to talk about your home?</h2><p>A free in-home visit, a written scope, and a firm price. No pressure to decide on the spot.</p></div>
+    <div className="fr-cta-strip-actions"><Link className="f-button f-dark" href="/#request">Request a quote</Link><a className="f-link" href="/contact">Call or text us <Arrow/></a></div>
+   </div>
+  </section>
+
+  {/* 8. The way we work. */}
+  <section className="f-section f-container f-two" id="why-choose-us">
+   <div className="f-sticky"><p className="f-eyebrow">THE WAY WE WORK</p><h2>Good work.<br/><em>A better experience.</em></h2><p>Clear expectations, thoughtful decisions, and someone accountable for the work. That is the P5 standard.</p></div>
+   <Rows items={b.approach}/>
+  </section>
+
+  {/* 9. Where we work: one line of linked cities. */}
+  <section className="f-area f-section f-container">
+   <p className="f-eyebrow">AT HOME IN IDAHO</p>
+   <h2>Local people.<br/><em>Valley-wide reach.</em></h2>
+   <p>Serving homeowners throughout the Treasure Valley.</p>
+   <nav className="fr-cities" aria-label="Service area cities">{cities.map(city=><a key={city} href={`/areas/${city.toLowerCase().replaceAll(" ","-")}`} aria-label={`Remodeling contractors in ${city}`}>{city}</a>)}</nav>
+  </section>
+
+  <FAQSection/>
+ </div>;
+}

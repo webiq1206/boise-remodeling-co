@@ -13,7 +13,7 @@ import { HOMEPAGE_FAQS } from "@/shared/homepageFaqs";
 
 export { HOMEPAGE_FAQS };
 
-const INITIAL_FAQ_COUNT = 8;
+const INITIAL_FAQ_COUNT = 6;
 
 /**
  * Common questions.
