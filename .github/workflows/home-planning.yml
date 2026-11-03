@@ -30,11 +30,9 @@ jobs:
           node-version: 24
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Preserve before and after source
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
           cp components/approved/PlanningRangeExplorer.tsx /tmp/planning-after.tsx
-          git show "$BASE_SHA:components/approved/PlanningRangeExplorer.tsx" > components/approved/PlanningRangeExplorer.tsx
+          cp scripts/fixtures/home-planning-before.tsx.txt components/approved/PlanningRangeExplorer.tsx
       - name: Start isolated homepage preview
         run: |
           mkdir -p test-results/home-planning
