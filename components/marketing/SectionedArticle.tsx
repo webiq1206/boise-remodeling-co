@@ -1,3 +1,4 @@
+import { glueHeadingHtml } from '@/components/NoOrphan';
 import { labelTableCells } from '@/lib/tableLabels';
 import {
   splitHtmlByH2,
@@ -90,7 +91,7 @@ export function SectionedArticle({
             {section.headingHtml && (
               <div
                 className="blog-content [&_h2]:mt-0 [&_h2]:mb-6 [&_h2]:text-xl md:[&_h2]:text-2xl"
-                dangerouslySetInnerHTML={{ __html: section.headingHtml }}
+                dangerouslySetInnerHTML={{ __html: glueHeadingHtml(section.headingHtml) }}
               />
             )}
             {renderSectionBody(index, section.bodyHtml, inlineFigures, 'blog-content')}
@@ -122,7 +123,7 @@ export function SectionedArticle({
             <summary className="guide-section-summary cursor-pointer list-none py-5 md:py-6 [&::-webkit-details-marker]:hidden">
               <div
                 className="blog-content [&_h2]:mt-0 [&_h2]:mb-0 [&_h2]:text-xl md:[&_h2]:text-2xl flex items-start justify-between gap-4"
-                dangerouslySetInnerHTML={{ __html: section.headingHtml }}
+                dangerouslySetInnerHTML={{ __html: glueHeadingHtml(section.headingHtml) }}
               />
               <span className="text-xs text-muted-foreground mt-1 block group-open:hidden">
                 Tap to expand

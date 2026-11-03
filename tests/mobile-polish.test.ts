@@ -15,10 +15,14 @@ test('phone rules cap type, center the hero, and keep a 44px tap floor', () => {
   const css = readFileSync('app/mobile-polish.css', 'utf8');
   assert.match(css, /@media \(max-width: 767px\)/);
   assert.match(css, /font-size: 40px/);
-  assert.match(css, /font-size: 36px/);
+  assert.match(css, /font-size: 32px/);
   assert.match(css, /font-size: 16px/);
   assert.match(css, /min-height: 44px/);
   assert.match(css, /text-align: center/);
   assert.match(css, /padding-block: 64px/);
   assert.match(css, /var\(--color-charcoal\)/);
+  assert.match(css, /\.m-phone-scroll/);
+  assert.match(css, /position: static/);
+  const layout = readFileSync('app/layout.tsx', 'utf8');
+  assert.match(layout, /m-phone-scroll/);
 });

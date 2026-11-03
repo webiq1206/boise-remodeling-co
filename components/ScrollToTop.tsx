@@ -24,6 +24,7 @@ export function ScrollToTop() {
     // Ordinary route changes still start at the top, before paint rather than
     // in a delayed passive effect that can interrupt a pointer gesture.
     window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    document.querySelector(".m-phone-scroll")?.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
   }, [pathname]);
 
   return null;
