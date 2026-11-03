@@ -74,6 +74,8 @@ export function BudgetInclusionsSection() {
         <Reveal delay={80}>
           <div
             className="ed-matrix mt-[clamp(48px,6vw,88px)]"
+            tabIndex={0}
+            aria-label="Budget guidance"
             style={{ ["--ed-cols" as string]: BUDGET_GUIDANCE_POINTS.length, ["--ed-cell-h" as string]: "230px" }}
           >
             {BUDGET_GUIDANCE_POINTS.map((point, i) => (
@@ -82,7 +84,9 @@ export function BudgetInclusionsSection() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className="ed-h4 mt-8 sm:mt-10 sm:min-h-[2.8em]">{point.title}</h3>
-                <p className="ed-body mt-3 text-[0.875rem]">{point.body}</p>
+                {point.body.split(/(?<=\.)\s+/).filter(Boolean).map((sentence) => (
+                  <p key={sentence} className="ed-body mt-3">{sentence}</p>
+                ))}
               </div>
             ))}
           </div>
@@ -113,7 +117,9 @@ export function BudgetInclusionsSection() {
             >
               <p className="ed-eyebrow ed-eyebrow-accent">Optional enhancement</p>
               <h3 className="ed-h4">{OPTIONAL_ENHANCEMENTS.title}</h3>
-              <p className="ed-body mt-3 text-[0.875rem]">{OPTIONAL_ENHANCEMENTS.body}</p>
+              {OPTIONAL_ENHANCEMENTS.body.split(/(?<=\.)\s+/).filter(Boolean).map((sentence) => (
+                <p key={sentence} className="ed-body mt-3">{sentence}</p>
+              ))}
               <p className="ed-small mt-3">{OPTIONAL_ENHANCEMENTS.note}</p>
               <a
                 href="#consult"

@@ -54,7 +54,7 @@ export function PlanningRangeExplorer() {
       <div className="f-section f-container fr-range">
         <div className="fr-range-intro">
           <p className="f-eyebrow">PLANNING RANGES</p>
-          <h2 id="planning-ranges-title">What Treasure Valley remodels <em>typically plan.</em></h2>
+          <h2 id="planning-ranges-title">Treasure Valley <em>remodel plans.</em></h2>
           <p>
             Choose a project type for the published planning band from our cost guide. These are planning
             ranges, not bids. A written scope comes after your visit.

@@ -45,7 +45,7 @@ export function DesignGallery({
           </div>
           <p className="fr-gallery-intro">{intro}</p>
         </div>
-        <div className="fr-mosaic">
+        <div className="fr-mosaic" tabIndex={0} aria-label="Project photos">
           {photos.map((p, i) => (
             <figure key={p.src} className={p.wide ? 'is-wide' : undefined}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -61,7 +61,9 @@ export function DesignGallery({
             </figure>
           ))}
         </div>
-        <p className="fr-gallery-note">{note}</p>
+        {note.split(/(?<=\.)\s+/).filter(Boolean).map((sentence) => (
+          <p className="fr-gallery-note" key={sentence}>{sentence}</p>
+        ))}
       </div>
     </section>
   );
