@@ -32,6 +32,10 @@ for(const [width,height] of viewports){
   const card=page.getByTestId('planning-step');
   const record={viewport:key,steps:[]};records.push(record);
   if(width<640){
+   await page.getByRole('button',{name:'Open navigation menu',exact:true}).click();
+   check(!(await card.getByRole('button',{name:'Next',exact:true}).isVisible()),`${key}: taskbar visible over menu`);
+   await page.screenshot({path:path.join(output,`menu-${key}.png`)});
+   await page.getByRole('button',{name:'Close navigation menu',exact:true}).click();
    await card.getByRole('button',{name:'Your selections',exact:true}).click();
    await page.screenshot({path:path.join(output,`summary-${key}.png`)});
    await card.getByRole('button',{name:'Edit finish',exact:true}).click();
@@ -39,11 +43,13 @@ for(const [width,height] of viewports){
    await page.screenshot({path:path.join(output,`edit-${key}.png`)});
    await card.getByRole('button',{name:'Cancel',exact:true}).click();
    check((await card.innerText()).includes('Mid-range'),`${key}: Cancel changed committed finish`);
+   await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Edit finish');
    check(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label'))==='Edit finish',`${key}: Cancel lost edit focus`);
    await card.getByRole('button',{name:'Edit finish',exact:true}).click();
    await card.getByRole('radio',{name:'High-end',exact:true}).check();
    await card.getByRole('button',{name:'Save changes',exact:true}).click();
    check((await card.innerText()).includes('Step 1 of 5'),`${key}: early Edit skipped steps`);
+   await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Edit finish');
    check(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label'))==='Edit finish',`${key}: Save lost edit focus`);
    await card.getByRole('button',{name:'Continue planning',exact:true}).click();
   }
@@ -54,9 +60,11 @@ for(const [width,height] of viewports){
    // Actual header dimensions, not a hard-coded viewport subtraction.
    await page.evaluate(()=>{const c=document.querySelector('[data-testid=planning-step]');const h=document.querySelector('[data-family-header]');scrollBy({top:c.getBoundingClientRect().top-(h?.getBoundingClientRect().height||76)-16,behavior:"instant"})});
    await page.waitForTimeout(200);
-   const metrics=await card.evaluate(c=>{const b=c.getBoundingClientRect();const h=document.querySelector('[data-family-header]')?.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,headerBottom:h?.bottom||0,viewportHeight:innerHeight,overflow:document.documentElement.scrollWidth>innerWidth+1,controls:[...c.querySelectorAll('button,a,input')].filter(e=>e.type!=='radio').map(e=>{const r=e.getBoundingClientRect();return {text:e.textContent,height:r.height,width:r.width}})}});
+   const metrics=await card.evaluate(c=>{const b=c.getBoundingClientRect();const h=document.querySelector('[data-family-header]')?.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,headerBottom:h?.bottom||0,viewportHeight:innerHeight,overflow:document.documentElement.scrollWidth>innerWidth+1,escaped:[...c.querySelectorAll('label')].some(e=>{const r=e.getBoundingClientRect();return r.right>b.right+1||r.left<b.left-1}),barTop:[...c.querySelectorAll('button')].find(e=>e.textContent==='Back')?.parentElement.getBoundingClientRect().top,contentBottom:Math.max(...[...c.querySelectorAll('fieldset,dl,a')].filter(e=>getComputedStyle(e.parentElement).position!=='fixed').map(e=>e.getBoundingClientRect().bottom)),controls:[...c.querySelectorAll('button,a,input')].filter(e=>e.type!=='radio').map(e=>{const r=e.getBoundingClientRect();return {text:e.textContent,height:r.height,width:r.width}})}});
    record.steps.push({step,metrics});
    check(!metrics.overflow,`${key} step ${step}: horizontal overflow`);
+   check(!metrics.escaped,`${key} step ${step}: choice escapes card`);
+   if(width<640)check(metrics.contentBottom<=metrics.barTop+1,`${key} step ${step}: taskbar covers content`);
    // Short landscape is recorded separately; cannot count as a passing input budget.
    check(metrics.top>=metrics.headerBottom-1,`${key} step ${step}: header obstruction`);
    check(metrics.bottom<=height+1,`${key} step ${step}: input-step viewport overflow`);

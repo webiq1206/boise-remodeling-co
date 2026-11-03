@@ -135,10 +135,10 @@ export function PlanningRangeExplorer() {
 
             {shownStep === 0 && options("What are you remodeling?", PROJECTS, shown.project, project => change(p => ({ ...p, project, sqft: getProjectSizeConfig(project).baselineSqft })))}
             {shownStep === 1 && <fieldset className={styles.fieldset}><legend>How much space?</legend>
-              <label htmlFor={`${id}-size`}>{projectLabel} area: <strong>{shown.sqft.toLocaleString()} sq ft</strong></label>
+              <div className={styles.sizeControls}><label htmlFor={`${id}-size`}>{projectLabel} area: <strong>{shown.sqft.toLocaleString()} sq ft</strong></label>
               <input id={`${id}-size`} className={styles.slider} type="range" min={size.min} max={size.max} step={size.step} value={shown.sqft} onChange={e => change(p => ({ ...p, sqft: Number(e.target.value) }))} aria-valuetext={`${shown.sqft} square feet`} />
               <div className={styles.ends}><span>{size.min.toLocaleString()} sq ft</span><span>{size.max.toLocaleString()} sq ft</span></div>
-              <p className={styles.help}>Use the area being remodeled, not the whole property.</p>
+              <p className={styles.help}>Use the area being remodeled, not the whole property.</p></div>
             </fieldset>}
             {shownStep === 2 && options("Choose a finish level", FINISHES, shown.finish, finish => change(p => ({ ...p, finish })))}
             {shownStep === 3 && options("Will the layout change?", LAYOUTS, shown.layout, layout => change(p => ({ ...p, layout })))}
@@ -161,6 +161,8 @@ export function PlanningRangeExplorer() {
           <p className={styles.notice}>{NOT_A_QUOTE_NOTICE}</p>
           <a className={`f-button f-dark ${styles.quote}`} href="/#request" data-family-bar-yield="">Request a quote</a>
           <p className={styles.help}>A site visit and written scope come before a firm construction price.</p>
+        </aside>
+        <div className={styles.disclosures} aria-label="Planning range details">
           <details className={styles.details}><summary>What the model includes</summary><ul>{disclosure.includes.map(item => <li key={item}>{item}</li>)}</ul></details>
           <details className={styles.details}><summary>Assumptions and exclusions</summary>
             <p>Other scope details use the estimator's baseline assumptions. Plumbing, electrical, cabinet specifications and room counts are not customized in this quick planner.</p>
@@ -168,7 +170,7 @@ export function PlanningRangeExplorer() {
           </details>
           <details className={styles.details}><summary>What can change the budget</summary><ul>{disclosure.increases.map(item => <li key={item}>{item}</li>)}</ul></details>
           <p className={styles.source}>Method: our existing remodeling estimate engine, using project type, area, finish and layout. <Link href="/guides/boise-remodeling-cost-guide">Read the cost guide</Link>.</p>
-        </aside>
+        </div>
       </div>
     </div>
   </section>;
