@@ -1,0 +1,56 @@
+name: Homepage planning calculator review
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - components/approved/PlanningRangeExplorer*
+      - scripts/verify-home-planning.cjs
+      - scripts/offline-run.mjs
+      - .github/workflows/home-planning.yml
+permissions:
+  contents: read
+concurrency:
+  group: home-planning-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  planning:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Preserve before and after source
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          cp components/approved/PlanningRangeExplorer.tsx /tmp/planning-after.tsx
+          git show "$BASE_SHA:components/approved/PlanningRangeExplorer.tsx" > components/approved/PlanningRangeExplorer.tsx
+      - name: Start isolated homepage preview
+        run: |
+          mkdir -p test-results/home-planning
+          node scripts/offline-run.mjs dev --hostname 127.0.0.1 --port 34863 > test-results/home-planning/server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{if((await fetch("http://127.0.0.1:34863/",{signal:AbortSignal.timeout(10000)})).ok){clearInterval(t);return}}catch{}if(++n>150){clearInterval(t);process.exit(1)}},1000)'
+      - name: Capture baseline
+        run: node scripts/verify-home-planning.cjs --baseline
+      - name: Restore proposed component
+        if: always()
+        run: cp /tmp/planning-after.tsx components/approved/PlanningRangeExplorer.tsx
+      - name: Check proposed calculator and capture every step
+        run: node scripts/verify-home-planning.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: home-planning-${{ github.sha }}
+          path: test-results/home-planning/
+          retention-days: 14
+          if-no-files-found: error
