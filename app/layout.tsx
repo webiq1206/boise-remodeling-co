@@ -1,4 +1,5 @@
 import { ApprovedShell } from "@/components/approved/ApprovedShell";
+import { BRAND_CHARCOAL } from "@/lib/p5/brand";
 import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
@@ -112,7 +113,7 @@ export const metadata: Metadata = withBrandPageMetadata(({
 }), "__layout__")
 
 export const viewport: Viewport = {
-  themeColor: '#1C1F1E',
+  themeColor: BRAND_CHARCOAL,
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,

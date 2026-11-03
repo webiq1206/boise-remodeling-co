@@ -6,15 +6,15 @@
 
 .root{
   --p5-accent:#9AA098;--p5-accent-ink:#B7BDB5;--p5-heading-font:inherit;
-  --p5-surface:#262b29;--p5-surface-2:#1f2422;--p5-surface-3:#2e3431;
+  --p5-surface:var(--color-charcoal);--p5-surface-2:var(--color-charcoal);--p5-surface-3:var(--color-charcoal);
   --p5-ink:#f1ede4;--p5-ink-muted:#b9c1bb;--p5-ink-soft:#9aa39d;
   --p5-line:#3b423e;--p5-line-strong:#59625d;
-  --p5-field:#1a1e1c;--p5-field-ink:#f1ede4;--p5-field-placeholder:#8a938d;
-  --p5-primary:#f7f5f3;--p5-primary-ink:#2c302f;--p5-primary-hover:#ffffff;
+  --p5-field:var(--color-charcoal);--p5-field-ink:#f1ede4;--p5-field-placeholder:#a7b0aa;
+  --p5-primary:#f7f5f3;--p5-primary-ink:var(--color-charcoal);--p5-primary-hover:#ffffff;
   --p5-danger-bg:#3d2a26;--p5-danger-ink:#ffd9d1;--p5-danger-line:#8a4f45;
   --p5-notice-bg:#2b3a33;--p5-notice-ink:#dbe7df;--p5-notice-line:#4c6a5a;
   --p5-success-bg:#233a2f;--p5-success-ink:#cfe9d9;
-  --p5-user-bubble:#33403a;--p5-user-ink:#f1ede4;
+  --p5-user-bubble:var(--color-charcoal);--p5-user-ink:#f1ede4;
   --p5-shadow:0 18px 48px rgba(0,0,0,.35);--p5-focus:#B7BDB5;
   --p5-badge-included:#2f4a3c;--p5-badge-excluded:#4a3030;--p5-badge-allowance:#4a4030;--p5-badge-assumption:#31404a;
   --p5-top:0px;--p5-bottom:0px;
@@ -27,7 +27,7 @@
   --p5-ink:#20231f;--p5-ink-muted:#5f6862;--p5-ink-soft:#59645d;
   --p5-line:#e1e5dd;--p5-line-strong:#b7c0b8;
   --p5-field:#ffffff;--p5-field-ink:#20231f;--p5-field-placeholder:#626b65;
-  --p5-primary:#17211c;--p5-primary-ink:#fbfaf6;--p5-primary-hover:#0f1713;
+  --p5-primary:var(--color-charcoal);--p5-primary-ink:#fbfaf6;--p5-primary-hover:#0f1713;
   --p5-danger-bg:#fff3ee;--p5-danger-ink:#7a2f22;--p5-danger-line:#e6baac;
   --p5-notice-bg:#eef4ec;--p5-notice-ink:#294237;--p5-notice-line:#b7cbb9;
   --p5-success-bg:#e9f3ec;--p5-success-ink:#1f4a33;

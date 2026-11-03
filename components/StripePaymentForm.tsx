@@ -295,9 +295,9 @@ export function StripePaymentForm({
               theme: "night",
               variables: {
                 colorPrimary: "#9AA098",      /* sage accent */
-                colorBackground: "#1F2321",   /* input field */
+                colorBackground: "#383837",   /* brand charcoal */
                 colorText: "#E6E3DE",
-                colorTextSecondary: "#9AA098",
+                colorTextSecondary: "#9FA49D", /* sage lifted so it clears 4.5:1 on #383837 */
                 colorDanger: "#C77B6B",
                 borderRadius: "8px",
                 fontFamily: "Montserrat, system-ui, sans-serif",

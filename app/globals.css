@@ -65,13 +65,14 @@
 
 /* ═══════════════════════════════════════════════════════════════════
    BOISE REMODELING CO - DARK-ONLY BRAND IDENTITY
-   Committed dark ground (#1C1F1E). :root and .dark carry IDENTICAL
+   Committed dark ground (#383837). :root and .dark carry IDENTICAL
    values so there is no light-mode leak whether or not the .dark class
    is present. This is the identity, not a toggle. Palette:
-     --bg #1C1F1E · --bg-2 #222624 · --surface #262B29 · hairline #39403D
+     --bg #383837 · --bg-2 #383837 · --surface #383837 · hairline #39403D
      bone #FBFAF6 · body #E6E3DE · mist #7D9479 · faint #6E756F
      sage #7D9479 = the single brand accent (accent WORDS, eyebrow ticks,
-     links/hover, focus, numerals, chips, tints); 6.21:1 on the charcoal ground
+     links/hover, focus, numerals, chips, tints). On #383837 that sage is
+     3.57:1, large-text AA only. Bone and paper text on #383837 clear AA.
    ═══════════════════════════════════════════════════════════════════ */
 :root, .dark {
   --button-outline: rgba(255,255,255, .08);
@@ -80,22 +81,22 @@
   --elevate-1: rgba(255,255,255, .03);
   --elevate-2: rgba(255,255,255, .07);
 
-  /* Page base - charcoal #1C1F1E */
-  --background: 160 5% 12%;
+  /* Page base - brand charcoal #383837 */
+  --background: 60 1% 21.8%;
   --foreground: 40 32% 92%;  /* P5 bone #F1EDE4 */
   --heading: 30 20% 96%;           /* bone #FBFAF6 */
   --border: 40 8% 27%;  /* hairline warmed toward bone, like P5's --line */
-  --card: 156 6% 16%;              /* surface #262B29 */
+  --card: 60 1% 21.8%;              /* dark card, brand charcoal #383837 */
   --card-foreground: 37 14% 89%;
   --card-border: 154 6% 24%;
 
-  /* Elevated band - #222624 (footer, statement bands) */
-  --inverse: 150 6% 14%;
+  /* Elevated band (footer, statement bands): brand charcoal #383837 */
+  --inverse: 60 1% 21.8%;
   --inverse-foreground: 30 20% 96%;   /* bone */
-  --inverse-muted: 105 4% 61%;        /* mist #7D9479 */
+  --inverse-muted: 105 4% 63%;        /* mist, lifted so normal text clears 4.5:1 on #383837 */
 
-  --surface-muted: 150 6% 14%;        /* #222624 */
-  --surface-greige: 156 6% 16%;       /* #262B29 */
+  --surface-muted: 60 1% 21.8%;        /* brand charcoal #383837 */
+  --surface-greige: 60 1% 21.8%;       /* brand charcoal #383837 */
 
   /* Section tints - subtle hued dark panels */
   --tint-warm: 36 8% 15%;
@@ -103,32 +104,30 @@
   --tint-blush: 8 10% 16%;
 
   /* Sidebar - admin/portal (a touch below page base) */
-  --sidebar: 160 5% 10%;
+  --sidebar: 60 1% 21.8%;
   --sidebar-foreground: 37 14% 89%;
   --sidebar-border: 154 6% 24%;
   --sidebar-primary: 111.11 11.20% 52.75%;      /* sage */
   --sidebar-primary-foreground: 150 6% 7%;
-  --sidebar-accent: 156 6% 16%;
+  --sidebar-accent: 60 1% 21.8%;
   --sidebar-accent-foreground: 37 14% 89%;
   --sidebar-ring: 111.11 11.20% 52.75%;
 
-  --popover: 156 6% 16%;
+  --popover: 60 1% 21.8%;
   --popover-foreground: 37 14% 89%;
   --popover-border: 154 6% 24%;
 
-  /* Primary CTA - bone #FBFAF6 fill, charcoal #2C302F text */
+  /* Primary CTA - bone #FBFAF6 fill, charcoal #383837 text */
   --primary: 30 20% 96%;
-  --primary-foreground: 165 4% 18%;
+  --primary-foreground: 60 1% 21.8%;
 
-  --secondary: 156 6% 16%;
+  --secondary: 60 1% 21.8%;
   --secondary-foreground: 37 14% 89%;
 
-  --muted: 156 6% 16%;
-  /* Secondary body text. Raised from 52% lightness, where the sage measured
-     4.21:1 on this charcoal ground and failed WCAG AA for normal-size text -
-     which covered most of the supporting copy on the site. Same sage hue, lifted
-     until it clears 4.5:1. Verified by scripts/verify-contrast.mjs. */
-  --muted-foreground: 147 9% 60%;
+  --muted: 60 1% 21.8%;
+  /* Secondary body text. Same sage hue, lifted again when the charcoal ground
+     moved to #383837 so normal text still clears 4.5:1 (4.64:1 at 62%). */
+  --muted-foreground: 147 9% 62%;
   --faint: 129 3% 45%;                /* #6E756F */
 
   /* THE BRAND ACCENT, AND IT IS THE ONLY ONE. The kit is explicit: never
@@ -145,10 +144,10 @@
   --brass: 105 4% 61%;
   --brass-foreground: 150 6% 11%;
 
-  /* Same value. Kept as a separate token because a great deal of markup asks
-     for "the accent that stays legible on the dark ground" by name, and
-     #7D9479 on #1C1F1E is 6.21:1, comfortably AA. */
-  --accent-legible: 105 4% 61%;       /* #7D9479 */
+  /* Kept as a separate token because markup asks for the accent that stays
+     legible on the dark ground. #7D9479 on #383837 is 3.57:1, so this step
+     is lighter: 105 4% 63% (#9FA49D) clears 4.62:1 for normal text. */
+  --accent-legible: 105 4% 63%;
   /* The same sage, darkened for use as TEXT on a light (bone) band. The site
      was built dark, so --accent-legible is tuned for a charcoal ground; at 61%
      lightness it falls to roughly 2.5:1 on bone, which fails AA. This is the
@@ -160,7 +159,7 @@
   --destructive: 10 45% 60%;
   --destructive-foreground: 30 20% 96%;
 
-  --input: 150 6% 13%;                /* #1F2321 */
+  --input: 60 1% 21.8%;                /* brand charcoal #383837 */
   --ring: 111.11 11.20% 52.75%;
 
   --chart-1: 152 10% 58%;
@@ -442,9 +441,9 @@
   font-style: italic;
   font-optical-sizing: auto;
   /* Accent WORDS are the serif grace note AND the brand's sage moment. The kit
-     uses a single sage (#7D9479), which on the charcoal ground reads at 6.21:1,
-     comfortably AA as text at any size. Overrides any text-accent on the same
-     element. */
+     uses a single sage (#7D9479). On #383837 that value is 3.57:1, so this
+     uses --accent-legible, which clears 4.5:1 there. Overrides any text-accent
+     on the same element. */
   color: hsl(var(--accent-legible));
 }
 

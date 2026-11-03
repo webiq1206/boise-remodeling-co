@@ -1,3 +1,6 @@
+/** Brand charcoal for fills: backgrounds, headers, footers, dark cards, buttons. */
+export const BRAND_CHARCOAL = "#383837";
+
 export const ESTIMATOR_BRAND = {
   "id": "remodeling",
   "name": "Boise Remodeling Co",
@@ -19,7 +22,7 @@ export const ESTIMATOR_BRAND = {
   "defaultService": "",
   "email": "hello@boiseremodeling.co",
   "phone": "(208) 477-1169",
-  "ink": "#2C302F",
+  "ink": BRAND_CHARCOAL,
   "paper": "#FBFAF6",
   "logo": "/brand/png/wordmark/light/boise-remodeling-co-wordmark-charcoal-accent-1200w.png",
   "font": "/fonts/p5-estimator-sans.ttf",

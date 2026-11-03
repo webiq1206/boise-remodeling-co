@@ -20,11 +20,11 @@
 .fr-band,
 .fr-request,
 .fr-cta-strip {
-  --fr-ink: #2c302f;
+  --fr-ink: var(--color-charcoal);
   --fr-ink-soft: #484c47;
   --fr-paper: #fbfaf6;
   --fr-bone: #f1ede4;
-  --fr-line: rgba(44, 48, 47, 0.16);
+  --fr-line: color-mix(in srgb, var(--color-charcoal) 16%, transparent);
   --fr-line-on-dark: rgba(251, 250, 246, 0.24);
   --fr-accent-on-dark: color-mix(in srgb, var(--f-accent) 68%, #fbfaf6);
 }
@@ -290,7 +290,7 @@
   border-top: 6px solid var(--f-accent);
   background: #fff;
   color: var(--fr-ink);
-  box-shadow: 0 40px 70px -40px rgba(28, 31, 30, 0.45), 0 0 0 1px var(--fr-line);
+  box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--color-charcoal) 45%, transparent), 0 0 0 1px var(--fr-line);
 }
 .fr-request-copy p:not(.f-eyebrow) { margin-top: 24px; color: var(--fr-ink-soft); max-width: 46ch; }
 .fr-request-list {
@@ -369,12 +369,12 @@
 }
 .referral-lede { margin-top: 24px; max-width: 34em; }
 .referral-note { margin-top: 18px; }
-.referral-back { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--fr-line, rgba(44,48,47,0.16)); }
+.referral-back { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--fr-line, color-mix(in srgb, var(--color-charcoal) 16%, transparent)); }
 .referral-panel {
-  border-top: 6px solid var(--f-accent, #2c302f);
+  border-top: 6px solid var(--f-accent, var(--color-charcoal));
   background: var(--fr-bone, #f1ede4);
-  color: var(--fr-ink, #2c302f);
-  box-shadow: 0 40px 70px -40px rgba(28, 31, 30, 0.35);
+  color: var(--fr-ink, var(--color-charcoal));
+  box-shadow: 0 40px 70px -40px color-mix(in srgb, var(--color-charcoal) 35%, transparent);
 }
 .referral-visual { margin: 0; }
 .referral-visual img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; }
@@ -410,7 +410,7 @@
 
 /* Choice cards on a dark band: paper cards, and the chosen one stays paper with the
    accent border, instead of a tinted charcoal that disappears into the ground. */
-.fr-band [data-selected] { background: var(--fr-paper); color: var(--fr-ink); border-color: rgba(44, 48, 47, 0.25); }
+.fr-band [data-selected] { background: var(--fr-paper); color: var(--fr-ink); border-color: color-mix(in srgb, var(--color-charcoal) 25%, transparent); }
 .fr-band [data-selected="true"] { border-color: var(--f-accent); box-shadow: inset 0 0 0 1px var(--f-accent); }
 .fr-band [data-selected] * { color: inherit; }
 .fr-band-estimate.approved-estimate h2 { font-size: clamp(46px, 5.6vw, 84px); }
@@ -419,8 +419,11 @@
 
 /* Brand ground for the shared chrome: this site's footer and hero fallback sit on
    its own deep charcoal, not the parent company's forest green. */
-footer.fam-footer[data-family-footer] { background: #1c1f1e; }
-section.fam-hero[data-family-hero] { background: #2c302f; }
+footer.fam-footer[data-family-footer] { background: var(--color-charcoal); }
+/* The shared bar rule is the same specificity and loads later, so the element
+   qualifier is what lets this site's charcoal win. */
+html .fam-bar[data-family-bar] { background: var(--color-charcoal); }
+section.fam-hero[data-family-hero] { background: var(--color-charcoal); }
 
 /* One heading scale for the family sections, whatever the site's older approved
    layer says: the editorial h2 is large on purpose. */
@@ -470,7 +473,7 @@ html .approved-shell.site-cabinet .approved-interior .interior-hero-fit .interio
 html .approved-interior .interior-detail-body h2 { font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1.02; }
 
 /* ------------------------------------------------------- design gallery mosaic */
-.fr-gallery { background: var(--fr-paper, #fbfaf6); color: var(--fr-ink, #2c302f); }
+.fr-gallery { background: var(--fr-paper, #fbfaf6); color: var(--fr-ink, var(--color-charcoal)); }
 .fr-gallery-inner { width: min(1260px, 88%); margin-inline: auto; padding-block: clamp(80px, 9vw, 124px); }
 .fr-gallery-top {
   display: grid;

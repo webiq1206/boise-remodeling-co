@@ -1,3 +1,4 @@
+import { BRAND_CHARCOAL } from "@/lib/p5/brand";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /**
@@ -7,17 +8,17 @@ import { SITE_CONFIG } from "@/shared/siteConfig";
  * (bg/surface/text/...) so both the shared CSS here and the inline styles in
  * emailNotifications.ts pull the same colors.
  *
- * The brand kit collapses to a single sage (#9AA098); on the charcoal email
- * ground that reads at 6.21:1, comfortably AA for links, bars and ticks. The
- * retired two-tone sages (#899F95 / #5D6561) are gone.
+ * The brand kit collapses to a single sage (#9AA098). Bone text on #383837
+ * clears AA. Sage #9AA098 on that ground is 4.39:1, so muted text uses a
+ * lighter step of the same hue that clears 4.5:1.
  */
 export const EMAIL_BRAND = {
-  bg: "#1C1F1E",         // page background (charcoal)
-  surface: "#262B29",    // content card
-  raised: "#2E3331",     // highlighted boxes, footer, badges
+  bg: BRAND_CHARCOAL,    // page background (charcoal)
+  surface: BRAND_CHARCOAL, // content card
+  raised: BRAND_CHARCOAL, // highlighted boxes, footer, badges
   hairline: "#39403D",   // borders + dividers
   text: "#F7F5F3",       // primary text (bone)
-  textMuted: "#9AA098",  // secondary text (sage)
+  textMuted: "#9FA49D",  // secondary text, sage lifted for 4.5:1 on #383837
   accent: "#9AA098",     // sage accent - links, bars, ticks
 } as const;
 

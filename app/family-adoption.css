@@ -71,7 +71,7 @@
   padding: 6px 12px;
   border: 1px solid rgb(44 48 47 / 0.22);
   background: #fbfaf6;
-  color: #2c302f;
+  color: var(--color-charcoal);
   font-family: var(--font-sans);
   font-size: 13px;
   line-height: 1.3;
@@ -97,7 +97,7 @@
   display: inline-flex;
   align-items: center;
   min-height: var(--touch-min, 44px);
-  color: #2c302f;
+  color: var(--color-charcoal);
   font: 500 15px/1.3 var(--font-sans);
   text-decoration: underline;
   text-decoration-thickness: 1px;
@@ -116,7 +116,7 @@
 }
 .approved-shell .interior-hero-more .ed-lede {
   max-width: 65ch;
-  color: #2c302f;
+  color: var(--color-charcoal);
   font-size: var(--fs-body);
 }
 .approved-shell .interior-hero-more .interior-hero-more-note {
