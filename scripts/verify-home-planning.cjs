@@ -37,9 +37,16 @@ for(const [width,height] of viewports){
    await page.screenshot({path:path.join(output,`menu-${key}.png`)});
    await page.getByRole('button',{name:'Close navigation menu',exact:true}).click();
    await card.getByRole('button',{name:'Your selections',exact:true}).click();
+   await page.waitForTimeout(100);
+   const summaryFit=await card.evaluate(c=>{const r=c.getBoundingClientRect();const bar=[...c.querySelectorAll('button')].find(e=>e.textContent==='Continue planning').parentElement.getBoundingClientRect();return [...c.querySelectorAll('dl,a,[aria-live]')].every(e=>e.getBoundingClientRect().bottom<=bar.top+1)&&r.top>=document.querySelector('[data-family-header]').getBoundingClientRect().bottom});
+   check(summaryFit,`${key}: expanded summary obscured`);
    await page.screenshot({path:path.join(output,`summary-${key}.png`)});
    await card.getByRole('button',{name:'Edit finish',exact:true}).click();
    await card.getByRole('radio',{name:'Luxury',exact:true}).check();
+   await page.waitForTimeout(100);
+   const editFit=await card.evaluate(c=>{const bar=[...c.querySelectorAll('button')].find(e=>e.textContent==='Save changes').parentElement.getBoundingClientRect();return [...c.querySelectorAll('fieldset,a,[aria-live]')].every(e=>e.getBoundingClientRect().bottom<=bar.top+1)});
+   check(editFit,`${key}: edit controls obscured`);
+   check((await card.innerText()).includes('Saved planning range'),`${key}: draft range labeling`);
    await page.screenshot({path:path.join(output,`edit-${key}.png`)});
    await card.getByRole('button',{name:'Cancel',exact:true}).click();
    check((await card.innerText()).includes('Mid-range'),`${key}: Cancel changed committed finish`);

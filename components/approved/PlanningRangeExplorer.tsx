@@ -76,14 +76,21 @@ export function PlanningRangeExplorer() {
   const finishLabel = FINISHES.find(f => f.value === plan.finish)!.label;
   const layoutLabel = LAYOUTS.find(l => l.value === plan.layout)!.label;
   const range = `${formatPlanningCurrency(result.priceLow)} to ${formatPlanningCurrency(result.priceHigh)}`;
+  function alignCard() {
+    const headerHeight = document.querySelector("[data-family-header]")?.getBoundingClientRect().height ?? 76;
+    if (card.current) window.scrollBy({ top: card.current.getBoundingClientRect().top - headerHeight - 16, behavior: "instant" });
+  }
+  function toggleSummary(open: boolean) {
+    setSummaryOpen(open);
+    requestAnimationFrame(alignCard);
+  }
   function go(step: number) {
     setDirection(step >= plan.step ? 1 : -1);
     setSummaryOpen(false);
     setEditing(null);
     setPlan(p => ({ ...p, step }));
     requestAnimationFrame(() => {
-      const headerHeight = document.querySelector("[data-family-header]")?.getBoundingClientRect().height ?? 76;
-      if (card.current) window.scrollBy({ top: card.current.getBoundingClientRect().top - headerHeight - 16, behavior: "instant" });
+      alignCard();
       card.current?.querySelector<HTMLElement>("input, button")?.focus({ preventScroll: true });
     });
   }
@@ -92,7 +99,7 @@ export function PlanningRangeExplorer() {
     setDraft(plan);
     setEditing(index);
     setSummaryOpen(false);
-    requestAnimationFrame(() => card.current?.querySelector<HTMLElement>("input")?.focus({ preventScroll: true }));
+    requestAnimationFrame(() => { alignCard(); card.current?.querySelector<HTMLElement>("input")?.focus({ preventScroll: true }); });
   }
   function finishEdit(save: boolean) {
     const index = editing;
@@ -100,6 +107,7 @@ export function PlanningRangeExplorer() {
     setEditing(null);
     setSummaryOpen(editFromSummary);
     requestAnimationFrame(() => {
+      alignCard();
       if (index !== null) card.current?.querySelector<HTMLElement>(`button[aria-label="Edit ${STEPS[index].toLowerCase()}"]`)?.focus({ preventScroll: true });
     });
   }
@@ -128,8 +136,8 @@ export function PlanningRangeExplorer() {
             else go(Math.min(4, plan.step + 1));
           }
         }}>
-          <div className={styles.cardHeader}><p className={styles.progress}>Step {plan.step + 1} of {STEPS.length} · {STEPS[plan.step]}</p>
-          {plan.step < 4 && editing === null && <button className={styles.summaryToggle} type="button" aria-expanded={summaryOpen} onClick={() => setSummaryOpen(value => !value)}>{summaryOpen ? "Hide selections" : "Your selections"}</button>}</div>
+          <div className={styles.cardHeader}><p className={styles.progress}>{editing === null ? <>Step {plan.step + 1} of {STEPS.length} · {STEPS[plan.step]}</> : <>Editing {STEPS[editing].toLowerCase()}</>}</p>
+          {plan.step < 4 && editing === null && <button className={styles.summaryToggle} type="button" aria-expanded={summaryOpen} onClick={() => toggleSummary(!summaryOpen)}>{summaryOpen ? "Hide selections" : "Your selections"}</button>}</div>
           <div className={styles.step} style={{ "--step-direction": direction } as React.CSSProperties} key={`${shownStep}-${editing}`}>
             {summaryOpen ? review : <>
 
@@ -147,15 +155,15 @@ export function PlanningRangeExplorer() {
             </div>}
             </>}
           </div>
-          <div className={`${styles.compactResult}${plan.step === 4 && editing === null ? ` ${styles.reviewRange}` : ""}`} aria-live="polite"><span>Modeled planning range</span><strong>{range}</strong></div>
+          <div className={`${styles.compactResult}${plan.step === 4 && editing === null ? ` ${styles.reviewRange}` : ""}`} aria-live="polite"><span>{editing === null ? "Modeled planning range" : "Saved planning range"}</span><strong>{range}</strong></div>
           <div className={styles.navigation}>
-            <button type="button" className={styles.back} onClick={() => editing !== null ? finishEdit(false) : summaryOpen ? setSummaryOpen(false) : go(Math.max(0, plan.step - 1))} disabled={plan.step === 0 && editing === null && !summaryOpen}>{editing !== null ? "Cancel" : "Back"}</button>
-            {editing !== null ? <button type="button" className={styles.next} onClick={() => finishEdit(true)}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => setSummaryOpen(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <a className={styles.next} href="/#request">Request a quote</a>}
+            <button type="button" className={styles.back} onClick={() => editing !== null ? finishEdit(false) : summaryOpen ? toggleSummary(false) : go(Math.max(0, plan.step - 1))} disabled={plan.step === 0 && editing === null && !summaryOpen}>{editing !== null ? "Cancel" : "Back"}</button>
+            {editing !== null ? <button type="button" className={styles.next} onClick={() => finishEdit(true)}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => toggleSummary(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <a className={styles.next} href="/#request">Request a quote</a>}
           </div>
           {(plan.step < STEPS.length - 1 || editing !== null) && <a className={styles.contact} href="/#request">Request a quote <ArrowUpRight size={16} aria-hidden="true" /></a>}
         </div>
         <aside className={styles.result} aria-label="Your modeled planning range">
-          <p className={styles.resultLabel}>{projectLabel} · modeled planning range</p>
+          <p className={styles.resultLabel}>{projectLabel} · {editing === null ? "modeled planning range" : "saved planning range"}</p>
           <p className={styles.figure} aria-live="polite" data-testid="planning-figure">{range}</p>
           <p className={styles.summary}>{plan.sqft.toLocaleString()} sq ft · {finishLabel} · {layoutLabel}</p>
           <p className={styles.notice}>{NOT_A_QUOTE_NOTICE}</p>
