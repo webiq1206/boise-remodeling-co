@@ -1,0 +1,161 @@
+/*
+  Phone layout under 768px (owner mobile spec, t1752u).
+  Desktop rules are unchanged. Dark text and rules use the brand charcoal token.
+*/
+
+html .fr-gallery p.fr-gallery-note + p.fr-gallery-note {
+  margin-top: 10px;
+}
+
+@media (max-width: 767px) {
+  /* Hero: center the eyebrow, title, support line, and actions. */
+  html .fam-hero[data-family-hero] .fam-hero-copy {
+    text-align: center;
+    margin-inline: auto;
+  }
+  html .fam-hero[data-family-hero] .fam-hero-support,
+  html .fam-hero[data-family-hero] .fam-hero-micro {
+    margin-inline: auto;
+  }
+  html .fam-hero[data-family-hero] .fam-hero-actions {
+    align-items: center;
+  }
+  html .fam-hero[data-family-hero] .fam-hero-actions .fam-btn {
+    align-self: stretch;
+  }
+  html .fam-hero[data-family-hero] .fam-hero-link {
+    align-self: center;
+    justify-content: center;
+  }
+  html .approved-shell .interior-hero-copy {
+    text-align: center;
+  }
+  html .approved-shell .interior-hero-action {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* H1 stays at most 40px. The home title then wraps to three lines. */
+  html .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-title,
+  html .approved-shell .approved-interior .interior-hero-copy h1,
+  html .approved-shell .approved-interior .interior-hero-editorial h1 {
+    font-size: 40px;
+    line-height: 1.05;
+  }
+
+  /* H2 stays at most 36px, including the family clamps. */
+  html .approved-shell h2,
+  html .family-site h2,
+  html .family-site .f-value h2,
+  html .family-site .f-contact h2,
+  html .family-site .fr-cta-strip h2,
+  html .fr-gallery h2,
+  html .approved-shell .ed-h2 {
+    font-size: 36px;
+    line-height: 1.1;
+  }
+
+  /* Body copy, not eyebrows or fine print. */
+  html .approved-shell main :is(p, li):not(.f-eyebrow):not(.ed-eyebrow):not(.fam-hero-eyebrow):not(.fr-gallery-eyebrow):not(.interior-eyebrow):not(.fam-hero-micro):not(.ed-small):not(.fr-range-result-label):not(.fr-range-result-source) {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Section rhythm: 64px is the low end of the 64 to 96px band, with a hairline between bands. */
+  html .approved-shell .f-area.f-section,
+  html .approved-shell .family-site > .f-section,
+  html .approved-shell .fr-band > .f-section,
+  html .approved-shell .fr-cta-strip,
+  html .approved-shell #faq,
+  html .approved-shell #budget.ed-photo-copy {
+    padding-block: 64px;
+  }
+  html .approved-shell .fr-gallery-inner {
+    padding-block: 64px;
+  }
+  html .approved-shell main section + section {
+    border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 16%, transparent);
+  }
+  html .approved-shell main :is(.fam-hero, .fr-band, .f-value, #budget) + section {
+    border-top-color: color-mix(in srgb, #fbfaf6 28%, transparent);
+  }
+
+  /* Controls and standalone links. Inline sentences keep their own line height. */
+  html .approved-shell :is(.fam-btn, .f-button, .f-link, .ed-link, .fr-range-choice, .fr-cities a, .interior-estimate-link, .fam-hero-link) {
+    min-height: 44px;
+  }
+  html .approved-shell :is(.f-link, .ed-link, .fr-cities a) {
+    display: inline-flex;
+    align-items: center;
+  }
+  html .approved-shell .f-section-top a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /*
+    Repeating cards, photos, and guidance cells scroll sideways.
+    Every item stays in the document for search and assistive tech.
+  */
+  html .fr-cards,
+  html .fr-mosaic,
+  html #budget .ed-matrix {
+    display: flex;
+    flex-wrap: nowrap;
+    grid-template-columns: none;
+    gap: 16px;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 4px;
+    padding-bottom: 8px;
+  }
+  html .fr-cards > .fr-card {
+    flex-direction: column;
+  }
+  html .fr-cards > .fr-card .fr-card-media {
+    flex: none;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+  }
+  html .fr-cards > .fr-card,
+  html .fr-mosaic > figure,
+  html .fr-mosaic > figure.is-wide,
+  html .fr-mosaic > figure:last-child,
+  html #budget .ed-matrix > * {
+    flex: 0 0 86%;
+    scroll-snap-align: start;
+    grid-column: auto;
+    min-height: 0;
+    max-width: none;
+  }
+  html .fr-mosaic > figure,
+  html .fr-mosaic > figure.is-wide {
+    aspect-ratio: 16 / 10;
+  }
+
+  /* Two budget panels scroll as one row instead of stacking into a second screen. */
+  html #budget .ed-inset {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    max-width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  html #budget .ed-inset > * {
+    flex: 0 0 88%;
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  html #who-you-are-hiring .fr-founder img,
+  html .f-value > img {
+    width: 100%;
+    max-height: 180px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+}
