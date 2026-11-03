@@ -41,6 +41,7 @@ export function PlanningRangeExplorer() {
   const [editing, setEditing] = useState<number | null>(null);
   const [draft, setDraft] = useState<Plan>(DEFAULT);
   const [direction, setDirection] = useState(1);
+  const [editFromSummary, setEditFromSummary] = useState(false);
   const card = useRef<HTMLDivElement>(null);
   const id = useId();
   useEffect(() => {
@@ -81,15 +82,26 @@ export function PlanningRangeExplorer() {
     setEditing(null);
     setPlan(p => ({ ...p, step }));
     requestAnimationFrame(() => {
-      card.current?.scrollIntoView({ block: "start", behavior: "instant" });
+      const headerHeight = document.querySelector("[data-family-header]")?.getBoundingClientRect().height ?? 76;
+      if (card.current) window.scrollBy({ top: card.current.getBoundingClientRect().top - headerHeight - 16, behavior: "instant" });
       card.current?.querySelector<HTMLElement>("input, button")?.focus({ preventScroll: true });
     });
   }
   function edit(index: number) {
+    setEditFromSummary(summaryOpen);
     setDraft(plan);
     setEditing(index);
     setSummaryOpen(false);
     requestAnimationFrame(() => card.current?.querySelector<HTMLElement>("input")?.focus({ preventScroll: true }));
+  }
+  function finishEdit(save: boolean) {
+    const index = editing;
+    if (save) setPlan({ ...draft, step: plan.step });
+    setEditing(null);
+    setSummaryOpen(editFromSummary);
+    requestAnimationFrame(() => {
+      if (index !== null) card.current?.querySelector<HTMLElement>(`button[aria-label="Edit ${STEPS[index].toLowerCase()}"]`)?.focus({ preventScroll: true });
+    });
   }
   const review = <dl className={styles.review}>{[projectLabel, `${plan.sqft.toLocaleString()} sq ft`, finishLabel, layoutLabel].map((value, index) => <div key={index}>
     <dt>{STEPS[index]}</dt><dd>{value}</dd><button type="button" onClick={() => edit(index)} aria-label={`Edit ${STEPS[index].toLowerCase()}`}>Edit</button>
@@ -112,7 +124,7 @@ export function PlanningRangeExplorer() {
         <div ref={card} className={`${styles.card}${active ? ` ${styles.active}` : ""}`} data-testid="planning-step" data-family-bar-yield="" onKeyDown={event => {
           if (event.key === "Enter" && event.target instanceof HTMLInputElement && event.target.type === "range") {
             event.preventDefault();
-            if (editing !== null) { setPlan({ ...draft, step: 4 }); setEditing(null); }
+            if (editing !== null) finishEdit(true);
             else go(Math.min(4, plan.step + 1));
           }
         }}>
@@ -137,17 +149,17 @@ export function PlanningRangeExplorer() {
           </div>
           <div className={`${styles.compactResult}${plan.step === 4 && editing === null ? ` ${styles.reviewRange}` : ""}`} aria-live="polite"><span>Modeled planning range</span><strong>{range}</strong></div>
           <div className={styles.navigation}>
-            <button type="button" className={styles.back} onClick={() => editing !== null ? setEditing(null) : summaryOpen ? setSummaryOpen(false) : go(Math.max(0, plan.step - 1))} disabled={plan.step === 0 && editing === null && !summaryOpen}>{editing !== null ? "Cancel" : "Back"}</button>
-            {editing !== null ? <button type="button" className={styles.next} onClick={() => { setPlan({ ...draft, step: 4 }); setEditing(null); }}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => setSummaryOpen(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <a className={styles.next} href="/#request">Request a quote</a>}
+            <button type="button" className={styles.back} onClick={() => editing !== null ? finishEdit(false) : summaryOpen ? setSummaryOpen(false) : go(Math.max(0, plan.step - 1))} disabled={plan.step === 0 && editing === null && !summaryOpen}>{editing !== null ? "Cancel" : "Back"}</button>
+            {editing !== null ? <button type="button" className={styles.next} onClick={() => finishEdit(true)}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => setSummaryOpen(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <a className={styles.next} href="/#request">Request a quote</a>}
           </div>
-          {(plan.step < STEPS.length - 1 || editing !== null) && <a className={styles.contact} href="/#request">Ready to talk? Request a quote <ArrowUpRight size={16} aria-hidden="true" /></a>}
+          {(plan.step < STEPS.length - 1 || editing !== null) && <a className={styles.contact} href="/#request">Request a quote <ArrowUpRight size={16} aria-hidden="true" /></a>}
         </div>
         <aside className={styles.result} aria-label="Your modeled planning range">
           <p className={styles.resultLabel}>{projectLabel} · modeled planning range</p>
           <p className={styles.figure} aria-live="polite" data-testid="planning-figure">{range}</p>
           <p className={styles.summary}>{plan.sqft.toLocaleString()} sq ft · {finishLabel} · {layoutLabel}</p>
           <p className={styles.notice}>{NOT_A_QUOTE_NOTICE}</p>
-          <a className={`f-button f-dark ${styles.quote}`} href="/#request">Request a quote</a>
+          <a className={`f-button f-dark ${styles.quote}`} href="/#request" data-family-bar-yield="">Request a quote</a>
           <p className={styles.help}>A site visit and written scope come before a firm construction price.</p>
           <details className={styles.details}><summary>What the model includes</summary><ul>{disclosure.includes.map(item => <li key={item}>{item}</li>)}</ul></details>
           <details className={styles.details}><summary>Assumptions and exclusions</summary>

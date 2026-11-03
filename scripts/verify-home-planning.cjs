@@ -31,9 +31,28 @@ for(const [width,height] of viewports){
   if(baseline){records.push({viewport:key,baseline:true});await page.close();continue;}
   const card=page.getByTestId('planning-step');
   const record={viewport:key,steps:[]};records.push(record);
+  if(width<640){
+   await card.getByRole('button',{name:'Your selections',exact:true}).click();
+   await page.screenshot({path:path.join(output,`summary-${key}.png`)});
+   await card.getByRole('button',{name:'Edit finish',exact:true}).click();
+   await card.getByRole('radio',{name:'Luxury',exact:true}).check();
+   await page.screenshot({path:path.join(output,`edit-${key}.png`)});
+   await card.getByRole('button',{name:'Cancel',exact:true}).click();
+   check((await card.innerText()).includes('Mid-range'),`${key}: Cancel changed committed finish`);
+   check(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label'))==='Edit finish',`${key}: Cancel lost edit focus`);
+   await card.getByRole('button',{name:'Edit finish',exact:true}).click();
+   await card.getByRole('radio',{name:'High-end',exact:true}).check();
+   await card.getByRole('button',{name:'Save changes',exact:true}).click();
+   check((await card.innerText()).includes('Step 1 of 5'),`${key}: early Edit skipped steps`);
+   check(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label'))==='Edit finish',`${key}: Save lost edit focus`);
+   await card.getByRole('button',{name:'Continue planning',exact:true}).click();
+  }
+  await card.getByRole('button',{name:'Next',exact:true}).click();
+  await card.getByRole('button',{name:'Back',exact:true}).click();
+  check((await card.innerText()).includes('Step 1 of 5'),`${key}: in-flow Back lost position`);
   for(let step=0;step<5;step++){
    // Actual header dimensions, not a hard-coded viewport subtraction.
-   await page.evaluate(()=>{const c=document.querySelector('[data-testid=planning-step]');const h=document.querySelector('[data-family-header]');scrollBy(0,c.getBoundingClientRect().top-(h?.getBoundingClientRect().height||76)-16)});
+   await page.evaluate(()=>{const c=document.querySelector('[data-testid=planning-step]');const h=document.querySelector('[data-family-header]');scrollBy({top:c.getBoundingClientRect().top-(h?.getBoundingClientRect().height||76)-16,behavior:"instant"})});
    await page.waitForTimeout(200);
    const metrics=await card.evaluate(c=>{const b=c.getBoundingClientRect();const h=document.querySelector('[data-family-header]')?.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,headerBottom:h?.bottom||0,viewportHeight:innerHeight,overflow:document.documentElement.scrollWidth>innerWidth+1,controls:[...c.querySelectorAll('button,a,input')].filter(e=>e.type!=='radio').map(e=>{const r=e.getBoundingClientRect();return {text:e.textContent,height:r.height,width:r.width}})}});
    record.steps.push({step,metrics});
