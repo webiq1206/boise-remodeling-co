@@ -109,7 +109,7 @@ export function PlanningRangeExplorer() {
   function options<T extends string>(label: string, values: readonly { value: T; label: string }[], selected: T, onChange: (value: T) => void) {
     return <fieldset className={styles.fieldset}><legend>{label}</legend><div className={styles.choices}>
       {values.map(option => <label key={option.value} className={styles.choice}>
-        <input type="radio" name={`${id}-${label}`} value={option.value} checked={selected === option.value} onChange={() => onChange(option.value)} />
+        <input data-clarity-mask="True" type="radio" name={`${id}-${label}`} value={option.value} checked={selected === option.value} onChange={() => onChange(option.value)} />
         <span>{option.label}</span>
       </label>)}
     </div></fieldset>;
@@ -136,7 +136,7 @@ export function PlanningRangeExplorer() {
             {shownStep === 0 && options("What are you remodeling?", PROJECTS, shown.project, project => change(p => ({ ...p, project, sqft: getProjectSizeConfig(project).baselineSqft })))}
             {shownStep === 1 && <fieldset className={styles.fieldset}><legend>How much space?</legend>
               <div className={styles.sizeControls}><label htmlFor={`${id}-size`}>{projectLabel} area: <strong>{shown.sqft.toLocaleString()} sq ft</strong></label>
-              <input id={`${id}-size`} className={styles.slider} type="range" min={size.min} max={size.max} step={size.step} value={shown.sqft} onChange={e => change(p => ({ ...p, sqft: Number(e.target.value) }))} aria-valuetext={`${shown.sqft} square feet`} />
+              <input data-clarity-mask="True" id={`${id}-size`} className={styles.slider} type="range" min={size.min} max={size.max} step={size.step} value={shown.sqft} onChange={e => change(p => ({ ...p, sqft: Number(e.target.value) }))} aria-valuetext={`${shown.sqft} square feet`} />
               <div className={styles.ends}><span>{size.min.toLocaleString()} sq ft</span><span>{size.max.toLocaleString()} sq ft</span></div>
               <p className={styles.help}>Use the area being remodeled, not the whole property.</p></div>
             </fieldset>}
