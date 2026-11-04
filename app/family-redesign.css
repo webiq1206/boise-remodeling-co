@@ -28,7 +28,8 @@
   --fr-line-on-dark: rgba(251, 250, 246, 0.24);
   --fr-accent-on-dark: color-mix(in srgb, var(--f-accent) 68%, #fbfaf6);
 }
-.family-site { font-size: 17px; }
+.family-site { font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
 /* A band that sits outside the family frame still gets its heading and label colours. */
 .fr-band .ed-eyebrow { color: #d9dbd4; }
 .fr-band .ed-h2,
@@ -55,7 +56,8 @@
 .family-site .f-use p:not(.f-eyebrow) {
   color: var(--fr-ink-soft);
 }
-.family-site .f-accordion [data-slot=accordion-content] { font-size: 17px; }
+.family-site .f-accordion [data-slot=accordion-content] { font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
 .family-site .f-section { padding-block: clamp(80px, 9vw, 124px); }
 .family-site .f-section-top { margin-bottom: 52px; }
 .family-site .f-section-top > p { max-width: 480px; }
@@ -93,10 +95,11 @@
 .fr-card-body { display: flex; flex-direction: column; flex: 1; }
 .fr-card h3 {
   margin-top: 22px;
-  font-size: clamp(26px, 2.1vw, 32px);
-  line-height: 1.08;
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
-.fr-card p { margin-top: 10px; color: var(--fr-ink-soft); font-size: 16px; }
+.fr-card p { margin-top: 10px; color: var(--fr-ink-soft); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
 .fr-card .f-link { margin-top: auto; padding-top: 18px; }
 .fr-cards-more {
   display: flex;
@@ -107,7 +110,8 @@
   padding-top: 24px;
   border-top: 1px solid var(--fr-line);
 }
-.fr-cards-more > span { color: var(--fr-ink-soft); font-size: 15px; }
+.fr-cards-more > span { color: var(--fr-ink-soft); font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
+}
 
 /* ------------------------------------------------------------ showcase split */
 .fr-showcase {
@@ -128,10 +132,10 @@
 .fr-photo-grid figcaption {
   margin-top: 10px;
   color: var(--fr-ink-soft);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: var(--fs-small);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: uppercase; line-height: var(--lh-small);
 }
 .fr-note {
   margin-top: 28px;
@@ -139,8 +143,8 @@
   border-left: 2px solid var(--f-accent);
   background: var(--fr-bone);
   color: var(--fr-ink-soft);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
 }
 
 /* ------------------------------------------------------------ dark feature band */
@@ -249,7 +253,8 @@
   gap: 32px;
   padding-block: 44px;
 }
-.fr-cta-strip h2 { font-size: clamp(30px, 3vw, 44px); max-width: 22ch; }
+.fr-cta-strip h2 { font-size: var(--fs-h2); max-width: 22ch; line-height: var(--lh-h2); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
 .fr-cta-strip p:not(.f-eyebrow) { margin-top: 8px; color: var(--fr-ink-soft); }
 .fr-cta-strip-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; flex: none; }
 
@@ -266,9 +271,9 @@
   min-height: 44px;
   padding: 8px 18px;
   border: 1px solid var(--fr-line);
-  font-size: 15px;
+  font-size: var(--fs-nav);
   font-weight: 500;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  transition: background 0.2s, color 0.2s, border-color 0.2s; line-height: 1; letter-spacing: 0;
 }
 .fr-cities a:hover,
 .fr-cities a:focus-visible {
@@ -301,7 +306,8 @@
   display: grid;
   gap: 12px;
 }
-.fr-request-list li { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; color: var(--fr-ink-soft); }
+.fr-request-list li { display: flex; gap: 12px; align-items: flex-start; font-size: var(--fs-body); color: var(--fr-ink-soft); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
 .fr-request-list svg { flex: none; margin-top: 3px; color: var(--f-accent); }
 
 /* ------------------------------------------------------------------- founder */
@@ -347,9 +353,12 @@
   .fr-card { flex-direction: row; gap: 16px; align-items: flex-start; }
   .fr-card-media { flex: 0 0 38%; aspect-ratio: 1; }
   .fr-card-body { flex: 1; min-width: 0; }
-  .fr-card h3 { margin-top: 0; font-size: 24px; }
-  .fr-card p { margin-top: 6px; font-size: 15px; }
-  .fr-card .f-link { padding-top: 10px; font-size: 13px; }
+  .fr-card h3 { margin-top: 0; font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
+  .fr-card p { margin-top: 6px; font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
+  .fr-card .f-link { padding-top: 10px; font-size: var(--fs-button); line-height: 1; letter-spacing: 0; font-weight: 600;
+}
   .fr-cards-more { gap: 8px 24px; margin-top: 32px; }
 }
 
@@ -363,8 +372,8 @@
 }
 .referral-title {
   margin-top: 4px;
-  font: 300 clamp(44px, 5vw, 76px) / 1.02 var(--font-cormorant), Georgia, serif;
-  letter-spacing: -0.03em;
+  font: var(--weight-display) var(--fs-h1)/var(--lh-h1) var(--font-display);
+  letter-spacing: var(--tracking-display);
   text-wrap: balance;
 }
 .referral-lede { margin-top: 24px; max-width: 34em; }
@@ -381,7 +390,7 @@
 .referral-panel-body { padding: clamp(24px, 3vw, 40px); }
 .referral-panel-title {
   margin: 0 0 24px;
-  font: 400 clamp(22px, 2vw, 28px) / 1.3 var(--font-cormorant), Georgia, serif;
+  font: var(--weight-display) var(--fs-h3)/var(--lh-h3) var(--font-display); letter-spacing: var(--tracking-heading);
 }
 .referral-panel .f-button { width: 100%; }
 @media (max-width: 1100px) {
@@ -413,7 +422,8 @@
 .fr-band [data-selected] { background: var(--fr-paper); color: var(--fr-ink); border-color: rgba(44, 48, 47, 0.25); }
 .fr-band [data-selected="true"] { border-color: var(--f-accent); box-shadow: inset 0 0 0 1px var(--f-accent); }
 .fr-band [data-selected] * { color: inherit; }
-.fr-band-estimate.approved-estimate h2 { font-size: clamp(46px, 5.6vw, 84px); }
+.fr-band-estimate.approved-estimate h2 { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
+}
 .fr-band-estimate .fr-range-result .planning-range-value { font-size: clamp(40px, 5vw, 72px); line-height: 1; }
 .fr-band-estimate .fr-range-result .planning-range-band { font-size: 16px; margin-top: 14px; }
 
@@ -424,16 +434,24 @@ section.fam-hero[data-family-hero] { background: #2c302f; }
 
 /* One heading scale for the family sections, whatever the site's older approved
    layer says: the editorial h2 is large on purpose. */
-html .family-site h2 { font-size: clamp(46px, 5.6vw, 84px); }
-html .family-site h3 { font-size: 36px; }
+html .family-site h2 { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
+}
+html .family-site h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
 html .family-site .f-value h2,
-html .family-site .f-contact h2 { font-size: clamp(44px, 5vw, 76px); }
-html .family-site .fr-cta-strip h2 { font-size: clamp(30px, 3vw, 44px); }
-html .family-site .fr-card h3 { font-size: clamp(26px, 2.1vw, 32px); }
-html .family-site .fr-every-title { font-size: clamp(24px, 2vw, 30px); }
-html .fr-band-estimate.approved-estimate h2 { font-size: clamp(46px, 5.6vw, 84px); }
+html .family-site .f-contact h2 { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
+}
+html .family-site .fr-cta-strip h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
+html .family-site .fr-card h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
+html .family-site .fr-every-title { font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
+html .fr-band-estimate.approved-estimate h2 { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
+}
 html .family-site .f-section-top { align-items: end; }
-@media (max-width: 640px) { html .family-site .fr-card h3 { font-size: 24px; } }
+@media (max-width: 640px) { html .family-site .fr-card h3 { font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+} }
 
 /* Picture-card rows always finish full. Six tracks: rows of three by default; a
    count ending in one (4, 7, 10) opens and closes with a pair of wide cards; a
@@ -466,8 +484,10 @@ html [data-slot="accordion-content"][data-state="closed"]:not([hidden]) { displa
 /* Interior page titles: always one step above the 72px section headings. */
 html .approved-interior .interior-hero-copy h1,
 html .approved-interior .interior-hero-editorial h1,
-html .approved-shell.site-cabinet .approved-interior .interior-hero-fit .interior-hero-copy h1 { font-size: clamp(3rem, 5.4vw, 5rem); }
-html .approved-interior .interior-detail-body h2 { font-size: clamp(2.5rem, 4.4vw, 4rem); line-height: 1.02; }
+html .approved-shell.site-cabinet .approved-interior .interior-hero-fit .interior-hero-copy h1 { font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
+}
+html .approved-interior .interior-detail-body h2 { font-size: var(--fs-h2); line-height: var(--lh-h2); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
+}
 
 /* ------------------------------------------------------- design gallery mosaic */
 .fr-gallery { background: var(--fr-paper, #fbfaf6); color: var(--fr-ink, #2c302f); }
@@ -481,19 +501,20 @@ html .approved-interior .interior-detail-body h2 { font-size: clamp(2.5rem, 4.4v
 }
 .fr-gallery-eyebrow {
   margin: 0 0 22px;
-  font-size: 12px;
+  font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase; line-height: var(--lh-label);
 }
 .fr-gallery h2 {
   margin: 0;
-  font: 300 clamp(46px, 5.6vw, 84px) / 1.02 var(--font-cormorant), Georgia, serif;
-  letter-spacing: -0.035em;
+  font: var(--weight-display) var(--fs-display)/var(--lh-display) var(--font-display);
+  letter-spacing: var(--tracking-display);
   text-wrap: balance;
 }
 .fr-gallery h2 em { font-style: normal; color: var(--f-accent, currentColor); }
-.fr-gallery-intro { margin: 0; max-width: 46ch; color: var(--fr-ink-soft, #484c47); font-size: 17px; line-height: 1.75; }
+.fr-gallery-intro { margin: 0; max-width: 46ch; color: var(--fr-ink-soft, #484c47); font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
 .fr-mosaic {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -525,17 +546,17 @@ html .approved-interior .interior-detail-body h2 { font-size: clamp(2.5rem, 4.4v
   padding: 40px 18px 14px;
   background: linear-gradient(180deg, transparent, rgba(20, 22, 21, 0.55));
   color: #fbfaf6;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: var(--fs-small);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: uppercase; line-height: var(--lh-small);
 }
 html .fr-gallery p.fr-gallery-note {
   margin: 28px 0 0;
   max-width: 70ch;
   color: var(--fr-ink-soft, #484c47);
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
 }
 @media (max-width: 900px) {
   .fr-gallery-top { grid-template-columns: 1fr; gap: 24px; }
@@ -545,5 +566,6 @@ html .fr-gallery p.fr-gallery-note {
   .fr-mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .fr-mosaic figure.is-wide { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
   .fr-mosaic figure:last-child:not(.is-wide) { grid-column: 1 / -1; aspect-ratio: 16 / 9; }
-  .fr-mosaic figcaption { padding: 28px 12px 10px; font-size: 11px; }
+  .fr-mosaic figcaption { padding: 28px 12px 10px; font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
+}
 }

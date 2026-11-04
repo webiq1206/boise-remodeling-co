@@ -76,13 +76,6 @@ export function buildBusinessVCard(): string {
     foldLine(`TEL;TYPE=WORK,VOICE:${tel}`),
     foldLine(`EMAIL;TYPE=WORK:${escapeVCard(SITE_CONFIG.email)}`),
     foldLine(`URL:${escapeVCard(SITE_CONFIG.siteUrl)}`),
-    // Street, city, state, and ZIP are the site NAP. Nothing here is filled in by hand.
-    foldLine(
-      `ADR;TYPE=WORK:;;${escapeVCard(SITE_CONFIG.address.street)};${escapeVCard(SITE_CONFIG.address.city)};${escapeVCard(SITE_CONFIG.address.state)};${escapeVCard(SITE_CONFIG.address.postalCode)};${escapeVCard(BUSINESS_INFO.address.country)}`,
-    ),
-    foldLine(
-      `LABEL;TYPE=WORK:${escapeVCard(`${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.cityState} ${SITE_CONFIG.address.postalCode} · ${SITE_CONFIG.address.serviceArea}`)}`,
-    ),
     foldLine(`NOTE:${escapeVCard(note)}`),
     ...socialLines,
     "END:VCARD",

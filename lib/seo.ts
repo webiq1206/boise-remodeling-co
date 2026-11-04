@@ -545,13 +545,10 @@ export const BUSINESS_INFO = {
   founderName: '',
   phone: SITE_CONFIG.phone,
   email: SITE_CONFIG.email,
-  // Full NAP for JSON-LD and citations. Visible pages stay city and state
-  // only: service-area business, no storefront.
+  // Public locality; the business street remains in private verification records.
   address: {
-    street: SITE_CONFIG.address.street,
     city: SITE_CONFIG.address.city,
     state: 'Idaho',
-    postalCode: SITE_CONFIG.address.postalCode,
     country: 'United States',
   },
   hours: {

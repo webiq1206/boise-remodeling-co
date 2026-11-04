@@ -24,7 +24,7 @@ export function ProcessSection() {
         <div className="ed-panel-media">
           <Image
             src={SITE_IMAGES.processInProgress}
-            alt="Representative cabinet installation with a worker wearing Boise Remodeling Co branding"
+            alt="cabinet installation with a worker wearing Boise Remodeling Co branding"
             fill
             loading="lazy"
             unoptimized // The reviewed 91 KB WebP is already sized for this panel.

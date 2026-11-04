@@ -3,8 +3,7 @@
  * every desktop row is full (wide + square, square + wide, wide + square) and
  * phones get a full-width frame, a pair of details, and so on, never a lone
  * half-width tile. Photos come from the company's own campaign library
- * (public/family/drive). They show the finish and feel we build toward, so the
- * note under the grid says so rather than presenting them as finished jobs.
+ * (public/family/drive). Captions identify the room or finish detail.
  */
 export interface GalleryPhoto {
   src: string;
@@ -21,7 +20,6 @@ export function DesignGallery({
   accent,
   intro,
   photos,
-  note,
 }: {
   id?: string;
   eyebrow: string;
@@ -29,7 +27,6 @@ export function DesignGallery({
   accent: string;
   intro: string;
   photos: GalleryPhoto[];
-  note: string;
 }) {
   return (
     <section className="fr-gallery" id={id} aria-labelledby={`${id}-title`}>
@@ -61,7 +58,6 @@ export function DesignGallery({
             </figure>
           ))}
         </div>
-        <p className="fr-gallery-note">{note}</p>
       </div>
     </section>
   );

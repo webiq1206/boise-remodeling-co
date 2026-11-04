@@ -16,7 +16,7 @@ export function HeroSection() {
       <div id="hero-sentinel" className="absolute bottom-0 left-0 h-px w-full" aria-hidden="true" />
         <Image
           src={SITE_IMAGES.hero}
-          alt="Representative open kitchen with a dark island, brass fixtures and a connected living room"
+          alt="open kitchen with a dark island, brass fixtures and a connected living room"
           fill
           priority
           sizes="(max-width: 768px) 100vw, 1400px"

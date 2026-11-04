@@ -77,7 +77,7 @@ export function FeaturedProjectRoomsSection({
         <div className={`ed-shell ${compact ? "py-6 md:py-8" : "py-8 md:py-12"}`}>
           {compact && (
             <Reveal>
-              <p className="ed-eyebrow">{project.city.toUpperCase()}</p>
+              <p className="ed-eyebrow">Ranch home</p>
               <h2 className="ed-h2-sm ed-statement-wide mt-2">
                 {toSentenceCase(project.title)}
               </h2>

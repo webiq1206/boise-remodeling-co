@@ -30,7 +30,9 @@ test('the brand config carries this site’s facts, one CTA and one destination'
   assert.equal(FAMILY_BRAND.parentFacebook.href, P5_FACEBOOK_URL);
   assert.deepEqual(FAMILY_BRAND.parentGoogle, { href: P5_GBP_URL, label: 'P5 Home Co on Google' });
   assert.equal(FAMILY_BRAND.nap.line, publicFooterLine());
-  assert.match(FAMILY_BRAND.nap.line, /4031 W Wapoot St, Meridian, ID 83646/);
+  assert.match(FAMILY_BRAND.nap.line, /Serving the Treasure Valley/);
+  assert.doesNotMatch(FAMILY_BRAND.nap.line, /Wapoot|4031|Public representative|staffed storefront/i);
+  assert.deepEqual(FAMILY_BRAND.header.phoneActions, ['call', 'text', 'chat']);
   assert.equal(FAMILY_BRAND.registration.href, DOPL_LICENSE_SEARCH);
   // Approved C7 check (scripts/verify-p5-mobile-seo.mjs): the bar is on the first screen below 1180px.
   assert.equal(FAMILY_BRAND.bar.showOverHero, true);
@@ -75,7 +77,11 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   }
   assert.match(html, /<span class="fam-footer-current" aria-current="true">Boise Remodeling Co<\/span>/);
   assert.equal(/rel="noopener noreferrer">(P5 Home Co|Boise)/.test(html), false);
-  assert.match(html, /Public representative: Nick Perkins/);
+  assert.match(html, /Serving the Treasure Valley/);
+  assert.doesNotMatch(html, /Wapoot|4031|Public representative|staffed storefront/i);
+  assert.match(html, /data-testid="link-footer-call"/);
+  assert.match(html, /href="sms:\+12084771169"[^>]*data-testid="link-footer-text"/);
+  assert.match(html, /type="button"[^>]*data-testid="button-chat-footer"/);
   assert.match(html, /Mon to Fri 9 to 6, Sat 9 to 4 Mountain\. Closed Sunday\./);
   assert.match(html, /mailto:hello@boiseremodeling\.co/);
   assert.match(html, /href="\/contact\.vcf"/);
@@ -99,7 +105,8 @@ test('the homepage hero is the family template with sourced proof', () => {
   assert.match(cta[0], /href="\/#request"/);
   assert.match(cta[0], /fam-btn--hero fam-btn--lg/);
   assert.equal(cta[1], 'Request a quote');
-  assert.match(html, /<a href="tel:\+12084771169" class="fam-hero-link">Call or text \(208\) 477-1169<\/a>/);
+  assert.match(html, /data-fit="viewport"/);
+  assert.doesNotMatch(html, /class="fam-hero-link"/);
   assert.match(html, /<picture class="fam-hero-media"><source media="\(max-width: 1023px\)"/);
   assert.match(html, /<img [^>]*fetchPriority="high"[^>]*class="fam-hero-img"/);
   // Support line: 14 words at most.
@@ -152,4 +159,6 @@ test('the shared chrome matches its manifest and stays brand-agnostic', () => {
     assert.ok(file in manifest.files, file);
   }
   assert.equal('lib/familyBrand.ts' in manifest.files, false);
+  assert.ok('components/family/ContactActions.tsx' in manifest.files);
+  assert.ok('components/family/ServiceArea.tsx' in manifest.files);
 });

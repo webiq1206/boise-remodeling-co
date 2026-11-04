@@ -14,7 +14,6 @@ import {
   generateLocalBusinessSchema,
   generateOrganizationSchema,
   generateServiceSchema,
-  NICK_PERKINS_ID,
   P5_ORG_ID,
 } from '../lib/schema.ts';
 import { BUSINESS_INFO, generateSafePageTitle } from '../lib/seo.ts';
@@ -37,34 +36,18 @@ function renderedTitle(meta: { title?: unknown }): string {
   return '';
 }
 
-test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
+test('contractor schema preserves contacts, served cities and parent without publishing the business address', () => {
   const business = generateLocalBusinessSchema('Eagle');
   assert.deepEqual(business['@type'], ['HomeAndConstructionBusiness', 'GeneralContractor']);
-  assert.deepEqual(business.address, {
-    '@type': 'PostalAddress',
-    streetAddress: '4031 W Wapoot St',
-    addressLocality: 'Meridian',
-    addressRegion: 'ID',
-    postalCode: '83646',
-    addressCountry: 'US',
-  });
-  assert.equal(business.address.streetAddress, SITE_CONFIG.address.street);
-  assert.equal(business.address.postalCode, SITE_CONFIG.address.postalCode);
+  assert.equal(business.address, undefined);
+  assert.equal(business.geo, undefined);
+  assert.equal(business.employee, undefined);
   assert.equal(business.telephone, '+1-208-477-1169');
   assert.equal(SITE_CONFIG.phone, '(208) 477-1169');
-  assert.equal((business.contactPoint as { name: string }).name, 'Nick Perkins');
+  assert.equal((business.contactPoint as { name?: string }).name, undefined);
   assert.equal((business.contactPoint as { contactType: string }).contactType, 'customer service');
   assert.equal((business.contactPoint as { telephone: string }).telephone, '+1-208-477-1169');
   assert.equal((business.contactPoint as { email: string }).email, 'hello@boiseremodeling.co');
-  assert.deepEqual(business.geo, { '@type': 'GeoCoordinates', latitude: 43.6515, longitude: -116.4444 });
-  assert.deepEqual(business.employee, {
-    '@type': 'Person',
-    '@id': 'https://p5homeco.com/#nick-perkins',
-    name: 'Nick Perkins',
-    jobTitle: 'Public representative',
-    worksFor: { '@id': 'https://p5homeco.com/#organization' },
-  });
-  assert.equal((business.employee as { '@id': string })['@id'], NICK_PERKINS_ID);
   assert.equal((business.parentOrganization as { '@id': string })['@id'], 'https://p5homeco.com/#organization');
   assert.equal((business.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
   assert.deepEqual(
@@ -78,12 +61,11 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
 
   const organization = generateOrganizationSchema();
   assert.equal((organization.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
-  assert.equal((organization.employee as { '@id': string })['@id'], NICK_PERKINS_ID);
-  assert.equal((organization.employee as { worksFor: { '@id': string } }).worksFor['@id'], P5_ORG_ID);
+  assert.equal(organization.employee, undefined);
   assert.deepEqual(organization.sameAs, BUSINESS_INFO.sameAs);
   assert.deepEqual(organization.address, business.address);
   const contact = organization.contactPoint as { contactType: string; name?: string; telephone?: string };
-  assert.equal(contact.name, 'Nick Perkins');
+  assert.equal(contact.name, undefined);
   assert.equal(contact.contactType, 'customer service');
   assert.equal(contact.telephone, '+1-208-477-1169');
   assert.equal(organization.telephone, '+1-208-477-1169');
@@ -91,10 +73,9 @@ test('contractor schema uses the Meridian NAP, Nick, and P5 parent', () => {
   for (const service of SERVICES) {
     for (const city of CITIES) {
       const schema = generateServiceSchema(service.name, service.shortDescription, city.name);
-      const provider = schema.provider as { address: { addressLocality: string; streetAddress: string }; '@type': string[] };
+      const provider = schema.provider as { address?: unknown; '@type': string[] };
       assert.deepEqual(provider['@type'], ['HomeAndConstructionBusiness', 'GeneralContractor']);
-      assert.equal(provider.address.addressLocality, 'Meridian');
-      assert.equal(provider.address.streetAddress, '4031 W Wapoot St');
+      assert.equal(provider.address, undefined);
       assert.equal((schema.areaServed as { name: string }).name, city.name);
       assert.equal(JSON.stringify(schema).includes('Garden City'), false);
     }
@@ -248,7 +229,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {
-  const footerLine = 'Public representative: Nick Perkins · 4031 W Wapoot St, Meridian, ID 83646 · Service-area business, not a staffed storefront';
+  const footerLine = 'Serving the Treasure Valley · Ada and Canyon County';
   // Phase 2: the footer is the shared family SiteFooter; this site's facts live in lib/familyBrand.ts.
   // The family row names every live family site; Boise ADU Co is left out until its own site exists.
   const footer = readFileSync('lib/familyBrand.ts', 'utf8');
@@ -268,7 +249,8 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
   assert.match(contact, /Call, text, or email\. We come to you\./);
   assert.match(contact, /never use high-pressure sales tactics/);
-  assert.match(contact, /publicFooterLine\(\)/);
+  assert.match(contact, /TREASURE_VALLEY_CITIES/);
+  assert.equal(/public representative|staffed storefront|Wapoot/i.test(contact), false);
   assert.equal(contact.includes('Call, email, or visit'), false);
   const email = readFileSync('components/EmailLink.tsx', 'utf8');
   assert.match(email, /mailto:\$\{address\}/);
@@ -297,8 +279,8 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   const llms = readFileSync('public/llms.txt', 'utf8');
   const full = readFileSync('public/llms-full.txt', 'utf8');
   for (const file of [llms, full]) {
-    assert.match(file, /Nick Perkins/);
-    assert.match(file, /4031 W Wapoot St/);
+    assert.equal(/Public representative|staffed storefront|Wapoot/i.test(file), false);
+    assert.match(file, /Serving the Treasure Valley/);
     assert.match(file, /hello@boiseremodeling\.co/);
     assert.match(file, /Last updated: 2026-10-16/);
     assert.match(file, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);

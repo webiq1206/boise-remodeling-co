@@ -17,7 +17,7 @@ export function RegistrationLink({ className = linkClass }: { className?: string
       href={DOPL_LICENSE_SEARCH}
       target="_blank"
       rel="noopener"
-      title="Search for a Registration on Idaho DOPL"
+      title="Idaho contractor registration"
       className={className}
     >
       {REGISTRATION_LINE}

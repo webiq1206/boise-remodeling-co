@@ -313,8 +313,8 @@
 .approved-shell.site-remodeling .home-direct p {
   max-width: 62ch;
   margin: 0;
-  font-size: 17px;
-  line-height: 1.65;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-shell.site-remodeling .family-site .f-area > div a {
   gap: 10px;
@@ -876,9 +876,9 @@
     padding: 28px 0 0;
   }
   .approved-shell.site-remodeling .home-direct p {
-    font-size: 16px;
-    line-height: 1.6;
-  }
+    font-size: var(--fs-body);
+    line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
+}
   .approved-shell.site-remodeling .fold-request .fold-lede {
     font-size: 15px;
     line-height: 1.4;
@@ -1133,8 +1133,8 @@ body[data-estimate-wizard="true"] .site-footer {
 }
 .approved-shell.site-remodeling .estimate-wizard-eyebrow {
   margin: 0;
-  font: 600 12px/1.3 var(--font-manrope), Arial, sans-serif;
-  letter-spacing: 0.1em;
+  font: 600 var(--fs-label)/var(--lh-label) var(--font-sans);
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: #4d6249;
 }
