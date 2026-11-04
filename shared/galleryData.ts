@@ -87,7 +87,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.aduBoise.after,
     title: "Detached ADU Build",
     description:
-      "Representative remodeling design inspiration, tailored to your home during design.",
+      "Detached living-space layout and finish options, tailored to your home during design.",
   },
   {
     serviceType: "aging-in-place",
@@ -237,7 +237,7 @@ export function getGalleryProjectsFor(
       beforeImageUrl: src,
       afterImageUrl: src,
       title: `${cityName} ${proofService.label} Design Inspiration`,
-      description: `Representative ${proofService.label.toLowerCase()} remodeling direction for ${cityName} homes. Final layouts and finishes are tailored during design.`,
+      description: `${proofService.label} layout and finish options for ${cityName} homes. Final layouts and finishes are tailored during design.`,
     },
   ];
 }
@@ -262,7 +262,7 @@ export function getGalleryProjectsForCity(citySlug: string): GalleryProject[] {
         beforeImageUrl: src,
         afterImageUrl: src,
         title: `${cityName} ${label} Design Inspiration`,
-        description: `Representative ${label.toLowerCase()} remodeling direction for ${cityName} homes. Final layouts and finishes are tailored during design.`,
+        description: `${label} layout and finish options for ${cityName} homes. Final layouts and finishes are tailored during design.`,
       },
     ];
   });

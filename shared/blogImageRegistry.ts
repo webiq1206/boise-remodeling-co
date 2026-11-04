@@ -263,13 +263,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodeling-mistakes-to-avoid': {
     hero: '/images/blog/remodeling-mistakes-to-avoid.webp',
-    alt: 'Completed whole-home remodel with a cohesive open-concept living and dining area and quality transitional finishes in a Boise home',
+    alt: 'Open-concept living and dining area with coordinated transitional finishes',
     topicTags: ["whole-home","planning","boise"],
     source: 'blog',
   },
   'design-build-process-guide': {
     hero: '/images/blog/design-build-process-guide.webp',
-    alt: 'Completed whole-home remodel showcasing cohesive design-build results',
+    alt: 'Open living area with coordinated cabinetry, flooring and finishes',
     topicTags: ["whole-home","design-build"],
     source: 'blog',
   },

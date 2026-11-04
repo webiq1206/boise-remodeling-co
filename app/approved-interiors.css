@@ -12,11 +12,11 @@
   margin-bottom:45px
 }
 .interior-document-heading h1 {
-  font-size:clamp(43px,5vw,72px);
-  font-weight:300;
-  line-height:1.08;
+  font-size: var(--fs-h1);
+  font-weight: var(--weight-display);
+  line-height: var(--lh-h1);
   max-width:24ch;
-  margin:0
+  margin:0; letter-spacing: var(--tracking-display);
 }
 .interior-document-grid {
   display:grid;
@@ -38,13 +38,13 @@
   display:block;
   padding:12px 0;
   border-bottom:1px solid #2c302f20;
-  font-size:14px;
-  line-height:1.5
+  font-size: var(--fs-nav);
+  line-height: 1; letter-spacing: 0; font-weight: 500;
 }
 .interior-document-index .interior-estimate-link {
   width:100%;
-  font-size:13px;
-  padding:16px
+  font-size: var(--fs-button);
+  padding:16px; line-height: 1; letter-spacing: 0; font-weight: 600;
 }
 .interior-document-main {
   min-width:0;
@@ -73,7 +73,7 @@
   margin:0
 }
 .approved-interior .interior-hero-copy .interior-page-heading h1 {
-  font-size:clamp(44px,4.8vw,72px)
+  font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .approved-interior .interior-hero-copy .interior-estimate-link {
   color:#fbfaf6
@@ -114,7 +114,7 @@
   margin-bottom:35px
 }
 .approved-interior .interior-hero-copy .interior-page-heading h1 {
-  font-size:43px
+  font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 }
 .approved-interior {
@@ -173,25 +173,25 @@
   margin:0
 }
 .approved-interior .interior-hero-copy h1 {
-  font:300 clamp(44px,4.8vw,72px)/1.04 var(--font-cormorant),Georgia,serif;
-  letter-spacing:-.035em;
+  font: var(--weight-display) var(--fs-h1)/var(--lh-h1) var(--font-display);
+  letter-spacing: var(--tracking-display);
   max-width:20ch;
   margin:20px 0 24px;
   color:#2c302f
 }
 .approved-interior .interior-hero-copy :is(.ed-lede,p:not(.sr-only)) {
-  font-family:var(--font-manrope),Arial,sans-serif;
-  font-size:16px;
-  line-height:1.8;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   max-width:54ch;
-  color:#62645f
+  color:#62645f; letter-spacing: 0; font-weight: 400;
 }
 .approved-interior .interior-hero-copy :is(.ed-eyebrow,.interior-eyebrow) {
-  font-size:12px;
-  letter-spacing:.12em;
-  line-height:1.5;
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--lh-label);
   color:#62645f!important;
-  margin-top:25px
+  margin-top:25px; font-weight: 600;
 }
 .approved-interior .interior-hero-copy :is(nav,nav a,nav span) {
   color:#62645f
@@ -243,7 +243,7 @@
 }
 .approved-interior .interior-hero-editorial h1 {
   max-width:24ch;
-  font-size:clamp(48px,5.7vw,82px)
+  font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .approved-interior .interior-hero-editorial .interior-hero-image {
   width:min(88%,1260px);
@@ -277,9 +277,9 @@
   min-height:54px;
   background:#2c302f;
   color:#fbfaf6!important;
-  font:500 14px/1.45 var(--font-manrope),Arial,sans-serif;
+  font: 600 var(--fs-button)/1 var(--font-sans);
   text-decoration:none;
-  border:1px solid transparent
+  border:1px solid transparent; letter-spacing: 0;
 }
 .interior-estimate-link:hover {
   background:#414744
@@ -292,17 +292,17 @@
   margin-top:28px
 }
 .interior-eyebrow {
-  font-size:12px;
-  letter-spacing:.12em;
-  line-height:1.5
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  line-height: var(--lh-label); font-weight: 600;
 }
 .interior-text-link {
   display:inline-flex;
   align-items:center;
   gap:16px;
   padding-block:12px;
-  font-size:14px;
-  min-height:44px
+  font-size: var(--fs-button);
+  min-height:44px; line-height: 1; letter-spacing: 0; font-weight: 600;
 }
 .interior-project-aside {
   background:#f1ede4;
@@ -312,15 +312,15 @@
   align-self:start
 }
 .interior-project-aside h2 {
-  font-size:43px;
-  line-height:1.05;
-  margin:20px 0
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  margin:20px 0; letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .interior-project-aside>p:not(.interior-eyebrow) {
-  font-size:16px;
-  line-height:1.8;
+  font-size: var(--fs-label);
+  line-height: var(--lh-label);
   color:#62645f;
-  margin-bottom:24px
+  margin-bottom:24px; letter-spacing: var(--tracking-label); font-weight: 600;
 }
 .interior-project-aside .interior-estimate-link {
   width:100%
@@ -340,8 +340,8 @@
   min-width:0
 }
 .interior-detail-body h2 {
-  font-size:clamp(34px,3.4vw,48px);
-  margin:0 0 25px
+  font-size: var(--fs-h2);
+  margin:0 0 25px; line-height: var(--lh-h2); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .interior-scope-list {
   list-style:none;
@@ -354,20 +354,19 @@
   gap:24px;
   padding:20px 0;
   border-top:1px solid #2c302f30;
-  font-size:16px;
-  line-height:1.75
+  font-size: var(--fs-body);
+  line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .interior-scope-list li>span {
-  font-size:12px;
-  color:#62645f
+  font-size: var(--fs-label);
+  color:#62645f; line-height: var(--lh-label); letter-spacing: var(--tracking-label); font-weight: 600;
 }
 .interior-detail-body .interior-long-copy {
   margin-top:45px
 }
 .interior-detail-body .interior-long-copy p {
   margin:0 0 20px;
-  line-height:1.85
-}
+  line-height: var(--lh-body)}
 .approved-interior .interior-service-grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
@@ -395,17 +394,17 @@
   margin-top:22px
 }
 .interior-service-card h2 {
-  font-size:31px;
-  line-height:1.12
+  font-size: var(--fs-h3);
+  line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .interior-service-card p {
-  font-size:16px;
-  line-height:1.8;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   margin-top:15px;
-  color:#62645f
+  color:#62645f; letter-spacing: 0; font-weight: 400;
 }
 .interior-service-card .interior-price {
-  font-size:13px
+  font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
 }
 .interior-service-card:hover img {
   filter:brightness(.96)
@@ -421,16 +420,16 @@
   max-width:none
 }
 .approved-interior .interior-page-heading h1 {
-  font:300 clamp(46px,5.5vw,76px)/1.06 var(--font-cormorant),Georgia,serif;
-  letter-spacing:-.035em;
+  font: var(--weight-display) var(--fs-h1)/var(--lh-h1) var(--font-display);
+  letter-spacing: var(--tracking-display);
   max-width:25ch;
   margin:18px 0 25px
 }
 .approved-interior .interior-page-heading p {
-  font-size:16px;
-  line-height:1.8;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
   max-width:58ch;
-  margin-bottom:0
+  margin-bottom:0; letter-spacing: 0; font-weight: 400;
 }
 .approved-interior .interior-page-heading .ed-eyebrow {
   justify-content:flex-start
@@ -444,16 +443,16 @@
   margin:0
 }
 .approved-interior .interior-article-header h1 {
-  font-size:clamp(43px,5vw,72px);
-  line-height:1.08;
-  font-weight:300;
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  font-weight: var(--weight-display);
   max-width:26ch;
-  margin:20px 0 25px
+  margin:20px 0 25px; letter-spacing: var(--tracking-display);
 }
 .approved-interior .interior-article-header>p {
-  font-size:18px;
-  line-height:1.8;
-  max-width:62ch
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  max-width:62ch; letter-spacing: 0; font-weight: 400;
 }
 .approved-interior .interior-article-image {
   position:relative;
@@ -489,16 +488,16 @@
   max-width:72ch
 }
 .approved-interior .blog-content {
-  font-size:17px;
-  line-height:1.85
+  font-size: var(--fs-body);
+  line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-interior .blog-content h2 {
-  font-size:clamp(31px,3.2vw,44px);
-  line-height:1.14;
-  margin-top:48px
+  font-size: var(--fs-h2);
+  line-height: var(--lh-h2);
+  margin-top:48px; letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .approved-interior .blog-content h3 {
-  font-size:28px
+  font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .approved-interior .quick-answer,.approved-interior .key-takeaways {
   border:0;
@@ -529,7 +528,7 @@
   padding:25px
 }
 .approved-interior .ed-matrix h3 {
-  font-size:30px
+  font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .approved-interior .ed-on-gradient {
   background:#2c302f;
@@ -547,26 +546,25 @@
 }
 .approved-interior .interior-accordion summary {
   cursor:pointer;
-  font:300 30px/1.2 var(--font-cormorant),Georgia,serif
+  font: var(--weight-display) var(--fs-h3)/var(--lh-h3) var(--font-display); letter-spacing: var(--tracking-heading);
 }
 .approved-interior .interior-accordion details p {
   margin:20px 0 0;
-  line-height:1.8
-}
+  line-height: var(--lh-body)}
 .interior-legal .prose,.interior-sitemap .prose {
   max-width:80ch;
   margin-inline:auto;
-  font-size:16px;
-  line-height:1.85
+  font-size: var(--fs-body);
+  line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .interior-legal h1,.interior-sitemap h1 {
-  font-size:clamp(42px,5vw,70px);
-  line-height:1.1;
-  margin-bottom:35px
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  margin-bottom: var(--stack-heading); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .interior-legal h2,.interior-sitemap h2 {
-  font-size:32px;
-  margin:38px 0 18px
+  font-size: var(--fs-h2);
+  margin:38px 0 18px; line-height: var(--lh-h2); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .interior-legal main,.interior-sitemap main {
   padding-top:0
@@ -610,15 +608,15 @@
   order:2
 }
 .approved-interior .interior-hero-copy h1 {
-  font-size:clamp(40px,10.5vw,53px);
+  font-size: var(--fs-h1);
   max-width:none;
-  margin:16px 0 18px
+  margin:16px 0 18px; line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .approved-interior .interior-hero-copy :is(p,.ed-lede) {
-  font-size:16px
+  font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-interior .interior-hero-copy nav {
-  font-size:12px
+  font-size: var(--fs-nav); line-height: 1; letter-spacing: 0; font-weight: 500;
 }
 /* Mobile first view: project photo plane under the brand header, then H1 + CTA.
    Desktop split layout is unchanged (image stays in the right column above 700px). */
@@ -640,7 +638,7 @@
   padding-bottom:55px
 }
 .interior-service-card h2 {
-  font-size:32px
+  font-size: var(--fs-h3); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading); font-weight: var(--weight-display);
 }
 .interior-detail-body {
   display:flex;
@@ -666,10 +664,10 @@
   padding-top:40px
 }
 .approved-interior .interior-article-header h1 {
-  font-size:42px
+  font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .approved-interior .interior-article-header>p {
-  font-size:16px
+  font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-interior .interior-article-image {
   height:260px;
@@ -679,7 +677,7 @@
   padding-block:52px
 }
 .approved-interior .interior-page-heading h1 {
-  font-size:43px
+  font-size: var(--fs-h1); line-height: var(--lh-h1); letter-spacing: var(--tracking-display); font-weight: var(--weight-display);
 }
 .approved-interior .interior-hero-copy .ed-hero-facts {
   display:none
@@ -728,7 +726,7 @@
 }
 
 .approved-interior .interior-page-heading p {
-  font-family: var(--font-manrope), Arial, sans-serif;
+  font-family: var(--font-sans);
 }
 /* Task-page hero (PageHeroBand compact, /remodel-plans-boise): on phones the
    copy leads and its action sits right under the H1, so "Upload your plans"

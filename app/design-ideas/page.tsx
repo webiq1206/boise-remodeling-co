@@ -24,7 +24,7 @@ export const metadata = withBrandPageMetadata((buildPageMetadata({
   path: '/design-ideas',
   titleOverride: 'Remodeling Design Ideas',
   descriptionOverride:
-    'Kitchen, bathroom, whole-home, and addition design inspiration for Treasure Valley homeowners. Captioned for materials and layout, not invented project records.',
+    'Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners. Explore layouts, cabinetry, tile, lighting and finishes.',
 })), "/design-ideas");
 
 export default function DesignIdeasPage() {
@@ -59,7 +59,7 @@ export default function DesignIdeasPage() {
             Remodeling design ideas for <em className="brc-accent">Boise</em> homes
           </h1>
           <p className="ed-body max-w-2xl mb-6">
-            Browse kitchen, bath, whole-home and addition layouts. Images are captioned for materials and design, not as completed customer jobs.
+            Browse kitchen, bath, whole-home and addition layouts, materials and finishes.
           </p>
           <div className="flex flex-wrap gap-3">
             <EstimateCTA>{CTA_PRIMARY}</EstimateCTA>
@@ -68,12 +68,12 @@ export default function DesignIdeasPage() {
         </PageHeroBand>
         <AnswerBlock
           question="What are these remodeling design ideas?"
-          answer="Representative remodeling concepts for Boise-area homes: kitchen refreshes, primary bath renovations, whole-home plans, basement finishes, additions and outdoor living. They are captioned for materials and layout, not presented as completed customer projects. Use them to collect what you like, then bring it to a free in-home visit, where your ideas become a written scope."
+          answer="Explore kitchen layouts, primary bath finishes, whole-home plans, basement spaces, additions and outdoor living. Save the details you like, then bring them to a free in-home visit to discuss your written scope."
         />
         <Section divider>
           <div className="container px-4">
             <p className="ed-body max-w-3xl">
-              Want to see finished work when we publish it? Ask for references on your free visit, or{' '}
+              Bring your layout ideas and finish preferences to a free in-home visit, or{' '}
               <a href="/#request" className="underline underline-offset-2">
                 request a quote
               </a>

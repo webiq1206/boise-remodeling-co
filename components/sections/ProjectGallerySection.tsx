@@ -47,7 +47,7 @@ export function ProjectGallerySection({
             </h2>
             <p className="ed-body mt-7">
               Explore kitchen, bathroom, whole-home and addition design ideas.
-              These representative images illustrate possibilities for your own remodel.
+              Compare cabinetry, tile, lighting and finish combinations for your own remodel.
             </p>
             <div className="mt-10 hidden lg:block">
               <ProjectMeta project={lead} lead />

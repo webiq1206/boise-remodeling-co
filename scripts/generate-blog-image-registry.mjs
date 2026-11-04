@@ -20,7 +20,7 @@ const ENTRIES = {
   // -  - Remodeling costs (8 blog) -  - 
   "kitchen-remodel-cost-boise": {
     hero: cs("kitchen-remodel", "boise"),
-    alt: "Completed kitchen remodel in a Boise home with warm cabinetry and quartz counters",
+    alt: "Kitchen with warm cabinetry and quartz counters",
     topicTags: ["kitchen", "cost", "boise"],
     source: "city-service",
   },
@@ -244,7 +244,7 @@ const ENTRIES = {
   },
   "design-build-process-guide": {
     hero: blog("design-build-process-guide"),
-    alt: "Completed whole-home remodel showcasing cohesive design-build results",
+    alt: "Open living area with coordinated cabinetry, flooring and finishes",
     topicTags: ["whole-home", "design-build"],
     source: "blog",
   },

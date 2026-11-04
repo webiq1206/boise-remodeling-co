@@ -11,7 +11,7 @@ const DEFAULT_BLOG_IMAGE = SITE_IMAGES.hero;
 const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'remodeling-costs': [
     { src: SITE_IMAGES.value, alt: 'Kitchen cabinetry and quartz materials during a Treasure Valley remodel' },
-    { src: GALLERY_IMAGES.kitchen.after, alt: 'Representative kitchen design used for planning-range context' },
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'kitchen design used for planning-range context' },
   ],
   'kitchen-remodeling': [
     { src: GALLERY_IMAGES.kitchen.after, alt: 'White shaker kitchen remodel with quartz counters' },
@@ -20,18 +20,18 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   ],
   'bathroom-remodeling': [
     { src: GALLERY_IMAGES.bathroom.after, alt: 'Primary bathroom remodel with walk-in shower' },
-    { src: GALLERY_IMAGES.hallBathBoise.after, alt: 'Representative Boise hall bath with a walk-in shower' },
+    { src: GALLERY_IMAGES.hallBathBoise.after, alt: 'Boise hall bath with a walk-in shower' },
     { src: GALLERY_IMAGES.bathroomNampa.after, alt: 'Nampa primary bath remodel with double vanity' },
   ],
   'home-additions': [
-    { src: GALLERY_IMAGES.addition.after, alt: 'Representative master suite addition exterior' },
+    { src: GALLERY_IMAGES.addition.after, alt: 'master suite addition exterior' },
     { src: GALLERY_IMAGES.additionEagle.after, alt: 'Eagle rear addition with matching roof line' },
     { src: GALLERY_IMAGES.additionMeridian.after, alt: 'Meridian sunroom bump-out addition' },
   ],
   'whole-home-remodeling': [
-    { src: GALLERY_IMAGES.wholeHome.after, alt: 'Representative open-concept living and kitchen' },
-    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Representative Eagle foothills ranch exterior' },
-    { src: '/images/gallery/featured-eagle-kitchen.webp', alt: 'Representative kitchen with coordinated cabinet and counter finishes' },
+    { src: GALLERY_IMAGES.wholeHome.after, alt: 'open-concept living and kitchen' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Eagle foothills ranch exterior' },
+    { src: '/images/gallery/featured-eagle-kitchen.webp', alt: 'kitchen with coordinated cabinet and counter finishes' },
   ],
   'contractor-selection': [
     { src: SITE_IMAGES.process, alt: 'Remodel plans and finish samples reviewed before construction' },
@@ -40,7 +40,7 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'remodeling-process': [
     { src: SITE_IMAGES.processInProgress, alt: 'Kitchen remodel in progress with floor protection' },
     { src: SITE_IMAGES.process, alt: 'Design review with plans and material samples' },
-    { src: GALLERY_IMAGES.wholeHome.after, alt: 'Representative open living area' },
+    { src: GALLERY_IMAGES.wholeHome.after, alt: 'open living area' },
   ],
   'remodeling-roi': [
     { src: GALLERY_IMAGES.kitchen.after, alt: 'Updated kitchen finishes that support resale appeal' },
@@ -54,7 +54,7 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'treasure-valley-locations': [
     { src: '/images/areas/boise.webp', alt: 'Boise neighborhood street with established homes' },
     { src: '/images/areas/eagle.webp', alt: 'Eagle residential street near the foothills' },
-    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Representative Treasure Valley ranch exterior' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Treasure Valley ranch exterior' },
   ],
 };
 
@@ -75,7 +75,7 @@ export function getBlogImageForSlug(
 }
 
 export function getBlogImageAlt(slug: string): string {
-  return BLOG_IMAGE_REGISTRY[slug]?.alt ?? 'Representative remodeling design imagery';
+  return BLOG_IMAGE_REGISTRY[slug]?.alt ?? 'Kitchen and living-area finishes';
 }
 
 export function getBlogHeroImage(
@@ -122,16 +122,16 @@ export interface ArticleInlineFigurePlacement {
  * to break up text-heavy content (Phase 4).
  */
 const INLINE_HUB_ALTS: Record<string, string> = {
-  "remodeling-costs": "Representative living room renovation concept",
-  "kitchen-remodeling": "Representative remodeled kitchen with coordinated cabinetry and counters",
-  "bathroom-remodeling": "Representative remodeled bathroom design",
-  "home-additions": "Representative room addition design",
-  "whole-home-remodeling": "Representative open-plan living area and kitchen",
+  "remodeling-costs": "Living room finishes",
+  "kitchen-remodeling": "remodeled kitchen with coordinated cabinetry and counters",
+  "bathroom-remodeling": "remodeled bathroom design",
+  "home-additions": "room addition design",
+  "whole-home-remodeling": "open-plan living area and kitchen",
   "contractor-selection": "Remodeling plans, paint colors and finish samples arranged for a design discussion",
   "remodeling-process": "Existing living room before a design refresh",
-  "remodeling-roi": "Representative kitchen with updated cabinetry",
+  "remodeling-roi": "kitchen with updated cabinetry",
   "outdoor-living": "Existing backyard illustrating an outdoor planning starting point",
-  "treasure-valley-locations": "Representative Boise-area home exterior"
+  "treasure-valley-locations": "Boise-area home exterior"
 };
 
 export function getArticleInlineFigures(

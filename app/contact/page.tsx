@@ -35,7 +35,7 @@ import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { TextReplyAnswer, TextReplyLine } from '@/components/TextReplyLine';
-import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
+import { SITE_CONFIG } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight,Mail,MapPin,MessageSquare,Phone } from 'lucide-react';
@@ -297,13 +297,9 @@ export default function ContactPage() {
                   label="Where we work"
                   subtext={SITE_CONFIG.address.serviceArea}
                 >
-                  <address className="not-italic leading-relaxed">
-                    {publicFooterLine()}
-                    <br />
-                    Based in {SITE_CONFIG.address.cityState}
-                    <br />
-                    Serving the Treasure Valley
-                  </address>
+                  <p className="leading-relaxed">
+                    {TREASURE_VALLEY_CITIES}
+                  </p>
                 </ContactChannel>
               </Reveal>
               <Reveal delay={180} className="sm:col-span-2">

@@ -22,8 +22,8 @@ export function BeforeAfterSlider({
   afterSrc,
   beforeAlt,
   afterAlt,
-  beforeLabel = "Before",
-  afterLabel = "After",
+  beforeLabel = "Option one",
+  afterLabel = "Option two",
   caption,
   className = "",
   aspectClass = "aspect-[4/3]",
@@ -124,7 +124,7 @@ export function BeforeAfterSlider({
     >
       <p id={instructionsId} className="sr-only">
         {beforeAlt} on the left, {afterAlt} on the right. Drag the handle, or
-        use the arrow keys, Home, and End to reveal the transformation.
+        use the arrow keys, Home, and End to compare the finishes.
       </p>
 
       {/* After image (base layer) */}
@@ -172,13 +172,13 @@ export function BeforeAfterSlider({
           style={{ left: `clamp(24px, ${pos}%, calc(100% - 24px))` }}
           type="button"
           role="slider"
-          aria-label="Compare before and after"
+          aria-label="Compare cabinet finishes"
           aria-orientation="horizontal"
           aria-describedby={instructionsId}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round(pos)}
-          aria-valuetext={`${Math.round(pos)}% before image visible`}
+          aria-valuetext={`${Math.round(pos)}% of ${beforeLabel} option visible`}
           onKeyDown={(e) => {
             if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
               e.preventDefault();

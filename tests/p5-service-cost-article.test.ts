@@ -104,16 +104,15 @@ test('company tel links use +1 and the visible number stays the same', () => {
   assert.match(outreach, /SITE_CONFIG\.phoneHref/);
 });
 
-test('contact card uses the site NAP street address', () => {
-  const { street, city, state, postalCode } = SITE_CONFIG.address;
-  assert.equal(street, '4031 W Wapoot St');
+test('contact card preserves useful contact facts without a business street address', () => {
   const card = buildBusinessVCard();
-  assert.match(
-    card,
-    new RegExp(
-      `ADR;TYPE=WORK:;;${street};${city};${state};${postalCode};${BUSINESS_INFO.address.country}`,
-    ),
-  );
+  assert.equal(/^ADR[;:]|^LABEL[;:]/m.test(card), false);
+  assert.equal(/Wapoot|public representative|staffed storefront/i.test(card), false);
+  assert.match(card, /TEL;TYPE=WORK,VOICE:\+12084771169/);
+  assert.match(card, /EMAIL;TYPE=WORK:hello@boiseremodeling\.co/);
+  assert.match(card, /URL:https:\/\/boiseremodeling\.co/);
+  assert.match(card, /Treasure Valley/);
+  assert.match(card, /Hours:/);
 });
 
 test('every vCard line is at most 75 octets and lines use CRLF', () => {
