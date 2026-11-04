@@ -3,6 +3,19 @@
   styles live in styles/family-*.css and are never edited here.
 */
 
+/* Preserve the exact logo sage over the homepage photo with a thin charcoal surround. */
+.family-remodeling > .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-accent {
+  text-shadow:
+    -1px -1px 0 var(--color-charcoal),
+     0 -1px 0 var(--color-charcoal),
+     1px -1px 0 var(--color-charcoal),
+     1px  0 0 var(--color-charcoal),
+     1px  1px 0 var(--color-charcoal),
+     0  1px 0 var(--color-charcoal),
+    -1px  1px 0 var(--color-charcoal),
+    -1px  0 0 var(--color-charcoal);
+}
+
 /* B3 interior page-title role: 32/44/52px at the shared phone/tablet/desktop tiers.
    Editorial section display uses 36/52/64px elsewhere. The shared marketing hero
    keeps its existing fluid role; this rule covers only the named interior templates. */
