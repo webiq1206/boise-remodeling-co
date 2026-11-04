@@ -1,6 +1,6 @@
 # Boise Remodeling Co brand profile
 
-Profile version: 1.1, source consolidation dated November 4, 2026. Last separately recorded approval: the September 24 family design handoff and October 28 approved logo receipt; the latest owner instructions are incorporated below. This consolidation and the November 4 implementation still require independent rendered review and release checks. It is not a new approval or publication record.
+Profile version: 1.2, source consolidation dated November 4, 2026. Last separately recorded approval: the September 24 family design handoff and October 28 approved logo receipt; the latest owner instructions are incorporated below. This consolidation and the November 4 implementation still require independent rendered review and release checks. It is not a new approval or publication record.
 
 This is the current website profile. Its source of truth is the verified owner direction, the [approved design handoff](approved-design-handoff.md), [approved asset receipt](branding-20261028.json), [brand configuration](../lib/familyBrand.ts), [site configuration](../shared/siteConfig.ts), and [canonical family tokens](../styles/family-tokens.css). The November 4 authority and typography decision are recorded in the workspace as `evidence/portfolio-six-site-authority.md` and `evidence/portfolio-typography-decision.md`. Older kit rules remain useful for original artwork, but their colors and minimum wordmark sizes do not override the approved website lockup or current UI tokens.
 
@@ -28,22 +28,22 @@ Use these exact canonical values. The brand configuration supplies Remodeling's 
 | Bone / alternate background | `#f1ede4` | Alternate sections and quiet surfaces |
 | Ink / primary text | `#20231f` | Canonical readable text |
 | Ink 2 / muted text | `#343934` | Supporting text |
-| Charcoal / primary action | `#2c302f` | Existing editorial dark surfaces and primary action role |
-| Chrome | `#1c1f1e` | Owner-selected current footer charcoal; header, desktop/mobile menu, and footer backgrounds |
+| Charcoal / primary action | `#383837` | Owner-approved editorial dark surfaces and primary action role |
+| Chrome | `var(--color-charcoal)` (`#383837`) | Shared header, desktop/mobile menu, and footer backgrounds |
 | Moss | `#233029` | Existing deep surface role |
-| Forest | `#17211c` | Existing darkest surface role |
+| Forest / legacy dark fill | `#383837` | Neutral hero fallback and mobile action-bar fill |
 | Border | `rgba(32,35,31,.15)` | Light-ground separators |
 | Remodeling accent | `#7d9479` | Sage identity, emphasis and decorative details |
 | Remodeling accent ink | `#4d6249` | Readable accent text and active states on light grounds |
 | On dark | `#fbfaf6` | Text and icons on dark grounds |
 | Muted on dark | `rgba(251,250,246,.8)` | Secondary text on dark grounds |
 | Border on dark | `rgba(251,250,246,.18)` | Dark-ground separators |
-| Image scrim RGB | `13,24,18` | Existing image contrast treatment |
+| Image scrim RGB | `56,56,55` | Neutral charcoal in the existing hero gradients |
 | Success | `#3f6b4a` | Confirmed success state |
 | Warning | `#8a6a1f` | Warning state |
 | Error | `#a33a2c` | Validation and error state |
 
-The approved editorial layer also contains existing ink `#2c302f` and muted-ink aliases for its paper/bone compositions. Preserve their contrast while using the common role hierarchy; do not replace every dark panel with the chrome color. The original logo kit's sage `#9aa098` belongs to historical artwork guidance. It is not the current website accent. The separate draft Cursor PR #131 proposes `#383837`; it has not been adopted or merged by this work.
+The latest November 4 owner direction adopts the charcoal proposed in PR #131, `#383837`, and requests resolution of the charcoal conflicts. The primary-action and chrome roles now share this value. Preserve the current typography, icons, service sections, truthful copy and public-address removal while reconciling that draft. Source implementation does not establish independent review, merge or publication. The legacy email role's sage `#9aa098` belongs to historical artwork guidance; it is not the current website accent.
 
 ## Typography
 
@@ -129,3 +129,20 @@ Boise Remodeling Co is a DBA of P5 Home Co LLC; retain the legal parent disclosu
 ### November4 narrow-header and menu implementation record
 
 Canonical source `boise-remodeling-co` revision `fa720a579b696af92861fb571fa0aff043e734b0` restores the complete approved SVG below360px in a logo row above the unboxed contact/menu controls. Normal320px prototype height is89px including the border; use the actual measured header/safe-area height, not a fixed clearance. Enlarged text may grow it. Normal360px-and-up header geometry is unchanged. Mobile-menu Call/Text/Chat contact controls are transparent and borderless at rest, retain visible focus and existing destinations/capability, and use the same icons as header/footer. This records the owner-requested consistency repair, not a new identity or approval exception. The independently reviewed prototype is narrower evidence than each final built site; retain exact-head rendering and functional gates.
+
+
+### Exact heading accent, November 4 owner instruction
+
+Heading emphasis uses the actual approved logo/icon pop `#7d9479` through the site-owned
+`--color-heading-accent` role. It is not mixed with paper or replaced by accent ink.
+The approved SVG bytes, existing type families/sizes/weights, neutral palette and
+functional text/focus roles are preserved. Public H1/H2 and editorial display emphasis,
+interior statement/aside titles, legacy hero emphasis and dark planning bands consume
+this exact role. The shared HeroPhoto uses the same heading role after canonical transport.
+Small FAQ open states and related/service title hover states retain readable neutral text;
+underline/chevron affordances convey their state without adding a different heading hue.
+Sage display emphasis on bone uses a scoped 1px existing-charcoal glyph context; paper and dark contexts retain their current surfaces.
+This is a source implementation record, not a rendered contrast or visual acceptance.
+Actual font pixels, photograph contrast, all listed template consumers and independent
+review remain required at the exact final revision. Source evidence lives in the private
+`evidence/brand-heading-accent-inventory.json` and implementation ledger.

@@ -49,9 +49,12 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   <section className="f-section f-container" id="services">
    <div className="f-section-top">
     <div><p className="f-eyebrow">FIND YOUR STARTING POINT</p><h2><Title lines={b.serviceTitle}/></h2></div>
-    <p>{b.serviceIntro} Start with {b.services.slice(0,3).map((s,i,all)=><span key={s.slug}>{i>0?(i===all.length-1?' or ':', '):''}<a className="underline underline-offset-2" href={s.live || `/services/${s.slug}`}>{s.name.toLowerCase()}</a></span>)}.</p>
+    <div>
+     <p>{b.serviceIntro}</p>
+     <p>Start with {b.services.slice(0,3).map((s,i,all)=><span key={s.slug}>{i>0?(i===all.length-1?' or ':', '):''}<a className="underline underline-offset-2" href={s.live || `/services/${s.slug}`}>{s.name.toLowerCase()}</a></span>)}.</p>
+    </div>
    </div>
-   <div className="fr-cards">
+   <div className="fr-cards" tabIndex={0} aria-label="Services">
     {b.services.map((s,i)=><a className="fr-card" key={s.slug} href={s.live || `/services/${s.slug}`} aria-label={s.slug==='kitchen-remodel'?'Kitchen remodeling in Boise':s.name}>
      <span className="fr-card-media"><img src={s.image} alt={photoAlt(s.slug)} loading={i<3?'eager':'lazy'} width="1000" height="750"/></span>
      <span className="fr-card-body">
@@ -97,7 +100,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   {/* 5. Why the price is fair. */}
   <section className="f-value">
    <img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/>
-   <div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2><p>{b.value}</p><Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div>
+   <div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2>{b.value.split(/(?<=\.)\s+/).filter(Boolean).map((sentence)=><p key={sentence}>{sentence}</p>)}<Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div>
   </section>
 
   {/* 6. Who you are hiring. */}
@@ -107,7 +110,9 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
     <div>
      <p className="f-eyebrow">WHO YOU ARE HIRING</p>
      <h2>Nick Perkins, founder.</h2>
-     <p>Construction project manager with a bachelor&apos;s degree in Construction with an emphasis in Project Management, and more than a decade of custom homes, remodels and developments. Husband, father of five. The family moved to Meridian in 2025.</p>
+     <p>Construction project manager with a bachelor&apos;s degree in Construction with an emphasis in Project Management.</p>
+     <p>More than a decade of custom homes, remodels and developments.</p>
+     <p>Husband, father of five. The family moved to Meridian in 2025.</p>
      <blockquote>&ldquo;Work hard. Keep your word. Treat people right.&rdquo;</blockquote>
      <p><a className="f-link" href="/about">Read Nick&apos;s story <Arrow/></a></p>
     </div>

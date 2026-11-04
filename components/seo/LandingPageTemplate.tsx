@@ -1,3 +1,4 @@
+import { NoOrphan } from '@/components/NoOrphan';
 import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorHeroActions } from '@/components/approved/InteriorHeroActions';
 import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
@@ -220,11 +221,14 @@ function withArticle(noun: string): string {
 
 /** Heading text with its last word carried by the accent, as the slogans were. */
 function Accented({ text }: { text: string }) {
-  const cut = text.lastIndexOf(' ');
-  if (cut < 0) return <>{text}</>;
+  const words = text.trim().split(/\s+/);
+  if (words.length < 2) return <>{text}</>;
+  const last = words.pop() as string;
+  const prev = words.pop() as string;
+  const head = words.join(' ');
   return (
     <>
-      {text.slice(0, cut)} <em className="not-italic" style={accent}>{text.slice(cut + 1)}</em>
+      {head}{head ? ' ' : ''}<span className="m-keep">{prev} <em className="not-italic" style={accent}>{last}</em></span>
     </>
   );
 }
@@ -355,7 +359,7 @@ export function LandingPageTemplate({
               <div className="lg:sticky lg:top-28 lg:self-start">
                 <Reveal>
                   <p className="ed-eyebrow">Cost and timeline</p>
-                  <h2 className="ed-h2 ed-statement">{costGuidance.heading}</h2>
+                  <h2 className="ed-h2 ed-statement"><NoOrphan text={costGuidance.heading} /></h2>
                   {timeline && (
                     <div className="ed-inset mt-10">
                       <p className="ed-eyebrow ed-eyebrow-accent">Typical timeline</p>
@@ -545,7 +549,7 @@ export function LandingPageTemplate({
                         />
                       )}
                       <Reveal delay={Math.min(i, 4) * 60}>
-                        <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28">{section.heading}</h2>
+                        <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28"><NoOrphan text={section.heading} /></h2>
                         {section.paragraphs?.map((p, j) => (
                           <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>
                             {typeof p === 'string' ? p : (
@@ -559,7 +563,7 @@ export function LandingPageTemplate({
                         ))}
                         {section.subsections?.map((sub) => (
                           <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
-                            <h3 className="ed-h4">{sub.heading}</h3>
+                            <h3 className="ed-h4"><NoOrphan text={sub.heading} /></h3>
                             {sub.paragraphs.map((p, k) => (
                               <p key={k} className="ed-body mt-3 max-w-[62ch]">{p}</p>
                             ))}
@@ -665,7 +669,7 @@ export function LandingPageTemplate({
               <Accordion type="single" collapsible className="w-full border-t" style={line}>
                 {faqs.map((faq, i) => (
                   <AccordionItem key={i} value={`faq-${i}`} className="border-0 border-b" style={line}>
-                    <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:[color:var(--ed-accent)]">
+                    <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:underline [&[data-state=open]]:underline-offset-4">
                       {faq.question}
                     </AccordionTrigger>
                     <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>

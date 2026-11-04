@@ -715,8 +715,8 @@ export function buildAdminEmailHtml(
         <p style="${SECTION_TITLE}">Lead contact</p>
         <table style="width:100%;border-collapse:collapse;">
           <tr><td style="${LABEL_CELL}">Name</td><td style="${VALUE_CELL}">${escapeHtml(lead.name)}</td></tr>
-          <tr><td style="${LABEL_CELL}">Phone</td><td style="${CELL}"><a href="${escapeHtml(telHref)}" style="color:${EMAIL_BRAND.accent};text-decoration:none;">${escapeHtml(lead.phone)}</a></td></tr>
-          <tr><td style="${LABEL_CELL}">Email</td>${lead.email ? `<td style="${CELL}"><a href="mailto:${escapeHtml(lead.email)}" style="color:${EMAIL_BRAND.accent};text-decoration:none;">${escapeHtml(lead.email)}</a></td>` : `<td style="${VALUE_CELL}">Not given</td>`}</tr>
+          <tr><td style="${LABEL_CELL}">Phone</td><td style="${CELL}"><a href="${escapeHtml(telHref)}" style="color:${EMAIL_BRAND.text};text-decoration:none;">${escapeHtml(lead.phone)}</a></td></tr>
+          <tr><td style="${LABEL_CELL}">Email</td>${lead.email ? `<td style="${CELL}"><a href="mailto:${escapeHtml(lead.email)}" style="color:${EMAIL_BRAND.text};text-decoration:none;">${escapeHtml(lead.email)}</a></td>` : `<td style="${VALUE_CELL}">Not given</td>`}</tr>
           <tr><td style="${LABEL_CELL}">Address</td><td style="${VALUE_CELL}">${lead.address ? `${escapeHtml(lead.address)}${lead.zip ? ` ${escapeHtml(lead.zip)}` : ""}` : "Not provided"}</td></tr>
           <tr><td style="${LABEL_CELL}">Project</td><td style="${VALUE_CELL}">${escapeHtml(projectLabel)}</td></tr>
           ${lead.budget ? `<tr><td style="${LABEL_CELL}">Desired budget</td><td style="${VALUE_CELL};font-weight:600;">${escapeHtml(lead.budget)}</td></tr>` : ""}
@@ -770,14 +770,14 @@ export function buildCustomerEmailHtml(
       <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Thanks, ${escapeHtml(firstName)}. Here is the planning range you built.</p>
       ${buildEstimateSectionsHtml(estimate, overrides)}
       ${budgetNote}
-      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">We will reach out within one business day to book your free in-home visit, where we confirm the scope and give you a firm number. Until then, reply here or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.accent};">${escapeHtml(SITE_CONFIG.phone)}</a> with any questions.</p>
+      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">We will reach out within one business day to book your free in-home visit, where we confirm the scope and give you a firm number. Until then, reply here or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a> with any questions.</p>
       ${textReplyLineHtml()}
       <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
     `
     : `
       <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">We received your consultation request and will reach out within one business day to schedule your free in-home visit.</p>
       ${textReplyLineHtml()}
-      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">In the meantime, feel free to call us at <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.accent};">${escapeHtml(SITE_CONFIG.phone)}</a>, <a href="${SITE_CONFIG.phoneSmsHref}" style="color:${EMAIL_BRAND.accent};">send us a text</a>, or reply to this email with any questions.</p>
+      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">In the meantime, feel free to call us at <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a>, <a href="${SITE_CONFIG.phoneSmsHref}" style="color:${EMAIL_BRAND.text};">send us a text</a>, or reply to this email with any questions.</p>
       <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
     `;
 

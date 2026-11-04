@@ -109,7 +109,7 @@ export function ServicesGrid() {
                 className="group grid items-baseline gap-x-8 gap-y-2 py-[clamp(20px,2.4vw,30px)] transition-colors md:grid-cols-[minmax(210px,0.9fr)_1.6fr_auto_28px]"
                 style={{ borderBottom: "1px solid var(--ed-line)" }}
               >
-                <h3 className="ed-h3 transition-colors group-hover:[color:var(--ed-accent)]">
+                <h3 className="ed-h3 group-hover:underline group-hover:underline-offset-4">
                   {toSentenceCase(service.name)}
                 </h3>
                 <p className="ed-body max-w-none">{service.shortDescription}</p>

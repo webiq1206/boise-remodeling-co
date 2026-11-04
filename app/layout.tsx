@@ -1,4 +1,5 @@
 import { ApprovedShell } from "@/components/approved/ApprovedShell";
+import { BRAND_CHARCOAL } from "@/lib/p5/brand";
 import {withBrandPageMetadata} from '@/lib/brand-page-metadata';
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
@@ -34,6 +35,7 @@ import './family-redesign.css'
 import '@/styles/family-tokens.css'
 import '@/styles/family-chrome.css'
 import './family-adoption.css'
+import './mobile-polish.css'
 
 // P5 family typefaces, self-hosted from the same two OFL variable files P5 Home Co serves.
 const manrope = localFont({
@@ -112,7 +114,7 @@ export const metadata: Metadata = withBrandPageMetadata(({
 }), "__layout__")
 
 export const viewport: Viewport = {
-  themeColor: '#1C1F1E',
+  themeColor: BRAND_CHARCOAL,
   colorScheme: 'dark',
   width: 'device-width',
   initialScale: 1,

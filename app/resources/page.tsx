@@ -51,7 +51,7 @@ export default function ResourcesIndexPage() {
         <InteriorHero layout="editorial" className="interior-hero-budget">
           <p className="ed-eyebrow">Free downloads</p>
           <h1 className="ed-display ed-statement-display mb-8">
-            Remodel planning <em className="brc-accent">resources</em>
+            Remodel <span className="m-keep">planning <em className="brc-accent">resources</em></span>
           </h1>
           <p className="interior-hero-support">
             Printable PDFs and visual guides to use alongside our{' '}

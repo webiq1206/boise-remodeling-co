@@ -1,0 +1,70 @@
+/* Compatible phone presentation from the charcoal audit.
+   Role sizes and control geometry remain in the canonical family tokens.
+   Keep document scrolling for anchors, the TOC and the planning calculator. */
+@media (max-width: 767px) {
+  /* Carry the final phrase together when it fits, with a natural wrap fallback. */
+  .m-keep { display: inline-block; max-inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
+
+  html .fam-hero[data-family-hero] .fam-hero-copy {
+    text-align: center;
+    margin-inline: auto;
+  }
+  html .fam-hero[data-family-hero] .fam-hero-support,
+  html .fam-hero[data-family-hero] .fam-hero-micro { margin-inline: auto; }
+  html .fam-hero[data-family-hero] .fam-hero-actions { align-items: center; }
+  html .fam-hero[data-family-hero] .fam-hero-actions .fam-btn { align-self: stretch; }
+  html .fam-hero[data-family-hero] .fam-hero-link { align-self: center; justify-content: center; }
+  html .approved-shell .interior-hero-copy { text-align: center; }
+  html .approved-shell .interior-hero-action { display: flex; justify-content: center; }
+}
+
+@media (max-width: 639px) {
+  /* Keep repeated content accessible by touch and keyboard without deleting it. */
+  html .fr-cards,
+  html .fr-mosaic,
+  html #budget .ed-matrix {
+    display: flex;
+    flex-wrap: nowrap;
+    grid-template-columns: none;
+    gap: var(--space-4);
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--space-1);
+    padding-bottom: var(--space-2);
+  }
+  html .fr-cards > .fr-card { flex-direction: column; }
+  html .fr-cards > .fr-card .fr-card-media { flex: none; width: 100%; aspect-ratio: 16 / 10; }
+  html .fr-cards > .fr-card,
+  html .fr-mosaic > figure,
+  html .fr-mosaic > figure.is-wide,
+  html .fr-mosaic > figure:last-child,
+  html #budget .ed-matrix > * {
+    flex: 0 0 86%;
+    scroll-snap-align: start;
+    grid-column: auto;
+    min-height: 0;
+    max-width: none;
+  }
+  html .fr-mosaic > figure,
+  html .fr-mosaic > figure.is-wide { aspect-ratio: 16 / 10; }
+  html #budget .ed-inset {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--space-4);
+    max-width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  html #budget .ed-inset > * { flex: 0 0 88%; scroll-snap-align: start; min-width: 0; }
+
+  html .approved-shell :is(.f-link, .ed-link, .fr-cities a, .fam-hero-link) {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-min);
+  }
+  html .approved-shell .f-accordion .f-number { align-self: flex-start; }
+  html .approved-shell :is(h1, h2, h3, h4) { text-wrap: pretty; }
+  html .approved-shell :is(.ed-statement, .ed-statement-wide, .ed-statement-display) { max-width: none; }
+}

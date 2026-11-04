@@ -106,7 +106,7 @@ function ContactChannel({
 }: ContactChannelProps) {
   const inner = (
     <MarketingCard
-      className={`h-full transition-colors ${
+      className={`min-w-0 transition-colors ${
         href ? 'group-hover:border-foreground/25' : ''
       } ${featured ? 'md:p-10' : ''}`}
       padding={featured ? 'lg' : 'default'}
@@ -132,10 +132,10 @@ function ContactChannel({
 
   if (href) {
     return (
-      <div className="h-full">
+      <div className="min-w-0 flex h-full flex-col">
         <a
           href={href}
-          className="block h-full group"
+          className="block min-w-0 flex-1 group"
           {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >
           {inner}
@@ -254,7 +254,7 @@ export default function ContactPage() {
               description="Call, text, or email. We come to you. We respond within one business day and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
-            <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
+            <div className="ed-grid-balance grid grid-cols-1 sm:grid-cols-2 gap-4 [&>*]:min-w-0">
               <Reveal className="sm:col-span-2">
                 <ContactChannel
                   icon={<Phone className="h-5 w-5" strokeWidth={1.5} />}
@@ -288,7 +288,7 @@ export default function ContactPage() {
                   label="Email us"
                   subtext="Response within one business day"
                 >
-                  <EmailLink className="text-base hover:text-foreground/70 transition-colors" />
+                  <EmailLink className="max-w-full min-w-0 break-all text-base hover:text-foreground/70 transition-colors" />
                 </ContactChannel>
               </Reveal>
               <Reveal delay={120}>
