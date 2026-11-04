@@ -17,8 +17,12 @@ export function ContactActions({ surface }: { surface: 'header' | 'footer' }) {
   const openChat = (opener: HTMLButtonElement) => {
     returnFocusObserver.current?.disconnect();
     let opened = false;
+    let openedDialog: HTMLElement | null = null;
+    const visible = (element: HTMLElement) => element.isConnected && element.getClientRects().length > 0;
+    const existingDialogs = new Set([...document.querySelectorAll<HTMLElement>('[role="dialog"]')].filter(visible));
     const observer = new MutationObserver(() => {
-      const active = document.body.dataset.assistantOpen === 'true' || document.body.dataset.p5ChatOpen === 'true';
+      if (!openedDialog) openedDialog = [...document.querySelectorAll<HTMLElement>('[role="dialog"]')].find(element => visible(element) && !existingDialogs.has(element)) ?? null;
+      const active = document.body.dataset.assistantOpen === 'true' || document.body.dataset.p5ChatOpen === 'true' || Boolean(openedDialog && visible(openedDialog));
       if (active) opened = true;
       if (opened && !active) {
         observer.disconnect();
@@ -27,7 +31,7 @@ export function ContactActions({ surface }: { surface: 'header' | 'footer' }) {
         });
       }
     });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['data-assistant-open', 'data-p5-chat-open'] });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-assistant-open', 'data-p5-chat-open', 'aria-hidden', 'data-state', 'style', 'class'] });
     returnFocusObserver.current = observer;
     window.dispatchEvent(new Event(brand.chat.openEvent));
   };
