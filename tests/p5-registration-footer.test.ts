@@ -41,12 +41,16 @@ test('every sitemap page shows the registration line, plain text on the estimate
 
 test('the footer links the registration line and the funnel prints it as plain text', () => {
   const linked = renderToStaticMarkup(React.createElement(Footer));
-  assert.match(linked, /Idaho Registered Contractor #8381215/);
-  assert.match(linked, new RegExp(DOPL_LICENSE_SEARCH.replace(/[?]/g, '\\?')));
-  assert.match(linked, /target="_blank"/);
-  assert.match(linked, /rel="noopener noreferrer"/);
-  assert.match(linked, /title="Look up registration 8381215 on Idaho DOPL"/);
-  assert.match(linked, /aria-label="Verify with Idaho DOPL: look up registration 8381215, opens in a new tab"/);
+  const registration = (linked.match(/<a\b[^>]*>[\s\S]*?<\/a>/g) ?? [])
+    .find((anchor) => anchor.includes('data-testid="registration-line"'));
+  assert.ok(registration);
+  assert.match(registration, /Idaho Registered Contractor #8381215/);
+  assert.ok(registration.includes(`href="${DOPL_LICENSE_SEARCH}"`));
+  assert.match(registration, /target="_blank"/);
+  assert.match(registration, /rel="noopener noreferrer"/);
+  assert.match(registration, /title="Idaho contractor registration 8381215"/);
+  assert.match(registration, /aria-label="Idaho contractor registration 8381215, opens in a new tab"/);
+  assert.equal(/Look up registration|Verify with Idaho DOPL/i.test(linked), false);
   assert.equal(linked.includes('License details available upon request'), false);
   assert.equal(/8381215\s*\(/.test(linked), false);
   assert.equal(linked.includes('Easy Home'), false);

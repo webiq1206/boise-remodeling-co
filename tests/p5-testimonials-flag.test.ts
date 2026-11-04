@@ -165,7 +165,13 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
   for (const phrase of BANNED) assert.equal(surfaces.includes(phrase), false, phrase);
 
   const page = text('../app/design-ideas/page.tsx');
-  assert.match(page, /Captioned for materials and layout, not invented project records/);
+  assert.match(page, /Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners\. Explore layouts, cabinetry, tile, lighting and finishes\./);
+  assert.match(page, /Browse kitchen, bath, whole-home and addition layouts, materials and finishes\./);
+  assert.match(page, /What are these remodeling design ideas\?/);
+  assert.equal(/\b(?:completed|finished)\s+(?:(?:customer|client)\s+)?(?:projects?|jobs?|work)\b/i.test(page), false);
+  assert.equal(/\bour\s+(?:completed|finished)\s+(?:projects?|jobs?|work)\b/i.test(page), false);
+  assert.equal(/\bfirst projects\b/i.test(page), false);
+  assert.equal(page.includes('Captioned for materials and layout, not invented project records'), false);
   assert.match(page, /titleOverride: 'Remodeling Design Ideas'/);
   assert.equal(page.includes('Homeowner reviews'), false);
   assert.equal(page.includes('Project gallery'), false);
