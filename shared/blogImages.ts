@@ -10,51 +10,51 @@ const DEFAULT_BLOG_IMAGE = SITE_IMAGES.hero;
 /** Secondary mid-article figures by hub so long posts get visual relief. */
 const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'remodeling-costs': [
-    { src: SITE_IMAGES.value, alt: 'Kitchen cabinetry and quartz materials during a Treasure Valley remodel' },
-    { src: GALLERY_IMAGES.kitchen.after, alt: 'kitchen design used for planning-range context' },
+    { src: SITE_IMAGES.value, alt: 'Kitchen cabinetry, unfinished cabinet boxes and tools on a workbench' },
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
   ],
   'kitchen-remodeling': [
-    { src: GALLERY_IMAGES.kitchen.after, alt: 'White shaker kitchen remodel with quartz counters' },
-    { src: GALLERY_IMAGES.kitchenMeridian.after, alt: 'Meridian kitchen remodel with island seating' },
-    { src: GALLERY_IMAGES.kitchenEagle.after, alt: 'Eagle kitchen remodel with foothills window light' },
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
+    { src: GALLERY_IMAGES.kitchenMeridian.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
+    { src: GALLERY_IMAGES.kitchenEagle.after, alt: 'Kitchen with wood cabinetry, a white counter and large windows' },
   ],
   'bathroom-remodeling': [
-    { src: GALLERY_IMAGES.bathroom.after, alt: 'Primary bathroom remodel with walk-in shower' },
-    { src: GALLERY_IMAGES.hallBathBoise.after, alt: 'Boise hall bath with a walk-in shower' },
-    { src: GALLERY_IMAGES.bathroomNampa.after, alt: 'Nampa primary bath remodel with double vanity' },
+    { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, black-framed mirrors and a glass shower' },
+    { src: GALLERY_IMAGES.hallBathBoise.after, alt: 'Bathroom with a long white vanity and a black-framed glass walk-in shower' },
+    { src: GALLERY_IMAGES.bathroomNampa.after, alt: 'Bathroom with a white double vanity, black-framed mirrors and a glass walk-in shower' },
   ],
   'home-additions': [
-    { src: GALLERY_IMAGES.addition.after, alt: 'master suite addition exterior' },
-    { src: GALLERY_IMAGES.additionEagle.after, alt: 'Eagle rear addition with matching roof line' },
-    { src: GALLERY_IMAGES.additionMeridian.after, alt: 'Meridian sunroom bump-out addition' },
+    { src: GALLERY_IMAGES.addition.after, alt: 'Single-story house with pale siding, a wide glass door and a paved patio' },
+    { src: GALLERY_IMAGES.additionEagle.after, alt: 'Single-story house with lap siding, brick trim and a paved rear patio' },
+    { src: GALLERY_IMAGES.additionMeridian.after, alt: 'Single-story house with lap siding, brick trim and a paved rear patio' },
   ],
   'whole-home-remodeling': [
-    { src: GALLERY_IMAGES.wholeHome.after, alt: 'open-concept living and kitchen' },
-    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Eagle foothills ranch exterior' },
-    { src: '/images/gallery/featured-eagle-kitchen.webp', alt: 'kitchen with coordinated cabinet and counter finishes' },
+    { src: GALLERY_IMAGES.wholeHome.after, alt: 'Open living area and kitchen with wood floors, neutral furnishings and large windows' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with lap siding, brick trim and an attached garage' },
+    { src: '/images/gallery/featured-eagle-kitchen.webp', alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
   ],
   'contractor-selection': [
-    { src: SITE_IMAGES.process, alt: 'Remodel plans and finish samples reviewed before construction' },
-    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen remodel in progress with cabinets installed' },
+    { src: SITE_IMAGES.process, alt: 'Printed floor plan, tape measure and notebook on a kitchen island' },
+    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen with open cabinet boxes, a workbench and a spirit level' },
   ],
   'remodeling-process': [
-    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen remodel in progress with floor protection' },
-    { src: SITE_IMAGES.process, alt: 'Design review with plans and material samples' },
-    { src: GALLERY_IMAGES.wholeHome.after, alt: 'open living area' },
+    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen with open cabinet boxes, a workbench and a spirit level' },
+    { src: SITE_IMAGES.process, alt: 'Printed floor plan, tape measure and notebook on a kitchen island' },
+    { src: GALLERY_IMAGES.wholeHome.after, alt: 'Open living area and kitchen with wood floors, neutral furnishings and large windows' },
   ],
   'remodeling-roi': [
-    { src: GALLERY_IMAGES.kitchen.after, alt: 'Updated kitchen finishes that support resale appeal' },
-    { src: GALLERY_IMAGES.bathroom.after, alt: 'Updated primary bath finishes for everyday use and resale' },
+    { src: GALLERY_IMAGES.kitchen.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
+    { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, black-framed mirrors and a glass shower' },
   ],
   'outdoor-living': [
-    { src: GALLERY_IMAGES.outdoor.after, alt: 'Covered patio outdoor living remodel' },
-    { src: GALLERY_IMAGES.outdoorEagle.after, alt: 'Eagle covered patio with outdoor fireplace' },
-    { src: '/images/gallery/featured-eagle-outdoor.webp', alt: 'Covered rear patio looking toward dry foothills' },
+    { src: GALLERY_IMAGES.outdoor.after, alt: 'Covered rear patio with a wood dining table, lawn and dry hills beyond' },
+    { src: GALLERY_IMAGES.outdoorEagle.after, alt: 'Covered patio with a wood dining table, broad lawn and dry hills beyond' },
+    { src: '/images/gallery/featured-eagle-outdoor.webp', alt: 'Single-story ranch house with a front lawn, mature trees and dry hills beyond' },
   ],
   'treasure-valley-locations': [
-    { src: '/images/areas/boise.webp', alt: 'Boise neighborhood street with established homes' },
-    { src: '/images/areas/eagle.webp', alt: 'Eagle residential street near the foothills' },
-    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Treasure Valley ranch exterior' },
+    { src: '/images/areas/boise.webp', alt: 'Craftsman-style houses along a tree-lined sidewalk with mountains in the distance' },
+    { src: '/images/areas/eagle.webp', alt: 'Stone-front house with a circular driveway and mountains beyond' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with lap siding, brick trim and an attached garage' },
   ],
 };
 
@@ -122,16 +122,16 @@ export interface ArticleInlineFigurePlacement {
  * to break up text-heavy content (Phase 4).
  */
 const INLINE_HUB_ALTS: Record<string, string> = {
-  "remodeling-costs": "Living room finishes",
-  "kitchen-remodeling": "remodeled kitchen with coordinated cabinetry and counters",
-  "bathroom-remodeling": "remodeled bathroom design",
-  "home-additions": "room addition design",
-  "whole-home-remodeling": "open-plan living area and kitchen",
-  "contractor-selection": "Remodeling plans, paint colors and finish samples arranged for a design discussion",
-  "remodeling-process": "Existing living room before a design refresh",
-  "remodeling-roi": "kitchen with updated cabinetry",
-  "outdoor-living": "Existing backyard illustrating an outdoor planning starting point",
-  "treasure-valley-locations": "Boise-area home exterior"
+  "remodeling-costs": "Open living area and kitchen with wood floors, neutral furnishings and large windows",
+  "kitchen-remodeling": "White kitchen with a gray-green island, pendant lights and a broad window",
+  "bathroom-remodeling": "Bathroom with a white vanity, black-framed mirrors and a glass shower",
+  "home-additions": "Single-story house with pale siding, a wide glass door and a paved patio",
+  "whole-home-remodeling": "Open living area and kitchen with wood floors, neutral furnishings and large windows",
+  "contractor-selection": "Floor plans, paint chips, tile and flooring samples arranged on a table",
+  "remodeling-process": "Living room with carpet, a fireplace and broad windows",
+  "remodeling-roi": "White kitchen with an island, pendant lights and wood flooring",
+  "outdoor-living": "Backyard lawn beside a house with pale siding and a sliding glass door",
+  "treasure-valley-locations": "Craftsman-style houses along a tree-lined sidewalk with mountains in the distance"
 };
 
 export function getArticleInlineFigures(
