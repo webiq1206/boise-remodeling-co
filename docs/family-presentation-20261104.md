@@ -15,3 +15,5 @@ Validation checkpoints: source types and eight family tests passed on the protot
 Unrelated Cursor draft#131 is preserved. Recovery source is main2d659fbca18ef1be0136edd391eae3d57596afb3. Merge only after final review and test gates; publication remains the owner's separate step.
 
 Current-standard refresh: Organic1.0.2 and all six current references were loaded November4. The archived1.0.0 snapshot remains historical evidence, not current guidance. The seven independent typography source findings were corrected with marketing leaf selectors; exact rendered acceptance remains open.
+
+Final scoped chrome correction: canonical fa720a579b696af92861fb571fa0aff043e734b0 supplies only the reviewed narrow-header/menu stylesheet update plus exact17-file manifest. Other16shared files and all protected engine files remain. Independent prototype review covers nine normal Cabinet sizes plus320x844, five intact SVG fixtures, menu/focus/200% and unchanged360+headers. Profiles describe actual89px narrow header and unboxed menu contacts. Each final brand build/CI/rendering remains a separate gate; the prototype is not full-site or live acceptance.
