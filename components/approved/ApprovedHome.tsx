@@ -7,6 +7,7 @@ import {FAQSection} from '@/components/FAQSection';
 import {PlanningRangeExplorer} from './PlanningRangeExplorer';
 import {brands,cities,serviceExtras} from './family-content';
 import {DesignGallery} from '@/components/sections/DesignGallery';
+import {ServiceArea} from '@/components/family/ServiceArea';
 
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
 
@@ -73,7 +74,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   {/* 2. The look: six photographs from the company's own campaign library. */}
   <DesignGallery
    id="our-work"
-   eyebrow="OUR WORK"
+   eyebrow="DESIGN IDEAS"
    title="See what a remodel"
    accent="can become."
    intro="Warm white oak, quiet tile and light that lands well. Kitchens and baths planned around the way you actually use them, finished with the small details you notice every day."
@@ -85,7 +86,6 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
     {src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:'Floating white oak double vanity with round black mirrors beside a glass walk-in shower',label:'Double vanity',wide:true},
     {src:'/family/drive/square-3-tiled-shower-bench.webp',alt:'Tiled shower bench with a rolled white towel, soap and hanging eucalyptus',label:'Shower bench'},
    ]}
-   note="Design imagery showing the finish and feel we build toward. We publish only our own completed work, and our first projects as Boise Remodeling Co are finishing now. Ask us for references and we will connect you with past clients."
   />
 
   {/* 3. The number, on its own band. */}
@@ -134,12 +134,12 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   </section>
 
   {/* 9. Where we work: one line of linked cities. */}
-  <section className="f-area f-section f-container">
+  <ServiceArea image={{src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:'Oak double vanity beside a tiled walk-in shower',width:1200,height:628}}>
    <p className="f-eyebrow">AT HOME IN IDAHO</p>
    <h2>Local people.<br/><em>Valley-wide reach.</em></h2>
    <p>Serving homeowners throughout the Treasure Valley.</p>
    <nav className="fr-cities" aria-label="Service area cities">{cities.map(city=><a key={city} href={`/areas/${city.toLowerCase().replaceAll(" ","-")}`} aria-label={`Remodeling contractors in ${city}`}>{city}</a>)}</nav>
-  </section>
+  </ServiceArea>
 
   <FAQSection/>
  </div>;

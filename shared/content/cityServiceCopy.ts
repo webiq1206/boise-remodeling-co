@@ -202,7 +202,7 @@ export const CITY_SERVICE_COPY: Record<string, CityServiceCopy> = {
       { question: "How do you keep a large project on budget?", answer: "We write the scope down, document every selection, and use a change order for any added work. You approve each piece before we move forward." },
       { question: "Do you offer whole-home remodeling in Meridian?", answer: "Yes. Whole-home remodels are regular work for us in Meridian, and we cover the Ada County neighborhoods bordering the city the same way." },
       { question: "How do I get a quote for whole-home remodeling in Meridian?", answer: "Use the online estimator first for a planning range. Then schedule the free in-home visit; in 60 to 90 minutes we walk the house together and you leave with a design direction and a clear sense of next steps." },
-      { question: "Who issues permits for a Meridian whole-home remodel?", answer: "The City of Meridian, not Ada County, for homes inside city limits. Building Services is at 33 E. Broadway Ave, and applications and inspections run through the city's Citizen Access portal. Only about 7% of the city's housing predates 1980 in the Census ACS 2020\u20132024 estimates, so most of these remodels update a newer house rather than rescue an old one." },
+      { question: "Who issues permits for a Meridian whole-home remodel?", answer: "The City of Meridian, not Ada County, for homes inside city limits. Applications and inspections run through the city's Building Services Citizen Access portal. Only about 7% of the city's housing predates 1980 in the Census ACS 2020\u20132024 estimates, so most of these remodels update a newer house rather than rescue an old one." },
     ],
   },
   "whole-home-remodel/eagle": {

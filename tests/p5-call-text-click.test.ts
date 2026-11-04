@@ -1,12 +1,17 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ContactActions } from "../components/family/ContactActions.tsx";
 import {
   GOOGLE_ADS_CALL_CLICK_LABEL,
   GOOGLE_ADS_TEXT_CLICK_LABEL,
   trackDelegatedContactClick,
   trackGoogleAdsContactClick,
 } from "../lib/googleAdsConversion.ts";
+
+(globalThis as typeof globalThis & { React: typeof React }).React = React;
 
 function restore(name: "window" | "navigator", prior: PropertyDescriptor | undefined) {
   if (prior) Object.defineProperty(globalThis, name, prior);
@@ -226,16 +231,28 @@ import { SITE_CONFIG } from "../shared/siteConfig.ts";
 test("call and text controls use the site phone and the listener stays in the existing click path", () => {
   assert.equal(SITE_CONFIG.phoneHref, "tel:+12084771169");
   assert.equal(SITE_CONFIG.phoneSmsHref, "sms:+12084771169");
-  // Phase 2: the header is the shared family SiteHeader (call before text, then the menu
-  // drawer in its own MobileMenu), reading the phone hrefs from lib/familyBrand.ts.
+  // SiteHeader composes the shared controls; ContactActions owns their IDs and hrefs.
   const nav = readFileSync(new URL("../components/family/SiteHeader.tsx", import.meta.url), "utf8");
   const menu = readFileSync(new URL("../components/family/MobileMenu.tsx", import.meta.url), "utf8");
-  const headerAt = nav.indexOf('data-testid="link-call-mobile-header"');
-  const textAt = nav.indexOf('data-testid="link-text-mobile-header"');
+  assert.match(nav, /import \{ ContactActions \} from ['"]\.\/ContactActions['"]/);
+  assert.equal(nav.match(/<ContactActions\s+surface="header"\s*\/>/g)?.length, 1);
+  assert.ok(nav.indexOf('<ContactActions surface="header" />') < nav.indexOf('<MobileMenu'));
+  const controls = renderToStaticMarkup(React.createElement(ContactActions, { surface: 'header' }));
+  const headerAt = controls.indexOf('data-testid="link-call-mobile-header"');
+  const textAt = controls.indexOf('data-testid="link-text-mobile-header"');
   assert.ok(headerAt > 0 && textAt > headerAt);
+  const anchors = controls.match(/<a\b[^>]*>[\s\S]*?<\/a>/g) ?? [];
+  const call = anchors.find((anchor) => anchor.includes('data-testid="link-call-mobile-header"'));
+  const sms = anchors.find((anchor) => anchor.includes('data-testid="link-text-mobile-header"'));
+  assert.ok(call);
+  assert.ok(sms);
+  assert.ok(call.includes(`href="${SITE_CONFIG.phoneHref}"`));
+  assert.ok(sms.includes(`href="${SITE_CONFIG.phoneSmsHref}"`));
+  assert.ok(call.includes(`aria-label="Call ${SITE_CONFIG.phone}"`));
+  assert.ok(sms.includes(`aria-label="Text ${SITE_CONFIG.phone}"`));
+  assert.equal(controls.includes('data-testid="link-footer-call"'), false);
+  assert.equal(controls.includes('data-testid="link-footer-text"'), false);
   assert.match(menu, /data-testid="mobile-nav-drawer"/);
-  assert.ok(nav.slice(headerAt - 200, headerAt).includes("brand.phone.telHref"));
-  assert.ok(nav.slice(textAt - 300, textAt).includes("brand.phone.smsHref"));
   const brand = readFileSync(new URL("../lib/familyBrand.ts", import.meta.url), "utf8");
   assert.match(brand, /telHref: SITE_CONFIG\.phoneHref, smsHref: SITE_CONFIG\.phoneSmsHref/);
   const clicks = readFileSync(new URL("../components/ConversionTracking.tsx", import.meta.url), "utf8");

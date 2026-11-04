@@ -26,9 +26,7 @@ const url = (p: string) => `${BASE}${p}`;
 const today = '2026-10-16';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
-  `Public representative: ${SITE_CONFIG.publicRepresentative}. Service-area business based at ` +
-  `${SITE_CONFIG.address.street}, ${SITE_CONFIG.address.city}, ${SITE_CONFIG.address.state} ${SITE_CONFIG.address.postalCode} ` +
-  `(not a staffed storefront). Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
+  `Serving the ${SITE_CONFIG.address.serviceArea}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
   `Idaho Registered Contractor #8381215, bonded and insured.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
@@ -113,7 +111,7 @@ function buildShort(): string {
 
   lines.push('## Machine-readable endpoints', '');
   lines.push(`- [Sitemap](${url('/sitemap.xml')}): every indexable page.`);
-  lines.push(`- [Image sitemap](${url('/sitemap-images.xml')}): project before/after and guide imagery with titles and captions.`);
+  lines.push(`- [Image sitemap](${url('/sitemap-images.xml')}): room, finish and guide images with titles and captions.`);
   lines.push(`- [RSS feed](${url('/feed.xml')}): guides and articles, newest first, with publication and revision dates.`);
   lines.push(`- [Full text for LLMs](${url('/llms-full.txt')}): expanded reference copy of the core facts.`, '');
 

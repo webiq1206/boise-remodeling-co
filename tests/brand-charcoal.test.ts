@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { BRAND_CHARCOAL } from '../lib/p5/brand.ts';
-import { EMAIL_BRAND } from '../server/services/emailLayout.ts';
+import { EMAIL_BRAND, buildTextLogo, emailStyles } from '../server/services/emailLayout.ts';
 
 const CHARCOAL = '#383837';
 
@@ -29,6 +29,9 @@ function contrast(foreground: string, background: string): number {
 test('brand charcoal token is #383837', () => {
   const tokens = readFileSync('styles/family-tokens.css', 'utf8');
   assert.match(tokens, /--color-charcoal:\s*#383837;/);
+  assert.match(tokens, /--color-chrome:\s*var\(--color-charcoal\);/);
+  assert.match(tokens, /--color-forest:\s*#383837;/);
+  assert.match(tokens, /--color-scrim-rgb:\s*56,\s*56,\s*55;/);
   assert.equal(BRAND_CHARCOAL, CHARCOAL);
   assert.equal(EMAIL_BRAND.bg, CHARCOAL);
   assert.equal(EMAIL_BRAND.surface, CHARCOAL);
@@ -48,5 +51,16 @@ test('white and light text on #383837 clears WCAG AA', () => {
   for (const color of lightText) {
     const ratio = contrast(color, CHARCOAL);
     assert.ok(ratio >= 4.5, `${color} on ${CHARCOAL} is ${ratio.toFixed(2)}:1`);
+  }
+});
+
+test('approved sage stays decorative while small email text uses the readable bone role', () => {
+  assert.equal(EMAIL_BRAND.accent, '#9AA098');
+  assert.ok(contrast(EMAIL_BRAND.text, CHARCOAL) >= 4.5);
+  assert.ok(emailStyles.includes(`.content a { color: ${EMAIL_BRAND.text}; }`));
+  assert.ok(buildTextLogo().includes(`color:${EMAIL_BRAND.text};font-style:italic;`));
+  for (const path of ['server/services/requestDetailsDelivery.ts', 'server/services/consultationEmail.ts', 'server/services/re10Email.ts']) {
+    const source = readFileSync(path, 'utf8');
+    assert.doesNotMatch(source, /<a\b[^>]*style="[^"\r\n]*color:\$\{EMAIL_BRAND\.accent\}/);
   }
 });

@@ -1,52 +1,15 @@
-# P5 family design system (shared rules and permitted brand variation)
+# Current family design implementation
 
-The four brand sites share one editorial layer, `app/family.css`, kept byte-identical across repositories (`md5 -q app/family.css` on each repo must match). It carries no brand colour: every hue resolves from the site's own tokens (`--background`, `--foreground`, `--heading`, `--primary`, `--accent`, `--accent-legible`, `--accent-on-light`, `--muted-foreground`, `--border`, `--inverse`). The reference is p5homeco.com's own stylesheet.
+The authoritative identity and source register are in [this brand profile](brand-profile.md). Apply the complete Website Design Quality2.3 master, implementation rules and review record, and current Organic and AI Search Visibility1.0.2 with applicable references. Latest explicit owner instructions govern the coordinated family changes; this document grants no new approval or release exception.
 
-## Shared rules (do not vary per brand)
-- Measure: `ed-shell` = min(100% - 48px, 1380px); narrow 1080px; prose 720px. Breakpoints 1100 / 820 / 560.
-- Rhythm: `Section` with `spacing="default" | "sm" | "lg" | "xl"` (fluid clamp paddings) and `surface="dark" | "deep" | "bone" | "muted" | "gradient"`. Dark-dominant pages with several light (`bone`) bands spaced apart; closing asks are gradient statement bands, never cards.
-- Type: Cormorant Garamond display/headings (`ed-display`, `ed-h2`, `ed-h2-sm`, `ed-h3`, `ed-h4`), Manrope body at 15px/1.75 (`ed-body`), `ed-lede`, tracked uppercase `ed-eyebrow` with a 28px rule. Statement measures live on the heading (`ed-statement*`), never on a wrapper.
-- Layout primitives: `ed-split` (1.35fr/.65fr, `-even`, `-narrow`, `-end`, `-center`), `ed-matrix` (hairline grid; column count via `--ed-cols`, collapses to 2 columns under 1100px and 1 under 560px by track list, so an inline `--ed-cols` cannot override it), `ed-panel` (57/43 image + copy, `-reverse`), `ed-rail` (horizontal scroller), `ed-inset`, `ed-card`, `ed-steps`/`ed-step`/`ed-step-n`, `ed-link` + `ed-arrow`.
-- Buttons: `brand` (58px, uppercase, 11px/700, tracked), `brandOutline`, `heroOutline` (same format in inverse colours over photography). CTA pairs stack full width under 640px. `heroGhost` is wizard chrome only.
-- Motion: `ed-rise` reveal and `ed-zoom` 850ms on the shared curve; everything respects `prefers-reduced-motion`.
-- Light bands re-point the semantic tokens for their subtree (including `--heading`, `--primary` and `--primary-foreground` so `brand` buttons are ink on bone) and leave `--inverse` alone so photo badges stay dark.
-- Estimators: `/estimate` is a fixed one-screen `AppFrame` (Cabinet: `GuidedFlowShell fitViewport`) with the step body between a compact header and a pinned footer; every step fits 390x844 without page scroll. Dialogs render above the frame (`z-[210]/[220]`).
-- Mobile: hero stat cards become a three-cell strip; trust strips are left-aligned rows with an inline dot; phone layouts are checked by `scripts/verify-mobile-layout.mjs` and contrast by `npm run verify:contrast`.
+The17 shared family files listed in `lib/family/manifest.json` are canonically owned by `boise-remodeling-co`. Verify with `scripts/verify-family-chrome.mjs`; selectively transport only the reviewed manifest set. Brand configuration, content and site-owned presentation CSS remain local. `app/family.css` is not an authority for broad engine synchronization or a byte-identity requirement. Preserve the separate P5 engine manifest and unrelated active work.
 
-## Permitted brand variation
-- Colour tokens and accent (Remodeling sage, Construction ochre, Handyman blue, Cabinet teal), logos and wordmarks, photography, copy, service data, section order per page, and which sections a page uses. Header and footer structure follow the same pattern with brand-specific links.
-- Nothing else: type scale, spacing, primitives, button formats and estimator chrome stay shared so the sites read as one family.
+Use the approved Cormorant Garamond/Manrope direction and `--fs-*`, `--lh-*`, tracking and spacing roles. Phone <640, tablet640–1023, desktop >=1024; wide1280. Shared navigation expands at its configured1180 component threshold. Editorial section display is36/52/64; interior H1/feature32/44/52; ordinary H2 and compact SectionHeader `ed-h2-sm`28/36/40; H3 22/26/28; body17/18/18; captions14/15/15; labels13; navigation15; buttons and tertiary marketing actions16. Keep distinct task/component roles, explicit shared fluid photo heroes and approved scoped hero corrections recorded in the profile. Do not shrink Cabinet in isolation or change task controls through broad descendant rules.
 
-## Grid balance (2026-09-08)
+Use standard spacing tokens and actual item counts. Four comparable cards use4,2or1columns; do not force an odd last card to full width. Sticky desktop headings are optional and section-bound. Preserve natural phone reflow, 200% text, visible focus and actual persistent-UI clearance. Never claim a fixed viewport fit from source rules or a passing script.
 
-A row that ends with one lonely cell reads as unfinished, so every grid picks
-its shape from its item count instead of a fixed column number.
+Headers, menus and footers use shared standard charcoal `--color-chrome:#1c1f1e` and consistent unboxed Call/Text/Chat controls. Preserve this brand's actual destinations, route exclusions, accent, images, proof and content. Generated generic imagery needs no routine presentation disclaimer and must not be claimed as completed customer work. Remove requested public address/admin/status copy while retaining useful contacts, hours, service areas, licensing and necessary safety/pricing/legal qualifications.
 
-- `.ed-matrix`: five items lay out as three then two, seven as four then three
-  (span rules in `family.css`, desktop only). In the two-column range
-  (561 to 1100 px) an odd last item takes the full row.
-- `.ed-cards-3`: the card grid for posts, guides, projects and services. One
-  column on phones, two on tablets (an odd last card is centred), three on
-  laptops and up (a lone last card is centred, a pair widens to halves).
-  Use it instead of `grid sm:grid-cols-2 lg:grid-cols-3`.
-- `.ed-grid-balance`: opt-in for one or two column Tailwind grids (option
-  cards, checklists, contact channels): the last odd item spans the row.
-- Fixed counts: nine cities use three columns; four benefits use four.
-- Two-column sections never leave a column empty. The long-form prose measure
-  carries a sticky "In this guide" index; a lone local note or timeline is a
-  split with the heading on the left; "what sets us apart" carries a photo
-  under its sticky intro.
+Every affected public route/resource/state belongs in the current finite inventory. Plan matching before/after evidence, rendered phone/tablet/desktop and C3/C9 coverage, C10/D2 input states, accessibility and protected journey checks before release. Independent F4/F5 and exact-head tests/CI remain separate gates; samples and old prototype results are not a whole-site pass. No actual lead, external communication or provider operation is authorized as a test. Jared owns Replit import/publication; report source, review, CI, merge and live states separately.
 
-The section audit that found these lives at `scripts/_section-audit.mjs` in
-the Remodeling repo (Playwright; nine viewports; flags orphans, one-sided
-sections, sparse bands, text-only sections, overflow) with `scripts/section-sheets.py` for
-contact sheets.
-
-## Header clearance (2026-09-08)
-
-The header is fixed and transparent over the page. `family.css` gives the first
-section of every route `padding-top: var(--ed-hero-top)` (header height plus
-48px) so breadcrumbs and eyebrows never sit under the menu. A hero that must
-run flush to the top (image first) opts out with `pt-0`; the fixed estimator
-frame is excluded. `scripts/_hero-gap.mjs` in the Remodeling repo measures the
-gap on every template at 1440, 834 and 390 and lists anything under 32px.
+This current instruction supersedes the earlier 15pxbody/11pxbutton, Handyman-blue, 1100/820/560breakpoint, universal sticky/dark-band and unmeasured estimator-fit guidance. Historical audits and screenshots remain evidence of their own revisions only.

@@ -23,7 +23,7 @@ export function RelatedPostCards({
         {links.map((link) => (
           <Link key={link.url} href={link.url} className="block group" aria-label={link.anchor}>
             <article className="ed-card ed-card-link flex h-full min-h-[88px] items-center justify-between gap-5 p-5" style={{ flexDirection: "row" }}>
-              <p className="ed-h4 text-[1rem] transition-colors group-hover:[color:var(--ed-accent)]">
+              <p className="ed-h4 text-[1rem] group-hover:underline group-hover:underline-offset-4">
                 {link.anchor}
               </p>
               <ArrowUpRight aria-hidden="true" className="h-5 w-5 shrink-0 opacity-65 transition-opacity group-hover:opacity-100" />

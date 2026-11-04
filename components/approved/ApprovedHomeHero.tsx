@@ -25,13 +25,14 @@ export function ApprovedHomeHero() {
           are served as is. Through /_next/image the phone crop sometimes never got a response,
           and every later request for it hung too, which held the page's load event open. */}
       <HeroPhoto
+        fit="viewport"
         image={{
           src: "/family/remodeling-hero-kitchen-island.webp",
           width: 1536,
           height: 1024,
           position: "62% 50%",
           unoptimized: true,
-          alt: "Representative open kitchen with a dark island, glass pendant lights and white cabinets",
+          alt: "Open kitchen with a dark island, glass pendant lights and white cabinets",
         }}
         phoneImage={{
           src: "/family/remodeling-hero-kitchen-island-phone.webp",
@@ -45,8 +46,6 @@ export function ApprovedHomeHero() {
         titleAccent="One team, start to finish."
         support="We design, price and build kitchens, baths and whole-home remodels."
         primary={{ label: FAMILY_BRAND.cta.label, href: FAMILY_BRAND.cta.href }}
-        link={{ label: `Call or text ${FAMILY_BRAND.phone.display}`, href: FAMILY_BRAND.phone.telHref }}
-        microcopy="Free in-home visit, no obligation."
         // White cabinetry in daylight: the standard scrim measured under 3:1 behind the accent line.
         scrim="strong"
       />
@@ -58,7 +57,7 @@ export function ApprovedHomeHero() {
             label: "Registered",
             text: REGISTRATION_LINE,
             href: DOPL_LICENSE_SEARCH,
-            linkTitle: "Look up registration 8381215 on Idaho DOPL",
+            linkTitle: "Idaho contractor registration 8381215",
             newTab: true,
           },
           { label: "Scope first", text: "Written scope before any price" },

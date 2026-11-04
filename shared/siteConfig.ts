@@ -33,15 +33,10 @@ export const SITE_CONFIG = {
   phoneSmsHref: companyTelHref(process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL).replace(/^tel:/, "sms:"),
   email: process.env.NEXT_PUBLIC_EMAIL ?? DEFAULT_EMAIL,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL,
-  /** Named public contact. Not a founder and not a staffed-office claim. */
-  publicRepresentative: "Nick Perkins",
-  // Canonical NAP. This is a service-area business, not a staffed storefront.
-  // Visible pages and JSON-LD both carry the full street, city, state, and ZIP.
+  // Public service locality and coverage. Verification records retain the business address.
   address: {
-    street: "4031 W Wapoot St",
     city: "Meridian",
     state: "ID",
-    postalCode: "83646",
     cityState: "Meridian, ID",
     serviceArea: "Treasure Valley · Ada and Canyon County",
   },
@@ -72,8 +67,7 @@ export function formatPhoneDisplay(tel: string = SITE_CONFIG.phoneTel): string {
   return SITE_CONFIG.phone;
 }
 
-/** Construction's footer line, with middle-dot separators. Same words on every page. */
+/** Customer-facing coverage line, shared by the contact page and footer. */
 export function publicFooterLine(): string {
-  const address = SITE_CONFIG.address;
-  return `Public representative: ${SITE_CONFIG.publicRepresentative} · ${address.street}, ${address.city}, ${address.state} ${address.postalCode} · Service-area business, not a staffed storefront`;
+  return `Serving the ${SITE_CONFIG.address.serviceArea}`;
 }

@@ -222,13 +222,13 @@
      300 reads faint rather than refined, so they carry regular weight. */
   h1, h2, h3, h4, h5, h6 {
     /* Cormorant Garamond for every heading, as on P5. */
-    font-family: var(--font-cormorant, Georgia, serif);
-    font-weight: 400;
+    font-family: var(--font-display);
+    font-weight: var(--weight-display);
     letter-spacing: -0.02em;
     color: hsl(var(--heading));
   }
-  h1, h2 { font-weight: 300; }
-  h3, h4, h5, h6 { font-weight: 400; }
+  h1, h2 { font-weight: var(--weight-display); }
+  h3, h4, h5, h6 { font-weight: var(--weight-display); }
 
   p { @apply leading-relaxed; }
 
@@ -464,11 +464,11 @@
   /* 13px, not 11px. Uppercase and 0.14em tracking each cost legibility on
      their own and this eyebrow stacks both, so the size has to compensate
      rather than compound them. Tracking eased slightly for the same reason. */
-  font-size: 0.8125rem;
-  letter-spacing: 0.19em;
-  font-weight: 700;
+  font-size: var(--fs-label);
+  letter-spacing: var(--tracking-label);
+  font-weight: 600;
   text-transform: uppercase;
-  color: hsl(var(--muted-foreground));
+  color: hsl(var(--muted-foreground)); line-height: var(--lh-label);
 }
 .brc-label::before {
   content: "";
@@ -505,32 +505,32 @@
 /* ─── Blog Content Styles ─── */
 .blog-content {
   color: hsl(var(--foreground));
-  line-height: 1.8;
+  line-height: var(--lh-body);
   /* 17px, not 16 - long-form reading size on the 42rem measure. */
-  font-size: 1.0625rem;
+  font-size: var(--fs-body); letter-spacing: 0; font-weight: 400;
 }
 .blog-content h2 {
-  font-size: 1.75rem;
-  font-weight: 400;
+  font-size: var(--fs-h2);
+  font-weight: var(--weight-display);
   margin-top: 2.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: var(--stack-heading);
   padding-bottom: 0.5rem;
   border-bottom: 1px solid hsl(var(--border));
-  color: hsl(var(--foreground));
+  color: hsl(var(--foreground)); line-height: var(--lh-h2); letter-spacing: var(--tracking-heading);
 }
 .blog-content h3 {
-  font-size: 1.35rem;
-  font-weight: 400;
+  font-size: var(--fs-h3);
+  font-weight: var(--weight-display);
   margin-top: 2rem;
-  margin-bottom: 0.75rem;
-  color: hsl(var(--foreground));
+  margin-bottom: var(--stack-heading);
+  color: hsl(var(--foreground)); line-height: var(--lh-h3); letter-spacing: var(--tracking-heading);
 }
 .blog-content h4 {
-  font-size: 1.05rem;
-  font-weight: 400;
+  font-size: var(--fs-h4);
+  font-weight: var(--weight-display);
   margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: hsl(var(--foreground));
+  margin-bottom: var(--stack-heading);
+  color: hsl(var(--foreground)); line-height: var(--lh-h4); letter-spacing: 0;
 }
 .blog-content p {
   margin-bottom: 1.25rem;
@@ -552,7 +552,7 @@
 .blog-content li {
   margin-bottom: 0.5rem;
   color: hsl(var(--foreground));
-  line-height: 1.7;
+  line-height: var(--lh-body);
 }
 .blog-content li strong { color: hsl(var(--foreground)); }
 /* Emphasis via a brighter bone tone AND a medium weight. The original brand
@@ -575,7 +575,7 @@
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
-  font-size: 0.9rem;
+  font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
 }
 .blog-content th {
   background: hsl(var(--primary) / 0.08);
@@ -633,18 +633,18 @@
 }
 .blog-content .summary-block p {
   margin: 0;
-  font-size: 0.95rem;
-  color: hsl(var(--muted-foreground));
+  font-size: var(--fs-body);
+  color: hsl(var(--muted-foreground)); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 
 .blog-content figcaption {
   /* 0.75rem here outranked the `text-xs` the markup asks for (element+class
      beats class), so image captions rendered 12px while the rest of the site
      floors at 13. Matched to the scale's caption step. */
-  font-size: 0.8125rem;
+  font-size: var(--fs-small);
   color: hsl(var(--muted-foreground));
   margin-top: 0.5rem;
-  text-align: center;
+  text-align: center; line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
 }
 
 /* ===================================================================
@@ -663,7 +663,8 @@
 }
 .blog-content .callout > *:first-child { margin-top: 0; }
 .blog-content .callout > *:last-child { margin-bottom: 0; }
-.blog-content .callout p { margin: 0.5rem 0; font-size: 0.98rem; }
+.blog-content .callout p { margin: 0.5rem 0; font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
+}
 .blog-content .callout .callout-label {
   display: inline-flex;
   align-items: center;
@@ -674,11 +675,11 @@
      page. Uppercase at 0.15em tracking is already hard to read small; at 11px
      on a phone it is a squint. Raised to the scale's caption step (13px) and
      the tracking eased to match .brc-label, which made the same trade. */
-  font-size: 0.8125rem;
-  font-weight: 500;
-  letter-spacing: 0.12em;
+  font-size: var(--fs-small);
+  font-weight: 400;
+  letter-spacing: 0;
   text-transform: uppercase;
-  color: hsl(var(--accent-legible));
+  color: hsl(var(--accent-legible)); line-height: var(--lh-small);
 }
 .blog-content .callout .callout-label::before {
   content: '';
@@ -708,7 +709,7 @@
   border-left-color: hsl(var(--accent-legible));
   background: hsl(var(--accent) / 0.07);
 }
-.blog-content .callout.cost strong { color: hsl(var(--accent-legible)); font-weight: 500; }
+.blog-content .callout.cost strong { color: hsl(var(--accent-legible)); font-weight: 400; }
 
 /* Warning / important - restrained clay tone that pairs with sage,
    used sparingly so caution reads distinctly from tips. */
@@ -729,7 +730,7 @@
   position: relative;
   margin: 0.6rem 0;
   padding-left: 1.95rem;
-  font-size: 0.98rem;
+  font-size: var(--fs-small); line-height: var(--lh-small); letter-spacing: 0; font-weight: 400;
 }
 .blog-content .callout.checklist li::before {
   content: '';
@@ -755,9 +756,9 @@
 
 /* Decorative lead paragraph + inline sage accent for eye-draw */
 .blog-content .guide-lead {
-  font-size: 1.15rem;
-  line-height: 1.7;
-  color: hsl(var(--foreground));
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: hsl(var(--foreground)); letter-spacing: 0; font-weight: 400;
 }
 .blog-content .sage {
   color: hsl(var(--accent-legible));

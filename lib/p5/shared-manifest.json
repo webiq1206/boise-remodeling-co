@@ -25,7 +25,7 @@
     "components/P5AddressInput.module.css": "5b1405323494f7768282a8302b15f8ca51b6d332819ec9f7b0246e2f1dad697f",
     "components/P5AddressInput.tsx": "5372b8587c55264c433f633ea8de6958d5a645d186bf35c8503f31abde49b011",
     "components/P5EstimateDetails.tsx": "ad36be0cb27f55e51ee63f222af7c749b3037e1fb12ff7131be62a6db93565d0",
-    "components/P5Estimator.module.css": "bff443e07b9d68f9cf29eac43c0b7e78fa86fc86ebafd366418f9193fc09f956",
+    "components/P5Estimator.module.css": "e2e0523658049944e5e65aee990523691a6d98e7a19f6fa9d3b92bae3a0b8c6b",
     "components/P5Estimator.tsx": "59cf9a4cdbb17eff7f288ab5361a6575c3be66aed628f13483fc5b69fd580f72",
     "components/P5EstimatorNavigation.tsx": "427346f6a31453e01f54900b1350c222c59a74d9c23691a6fc346b5cc26da8f3",
     "components/P5IntakeQueue.tsx": "cb9638fa46c9e88bf6f7609cd08e4cf26c24564c20bba50d124dc1c3bf5c8fab",
@@ -494,7 +494,7 @@
     "tests/p5-intake-contact-fields.test.ts": "2e50258d54258ee988206a3c5d91bee2aeab1521a614bae5d1db37d0cc2f0b6b",
     "lib/p5/exitCallback.ts": "9ab0cb2118925362f718de369cab17a1e176340a155f971b75458015df22e28f",
     "components/P5ExitOffer.tsx": "6a73f5b9b2d749f716e9a7e85da1b84416395e10c9a3ca0dec241f80b74cc331",
-    "components/P5ExitOffer.module.css": "88f45092817c319fa06ee60b102a8b439412f29747f25bd95ebdf9ea28b99461",
+    "components/P5ExitOffer.module.css": "3d24e27f07bcd049e2770054d34b9342bdec6ac777ea3cfb5d812108d5c0b2c6",
     "tests/p5-exit-callback.test.ts": "fb985b096b8397d0d424d3ec31cd48a444c0546cfbc012736343cd5b94b450a3",
     "scripts/p5-exit-browser.mjs": "6b0556f4c8b17cd5f314f60d84246363b60e4dc54e191f91010e78374cf44a97",
     "lib/p5/intakeIntent.ts": "5f77bf876278b307a1fee4e49e8ac4a144e99bd7bd4e5f6b186491fd0888b360",
@@ -674,6 +674,109 @@
         }
       ],
       "note": "Only explicitly listed files synchronized; other files and provenance retained. Runtime scope is restricted to mobile-action and route-presentation compatibility."
+    }
+  ],
+  "selectivePresentationBatches": [
+    {
+      "kind": "qualified-charcoal-presentation-only",
+      "source": "p5-home-co",
+      "sourceCommit": "386a52afadf495b0c30a83a6976165a73768b98b",
+      "sourceBase": "fe64fc32737c239661761d685481e35e7ed68747",
+      "targetMain": "fe6d3e44fda78718e645b50d632bbdb27fd87974",
+      "targetHeadAtApply": "abd8dd6729c59d72952811ce575f4f55bf136a8b",
+      "files": [
+        {
+          "file": "components/P5Estimator.module.css",
+          "targetMainBefore": "c973c32412f8b29cbbe29ab7b1a310695686f9828d375e770f9e45eb99f5fc3b",
+          "workingBefore": "bff443e07b9d68f9cf29eac43c0b7e78fa86fc86ebafd366418f9193fc09f956",
+          "canonicalHunkSha256": "baa5baf80352865da1c501ab93874d3a65e3957131153dd9b657de2c36c8aead",
+          "canonicalSourceAfter": "e2e0523658049944e5e65aee990523691a6d98e7a19f6fa9d3b92bae3a0b8c6b",
+          "method": "exact-canonical-copy-after-identical-main-baseline",
+          "baselineByteIdentical": true,
+          "after": "e2e0523658049944e5e65aee990523691a6d98e7a19f6fa9d3b92bae3a0b8c6b"
+        },
+        {
+          "file": "components/P5ExitOffer.module.css",
+          "targetMainBefore": "88f45092817c319fa06ee60b102a8b439412f29747f25bd95ebdf9ea28b99461",
+          "workingBefore": "88f45092817c319fa06ee60b102a8b439412f29747f25bd95ebdf9ea28b99461",
+          "canonicalHunkSha256": "d1a26801c196c0ddffa464a5932421a6513df884cc0a891b66c2ea803620ac96",
+          "canonicalSourceAfter": "3d24e27f07bcd049e2770054d34b9342bdec6ac777ea3cfb5d812108d5c0b2c6",
+          "method": "exact-canonical-copy-after-identical-main-baseline",
+          "baselineByteIdentical": true,
+          "after": "3d24e27f07bcd049e2770054d34b9342bdec6ac777ea3cfb5d812108d5c0b2c6"
+        },
+        {
+          "file": "lib/p5/adminEstimate.ts",
+          "targetMainBefore": "f35f529614dbb4c01ec7df4598b5485ca00ad9ff2f8961cbf19c333061dd3718",
+          "workingBefore": "0a324a6dfaa166e9369705381f4ce45b7d89d5b960ac9bccb125adcf51d2f024",
+          "canonicalHunkSha256": "55d26be4d078a91cebd927001b313322718deedf2aa3dc62ba769944bef33206",
+          "canonicalSourceAfter": "0a324a6dfaa166e9369705381f4ce45b7d89d5b960ac9bccb125adcf51d2f024",
+          "method": "exact-canonical-copy-after-identical-main-baseline",
+          "baselineByteIdentical": true,
+          "after": "0a324a6dfaa166e9369705381f4ce45b7d89d5b960ac9bccb125adcf51d2f024"
+        },
+        {
+          "file": "lib/p5/estimateEmail.ts",
+          "targetMainBefore": "d33f40f8724c69c77f7b05c46084cf18c3c39ee7847516ac8e5565f425586b82",
+          "workingBefore": "07e0197745fff54cbe3e50bfebc3e8c8f44afe0458f55cecb4c9de715ffb290b",
+          "canonicalHunkSha256": "28715826f0ea62070773984d8c59a1c7a5e943e19f1a3193ffe6e8a9e95d2139",
+          "canonicalSourceAfter": "8f818f679b24e032da6b53d0d541f7801fb6998e82b93936fcce8d37bca0cbb7",
+          "method": "canonical-literal-hunk-on-target-current-main",
+          "literalPatch": {
+            "old": "const C={ink:'#2C302F',",
+            "new": "const C={ink:brand.ink,",
+            "occurrences": 1
+          },
+          "targetPrivateBytesPreservedByReversePatch": true,
+          "targetBaselineDivergesFromCanonical": true,
+          "after": "07e0197745fff54cbe3e50bfebc3e8c8f44afe0458f55cecb4c9de715ffb290b"
+        },
+        {
+          "file": "lib/p5/estimatePdf.ts",
+          "targetMainBefore": "a6c5fb7e72db9fb40fec12b9c8894526f1e3f306b331daf6e6aec28a0b0dbcbf",
+          "workingBefore": "14f02c090319226be358ad0b22c280199139ff1da4ffcac481508a445f3bb0c4",
+          "canonicalHunkSha256": "35353f257f47a9d9f7eecef116f3915b58e22cddfddcfdaccff27aab8b1ac82d",
+          "canonicalSourceAfter": "14f02c090319226be358ad0b22c280199139ff1da4ffcac481508a445f3bb0c4",
+          "method": "exact-canonical-copy-after-identical-main-baseline",
+          "baselineByteIdentical": true,
+          "after": "14f02c090319226be358ad0b22c280199139ff1da4ffcac481508a445f3bb0c4"
+        },
+        {
+          "file": "lib/p5/intakeEmail.ts",
+          "targetMainBefore": "191c7d0b90bdf810a48dae1a3f70d8085ea36f7cf7345d5c7cdb312e71667b58",
+          "workingBefore": "ce5eb3eb3cf97736658c41e59af9a9eb722f2b2aa57cc232c4a8779439bb9909",
+          "canonicalHunkSha256": "fadbf4c8b9c43cf7ef544dd4e71238a962568c69510f50c3bea49a875825d125",
+          "canonicalSourceAfter": "54a8c19778bb3b1957f6915b55ae14660a93a1fc873dac75b4d7678977356bbd",
+          "method": "canonical-literal-hunk-on-target-current-main",
+          "literalPatch": {
+            "old": "#2C302F",
+            "new": "${brand.ink}",
+            "occurrences": 6
+          },
+          "targetPrivateBytesPreservedByReversePatch": true,
+          "targetBaselineDivergesFromCanonical": true,
+          "after": "ce5eb3eb3cf97736658c41e59af9a9eb722f2b2aa57cc232c4a8779439bb9909"
+        },
+        {
+          "file": "lib/p5/intakePdf.ts",
+          "targetMainBefore": "4fb6243e39d644772a4c76d1e9292cf48e9d5e6711206bb2d1e83920b78a55a4",
+          "workingBefore": "c8e438c5025ae5c09aaa3427fa80e2b7ecb57e3c96f6a7c2759dcc6ada788f04",
+          "canonicalHunkSha256": "e007e146aab9c00e4073af6acef6439836f9f2bcde2b947be198bfea78886d66",
+          "canonicalSourceAfter": "c8e438c5025ae5c09aaa3427fa80e2b7ecb57e3c96f6a7c2759dcc6ada788f04",
+          "method": "exact-canonical-copy-after-identical-main-baseline",
+          "baselineByteIdentical": true,
+          "after": "c8e438c5025ae5c09aaa3427fa80e2b7ecb57e3c96f6a7c2759dcc6ada788f04"
+        }
+      ],
+      "brandOwned": {
+        "file": "lib/p5/brand.ts",
+        "targetMainBefore": "d308b0b93747aaddb4ff0f3d68ef68e7628dcb5b25bc2a94b964c9162c10d02e",
+        "workingBefore": "d27dcdf25b2060117af8121d09f70f270eeb8b51ca3e389a2965857c198b4b13",
+        "after": "6add1e42bdf8c430bf2d1c8115882a7eaa8d0321da45bc973ffee390ac2a780e",
+        "allOtherFactsAccentContactBytesPreserved": true
+      },
+      "canonicalHunkReceipt": "evidence/charcoal-palette-transport/canonical-hunks.json",
+      "note": "Only seven explicit shared presentation files/hash entries and site-owned ink changed. Divergent email authentication, recipients, documents and URLs retained from target current main. No full sync or guard/allowlist changes."
     }
   ]
 }

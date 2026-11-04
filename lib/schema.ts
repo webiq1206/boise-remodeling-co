@@ -44,11 +44,6 @@ const P5_ORIGIN = 'https://p5homeco.com';
 export const P5_ORG_ID = `${P5_ORIGIN}/#organization`;
 /** Shared person node. The @id lives on p5homeco.com so every brand merges to one Nick Perkins. */
 export const NICK_PERKINS_ID = `${P5_ORIGIN}/#nick-perkins`;
-/**
- * OpenStreetMap Nominatim geocode of 4031 W Wapoot St, Meridian, ID 83646.
- * Not the Meridian city-center pin in CITY_SEO_DATA.
- */
-const SERVICE_AREA_GEO = { latitude: 43.6515, longitude: -116.4444 } as const;
 export const P5_PARENT_ORGANIZATION = {
   '@type': 'Organization',
   '@id': P5_ORG_ID,
@@ -89,44 +84,15 @@ const CITY_WIKIPEDIA: Record<string, string> = {
 const CONTRACTOR_TYPES = ['HomeAndConstructionBusiness', 'GeneralContractor'] as const;
 
 /**
- * The registered Meridian NAP. This is a service-area business with no
- * storefront. Visible pages and JSON-LD both carry the full street so the
- * entity matches the citation record.
- * A page about another city puts that city in areaServed, never in this address.
- */
-function publicPostalAddress() {
-  return {
-    '@type': 'PostalAddress' as const,
-    streetAddress: BUSINESS_INFO.address.street,
-    addressLocality: BUSINESS_INFO.address.city,
-    addressRegion: 'ID',
-    postalCode: BUSINESS_INFO.address.postalCode,
-    addressCountry: 'US',
-  };
-}
-
-/** The shared public representative. worksFor points at P5, not a second business. */
-function publicEmployee() {
-  return {
-    '@type': 'Person' as const,
-    '@id': NICK_PERKINS_ID,
-    name: 'Nick Perkins',
-    jobTitle: 'Public representative',
-    worksFor: { '@id': P5_ORG_ID },
-  };
-}
-
-/**
  * Schema.org telephone. Visible pages keep the display format in
  * BUSINESS_INFO.phone. JSON-LD uses E.164 only.
  */
 const SCHEMA_TELEPHONE = '+1-208-477-1169';
 
-/** One family ContactPoint. The Person jobTitle stays Public representative. */
-function publicRepresentative() {
+/** Customer-service contact shared by the public organization graph. */
+function customerServiceContactPoint() {
   return {
     '@type': 'ContactPoint' as const,
-    name: 'Nick Perkins',
     contactType: 'customer service',
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
@@ -141,10 +107,8 @@ export function contractorDescription(city = 'Boise'): string {
 }
 
 export function generateLocalBusinessSchema(city?: string): SchemaContext {
-  // A single-location business has ONE set of coordinates (its HQ). Emitting
-  // per-city coordinates under one @id confuses entity disambiguation, so geo
-  // is always the HQ; the service area is expressed via `areaServed`. The
-  // optional `city` only customizes the human-readable description.
+  // Served cities belong in areaServed; no home street or exact home pin is published.
+  // The optional city customizes only the human-readable description.
   return {
     '@context': 'https://schema.org',
     '@type': [...CONTRACTOR_TYPES],
@@ -169,14 +133,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     },
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
-    contactPoint: publicRepresentative(),
-    employee: publicEmployee(),
-    address: publicPostalAddress(),
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: SERVICE_AREA_GEO.latitude,
-      longitude: SERVICE_AREA_GEO.longitude,
-    },
+    contactPoint: customerServiceContactPoint(),
     openingHoursSpecification: Object.entries(BUSINESS_INFO.hours).map(([day, hours]) => ({
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
@@ -256,7 +213,6 @@ export function generateServiceSchema(serviceName: string, serviceDescription: s
       telephone: SCHEMA_TELEPHONE,
       email: BUSINESS_INFO.email,
       priceRange: '$$',
-      address: publicPostalAddress(),
       parentOrganization: P5_PARENT_ORGANIZATION,
     },
     // The page city is the service area. It is not a second PostalAddress.
@@ -328,8 +284,6 @@ export function generateOrganizationSchema(): SchemaContext {
       : {}),
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
-    employee: publicEmployee(),
-    address: publicPostalAddress(),
     knowsAbout: [
       'kitchen remodeling',
       'bathroom remodeling',
@@ -341,7 +295,7 @@ export function generateOrganizationSchema(): SchemaContext {
       'Canyon County building permits',
     ],
     sameAs: BUSINESS_INFO.sameAs,
-    contactPoint: publicRepresentative(),
+    contactPoint: customerServiceContactPoint(),
   };
 }
 

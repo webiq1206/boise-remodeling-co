@@ -41,8 +41,7 @@ export const FAMILY_BRAND: FamilyBrand = {
     // Seven navigation items do not fit beside the lockup and CTA at 1024px, and the approved
     // C7 check (scripts/verify-p5-mobile-seo.mjs) keeps the bottom bar on screen below 1180px.
     desktopFrom: 1180,
-    // Owner decision #102: Call with its label, then Text. Chat lives in the request block and the menu.
-    phoneActions: ['call', 'text'],
+    phoneActions: ['call', 'text', 'chat'],
   },
   nav: [
     { label: 'Services', href: '/services' },
@@ -56,7 +55,13 @@ export const FAMILY_BRAND: FamilyBrand = {
   // One label, one destination: the short request on the homepage.
   cta: { label: 'Request a quote', href: '/#request' },
   phone: { display: SITE_CONFIG.phone, telHref: SITE_CONFIG.phoneHref, smsHref: SITE_CONFIG.phoneSmsHref },
-  chat: { enabled: true, label: 'Chat', openEvent: 'p5:assistant-open' },
+  chat: {
+    enabled: true, label: 'Chat', openEvent: 'p5:assistant-open',
+    // Match the existing closed-launcher exclusions and portal guards.
+    hiddenOn: ['/estimate', '/estimate/p5-preview', '/re-10*', '/remodel-plans*', '/admin*',
+      '/subcontractor', '/subcontractor/portal*', '/subcontractor/leads*', '/subcontractor/compliance*',
+      '/subcontractor/projects*', '/subcontractor/contracts*', '/subcontractor/purchases*'],
+  },
   bar: {
     // Approved C7 decision: the bar is on the first screen, over the hero.
     showOverHero: true,
@@ -133,8 +138,8 @@ export const FAMILY_BRAND: FamilyBrand = {
   registration: {
     text: REGISTRATION_LINE,
     href: DOPL_LICENSE_SEARCH,
-    title: 'Look up registration 8381215 on Idaho DOPL',
-    ariaLabel: 'Verify with Idaho DOPL: look up registration 8381215, opens in a new tab',
+    title: 'Idaho contractor registration 8381215',
+    ariaLabel: 'Idaho contractor registration 8381215, opens in a new tab',
     rel: 'noopener noreferrer',
   },
   // P5 Home Co's Facebook page (shared/gbpProfile); nothing renders until its URL exists.

@@ -60,7 +60,7 @@ export function FAQSection() {
                   className="border-0 border-b"
                   style={{ borderColor: "var(--ed-line)" }}
                 >
-                  <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:[color:var(--ed-accent)]">
+                  <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:underline [&[data-state=open]]:underline-offset-4">
                     {faq.q}
                   </AccordionTrigger>
                   <AccordionContent className="ed-body pb-7 text-[0.9375rem]">

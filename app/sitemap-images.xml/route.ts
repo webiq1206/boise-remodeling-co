@@ -48,13 +48,13 @@ export async function GET() {
     byPage.set(pageUrl, existing);
   };
 
-  // Representative inspiration, declared on the service page that shows it.
+  // Room and finish images, declared on the service page that shows them.
   for (const project of GALLERY_PROJECTS) {
     const pageUrl = `${baseUrl}/services/${project.serviceType}`;
     add(pageUrl, {
       loc: absolute(project.afterImageUrl, baseUrl),
       title: `${project.title} (design inspiration)`,
-      caption: `Representative design imagery. ${project.description}`,
+      caption: project.description,
     });
   }
 

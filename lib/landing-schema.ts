@@ -27,8 +27,7 @@ export function landingServiceSchema(
 }
 
 export function landingAreaBusinessSchema(cityName: string) {
-  // The PostalAddress stays the Meridian NAP. The page city is named in the
-  // description. areaServed remains the eight-city service area.
+  // The page city is named in the description; areaServed remains the eight-city coverage.
   return generateLocalBusinessSchema(cityName);
 }
 

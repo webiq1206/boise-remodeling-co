@@ -144,14 +144,12 @@ export default function RootLayout({
         <Providers>
           <ScrollToTop />
           <SkipLink />
-          <ApprovedShell><div className="m-phone-frame flex flex-col min-h-screen">
+          <ApprovedShell><div className="flex flex-col min-h-screen">
             <Navigation />
-            <div className="m-phone-scroll">
-              <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
-                {children}
-              </main>
-              <ConditionalFooter />
-            </div>
+            <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
+              {children}
+            </main>
+            <ConditionalFooter />
             <SiteActionBar />
           </div></ApprovedShell>
           <DeferredToaster />

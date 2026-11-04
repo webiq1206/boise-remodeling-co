@@ -19,7 +19,7 @@ export const EMAIL_BRAND = {
   hairline: "#39403D",   // borders + dividers
   text: "#F7F5F3",       // primary text (bone)
   textMuted: "#9FA49D",  // secondary text, sage lifted for 4.5:1 on #383837
-  accent: "#9AA098",     // sage accent - links, bars, ticks
+  accent: "#9AA098",     // approved sage accent for decorative rules and ticks
 } as const;
 
 export const SITE_BASE_URL = SITE_CONFIG.siteUrl;
@@ -75,7 +75,7 @@ export function buildTextLogo(): string {
   return `
     <div style="margin-bottom:16px;">
       <div style="font-family:'Fraunces',Georgia,'Times New Roman',serif;font-size:20px;font-weight:400;color:${EMAIL_BRAND.text};line-height:1.2;">
-        Boise Remodeling <span style="color:${EMAIL_BRAND.accent};font-style:italic;">Co.</span>
+        Boise Remodeling <span style="color:${EMAIL_BRAND.text};font-style:italic;">Co.</span>
       </div>
       <div style="font-family:Arial,Helvetica,sans-serif;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:${EMAIL_BRAND.textMuted};margin-top:6px;">
         Design &amp; Build
@@ -123,7 +123,7 @@ export const emailStyles = `
     color: ${EMAIL_BRAND.text};
   }
   .content p { color: ${EMAIL_BRAND.text}; }
-  .content a { color: ${EMAIL_BRAND.accent}; }
+  .content a { color: ${EMAIL_BRAND.text}; }
   .greeting {
     font-size: 18px;
     color: ${EMAIL_BRAND.text};

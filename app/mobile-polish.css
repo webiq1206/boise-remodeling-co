@@ -1,169 +1,41 @@
-/*
-  Phone layout under 768px (owner mobile spec, t1752u).
-  Desktop rules are unchanged. Dark text and rules use the brand charcoal token.
-*/
-
-html .fr-gallery p.fr-gallery-note + p.fr-gallery-note {
-  margin-top: 10px;
-}
-
+/* Compatible phone presentation from the charcoal audit.
+   Role sizes and control geometry remain in the canonical family tokens.
+   Keep document scrolling for anchors, the TOC and the planning calculator. */
 @media (max-width: 767px) {
-  .m-keep { white-space: nowrap; }
+  /* Carry the final phrase together when it fits, with a natural wrap fallback. */
+  .m-keep { display: inline-block; max-inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
 
-  /* The action bar sits in the page column, under the scrolling content,
-     so a heading or link cannot land underneath it. */
-  html:has(.approved-shell),
-  html:has(.approved-shell) body {
-    height: 100svh;
-    overflow: hidden;
-  }
-  html .approved-shell {
-    height: 100svh;
-    max-height: 100svh;
-    overflow: hidden;
-  }
-  html .approved-shell > .m-phone-frame {
-    display: flex;
-    flex-direction: column;
-    height: 100svh;
-    max-height: 100svh;
-    min-height: 0 !important;
-    overflow: hidden;
-  }
-  html .m-phone-scroll {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  html .fam-bar[data-family-bar] {
-    position: static;
-    flex: none;
-  }
-  html .fam-bar[data-family-bar][data-state="hidden"] {
-    display: none;
-  }
-  html .fam-bar-spacer {
-    display: none;
-  }
-}
-
-@media (max-width: 767px) {
-  /* Hero: center the eyebrow, title, support line, and actions. */
   html .fam-hero[data-family-hero] .fam-hero-copy {
     text-align: center;
     margin-inline: auto;
   }
   html .fam-hero[data-family-hero] .fam-hero-support,
-  html .fam-hero[data-family-hero] .fam-hero-micro {
-    margin-inline: auto;
-  }
-  html .fam-hero[data-family-hero] .fam-hero-actions {
-    align-items: center;
-  }
-  html .fam-hero[data-family-hero] .fam-hero-actions .fam-btn {
-    align-self: stretch;
-  }
-  html .fam-hero[data-family-hero] .fam-hero-link {
-    align-self: center;
-    justify-content: center;
-  }
-  html .approved-shell .interior-hero-copy {
-    text-align: center;
-  }
-  html .approved-shell .interior-hero-action {
-    display: flex;
-    justify-content: center;
-  }
+  html .fam-hero[data-family-hero] .fam-hero-micro { margin-inline: auto; }
+  html .fam-hero[data-family-hero] .fam-hero-actions { align-items: center; }
+  html .fam-hero[data-family-hero] .fam-hero-actions .fam-btn { align-self: stretch; }
+  html .fam-hero[data-family-hero] .fam-hero-link { align-self: center; justify-content: center; }
+  html .approved-shell .interior-hero-copy { text-align: center; }
+  html .approved-shell .interior-hero-action { display: flex; justify-content: center; }
+}
 
-  /* H1 stays at most 40px. The home title then wraps to three lines. */
-  html .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-title,
-  html .approved-shell .approved-interior .interior-hero-copy h1,
-  html .approved-shell .approved-interior .interior-hero-editorial h1 {
-    font-size: 40px;
-    line-height: 1.05;
-  }
-
-  /* Section H2s stay at most 36px. Card titles stay smaller so a
-     two-word name does not leave one word alone on the next line. */
-  html .approved-shell :is(.f-section, .fr-band, .fr-gallery, .interior-hero, .fr-cta-strip, .f-value, #faq, .ed-split) h2,
-  html .family-site :is(.f-section, .fr-band, .fr-cta-strip, .f-value) h2,
-  html .fr-gallery h2,
-  html .approved-shell .ed-h2 {
-    font-size: 36px;
-    line-height: 1.1;
-  }
-  html .approved-shell .interior-service-card h2 {
-    font-size: 22px;
-    line-height: 1.2;
-  }
-
-  /* Body copy, not eyebrows or fine print. */
-  html .approved-shell main :is(p, li):not(.f-eyebrow):not(.ed-eyebrow):not(.fam-hero-eyebrow):not(.fr-gallery-eyebrow):not(.interior-eyebrow):not(.fam-hero-micro):not(.ed-small):not(.fr-range-result-label):not(.fr-range-result-source) {
-    font-size: 16px;
-    line-height: 1.5;
-  }
-
-  /* Section rhythm: 64px is the low end of the 64 to 96px band, with a hairline between bands. */
-  html .approved-shell .f-area.f-section,
-  html .approved-shell .family-site > .f-section,
-  html .approved-shell .fr-band > .f-section,
-  html .approved-shell .fr-cta-strip,
-  html .approved-shell #faq,
-  html .approved-shell #budget.ed-photo-copy {
-    padding-block: 64px;
-  }
-  html .approved-shell .fr-gallery-inner {
-    padding-block: 64px;
-  }
-  html .approved-shell main section + section {
-    border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 16%, transparent);
-  }
-  html .approved-shell main :is(.fam-hero, .fr-band, .f-value, #budget) + section {
-    border-top-color: color-mix(in srgb, #fbfaf6 28%, transparent);
-  }
-
-  /* Controls and standalone links. Inline sentences keep their own line height. */
-  html .approved-shell :is(.fam-btn, .f-button, .f-link, .ed-link, .fr-range-choice, .fr-cities a, .interior-estimate-link, .fam-hero-link) {
-    min-height: 44px;
-  }
-  html .approved-shell :is(.f-link, .ed-link, .fr-cities a) {
-    display: inline-flex;
-    align-items: center;
-  }
-  html .approved-shell .f-section-top a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-
-  /*
-    Repeating cards, photos, and guidance cells scroll sideways.
-    Every item stays in the document for search and assistive tech.
-  */
+@media (max-width: 639px) {
+  /* Keep repeated content accessible by touch and keyboard without deleting it. */
   html .fr-cards,
   html .fr-mosaic,
   html #budget .ed-matrix {
     display: flex;
     flex-wrap: nowrap;
     grid-template-columns: none;
-    gap: 16px;
+    gap: var(--space-4);
     max-width: 100%;
     min-width: 0;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: 4px;
-    padding-bottom: 8px;
+    scroll-padding-inline: var(--space-1);
+    padding-bottom: var(--space-2);
   }
-  html .fr-cards > .fr-card {
-    flex-direction: column;
-  }
-  html .fr-cards > .fr-card .fr-card-media {
-    flex: none;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-  }
+  html .fr-cards > .fr-card { flex-direction: column; }
+  html .fr-cards > .fr-card .fr-card-media { flex: none; width: 100%; aspect-ratio: 16 / 10; }
   html .fr-cards > .fr-card,
   html .fr-mosaic > figure,
   html .fr-mosaic > figure.is-wide,
@@ -176,129 +48,23 @@ html .fr-gallery p.fr-gallery-note + p.fr-gallery-note {
     max-width: none;
   }
   html .fr-mosaic > figure,
-  html .fr-mosaic > figure.is-wide {
-    aspect-ratio: 16 / 10;
-  }
-
-  /* Two budget panels scroll as one row instead of stacking into a second screen. */
+  html .fr-mosaic > figure.is-wide { aspect-ratio: 16 / 10; }
   html #budget .ed-inset {
     display: flex;
     flex-wrap: nowrap;
-    gap: 16px;
+    gap: var(--space-4);
     max-width: 100%;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
   }
-  html #budget .ed-inset > * {
-    flex: 0 0 88%;
-    scroll-snap-align: start;
-    min-width: 0;
-  }
+  html #budget .ed-inset > * { flex: 0 0 88%; scroll-snap-align: start; min-width: 0; }
 
-  html #who-you-are-hiring .fr-founder img,
-  html .f-value > img {
-    width: 100%;
-    max-height: 180px;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
-  }
-
-  /* Every visible word is at least 16px. Heading sizes are set again so
-     the floor does not shrink them. Spans inside headings keep that size. */
-  html .approved-shell :is(p, span, a, button, li, label, legend, small, figcaption, td, th, dt, dd, input, textarea, select, summary, caption) {
-    font-size: 16px !important;
-  }
-  html .approved-shell :is(h1, h2, h3, h4, h5, h6) :is(span, a, em, strong, b) {
-    font-size: inherit !important;
-  }
-  html .approved-shell h1 { font-size: 32px !important; line-height: 1.1 !important; }
-  html .approved-shell main :is(.interior-hero-copy, .interior-hero-editorial, .interior-page-heading, .interior-document-heading, .interior-article-header, .interior-legal, .interior-sitemap) h1 {
-    font-size: 32px !important;
-    line-height: 1.1 !important;
-  }
-  html .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-title { font-size: 40px !important; line-height: 1.05 !important; }
-  html .approved-shell h3 { font-size: 22px !important; line-height: 1.2 !important; }
-  html .approved-shell h4 { font-size: 18px !important; line-height: 1.3 !important; }
-  html .approved-shell .interior-service-card h2 { font-size: 22px !important; line-height: 1.2 !important; }
-
-  /* Pull a last lone word up onto the previous line. */
-  html .approved-shell :is(h1, h2, h3, h4) {
-    text-wrap: pretty;
-  }
-  html .approved-shell .f-accordion .f-number {
-    align-self: flex-start;
-  }
-
-  /* Tap targets. Card and button links keep their own display.
-     The skip link stays clipped until it is focused. */
-  html .approved-shell :is(a, button, summary, [role="button"], input, select, textarea) {
-    min-height: 44px;
-    min-width: 44px;
-  }
-  html .approved-shell a:not(:has(img, h2, h3, div, picture)):not(.fr-card):not(.fam-btn):not(.f-button) {
+  html .approved-shell :is(.f-link, .ed-link, .fr-cities a, .fam-hero-link) {
     display: inline-flex;
     align-items: center;
+    min-height: var(--touch-min);
   }
-  html .approved-shell .fold-tile {
-    position: relative;
-    min-height: 44px;
-    min-width: 44px;
-  }
-  html .approved-shell input.fold-tile-input {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 44px !important;
-    min-height: 44px !important;
-    margin: 0 !important;
-    opacity: 0 !important;
-    clip: auto !important;
-    overflow: hidden;
-  }
-  html .approved-shell .fam-skip {
-    min-width: 1px;
-    min-height: 1px;
-  }
-  html .approved-shell .fam-skip:focus,
-  html .approved-shell .fam-skip:focus-visible {
-    min-width: auto;
-    min-height: 44px;
-  }
-  html .approved-shell :is(input, select, textarea) {
-    box-sizing: border-box;
-  }
-
-  /* Small utility headings were 12 to 14px. Section titles stay larger, card titles smaller. */
-  html .approved-shell h2 {
-    font-size: 20px !important;
-    line-height: 1.25 !important;
-  }
-  html .approved-shell :is(.f-section, .fr-band, .fr-gallery, .interior-hero, .fr-cta-strip, .f-value, #faq, .ed-split, .ed-shell) h2,
-  html .family-site :is(.f-section, .fr-band, .fr-cta-strip, .f-value) h2,
-  html .fr-gallery h2,
-  html .approved-shell :is(.ed-h2, .ed-h2-sm) {
-    font-size: 32px !important;
-    line-height: 1.15 !important;
-  }
-  html .approved-shell .interior-service-card h2,
-  html .approved-shell h3.ed-h4 {
-    font-size: 18px !important;
-    line-height: 1.25 !important;
-  }
-  html .approved-shell :is(.ed-statement, .ed-statement-wide, .ed-statement-display) {
-    max-width: none;
-  }
-  html .approved-shell .text-caption {
-    font-size: 16px !important;
-    line-height: 1.3 !important;
-  }
-}
-
-/* At 360px, 40px wraps the home title to four lines. 32px keeps it to two. */
-@media (max-width: 374px) {
-  html .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-title {
-    font-size: 32px !important;
-    line-height: 1.08 !important;
-  }
+  html .approved-shell .f-accordion .f-number { align-self: flex-start; }
+  html .approved-shell :is(h1, h2, h3, h4) { text-wrap: pretty; }
+  html .approved-shell :is(.ed-statement, .ed-statement-wide, .ed-statement-display) { max-width: none; }
 }

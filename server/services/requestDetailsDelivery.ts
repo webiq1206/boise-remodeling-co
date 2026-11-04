@@ -46,7 +46,7 @@ export function buildDetailsEmailHtml(input: DetailsDeliveryInput): string {
   const fileRows = files
     .map(
       (file) =>
-        `<li style="margin:0 0 6px;"><a href="${escapeHtml(file.url)}" style="color:${EMAIL_BRAND.accent};">${escapeHtml(file.name)}</a> <span style="color:${EMAIL_BRAND.textMuted};">(${escapeHtml(formatFileSize(file.size))})</span></li>`,
+        `<li style="margin:0 0 6px;"><a href="${escapeHtml(file.url)}" style="color:${EMAIL_BRAND.text};">${escapeHtml(file.name)}</a> <span style="color:${EMAIL_BRAND.textMuted};">(${escapeHtml(formatFileSize(file.size))})</span></li>`,
     )
     .join("");
   return wrapEmailHtml({
@@ -56,7 +56,7 @@ export function buildDetailsEmailHtml(input: DetailsDeliveryInput): string {
       <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:${EMAIL_BRAND.text};">
         ${escapeHtml(request.name)} added to the request they sent from the website. Same lead as the earlier email.
       </p>
-      <p style="margin:0 0 18px;font-size:15px;"><a href="${escapeHtml(tel)}" style="color:${EMAIL_BRAND.accent};">Call ${escapeHtml(request.phone)}</a>${request.email ? ` &middot; <a href="mailto:${escapeHtml(request.email)}" style="color:${EMAIL_BRAND.accent};">${escapeHtml(request.email)}</a>` : ""}</p>
+      <p style="margin:0 0 18px;font-size:15px;"><a href="${escapeHtml(tel)}" style="color:${EMAIL_BRAND.text};">Call ${escapeHtml(request.phone)}</a>${request.email ? ` &middot; <a href="mailto:${escapeHtml(request.email)}" style="color:${EMAIL_BRAND.text};">${escapeHtml(request.email)}</a>` : ""}</p>
       <div style="background:${EMAIL_BRAND.raised};border-left:3px solid ${EMAIL_BRAND.accent};padding:20px;margin:0 0 18px;border-radius:4px;">
         <p style="margin:0;white-space:pre-wrap;line-height:1.6;color:${EMAIL_BRAND.text};">${escapeHtml(files.length ? body.replace(/\nPhotos and files \(\d+\):[\s\S]*$/, "") : body)}</p>
         ${fileRows ? `<p style="margin:14px 0 6px;color:${EMAIL_BRAND.text};">Photos and files</p><ul style="margin:0;padding-left:18px;">${fileRows}</ul>` : ""}

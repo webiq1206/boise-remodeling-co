@@ -1,4 +1,4 @@
-/** Brand charcoal for fills: backgrounds, headers, footers, dark cards, buttons. */
+/** Shared neutral for presentation; brand facts and accents stay site-owned. */
 export const BRAND_CHARCOAL = "#383837";
 
 export const ESTIMATOR_BRAND = {

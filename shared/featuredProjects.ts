@@ -27,15 +27,15 @@ const BENCH = "/images/projects/boise-bench-ranch";
 export const FEATURED_BOISE_BENCH_RANCH: FeaturedProjectSet = {
   id: "boise-bench-ranch",
   city: "boise",
-  title: "Boise Bench ranch remodel concept",
+  title: "Ranch home finishes",
   description:
-    "Concept design for a 1972 Bench ranch: sage-grey lap siding over brick, black-framed windows, white shaker kitchen with a sage island, and a primary bath with subway tile. Not a completed customer project.",
+    "Sage-grey lap siding over brick, black-framed windows, white shaker cabinetry with a sage island, and a primary bath with subway tile.",
   rooms: [
     {
       key: "exterior",
       label: "Exterior",
       src: `${BENCH}/exterior-after.webp`,
-      alt: "1972 Boise Bench ranch with sage-grey lap siding, brick wainscot, and black-framed windows",
+      alt: "Ranch exterior with sage-grey lap siding, brick wainscot, and black-framed windows",
     },
     {
       key: "kitchen",
@@ -57,9 +57,9 @@ export const FEATURED_BOISE_BENCH_RANCH: FeaturedProjectSet = {
     },
     {
       key: "exterior-before",
-      label: "Exterior before",
+      label: "Tan siding",
       src: `${BENCH}/exterior-before.webp`,
-      alt: "Same Bench ranch before remodel with faded tan siding and brown aluminium windows",
+      alt: "Ranch exterior with tan siding and brown aluminium windows",
     },
   ],
 };

@@ -3,19 +3,18 @@
   styles live in styles/family-*.css and are never edited here.
 */
 
-/* B3 type scale. Page-opening H1s (interior and index heroes) use Display 36/52/64;
-   document, article, legal and sitemap H1s use H1 32/44/52. No H1 above 64px anywhere
-   (index pages ran to 82px). The older per-template rules set these sizes with clamps
-   that outgrew the scale, so the scale is bound here once, for every template. */
+/* B3 interior page-title role: 32/44/52px at the shared phone/tablet/desktop tiers.
+   Editorial section display uses 36/52/64px elsewhere. The shared marketing hero
+   keeps its existing fluid role; this rule covers only the named interior templates. */
 .approved-shell main :is(.interior-hero-copy, .interior-hero-editorial, .interior-page-heading) h1 {
-  font-size: var(--fs-display) !important;
-  line-height: var(--lh-display) !important;
-  letter-spacing: var(--tracking-display) !important;
+  font-size: var(--fs-h1) !important;
+  line-height: var(--lh-h1) !important;
+  letter-spacing: var(--tracking-display) !important; font-weight: var(--weight-display);
 }
 .approved-shell main :is(.interior-document-heading, .interior-article-header, .interior-legal, .interior-sitemap) h1 {
   font-size: var(--fs-h1) !important;
   line-height: var(--lh-h1) !important;
-  letter-spacing: var(--tracking-display) !important;
+  letter-spacing: var(--tracking-display) !important; font-weight: var(--weight-display);
 }
 
 /* Final CTA band: the short request card, then the longer consultation form one tap away. */
@@ -33,7 +32,7 @@
 .approved-shell .ed-lede {
   font-family: var(--font-sans);
   font-weight: 400;
-  line-height: 1.55;
+  line-height: var(--lh-body);
 }
 
 /* Interior hero budget (service, city-service and area pages, phase 3). The hero
@@ -59,7 +58,7 @@
   color: #4f524d;
   font-family: var(--font-sans);
   font-size: var(--fs-body);
-  line-height: 1.55;
+  line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-shell .approved-interior .interior-hero-copy p.interior-hero-chip {
   display: inline-flex;
@@ -73,8 +72,8 @@
   background: #fbfaf6;
   color: var(--color-charcoal);
   font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.3;
+  font-size: var(--fs-body);
+  line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-shell .approved-interior .interior-hero-chip > span {
   color: #4f524d;
@@ -117,7 +116,7 @@
 .approved-shell .interior-hero-more .ed-lede {
   max-width: 65ch;
   color: var(--color-charcoal);
-  font-size: var(--fs-body);
+  font-size: var(--fs-body); line-height: var(--lh-body); letter-spacing: 0; font-weight: 400;
 }
 .approved-shell .interior-hero-more .interior-hero-more-note {
   margin-top: var(--space-3, 12px);
@@ -164,7 +163,7 @@
    it is the paper-filled primary. */
 .approved-shell .fam-btn.interior-estimate-link {
   justify-content: center;
-  font-size: var(--fs-button);
+  font-size: var(--fs-button); line-height: 1; letter-spacing: 0; font-weight: 600;
 }
 .approved-shell .approved-interior .interior-hero-contact .fam-btn.interior-estimate-link {
   border-color: var(--color-paper);
@@ -185,7 +184,7 @@
   }
   .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy h1 + p {
     margin-bottom: var(--space-4, 16px);
-    line-height: 1.6;
+    line-height: var(--lh-body);
   }
   .approved-shell .approved-interior .interior-hero-contact .interior-hero-copy .ed-eyebrow {
     margin-top: var(--space-3, 12px);
@@ -246,4 +245,36 @@
 .approved-shell #request-form,
 .approved-shell #contact-request-form {
   scroll-margin-top: 0;
+}
+/*
+  Reviewed marketing typography roles, November 4. Dedicated tool and form controls retain their own rules.
+*/
+.fr-card-body > .f-link,
+.fr-cards-more > .f-link,
+.f-value > div > .f-link,
+.fr-founder > div > p > .f-link,
+.fr-cta-strip-actions > .f-link,
+.fr-request-copy .fr-request-list .f-link {
+  font-family: var(--font-sans);
+  font-size: var(--fs-button);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+
+/* Exact logo colors for heading emphasis, owner direction November 4.
+   Functional link/focus inks and body copy keep their existing contrast roles. */
+:root { --color-heading-accent: #7d9479; }
+html .approved-shell main :is(h1, h2, .ed-display, .ed-h2, .ed-h2-sm, .interior-statement) {
+  --ed-accent: var(--color-heading-accent);
+}
+html .approved-shell main :is(h1, h2, .ed-display, .ed-h2, .ed-h2-sm) :is(em, .brc-accent, .text-accent, .text-accent-legible),
+html .approved-shell main .interior-statement em {
+  color: var(--color-heading-accent);
+}
+/* Sage already clears large-text contrast on paper. Bone needs a small
+   neutral context around the existing display emphasis, without repainting sections. */
+html .approved-shell main :is(.ed-on-bone, .ed-on-muted, .ed-on-deep, .interior-project-aside, .f-scene-copy, .f-detail-aside) :is(h1, h2, .ed-display, .ed-h2, .ed-h2-sm) :is(em, .brc-accent, .text-accent, .text-accent-legible) {
+  text-shadow: -1px -1px 0 var(--color-charcoal), 0 -1px 0 var(--color-charcoal), 1px -1px 0 var(--color-charcoal), -1px 0 0 var(--color-charcoal), 1px 0 0 var(--color-charcoal), -1px 1px 0 var(--color-charcoal), 0 1px 0 var(--color-charcoal), 1px 1px 0 var(--color-charcoal);
 }

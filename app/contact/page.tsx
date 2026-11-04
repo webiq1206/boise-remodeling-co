@@ -35,7 +35,7 @@ import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { TextReplyAnswer, TextReplyLine } from '@/components/TextReplyLine';
-import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
+import { SITE_CONFIG } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight,Mail,MapPin,MessageSquare,Phone } from 'lucide-react';
@@ -106,7 +106,7 @@ function ContactChannel({
 }: ContactChannelProps) {
   const inner = (
     <MarketingCard
-      className={`h-full transition-colors ${
+      className={`min-w-0 transition-colors ${
         href ? 'group-hover:border-foreground/25' : ''
       } ${featured ? 'md:p-10' : ''}`}
       padding={featured ? 'lg' : 'default'}
@@ -132,10 +132,10 @@ function ContactChannel({
 
   if (href) {
     return (
-      <div className="h-full">
+      <div className="min-w-0 flex h-full flex-col">
         <a
           href={href}
-          className="block h-full group"
+          className="block min-w-0 flex-1 group"
           {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
         >
           {inner}
@@ -254,7 +254,7 @@ export default function ContactPage() {
               description="Call, text, or email. We come to you. We respond within one business day and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
-            <div className="ed-grid-balance grid sm:grid-cols-2 gap-4">
+            <div className="ed-grid-balance grid grid-cols-1 sm:grid-cols-2 gap-4 [&>*]:min-w-0">
               <Reveal className="sm:col-span-2">
                 <ContactChannel
                   icon={<Phone className="h-5 w-5" strokeWidth={1.5} />}
@@ -288,7 +288,7 @@ export default function ContactPage() {
                   label="Email us"
                   subtext="Response within one business day"
                 >
-                  <EmailLink className="text-base hover:text-foreground/70 transition-colors" />
+                  <EmailLink className="max-w-full min-w-0 break-all text-base hover:text-foreground/70 transition-colors" />
                 </ContactChannel>
               </Reveal>
               <Reveal delay={120}>
@@ -297,13 +297,9 @@ export default function ContactPage() {
                   label="Where we work"
                   subtext={SITE_CONFIG.address.serviceArea}
                 >
-                  <address className="not-italic leading-relaxed">
-                    {publicFooterLine()}
-                    <br />
-                    Based in {SITE_CONFIG.address.cityState}
-                    <br />
-                    Serving the Treasure Valley
-                  </address>
+                  <p className="leading-relaxed">
+                    {TREASURE_VALLEY_CITIES}
+                  </p>
                 </ContactChannel>
               </Reveal>
               <Reveal delay={180} className="sm:col-span-2">
