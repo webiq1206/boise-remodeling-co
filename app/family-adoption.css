@@ -246,3 +246,18 @@
 .approved-shell #contact-request-form {
   scroll-margin-top: 0;
 }
+/*
+  Reviewed marketing typography roles, November 4. Dedicated tool and form controls retain their own rules.
+*/
+.fr-card-body > .f-link,
+.fr-cards-more > .f-link,
+.f-value > div > .f-link,
+.fr-founder > div > p > .f-link,
+.fr-cta-strip-actions > .f-link,
+.fr-request-copy .fr-request-list .f-link {
+  font-family: var(--font-sans);
+  font-size: var(--fs-button);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0;
+}
