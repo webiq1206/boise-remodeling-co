@@ -15,7 +15,6 @@ const selected=[...new Set(['/', '/estimate/scope', '/contact','/about','/testim
  routes.find(r=>/^\/services\/[^/]+\/[^/]+$/.test(r)),
  routes.find(r=>/^\/guides\/[^/]+$/.test(r)),
  routes.find(r=>/^\/blog\/[^/]+$/.test(r)),
- ...(remodeling?['/design-ideas']:[]),
  ...(cabinet?['/catalog','/cabinets','/compare','/construction','/builders','/warranty']:[])
 ].filter(Boolean))];
 try {
@@ -99,8 +98,8 @@ try {
      }
      await page.screenshot({path:`${out}/${width}-footer-cta.jpg`});
     }
-    if(remodeling&&route==='/design-ideas'){
-     const slider=page.getByRole('slider',{name:'Compare cabinet finishes'}).first();await slider.scrollIntoViewIfNeeded();
+    if(remodeling&&route==='/'){
+     const slider=page.getByRole('slider',{name:'Compare before and after'}).first();await slider.scrollIntoViewIfNeeded();
      await slider.focus();await page.keyboard.press('Home');assert.equal(await slider.getAttribute('aria-valuenow'),'0');
      await page.keyboard.press('End');assert.equal(await slider.getAttribute('aria-valuenow'),'100');
      await page.keyboard.press('ArrowLeft');assert.equal(await slider.getAttribute('aria-valuenow'),'96');
@@ -109,8 +108,8 @@ try {
      assert(await slider.locator('..').locator('img').evaluateAll(es=>es.every(i=>i.naturalWidth>0&&i.complete)),'Both comparison images decode');
      await page.waitForTimeout(500);
      await page.screenshot({path:`${out}/${width}-kitchen-comparison.jpg`});
-     const originalLabel=await slider.locator('..').getByText('Oak cabinetry',{exact:true}).boundingBox();
-     const refreshLabel=await slider.locator('..').getByText('White shaker',{exact:true}).boundingBox();
+     const originalLabel=await slider.locator('..').getByText('Original concept',{exact:true}).boundingBox();
+     const refreshLabel=await slider.locator('..').getByText('Refresh concept',{exact:true}).boundingBox();
      assert(originalLabel.x+originalLabel.width+4<=refreshLabel.x,'Comparison labels must remain separate');
      const imgs=await slider.locator('..').locator('img').evaluateAll(es=>es.map(i=>({w:i.getBoundingClientRect().width,h:i.getBoundingClientRect().height,nw:i.naturalWidth,nh:i.naturalHeight})));
      assert(imgs.length===2&&imgs.every(i=>Math.abs(i.w/i.h-1.5)<.01),'Comparison aspect ratio');
