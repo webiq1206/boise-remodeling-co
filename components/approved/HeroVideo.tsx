@@ -43,7 +43,7 @@ export function HeroVideo() {
         </picture>
         <video ref={video} id="remodeling-hero-video" src={source} poster={POSTER} autoPlay muted loop playsInline preload="none" controls={false}
           className="remodeling-hero-video" data-visible={visible} tabIndex={-1} disablePictureInPicture
-          onLoadStart={() => setVisible(false)} onPlaying={() => setVisible(true)}
+          onPlaying={() => setVisible(true)}
           onError={() => setVisible(false)} />
       </div>
   );
