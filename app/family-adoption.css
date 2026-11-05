@@ -3,17 +3,49 @@
   styles live in styles/family-*.css and are never edited here.
 */
 
-/* Preserve the exact logo sage over the homepage photo with a thin charcoal surround. */
-.family-remodeling > .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-accent {
-  text-shadow:
-    -1px -1px 0 var(--color-charcoal),
-     0 -1px 0 var(--color-charcoal),
-     1px -1px 0 var(--color-charcoal),
-     1px  0 0 var(--color-charcoal),
-     1px  1px 0 var(--color-charcoal),
-     0  1px 0 var(--color-charcoal),
-    -1px  1px 0 var(--color-charcoal),
-    -1px  0 0 var(--color-charcoal);
+/* A clean photo-to-copy transition keeps the room above the brand statement
+   visible. The existing heading stays full width, without a glyph surround. */
+.family-remodeling > .fam-hero[data-family-hero] .fam-hero-copy {
+  position: relative;
+  isolation: isolate;
+}
+.family-remodeling > .fam-hero[data-family-hero] .fam-hero-accent {
+  position: relative;
+  padding-top: var(--space-2);
+}
+.family-remodeling > .fam-hero[data-family-hero] .fam-hero-accent::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: var(--space-2);
+  bottom: -100svh;
+  left: calc(-1 * max(var(--gutter), (100vw - var(--container-max)) / 2));
+  width: 100vw;
+  background: var(--color-charcoal);
+  pointer-events: none;
+}
+@media (max-width: 639px) {
+  .family-remodeling > .fam-hero[data-family-hero] {
+    --stack-cta: var(--space-4);
+  }
+}
+@media (max-width: 1023px) {
+  .family-remodeling > .fam-hero[data-family-hero] .fam-hero-media {
+    height: 50%;
+  }
+  .family-remodeling > .fam-hero[data-family-hero] .fam-hero-img {
+    object-position: 50% 100%;
+  }
+}
+@media (min-width: 1024px) {
+  .family-remodeling > .fam-hero[data-family-hero] .fam-hero-accent::before {
+    width: calc(72vw + var(--space-20));
+    background: linear-gradient(
+      90deg,
+      var(--color-charcoal) 0 calc(100% - var(--space-20)),
+      rgba(var(--color-scrim-rgb), 0) 100%
+    );
+  }
 }
 
 /* B3 interior page-title role: 32/44/52px at the shared phone/tablet/desktop tiers.
@@ -288,6 +320,6 @@ html .approved-shell main .interior-statement em {
 }
 /* Sage already clears large-text contrast on paper. Bone needs a small
    neutral context around the existing display emphasis, without repainting sections. */
-html .approved-shell main :is(.ed-on-bone, .ed-on-muted, .ed-on-deep, .interior-project-aside, .f-scene-copy, .f-detail-aside) :is(h1, h2, .ed-display, .ed-h2, .ed-h2-sm) :is(em, .brc-accent, .text-accent, .text-accent-legible) {
+html .approved-shell main :is(.ed-on-bone, .ed-on-muted, .ed-on-deep, .interior-project-aside, .f-scene-copy, .f-detail-aside) :is(h2, .ed-display, .ed-h2, .ed-h2-sm):not(h1) :is(em, .brc-accent, .text-accent, .text-accent-legible) {
   text-shadow: -1px -1px 0 var(--color-charcoal), 0 -1px 0 var(--color-charcoal), 1px -1px 0 var(--color-charcoal), -1px 0 0 var(--color-charcoal), 1px 0 0 var(--color-charcoal), -1px 1px 0 var(--color-charcoal), 0 1px 0 var(--color-charcoal), 1px 1px 0 var(--color-charcoal);
 }
