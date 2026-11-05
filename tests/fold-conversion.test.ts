@@ -14,19 +14,19 @@ const chat = readFileSync("components/assistant/AssistantWidget.tsx", "utf8");
 const css = readFileSync("app/design-refresh.css", "utf8");
 const nav = readFileSync("components/Navigation.tsx", "utf8");
 // The header and bar are the shared family components; this site sets them up in lib/familyBrand.ts.
-const header = readFileSync("components/family/SiteHeader.tsx", "utf8");
+const contactActions = readFileSync("components/family/ContactActions.tsx", "utf8");
 const bar = readFileSync("components/family/MobileActionBar.tsx", "utf8");
 const brand = readFileSync("lib/familyBrand.ts", "utf8");
 const sessions = readFileSync("server/services/estimatorSessions.ts", "utf8");
 const contactPage = readFileSync("app/contact/page.tsx", "utf8");
 const homePage = readFileSync("app/page.tsx", "utf8");
 
-// Phase 2 family chrome (intended change): the hero is the shared HeroPhoto, and the short
+// Phase 2 family chrome (intended change): the hero uses the approved video, and the short
 // request moved from under the hero to the final CTA band, where #request and #request-form
 // still hold it. Every primary CTA (hero, header, bar) points there.
-test("the first screen is the photograph and headline, and the short request is the final ask", () => {
+test("the first screen is the video and headline, and the short request is the final ask", () => {
   assert.equal(hero.includes("use client"), false);
-  assert.match(hero, /<HeroPhoto/);
+  assert.match(hero, /<ApprovedVideoHero/);
   assert.match(hero, /<ProofStrip/);
   assert.equal(hero.includes("HeroConversion"), false);
   assert.equal(hero.includes("fold-form"), false);
@@ -47,7 +47,7 @@ test("the first screen is the photograph and headline, and the short request is 
   assert.match(css, /--site-header-h:\s*64px/);
   assert.match(css, /--site-bottom-bar-h:\s*calc\(72px/);
   assert.match(bar, /data-mobile-nav-bar=""/);
-  assert.match(brand, /phoneActions: \['call', 'text'\]/);
+  assert.match(brand, /phoneActions: \['call', 'text', 'chat'\]/);
   assert.match(convert, /className="fold-call"/);
   assert.match(convert, /className="fold-chat"/);
   assert.match(convert, /p5:assistant-open/);
@@ -70,8 +70,8 @@ test("the first screen is the photograph and headline, and the short request is 
   assert.match(route, /email: z\.string\(\)\.email\(\)/);
   assert.match(route, /data\.contactPreference === "email" && !data\.email/);
   assert.match(route, /if \(!data\.email\) \{\s*ctx\.addIssue/);
-  assert.match(header, /data-testid="link-call-mobile-header"/);
-  assert.match(header, /data-testid="link-text-mobile-header"/);
+  assert.match(contactActions, /'link-call-mobile-header'/);
+  assert.match(contactActions, /'link-text-mobile-header'/);
   assert.match(contactPage, /<ConsultationForm/);
 });
 
@@ -123,7 +123,7 @@ test("the short request is one native step with call, text and a callback beside
 // Owner request (1 November 2026): every primary CTA lands on the form, not on a section intro.
 test("#request and #consult land on the form block, not on an intro", () => {
   const request = homePage.indexOf('<div id="request"');
-  assert.ok(request > 0 && request < homePage.indexOf('<p className="ed-eyebrow">Begin a conversation</p>'), "the form leads the closing section");
+  assert.ok(request > 0 && request < homePage.indexOf('<div className="fr-request-copy'), "the form leads the closing section");
   assert.match(homePage, /<span id="consult" className="home-request-anchor"/);
   assert.equal(homePage.includes('<Section id="consult"'), false);
   assert.ok(contactPage.indexOf('<div id="consult"') < contactPage.indexOf('className="interior-contact-intro"'), "contact form leads its section");

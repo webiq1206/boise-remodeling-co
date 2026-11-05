@@ -95,7 +95,7 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.match(html, /<a href="https:\/\/www\.google\.com\/search\?kgmid=\/g\/11ntl1t7dc" rel="noopener" target="_blank" data-testid="link-footer-google">P5 Home Co on Google<\/a>/);
 });
 
-test('the homepage hero is the family template with sourced proof', () => {
+test('the video hero preserves the family template copy, action and sourced proof', () => {
   const html = renderToStaticMarkup(React.createElement(ApprovedHomeHero));
   assert.equal((html.match(/<h1\b/g) ?? []).length, 1);
   assert.match(html, /<h1 class="fam-hero-title" id="family-hero-title">Boise home remodeling\. <span class="fam-hero-accent">One team, start to finish\.<\/span><\/h1>/);
@@ -107,8 +107,9 @@ test('the homepage hero is the family template with sourced proof', () => {
   assert.equal(cta[1], 'Request a quote');
   assert.match(html, /data-fit="viewport"/);
   assert.doesNotMatch(html, /class="fam-hero-link"/);
-  assert.match(html, /<picture class="fam-hero-media"><source media="\(max-width: 1023px\)"/);
-  assert.match(html, /<img [^>]*fetchPriority="high"[^>]*class="fam-hero-img"/);
+  assert.match(html, /data-video-hero=""/);
+  assert.match(html, /<div class="fam-hero-media" aria-hidden="true"><picture>/);
+  assert.match(html, /<img [^>]*class="fam-hero-img"[^>]*fetchPriority="high"/);
   // Support line: 14 words at most.
   const support = html.match(/<p class="fam-hero-support">([^<]+)<\/p>/)?.[1] ?? '';
   assert.ok(support.split(/\s+/).length <= 14, support);
@@ -120,19 +121,16 @@ test('the homepage hero is the family template with sourced proof', () => {
   assert.match(html, new RegExp(`Kitchen remodels planning from \\${kitchen?.planningFrom}`));
 });
 
-// The phone crop through /_next/image sometimes never got a response, which held
-// the load event open and timed out scripts/verify-p5-mobile-seo.mjs. Both hero
-// files are already sized WebP, so the hero serves them as is.
-test('the homepage hero serves its already-sized files as is, never through /_next/image', () => {
+// The approved poster stays in server HTML, with no optimizer or video request
+// before hydration determines the visitor's motion preference and viewport.
+test('the homepage serves the approved poster directly before any video source', () => {
   const html = renderToStaticMarkup(React.createElement(ApprovedHomeHero));
   assert.equal(html.includes('/_next/image'), false);
-  const phone = '/family/remodeling-hero-kitchen-island-phone.webp';
-  const desktop = '/family/remodeling-hero-kitchen-island.webp';
-  assert.match(html, new RegExp(`<link rel="preload" as="image" href="${phone}" media="\\(max-width: 1023px\\)"`));
-  assert.match(html, new RegExp(`<link rel="preload" as="image" href="${desktop}" media="\\(min-width: 1024px\\)"`));
-  assert.match(html, new RegExp(`<source media="\\(max-width: 1023px\\)" srcSet="${phone}" width="760" height="1024"/>`));
-  assert.match(html, new RegExp(`<img [^>]*src="${desktop}"[^>]*class="fam-hero-img"`));
-  assert.equal(/imageSrcSet|sizes="100vw"/.test(html), false);
+  assert.match(html, /<img [^>]*src="\/media\/remodeling\/boise-remodeling-co-poster\.jpg"/);
+  assert.match(html, /<video [^>]*muted=""[^>]*loop=""[^>]*playsinline=""[^>]*preload="none"/i);
+  assert.doesNotMatch(html, /<video [^>]* src=/);
+  assert.doesNotMatch(html, /<video [^>]*autoplay/i);
+  assert.doesNotMatch(html, /Pause background video/);
 });
 
 test('HeroPhoto still goes through the optimizer unless a file opts out', () => {
