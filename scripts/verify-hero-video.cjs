@@ -44,13 +44,22 @@ async function playing(page) {
   await page.waitForFunction(()=>{const v=document.querySelector('video');return !v.paused&&v.currentTime>0&&getComputedStyle(v).opacity==='1';},null,{timeout:20000});
 }
 async function loop(page,key) {
-  await page.locator('video').evaluate(v=>{
+  const natural=key.startsWith('webkit');
+  const duration=await page.locator('video').evaluate((v,natural)=>{
     v.__loopEvents=[];
+    v.__loopLastTime=v.currentTime;
     for(const name of ['loadstart','playing','pause','waiting','seeking','seeked','ended','error'])v.addEventListener(name,()=>v.__loopEvents.push({event:name,time:v.currentTime,paused:v.paused,ready:v.readyState}));
-    v.currentTime=v.duration-.25;
-  });
+    // Linux WebKit can freeze after an artificial near-EOF segment seek.
+    // Observe its complete uninterrupted loop instead of exercising that seek.
+    if(!natural)v.currentTime=v.duration-.25;
+    return v.duration;
+  },natural);
   try {
-    await page.waitForFunction(()=>{const v=document.querySelector('video');return !v.paused&&v.currentTime<2;},null,{timeout:10000});
+    await page.waitForFunction(natural=>{
+      const v=document.querySelector('video'),previous=v.__loopLastTime;
+      v.__loopLastTime=v.currentTime;
+      return !v.paused&&v.currentTime<2&&(!natural||previous>v.duration-2);
+    },natural,{timeout:natural?Math.ceil(duration*1000)+15000:10000});
   } catch(error) {
     const state=await page.locator('video').evaluate(v=>({time:v.currentTime,duration:v.duration,paused:v.paused,ended:v.ended,seeking:v.seeking,ready:v.readyState,network:v.networkState,opacity:getComputedStyle(v).opacity,visible:document.visibilityState,error:v.error?.message,buffered:Array.from({length:v.buffered.length},(_,i)=>[v.buffered.start(i),v.buffered.end(i)]),events:v.__loopEvents}));
     fs.writeFileSync(path.join(out,`${key}-loop-failure.json`),JSON.stringify(state,null,2));
@@ -58,7 +67,7 @@ async function loop(page,key) {
   }
   const state=await page.locator('video').evaluate(v=>({time:v.currentTime,paused:v.paused,loop:v.loop,muted:v.muted}));
   check(state.loop&&state.muted&&!state.paused,`${key}: loop did not restart muted playback`);
-  loops.push({key,...state});
+  loops.push({key,mode:natural?'uninterrupted':'end-seek',...state});
 }
 async function geometry(page,key) {
   const g=await page.evaluate(()=>{
