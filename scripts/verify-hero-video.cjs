@@ -92,6 +92,17 @@ async function geometry(page, key) {
         check(Math.abs((await p.locator('video').evaluate(v=>v.currentTime))-before)<0.05,`${key}: pause did not freeze playback`);
         check(await p.locator('video').evaluate(v=>getComputedStyle(v).opacity==='1'),`${key}: paused frame disappeared`);
         await p.keyboard.press('Enter'); await playing(p);
+        if (width===1440) {
+          const launcher=p.getByTestId('assistant-launcher');
+          await launcher.waitFor({state:'visible'});
+          const overlap=await p.evaluate(()=>{
+            const a=document.querySelector('.remodeling-hero-video-toggle').getBoundingClientRect();
+            const b=document.querySelector('[data-testid="assistant-launcher"]').getBoundingClientRect();
+            return a.left<b.right && a.right>b.left && a.top<b.bottom && a.bottom>b.top;
+          });
+          check(!overlap,'desktop playback control overlaps chat launcher');
+          await p.screenshot({path:path.join(out,'desktop-controls.png')});
+        }
       }
       if (width===390) {
         for (const h of [700,932,844]) { await p.setViewportSize({width,height:h}); await geometry(p,`resized-390x${h}`); }

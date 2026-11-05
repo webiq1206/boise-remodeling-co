@@ -115,6 +115,8 @@
   }
   .remodeling-hero-video-toggle {
     bottom: var(--space-6);
+    left: var(--gutter);
+    right: auto;
   }
 }
 
