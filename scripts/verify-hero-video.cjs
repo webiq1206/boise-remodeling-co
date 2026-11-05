@@ -48,14 +48,27 @@ async function loop(page,key) {
   const duration=await page.locator('video').evaluate((v,natural)=>{
     v.__loopEvents=[];
     v.__loopMaxTime=v.currentTime;
+    v.__loopClockMaxTime=v.currentTime;
+    v.__loopFrameMaxTime=0;
+    v.__loopStarted=performance.now();
+    v.__loopFrames=0;
     v.__naturalLoopObserved=false;
     for(const name of ['loadstart','playing','pause','waiting','seeking','seeked','ended','error'])v.addEventListener(name,()=>v.__loopEvents.push({event:name,time:v.currentTime,paused:v.paused,ready:v.readyState}));
     // Latch the real high-to-low transition in media events. A busy WebKit
     // animation-frame callback can miss the brief beginning of the next loop.
-    for(const name of ['timeupdate','seeking','seeked','playing'])v.addEventListener(name,()=>{
-      if(v.__loopMaxTime>v.duration-2&&v.currentTime<2)v.__naturalLoopObserved=true;
-      v.__loopMaxTime=Math.max(v.__loopMaxTime,v.currentTime);
-    });
+    v.__observeLoop=(time,frame=false)=>{
+      if(v.__loopMaxTime>v.duration-2&&time<2)v.__naturalLoopObserved=true;
+      v.__loopMaxTime=Math.max(v.__loopMaxTime,time);
+      if(frame)v.__loopFrameMaxTime=Math.max(v.__loopFrameMaxTime,time);
+      else v.__loopClockMaxTime=Math.max(v.__loopClockMaxTime,time);
+    };
+    for(const name of ['timeupdate','seeking','seeked','playing'])v.addEventListener(name,()=>v.__observeLoop(v.currentTime));
+    // WebKit's timeupdate events can be several seconds apart in CI. Sample
+    // presented media timestamps too; this observes frames without seeking.
+    if(natural&&v.requestVideoFrameCallback){
+      const frame=(_,metadata)=>{v.__loopFrames++;v.__observeLoop(metadata.mediaTime,true);if(!v.__naturalLoopObserved)v.__loopFrameCallback=v.requestVideoFrameCallback(frame);};
+      v.__loopFrameCallback=v.requestVideoFrameCallback(frame);
+    }
     // Linux WebKit can freeze after an artificial near-EOF segment seek.
     // Observe its complete uninterrupted loop instead of exercising that seek.
     if(!natural)v.currentTime=v.duration-.25;
@@ -64,14 +77,17 @@ async function loop(page,key) {
   try {
     await page.waitForFunction(natural=>{
       const v=document.querySelector('video');
+      v.__observeLoop(v.currentTime);
       return !v.paused&&v.currentTime>0&&getComputedStyle(v).opacity==='1'&&(natural?v.__naturalLoopObserved:v.currentTime<2);
-    },natural,{timeout:natural?Math.ceil(duration*1000)+15000:10000});
+    },natural,{polling:100,timeout:natural?Math.ceil(duration*1000)+15000:10000});
   } catch(error) {
-    const state=await page.locator('video').evaluate(v=>({time:v.currentTime,duration:v.duration,maxTime:v.__loopMaxTime,naturalLoopObserved:v.__naturalLoopObserved,paused:v.paused,ended:v.ended,seeking:v.seeking,ready:v.readyState,network:v.networkState,opacity:getComputedStyle(v).opacity,visible:document.visibilityState,error:v.error?.message,buffered:Array.from({length:v.buffered.length},(_,i)=>[v.buffered.start(i),v.buffered.end(i)]),events:v.__loopEvents}));
+    const state=await page.locator('video').evaluate(v=>({time:v.currentTime,duration:v.duration,maxTime:v.__loopMaxTime,clockMaxTime:v.__loopClockMaxTime,frameMaxTime:v.__loopFrameMaxTime,elapsedMs:performance.now()-v.__loopStarted,observedFrames:v.__loopFrames,naturalLoopObserved:v.__naturalLoopObserved,paused:v.paused,ended:v.ended,seeking:v.seeking,ready:v.readyState,network:v.networkState,opacity:getComputedStyle(v).opacity,visible:document.visibilityState,error:v.error?.message,buffered:Array.from({length:v.buffered.length},(_,i)=>[v.buffered.start(i),v.buffered.end(i)]),events:v.__loopEvents}));
     fs.writeFileSync(path.join(out,`${key}-loop-failure.json`),JSON.stringify(state,null,2));
     throw error;
+  } finally {
+    await page.locator('video').evaluate(v=>{if(v.__loopFrameCallback!==undefined&&v.cancelVideoFrameCallback)v.cancelVideoFrameCallback(v.__loopFrameCallback);});
   }
-  const state=await page.locator('video').evaluate(v=>({time:v.currentTime,maxTime:v.__loopMaxTime,naturalLoopObserved:v.__naturalLoopObserved,paused:v.paused,loop:v.loop,muted:v.muted}));
+  const state=await page.locator('video').evaluate(v=>({time:v.currentTime,maxTime:v.__loopMaxTime,clockMaxTime:v.__loopClockMaxTime,frameMaxTime:v.__loopFrameMaxTime,elapsedMs:performance.now()-v.__loopStarted,observedFrames:v.__loopFrames,naturalLoopObserved:v.__naturalLoopObserved,paused:v.paused,loop:v.loop,muted:v.muted}));
   check(state.loop&&state.muted&&!state.paused,`${key}: loop did not restart muted playback`);
   loops.push({key,mode:natural?'uninterrupted':'end-seek',...state});
 }
