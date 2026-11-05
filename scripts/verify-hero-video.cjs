@@ -97,7 +97,10 @@ async function loop(page,key) {
     await page.waitForFunction(natural=>{
       const v=document.querySelector('video');
       v.__observeLoop(v.currentTime);
-      const nativeRestart=v.__nativeLoopSeek&&v.__nativeLoopSeeked&&v.__nativeLoopPlaying&&!v.__loopInterrupted&&v.currentSrc===v.__loopSource;
+      // macOS WebKit stays playing through the wrap and emits no new playing
+      // event. Its full timestamp rollover plus seeked is equally direct proof;
+      // both paths must subsequently advance while visibly playing.
+      const nativeRestart=v.__nativeLoopSeek&&v.__nativeLoopSeeked&&(v.__nativeLoopPlaying||v.__timestampRolloverObserved)&&!v.__loopInterrupted&&v.currentSrc===v.__loopSource;
       return !v.paused&&v.muted&&v.loop&&getComputedStyle(v).opacity==='1'&&(natural?nativeRestart&&v.currentTime>1:v.currentTime>0&&v.currentTime<2);
     },natural,{polling:100,timeout:natural?Math.ceil(duration*1000)+15000:10000});
     if(natural){
