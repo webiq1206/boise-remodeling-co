@@ -122,15 +122,16 @@ test('the video hero preserves the family template copy, action and sourced proo
 });
 
 // The approved poster stays in server HTML, with no optimizer or video request
-// before hydration determines the visitor's motion preference and viewport.
+// before hydration selects the correct viewport source.
 test('the homepage serves the approved poster directly before any video source', () => {
   const html = renderToStaticMarkup(React.createElement(ApprovedHomeHero));
   assert.equal(html.includes('/_next/image'), false);
   assert.match(html, /<img [^>]*src="\/media\/remodeling\/boise-remodeling-co-poster\.jpg"/);
   assert.match(html, /<video [^>]*muted=""[^>]*loop=""[^>]*playsinline=""[^>]*preload="none"/i);
   assert.doesNotMatch(html, /<video [^>]* src=/);
-  assert.doesNotMatch(html, /<video [^>]*autoplay/i);
-  assert.doesNotMatch(html, /Pause background video/);
+  assert.match(html, /<video [^>]*autoplay=""/i);
+  assert.doesNotMatch(html, /<video [^>]*\bcontrols(?:=|\s|>)/i);
+  assert.doesNotMatch(html, /<(?:button|input)\b|(?:Play|Pause|Stop) background video/);
 });
 
 test('HeroPhoto still goes through the optimizer unless a file opts out', () => {
