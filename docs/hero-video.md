@@ -18,7 +18,7 @@ poster. A paused video retains its current frame.
 
 ## Validation
 
-`node scripts/verify-hero-video.cjs` checks the real homepage at ten viewport
+`node scripts/verify-hero-video.cjs` checks the real homepage at twelve viewport
 sizes, viewport resizing, keyboard pause/play, responsive sources, reduced
 motion changes, failed playback, autoplay rejection and no JavaScript.
 Set `HERO_TEST_WEBKIT=1` to include mobile WebKit. Screenshots and measured

@@ -9,7 +9,7 @@ const out = path.resolve('test-results/hero-video');
 fs.mkdirSync(out, { recursive: true });
 const records = [];
 const failures = [];
-const viewports = [[320,568],[360,640],[390,844],[430,932],[768,1024],[1024,768],[1280,720],[1440,900],[1920,1080],[844,390]];
+const viewports = [[320,568],[360,640],[390,844],[430,932],[768,1024],[1024,768],[1280,720],[1440,900],[1920,1080],[844,390],[667,375],[640,360]];
 const check = (ok, text) => { if (!ok) failures.push(text); };
 async function context(browser, options = {}, mode = '') {
   const c = await browser.newContext({serviceWorkers:'block', ...options});
@@ -27,8 +27,9 @@ async function context(browser, options = {}, mode = '') {
   return c;
 }
 async function ready(page) {
-  const response=await page.goto(origin, {waitUntil:'networkidle', timeout:180000});
+  const response=await page.goto(origin, {waitUntil:'domcontentloaded', timeout:180000});
   assert.equal(response.status(),200,'homepage response');
+  await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--header-height')); 
   await page.evaluate(() => document.fonts.ready);
 }
 async function playing(page) {
