@@ -17,7 +17,7 @@ const viewports = [[320,568],[390,844],[768,1024],[1440,900]];
 const times = [0.2,1,4,7,10,13,16,19,22,25,28,29.7];
 const selectors = {
   eyebrow:'.fam-hero-eyebrow', heading:'.fam-hero-title', accent:'.fam-hero-accent',
-  support:'.fam-hero-support', cta:'[data-hero-cta]', playback:'.remodeling-hero-video-toggle',
+  support:'.fam-hero-support', cta:'[data-hero-cta]',
 };
 const auditSelectors = Object.values(selectors).map(s => `html body [data-video-hero] ${s}`).join(',');
 const results = [], bounds = [], failures = [];
@@ -78,7 +78,6 @@ async function main() {
       await page.waitForFunction(() => {const i=document.querySelector('.fam-hero-img'); return i.complete && i.naturalWidth>0;});
       await page.waitForFunction(() => {const v=document.querySelector('video'); return v.currentTime>0 && !v.paused;});
       await page.locator('video').evaluate(video => video.pause());
-      await page.getByRole('button',{name:'Play background video',exact:true}).waitFor();
       // Audit-only changes prevent color-transition ghosts and keep masks stable.
       await page.addStyleTag({content:'*,*::before,*::after{transition:none!important;animation:none!important}'});
       const info=await page.evaluate(selectors => {

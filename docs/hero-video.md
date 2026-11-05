@@ -17,15 +17,23 @@ including the top safe area. Mobile action-bar space is reserved inside content,
 so it never shortens the backdrop. The shared family chrome remains unchanged.
 
 The supplied poster and existing copy/action render without JavaScript.
-Reduced motion fetches no video. Muted looping inline playback has a visible
-keyboard-operable pause/play button, and errors/autoplay rejection retain the
-poster. A paused video retains its current frame.
+The hero attempts muted inline autoplay and looping at every viewport, including
+when reduced-motion or data-saver preferences are enabled. There are no custom
+play, pause or stop controls, and native video controls are disabled. The poster
+remains during loading or technical failure, including browser autoplay rejection,
+unsupported media, network failure and no JavaScript. Browser restrictions are
+respected; autoplay is not guaranteed when the browser blocks it.
+
+This requested continuous decorative loop has no pause, stop or hide mechanism
+and does not meet WCAG 2.2.2 (Level A). Passing contrast checks is not a claim
+of full accessibility compliance. See the [W3C explanation](https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html).
 
 ## Validation
 
 `node scripts/verify-hero-video.cjs` checks the real homepage at twelve viewport
-sizes, viewport resizing, keyboard pause/play, responsive sources, reduced
-motion changes, failed playback, autoplay rejection and no JavaScript.
+sizes, viewport resizing, conversion-link keyboard access, responsive sources,
+control absence, real looping, autoplay under reduced motion and emulated data
+saver, technical playback failures, autoplay rejection and no JavaScript.
 Set `HERO_TEST_WEBKIT=1` to include mobile WebKit. Screenshots and measured
 viewport/header/hero/next-section geometry are saved under
 `test-results/hero-video/`. The `Homepage video and fold verification` workflow
