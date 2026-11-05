@@ -11,8 +11,8 @@ const path = require('node:path');
 const origin = process.env.HERO_TEST_ORIGIN || 'http://127.0.0.1:34865';
 assert.match(origin, /^http:\/\/127\.0\.0\.1:\d+$/);
 const out = path.resolve('test-results/hero-video/contrast');
+fs.rmSync(out, {recursive:true,force:true});
 fs.mkdirSync(out, {recursive:true});
-fs.rmSync(path.join(out,'failure.txt'), {force:true});
 const viewports = [[320,568],[390,844],[768,1024],[1440,900]];
 const times = [0.2,1,4,7,10,13,16,19,22,25,28,29.7];
 const selectors = {
@@ -31,8 +31,8 @@ function luminance(channels) {
 }
 function contrast(a, b) { return (Math.max(a,b) + 0.05) / (Math.min(a,b) + 0.05); }
 const rendered = page => page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-async function capture(page, filename) {
-  const image = await page.screenshot({path:path.join(out,filename)});
+async function capture(page, filename, save=true) {
+  const image = await page.screenshot(save ? {path:path.join(out,filename)} : {});
   return sharp(image).removeAlpha().raw().toBuffer();
 }
 function glyphMask(pixels, region, width, height) {
@@ -129,7 +129,10 @@ async function main() {
         for (const treatment of ['painted-shadow','without-shadow']) {
           const noShadow=treatment==='without-shadow'?await page.addStyleTag({content:`${auditSelectors}{text-shadow:none!important;-webkit-text-stroke:0!important}`}):null;
           await rendered(page);
-          const pixels=await capture(page,`${key}-${label}-${treatment}.png`);
+          // Measure every sample; retain representative background images so the
+          // complete screenshots/JSON artifact stays within its existing 64MiB cap.
+          const save=sample.kind!=='video' || [1,7,13,22,28].includes(sample.time);
+          const pixels=await capture(page,`${key}-${label}-${treatment}.png`,save);
           for (const region of info.regions) {
             const foreground=luminance(rgb(region.color)), mask=masks[region.name];
             const core=measure(pixels,mask.core,foreground,region.threshold), ring=measure(pixels,mask.ring,foreground,region.threshold);
