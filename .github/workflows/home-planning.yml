@@ -7,6 +7,7 @@ on:
       - scripts/verify-home-planning.cjs
       - scripts/offline-run.mjs
       - .github/workflows/home-planning.yml
+      - scripts/branding-ci-evidence-bound.mjs
 permissions:
   contents: read
 concurrency:
@@ -45,10 +46,15 @@ jobs:
         run: cp /tmp/planning-after.tsx components/approved/PlanningRangeExplorer.tsx
       - name: Check proposed calculator and capture every step
         run: node scripts/verify-home-planning.cjs
-      - uses: actions/upload-artifact@v4
+      - name: Bound complete artifact group 1 to64MiB
+        id: bounded_artifact_01
         if: always()
+        run: node scripts/branding-ci-evidence-bound.mjs --strict-64m 'test-results/home-planning/'
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && steps.bounded_artifact_01.outcome == 'success' && steps.bounded_artifact_01.outputs.ready == 'true' }}
         with:
           name: home-planning-${{ github.sha }}
-          path: test-results/home-planning/
+          path: branding-ci-evidence/complete.tar.gz
           retention-days: 14
+          compression-level: 0
           if-no-files-found: error

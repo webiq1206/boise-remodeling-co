@@ -17,7 +17,9 @@ test('home keywords and the current ungated planning calculator survive phone po
 test('phone polish preserves canonical type and controls instead of universal overrides', () => {
   const css = readFileSync('app/mobile-polish.css', 'utf8');
   assert.match(css, /@media \(max-width: 767px\)/);
-  assert.match(css, /text-align: center/);
+  // Editorial blocks inherit their original alignment. Shared control labels
+  // retain their own alignment instead of receiving a blanket phone override.
+  assert.doesNotMatch(css, /text-align\s*:|justify-content\s*:\s*center/);
   assert.match(css, /min-height: var\(--touch-min\)/);
   assert.match(css, /gap: var\(--space-4\)/);
   assert.match(css, /overflow-x: auto/);
