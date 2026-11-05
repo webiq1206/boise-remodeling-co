@@ -1,6 +1,6 @@
 # Boise Remodeling Co brand profile
 
-Profile version: 1.2, source consolidation dated November 4, 2026. Last separately recorded approval: the September 24 family design handoff and October 28 approved logo receipt; the latest owner instructions are incorporated below. This consolidation and the November 4 implementation still require independent rendered review and release checks. It is not a new approval or publication record.
+Profile version: 1.3, source consolidation dated November 5, 2026. Last separately recorded approval: the September 24 family design handoff and October 28 approved logo receipt; the latest owner instructions are incorporated below. This consolidation and the November 4 implementation still require independent rendered review and release checks. It is not a new approval or publication record.
 
 This is the current website profile. Its source of truth is the verified owner direction, the [approved design handoff](approved-design-handoff.md), [approved asset receipt](branding-20261028.json), [brand configuration](../lib/familyBrand.ts), [site configuration](../shared/siteConfig.ts), and [canonical family tokens](../styles/family-tokens.css). The November 4 authority and typography decision are recorded in the workspace as `evidence/portfolio-six-site-authority.md` and `evidence/portfolio-typography-decision.md`. Older kit rules remain useful for original artwork, but their colors and minimum wordmark sizes do not override the approved website lockup or current UI tokens.
 
@@ -53,9 +53,10 @@ The November 4 common responsive roles are explicit below. Phone is below 640px,
 
 | Role and canonical token | Phone | Tablet | Desktop | Line height / tracking |
 | --- | --- | --- | --- | --- |
-| Marketing hero `--fs-hero` | `clamp(42px,11.5vw,56px)` | `clamp(56px,8.5vw,80px)` | `clamp(68px,7vw,116px)` | 1.02, desktop .98 / -.03em |
+| Marketing hero `--fs-hero` | `clamp(44px,13.333vw,56px)` | `clamp(56px,8.5vw,80px)` | `clamp(68px,7vw,116px)` | 1.02, desktop .98 / -.03em |
 | Editorial section display `--fs-display` | 36 | 52 | 64 | 1.05 / -.02em |
-| Interior H1 / feature panel `--fs-h1` | 32 | 44 | 52 | 1.1 / -.02em |
+| Interior H1 `--fs-page-title` | 40 | 44 | 52 | 1.1 / -.02em |
+| Feature panel `--fs-h1` | 32 | 44 | 52 | 1.1 / -.02em |
 | Ordinary content H2 `--fs-h2` | 28 | 36 | 40 | 1.15 / -.01em |
 | Card/content H3 `--fs-h3` | 22 | 26 | 28 | 1.2 / -.01em |
 | H4 `--fs-h4` | 18 | 20 | 20 | 1.3 / 0 |
@@ -141,8 +142,14 @@ interior statement/aside titles, legacy hero emphasis and dark planning bands co
 this exact role. The shared HeroPhoto uses the same heading role after canonical transport.
 Small FAQ open states and related/service title hover states retain readable neutral text;
 underline/chevron affordances convey their state without adding a different heading hue.
-Sage display emphasis on bone uses a scoped 1px existing-charcoal glyph context; paper and dark contexts retain their current surfaces.
+Existing H2 display emphasis on bone retains its scoped 1px charcoal context. The later November 5 instruction removes that context from H1s only; H2 styling is preserved.
 This is a source implementation record, not a rendered contrast or visual acceptance.
 Actual font pixels, photograph contrast, all listed template consumers and independent
 review remain required at the exact final revision. Source evidence lives in the private
 `evidence/brand-heading-accent-inventory.json` and implementation ledger.
+
+### November 5 heading refinement
+
+The owner requested clean H1s without glyph shadows, stronger phone H1s, and selective restoration of earlier mobile left alignment. The shared hero phone role is `clamp(44px,13.333vw,56px)`, while ordinary H1s use `--fs-page-title` at40/44/52px. The separate feature-title role stays32/44/52px; dedicated estimator title clamps and centered controls remain unchanged. Only the recently introduced mobile hero/interior centering rules were removed.
+
+For the homepage, the exact sage accent sits on an existing-charcoal lower copy field instead of an eight-direction glyph surround. An8px heading-stack separation clears descenders; the phone CTA stack is16px. Phones/tablets show a purposeful upper kitchen crop including island/stool detail; desktop retains the original heading width and a right-hand view of the room. This bounded composition preserves the approved image, content and CTA. Independent V5 development-prototype review passed the nine-size set; final production-build review, CI, merge and publication are separate gates. Jared retains publication ownership.

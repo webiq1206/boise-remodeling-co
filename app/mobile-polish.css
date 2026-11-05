@@ -5,17 +5,8 @@
   /* Carry the final phrase together when it fits, with a natural wrap fallback. */
   .m-keep { display: inline-block; max-inline-size: 100%; white-space: normal; overflow-wrap: anywhere; }
 
-  html .fam-hero[data-family-hero] .fam-hero-copy {
-    text-align: center;
-    margin-inline: auto;
-  }
-  html .fam-hero[data-family-hero] .fam-hero-support,
-  html .fam-hero[data-family-hero] .fam-hero-micro { margin-inline: auto; }
-  html .fam-hero[data-family-hero] .fam-hero-actions { align-items: center; }
-  html .fam-hero[data-family-hero] .fam-hero-actions .fam-btn { align-self: stretch; }
-  html .fam-hero[data-family-hero] .fam-hero-link { align-self: center; justify-content: center; }
-  html .approved-shell .interior-hero-copy { text-align: center; }
-  html .approved-shell .interior-hero-action { display: flex; justify-content: center; }
+  /* Editorial copy retains its original left flow. Control labels keep their
+     existing centered treatment in the shared components. */
 }
 
 @media (max-width: 639px) {
