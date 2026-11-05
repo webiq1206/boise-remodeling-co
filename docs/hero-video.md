@@ -6,7 +6,12 @@ The 720p MP4 is selected at widths up to 767px; desktop and tablet use 1080p.
 All three supplied videos and both images are retained. No visual regeneration
 or re-editing was performed. The Library transfer metadata stays outside Git.
 
-The homepage uses a uniform `#000000` overlay at 40% opacity (60% transparency).
+The homepage uses a uniform `#000000` overlay at 60% opacity (40% transparency).
+Its hero-only sage accent is `#C0CFBB`; existing light copy remains `#FBFAF6`.
+This keeps 40% of the video contribution visible while providing a conservative
+pure-white-frame contrast bound of 3.52:1 for the large sage accent and 5.50:1
+for normal light copy, without relying on text shadows. Brand tokens elsewhere
+remain unchanged.
 Its backdrop extends to the dynamic viewport fold below the in-flow header,
 including the top safe area. Mobile action-bar space is reserved inside content,
 so it never shortens the backdrop. The shared family chrome remains unchanged.
@@ -26,6 +31,15 @@ viewport/header/hero/next-section geometry are saved under
 `test-results/hero-video/`. The `Homepage video and fold verification` workflow
 runs repository prebuild gates, affected tests, TypeScript, a production build,
 and browser verification on the PR and final main commit.
+
+`node scripts/verify-hero-contrast.cjs` measures actual text regions across the
+video loop at mobile, tablet and desktop sizes. It retains the painted shadows
+for one pass and measures the video background without shadows separately.
+Computed colors and font sizes determine the WCAG AA threshold. A conservative
+pure-white-frame bound guards every possible video frame and the poster.
+The scene samples and glyph-boundary measurements are evidence, rather than a
+whole-site accessibility certification. Results stay in
+`test-results/hero-video/contrast/` and are included in the CI evidence archive.
 
 ## Original delivery files
 

@@ -52,7 +52,7 @@ async function geometry(page, key) {
   check(g.hero.bottom>=g.viewport.height-1 && g.next.top>=g.viewport.height-1, `${key}: next section exposed`);
   check(g.hero.left===0 && g.hero.width===g.viewport.width, `${key}: hero not full width`);
   check(Math.abs(g.media.height-g.hero.height)<1 && g.video.width===g.hero.width && Math.abs(g.video.height-g.hero.height)<1, `${key}: media does not cover hero`);
-  check(g.scrim.color==='rgba(0, 0, 0, 0.4)' && g.scrim.image==='none' && g.innerBackground==='none' && g.accentMask==='none', `${key}: overlay not uniform black40`);
+  check(g.scrim.color==='rgba(0, 0, 0, 0.6)' && g.scrim.image==='none' && g.innerBackground==='none' && g.accentMask==='none', `${key}: overlay not uniform black60`);
   check(g.scrollWidth===g.viewport.width, `${key}: horizontal overflow`);
   check(g.support.bottom<=(g.bar?.top ?? g.viewport.height)+1, `${key}: support below initial fold/action bar`);
   check(g.cta.bottom<=(g.bar?.top ?? g.viewport.height)+1, `${key}: CTA below initial fold/action bar`);

@@ -34,9 +34,9 @@
 .family-remodeling > .fam-hero[data-family-hero][data-video-hero] .remodeling-hero-video[data-visible='true'] {
   opacity: 1;
 }
-/* #000000 at 60% transparency (40% opacity), consistently across the frame. */
+/* Uniform black keeps the approved video visible while protecting light copy. */
 .family-remodeling > .fam-hero[data-family-hero][data-video-hero] .fam-hero-scrim {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
 }
 .family-remodeling > .fam-hero[data-family-hero][data-video-hero] .fam-hero-inner {
   background: none;
@@ -46,6 +46,8 @@
   text-shadow: 0 1px 3px #000000, 0 2px 16px rgba(0, 0, 0, 0.6);
 }
 .family-remodeling > .fam-hero[data-family-hero][data-video-hero] .fam-hero-accent {
+  /* This hero-only sage tint clears 3.5:1 even over a pure white video frame. */
+  color: #C0CFBB;
   padding-top: var(--space-2);
 }
 .family-remodeling > .fam-hero[data-family-hero][data-video-hero] .fam-hero-accent::before {
