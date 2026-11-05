@@ -1,0 +1,78 @@
+name: Homepage video and fold verification
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - components/approved/ApprovedHomeHero.tsx
+      - components/approved/ApprovedVideoHero.tsx
+      - components/approved/HeroVideo.tsx
+      - app/family-adoption.css
+      - public/media/remodeling/**
+      - scripts/verify-hero-video.cjs
+      - scripts/verify-hero-contrast.cjs
+      - tests/family-chrome.test.ts
+      - tests/fold-conversion.test.ts
+      - .github/workflows/hero-video.yml
+  push:
+    branches: [main]
+    paths:
+      - components/approved/ApprovedHomeHero.tsx
+      - components/approved/ApprovedVideoHero.tsx
+      - components/approved/HeroVideo.tsx
+      - app/family-adoption.css
+      - public/media/remodeling/**
+      - scripts/verify-hero-video.cjs
+      - scripts/verify-hero-contrast.cjs
+      - .github/workflows/hero-video.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: hero-video-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+      HERO_TEST_ORIGIN: http://127.0.0.1:34865
+      HERO_TEST_WEBKIT: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Repository and affected component checks
+        run: |
+          npm run prebuild
+          node --import tsx --test tests/family-chrome.test.ts tests/fold-conversion.test.ts tests/mobile-polish.test.ts tests/p5-search-phase1.test.ts
+          npx tsc --noEmit --incremental false
+      - name: Isolated production build
+        run: node scripts/offline-run.mjs build
+      - name: Start local production preview
+        run: |
+          mkdir -p test-results/hero-video
+          npx next start --hostname 127.0.0.1 --port 34865 > test-results/hero-video/server.log 2>&1 &
+          node -e 'let n=0;const t=setInterval(async()=>{try{if((await fetch("http://127.0.0.1:34865",{signal:AbortSignal.timeout(10000)})).ok){clearInterval(t);return}}catch{}if(++n>90){clearInterval(t);process.exit(1)}},1000)'
+      - name: Verify approved playback, uniform overlay, mobile fold and fallbacks
+        run: node scripts/verify-hero-video.cjs
+      - name: Measure scene and poster contrast with a conservative white-frame bound
+        run: node scripts/verify-hero-contrast.cjs
+      - name: Bound complete evidence to 64MiB
+        id: evidence
+        if: always()
+        run: node scripts/branding-ci-evidence-bound.mjs --strict-64m test-results/hero-video/
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() && steps.evidence.outcome == 'success' && steps.evidence.outputs.ready == 'true' }}
+        with:
+          name: hero-video-${{ github.sha }}
+          path: branding-ci-evidence/complete.tar.gz
+          retention-days: 7
+          compression-level: 0
+          if-no-files-found: error
