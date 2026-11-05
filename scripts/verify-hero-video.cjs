@@ -7,6 +7,7 @@ const origin = process.env.HERO_TEST_ORIGIN || 'http://127.0.0.1:34865';
 assert.match(origin, /^http:\/\/127\.0\.0\.1:\d+$/);
 const out = path.resolve('test-results/hero-video');
 fs.mkdirSync(out, { recursive: true });
+fs.rmSync(path.join(out, 'failure.txt'), {force:true});
 const records = [];
 const failures = [];
 const viewports = [[320,568],[360,640],[390,844],[430,932],[768,1024],[1024,768],[1280,720],[1440,900],[1920,1080],[844,390],[667,375],[640,360]];
@@ -29,7 +30,7 @@ async function context(browser, options = {}, mode = '') {
 async function ready(page) {
   const response=await page.goto(origin, {waitUntil:'domcontentloaded', timeout:180000});
   assert.equal(response.status(),200,'homepage response');
-  await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--header-height')); 
+  await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--header-height'));
   await page.evaluate(() => document.fonts.ready);
 }
 async function playing(page) {
