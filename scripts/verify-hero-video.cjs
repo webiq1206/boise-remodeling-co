@@ -32,6 +32,7 @@ async function ready(page) {
   assert.equal(response.status(),200,'homepage response');
   await page.waitForFunction(() => document.documentElement.style.getPropertyValue('--header-height'));
   await page.evaluate(() => document.fonts.ready);
+  await page.waitForFunction(() => { const image=document.querySelector('.fam-hero-img'); return image && image.complete && image.naturalWidth>0; });
 }
 async function playing(page) {
   await page.waitForFunction(() => { const v=document.querySelector('video'); return v && !v.paused && v.currentTime>0; }, null, {timeout:20000});
