@@ -25,7 +25,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 const SPEAKABLE_SUMMARY =
-  "Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four companies of P5 Home Co. It is run by Nick Perkins. Idaho Registered Contractor #8381215. Written workmanship warranty on remodels.";
+  "Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the companies of P5 Home Co. It is run by Nick Perkins. Idaho Registered Contractor #8381215. Written workmanship warranty on remodels.";
 
 const COMPANY_ITEMS = [
   "Written scope before construction",

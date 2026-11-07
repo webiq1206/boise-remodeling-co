@@ -135,8 +135,8 @@ function buildFull(): string {
       `design direction, estimating, permitting and construction are delivered by one team under ` +
       `one contract, which removes the handoff between a designer and a general contractor and ` +
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
-      `scope before construction, a dedicated project manager, a written progress update every ` +
-      `Friday, and a workmanship warranty at completion.`),
+      `scope before construction, a dedicated project manager, written progress updates, and a ` +
+      `written workmanship warranty at completion.`),
     '',
   );
   lines.push('- Business type: Residential design-build remodeling contractor');

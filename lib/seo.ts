@@ -136,7 +136,7 @@ const CITY_CTA_VARIANTS: Record<string, string> = {
   Meridian: "Insured",
   Eagle: "Clear written scope",
   Star: "Weekly project updates",
-  Middleton: "Workmanship guarantee",
+  Middleton: "Written workmanship warranty",
   Nampa: "Ada & Canyon County permits",
   Caldwell: "Design-build remodeling",
 };
@@ -170,7 +170,7 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   
   const serviceLC = serviceName.toLowerCase();
   const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
-  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, insured${guarantee}. Free in-home visit.`;
+  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, insured. Free in-home visit.`;
 }
 
 /**

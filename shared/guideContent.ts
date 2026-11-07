@@ -81,7 +81,7 @@ const costPillarFaqs = [
   {
     question: 'How long does a kitchen remodel take in the Treasure Valley?',
     answer:
-      'Many full kitchen remodels run 8 to 16 weeks of construction after design and permits. Cabinet lead times can add weeks before demo.',
+      'Many full kitchen remodels move into construction after design and permits. Cabinet lead times can add time before demo.',
   },
   {
     question: 'What permits are needed for a bathroom remodel in Boise?',
@@ -234,7 +234,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       },
       {
         question: 'How long do valley remodels take?',
-        answer: 'Kitchens often 2 to 4 months total; additions and whole-home programs can run much longer.',
+        answer: 'Kitchens vary with scope; additions and whole-home programs can run much longer.',
       },
       {
         question: 'Do you offer free estimates?',

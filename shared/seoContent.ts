@@ -562,7 +562,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does a deck or patio take to build?',
         answer:
-          'Plan 3 to 8 weeks after permits. A simple deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
+          'Plan the build after permits. A simple deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
       },
     ],
     costGuidance: {
@@ -666,7 +666,7 @@ export function getCityServiceIntro(
   const fact = localFact
     ? ` ${localFact}`
     : ` We understand ${county} permit requirements and typical ${city.name} home styles.`;
-  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, proactive weekly updates, and a written workmanship warranty. Schedule a free in-home consultation or use our project estimator for a planning range.`;
+  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope and a written workmanship warranty. Schedule a free in-home consultation or use our project estimator for a planning range.`;
 }
 
 /** Letter names that start with a vowel sound, so an acronym such as ADU takes "an". */
