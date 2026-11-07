@@ -78,7 +78,7 @@ See `GBP_PHOTO_CHECKLIST`. Caption formula: `{Project type} in {City}, Idaho —
 
 See `GBP_QA_SEED` — post each question yourself, then answer as owner.
 
-### Posts (weekly)
+### Posts
 
 See `GBP_POSTS_STARTER` for weeks 1–4. Rotate monthly: city spotlight → `/areas/{city}`, service → `/services/{service}`, cost guide, process guide, contractor guide, review highlight.
 

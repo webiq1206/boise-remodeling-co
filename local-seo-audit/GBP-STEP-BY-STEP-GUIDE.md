@@ -185,14 +185,14 @@ Add categories in this exact order:
 
 Go to **Edit profile → Business description**. Paste this description, leaving the founding year blank until documented:
 
-> Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.
+> Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, written progress updates, and a written workmanship warranty. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.
 
 ### Step 3.5 — Add all services
 
 Go to **Edit profile → Services**. Add each service below. Include the starting price where noted.
 
 **Kitchen remodeling**  
-Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild. Written scope, permits, and weekly updates included.  
+Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild. Written scope, permits, and written updates included.  
 Starting price: $15,000
 
 **Bathroom remodeling**  
@@ -253,7 +253,7 @@ Each product has a **Product URL** field — paste the full link for each item. 
 |--------------|-------|-------------|-------------|
 | Kitchen Remodel | From $15,000 | https://boiseremodeling.co/services/kitchen-remodel | Design-build kitchen remodels in the Treasure Valley. Cabinet refresh to full gut-and-rebuild. Free in-home planning visit. |
 | Bathroom Remodel | From $18,000 | https://boiseremodeling.co/services/bathroom-remodel | Guest and primary bathroom remodels with written scope before construction. Ada and Canyon County permits handled in-house. |
-| Whole-Home Remodel | From $150,000 | https://boiseremodeling.co/services/whole-home-remodel | Single project manager from design through final walkthrough. Weekly written updates and workmanship guarantee included. |
+| Whole-Home Remodel | From $150,000 | https://boiseremodeling.co/services/whole-home-remodel | Single project manager from design through final walkthrough. Written updates and a written workmanship warranty included. |
 | Room Addition | From $80,000 | https://boiseremodeling.co/services/room-addition | Bump-outs, primary suites, and second-story additions that look original to your home. |
 | ADU / Guest House | From $90,000 | https://boiseremodeling.co/services/adu | Attached, detached, and garage-conversion ADUs. Feasibility review and Boise ordinance guidance. |
 | Garage Conversion | From $90,000 | https://boiseremodeling.co/services/adu | Convert existing garage space into livable ADU or guest quarters. |
@@ -374,14 +374,14 @@ Call (208) 477-1169, text us at the same number, or schedule online: https://boi
 
 ---
 
-## Phase 5 — Publish Google Posts (weekly, starting week 1)
+## Phase 5 — Publish Google Posts (starting week 1)
 
 Post **once per week**. Every post must link to a specific page on your website — never just the homepage. Set a recurring Monday reminder on your calendar.
 
 ### Week 1 — Project showcase
 
 - **Headline:** Kitchen clarity in Boise
-- **Body:** North End kitchen remodel - written scope before demo, weekly Friday updates, final walkthrough with workmanship guarantee.
+- **Body:** North End kitchen remodel. Written scope before demo, written updates, and a final walkthrough with a written workmanship warranty.
 - **Button:** Learn more
 - **Link:** https://boiseremodeling.co/services/kitchen-remodel/boise
 - **Photo:** Your best kitchen after photo
@@ -491,7 +491,7 @@ Either way, thank you again for choosing Boise Remodeling Co.
 
 **Positive review template:**
 
-> Thank you, [Name]. We enjoyed your [city] [project type] - especially [something specific they mentioned]. Glad the weekly updates and written scope kept things clear. - the owner, Boise Remodeling Co
+> Thank you, [Name]. We enjoyed your [city] [project type] - especially [something specific they mentioned]. Glad the written updates and written scope kept things clear. - the owner, Boise Remodeling Co
 
 **Negative review:** Respond once, factually, offer to resolve offline. Never argue publicly.
 
@@ -567,7 +567,7 @@ Either way, thank you again for choosing Boise Remodeling Co.
 - [ ] Phase 2: Verify Google profile (video verification)
 - [ ] Phase 3: Complete profile — description, services, products, attributes, photos
 - [ ] Phase 4: Seed all 12 Q&A entries
-- [ ] Phase 5: Publish Week 1 Google Post; set weekly reminder
+- [ ] Phase 5: Publish Week 1 Google Post; set a reminder
 - [ ] Phase 6: Save review link; start ask-at-closeout system
 - [ ] Phase 7: Bing Places + Apple Business Connect
-- [ ] Phase 8: Follow weekly, monthly, and quarterly maintenance
+- [ ] Phase 8: Follow monthly and quarterly maintenance

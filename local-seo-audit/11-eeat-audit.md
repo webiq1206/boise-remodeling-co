@@ -1,6 +1,6 @@
 # 11 - EEAT Audit
 
-Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The site *claims* trust ("insured, workmanship guarantee") but *demonstrates* almost none of it. For YMYL-adjacent home services, this gates both Google rankings and AI-engine recommendations.
+Sitewide EEAT score: **4.2/10** - the lowest non-GBP score in the audit. The site *claims* trust ("insured, written workmanship warranty") but *demonstrates* almost none of it. For YMYL-adjacent home services, this gates both Google rankings and AI-engine recommendations.
 
 ## Experience - 4/10
 - 5 gallery projects, 4 testimonials, 1 featured before/after. No project dates, no addresses/neighborhoods, no budget bands, no duration.
