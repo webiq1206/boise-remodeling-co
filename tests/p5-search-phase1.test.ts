@@ -75,12 +75,21 @@ test('contractor schema preserves contacts, served cities and parent without pub
     ['Ada County', 'Canyon County'],
   );
   assert.deepEqual(business.sameAs, [...BRAND_SAME_AS]);
-  const catalog = business.hasOfferCatalog as { itemListElement: Array<{ url: string }> };
+  const catalog = business.hasOfferCatalog as {
+    itemListElement: Array<{ url: string; itemOffered: { name: string; description?: string } }>;
+  };
   assert.deepEqual(
     catalog.itemListElement.map((item) => item.url),
     SERVICES.map((service) => `https://boiseremodeling.co/services/${service.slug}`),
   );
+  assert.deepEqual(
+    catalog.itemListElement.map((item) => item.itemOffered),
+    SERVICES.map((service) => ({ '@type': 'Service', name: service.name })),
+  );
   const encoded = JSON.stringify(business);
+  assert.equal(encoded.includes('Spa-quality'), false);
+  assert.equal(encoded.includes('maximize your property value'), false);
+  assert.equal(encoded.includes('aggregateRating'), false);
   assert.equal(encoded.includes('Garden City'), false);
   assert.equal(encoded.includes('Jared'), false);
 

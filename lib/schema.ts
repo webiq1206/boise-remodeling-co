@@ -129,7 +129,6 @@ function serviceOfferCatalog() {
       itemOffered: {
         '@type': 'Service' as const,
         name: service.name,
-        description: service.shortDescription,
       },
     })),
   };
@@ -194,17 +193,6 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
       closes: hours === 'Closed' ? undefined : schemaTime(hours.split(' - ')[1]),
     })).filter(spec => spec.opens),
     areaServed: businessAreaServed(),
-    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
-      ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: BUSINESS_INFO.rating,
-            reviewCount: BUSINESS_INFO.reviewCount,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }
-      : {}),
     ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     slogan: 'Boise\'s Design-Build Remodeling Company',
     paymentAccepted: 'Cash, Credit Card, Check, Financing',
