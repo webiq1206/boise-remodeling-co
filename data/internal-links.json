@@ -2963,14 +2963,14 @@
           "anchor": "Treasure Valley Remodeling Guide",
           "title": "Treasure Valley Remodeling Guide",
           "type": "guide",
-          "score": 0.205
+          "score": 0.213
         },
         {
           "url": "/services/basement-remodel",
           "anchor": "Basement Remodeling",
           "title": "Basement Remodeling in Boise & Treasure Valley, Idaho",
           "type": "service",
-          "score": -0.002
+          "score": 0
         }
       ]
     },
@@ -4069,16 +4069,16 @@
           "score": 0.095
         },
         {
+          "url": "/blog/warranty-guide-remodeling",
+          "anchor": "Warranty Guide",
+          "title": "Warranty Guide",
+          "type": "blog",
+          "score": 0.048
+        },
+        {
           "url": "/blog/outdoor-living-roi",
           "anchor": "Outdoor Living ROI",
           "title": "Outdoor Living ROI",
-          "type": "blog",
-          "score": 0.047
-        },
-        {
-          "url": "/blog/remodeling-before-selling",
-          "anchor": "Remodeling Before Selling",
-          "title": "Remodeling Before Selling",
           "type": "blog",
           "score": 0.047
         }
@@ -4133,11 +4133,11 @@
           "score": 0.09
         },
         {
-          "url": "/blog/warranty-guide-remodeling",
-          "anchor": "Warranty Guide",
-          "title": "Warranty Guide",
+          "url": "/blog/remodeling-before-selling",
+          "anchor": "Remodeling Before Selling",
+          "title": "Remodeling Before Selling",
           "type": "blog",
-          "score": 0.045
+          "score": 0.047
         },
         {
           "url": "/blog/punch-list-guide",
@@ -7408,7 +7408,7 @@
           "anchor": "Warranty Guide",
           "title": "Warranty Guide",
           "type": "blog",
-          "score": 0.071
+          "score": 0.085
         }
       ]
     },
@@ -7472,7 +7472,7 @@
           "anchor": "Warranty Guide",
           "title": "Warranty Guide",
           "type": "blog",
-          "score": 0.02
+          "score": 0.031
         }
       ]
     },
@@ -7536,7 +7536,7 @@
           "anchor": "Warranty Guide",
           "title": "Warranty Guide",
           "type": "blog",
-          "score": -0.02
+          "score": -0.009
         }
       ]
     },
@@ -7792,7 +7792,7 @@
           "anchor": "Warranty Guide",
           "title": "Warranty Guide",
           "type": "blog",
-          "score": -0.06
+          "score": -0.049
         }
       ]
     },
@@ -8397,7 +8397,7 @@
           "anchor": "Warranty Guide",
           "title": "Warranty Guide",
           "type": "blog",
-          "score": 0.537
+          "score": 0.55
         },
         {
           "url": "/blog/boise-permit-guide",
@@ -9371,7 +9371,7 @@
           "anchor": "Warranty Guide",
           "title": "Warranty Guide",
           "type": "blog",
-          "score": -0.115
+          "score": -0.107
         },
         {
           "url": "/services/aging-in-place/eagle",
