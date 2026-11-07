@@ -40,7 +40,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. The company is an Idaho Registered Contractor #8381215, bonded, and insured. Every finished Boise project also comes with a written workmanship guarantee.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -76,7 +76,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -112,7 +112,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured, and each finished project carries a written workmanship guarantee.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -148,7 +148,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured. Permits for your Nampa remodel are pulled in-house as part of our contract.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -185,7 +185,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded and insured, and our workmanship guarantee applies at completion.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -221,7 +221,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, and we carry a bond and insurance.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -257,7 +257,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured, and Middleton's permit portal references Idaho Code 54-5209 for the registration number on building permits.",
+          "Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.",
       },
       {
         question: 'How do I start a project?',
@@ -294,7 +294,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          'Yes. We are an Idaho Registered Contractor #8381215, bonded, and insured.',
+          'Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.',
       },
       {
         question: 'How do I start a project?',

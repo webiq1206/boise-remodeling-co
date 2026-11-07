@@ -801,7 +801,7 @@ export const AREA_PAGE_FAQS: FAQItem[] = [
   {
     question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+      'Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.',
   },
   {
     question: 'How do I start a project?',

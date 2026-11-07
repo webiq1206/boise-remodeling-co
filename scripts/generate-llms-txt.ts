@@ -27,7 +27,7 @@ const today = '2026-10-16';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
   `Serving the ${SITE_CONFIG.address.serviceArea}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
-  `Idaho Registered Contractor #8381215, bonded and insured.`;
+  `Idaho Registered Contractor #8381215, insured.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
 const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
@@ -207,7 +207,7 @@ function buildFull(): string {
       'weeks for a bathroom to several months for a whole-home renovation or addition.',
   );
   lines.push(
-    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+    '- Are you a registered contractor and insured? Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.',
   );
   lines.push(
     '- Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of ' +

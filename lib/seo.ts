@@ -133,7 +133,7 @@ export function generatePageTitle(params: ServiceSEOParams): string {
 const CITY_CTA_VARIANTS: Record<string, string> = {
   Kuna: "Free in-home consultation",
   Boise: "Treasure Valley design-build",
-  Meridian: "Bonded and insured",
+  Meridian: "Insured",
   Eagle: "Clear written scope",
   Star: "Weekly project updates",
   Middleton: "Workmanship guarantee",
@@ -170,7 +170,7 @@ export function generateMetaDescription(params: ServiceSEOParams): string {
   
   const serviceLC = serviceName.toLowerCase();
   const guarantee = SHOW_UNPROVEN_SATISFACTION_GUARANTEE ? " & satisfaction guaranteed" : "";
-  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, bonded & insured${guarantee}. Free in-home visit.`;
+  return `${serviceName} across the Treasure Valley from one design-build team. Idaho Registered Contractor #8381215, Insured${guarantee}. Free in-home visit.`;
 }
 
 /**
@@ -564,8 +564,8 @@ export const BUSINESS_INFO = {
   serviceArea: ['Boise', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'],
   serviceRadius: '35 miles',
   licenses: ['Idaho Registered Contractor #8381215'],
-  certifications: ['Design-Build Remodeling', 'Bonded & Insured'],
-  insurance: 'Bonded and insured',
+  certifications: ['Design-Build Remodeling', 'Insured'],
+  insurance: 'Insured',
   rating: 0,
   reviewCount: 0,
   yearlyServicesCompleted: 0,

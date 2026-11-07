@@ -109,7 +109,7 @@ export const PROOF_STATS = {
 const TRUST_ITEM_SOURCE = [
   `Est. ${PROOF_STATS.established}`,
   `${PROOF_STATS.projectsCompleted} Projects`,
-  "Bonded · Insured",
+  "Insured",
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
@@ -157,7 +157,7 @@ export interface ClientPriority {
 export const CLIENT_PRIORITIES: ClientPriority[] = [
   {
     title: "Trust and credibility",
-    body: "Idaho Registered Contractor #8381215, bonded and insured, with permits handled in-house and a written scope before work begins.",
+    body: "Idaho Registered Contractor #8381215, insured, with permits handled in-house and a written scope before work begins.",
     icon: ShieldCheck,
   },
   {

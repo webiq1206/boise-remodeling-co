@@ -167,7 +167,7 @@ export default function AboutPage() {
                     #8381215. Your contract is with P5 Home Co LLC doing business as Boise Remodeling Co.
                   </p>
                   <p className="ed-body mt-4">
-                    <RegistrationLink className="underline underline-offset-2" />. Bonded and insured.
+                    <RegistrationLink className="underline underline-offset-2" />. Insured.
                   </p>
                 </Reveal>
               </div>

@@ -139,7 +139,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Who stands behind the work',
         paragraphs: [
           'A guarantee is only as good as the team behind it. At Boise Remodeling Co a core in-house team handles project management, design coordination and key trades, while plumbing, electrical and HVAC go to licensed trade partners we schedule and stand behind. Your project manager remains your single point of contact, during the build and after it.',
-          'Boise Remodeling Co is an Idaho Registered Contractor (#8381215), bonded and insured. Ask any contractor you compare for the same facts, and check them before you sign.',
+          'Boise Remodeling Co is an Idaho Registered Contractor (#8381215), insured. Ask any contractor you compare for the same facts, and check them before you sign.',
         ],
       },
     ],
