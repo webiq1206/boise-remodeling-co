@@ -126,14 +126,21 @@ test('client source does not carry the other business review text', () => {
   assert.match(text('../package.json'), /next build && node scripts\/grep-client-reviews\.mjs/);
 });
 
-test('AggregateRating and Review schema stay out while the flag is off', () => {
+test('LocalBusiness schema has no aggregateRating, and Review schema stays out while the flag is off', () => {
   const saved = { rating: BUSINESS_INFO.rating, reviewCount: BUSINESS_INFO.reviewCount };
   BUSINESS_INFO.rating = 5;
   BUSINESS_INFO.reviewCount = 4;
   try {
     const business = JSON.stringify(generateLocalBusinessSchema());
     assert.equal(business.includes('AggregateRating'), false);
+    assert.equal(business.includes('aggregateRating'), false);
     assert.equal(business.includes('reviewCount'), false);
+    const source = readFileSync(new URL('../lib/schema.ts', import.meta.url), 'utf8');
+    const localStart = source.indexOf('export function generateLocalBusinessSchema');
+    const localEnd = source.indexOf('export function generateWebSiteSchema');
+    const localSource = source.slice(localStart, localEnd);
+    assert.equal(localSource.includes('aggregateRating'), false);
+    assert.equal(localSource.includes('SHOW_TESTIMONIALS'), false);
     const review = JSON.stringify(generateReviewSchema([
       { author: 'Sarah M.', rating: 5, text: 'Lawn Care Kuna has been taking care of our yard.' },
       { author: 'Mike R.', rating: 5, text: 'They installed a beautiful patio.' },

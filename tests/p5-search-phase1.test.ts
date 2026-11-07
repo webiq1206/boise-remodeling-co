@@ -11,12 +11,15 @@ import {
   FEED_ALTERNATES,
 } from '../lib/page-metadata.ts';
 import {
+  BRAND_SAME_AS,
+  generateHomePageSchemaGraph,
   generateLocalBusinessSchema,
   generateOrganizationSchema,
   generateServiceSchema,
   P5_ORG_ID,
+  P5_SAME_AS,
 } from '../lib/schema.ts';
-import { BUSINESS_INFO, generateSafePageTitle } from '../lib/seo.ts';
+import { generateSafePageTitle } from '../lib/seo.ts';
 import { getAllSiteUrls } from '../lib/siteUrls.ts';
 import { stripBrandSuffix } from '../lib/page-metadata.ts';
 import { BLOG_POSTS } from '../shared/blogContent.ts';
@@ -39,7 +42,16 @@ function renderedTitle(meta: { title?: unknown }): string {
 test('contractor schema preserves contacts, served cities and parent without publishing the business address', () => {
   const business = generateLocalBusinessSchema('Eagle');
   assert.deepEqual(business['@type'], ['HomeAndConstructionBusiness', 'GeneralContractor']);
-  assert.equal(business.address, undefined);
+  assert.equal(business['@id'], 'https://boiseremodeling.co/#business');
+  assert.deepEqual(business.address, {
+    '@type': 'PostalAddress',
+    addressLocality: 'Meridian',
+    addressRegion: 'ID',
+    addressCountry: 'US',
+  });
+  assert.equal((business.address as { streetAddress?: string }).streetAddress, undefined);
+  assert.equal((business.address as { postalCode?: string }).postalCode, undefined);
+  assert.equal(business.priceRange, undefined);
   assert.equal(business.geo, undefined);
   assert.equal(business.employee, undefined);
   assert.equal(business.telephone, '+1-208-477-1169');
@@ -48,21 +60,43 @@ test('contractor schema preserves contacts, served cities and parent without pub
   assert.equal((business.contactPoint as { contactType: string }).contactType, 'customer service');
   assert.equal((business.contactPoint as { telephone: string }).telephone, '+1-208-477-1169');
   assert.equal((business.contactPoint as { email: string }).email, 'hello@boiseremodeling.co');
-  assert.equal((business.parentOrganization as { '@id': string })['@id'], 'https://p5homeco.com/#organization');
+  assert.equal((business.parentOrganization as { '@id': string })['@id'], 'https://p5homeco.com/#business');
   assert.equal((business.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
+  assert.equal((business.parentOrganization as { name: string }).name, 'P5 Home Co');
+  assert.equal((business.parentOrganization as { url: string }).url, 'https://p5homeco.com');
+  assert.deepEqual((business.parentOrganization as { sameAs: readonly string[] }).sameAs, P5_SAME_AS);
+  const areas = business.areaServed as Array<{ '@type': string; name: string }>;
   assert.deepEqual(
-    (business.areaServed as Array<{ name: string }>).map((area) => area.name),
+    areas.filter((area) => area['@type'] === 'City').map((area) => area.name),
     AREAS,
   );
-  assert.deepEqual(business.sameAs, BUSINESS_INFO.sameAs);
+  assert.deepEqual(
+    areas.filter((area) => area['@type'] === 'AdministrativeArea').map((area) => area.name),
+    ['Ada County', 'Canyon County'],
+  );
+  assert.deepEqual(business.sameAs, [...BRAND_SAME_AS]);
+  const catalog = business.hasOfferCatalog as {
+    itemListElement: Array<{ url: string; itemOffered: { name: string; description?: string } }>;
+  };
+  assert.deepEqual(
+    catalog.itemListElement.map((item) => item.url),
+    SERVICES.map((service) => `https://boiseremodeling.co/services/${service.slug}`),
+  );
+  assert.deepEqual(
+    catalog.itemListElement.map((item) => item.itemOffered),
+    SERVICES.map((service) => ({ '@type': 'Service', name: service.name })),
+  );
   const encoded = JSON.stringify(business);
+  assert.equal(encoded.includes('Spa-quality'), false);
+  assert.equal(encoded.includes('maximize your property value'), false);
+  assert.equal(encoded.includes('aggregateRating'), false);
   assert.equal(encoded.includes('Garden City'), false);
   assert.equal(encoded.includes('Jared'), false);
 
   const organization = generateOrganizationSchema();
   assert.equal((organization.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
   assert.equal(organization.employee, undefined);
-  assert.deepEqual(organization.sameAs, BUSINESS_INFO.sameAs);
+  assert.deepEqual(organization.sameAs, [...BRAND_SAME_AS]);
   assert.deepEqual(organization.address, business.address);
   const contact = organization.contactPoint as { contactType: string; name?: string; telephone?: string };
   assert.equal(contact.name, undefined);
@@ -80,6 +114,23 @@ test('contractor schema preserves contacts, served cities and parent without pub
       assert.equal(JSON.stringify(schema).includes('Garden City'), false);
     }
   }
+
+  const graph = generateHomePageSchemaGraph([{ question: 'Hours?', answer: 'Weekdays.' }]);
+  const nodes = graph['@graph'];
+  const ids = nodes.map((node) => node['@id']).filter((id) => typeof id === 'string');
+  assert.equal(new Set(ids).size, ids.length);
+  const businessNodes = nodes.filter((node) => {
+    const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
+    return types.some((type) =>
+      type === 'HomeAndConstructionBusiness' || type === 'GeneralContractor' || type === 'LocalBusiness' || type === 'Organization',
+    );
+  });
+  assert.equal(businessNodes.length, 1);
+  assert.equal(JSON.stringify(graph).includes('AggregateRating'), false);
+  assert.equal(JSON.stringify(graph).includes('nextdoor'), false);
+  assert.equal(JSON.stringify(graph).includes('showroom'), false);
+  assert.equal(JSON.stringify(graph).includes('streetAddress'), false);
+  assert.equal(JSON.stringify(graph).includes('$'), false);
 });
 
 test('noindex ADU city pages stay out of the sitemap', () => {
