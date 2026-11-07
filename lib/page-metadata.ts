@@ -162,7 +162,7 @@ const CITY_SERVICE_TITLE_OVERRIDES: Record<string, string> = {
 /**
  * Answer-first titles and descriptions for the pages called out in phase 1.
  * Facts used here are limited to design-build, founded 2020, part of P5, a
- * free in-home visit, written scope, workmanship guarantee, Ada or Canyon
+ * free in-home visit, written scope, workmanship warranty, Ada or Canyon
  * permitting, and budget ranges, not quotes.
  */
 const AREA_ANSWER: Record<string, { title: string; description: string }> = {
@@ -173,29 +173,29 @@ const AREA_ANSWER: Record<string, { title: string; description: string }> = {
     // "Idaho" is "ID" and "founded in 2020" is "founded 2020" so kitchen,
     // home, Eagle, and every trust claim still fit.
     description:
-      'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
+      'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes',
   },
   boise: {
     title: 'Remodeling contractors in Boise, ID',
     // Exactly 160 characters. "Idaho" is "ID" and "Founded in 2020" is
     // "Founded 2020" so Design-build stays with kitchen and bath.
     description:
-      'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
+      'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes',
   },
   nampa: {
     title: 'Remodeling contractors in Nampa, ID',
     description:
-      'Design-build remodeling in Nampa, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Design-build remodeling in Nampa, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes.',
   },
   kuna: {
     title: 'Remodeling contractors in Kuna, ID',
     description:
-      'Design-build remodeling in Kuna, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Design-build remodeling in Kuna, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes.',
   },
   meridian: {
     title: 'Remodeling contractors in Meridian',
     description:
-      'Design-build remodeling in Meridian, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Design-build remodeling in Meridian, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes.',
   },
 };
 
@@ -208,7 +208,7 @@ const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
   'kitchen-remodel': {
     title: 'Kitchen remodeling in Boise',
     description:
-      'Design-build kitchen remodeling in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      'Design-build kitchen remodeling in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes.',
   },
   'room-addition': {
     title: 'Room additions in the Treasure Valley',

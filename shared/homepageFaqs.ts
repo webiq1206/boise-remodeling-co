@@ -19,7 +19,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
     a: "You receive a written scope and price before any work. Nothing is due until that scope is signed. Draw timing for the remodel is set in the contract and confirmed at the free in-home visit.",
   },
   {
-    q: "How long is the workmanship guarantee?",
+    q: "How long is the workmanship warranty?",
     a: "Written workmanship warranty. We also pass through manufacturer warranties on fixtures and cabinetry we install.",
   },
   {

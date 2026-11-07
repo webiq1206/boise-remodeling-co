@@ -66,7 +66,7 @@ export const DIFFERENTIATORS: Differentiator[] = [
   {
     title: "Confidence that outlasts the project",
     contrast: "Beyond a quick sign-off and goodbye,",
-    body: "we stand behind our craftsmanship with a written workmanship guarantee. Optional 3D visualizations are available for clients who want extra confidence in major layout and finish decisions before construction begins.",
+    body: "we stand behind our craftsmanship with a written workmanship warranty. Optional 3D visualizations are available for clients who want extra confidence in major layout and finish decisions before construction begins.",
   },
   {
     title: "A job site that respects your home",
@@ -111,7 +111,7 @@ const TRUST_ITEM_SOURCE = [
   `${PROOF_STATS.projectsCompleted} Projects`,
   "Insured",
   "Permits In-House",
-  "Workmanship Guarantee",
+  "Workmanship Warranty",
   "Free In-Home Visit",
 ] as const;
 
@@ -143,8 +143,8 @@ export const PROMISE_ITEMS = [
   },
   {
     num: "04",
-    title: "The workmanship guarantee",
-    body: "We stand behind our craftsmanship with a written workmanship guarantee, long after the final walkthrough.",
+    title: "The workmanship warranty",
+    body: "We stand behind our craftsmanship with a written workmanship warranty, long after the final walkthrough.",
   },
 ];
 
@@ -210,7 +210,7 @@ export const HOW_WE_BUILD_STEPS = [
   },
   {
     number: "05",
-    title: "Final walkthrough and workmanship guarantee",
+    title: "Final walkthrough and workmanship warranty",
     desc: "We walk every inch with you. If we built it and it fails due to workmanship, we fix it free.",
   },
 ];
@@ -237,8 +237,8 @@ export const PRINCIPLES = [
     desc: "Your project manager is the same person from design day to final walkthrough. You always know who to call.",
   },
   {
-    title: "Workmanship guarantee",
-    desc: "We stand behind what we build with a written workmanship guarantee, because we build things meant to last.",
+    title: "Workmanship warranty",
+    desc: "We stand behind what we build with a written workmanship warranty, because we build things meant to last.",
   },
 ];
 
@@ -247,7 +247,7 @@ export const STANDARD_INCLUSIONS = [
   "Dedicated project manager",
   "Weekly written progress updates",
   "Dust barriers and floor protection daily",
-  "Written workmanship guarantee",
+  "Written workmanship warranty",
   "Manufacturer warranties passed through",
 ];
 

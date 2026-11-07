@@ -45,7 +45,7 @@ export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] 
   {
     title: 'Final walkthrough',
     description:
-      'We review every detail with you before sign-off. Written workmanship guarantee on our labor.',
+      'We review every detail with you before sign-off. Written workmanship warranty on our labor.',
   },
 ];
 

@@ -81,7 +81,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       { title: 'In-home consultation', description: 'We walk your space, discuss goals, and share a planning range on the spot.' },
       { title: 'Design and scope', description: 'You receive selections guidance and a written scope with your project investment.' },
       { title: 'Permits and scheduling', description: 'We file permits and build a week-by-week schedule before demo day.' },
-      { title: 'Construction and walkthrough', description: 'Our crew executes the plan; you receive a final walkthrough and workmanship guarantee.' },
+      { title: 'Construction and walkthrough', description: 'Our crew executes the plan; you receive a final walkthrough and workmanship warranty.' },
     ],
     faqs: [
       {
@@ -153,7 +153,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Design-build accountability from layout through tile and fixtures',
       'Waterproofing and plumbing scope defined in writing',
       'Transparent project investment, no surprise line-item games',
-      'Written workmanship guarantee on our labor',
+      'Written workmanship warranty on our labor',
     ],
     inclusions: [
       'Vanity, shower, and tub planning',
@@ -666,7 +666,7 @@ export function getCityServiceIntro(
   const fact = localFact
     ? ` ${localFact}`
     : ` We understand ${county} permit requirements and typical ${city.name} home styles.`;
-  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, proactive weekly updates, and a written workmanship guarantee. Schedule a free in-home consultation or use our project estimator for a planning range.`;
+  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, proactive weekly updates, and a written workmanship warranty. Schedule a free in-home consultation or use our project estimator for a planning range.`;
 }
 
 /** Letter names that start with a vowel sound, so an acronym such as ADU takes "an". */
@@ -826,7 +826,7 @@ export const HOMEPAGE_FAQS_FOR_SCHEMA: FAQItem[] = [
     answer: 'Yes. Permits are included in our scope and handled in-house for Ada and Canyon County.',
   },
   {
-    question: 'What is your workmanship guarantee?',
-    answer: 'We provide a written workmanship guarantee on our labor.',
+    question: 'What is your workmanship warranty?',
+    answer: 'We provide a written workmanship warranty on our labor.',
   },
 ];

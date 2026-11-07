@@ -51,7 +51,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
   const county = getCountyLabel(city.county);
   const path = areaPath(city.slug);
   const answerFirst = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
-    ? `${publishFoundingCopy(`Boise Remodeling Co is a design-build remodeling contractor in ${city.name}, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship guarantee. The first figures are budget ranges, not quotes.`)} `
+    ? `${publishFoundingCopy(`Boise Remodeling Co is a design-build remodeling contractor in ${city.name}, founded in 2020 and part of P5. A free in-home visit includes a written scope and a workmanship warranty. The first figures are budget ranges, not quotes.`)} `
     : '';
   const overview = publishFoundingCopy(`${answerFirst}${getAreaIntro(city)}`);
   const images = getAreaImageSet(city.slug);
@@ -173,7 +173,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
           `Local experience in ${city.name} and ${county}`,
           'Design-build team, one accountable contact',
           'Written scope before construction',
-          'Written workmanship guarantee',
+          'Written workmanship warranty',
         ]}
         localNote={localNote}
         inclusions={[
