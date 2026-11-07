@@ -13,7 +13,7 @@ import { withBrandPageMetadata } from "@/lib/brand-page-metadata";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import {
   generateBreadcrumbSchema,
-  generateOrganizationSchema,
+  generateLocalBusinessSchema,
   generateWebPageSchema,
 } from "@/lib/schema";
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
@@ -64,7 +64,7 @@ export const metadata = withBrandPageMetadata(
 
 export default function AboutPage() {
   const schemas = [
-    generateOrganizationSchema(),
+    generateLocalBusinessSchema(),
     generateWebPageSchema({
       title: "About Boise Remodeling Co",
       description: SPEAKABLE_SUMMARY,

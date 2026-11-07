@@ -5,9 +5,9 @@ import test from 'node:test';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { Footer } from '../components/Footer.tsx';
-import { generateLocalBusinessSchema, generateOrganizationSchema, generateServiceSchema } from '../lib/schema.ts';
+import { BRAND_SAME_AS, generateLocalBusinessSchema, generateOrganizationSchema, generateServiceSchema, P5_SAME_AS } from '../lib/schema.ts';
 import { BUSINESS_INFO } from '../lib/seo.ts';
-import { getExternalProfileUrls, P5_FACEBOOK_URL, P5_GBP_URL } from '../shared/gbpProfile.ts';
+import { getExternalProfileUrls, P5_GBP_URL } from '../shared/gbpProfile.ts';
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
@@ -34,16 +34,26 @@ test('no rendered link or schema names the non-existent brand profiles', () => {
   }
 });
 
-// Owner decision 2026-11-01: P5 Home Co's one Google Business Profile joins the
-// parent organization's sameAs beside its Facebook page, and never this brand's.
-test('the P5 Google profile sits on the parent organization only', () => {
+// Directory listings are P5's. This brand's sameAs is its own profiles only.
+// Nextdoor is the same P5 page, so it is not added here. kgmid stays on the parent.
+test('P5 directory profiles stay on the parent and off this brand', () => {
   assert.equal(P5_GBP_URL, 'https://www.google.com/search?kgmid=/g/11ntl1t7dc');
   const before = process.env.NEXT_PUBLIC_GBP_URL;
   process.env.NEXT_PUBLIC_GBP_URL = P5_GBP_URL;
   try {
+    assert.deepEqual(P5_SAME_AS, [
+      'https://www.facebook.com/p5homeco',
+      'https://ezlocal.com/id/meridian/home-remodeling/0919899218',
+      'https://www.cylex.us.com/company/p5-home-co--llc-40749871.html',
+      'https://www.google.com/maps?cid=11869148461693849141',
+      P5_GBP_URL,
+    ]);
+    assert.equal(P5_SAME_AS.some((url) => /nextdoor|bbb\.org|houzz|buildzoom/i.test(url)), false);
     for (const node of [generateLocalBusinessSchema(), generateOrganizationSchema()] as any[]) {
-      assert.deepEqual(node.parentOrganization.sameAs, [P5_FACEBOOK_URL, P5_GBP_URL]);
+      assert.deepEqual(node.parentOrganization.sameAs, P5_SAME_AS);
+      assert.deepEqual(node.sameAs, [...BRAND_SAME_AS]);
       assert.equal(JSON.stringify(node.sameAs ?? []).includes('kgmid'), false);
+      assert.equal(JSON.stringify(node.sameAs ?? []).includes('nextdoor'), false);
     }
     assert.equal(BUSINESS_INFO.sameAs.includes(P5_GBP_URL), false);
     assert.equal(getExternalProfileUrls().includes(P5_GBP_URL), false, 'NEXT_PUBLIC_GBP_URL never feeds the brand sameAs');
