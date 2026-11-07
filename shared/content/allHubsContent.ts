@@ -635,7 +635,7 @@ export const LOCATION_GUIDES: GuidePageData[] = [
     seoTitle: 'Boise Bench Remodeling Guide',
     metaDescription: 'Remodeling on the Boise Bench: opening up mid-century ranch kitchens, modernizing primary baths, and upgrading windows and insulation.',
     excerpt: 'Bench neighborhood remodeling guide.',
-    quickAnswer: 'The Bench is full of 1950s to 1970s ranches and split-levels whose straightforward framing takes well to open kitchens and single-level aging-in-place updates. Budget for the era\'s known conditions: 100-amp panels that need upsizing, thin insulation in 2x4 walls, and galvanized supply lines in pre-1960 homes.',
+    quickAnswer: 'The Bench is full of 1950s to 1970s ranches and split-levels whose simple framing takes well to open kitchens and single-level aging-in-place updates. Budget for the era\'s known conditions: 100-amp panels that need upsizing, thin insulation in 2x4 walls, and galvanized supply lines in pre-1960 homes.',
     takeaways: ['Check structure before removing walls.', 'Improve insulation when walls are open.'],
   }),
   buildLocationGuide({

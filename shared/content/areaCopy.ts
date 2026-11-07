@@ -30,7 +30,7 @@ const CALDWELL_CREEK_NOTE =
 export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
   boise: {
     intro:
-      'Boise has about 106,000 housing units, and the median one was built in 1986 (Census ACS 2020–2024), so most remodels here start with a house that already has some history. Boise Remodeling Co does design-build remodeling for homeowners across Boise and Ada County: kitchen and bathroom renovations, whole-home remodels, and room additions, handled by one accountable team from the first consultation through the final walkthrough.',
+      'Boise has about 106,000 housing units, and the median one was built in 1986 (Census ACS 2020 to 2024), so most remodels here start with a house that already has some history. Boise Remodeling Co does design-build remodeling for homeowners across Boise and Ada County: kitchen and bathroom renovations, whole-home remodels, and room additions, handled by one accountable team from the first consultation through the final walkthrough.',
     faqs: [
       {
         question: 'What remodeling services do you offer?',
@@ -60,13 +60,13 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'What changes when remodeling an older Boise home?',
         answer:
-          "Age shows up in the plan. About 17% of Boise homes were built before 1960 (Census ACS 2020–2024), and layout, structure, and finishes get fitted to the age and style of the house during design. If the home is in a Boise historic district, exterior changes such as windows and siding first need a Certificate of Appropriateness from the Planning division, obtained before the building permit application.",
+          "Age shows up in the plan. About 17% of Boise homes were built before 1960 (Census ACS 2020 to 2024), and layout, structure, and finishes get fitted to the age and style of the house during design. If the home is in a Boise historic district, exterior changes such as windows and siding first need a Certificate of Appropriateness from the Planning division, obtained before the building permit application.",
       },
     ],
   },
   meridian: {
     intro:
-      "Most Meridian houses are 2000s-era or newer: about 70% were built in 2000 or after, by the Census Bureau's 2020–2024 survey estimates. Boise Remodeling Co, based in Meridian, delivers design-build remodeling to homeowners here and across Ada County, covering kitchens and bathrooms, full-home remodels, and room additions with one accountable team from consultation to final walkthrough.",
+      "Most Meridian houses are 2000s-era or newer: about 70% were built in 2000 or after, by the Census Bureau's 2020 to 2024 survey estimates. Boise Remodeling Co, based in Meridian, delivers design-build remodeling to homeowners here and across Ada County, covering kitchens and bathrooms, full-home remodels, and room additions with one accountable team from consultation to final walkthrough.",
     faqs: [
       {
         question: 'What remodeling services do you offer?',
@@ -96,13 +96,13 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'How old are Meridian homes?',
         answer:
-          'Young. Census ACS 2020–2024 estimates put the median Meridian home at 2007, with only about 7% built before 1980 and roughly 30% built between 2000 and 2009, so many Meridian remodels start from a fairly young house. Design starts from your home\'s actual layout at the in-home visit.',
+          'Young. Census ACS 2020 to 2024 estimates put the median Meridian home at 2007, with only about 7% built before 1980 and roughly 30% built between 2000 and 2009, so many Meridian remodels start from a fairly young house. Design starts from your home\'s actual layout at the in-home visit.',
       },
     ],
   },
   eagle: {
     intro:
-      "Eagle has roughly 13,500 homes, and about 23% of them date from 2000 through 2009, the Census Bureau's ACS figures for 2020–2024 show. Our design-build remodeling reaches homeowners in Eagle and the rest of Ada County, including room additions, whole-home remodels, and kitchen and bathroom renovations, with a single accountable team from your consultation to the final walkthrough.",
+      "Eagle has roughly 13,500 homes, and about 23% of them date from 2000 through 2009, the Census Bureau's ACS figures for 2020 to 2024 show. Our design-build remodeling reaches homeowners in Eagle and the rest of Ada County, including room additions, whole-home remodels, and kitchen and bathroom renovations, with a single accountable team from your consultation to the final walkthrough.",
     faqs: [
       {
         question: 'What remodeling services do you offer?',
@@ -138,7 +138,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
   },
   nampa: {
     intro:
-      "Nampa's homes span a wide range of ages: roughly 26% were built before 1980 and 28% from 2000 to 2009, per American Community Survey 2020–2024 estimates. Boise Remodeling Co serves Nampa and Canyon County homeowners with design-build remodeling, from kitchen and bath renovations to remodels of entire houses and room additions, and one accountable team runs each job from consultation through the final walkthrough.",
+      "Nampa's homes span a wide range of ages: roughly 26% were built before 1980 and 28% from 2000 to 2009, per American Community Survey 2020 to 2024 estimates. Boise Remodeling Co serves Nampa and Canyon County homeowners with design-build remodeling, from kitchen and bath renovations to remodels of entire houses and room additions, and one accountable team runs each job from consultation through the final walkthrough.",
     faqs: [
       {
         question: 'What remodeling services do you offer?',
@@ -174,7 +174,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
   },
   kuna: {
     intro:
-      "About a third of Kuna's homes (33%) were built from 2000 through 2009, and owners live in roughly 83% of them (Census ACS 2020–2024). Boise Remodeling Co offers Kuna homeowners design-build remodeling, spanning bathroom and kitchen updates, remodels of the whole house, and room additions throughout Ada County, and the same accountable team is with you from the consultation to the last walkthrough.",
+      "About a third of Kuna's homes (33%) were built from 2000 through 2009, and owners live in roughly 83% of them (Census ACS 2020 to 2024). Boise Remodeling Co offers Kuna homeowners design-build remodeling, spanning bathroom and kitchen updates, remodels of the whole house, and room additions throughout Ada County, and the same accountable team is with you from the consultation to the last walkthrough.",
     creekNote: KUNA_CREEK_NOTE,
     faqs: [
       {
@@ -205,13 +205,13 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'When is the best time for a deck or patio project in Kuna?',
         answer:
-          "Midsummer is the driest stretch. NOAA's 1991–2020 normals for a volunteer precipitation station just outside Kuna show July and August averaging about half an inch of precipitation combined, compared with more than 1.5 inches in May alone. Our outdoor living work, from decks to covered patios and outdoor kitchens, schedules most easily in those dry months.",
+          "Midsummer is the driest stretch. NOAA's 1991 to 2020 normals for a volunteer precipitation station just outside Kuna show July and August averaging about half an inch of precipitation combined, compared with more than 1.5 inches in May alone. Our outdoor living work, from decks to covered patios and outdoor kitchens, schedules most easily in those dry months.",
       },
     ],
   },
   star: {
     intro:
-      "Roughly 83% of Star's homes were built in 2000 or later, going by five-year Census survey estimates for 2020–2024, which makes Star the newest housing market we work in. For homeowners in Star and greater Ada County, Boise Remodeling Co works as a design-build remodeler, whether that's a kitchen or bathroom renovation, a whole-home remodel, or a room addition, and one accountable team takes each project from consultation to the final walkthrough.",
+      "Roughly 83% of Star's homes were built in 2000 or later, going by five-year Census survey estimates for 2020 to 2024, which makes Star the newest housing market we work in. For homeowners in Star and greater Ada County, Boise Remodeling Co works as a design-build remodeler, whether that's a kitchen or bathroom renovation, a whole-home remodel, or a room addition, and one accountable team takes each project from consultation to the final walkthrough.",
     faqs: [
       {
         question: 'What remodeling services do you offer?',
@@ -247,7 +247,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
   },
   middleton: {
     intro:
-      "About 12% of Middleton's homes predate 1980, while nearly half went up in 2010 or after (ACS five-year data, 2020–2024). Boise Remodeling Co brings design-build remodeling to Middleton and Canyon County homeowners: kitchen renovations, bathroom renovations, room additions, and remodels of entire homes, guided by one accountable team from your consultation to the closing walkthrough.",
+      "About 12% of Middleton's homes predate 1980, while nearly half went up in 2010 or after (ACS five-year data, 2020 to 2024). Boise Remodeling Co brings design-build remodeling to Middleton and Canyon County homeowners: kitchen renovations, bathroom renovations, room additions, and remodels of entire homes, guided by one accountable team from your consultation to the closing walkthrough.",
     faqs: [
       {
         question: 'What remodeling services do you offer?',
@@ -283,7 +283,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
   },
   caldwell: {
     intro:
-      "Owners occupy roughly 73% of Caldwell's homes, and the city's median house dates to 2003 (Census ACS 2020–2024). Caldwell and Canyon County homeowners get design-build remodeling from Boise Remodeling Co, with kitchen and bath projects, whole-home renovation, and additions of new rooms. One accountable team stays on a Caldwell project from the consultation until the final walkthrough.",
+      "Owners occupy roughly 73% of Caldwell's homes, and the city's median house dates to 2003 (Census ACS 2020 to 2024). Caldwell and Canyon County homeowners get design-build remodeling from Boise Remodeling Co, with kitchen and bath projects, whole-home renovation, and additions of new rooms. One accountable team stays on a Caldwell project from the consultation until the final walkthrough.",
     creekNote: CALDWELL_CREEK_NOTE,
     faqs: [
       {

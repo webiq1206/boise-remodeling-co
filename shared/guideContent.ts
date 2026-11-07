@@ -51,7 +51,7 @@ const costPillarFaqs = [
   {
     question: 'How much does a typical home remodel cost in Boise?',
     answer:
-      'Most homeowners should plan room-level budgets: kitchens often $37,000–$110,000+, master baths $35,000–$85,000+, and whole-home programs $180,000–$425,000+ depending on scope and finishes.',
+      'Most homeowners should plan room-level budgets: kitchens often $37,000 to $110,000+, master baths $35,000 to $85,000+, and whole-home programs $180,000 to $425,000+ depending on scope and finishes.',
   },
   {
     question: 'Are remodeling costs higher in Eagle than in Meridian?',
@@ -71,7 +71,7 @@ const costPillarFaqs = [
   {
     question: 'Should I budget contingency for a remodel?',
     answer:
-      'Hold 10–15% contingency for concealed conditions - especially in pre-1990 Boise and Bench homes where framing, plumbing, or wiring surprises are common.',
+      'Hold 10 to 15% contingency for concealed conditions - especially in pre-1990 Boise and Bench homes where framing, plumbing, or wiring surprises are common.',
   },
   {
     question: 'Are appliances included in kitchen remodel cost?',
@@ -81,7 +81,7 @@ const costPillarFaqs = [
   {
     question: 'How long does a kitchen remodel take in the Treasure Valley?',
     answer:
-      'Many full kitchen remodels run 8–16 weeks of construction after design and permits. Cabinet lead times can add weeks before demo.',
+      'Many full kitchen remodels run 8 to 16 weeks of construction after design and permits. Cabinet lead times can add weeks before demo.',
   },
   {
     question: 'What permits are needed for a bathroom remodel in Boise?',
@@ -234,7 +234,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       },
       {
         question: 'How long do valley remodels take?',
-        answer: 'Kitchens often 2–4 months total; additions and whole-home programs can run much longer.',
+        answer: 'Kitchens often 2 to 4 months total; additions and whole-home programs can run much longer.',
       },
       {
         question: 'Do you offer free estimates?',

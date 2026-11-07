@@ -105,7 +105,7 @@ export const homeAdditionCostBoise: BlogPostData = {
 <p>The type of addition matters more than raw square footage because each type carries different structural and mechanical demands.</p>
 <ul>
 <li><strong>Bump-outs</strong> - extending a kitchen or bathroom a few feet is the most economical way to gain space, sometimes cantilevered to avoid a full foundation.</li>
-<li><strong>Bedroom and room additions</strong> - a straightforward ground-floor <a href="/blog/bedroom-additions">bedroom addition</a> with foundation and roof.</li>
+<li><strong>Bedroom and room additions</strong> - a simple ground-floor <a href="/blog/bedroom-additions">bedroom addition</a> with foundation and roof.</li>
 <li><strong>Primary suite additions</strong> - a bedroom, ensuite bath, and closet; the bathroom and custom closet make it more expensive per square foot. See <a href="/blog/primary-suite-additions">primary suite additions</a>.</li>
 <li><strong>Second-story additions</strong> - the priciest per square foot because the existing structure and foundation must carry new load; see <a href="/blog/second-story-additions">second story additions</a>.</li>
 <li><strong>ADUs and garage conversions</strong> - a separate category with their own economics; explore our ADU guidance.</li>

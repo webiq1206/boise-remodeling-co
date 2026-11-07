@@ -562,7 +562,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does a deck or patio take to build?',
         answer:
-          'Plan 3 to 8 weeks after permits. A straightforward deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
+          'Plan 3 to 8 weeks after permits. A simple deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
       },
     ],
     costGuidance: {

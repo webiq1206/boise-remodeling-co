@@ -180,7 +180,7 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
     {
       h2: 'Why the Bench is the valley\'s best remodel value',
       paragraphs: [
-        'The Bench (largely ZIPs 83705 and 83709) is stacked with 1950s-1970s ranches and split-levels on real lots, minutes from downtown, at prices well under the North End. These homes were built with straightforward framing that takes well to open-concept conversion: kitchen walls are often non-bearing or easily beamed, and single-level layouts adapt naturally for aging in place with curbless showers and widened doorways.',
+        'The Bench (largely ZIPs 83705 and 83709) is stacked with 1950s-1970s ranches and split-levels on real lots, minutes from downtown, at prices well under the North End. These homes were built with simple framing that takes well to open-concept conversion: kitchen walls are often non-bearing or easily beamed, and single-level layouts adapt naturally for aging in place with curbless showers and widened doorways.',
         'Plan for the era\'s known conditions: 100-amp panels that need upsizing for induction ranges and heat pumps, minimal insulation in 2x4 walls worth addressing while drywall is open, and original galvanized supply lines in pre-1960 homes. None are dealbreakers - they are just line items an experienced local team budgets up front rather than discovering mid-build.',
       ],
     },
