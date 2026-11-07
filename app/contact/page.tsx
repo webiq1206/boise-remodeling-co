@@ -263,7 +263,7 @@ export default function ContactPage() {
                   icon={<Phone className="h-5 w-5" strokeWidth={1.5} />}
                   label="Call us"
                   href={SITE_CONFIG.phoneHref}
-                  subtext="Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT"
+                  subtext="Mon to Fri 9 am to 6 pm · Sat 9 am to 4 pm MT"
                   featured
                   companion={
                     <SaveContactLink className="text-sm text-muted-foreground hover:text-foreground transition-colors" />
@@ -348,7 +348,7 @@ export default function ContactPage() {
                       <em className="brc-accent">Just answers.</em>
                     </>
                   }
-                  description="Your free 60 to 90 minute in-home visit is focused on planning guidance and an honest project range - not a commission-driven pitch."
+                  description="Your free in-home visit is focused on planning guidance and an honest project range - not a commission-driven pitch."
                   className="mb-8 max-w-none"
                 />
                 <ul className="flex flex-col gap-0 mb-8">

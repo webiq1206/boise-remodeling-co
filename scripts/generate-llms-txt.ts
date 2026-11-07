@@ -131,12 +131,13 @@ function buildFull(): string {
     `${SITE_CONFIG.name} is a residential design-build remodeling company serving the Treasure ` +
       `Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel ` +
       `existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ` +
-      `accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means ` +
+      `outdoor living spaces and aging-in-place work. ADUs are built by our sister company Boise ADU Co. ` +
+      `Start at p5homeco.com/quote/adu. Design-build means ` +
       `design direction, estimating, permitting and construction are delivered by one team under ` +
       `one contract, which removes the handoff between a designer and a general contractor and ` +
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
-      `scope before construction, a dedicated project manager, a written progress update every ` +
-      `Friday, and a workmanship guarantee at completion.`),
+      `scope before construction, a dedicated project manager, written progress updates, ` +
+      `and a workmanship guarantee at completion.`),
     '',
   );
   lines.push('- Business type: Residential design-build remodeling contractor');

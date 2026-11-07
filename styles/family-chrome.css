@@ -694,6 +694,23 @@ html {
   gap: var(--space-1);
   margin-top: var(--space-8);
 }
+/* A long primary label wraps inside the control instead of widening the page. */
+.fam-header[data-family-header] .fam-header-cta .fam-btn,
+.fam-hero[data-family-hero] .fam-hero-actions .fam-btn,
+.fam-menu[role='dialog'] .fam-menu-foot .fam-btn {
+  height: auto;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+}
+.fam-header[data-family-header] .fam-header-cta .fam-btn {
+  max-width: 12rem;
+  padding-block: 8px;
+}
+.fam-hero[data-family-hero] .fam-hero-actions .fam-btn {
+  max-width: 100%;
+  padding-block: 12px;
+}
 .fam-hero[data-family-hero] .fam-hero-copy .fam-hero-link {
   display: inline-flex;
   align-items: center;

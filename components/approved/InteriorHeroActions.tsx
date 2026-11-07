@@ -1,9 +1,8 @@
 'use client';
 /**
- * Interior hero actions (service, city-service and area pages): one primary
- * "Request a quote" in the family button, and the phone as a text link. Same
- * label and destination as the header and the bottom bar (FAMILY_BRAND.cta),
- * and the same primary_cta_clicked event the old hero button sent.
+ * Interior hero actions: call and text on the site number are the primary
+ * actions, with the same label as the header and the bottom bar. The quote
+ * form is the secondary ask.
  */
 import { usePathname } from 'next/navigation';
 import { FamilyButton } from '@/components/family/Button';
@@ -16,18 +15,31 @@ export function InteriorHeroActions() {
   return (
     <div className="interior-hero-actions">
       <FamilyButton
-        href={cta.href}
+        href={phone.telHref}
         variant="primary"
         size="lg"
         data-cta="primary"
-        data-testid="link-hero-request-quote"
+        data-testid="link-hero-call"
         onClick={() => trackEvent('primary_cta_clicked', { location: pathname ?? '', surface: 'interior-hero' })}
       >
         {cta.label}
       </FamilyButton>
-      <a className="interior-hero-call" href={phone.telHref} data-testid="link-hero-call">
-        Call or text {phone.display}
-      </a>
+      <FamilyButton
+        href={phone.smsHref}
+        variant="secondary"
+        size="lg"
+        data-testid="link-hero-text"
+      >
+        Text
+      </FamilyButton>
+      <FamilyButton
+        href="/#request"
+        variant="tertiary"
+        size="lg"
+        data-testid="link-hero-request-quote"
+      >
+        Request a quote
+      </FamilyButton>
     </div>
   );
 }

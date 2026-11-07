@@ -60,7 +60,7 @@ test('the one-business-day reply stays, and the text line follows it', () => {
 
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
   assert.match(contact, /<TextReplyLine/);
-  assert.match(contact, /Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT/);
+  assert.match(contact, /Mon to Fri 9 am to 6 pm · Sat 9 am to 4 pm MT/);
   assert.doesNotMatch(contact, /Mon – Fri 7 am|Sat 8 am/);
   assert.match(readFileSync('shared/siteContent.ts', 'utf8'), /"Response within one business day"/);
   // F4: one Prefer-to-text line per page, in the form block only.

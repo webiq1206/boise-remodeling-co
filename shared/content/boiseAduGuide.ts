@@ -6,11 +6,11 @@
  */
 
 export const BOISE_ADU_GUIDE_QUICK_ANSWER =
-  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. Most Treasure Valley ADU projects plan $135,000 to $365,000 depending on whether the unit is attached, detached, or a garage conversion, with compact units starting near $90,000, and take 4 to 8 months from design through final inspection.';
+  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. What changes the project is whether the unit is attached, detached, or a garage conversion, plus site work, utility connections, and finish level. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at p5homeco.com/quote/adu.';
 
 export const BOISE_ADU_GUIDE_TAKEAWAYS = [
   'Boise updated its zoning code in December 2023 and made ADUs easier to approve in most residential zones - verify current standards with the City of Boise Planning Division before design.',
-  'Detached new-build ADUs cost the most; garage conversions are usually the most budget-efficient path to a legal second unit.',
+  'A detached unit needs its own foundation and utility runs. A garage conversion reuses the shell you already have.',
   'Utility connections, fire separation, and parking are the three feasibility items that decide most projects.',
   'Meridian, Eagle, Nampa, and other Treasure Valley cities each apply their own ADU standards - the rules are city-specific, not county-wide.',
 ];
@@ -29,7 +29,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'How much does an ADU cost to build in the Treasure Valley?',
     answer:
-      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $65,000 to $135,000; attached ADUs $135,000 to $335,000; detached new-build ADUs $150,000 to $365,000. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at p5homeco.com/quote/adu.',
+      'Site work, utility connections, finish level, and whether the unit is attached, detached, or a garage conversion are what move the cost. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at p5homeco.com/quote/adu.',
   },
   {
     question: 'Do ADUs need their own utility connections?',
@@ -54,7 +54,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'How long does an ADU project take?',
     answer:
-      'Plan 4 to 8 months total: 6 to 10 weeks for design and engineering, several weeks for plan review depending on jurisdiction, then 3 to 5 months of construction for a detached unit. Garage conversions run shorter.',
+      'The schedule depends on the site, permit review, and whether the unit is a conversion or a new structure. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at p5homeco.com/quote/adu.',
   },
   {
     question: 'Do Meridian, Eagle, and Nampa allow ADUs?',
@@ -101,19 +101,11 @@ export const BOISE_ADU_GUIDE_HTML = `
 
 <div class="callout tip"><p class="callout-label">The most budget-friendly path</p><p>A <span class="sage">garage conversion</span> is usually the cheapest route to a legal unit, because it reuses the existing foundation, walls, and roof. A detached new-build ADU is the most expensive but the most flexible - match the type to your budget, your lot, and how much privacy the unit needs.</p></div>
 
-<h2>What does an ADU cost in the Treasure Valley?</h2>
-<table class="cost-table">
-  <thead><tr><th>ADU type</th><th>Planning range</th><th>Typical timeline</th></tr></thead>
-  <tbody>
-    <tr><td>Garage conversion</td><td>$65,000 - $135,000</td><td>3 to 5 months</td></tr>
-    <tr><td>Attached ADU / basement conversion</td><td>$135,000 - $335,000</td><td>4 to 6 months</td></tr>
-    <tr><td>Detached new-build ADU</td><td>$150,000 - $365,000</td><td>5 to 8 months</td></tr>
-  </tbody>
-</table>
-<p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. Foundation work, separate utility runs, and premium finishes push detached units toward the top of the band. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at <a href="https://p5homeco.com/quote/adu">p5homeco.com/quote/adu</a>.</p>
+<h2>What changes the cost of an ADU?</h2>
+<p>The main drivers are the type of unit, site work, utility connections, and finish level. A garage conversion reuses the foundation and shell you already have. An attached unit shares walls and utilities with the house. A detached unit needs its own foundation, envelope, and utility runs. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at <a href="https://p5homeco.com/quote/adu">p5homeco.com/quote/adu</a>.</p>
 
-<h2>Permits, timeline, and what to expect</h2>
-<p>Every legal ADU needs building, plumbing, electrical, and mechanical permits, plus zoning compliance. Typical sequence: feasibility and design (6 to 10 weeks), engineering and plan submission, plan review (varies by jurisdiction and season), then construction with inspections at each phase. The <a href="/blog/boise-permit-guide">permit guide</a> describes Ada and Canyon County review. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at <a href="https://p5homeco.com/quote/adu">p5homeco.com/quote/adu</a>.</p>
+<h2>Permits and what to expect</h2>
+<p>Every legal ADU needs building, plumbing, electrical, and mechanical permits, plus zoning compliance. The sequence is feasibility and design, engineering and plan submission, plan review, then construction with inspections at each phase. The <a href="/blog/boise-permit-guide">permit guide</a> describes Ada and Canyon County review. ADUs are built by sister company Boise ADU Co, part of P5 Home Co, starting at <a href="https://p5homeco.com/quote/adu">p5homeco.com/quote/adu</a>.</p>
 
 <h2>Design choices that make an ADU work</h2>
 <p>Good ADUs live larger than their square footage: vaulted ceilings over the main space, full-height storage walls, pocket doors, and a galley or L-kitchen sized for real cooking. If the unit may ever house aging parents, build in zero-step entry, a <a href="/blog/curbless-shower-guide">curbless shower</a>, and 36-inch doorways now - retrofitting later costs far more. Match exterior materials to the main house; several valley jurisdictions require design compatibility, and resale value rewards it regardless.</p>

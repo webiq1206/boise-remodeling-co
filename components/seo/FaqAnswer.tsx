@@ -41,6 +41,14 @@ export function FaqAnswer({ text }: { text: string }) {
         </>
       ),
     },
+    {
+      key: 'Boise ADU Co',
+      node: (
+        <a href={ADU_QUOTE_URL} className={linkClass}>
+          Boise ADU Co
+        </a>
+      ),
+    },
   ];
 
   const pieces: ReactNode[] = [];

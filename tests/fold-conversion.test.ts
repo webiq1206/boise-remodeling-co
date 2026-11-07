@@ -31,7 +31,7 @@ test("the first screen is the video and headline, and the short request is the f
   assert.equal(hero.includes("HeroConversion"), false);
   assert.equal(hero.includes("fold-form"), false);
   assert.match(hero, /primary=\{\{ label: FAMILY_BRAND\.cta\.label, href: FAMILY_BRAND\.cta\.href \}\}/);
-  assert.match(brand, /cta: \{ label: 'Request a quote', href: '\/#request' \}/);
+  assert.match(brand, /cta: \{ label: 'Call or text us about your project\.', href: SITE_CONFIG\.phoneHref \}/);
   assert.match(homePage, /<div id="request"/);
   assert.match(homePage, /<HeroConversion \/>/);
   // Owner request (1 November 2026, "too many options might be cumbersome"): one form, not
@@ -174,7 +174,7 @@ test("the multi-step intake stays optional and the estimator is not the header a
   assert.match(intake, /Open the optional intake/);
   assert.match(intake, /<ApprovedEstimate/);
   assert.match(nav, /<SiteHeader \/>/);
-  assert.match(brand, /label: 'Request a quote'/);
+  assert.match(brand, /label: 'Call or text us about your project\.'/);
   assert.equal(brand.includes("Get an Estimate"), false);
   assert.equal(brand.includes("/estimate' }"), false);
 });

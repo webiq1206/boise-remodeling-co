@@ -23,9 +23,11 @@ try{
    assert.ok(controls.every(c=>c.height>=44),'Mobile action too small');
    await page.screenshot({path:`${out}/actions-${width}.png`});
    await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await delay(150);assert.equal(await visible(bar),true,'Approved mobile CTA remains available after returning to hero');
-   const primary=bar.locator('a[href="/#request"]');assert.equal(await primary.count(),1,'One primary quote destination');
+   const primary=bar.locator('a.fam-bar-primary');assert.equal(await primary.count(),1,'One primary call action');
+   assert.match(await primary.getAttribute('href')||'',/^tel:/);
+   assert.equal((await primary.textContent())?.trim(),'Call or text us about your project.');
    assert.ok(await primary.evaluate(el=>{const r=el.getBoundingClientRect();return el.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));}),'Primary CTA is unobstructed');
-   await primary.click();await page.waitForURL(url=>url.hash==='#request');await page.locator('#request-form form').waitFor({state:'visible'});assert.equal(new URL(page.url()).hash,'#request','CTA targets the actual homepage request form');assert.ok(await page.locator('#request-form input[name="name"]').isVisible());
+   assert.equal(await page.locator('#request-form form').count(),1,'Quote form stays on the page as the secondary ask');
    results.mobile.push({width,visibleOverHero:true,visibleAfterHero:true,callLabeled:true});
   }
  }

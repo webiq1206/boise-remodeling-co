@@ -111,7 +111,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.881
+          "score": 0.875
         }
       ]
     },
@@ -225,7 +225,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.706
+          "score": 0.701
         }
       ]
     },
@@ -453,7 +453,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.637
+          "score": 0.633
         }
       ]
     },
@@ -995,7 +995,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.658
+          "score": 0.655
         }
       ]
     },
@@ -1109,7 +1109,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.524
+          "score": 0.491
         }
       ]
     },
@@ -1893,7 +1893,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.545
+          "score": 0.543
         }
       ]
     },
@@ -2214,7 +2214,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.477
+          "score": 0.473
         }
       ]
     },
@@ -2699,7 +2699,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.466
+          "score": 0.461
         }
       ]
     },
@@ -7942,49 +7942,49 @@
           "anchor": "How Much Does an ADU Cost in Boise? A Real Budget Breakdown",
           "title": "How Much Does an ADU Cost in Boise? A Real Budget Breakdown",
           "type": "blog",
-          "score": 0.561
+          "score": 0.555
         },
         {
           "url": "/blog/garage-conversions",
           "anchor": "Garage Conversions in Boise: Add a Room Without Adding On",
           "title": "Garage Conversions in Boise: Add a Room Without Adding On",
           "type": "blog",
-          "score": 0.498
+          "score": 0.495
         },
         {
           "url": "/blog/multigenerational-living-remodels",
           "anchor": "Mother-in-Law Suites & Multigenerational Living Remodels",
           "title": "Mother-in-Law Suites & Multigenerational Living Remodels",
           "type": "blog",
-          "score": 0.465
+          "score": 0.463
         },
         {
           "url": "/blog/basement-finishing-boise",
           "anchor": "Basement Finishing in Boise: Cost, Egress, and What to Know",
           "title": "Basement Finishing in Boise: Cost, Egress, and What to Know",
           "type": "blog",
-          "score": 0.426
+          "score": 0.421
         },
         {
           "url": "/blog/primary-suite-additions",
           "anchor": "Primary Suite Additions: Adding a Master Suite in Boise",
           "title": "Primary Suite Additions: Adding a Master Suite in Boise",
           "type": "blog",
-          "score": 0.397
+          "score": 0.393
         },
         {
           "url": "/guides/boise-remodeling-guide",
           "anchor": "Boise Remodeling Guide: What to Know Before You Remodel",
           "title": "Boise Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.088
+          "score": 0.087
         },
         {
-          "url": "/services/room-addition/meridian",
-          "anchor": "Room Addition in Meridian",
-          "title": "Room Addition in Meridian, Idaho",
+          "url": "/services/basement-remodel/boise",
+          "anchor": "Basement Remodeling in Boise",
+          "title": "Basement Remodeling in Boise, Idaho",
           "type": "city-service",
-          "score": -0.097
+          "score": -0.1
         }
       ]
     },
@@ -8044,11 +8044,11 @@
           "score": 0.25
         },
         {
-          "url": "/services/basement-remodel/boise",
-          "anchor": "Basement Remodeling in Boise",
-          "title": "Basement Remodeling in Boise, Idaho",
+          "url": "/services/basement-remodel/nampa",
+          "anchor": "Basement Remodeling in Nampa",
+          "title": "Basement Remodeling in Nampa, Idaho",
           "type": "city-service",
-          "score": -0.037
+          "score": -0.061
         }
       ]
     },
@@ -8108,9 +8108,9 @@
           "score": 0.06
         },
         {
-          "url": "/services/basement-remodel/nampa",
-          "anchor": "Basement Remodeling in Nampa",
-          "title": "Basement Remodeling in Nampa, Idaho",
+          "url": "/services/basement-remodel/star",
+          "anchor": "Basement Remodeling in Star",
+          "title": "Basement Remodeling in Star, Idaho",
           "type": "city-service",
           "score": -0.009
         }
@@ -8134,7 +8134,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.85
+          "score": 0.842
         },
         {
           "url": "/blog/garage-conversions",
@@ -8172,9 +8172,9 @@
           "score": 0.292
         },
         {
-          "url": "/services/room-addition/middleton",
-          "anchor": "Room Addition in Middleton",
-          "title": "Room Addition in Middleton, Idaho",
+          "url": "/services/room-addition/meridian",
+          "anchor": "Room Addition in Meridian",
+          "title": "Room Addition in Meridian, Idaho",
           "type": "city-service",
           "score": 0
         }
@@ -8300,11 +8300,11 @@
           "score": 0.183
         },
         {
-          "url": "/services/basement-remodel/star",
-          "anchor": "Basement Remodeling in Star",
-          "title": "Basement Remodeling in Star, Idaho",
+          "url": "/services/aging-in-place/eagle",
+          "anchor": "Aging-in-Place Remodeling in Eagle",
+          "title": "Aging-in-Place Remodeling in Eagle, Idaho",
           "type": "city-service",
-          "score": -0.084
+          "score": -0.086
         }
       ]
     },
@@ -9374,9 +9374,9 @@
           "score": -0.115
         },
         {
-          "url": "/services/aging-in-place/eagle",
-          "anchor": "Aging-in-Place Remodeling in Eagle",
-          "title": "Aging-in-Place Remodeling in Eagle, Idaho",
+          "url": "/services/aging-in-place/meridian",
+          "anchor": "Aging-in-Place Remodeling in Meridian",
+          "title": "Aging-in-Place Remodeling in Meridian, Idaho",
           "type": "city-service",
           "score": -0.115
         },
@@ -9452,9 +9452,9 @@
           "score": 0.013
         },
         {
-          "url": "/services/aging-in-place/meridian",
-          "anchor": "Aging-in-Place Remodeling in Meridian",
-          "title": "Aging-in-Place Remodeling in Meridian, Idaho",
+          "url": "/services/aging-in-place/middleton",
+          "anchor": "Aging-in-Place Remodeling in Middleton",
+          "title": "Aging-in-Place Remodeling in Middleton, Idaho",
           "type": "city-service",
           "score": -0.01
         }
@@ -9471,7 +9471,7 @@
           "anchor": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "title": "Boise ADU Guide: Rules, Costs & Building a Second Unit",
           "type": "guide",
-          "score": 0.032
+          "score": 0.027
         },
         {
           "url": "/blog/adu-cost-boise",
@@ -9538,13 +9538,6 @@
           "score": 1.7
         },
         {
-          "url": "/services/aging-in-place/middleton",
-          "anchor": "Aging-in-Place Remodeling in Middleton",
-          "title": "Aging-in-Place Remodeling in Middleton, Idaho",
-          "type": "city-service",
-          "score": 1.669
-        },
-        {
           "url": "/services/aging-in-place/nampa",
           "anchor": "Aging-in-Place Remodeling in Nampa",
           "title": "Aging-in-Place Remodeling in Nampa, Idaho",
@@ -9569,6 +9562,13 @@
           "url": "/services/aging-in-place/eagle",
           "anchor": "Aging-in-Place Remodeling in Eagle",
           "title": "Aging-in-Place Remodeling in Eagle, Idaho",
+          "type": "city-service",
+          "score": 1.629
+        },
+        {
+          "url": "/services/aging-in-place/meridian",
+          "anchor": "Aging-in-Place Remodeling in Meridian",
+          "title": "Aging-in-Place Remodeling in Meridian, Idaho",
           "type": "city-service",
           "score": 1.629
         },
@@ -9851,6 +9851,13 @@
       "url": "/services/room-addition",
       "links": [
         {
+          "url": "/services/room-addition/middleton",
+          "anchor": "Room Addition in Middleton",
+          "title": "Room Addition in Middleton, Idaho",
+          "type": "city-service",
+          "score": 1.6
+        },
+        {
           "url": "/services/room-addition/nampa",
           "anchor": "Room Addition in Nampa",
           "title": "Room Addition in Nampa, Idaho",
@@ -9882,13 +9889,6 @@
           "url": "/services/room-addition/caldwell",
           "anchor": "Room Addition in Caldwell",
           "title": "Room Addition in Caldwell, Idaho",
-          "type": "city-service",
-          "score": 1.56
-        },
-        {
-          "url": "/services/room-addition/eagle",
-          "anchor": "Room Addition in Eagle",
-          "title": "Room Addition in Eagle, Idaho",
           "type": "city-service",
           "score": 1.56
         },
@@ -10100,7 +10100,7 @@
     "/services/whole-home-remodel/caldwell": 6,
     "/services/room-addition/boise": 9,
     "/services/room-addition/meridian": 6,
-    "/services/room-addition/eagle": 7,
+    "/services/room-addition/eagle": 6,
     "/services/room-addition/nampa": 6,
     "/services/room-addition/kuna": 9,
     "/services/room-addition/star": 6,
@@ -10131,7 +10131,7 @@
     "/services/outdoor-living/middleton": 5,
     "/services/outdoor-living/caldwell": 6,
     "/services/aging-in-place/boise": 7,
-    "/services/aging-in-place/meridian": 5,
+    "/services/aging-in-place/meridian": 6,
     "/services/aging-in-place/eagle": 6,
     "/services/aging-in-place/nampa": 5,
     "/services/aging-in-place/kuna": 6,

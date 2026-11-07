@@ -15,8 +15,6 @@ function withoutTrailingSlash(pathname: string | null | undefined): string {
 }
 
 export function registrationPresentation(pathname: string | null | undefined): "link" | "plain" | "hidden" {
-  // BOT-05: the bathroom service page does not state contractor #8381215.
-  if (withoutTrailingSlash(pathname) === "/services/bathroom-remodel") return "hidden";
   if (isPortalPath(pathname)) return "hidden";
   if (isEstimatorPath(pathname)) return "plain";
   return "link";

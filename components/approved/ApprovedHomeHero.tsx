@@ -13,9 +13,8 @@ const KITCHEN_PLANNING_FROM = SERVICES.find((service) => service.slug === "kitch
  * Approved full-bleed remodeling video, a uniform black overlay, the existing
  * two-line brand statement and the site's common request action.
  *
- * The CTA goes where every other "Request a quote" on the site goes, the short
- * request in the final CTA band (/#request): one label, one destination, as the
- * approved checks pin it. The poster and H1 are in the first HTML.
+ * The primary action is call or text on the site number. The quote form stays
+ * on the page as the secondary ask. The poster and H1 are in the first HTML.
  */
 export function ApprovedHomeHero() {
   return (
