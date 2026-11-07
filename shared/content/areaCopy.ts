@@ -71,7 +71,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'What remodeling services do you offer?',
         answer:
-          'Kitchen and bath remodels, renovations of the whole home, and room additions. For Meridian homeowners each project runs design-build, meaning one team carries it from design through construction, with a written progress update every Friday.',
+          'Kitchen and bath remodels, renovations of the whole home, and room additions. For Meridian homeowners each project runs design-build, meaning one team carries it from design through construction, with written progress updates.',
       },
       {
         question: 'Are you a registered contractor and insured?',
@@ -299,7 +299,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'How do I start a project?',
         answer:
-          "Start with a call, a number from the project estimator, or a free in-home consultation booked online. You'll get a written scope before construction and a written progress update every Friday once work begins.",
+          "Start with a call, a number from the project estimator, or a free in-home consultation booked online. You'll get a written scope before construction and written progress updates once work begins.",
       },
       {
         question: 'Do you serve Caldwell, Idaho?',

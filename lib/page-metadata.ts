@@ -218,7 +218,7 @@ const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
   'whole-home-remodel': {
     title: 'Treasure Valley Whole-Home Remodeling',
     description:
-      'Whole-home remodeling across the Treasure Valley: phased or full-house renovations run by one design-build team with a written scope and weekly updates.',
+      'Whole-home remodeling across the Treasure Valley: phased or full-house renovations run by one design-build team with a written scope and written updates.',
   },
   'basement-remodel': {
     title: 'Treasure Valley Basement Remodeling',

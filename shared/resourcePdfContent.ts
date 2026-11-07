@@ -128,7 +128,7 @@ export const KITCHEN_BATH_CHECKLIST_BLOCKS: PdfBlock[] = [
     type: 'checkboxes',
     items: [
       'Temporary kitchen or bath plan if staying in home',
-      'Dust protection and daily access agreed',
+      'Dust protection and access agreed',
       'Selection deadlines met to avoid delays',
       'Change orders in writing before work proceeds',
     ],

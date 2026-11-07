@@ -42,7 +42,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.bathroom.after,
     title: "Primary Bathroom Renovation",
     description:
-      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
+      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable routine.",
   },
   {
     serviceType: "whole-home-remodel",
@@ -123,7 +123,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.hallBathBoise.after,
     title: "Hall Bath Shower Conversion",
     description:
-      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
+      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable routine.",
   },
   {
     serviceType: "bathroom-remodel",
@@ -132,7 +132,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.bathroomNampa.after,
     title: "Nampa Primary Bath Remodel",
     description:
-      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable daily routine.",
+      "Bathroom design inspiration exploring tile, fixtures, storage, and a comfortable routine.",
   },
   {
     serviceType: "whole-home-remodel",

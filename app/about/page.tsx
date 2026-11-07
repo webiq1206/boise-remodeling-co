@@ -29,8 +29,8 @@ const SPEAKABLE_SUMMARY =
 
 const COMPANY_ITEMS = [
   "Written scope before construction",
-  "Dust barriers and floor protection daily",
-  "Friday written update",
+  "Dust barriers and floor protection",
+  "Written progress updates",
   "Written change orders only",
   "Written workmanship warranty",
 ] as const;

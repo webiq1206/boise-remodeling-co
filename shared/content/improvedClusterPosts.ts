@@ -75,7 +75,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Where the punch list sits in the schedule',
         paragraphs: [
           'Most of what makes a punch list short happens months earlier. Preconstruction is where the design is developed, every material is selected, the scope is priced and permits are secured; finalizing all of it before demolition lets construction run predictably, and a predictable build leaves fewer loose ends at the end.',
-          'During construction you receive written schedule updates every week, and your project manager remains your single point of contact from the first visit to the final walkthrough. That continuity is what lets the punch list close quickly: the person walking the list with you is the person who managed the work.',
+          'During construction you receive written progress updates, and your project manager remains your single point of contact from the first visit to the final walkthrough. That continuity is what lets the punch list close quickly: the person walking the list with you is the person who managed the work.',
         ],
       },
       {

@@ -135,7 +135,7 @@ const CITY_CTA_VARIANTS: Record<string, string> = {
   Boise: "Treasure Valley design-build",
   Meridian: "Insured",
   Eagle: "Clear written scope",
-  Star: "Weekly project updates",
+  Star: "Written progress updates",
   Middleton: "Written workmanship warranty",
   Nampa: "Ada & Canyon County permits",
   Caldwell: "Design-build remodeling",

@@ -110,7 +110,7 @@ export const BATHROOM_GUIDE_FAQS = [
   {
     question: 'Should I choose a walk-in shower or a tub?',
     answer:
-      'A walk-in shower usually makes better daily use of space and feels more open, and many homeowners prefer it. The main caution is resale: many buyers want at least one bathtub in the home, so it is wise to keep a tub somewhere in the house. In a primary bath, a walk-in shower - sometimes paired with a separate freestanding tub in larger spaces - is one of the most satisfying upgrades.',
+      'A walk-in shower usually makes better regular use of space and feels more open, and many homeowners prefer it. The main caution is resale: many buyers want at least one bathtub in the home, so it is wise to keep a tub somewhere in the house. In a primary bath, a walk-in shower - sometimes paired with a separate freestanding tub in larger spaces - is one of the most satisfying upgrades.',
   },
   {
     question: 'Can I make my bathroom accessible without it looking institutional?',

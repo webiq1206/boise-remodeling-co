@@ -56,7 +56,7 @@ export const KITCHEN_GUIDE_CONTENT = `
 <p><strong>Appliances.</strong> Choose these early, because their sizes and rough-in requirements affect cabinetry and layout. Appliances are typically client-supplied; a good design-build team guides selection and coordinates the rough-in.</p>
 <div class="callout tip">
   <p class="callout-label">Where to splurge, where to save</p>
-  <p>Invest in the things that are hard to change and used daily - cabinets, counters, and quality drawer hardware. Save on the easily swapped items - cabinet pulls, paint, and light fixtures - which you can refresh affordably down the road.</p>
+  <p>Invest in the things that are hard to change and used often - cabinets, counters, and quality drawer hardware. Save on the easily swapped items - cabinet pulls, paint, and light fixtures - which you can refresh affordably down the road.</p>
 </div>
 
 <h2>5. The kitchen remodel process, step by step</h2>

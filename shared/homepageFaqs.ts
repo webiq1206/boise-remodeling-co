@@ -8,7 +8,7 @@ export interface HomepageFaq {
 export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
     q: "Can we live at home during the remodel?",
-    a: "For most kitchen and bathroom projects, yes, with some daily inconvenience. We install dust barriers, protect floors, and schedule noisy work for reasonable hours. For whole-home renovations involving HVAC or electrical throughout the house, we give you an honest assessment at the free visit of whether staying is practical.",
+    a: "For most kitchen and bathroom projects, yes, with some inconvenience. We install dust barriers, protect floors, and schedule noisy work for reasonable hours. For whole-home renovations involving HVAC or electrical throughout the house, we give you an honest assessment at the free visit of whether staying is practical.",
   },
   {
     q: "Is design included in the planning range?",
@@ -46,7 +46,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "What does a typical project timeline look like?",
-    a: "Kitchen remodels typically run 6 to 10 weeks from permit approval. Bathroom remodels are 3 to 6 weeks. Whole-home renovations range from 3 to 6 months depending on scope. We give you a week-by-week schedule at project kickoff and update it every Friday.",
+    a: "Kitchen remodels typically run 6 to 10 weeks from permit approval. Bathroom remodels are 3 to 6 weeks. Whole-home renovations range from 3 to 6 months depending on scope. We give you a written schedule at project kickoff and keep it current in writing.",
   },
   {
     q: "Do you handle permits?",

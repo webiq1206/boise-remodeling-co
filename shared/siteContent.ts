@@ -26,7 +26,7 @@ export const HERO_STATS = [
 export const DIFFERENTIATORS_HEADLINE = "Built for homeowners who want clarity, not chaos";
 
 export const DIFFERENTIATORS_INTRO =
-  "Many homeowners we meet have lived through a remodel where the scope shifted, the budget grew, the house became unlivable, or nobody returned their calls. We built our process around the opposite: one accountable team, a written plan before construction, a job site that respects your home, and proactive updates every Friday.";
+  "Many homeowners we meet have lived through a remodel where the scope shifted, the budget grew, the house became unlivable, or nobody returned their calls. We built our process around the opposite: one accountable team, a written plan before construction, a job site that respects your home, and written progress updates.";
 
 export interface Differentiator {
   title: string;
@@ -56,7 +56,7 @@ export const DIFFERENTIATORS: Differentiator[] = [
   {
     title: "Proactive communication, not radio silence",
     contrast: "Instead of wondering what happened on your project this week,",
-    body: "you receive a written update every Friday: what was completed, what is next, and any decisions needed from you. We also flag budget impacts early, before they become surprises.",
+    body: "you receive written progress updates: what was completed, what is next, and any decisions needed from you. We also flag budget impacts early, before they become surprises.",
   },
   {
     title: "Local permit and schedule expertise",
@@ -71,12 +71,12 @@ export const DIFFERENTIATORS: Differentiator[] = [
   {
     title: "A job site that respects your home",
     contrast: "Instead of living with open dust, damaged floors, and crews working at all hours,",
-    body: "we use dust barriers and floor protection daily, schedule disruptive work during reasonable hours, and plan the project so most kitchen and bath remodels remain livable while we work.",
+    body: "we use dust barriers and floor protection, schedule disruptive work during reasonable hours, and plan the project so most kitchen and bath remodels remain livable while we work.",
   },
   {
     title: "No high-pressure sales, no going dark",
     contrast: "Rather than a commission-driven pitch to sign on the spot or a project manager who stops returning calls,",
-    body: "your free in-home visit is focused on planning guidance and an honest range. You work with the same dedicated project manager throughout, with weekly written updates so you are never left wondering who to contact or what is happening.",
+    body: "your free in-home visit is focused on planning guidance and an honest range. You work with the same dedicated project manager throughout, with written progress updates so you are never left wondering who to contact or what is happening.",
   },
   {
     title: "Schedule changes communicated early",
@@ -134,7 +134,7 @@ export const PROMISE_ITEMS = [
   {
     num: "02",
     title: "Proactive communication",
-    body: "Every Friday: what was completed, what is next, and any decisions needed from you. One dedicated project manager start to finish.",
+    body: "Written progress updates: what was completed, what is next, and any decisions needed from you. One dedicated project manager start to finish.",
   },
   {
     num: "03",
@@ -167,7 +167,7 @@ export const CLIENT_PRIORITIES: ClientPriority[] = [
   },
   {
     title: "Clear communication",
-    body: "Weekly written updates and one project manager who knows your home from first visit to completion.",
+    body: "Written progress updates and one project manager who knows your home from first visit to completion.",
     icon: MessageSquare,
   },
   {
@@ -205,8 +205,8 @@ export const HOW_WE_BUILD_STEPS = [
   },
   {
     number: "04",
-    title: "Weekly progress updates",
-    desc: "Every Friday you get a written update: what was done, what is next, and any decisions needed from you.",
+    title: "Written progress updates",
+    desc: "You get a written progress update: what was done, what is next, and any decisions needed from you.",
   },
   {
     number: "05",
@@ -230,7 +230,7 @@ export const PRINCIPLES = [
   },
   {
     title: "We respect your time",
-    desc: "Noisy work during reasonable hours. Dust barriers every day. Your home stays as livable as possible.",
+    desc: "Noisy work during reasonable hours. Dust barriers and floor protection. Your home stays as livable as possible.",
   },
   {
     title: "One PM, start to finish",
@@ -245,8 +245,8 @@ export const PRINCIPLES = [
 export const STANDARD_INCLUSIONS = [
   "All permits pulled in-house",
   "Dedicated project manager",
-  "Weekly written progress updates",
-  "Dust barriers and floor protection daily",
+  "Written progress updates",
+  "Dust barriers and floor protection",
   "Written workmanship warranty",
   "Manufacturer warranties passed through",
 ];
@@ -282,7 +282,7 @@ export const LEADERSHIP_COPY = {
   paragraphs: [
     "Boise Remodeling Co was built on a simple belief: homeowners in the Treasure Valley deserve a design-build partner who communicates clearly, plans carefully, and treats their home with respect.",
     "We know how most firms are compared: separate designers and contractors, vague scopes, inconsistent updates, and pressure to sign before you have real answers. Our process was designed around what comparison shoppers actually need.",
-    "That means one accountable team, written scope before we build, weekly updates while we work, and a team that picks up the phone when you have a question.",
+    "That means one accountable team, written scope before we build, written progress updates while we work, and a team that picks up the phone when you have a question.",
   ],
   closing: "That is not a marketing promise. Every detail, every decision - handled with intention.",
 };
@@ -312,7 +312,7 @@ export const STATEMENT_BAND = {
   statement: "Every detail, every decision, handled with",
   accentWord: "intention",
   support:
-    "One accountable team, a written plan before we build, and proactive updates every week, from your first in-home visit to the final walkthrough.",
+    "One accountable team, a written plan before we build, and written progress updates, from your first in-home visit to the final walkthrough.",
 } as const;
 
 /**

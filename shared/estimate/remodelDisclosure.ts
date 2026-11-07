@@ -133,7 +133,7 @@ export function buildRemodelDisclosure(input: RemodelDisclosureInput): Disclosur
   if (input.occupiedDuringWork === true) {
     b.assume(
       "occupied",
-      "You will be living in the house while we work, so the schedule allows for protection, daily clean-up and staged access.",
+      "You will be living in the house while we work, so the schedule allows for protection, clean-up and staged access.",
       "customer said the property stays occupied",
     );
   }

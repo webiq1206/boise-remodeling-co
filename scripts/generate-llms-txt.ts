@@ -215,7 +215,7 @@ function buildFull(): string {
   );
   lines.push(
     '- Can I live in the house during the remodel? Usually, for kitchens, bathrooms and single ' +
-      'rooms, with dust barriers and a daily cleanup routine. Whole-home projects sometimes ' +
+      'rooms, with dust barriers and a cleanup routine. Whole-home projects sometimes ' +
       'phase the work so part of the house stays livable.',
   );
   lines.push(

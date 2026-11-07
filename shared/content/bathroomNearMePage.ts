@@ -40,7 +40,7 @@ export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] 
   },
   {
     title: 'Build',
-    description: 'Licensed trades coordinate waterproofing, tile, and trim with weekly updates.',
+    description: 'Licensed trades coordinate waterproofing, tile, and trim, and you get written progress updates.',
   },
   {
     title: 'Final walkthrough',
@@ -86,7 +86,7 @@ export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
     heading: 'What a bathroom remodel covers',
     paragraphs: [
       'Primary baths, guest baths and powder rooms get a written scope covering waterproofing, plumbing, tile, vanity and fixtures before demolition starts.',
-      'We protect adjacent rooms during workdays and send a written update every Friday while construction is underway.',
+      'We protect adjacent rooms during the work and send written progress updates while construction is underway.',
     ],
   },
   {
