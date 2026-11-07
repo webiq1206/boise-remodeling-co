@@ -3,6 +3,7 @@ import { ProofStrip } from "@/components/family/ProofStrip";
 import { DOPL_LICENSE_SEARCH, REGISTRATION_LINE } from "@/components/RegistrationLine";
 import { FAMILY_BRAND } from "@/lib/familyBrand";
 import { SERVICES } from "@/shared/contentData";
+import { AeoParagraph } from "@/components/seo/AeoParagraph";
 import { AEO } from "@/shared/content/p5Visibility";
 
 /** The published "planning from" figure on the kitchen service page, read from the same data. */
@@ -24,9 +25,11 @@ export function ApprovedHomeHero() {
         title="Boise home remodeling."
         titleAccent="One team, start to finish."
         support="We design, price and build kitchens, baths and whole-home remodels."
-        answer={AEO.home}
         primary={{ label: FAMILY_BRAND.cta.label, href: FAMILY_BRAND.cta.href }}
       />
+      <div className="fam-container py-8">
+        <AeoParagraph text={AEO.home} />
+      </div>
       {/* Facts already published on this site, nothing new: the DOPL-linked registration,
           the written scope, the warranty term and the kitchen planning-from figure. */}
       <ProofStrip

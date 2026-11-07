@@ -4,13 +4,12 @@ import { brandStyle } from '@/components/family/brandStyle';
 import { HeroVideo } from './HeroVideo';
 
 /** Keep the heading, poster and conversion control in the first server response. */
-export function ApprovedVideoHero({ eyebrow, title, titleAccent, support, primary, answer }: {
+export function ApprovedVideoHero({ eyebrow, title, titleAccent, support, primary }: {
   eyebrow: string;
   title: string;
   titleAccent: string;
   support: string;
   primary: { label: string; href: string };
-  answer?: string;
 }) {
   return (
     <section className="fam-hero" data-family-hero="" data-video-hero="" data-fit="viewport"
@@ -23,7 +22,6 @@ export function ApprovedVideoHero({ eyebrow, title, titleAccent, support, primar
           <h1 className="fam-hero-title" id="family-hero-title">
             {title}{' '}<span className="fam-hero-accent">{titleAccent}</span>
           </h1>
-          {answer ? <p className="aeo-paragraph fam-hero-support" data-aeo="answer">{answer}</p> : null}
           <p className="fam-hero-support">{support}</p>
           <div className="fam-hero-actions">
             <FamilyButton href={primary.href} variant="hero" size="lg" data-hero-cta="primary" data-cta="primary">
