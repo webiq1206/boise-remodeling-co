@@ -7,7 +7,7 @@ export const ROI_GUIDE_CONTENT = `
 
 <div class="callout note">
   <p class="callout-label">How ROI really works</p>
-  <p>Most remodels return a <span class="sage">large portion of their cost, not all of it</span> - the rest is returned in years of ongoing enjoyment and in a home that sells faster and more competitively. That does not make them poor investments; it means the goal is to remodel in the value-maximizing way this guide describes.</p>
+  <p>Most remodels return a <span class="sage">large portion of their cost, not all of it</span>, the rest is returned in years of ongoing enjoyment and in a home that sells faster and more competitively. That does not make them poor investments; it means the goal is to remodel in the value-maximizing way this guide describes.</p>
 </div>
 
 <h2>1. Which projects return the most</h2>
@@ -40,7 +40,7 @@ export const ROI_GUIDE_CONTENT = `
 <p>Not all value is cosmetic. <strong>Energy-efficiency</strong> upgrades - air sealing, insulation, efficient HVAC - pay back three ways: lower utility bills every month, greater comfort, and growing buyer demand for efficient homes. Because a remodel is the ideal time to do them (walls may already be open), they are one of the smartest ways to add lasting value. Fixing genuine problems - a bad layout, failing systems, moisture issues - also adds value by removing what buyers would otherwise deduct for.</p>
 
 <h2>5. Value beyond resale</h2>
-<p>ROI is only part of the picture. A remodel you will live in for years also pays back in <span class="sage">ongoing enjoyment</span> and in a home that shows well and sells competitively - value the simple cost-recouped percentage understates. For homeowners staying put, this everyday value is often the main reason to remodel, with the resale return a welcome bonus.</p>
+<p>ROI is only part of the picture. A remodel you will live in for years also pays back in <span class="sage">ongoing enjoyment</span> and in a home that shows well and sells competitively, value the simple cost-recouped percentage understates. For homeowners staying put, this everyday value is often the main reason to remodel, with the resale return a welcome bonus.</p>
 <div class="callout tip">
   <p class="callout-label">The best of both</p>
   <p>Make the value-maximizing choices - quality, timeless, appropriate to your home - <em>and</em> build for how you love to live. Done well, a remodel captures a strong return and years of enjoyment at the same time.</p>
@@ -59,7 +59,7 @@ export const ROI_GUIDE_FAQS = [
   {
     question: 'Do remodels return 100 percent of their cost?',
     answer:
-      'Rarely. Most remodels return a large portion of their cost at resale rather than all of it, with the remainder returned in years of ongoing enjoyment and in a home that sells faster and more competitively. That does not make them bad investments - it means the goal is to remodel in the value-maximizing way: quality, timeless, and appropriate to the home and neighborhood.',
+      'Rarely. Most remodels return a large portion of their cost at resale rather than all of it, with the remainder returned in years of ongoing enjoyment and in a home that sells faster and more competitively. That does not make them bad investments, it means the goal is to remodel in the value-maximizing way: quality, timeless, and appropriate to the home and neighborhood.',
   },
   {
     question: 'Is a mid-range or luxury remodel a better investment?',

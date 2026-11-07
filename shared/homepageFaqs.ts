@@ -46,7 +46,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "What does a typical project timeline look like?",
-    a: "Kitchen remodels typically run 6 to 10 weeks from permit approval. Bathroom remodels are 3 to 6 weeks. Whole-home renovations range from 3 to 6 months depending on scope. We give you a written schedule at project kickoff and keep it current in writing.",
+    a: "Your written schedule is set with your quote, based on scope and selections.",
   },
   {
     q: "Do you handle permits?",

@@ -71,7 +71,7 @@ const costPillarFaqs = [
   {
     question: 'Should I budget contingency for a remodel?',
     answer:
-      'Hold 10 to 15% contingency for concealed conditions - especially in pre-1990 Boise and Bench homes where framing, plumbing, or wiring surprises are common.',
+      'Hold 10 to 15% contingency for concealed conditions, especially in pre-1990 Boise and Bench homes where framing, plumbing, or wiring surprises are common.',
   },
   {
     question: 'Are appliances included in kitchen remodel cost?',

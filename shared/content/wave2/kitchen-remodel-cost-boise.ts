@@ -106,7 +106,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <h2 id="refresh-vs-full">Refresh vs. full remodel: which does your Boise kitchen need?</h2>
 <p>Before you settle on a budget, decide what problem you are actually solving. Not every kitchen needs a full remodel, and matching scope to the real issue is the single biggest way to control cost.</p>
 <p>A <strong>cosmetic refresh</strong> makes sense when the layout works and the bones are sound - you simply want it to look current. Refacing or replacing doors, adding quartz counters, a new backsplash, updated hardware, and paint can transform a dated kitchen for $16,000-$21,000 without moving a single pipe. Many 1990s and 2000s builder kitchens in Meridian, Kuna, and Nampa are strong candidates for a refresh.</p>
-<p>A <strong>full remodel</strong> is worth it when the layout fights you: a closed-off wall you want opened, a cramped work triangle, too little storage, or failing plumbing and wiring hiding behind the cabinets. Once you are changing layout or systems, the incremental cost of doing it right - new cabinetry, better lighting, a functional island - is usually money well spent. If you are unsure, our free in-home visit will tell you honestly which path your kitchen needs.</p>
+<p>A <strong>full remodel</strong> is worth it when the layout fights you: a closed-off wall you want opened, a cramped work triangle, too little storage, or failing plumbing and wiring hiding behind the cabinets. Once you are changing layout or systems, the incremental cost of doing it right, new cabinetry, better lighting, a functional island, is usually money well spent. If you are unsure, our free in-home visit will tell you honestly which path your kitchen needs.</p>
 
 <h2 id="breakdown">Kitchen remodel cost breakdown: where the money goes</h2>
 <p>Understanding how a kitchen budget divides helps you spend where it matters. Cabinetry is almost always the largest single line item, followed by labor and countertops. Here is a typical breakdown for a Boise mid-range to high-end remodel.</p>
@@ -173,7 +173,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <li><strong>Keep the plumbing where it is</strong> - a smart layout that respects existing lines avoids the priciest hidden work.</li>
 <li><strong>Choose semi-custom cabinets</strong> - most of the look of custom at a lower price and shorter lead time.</li>
 <li><strong>Pick a durable mid-tier quartz</strong> - the visual difference from premium slabs is small; the durability is not.</li>
-<li><strong>Spend on what you touch</strong> - hardware, faucet, and lighting deliver real payoff for modest money.</li>
+<li><strong>Spend on what you touch</strong>, hardware, faucet, and lighting deliver real payoff for modest money.</li>
 <li><strong>Lock selections before demo</strong> - clear decisions prevent change orders, the most common budget-buster. Our <a href="/blog/how-to-budget-remodel-boise">budgeting guide</a> shows how to structure the numbers.</li>
 </ul>
 

@@ -17,12 +17,7 @@ const CLAIM_RE = new RegExp(`\\b${CLAIM}\\b`, 'i');
 const SCAN_ROOTS = ['app', 'components', 'lib', 'shared', 'public', 'scripts', 'backlink-engine'];
 const SKIP_DIRS = new Set(['node_modules', '.next', '.git', 'dist', 'coverage']);
 const TEXT_EXT = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.txt', '.json', '.html']);
-// Held for a later ruling. Google Business copy stays on main, and the
-// organization description stays in lib/schema.ts for draft PR 139.
-const ALLOW = new Set([
-  'shared/gbpProfile.ts',
-  'lib/schema.ts',
-]);
+const ALLOW = new Set<string>();
 
 function walk(dir: string, out: string[]): void {
   for (const entry of readdirSync(dir)) {

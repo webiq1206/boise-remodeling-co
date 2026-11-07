@@ -24,7 +24,7 @@ export function buildReviewResponseTemplate(params: {
   detailTheyMentioned: string;
 }): string {
   const { customerName, city, projectType, detailTheyMentioned } = params;
-  return `Thank you, ${customerName}. We enjoyed your ${city} ${projectType} - especially ${detailTheyMentioned}. Glad the written scope kept things clear. - The ${GBP_NAP.name} team`;
+  return `Thank you, ${customerName}. We enjoyed your ${city} ${projectType}, especially ${detailTheyMentioned}. Glad the written scope kept things clear. The ${GBP_NAP.name} team`;
 }
 
 export function getReviewLink(): string {
