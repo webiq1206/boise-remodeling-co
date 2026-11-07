@@ -247,7 +247,7 @@ const wholeSlugs = [
 ] as const;
 
 const wholeHomeAnswers:Record<string,string>={
-  'remodeling-vs-moving':'Remodeling can address layout, condition and comfort while keeping your location; moving can solve needs your current property cannot accommodate. Compare a complete remodeling scope and temporary housing costs with the costs of buying, selling and moving. Consider daily routines, future space needs and how long you expect to stay, not just an assumed resale return.',
+  'remodeling-vs-moving':'Remodeling can address layout, condition and comfort while keeping your location; moving can solve needs your current property cannot accommodate. Compare a complete remodeling scope and temporary housing costs with the costs of buying, selling and moving. Consider routines, future space needs and how long you expect to stay, not just an assumed resale return.',
   'whole-home-remodel-timeline':'A whole-home remodeling schedule includes scope development, design and selections, permits where required, procurement, construction and closeout. Separate those phases when comparing timelines. Structural changes, occupied rooms and long-lead materials can affect sequencing. Ask for a schedule with decision deadlines and dependencies, then confirm how changes and concealed conditions will be handled.',
   'living-through-a-remodel':'Living at home during a remodel depends on safe access, working bathrooms, cooking arrangements and the ability to separate occupants from work areas. Noise, dust and temporary utility interruptions may make some phases impractical. Agree on room closures, work hours, pet safety, cleanup and any temporary accommodation before construction begins.',
   'remodel-planning-guide':'Plan a remodel by defining the problems you want to solve, the work included and the limits of your budget. Record measurements, priorities and owner-supplied items before comparing proposals. Confirm design, permit and construction responsibilities, then set selection deadlines and a written change process. Leave room in the schedule and budget for verified concealed conditions.',
@@ -635,7 +635,7 @@ export const LOCATION_GUIDES: GuidePageData[] = [
     seoTitle: 'Boise Bench Remodeling Guide',
     metaDescription: 'Remodeling on the Boise Bench: opening up mid-century ranch kitchens, modernizing primary baths, and upgrading windows and insulation.',
     excerpt: 'Bench neighborhood remodeling guide.',
-    quickAnswer: 'The Bench is full of 1950s to 1970s ranches and split-levels whose straightforward framing takes well to open kitchens and single-level aging-in-place updates. Budget for the era\'s known conditions: 100-amp panels that need upsizing, thin insulation in 2x4 walls, and galvanized supply lines in pre-1960 homes.',
+    quickAnswer: 'The Bench is full of 1950s to 1970s ranches and split-levels whose simple framing takes well to open kitchens and single-level aging-in-place updates. Budget for the era\'s known conditions: 100-amp panels that need upsizing, thin insulation in 2x4 walls, and galvanized supply lines in pre-1960 homes.',
     takeaways: ['Check structure before removing walls.', 'Improve insulation when walls are open.'],
   }),
   buildLocationGuide({

@@ -70,7 +70,7 @@ export const quartzVsQuartziteCountertops: BlogPostData = {
     {
       question: 'Is quartz or quartzite better for a busy family kitchen?',
       answer:
-        'Quartz is often the easier choice for a busy family kitchen because it never needs sealing, resists stains from wine, coffee, and oil, and cleans with soap and water. Quartzite suits families who want natural stone and cook with high heat, as long as they keep up with sealing and wipe spills promptly. Both are durable enough for heavy daily use.',
+        'Quartz is often the easier choice for a busy family kitchen because it never needs sealing, resists stains from wine, coffee, and oil, and cleans with soap and water. Quartzite suits families who want natural stone and cook with high heat, as long as they keep up with sealing and wipe spills promptly. Both are durable enough for heavy regular use.',
     },
   ],
   content: `

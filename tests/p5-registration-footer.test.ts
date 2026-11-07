@@ -69,17 +69,17 @@ test('the footer links the registration line and the funnel prints it as plain t
   assert.equal(source.includes(REGISTRATION_LINE), true);
 });
 
-test('home organization JSON-LD uses the bonded registration sentence', () => {
+test('home organization JSON-LD uses the registration sentence', () => {
   const org = generateOrganizationSchema();
   const description = String(org.description);
-  assert.match(description, /Idaho Registered Contractor #8381215, bonded, and insured, and committed to excellence\./);
+  assert.match(description, /Idaho Registered Contractor #8381215, insured, and committed to excellence\./);
   assert.equal(/licensed/i.test(description), false);
 });
 
 test('the Meridian area FAQ states the registration without a license claim', () => {
   const faq = AREA_CITY_COPY.meridian.faqs.find((item) => item.question === 'Are you a registered contractor and insured?');
   assert.ok(faq);
-  assert.equal(faq.answer, "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured.");
+  assert.equal(faq.answer, 'Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.');
   assert.equal(/licensed/i.test(faq.answer), false);
 });
 

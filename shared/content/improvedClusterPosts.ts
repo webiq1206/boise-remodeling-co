@@ -4,7 +4,7 @@ import type { ContentSection } from './wave1/snippets';
  * Phase 4: eight factory cluster posts (260 to 280 words of template copy)
  * rewritten with substance. Every fact here already appears elsewhere in this
  * repository: the process, ROI and outdoor pillar guides, the service pages,
- * the homepage FAQ (two-year workmanship guarantee), the covered-patio and
+ * the homepage FAQ (workmanship warranty), the covered-patio and
  * outdoor-kitchen posts and the home-addition cost post. No new numbers.
  *
  * Each post links its pillar guide and one service page in the body, and the
@@ -68,14 +68,14 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Sign-off, then the warranty',
         paragraphs: [
-          'Once the punch list is complete, the project is signed off and the workmanship guarantee takes over; our <a href="/blog/warranty-guide-remodeling">remodeling warranty guide</a> covers what it includes. Boise Remodeling Co guarantees remodeling workmanship for two years and passes through manufacturer warranties on fixtures and cabinetry we install. Both the punch list and the warranty should be defined in your contract from the start, so you know exactly how the project will be completed and supported.',
+          'Once the punch list is complete, the project is signed off and the workmanship warranty takes over; our <a href="/blog/warranty-guide-remodeling">remodeling warranty guide</a> covers what it includes. Boise Remodeling Co provides a written workmanship warranty and passes through manufacturer warranties on fixtures and cabinetry we install. Both the punch list and the warranty should be defined in your contract from the start, so you know exactly how the project will be completed and supported.',
         ],
       },
       {
         h2: 'Where the punch list sits in the schedule',
         paragraphs: [
           'Most of what makes a punch list short happens months earlier. Preconstruction is where the design is developed, every material is selected, the scope is priced and permits are secured; finalizing all of it before demolition lets construction run predictably, and a predictable build leaves fewer loose ends at the end.',
-          'During construction you receive written schedule updates every week, and your project manager remains your single point of contact from the first visit to the final walkthrough. That continuity is what lets the punch list close quickly: the person walking the list with you is the person who managed the work.',
+          'During construction you receive written progress updates, and your project manager remains your single point of contact from the first visit to the final walkthrough. That continuity is what lets the punch list close quickly: the person walking the list with you is the person who managed the work.',
         ],
       },
       {
@@ -94,13 +94,13 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   'warranty-guide-remodeling': {
     seoTitle: 'Remodeling warranty: what it covers',
     metaDescription:
-      'How a remodeling workmanship guarantee works: what it covers, how long it runs, how manufacturer warranties fit in, and what to get in writing first.',
-    excerpt: 'How a remodeling workmanship guarantee works and what to get in writing before you sign.',
+      'How a remodeling workmanship warranty works: what it covers, how long it runs, how manufacturer warranties fit in, and what to get in writing first.',
+    excerpt: 'How a remodeling workmanship warranty works and what to get in writing before you sign.',
     quickAnswer:
-      'A remodeling warranty has two layers: the contractor guarantees its own workmanship, and manufacturers warrant the products. Boise Remodeling Co guarantees remodeling workmanship for two years in writing and passes through manufacturer warranties on fixtures and cabinetry it installs.',
+      'A remodeling warranty has two layers: the contractor warrants its own workmanship in writing, and manufacturers warrant the products. Boise Remodeling Co provides a written workmanship warranty and passes through manufacturer warranties on fixtures and cabinetry we install.',
     takeaways: [
       'Workmanship and product warranties are two different promises.',
-      'Get the guarantee, its length and its process in writing.',
+      'Get the warranty and its process in writing.',
       'The warranty starts after the punch list is complete.',
     ],
     serviceUrl: '/services/bathroom-remodel',
@@ -108,38 +108,38 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Two warranties, two promises',
         paragraphs: [
-          'A workmanship guarantee covers how the work was done: the installation, the framing, the tile setting, the trim. A manufacturer warranty covers the product itself: the faucet, the cabinet box, the window unit. When something fails, the first question is which of the two it is, which is why both belong in your paperwork.',
-          'Boise Remodeling Co guarantees remodeling workmanship for two years and passes through manufacturer warranties on fixtures and cabinetry we install.',
+          'A workmanship warranty covers how the work was done: the installation, the framing, the tile setting, the trim. A manufacturer warranty covers the product itself: the faucet, the cabinet box, the window unit. When something fails, the first question is which of the two it is, which is why both belong in your paperwork.',
+          'Boise Remodeling Co provides a written workmanship warranty and passes through manufacturer warranties on fixtures and cabinetry we install.',
         ],
       },
       {
         h2: 'Get it in writing before you sign',
         paragraphs: [
-          'Vague contracts are one of the biggest sources of remodeling disputes. Before you sign, the agreement should name the length of the workmanship guarantee, what it covers, and how you report a problem. A written scope before construction, clear allowances for selections and a written workmanship guarantee at the end are the three documents that make a remodel predictable.',
+          'Vague contracts are one of the biggest sources of remodeling disputes. Before you sign, the agreement should name the length of the workmanship warranty, what it covers, and how you report a problem. A written scope before construction, clear allowances for selections and a written workmanship warranty at the end are the three documents that make a remodel predictable.',
           'Our <a href="' + PROCESS + '">remodeling process guide</a> covers where the warranty sits in the sequence, and the <a href="/guides/choose-remodeling-contractor-boise">contractor selection guide</a> covers what else to get in writing.',
         ],
       },
       {
         h2: 'Where the warranty starts',
         paragraphs: [
-          'The warranty takes over once the punch list is complete and the project is signed off. On a <a href="/services/bathroom-remodel">bathroom remodel</a>, for example, the final walkthrough reviews every detail before sign-off, and the two-year written workmanship guarantee on our labor starts from there.',
+          'The warranty takes over once the punch list is complete and the project is signed off. On a <a href="/services/bathroom-remodel">bathroom remodel</a>, for example, the final walkthrough reviews every detail before sign-off, and the written workmanship warranty on our labor starts from there.',
         ],
       },
       {
         h2: 'Questions to ask about any remodeling warranty',
         paragraphs: ['Ask every contractor you compare the same questions, so the answers line up:'],
         list: [
-          'How long is the workmanship guarantee, and is it written into the contract?',
+          'How long is the workmanship warranty, and is it written into the contract?',
           'Which manufacturer warranties pass through to me, and who registers them?',
           'Who do I call, and how quickly will someone come out?',
-          'What would void the guarantee?',
+          'What would void the warranty?',
         ],
       },
       {
         h2: 'Who stands behind the work',
         paragraphs: [
-          'A guarantee is only as good as the team behind it. At Boise Remodeling Co a core in-house team handles project management, design coordination and key trades, while plumbing, electrical and HVAC go to licensed trade partners we schedule and stand behind. Your project manager remains your single point of contact, during the build and after it.',
-          'Boise Remodeling Co is an Idaho Registered Contractor (#8381215), bonded and insured. Ask any contractor you compare for the same facts, and check them before you sign.',
+          'A warranty is only as good as the team behind it. At Boise Remodeling Co a core in-house team handles project management, design coordination and key trades, while plumbing, electrical and HVAC go to licensed trade partners we schedule and stand behind. Your project manager remains your single point of contact, during the build and after it.',
+          'Boise Remodeling Co is an Idaho Registered Contractor (#8381215), insured. Ask any contractor you compare for the same facts, and check them before you sign.',
         ],
       },
     ],

@@ -214,11 +214,11 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
   assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
-  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes';
   assert.ok(eagleMeta.length <= 160);
   assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
   assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
-  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship warranty. Budget ranges, not quotes';
   assert.ok(boiseMeta.length <= 160);
   assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
@@ -300,7 +300,7 @@ test('phase-1 copy is additive on the named pages', () => {
   assert.match(faqs, /q: "Can we live at home during the remodel\?"/);
   assert.match(faqs, /q: "What do home remodeling contractors typically handle\?"/);
   assert.match(faqs, /q: "Do you serve areas near Boise\?"/);
-  assert.match(faqs, /q: "How long is the workmanship guarantee\?"/);
+  assert.match(faqs, /q: "How long is the workmanship warranty\?"/);
   const areas = readFileSync('app/areas/[city]/page.tsx', 'utf8');
   assert.match(areas, /href: '\/services\/kitchen-remodel'/);
   assert.match(areas, /href: '\/services\/bathroom-remodel'/);

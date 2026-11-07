@@ -67,21 +67,21 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Single design-build team, no juggling separate designers and contractors',
       'Written scope and finish selections before construction begins',
       'Ada and Canyon County permits handled in-house',
-      'Weekly written schedule updates every Friday',
+      'Written progress updates',
     ],
     inclusions: [
       'Layout planning and design direction',
       'Cabinetry, countertops, and backsplash coordination',
       'Lighting and electrical updates as needed',
       'Plumbing adjustments for sinks and fixtures',
-      'Dust barriers, floor protection, and daily cleanup',
+      'Dust barriers, floor protection, and cleanup',
     ],
     timeline: 'Most kitchen remodels run 6 to 10 weeks from permit approval, depending on layout changes and custom lead times.',
     processSteps: [
       { title: 'In-home consultation', description: 'We walk your space, discuss goals, and share a planning range on the spot.' },
       { title: 'Design and scope', description: 'You receive selections guidance and a written scope with your project investment.' },
       { title: 'Permits and scheduling', description: 'We file permits and build a week-by-week schedule before demo day.' },
-      { title: 'Construction and walkthrough', description: 'Our crew executes the plan; you receive a final walkthrough and workmanship guarantee.' },
+      { title: 'Construction and walkthrough', description: 'Our crew executes the plan; you receive a final walkthrough and workmanship warranty.' },
     ],
     faqs: [
       {
@@ -153,14 +153,14 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Design-build accountability from layout through tile and fixtures',
       'Waterproofing and plumbing scope defined in writing',
       'Transparent project investment, no surprise line-item games',
-      'Written workmanship guarantee on our labor',
+      'Written workmanship warranty on our labor',
     ],
     inclusions: [
       'Vanity, shower, and tub planning',
       'Tile, flooring, and fixture selections guidance',
       'Ventilation and lighting improvements',
       'Plumbing and electrical updates as scoped',
-      'Daily protection of adjacent living spaces',
+      'Protection of adjacent living spaces',
     ],
     // City pages still render this duration. The parent route overrides it
     // with BATHROOM_NEAR_ME_TIMELINE until ops confirms a week count. [VERIFY]
@@ -168,7 +168,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Consultation', description: 'We assess your bath, discuss storage and accessibility needs, and outline a planning range.' },
       { title: 'Selections and scope', description: 'Finishes and fixtures are documented before demolition.' },
-      { title: 'Build', description: 'Our crew and trade partners coordinate waterproofing, tile, and trim with weekly updates.' },
+      { title: 'Build', description: 'Our crew and trade partners coordinate waterproofing, tile, and trim with written progress updates.' },
       { title: 'Final walkthrough', description: 'We review every detail with you before sign-off.' },
     ],
     faqs: BATHROOM_NEAR_ME_FAQS,
@@ -209,7 +209,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Discovery', description: 'We map goals room by room and identify must-haves vs. nice-to-haves.' },
       { title: 'Master scope', description: 'A written plan sequences work to minimize disruption.' },
-      { title: 'Phased construction', description: 'Trades follow an agreed schedule with Friday written updates.' },
+      { title: 'Phased construction', description: 'Trades follow an agreed schedule with written progress updates.' },
       { title: 'Completion', description: 'Final walkthrough covers every space in the scope.' },
     ],
     faqs: [
@@ -291,7 +291,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Site visit and feasibility', description: 'We review your lot, setbacks, utility access, and HOA rules to confirm the ADU approach that works best.' },
       { title: 'Design and engineering', description: 'Plans are drawn to meet code, match your property, and maximize livability within your investment target.' },
-      { title: 'Permitting and construction', description: 'We file permits and manage every trade from foundation through finish with weekly written updates.' },
+      { title: 'Permitting and construction', description: 'We file permits and manage every trade from foundation through finish with written progress updates.' },
       { title: 'Inspections and closeout', description: 'Final inspections are coordinated and we walk through every detail before handoff.' },
     ],
     faqs: [
@@ -374,7 +374,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Site visit', description: 'We review setbacks, access, and structural implications.' },
       { title: 'Design and engineering', description: 'Plans address code, loads, and aesthetic match.' },
-      { title: 'Construction', description: 'Foundation through finish with weekly communication.' },
+      { title: 'Construction', description: 'Foundation through finish with written progress updates.' },
       { title: 'Inspections and closeout', description: 'We coordinate final inspections and walkthrough.' },
     ],
     faqs: [
@@ -453,7 +453,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Assessment and moisture check', description: 'We evaluate ceiling height, moisture, existing mechanicals, and egress so the plan starts on a dry, code-ready foundation.' },
       { title: 'Design and layout', description: 'We design the lower level around how you will use it and confirm a written scope and allowances before construction.' },
-      { title: 'Permitting and construction', description: 'We file permits and manage framing, mechanicals, and finishes with weekly written updates.' },
+      { title: 'Permitting and construction', description: 'We file permits and manage framing, mechanicals, and finishes with written progress updates.' },
       { title: 'Inspections and walkthrough', description: 'Final inspections are coordinated and we walk every detail with you before handoff.' },
     ],
     faqs: [
@@ -530,7 +530,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Site and design consultation', description: 'We review your yard, grade, and how you want to use the space, then design a deck or patio that fits your home.' },
       { title: 'Engineering and permitting', description: 'We handle footings, structural details, and permits so the build is safe and code-compliant.' },
-      { title: 'Construction', description: 'Our team builds framing, decking, covers, and finishes with weekly written updates.' },
+      { title: 'Construction', description: 'Our team builds framing, decking, covers, and finishes with written progress updates.' },
       { title: 'Final walkthrough', description: 'We confirm every detail and finish with you before handoff.' },
     ],
     faqs: [
@@ -562,7 +562,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does a deck or patio take to build?',
         answer:
-          'Plan 3 to 8 weeks after permits. A straightforward deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
+          'Plan the build after permits. A simple deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
       },
     ],
     costGuidance: {
@@ -592,7 +592,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'One team handling design, structural changes, and finishes under one contract',
     ],
     inclusions: [
-      'Accessibility assessment of your home and daily routines',
+      'Accessibility assessment of your home and routines',
       'Curbless or roll-in showers, grab-bar blocking, and comfort-height vanities and toilets',
       'Widened doorways and hallways, lever hardware, and improved lighting',
       'Zero-step entries, thresholds, or ramps where needed',
@@ -602,7 +602,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Accessibility assessment', description: 'We review how you move through your home today and where safety, access, and comfort can improve.' },
       { title: 'Universal-design plan', description: 'We design changes that meet your needs now and adapt for the future, with a written scope before construction.' },
-      { title: 'Construction', description: 'Our team makes structural and finish changes with minimal disruption and weekly written updates.' },
+      { title: 'Construction', description: 'Our team makes structural and finish changes with minimal disruption and written progress updates.' },
       { title: 'Walkthrough and orientation', description: 'We confirm every detail works for you and walk through how to use new features safely.' },
     ],
     faqs: [
@@ -666,7 +666,7 @@ export function getCityServiceIntro(
   const fact = localFact
     ? ` ${localFact}`
     : ` We understand ${county} permit requirements and typical ${city.name} home styles.`;
-  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, proactive weekly updates, and a written workmanship guarantee. Schedule a free in-home consultation or use our project estimator for a planning range.`;
+  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope and a written workmanship warranty. Schedule a free in-home consultation or use our project estimator for a planning range.`;
 }
 
 /** Letter names that start with a vowel sound, so an acronym such as ADU takes "an". */
@@ -801,7 +801,7 @@ export const AREA_PAGE_FAQS: FAQItem[] = [
   {
     question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+      'Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.',
   },
   {
     question: 'How do I start a project?',
@@ -826,7 +826,7 @@ export const HOMEPAGE_FAQS_FOR_SCHEMA: FAQItem[] = [
     answer: 'Yes. Permits are included in our scope and handled in-house for Ada and Canyon County.',
   },
   {
-    question: 'What is your workmanship guarantee?',
-    answer: 'We provide a written workmanship guarantee on our labor.',
+    question: 'What is your workmanship warranty?',
+    answer: 'We provide a written workmanship warranty on our labor.',
   },
 ];

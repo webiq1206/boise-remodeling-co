@@ -8,7 +8,7 @@ export interface HomepageFaq {
 export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
     q: "Can we live at home during the remodel?",
-    a: "For most kitchen and bathroom projects, yes, with some daily inconvenience. We install dust barriers, protect floors, and schedule noisy work for reasonable hours. For whole-home renovations involving HVAC or electrical throughout the house, we give you an honest assessment at the free visit of whether staying is practical.",
+    a: "For most kitchen and bathroom projects, yes, with some inconvenience. We install dust barriers, protect floors, and schedule noisy work for reasonable hours. For whole-home renovations involving HVAC or electrical throughout the house, we give you an honest assessment at the free visit of whether staying is practical.",
   },
   {
     q: "Is design included in the planning range?",
@@ -19,8 +19,8 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
     a: "You receive a written scope and price before any work. Nothing is due until that scope is signed. Draw timing for the remodel is set in the contract and confirmed at the free in-home visit.",
   },
   {
-    q: "How long is the workmanship guarantee?",
-    a: "Two years on remodeling workmanship. We also pass through manufacturer warranties on fixtures and cabinetry we install.",
+    q: "How long is the workmanship warranty?",
+    a: "Written workmanship warranty. We also pass through manufacturer warranties on fixtures and cabinetry we install.",
   },
   {
     q: "Who does the work?",
@@ -37,7 +37,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
     q: "How are you different from other remodeling companies in the Treasure Valley?",
     a: publishFoundingCopy(
-      "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in Colorado in 2020 and part of P5 Home Co. A free in-home visit includes a written scope and a two-year workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are planning ranges, not quotes.",
+      "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in Colorado in 2020 and part of P5 Home Co. A free in-home visit includes a written scope and a written workmanship warranty. Ada and Canyon permitting is part of the project. The first figures are planning ranges, not quotes.",
     ),
   },
   {
@@ -46,7 +46,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "What does a typical project timeline look like?",
-    a: "Kitchen remodels typically run 6 to 10 weeks from permit approval. Bathroom remodels are 3 to 6 weeks. Whole-home renovations range from 3 to 6 months depending on scope. We give you a week-by-week schedule at project kickoff and update it every Friday.",
+    a: "Your written schedule is set with your quote, based on scope and selections.",
   },
   {
     q: "Do you handle permits?",

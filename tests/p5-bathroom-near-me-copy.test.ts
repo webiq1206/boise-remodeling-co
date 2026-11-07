@@ -82,7 +82,7 @@ test('bathroom parent copy hits the five places and holds unverified claims', ()
   assert.match(bath.overview, /call \(208\) 477-1169/);
   assert.equal(bath.overview.includes(SITE_CONFIG.phone), true);
   assert.match(copy, /What a bathroom remodel covers/);
-  assert.match(copy, /workmanship guarantee/i);
+  assert.match(copy, /workmanship warranty/i);
   assert.match(copy, /design-build/i);
   assert.match(copy, /Licensed trades coordinate|weekly updates/);
   assert.match(copy, /Why design-build for your bathroom remodel/);
@@ -103,7 +103,7 @@ test('bathroom parent copy hits the five places and holds unverified claims', ()
   assert.equal(/award/i.test(copy), false);
   assert.equal(/best remodeler/i.test(copy), false);
   assert.equal(bath.faqs.some((faq) => /how much/i.test(faq.question)), false);
-  assert.equal(bath.benefits.includes('Written workmanship guarantee on our labor'), true);
+  assert.equal(bath.benefits.includes('Written workmanship warranty on our labor'), true);
 
   const page = readFileSync('app/services/[slug]/page.tsx', 'utf8');
   assert.match(page, /isBathroomNearMe \? undefined : service\.planningFrom/);

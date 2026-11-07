@@ -40,12 +40,12 @@ export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] 
   },
   {
     title: 'Build',
-    description: 'Licensed trades coordinate waterproofing, tile, and trim with weekly updates.',
+    description: 'Licensed trades coordinate waterproofing, tile, and trim, and you get written progress updates.',
   },
   {
     title: 'Final walkthrough',
     description:
-      'We review every detail with you before sign-off. Two-year written workmanship guarantee on our labor.',
+      'We review every detail with you before sign-off. Written workmanship warranty on our labor.',
   },
 ];
 
@@ -86,14 +86,14 @@ export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
     heading: 'What a bathroom remodel covers',
     paragraphs: [
       'Primary baths, guest baths and powder rooms get a written scope covering waterproofing, plumbing, tile, vanity and fixtures before demolition starts.',
-      'We protect adjacent rooms during workdays and send a written update every Friday while construction is underway.',
+      'We protect adjacent rooms during the work and send written progress updates while construction is underway.',
     ],
   },
   {
     heading: 'Why design-build for your bathroom remodel',
     paragraphs: [
       'Design, estimating, permitting and construction stay under one contract and one accountable team, so layout and waterproofing decisions do not get lost between separate vendors.',
-      'You get a written scope before construction begins, clear allowances for selections, and a two-year workmanship guarantee when the project is complete.',
+      'You get a written scope before construction begins, clear allowances for selections, and a written workmanship warranty when the project is complete.',
     ],
   },
 ];
