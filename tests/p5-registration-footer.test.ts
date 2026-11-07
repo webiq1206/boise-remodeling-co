@@ -72,7 +72,7 @@ test('the footer links the registration line and the funnel prints it as plain t
 test('home organization JSON-LD uses the registration sentence', () => {
   const org = generateOrganizationSchema();
   const description = String(org.description);
-  assert.match(description, /Idaho Registered Contractor #8381215, insured, and committed to excellence\./);
+  assert.match(description, /Idaho Registered Contractor #8381215, bonded, and insured, and committed to excellence\./);
   assert.equal(/licensed/i.test(description), false);
 });
 

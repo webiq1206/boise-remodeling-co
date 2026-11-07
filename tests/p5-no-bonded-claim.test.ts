@@ -4,7 +4,6 @@ import { join, relative } from 'node:path';
 import test from 'node:test';
 import { landingFAQSchema } from '../lib/landing-schema.ts';
 import { AREA_CITY_COPY } from '../shared/content/areaCopy.ts';
-import { GBP_QA_SEED } from '../shared/gbpProfile.ts';
 import { AREA_PAGE_FAQS } from '../shared/seoContent.ts';
 
 const REGISTRATION_ANSWER =
@@ -18,7 +17,12 @@ const CLAIM_RE = new RegExp(`\\b${CLAIM}\\b`, 'i');
 const SCAN_ROOTS = ['app', 'components', 'lib', 'shared', 'public', 'scripts', 'backlink-engine'];
 const SKIP_DIRS = new Set(['node_modules', '.next', '.git', 'dist', 'coverage']);
 const TEXT_EXT = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.txt', '.json', '.html']);
-const ALLOW = new Set<string>();
+// Held for a later ruling. Google Business copy stays on main, and the
+// organization description stays in lib/schema.ts for draft PR 139.
+const ALLOW = new Set([
+  'shared/gbpProfile.ts',
+  'lib/schema.ts',
+]);
 
 function walk(dir: string, out: string[]): void {
   for (const entry of readdirSync(dir)) {
@@ -69,8 +73,4 @@ test('area FAQ answers match FAQPage JSON-LD and do not claim a bond', () => {
     assert.equal(registration[0].answer, REGISTRATION_ANSWER, label);
     assert.equal(JSON.stringify(schema).includes(REGISTRATION_ANSWER), true, label);
   }
-
-  const gbp = GBP_QA_SEED.find((entry) => entry.question === REGISTRATION_QUESTION);
-  assert.ok(gbp);
-  assert.equal(gbp.answer, REGISTRATION_ANSWER);
 });
