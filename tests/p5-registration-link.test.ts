@@ -47,7 +47,7 @@ test('footer and about render the registration line as that link', () => {
   const about = renderToStaticMarkup(React.createElement(AboutPage));
   for (const [label, html] of [['footer', footer], ['about', about]] as const) {
     const anchors = registrationAnchors(html);
-    assert.equal(anchors.length, 1, label);
+    assert.equal(anchors.length, label === 'about' ? 2 : 1, label);
     assert.match(anchors[0], label === 'footer' ? /rel="noopener noreferrer"/ : /rel="noopener"/);
     if (label === 'footer') assert.match(anchors[0], /opens in a new tab/);
     assert.equal(html.replace(/<[^>]*>/g, '').includes('Verify with Idaho DOPL'), false, label);
@@ -63,7 +63,7 @@ test('a visible FAQ answer links the phrase and JSON-LD stays plain text', () =>
     'app/contact/page.tsx',
   ]) {
     const source = readFileSync(file, 'utf8');
-    assert.match(source, /<RegistrationText text=\{faq\.answer\} \/>/, file);
+    assert.match(source, /<(?:RegistrationText|FaqAnswer) text=\{faq\.answer\} \/>/, file);
   }
 
   const business = generateLocalBusinessSchema('Boise');

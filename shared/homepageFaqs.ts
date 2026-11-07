@@ -1,4 +1,5 @@
 import { publishFoundingCopy } from '@/shared/publicClaims';
+import { HOME_NEW_FAQS } from '@/shared/content/p5Visibility';
 
 export interface HomepageFaq {
   q: string;
@@ -19,16 +20,12 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
     a: "You receive a written scope and price before any work. Nothing is due until that scope is signed. Draw timing for the remodel is set in the contract and confirmed at the free in-home visit.",
   },
   {
-    q: "How long is the workmanship guarantee?",
-    a: "Two years on remodeling workmanship. We also pass through manufacturer warranties on fixtures and cabinetry we install.",
-  },
-  {
     q: "Who does the work?",
     a: "A core in-house team handles project management, design coordination, and key trades. Plumbing, electrical and HVAC go to licensed trade partners we schedule and stand behind. Your project manager remains your single point of contact.",
   },
   {
     q: "What do home remodeling contractors typically handle?",
-    a: "Kitchen and bath remodels, basement finishing, outdoor living, and whole-home renovations when scoped. Room additions and ADUs are referred to Boise Construction Co. Exact inclusions are in your written scope before construction.",
+    a: "Kitchen and bath remodels, basement finishing, outdoor living, and whole-home renovations when scoped. Room additions on a new footprint are handled by Boise Construction Co. ADUs are built by our sister company Boise ADU Co. Exact inclusions are in your written scope before construction.",
   },
   {
     q: "Do you serve areas near Boise?",
@@ -37,7 +34,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
     q: "How are you different from other remodeling companies in the Treasure Valley?",
     a: publishFoundingCopy(
-      "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in Colorado in 2020 and part of P5 Home Co. A free in-home visit includes a written scope and a two-year workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are planning ranges, not quotes.",
+      "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in Colorado in 2020 and part of P5 Home Co. A free in-home visit includes a written scope. Ada and Canyon permitting is part of the project. The first figures are planning ranges, not quotes.",
     ),
   },
   {
@@ -46,7 +43,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "What does a typical project timeline look like?",
-    a: "Kitchen remodels typically run 6 to 10 weeks from permit approval. Bathroom remodels are 3 to 6 weeks. Whole-home renovations range from 3 to 6 months depending on scope. We give you a week-by-week schedule at project kickoff and update it every Friday.",
+    a: "Timelines depend on the scope. We give you a schedule at project kickoff and update it as the work proceeds.",
   },
   {
     q: "Do you handle permits?",
@@ -54,14 +51,15 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "What does the free in-home visit include?",
-    a: "A 60 to 90 minute walkthrough with our lead designer and estimator. We look at your space, discuss your goals and wish list, share relevant design ideas, and give you a planning range on the spot. No pressure. You leave with information, not a sales pitch.",
+    a: "A walkthrough with our lead designer and estimator. We look at your space, discuss your goals and wish list, share relevant design ideas, and give you a planning range. No pressure. You leave with information, not a sales pitch.",
   },
   {
     q: "What financing options do you offer?",
-    a: "We partner with GreenSky and Mosaic to offer flexible financing options on qualifying projects. Applications take about five minutes and you can get a decision the same day. We can walk you through options at your free in-home consultation.",
+    a: "We partner with GreenSky and Mosaic to offer flexible financing options on qualifying projects. We can walk you through options at your free in-home consultation.",
   },
   {
     q: "Do you work with subcontractors or your own employees?",
     a: "We employ a core in-house team for project management, design coordination, and key trades. Specialized work is performed by vetted trade partners we have worked with repeatedly. Your project manager remains your single point of contact regardless of who is on site any given day.",
   },
+  ...HOME_NEW_FAQS.map((faq) => ({ q: faq.question, a: faq.answer })),
 ];

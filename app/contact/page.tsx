@@ -9,7 +9,6 @@ import { MarketingCard } from '@/components/marketing/MarketingCard';
 import { SectionHeader } from '@/components/marketing/SectionHeader';
 import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
-import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { SaveContactLink } from '@/components/SaveContactLink';
 import { StatementBandSection } from '@/components/sections/StatementBandSection';
@@ -32,6 +31,9 @@ generateWebPageSchema,
 import { BUSINESS_INFO } from '@/lib/seo';
 import { areaPath } from '@/lib/seo-routes';
 import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
+import { AEO } from '@/shared/content/p5Visibility';
+import { AeoParagraph } from '@/components/seo/AeoParagraph';
+import { FaqAnswer } from '@/components/seo/FaqAnswer';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { TextReplyAnswer, TextReplyLine } from '@/components/TextReplyLine';
@@ -44,7 +46,7 @@ import Link from 'next/link';
 
 
 const SPEAKABLE_SUMMARY =
-  'Contact Boise Remodeling Co for a free consultation. Schedule a free 60 to 90 minute in-home visit, call our team, or request a quote and share photos so we can prepare a planning range for your remodel.';
+  'Contact Boise Remodeling Co for a free consultation. Schedule a free in-home visit, call our team, or request a quote and share photos so we can prepare a planning range for your remodel.';
 
 function HeroBreadcrumbs() {
   const items = [
@@ -186,8 +188,9 @@ export default function ContactPage() {
               Contact Boise Remodeling{' '}
               <em className="brc-accent">Co</em>
             </h1>
+            <AeoParagraph text={AEO.contact} tone="inverse" />
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-6">
-              Schedule a free 60 to 90 minute in-home visit, call our team, or request a quote
+              Schedule a free in-home visit, call our team, or request a quote
               and share photos so we can prepare a planning range for your remodel.
             </p>
             <BusinessPhoneContact
@@ -228,8 +231,8 @@ export default function ContactPage() {
                     <em className="brc-accent">home</em>.
                   </h2>
                   <p className="text-base leading-relaxed text-muted-foreground">
-                    Send a few details and we will reach out within one business day to schedule
-                    your free 60 to 90 minute in-home visit - planning guidance, design direction,
+                    Send a few details and we will reach out to schedule
+                    your free in-home visit. You leave with planning guidance, design direction,
                     and no obligation.
                   </p>
                   <TextReplyLine className="text-base leading-relaxed mb-8 mt-3 text-muted-foreground" />
@@ -390,8 +393,8 @@ export default function ContactPage() {
                     <AccordionTrigger className="text-left py-5 hover:no-underline font-sans font-normal text-sm text-foreground">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-sm leading-relaxed pb-6 text-muted-foreground">
-                      {faq.answer.includes("Prefer to text?") ? <TextReplyAnswer answer={faq.answer} /> : <RegistrationText text={faq.answer} />}
+                    <AccordionContent forceMount className="text-sm leading-relaxed pb-6 text-muted-foreground">
+                      {faq.answer.includes("Prefer to text?") ? <TextReplyAnswer answer={faq.answer} /> : <FaqAnswer text={faq.answer} />}
                     </AccordionContent>
                   </AccordionItem>
                 ))}

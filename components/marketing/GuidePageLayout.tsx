@@ -30,13 +30,15 @@ import { RelatedPostCards } from './RelatedPostCards';
 import { Section } from './Section';
 import { SectionedArticle } from './SectionedArticle';
 import { toSentenceCase } from '@/shared/sentenceCase';
+import { AeoParagraph } from '@/components/seo/AeoParagraph';
 
 interface GuidePageLayoutProps {
   guide: GuidePageData;
   formatDate: (date: string) => string;
+  answer?: string;
 }
 
-export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
+export function GuidePageLayout({ guide, formatDate, answer }: GuidePageLayoutProps) {
   const hub = getHubBySlug(guide.hubSlug);
   const heroImage = getBlogHeroImage(guide.slug, guide.heroImage);
   const heroAlt = getBlogImageAlt(guide.slug);
@@ -71,6 +73,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {toSentenceCase(guide.title)}
             </h1>
+            {answer ? <AeoParagraph text={answer} /> : null}
             <p className="text-lg text-muted-foreground mb-5">{guide.excerpt}</p>
             <div role="presentation" className="border-t border-border/60 mb-5" />
             <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">

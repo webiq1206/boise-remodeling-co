@@ -10,13 +10,16 @@ import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { Reveal } from "@/components/Reveal";
 import { PageHeroBand } from "@/components/sections/PageHeroBand";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { AnswerBlock } from "@/components/seo/AnswerBlock";
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildPageMetadata } from "@/lib/page-metadata";
 import {
 generateBreadcrumbSchema,
+generateFAQSchema,
 generateWebPageSchema,
 } from "@/lib/schema";
+import { AeoParagraph, ContractorHubLink } from "@/components/seo/AeoParagraph";
+import { VisibleFaqs } from "@/components/seo/VisibleFaqs";
+import { AEO, AREAS_FAQS } from "@/shared/content/p5Visibility";
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
 import { CITIES,TREASURE_VALLEY_CITIES } from "@/shared/contentData";
 import { CTA_PRIMARY,CTA_SECONDARY } from "@/shared/ctaCopy";
@@ -42,6 +45,7 @@ export default function AreasHubPage() {
       { name: "Home", url: "/" },
       { name: "Service Areas", url: "/areas" },
     ]),
+    generateFAQSchema(AREAS_FAQS),
   ];
 
   return (
@@ -58,6 +62,8 @@ export default function AreasHubPage() {
             Treasure Valley service{" "}
             <em className="brc-accent">areas</em>
           </h1>
+          <AeoParagraph text={AEO.areas} tone="inverse" />
+          <ContractorHubLink tone="inverse" />
           <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
             We serve homeowners across {TREASURE_VALLEY_CITIES}, and surrounding communities with
             kitchen, bathroom, whole-home, and addition remodeling under one design-build team.
@@ -72,11 +78,6 @@ export default function AreasHubPage() {
             <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
-
-        <AnswerBlock
-          question="Where does Boise Remodeling Co work?"
-          answer="Boise Remodeling Co remodels homes in eight Treasure Valley cities: Boise, Meridian, Eagle, Kuna and Star in Ada County, and Nampa, Middleton and Caldwell in Canyon County. Each city has its own page with local permit paths and housing notes, and every project runs through one design-build team with a written scope before construction."
-        />
 
         <Section surface="bone" spacing="xl">
           <div className="ed-shell">
@@ -95,6 +96,8 @@ export default function AreasHubPage() {
             </div>
           </div>
         </Section>
+
+        <VisibleFaqs faqs={AREAS_FAQS} heading="Questions about service areas" />
 
         <EstimatePromptBand
           title={

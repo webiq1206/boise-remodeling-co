@@ -5,6 +5,7 @@
  * on-brand reading flow. Passed into buildPillarGuide() as content/faqs
  * overrides so the pillar renders a real definitive guide, not generated stubs.
  */
+import { KITCHEN_GUIDE_NEW_FAQS } from '@/shared/content/p5Visibility';
 
 export const KITCHEN_GUIDE_CONTENT = `
 <p class="guide-lead">A kitchen remodel is the most rewarding project most homeowners take on - and the most involved. This guide walks you through the whole journey in order: setting a realistic budget, choosing a layout, picking cabinets and countertops, understanding the timeline and permits, and hiring the right team. Read it top to bottom and you will know exactly what to expect and how to get a kitchen you love. It reflects how design-build remodels actually run here in the Treasure Valley.</p>
@@ -123,7 +124,7 @@ export const KITCHEN_GUIDE_FAQS = [
   {
     question: 'How long does a kitchen remodel take?',
     answer:
-      'Plan for roughly 8 to 16 weeks of on-site construction for a typical kitchen, plus design, selections, and permitting beforehand - so the full project usually spans several months from first meeting to finished kitchen. Cabinet lead times and tile cure times most often drive the schedule. Finalizing every selection before demolition is the best way to keep it on track.',
+      'Cabinet lead times and tile cure times most often drive the schedule. Finalizing every selection before demolition is the best way to keep it on track.',
   },
   {
     question: 'Do I need a permit to remodel my kitchen?',
@@ -145,4 +146,5 @@ export const KITCHEN_GUIDE_FAQS = [
     answer:
       'Splurge on the things that are hard to change and used every day - quality cabinets, durable countertops, and good drawer hardware and storage. Save on items that are easy and inexpensive to swap later, like cabinet pulls, paint color, and light fixtures. This puts your budget into the lasting, high-impact elements while letting you refresh the affordable details down the road.',
   },
+  ...KITCHEN_GUIDE_NEW_FAQS,
 ];

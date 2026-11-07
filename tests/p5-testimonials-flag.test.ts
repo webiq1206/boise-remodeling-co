@@ -158,25 +158,26 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
     text('../components/Navigation.tsx'),
     text('../components/Footer.tsx'),
     text('../components/sections/TestimonialsSection.tsx'),
-    text('../app/design-ideas/page.tsx'),
+    text('../app/testimonials/page.tsx'),
     text('../public/llms.txt'),
     text('../public/llms-full.txt'),
   ].join('\n');
   for (const phrase of BANNED) assert.equal(surfaces.includes(phrase), false, phrase);
 
-  const page = text('../app/design-ideas/page.tsx');
-  assert.match(page, /Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners\. Explore layouts, cabinetry, tile, lighting and finishes\./);
+  const page = text('../app/testimonials/page.tsx') + text('../shared/content/p5Visibility.ts');
+  assert.match(page, /See kitchen, bath and whole-home ideas for Treasure Valley homes, then turn the ones you love into a written scope with a free in-home visit from our team\./);
   assert.match(page, /Browse kitchen, bath, whole-home and addition layouts, materials and finishes\./);
-  assert.match(page, /What are these remodeling design ideas\?/);
+  assert.match(page, /Find design ideas that fit your Treasure Valley home/);
   assert.equal(/\b(?:completed|finished)\s+(?:(?:customer|client)\s+)?(?:projects?|jobs?|work)\b/i.test(page), false);
   assert.equal(/\bour\s+(?:completed|finished)\s+(?:projects?|jobs?|work)\b/i.test(page), false);
   assert.equal(/\bfirst projects\b/i.test(page), false);
   assert.equal(page.includes('Captioned for materials and layout, not invented project records'), false);
-  assert.match(page, /titleOverride: 'Remodeling Design Ideas'/);
+  assert.match(page, /titleOverride: 'Remodeling Ideas for Boise Homes'/);
+  assert.match(page, /path: '\/testimonials'/);
   assert.equal(page.includes('Homeowner reviews'), false);
   assert.equal(page.includes('Project gallery'), false);
 
-  const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/design-ideas');
+  const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/testimonials');
   // Sentence case since owner decision C (1 November 2026); still not "Testimonials".
   assert.equal(entry?.label, 'Design ideas');
 

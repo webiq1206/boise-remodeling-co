@@ -122,8 +122,8 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   };
 
   const homeMetadata = withBrandPageMetadata({
-    title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope.'),
+    title: { absolute: 'Boise Home Remodeling Contractors | Boise Remodeling Co' },
+    description: fitDescription('Remodel your kitchen, bath or whole home with one design-build team in Boise. Free in-home visit, a written scope before any price, and a written warranty.'),
     alternates: { canonical: buildCanonical('/') },
   }, '/');
   push('/', homeMetadata);
@@ -207,24 +207,23 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
     descriptions.set(row.description, row.path);
   }
 
-  assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
-  const homeMeta = 'Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope.';
+  assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Boise Home Remodeling Contractors/);
+  const homeMeta = 'Remodel your kitchen, bath or whole home with one design-build team in Boise. Free in-home visit, a written scope before any price, and a written warranty.';
   assert.equal(homeMeta.length, 155);
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
-  assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
-  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Eagle, ID Kitchen and Bath Remodeling/);
+  const eagleMeta = 'Kitchen, bath and whole-home remodeling in Eagle, Idaho from one design-build team. Free in-home visit, written scope and a written workmanship guarantee.';
   assert.ok(eagleMeta.length <= 160);
   assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
-  assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
-  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
+  assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Boise, ID Remodeling Contractors/);
+  const boiseMeta = 'Kitchen, bath and whole-home remodeling in Boise, Idaho from one design-build team. Free in-home visit, a written scope and a written workmanship warranty.';
   assert.ok(boiseMeta.length <= 160);
   assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
-  assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
-  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Design-build remodeler, part of P5/);
-  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
-  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler \| Boise Remodeling Co/);
+  assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen Remodeling in Boise, ID/);
+  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Meet the design-build team behind your remodel/);
+  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /About Boise Remodeling Co: Design-Build Remodelers in Boise/);
   assert.equal(/since 2020|founded in 2020|founded 2020|EST 2020/i.test(rows.find((row) => row.path === '/about')?.title + '\n' + rows.find((row) => row.path === '/about')?.description), false);
 });
 
@@ -296,11 +295,12 @@ test('phase-1 copy is additive on the named pages', () => {
   assert.match(home, /Kitchen remodeling in Boise/);
   assert.match(home, /who-you-are-hiring/);
   assert.match(home, /\/services\/\$\{s\.slug\}/);
-  const faqs = readFileSync('shared/homepageFaqs.ts', 'utf8');
+  const faqs = readFileSync('shared/homepageFaqs.ts', 'utf8') + readFileSync('shared/content/p5Visibility.ts', 'utf8');
   assert.match(faqs, /q: "Can we live at home during the remodel\?"/);
   assert.match(faqs, /q: "What do home remodeling contractors typically handle\?"/);
   assert.match(faqs, /q: "Do you serve areas near Boise\?"/);
-  assert.match(faqs, /q: "How long is the workmanship guarantee\?"/);
+  assert.match(faqs, /How do I choose a home remodeling contractor in Boise\?/);
+  assert.equal(faqs.includes('How long is the workmanship guarantee?'), false);
   const areas = readFileSync('app/areas/[city]/page.tsx', 'utf8');
   assert.match(areas, /href: '\/services\/kitchen-remodel'/);
   assert.match(areas, /href: '\/services\/bathroom-remodel'/);

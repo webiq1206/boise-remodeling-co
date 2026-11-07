@@ -1,5 +1,6 @@
 import { TREASURE_VALLEY_CITIES } from "../contentData";
 import { textReplyLine } from "../siteConfig";
+import { CONTACT_NEW_FAQS } from "./p5Visibility";
 
 /**
  * The questions every channel answers the same way.
@@ -18,7 +19,7 @@ export const CONTACT_FAQS: { question: string; answer: string }[] = [
   {
     question: "Is the in-home consultation really free?",
     answer:
-      "Yes. Your 60 to 90 minute in-home visit is free with no obligation. You leave with planning guidance, design direction, and an honest project range - never a high-pressure sales pitch.",
+      "Yes. Your in-home visit is free with no obligation. You leave with planning guidance, design direction, and an honest project range. Never a high-pressure sales pitch.",
   },
   {
     question: "What areas do you serve?",
@@ -34,4 +35,5 @@ export const CONTACT_FAQS: { question: string; answer: string }[] = [
     answer:
       "Book a free in-home visit for a preliminary planning range and a written scope tailored to your home. Photos ahead of the visit help us prepare.",
   },
+  ...CONTACT_NEW_FAQS,
 ];

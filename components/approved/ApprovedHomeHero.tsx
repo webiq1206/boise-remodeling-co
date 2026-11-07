@@ -3,6 +3,7 @@ import { ProofStrip } from "@/components/family/ProofStrip";
 import { DOPL_LICENSE_SEARCH, REGISTRATION_LINE } from "@/components/RegistrationLine";
 import { FAMILY_BRAND } from "@/lib/familyBrand";
 import { SERVICES } from "@/shared/contentData";
+import { AEO } from "@/shared/content/p5Visibility";
 
 /** The published "planning from" figure on the kitchen service page, read from the same data. */
 const KITCHEN_PLANNING_FROM = SERVICES.find((service) => service.slug === "kitchen-remodel")?.planningFrom;
@@ -23,6 +24,7 @@ export function ApprovedHomeHero() {
         title="Boise home remodeling."
         titleAccent="One team, start to finish."
         support="We design, price and build kitchens, baths and whole-home remodels."
+        answer={AEO.home}
         primary={{ label: FAMILY_BRAND.cta.label, href: FAMILY_BRAND.cta.href }}
       />
       {/* Facts already published on this site, nothing new: the DOPL-linked registration,
@@ -37,7 +39,7 @@ export function ApprovedHomeHero() {
             newTab: true,
           },
           { label: "Scope first", text: "Written scope before any price" },
-          { label: "Warranty", text: "Two-year workmanship warranty" },
+          { label: "Warranty", text: "Written workmanship warranty" },
           ...(KITCHEN_PLANNING_FROM
             ? [{ label: "Planning", text: `Kitchen remodels planning from ${KITCHEN_PLANNING_FROM}` }]
             : []),

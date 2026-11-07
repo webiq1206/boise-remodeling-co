@@ -10,7 +10,11 @@ import { buildPageMetadata } from "@/lib/page-metadata";
 import {
 generateBreadcrumbSchema,
 generateCollectionPageSchema,
+generateFAQSchema,
 } from "@/lib/schema";
+import { AeoParagraph, ContractorHubLink } from "@/components/seo/AeoParagraph";
+import { VisibleFaqs } from "@/components/seo/VisibleFaqs";
+import { AEO, BLOG_FAQS } from "@/shared/content/p5Visibility";
 import { BLOG_POSTS } from "@/shared/blogContent";
 import { getBlogHeroImage,getBlogImageAlt } from "@/shared/blogImages";
 import { ArrowRight } from "lucide-react";
@@ -42,7 +46,7 @@ export default function BlogPage() {
 
   return (
     <InteriorPage kind="blog"><>
-      <JsonLd data={schemas} />
+      <JsonLd data={[...schemas, generateFAQSchema(BLOG_FAQS)]} />
 
       <PageHeroBand
         imageSrc={getBlogHeroImage("boise-remodeling-process-guide")}
@@ -53,6 +57,8 @@ export default function BlogPage() {
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Remodeling insights &amp; ideas
         </h1>
+        <AeoParagraph text={AEO.blog} tone="inverse" />
+        <ContractorHubLink tone="inverse" />
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           Honest advice for Idaho homeowners planning their next renovation - budgeting, timelines,
           permits, and design-build guidance from Boise Remodeling Co.
@@ -67,6 +73,8 @@ export default function BlogPage() {
       </PageHeroBand>
 
       <BlogIndexClient posts={blogIndexPosts()} />
+
+      <VisibleFaqs faqs={BLOG_FAQS} heading="Questions about the advice" />
 
       <EstimatePromptBand
         eyebrow="Ready to plan"

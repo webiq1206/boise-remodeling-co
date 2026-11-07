@@ -19,6 +19,7 @@ import { getAreaImageSet } from '@/shared/cityServiceImages';
 import { getCountyLabel,SERVICES } from '@/shared/contentData';
 import { getGalleryProjectsForCity } from '@/shared/galleryData';
 import { AREA_CITY_COPY } from '@/shared/content/areaCopy';
+import { AREA_AEO, AREA_NEW_FAQS } from '@/shared/content/p5Visibility';
 import { AREA_PAGE_FAQS,getAreaIntro } from '@/shared/seoContent';
 import { notFound } from 'next/navigation';
 
@@ -133,13 +134,14 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
   const h1 = new Set(['eagle', 'boise', 'nampa', 'kuna', 'meridian']).has(city.slug)
     ? `Remodeling contractors in ${city.name}, Idaho`
     : `Remodeling contractor in ${city.name}, Idaho`;
-  const faqs = cityCopy?.faqs ?? [
+  const baseFaqs = cityCopy?.faqs ?? [
     ...AREA_PAGE_FAQS,
     {
       question: `Do you serve ${city.name}, Idaho?`,
       answer: `Yes. ${city.name} is part of our Treasure Valley service area. We handle kitchen, bathroom, whole-home, and addition projects locally.`,
     },
   ];
+  const faqs = [...baseFaqs, ...(AREA_NEW_FAQS[city.slug] ?? [])];
 
   const schemas = [
     landingBreadcrumbs([
@@ -157,6 +159,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
       <JsonLd data={schemas} />
       <LandingPageTemplate
         h1={h1}
+        aeo={AREA_AEO[city.slug]}
         speakableSummary={overview}
         overview={overview}
         heroImageUrl={images.hero}
@@ -188,6 +191,7 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
         proofHeading={`Recent ${city.name} remodeling projects`}
         showEstimatePrompt
         faqs={faqs}
+        faqDisplay="visible"
         subject={{ noun: 'remodel', place: city.name }}
         related={{ variant: 'area', citySlug: city.slug }}
       />

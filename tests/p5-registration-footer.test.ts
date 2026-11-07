@@ -79,7 +79,7 @@ test('home organization JSON-LD uses the bonded registration sentence', () => {
 test('the Meridian area FAQ states the registration without a license claim', () => {
   const faq = AREA_CITY_COPY.meridian.faqs.find((item) => item.question === 'Are you a registered contractor and insured?');
   assert.ok(faq);
-  assert.equal(faq.answer, "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured.");
+  assert.equal(faq.answer, "Yes. We're an Idaho Registered Contractor #8381215 and insured.");
   assert.equal(/licensed/i.test(faq.answer), false);
 });
 

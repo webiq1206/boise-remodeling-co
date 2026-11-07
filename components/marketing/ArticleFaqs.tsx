@@ -1,4 +1,4 @@
-import { RegistrationText } from "@/components/RegistrationLink";
+import { FaqAnswer } from "@/components/seo/FaqAnswer";
 import {
   Accordion,
   AccordionContent,
@@ -45,8 +45,8 @@ export function ArticleFaqs({
             <AccordionTrigger className="text-left py-5 hover:no-underline font-sans font-normal text-body text-foreground">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-body leading-relaxed pb-6 text-foreground/90">
-              <RegistrationText text={faq.answer} />
+            <AccordionContent forceMount className="text-body leading-relaxed pb-6 text-foreground/90">
+              <FaqAnswer text={faq.answer} />
             </AccordionContent>
           </AccordionItem>
         ))}

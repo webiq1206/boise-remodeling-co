@@ -27,7 +27,7 @@ const today = '2026-10-16';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
   `Serving the ${SITE_CONFIG.address.serviceArea}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
-  `Idaho Registered Contractor #8381215, bonded and insured.`;
+  `Idaho Registered Contractor #8381215, insured.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
 const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
@@ -103,7 +103,7 @@ function buildShort(): string {
   lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.`));
   lines.push(`- [Contact](${url('/contact')})`);
   lines.push(`- [Send project details and photos for a quote](${url('/estimate')})`);
-  lines.push(`- [Remodeling design ideas](${url('/design-ideas')})`);
+  lines.push(`- [Remodeling design ideas](${url('/testimonials')})`);
   lines.push(`- [Planning resources and worksheets](${url('/resources')})`, '');
 
   lines.push('## Optional', '');
@@ -207,7 +207,7 @@ function buildFull(): string {
       'weeks for a bathroom to several months for a whole-home renovation or addition.',
   );
   lines.push(
-    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured.',
   );
   lines.push(
     '- Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of ' +
@@ -231,7 +231,7 @@ function buildFull(): string {
   lines.push(`- Services: ${url('/services')}`);
   lines.push(`- Service areas: ${url('/areas')}`);
   lines.push(`- Send project details: ${url('/estimate')}`);
-  lines.push(`- Remodeling design ideas: ${url('/design-ideas')}`);
+  lines.push(`- Remodeling design ideas: ${url('/testimonials')}`);
   lines.push(`- Blog: ${url('/blog')}`);
   lines.push(`- Guides: ${url('/guides')}`);
   lines.push(`- Resources: ${url('/resources')}`);
