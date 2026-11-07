@@ -67,7 +67,7 @@ export const GBP_CATEGORIES = {
 } as const;
 
 export const GBP_DESCRIPTION = publishFoundingCopy(
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, written progress updates, and a written workmanship warranty. Founded in 2020. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
 );
 
 export const GBP_LINKS = {
@@ -121,7 +121,7 @@ export const GBP_SERVICES: GbpService[] = [
   {
     name: 'Kitchen remodeling',
     description:
-      'Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild. Written scope, permits, and weekly updates included.',
+      'Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild. Written scope, permits, and written updates included.',
     startingPrice: '$15,000',
   },
   {
@@ -225,7 +225,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
     price: 'From $180,000',
     url: `${SITE}/services/whole-home-remodel`,
     description:
-      'Single project manager from design through final walkthrough. Weekly written updates and workmanship guarantee included.',
+      'Single project manager from design through final walkthrough. Written updates and a written workmanship warranty included.',
   },
   {
     category: 'Remodeling Services',
@@ -410,7 +410,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.',
+      'Yes. P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured; certificate on request.',
   },
   {
     question: 'Do you build ADUs?',
@@ -452,7 +452,7 @@ export const GBP_POSTS_STARTER: GbpPost[] = [
   {
     week: 1,
     headline: 'Kitchen clarity in Boise',
-    body: 'North End kitchen remodel - written scope before demo, weekly Friday updates, final walkthrough with workmanship guarantee.',
+    body: 'North End kitchen remodel. Written scope before demo, written updates, and a final walkthrough with a written workmanship warranty.',
     buttonLabel: 'Learn more',
     buttonUrl: `${SITE}/services/kitchen-remodel/boise`,
     photoHint: 'Best kitchen after photo',
