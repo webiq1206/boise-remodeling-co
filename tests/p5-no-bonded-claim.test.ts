@@ -18,10 +18,7 @@ const CLAIM_RE = new RegExp(`\\b${CLAIM}\\b`, 'i');
 const SCAN_ROOTS = ['app', 'components', 'lib', 'shared', 'public', 'scripts', 'backlink-engine'];
 const SKIP_DIRS = new Set(['node_modules', '.next', '.git', 'dist', 'coverage']);
 const TEXT_EXT = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.txt', '.json', '.html']);
-// Homeowner advice about what to ask another contractor. Not a company claim.
-const ALLOW = new Set([
-  'shared/content/wave2/questions-to-ask-remodeling-contractor.ts',
-]);
+const ALLOW = new Set<string>();
 
 function walk(dir: string, out: string[]): void {
   for (const entry of readdirSync(dir)) {
