@@ -32,7 +32,7 @@ const COMPANY_ITEMS = [
   "Dust barriers and floor protection daily",
   "Friday written update",
   "Written change orders only",
-  "Written workmanship guarantee",
+  "Two-year written workmanship guarantee",
 ] as const;
 
 function HeroBreadcrumbs() {
