@@ -116,7 +116,7 @@ test('the video hero preserves the family template copy, action and sourced proo
   // Proof: only facts already published on the site.
   assert.match(html, /Idaho Registered Contractor #8381215/);
   assert.match(html, /Written scope before any price/);
-  assert.match(html, /Two-year workmanship warranty/);
+  assert.match(html, /Written workmanship warranty/);
   const kitchen = SERVICES.find((service) => service.slug === 'kitchen-remodel');
   assert.match(html, new RegExp(`Kitchen remodels planning from \\${kitchen?.planningFrom}`));
 });

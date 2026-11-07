@@ -45,7 +45,7 @@ export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] 
   {
     title: 'Final walkthrough',
     description:
-      'We review every detail with you before sign-off. Two-year written workmanship guarantee on our labor.',
+      'We review every detail with you before sign-off. Written workmanship guarantee on our labor.',
   },
 ];
 
@@ -93,7 +93,7 @@ export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
     heading: 'Why design-build for your bathroom remodel',
     paragraphs: [
       'Design, estimating, permitting and construction stay under one contract and one accountable team, so layout and waterproofing decisions do not get lost between separate vendors.',
-      'You get a written scope before construction begins, clear allowances for selections, and a two-year workmanship guarantee when the project is complete.',
+      'You get a written scope before construction begins, clear allowances for selections, and a written workmanship warranty when the project is complete.',
     ],
   },
 ];

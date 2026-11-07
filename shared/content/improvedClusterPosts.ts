@@ -4,7 +4,7 @@ import type { ContentSection } from './wave1/snippets';
  * Phase 4: eight factory cluster posts (260 to 280 words of template copy)
  * rewritten with substance. Every fact here already appears elsewhere in this
  * repository: the process, ROI and outdoor pillar guides, the service pages,
- * the homepage FAQ (two-year workmanship guarantee), the covered-patio and
+ * the homepage FAQ (workmanship guarantee), the covered-patio and
  * outdoor-kitchen posts and the home-addition cost post. No new numbers.
  *
  * Each post links its pillar guide and one service page in the body, and the
@@ -68,7 +68,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Sign-off, then the warranty',
         paragraphs: [
-          'Once the punch list is complete, the project is signed off and the workmanship guarantee takes over; our <a href="/blog/warranty-guide-remodeling">remodeling warranty guide</a> covers what it includes. Boise Remodeling Co guarantees remodeling workmanship for two years and passes through manufacturer warranties on fixtures and cabinetry we install. Both the punch list and the warranty should be defined in your contract from the start, so you know exactly how the project will be completed and supported.',
+          'Once the punch list is complete, the project is signed off and the workmanship guarantee takes over; our <a href="/blog/warranty-guide-remodeling">remodeling warranty guide</a> covers what it includes. Boise Remodeling Co guarantees remodeling workmanship and passes through manufacturer warranties on fixtures and cabinetry we install. Both the punch list and the warranty should be defined in your contract from the start, so you know exactly how the project will be completed and supported.',
         ],
       },
       {
@@ -97,7 +97,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       'How a remodeling workmanship guarantee works: what it covers, how long it runs, how manufacturer warranties fit in, and what to get in writing first.',
     excerpt: 'How a remodeling workmanship guarantee works and what to get in writing before you sign.',
     quickAnswer:
-      'A remodeling warranty has two layers: the contractor guarantees its own workmanship, and manufacturers warrant the products. Boise Remodeling Co guarantees remodeling workmanship for two years in writing and passes through manufacturer warranties on fixtures and cabinetry it installs.',
+      'A remodeling warranty has two layers: the contractor guarantees its own workmanship, and manufacturers warrant the products. Boise Remodeling Co guarantees remodeling workmanship in writing and passes through manufacturer warranties on fixtures and cabinetry it installs.',
     takeaways: [
       'Workmanship and product warranties are two different promises.',
       'Get the guarantee, its length and its process in writing.',
@@ -109,7 +109,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Two warranties, two promises',
         paragraphs: [
           'A workmanship guarantee covers how the work was done: the installation, the framing, the tile setting, the trim. A manufacturer warranty covers the product itself: the faucet, the cabinet box, the window unit. When something fails, the first question is which of the two it is, which is why both belong in your paperwork.',
-          'Boise Remodeling Co guarantees remodeling workmanship for two years and passes through manufacturer warranties on fixtures and cabinetry we install.',
+          'Boise Remodeling Co guarantees remodeling workmanship and passes through manufacturer warranties on fixtures and cabinetry we install.',
         ],
       },
       {
@@ -122,7 +122,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Where the warranty starts',
         paragraphs: [
-          'The warranty takes over once the punch list is complete and the project is signed off. On a <a href="/services/bathroom-remodel">bathroom remodel</a>, for example, the final walkthrough reviews every detail before sign-off, and the two-year written workmanship guarantee on our labor starts from there.',
+          'The warranty takes over once the punch list is complete and the project is signed off. On a <a href="/services/bathroom-remodel">bathroom remodel</a>, for example, the final walkthrough reviews every detail before sign-off, and the written workmanship guarantee on our labor starts from there.',
         ],
       },
       {

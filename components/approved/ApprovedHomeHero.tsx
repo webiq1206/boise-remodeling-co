@@ -37,7 +37,7 @@ export function ApprovedHomeHero() {
             newTab: true,
           },
           { label: "Scope first", text: "Written scope before any price" },
-          { label: "Warranty", text: "Two-year workmanship warranty" },
+          { label: "Warranty", text: "Written workmanship warranty" },
           ...(KITCHEN_PLANNING_FROM
             ? [{ label: "Planning", text: `Kitchen remodels planning from ${KITCHEN_PLANNING_FROM}` }]
             : []),
