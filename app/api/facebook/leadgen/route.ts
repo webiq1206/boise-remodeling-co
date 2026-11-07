@@ -48,6 +48,14 @@ import {
   formatLeadReplyTo,
 } from "@/server/services/consultationEmail";
 import { forwardToLeadDashboard } from "@/server/services/leadDashboardForward";
+import {
+  GRAPH_LEAD_FIELDS,
+  metaLeadAttributionLines,
+  metaLeadProjectType,
+  metaLeadSource,
+  resolveMetaLeadAttribution,
+  type GraphLeadAttributionInput,
+} from "@/shared/metaLeadAttribution";
 
 const GRAPH_VERSION = "v21.0";
 const LOG = "[fb-leadgen]";
@@ -116,10 +124,9 @@ interface GraphFieldDatum {
   values?: string[];
 }
 
-interface GraphLead {
+interface GraphLead extends GraphLeadAttributionInput {
   id: string;
   created_time?: string;
-  form_id?: string;
   field_data?: GraphFieldDatum[];
   error?: { message?: string; type?: string; code?: number };
 }
@@ -180,7 +187,7 @@ async function processLead(leadgenId: string, formId: string | undefined, config
   // credentials end up in proxy and observability logs.
   const url =
     `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(leadgenId)}` +
-    `?fields=id,created_time,form_id,field_data`;
+    `?fields=${GRAPH_LEAD_FIELDS.join(",")}`;
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${config.pageAccessToken}` },
   });
@@ -213,11 +220,23 @@ async function processLead(leadgenId: string, formId: string | undefined, config
     .filter((f) => f.name && !STANDARD_FIELDS.has(f.name.toLowerCase()) && f.values?.[0])
     .map((f) => `${f.name.replace(/_/g, " ")}: ${f.values![0]}`);
 
-  const formLabel = lead.form_id || formId || "unknown form";
+  /* Brand, service and the campaign / ad set / ad that produced the lead. Every
+     P5 brand advertises from one Page, so without this every brand's lead looks
+     the same in the CRM. */
+  const attribution = resolveMetaLeadAttribution(lead, formId);
+  const attributionLines = metaLeadAttributionLines(attribution);
+  if (attribution.resolvedBy === "none") {
+    console.warn(
+      `${LOG} Lead ${leadgenId} (form ${attribution.formId || "unknown"}) matched no known form or P5 campaign name; stored as unattributed. Add the form to META_LEAD_FORMS.`,
+    );
+  }
+  const timing = fieldValue(data, "timing");
+  const serviceAnswer = fieldValue(data, "service", "project");
+
   const noteLines = [
     "Submitted via Facebook Lead Ad (Instant Form)",
     `Meta lead id: ${lead.id}`,
-    `Form: ${formLabel}`,
+    ...attributionLines,
     ...(lead.created_time ? [`Submitted: ${lead.created_time}`] : []),
     ...customAnswers,
   ];
@@ -243,7 +262,7 @@ async function processLead(leadgenId: string, formId: string | undefined, config
           zip: zip || "",
           address: address || "",
           city: city || null,
-          projectType: "facebook-lead-ad",
+          projectType: metaLeadProjectType(attribution),
           message,
           fbLeadId: lead.id,
         })
@@ -276,10 +295,11 @@ async function processLead(leadgenId: string, formId: string | undefined, config
     city: city || undefined,
     state: state || undefined,
     zip: zip || undefined,
-    projectTypes: [],
+    projectTypes: serviceAnswer ? [serviceAnswer] : [],
+    timeline: timing || undefined,
     finalNotes: customAnswers.length > 0 ? customAnswers.join("\n") : undefined,
-    projectScope: `Facebook Lead Ad (form ${formLabel})`,
-    source: "Facebook Lead Ad",
+    projectScope: attributionLines.join("\n"),
+    source: metaLeadSource(attribution),
   });
 
   /* 3 - Instant team notification, through the same admin email path. No
@@ -293,7 +313,7 @@ async function processLead(leadgenId: string, formId: string | undefined, config
       email: email || "(not provided)",
       address: address || "",
       zip: zip || undefined,
-      projectType: `Facebook Lead Ad${customAnswers.length ? ` - ${customAnswers.join("; ")}` : ""}`,
+      projectType: `${metaLeadSource(attribution)}${customAnswers.length ? ` - ${customAnswers.join("; ")}` : ""}`,
       budget: undefined,
     };
     const adminHtml = buildAdminEmailHtml(adminLead, null, null);

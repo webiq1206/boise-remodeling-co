@@ -26,6 +26,7 @@ each one caught something real:
 | `verify:plans` | the gates that let a plan set tighten a price |
 | `verify:plans-delivery` | plans disclosure wall, funnel events, request contract |
 | `verify:documents` | page pipeline: pagination, coverage, merge, dedup, conflicts, readiness |
+| `verify:meta-lead-attribution` | Instant Form leads keep brand, service, form, campaign, ad set and ad (all brands share one Page, so one webhook) |
 | `verify:no-em-dash` | house style, blocks the build |
 | `check:re10-extraction` | live API call, NOT in prebuild (costs money) |
 | `check:large-documents` | 104-sheet set + 62-item RE-10 against the real API, NOT in prebuild |
