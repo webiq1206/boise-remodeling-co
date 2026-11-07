@@ -27,7 +27,7 @@ export const remodelingContractorRedFlags: BlogPostData = {
   quickAnswer:
     'The biggest remodeling contractor red flags are no license or insurance, demanding a large deposit up front, no written contract or scope, high-pressure sales tactics, a price that seems too good to be true, avoiding permits, vague estimates, poor communication, no verifiable references, no physical business address, and full payment before completion. Any one of these warrants caution; several together mean walk away.',
   keyTakeaways: [
-    'No proof of license, bonding, and insurance is the number-one red flag.',
+    'No proof of registration and insurance is the number-one red flag.',
     'A large upfront deposit or full payment before completion signals risk.',
     'No written contract or scope means nothing is enforceable - avoid it.',
     'High-pressure "sign today" tactics and a too-good-to-be-true price are warnings.',
@@ -77,7 +77,7 @@ export const remodelingContractorRedFlags: BlogPostData = {
 <h2 id="why-matters">Why spotting red flags matters</h2>
 <p><strong>The most damaging remodeling mistakes happen before construction even begins - in choosing the wrong contractor.</strong> A bad contractor can drain your budget, leave your home half-finished, do work that fails inspection or fails outright, and turn a project you were excited about into months of stress and legal trouble. The good news is that the warning signs are usually visible early, if you know what to look for. This guide catalogs twelve red flags Boise homeowners should take seriously, and what a trustworthy contractor does instead. It pairs with our <a href="/blog/questions-to-ask-remodeling-contractor">questions to ask a contractor</a> and our full guide on <a href="/guides/choose-remodeling-contractor-boise">choosing a remodeling contractor</a>.</p>
 
-<h2 id="no-insurance">1. No proof of license, bonding, or insurance</h2>
+<h2 id="no-insurance">1. No proof of registration or insurance</h2>
 <p>This is the number-one red flag, and it is non-negotiable. Any contractor working on your home should be registered in Idaho and carry general liability insurance, and if they have employees, workers' compensation. If a contractor cannot or will not show you current proof, stop there. Without it, you could be liable for an injury on your property or left paying for damage out of pocket. A professional provides certificates without being pressed; excuses, stalling, or "I've been doing this for years, I don't need all that" are exactly the response you should never accept.</p>
 
 <h2 id="large-deposit">2. A large upfront deposit</h2>
@@ -120,6 +120,6 @@ export const remodelingContractorRedFlags: BlogPostData = {
 <p>Every red flag above has a mirror image in how a professional operates: proof of insurance offered freely, reasonable milestone-based payments, a written scope before construction, no pressure to sign, a realistic price you can understand, permits pulled in-house, itemized estimates, responsive communication, reachable local references, an established presence, and a written workmanship guarantee. You do not need a contractor to be perfect - you need one whose words and documents line up and who welcomes your scrutiny. When several red flags appear together, trust the pattern and keep looking; the cost of finding the right contractor is far lower than the cost of the wrong one.</p>
 
 <h2 id="next-steps">Work with a team that has none of these</h2>
-<p>We built our business to be the opposite of this list - insured, permits handled in-house, a written scope before we build, reasonable milestone payments, and a written workmanship guarantee. Our free in-home visit is the place to verify all of it. When you are ready, <a href="/contact">schedule a consultation</a>, learn more <a href="/about">about our team</a>, or read the full <a href="/guides/choose-remodeling-contractor-boise">guide to choosing a remodeling contractor</a>.</p>
+<p>We built our business to be the opposite of this list: insured, with permits handled in-house, a written scope before we build, reasonable milestone payments and a written workmanship guarantee. Our free in-home visit is the place to verify all of it. When you are ready, <a href="/contact">schedule a consultation</a>, learn more <a href="/about">about our team</a>, or read the full <a href="/guides/choose-remodeling-contractor-boise">guide to choosing a remodeling contractor</a>.</p>
 `.trim(),
 };
