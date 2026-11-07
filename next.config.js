@@ -112,13 +112,13 @@ const nextConfig = {
       // silently making the dedicated page unreachable from anywhere on the
       // site (nav, footer, every EstimateCTA click off the homepage) and
       // from search results.
-      '/portfolio': '/testimonials',
-      '/gallery': '/testimonials',
-      '/our-work': '/testimonials',
-      '/projects': '/testimonials',
-      '/reviews': '/testimonials',
-      '/our-reviews': '/testimonials',
-      '/design-ideas': '/testimonials',
+      '/portfolio': '/design-ideas',
+      '/gallery': '/design-ideas',
+      '/our-work': '/design-ideas',
+      '/projects': '/design-ideas',
+      '/reviews': '/design-ideas',
+      '/our-reviews': '/design-ideas',
+      '/testimonials': '/design-ideas',
       '/our-services': '/#services',
       '/all-services': '/',
       '/pricing': '/#calculator',

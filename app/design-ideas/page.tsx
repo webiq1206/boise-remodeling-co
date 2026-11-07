@@ -24,26 +24,26 @@ import { ArrowRight } from 'lucide-react';
 
 export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'about',
-  path: '/testimonials',
+  path: '/design-ideas',
   titleOverride: 'Remodeling Ideas for Boise Homes',
   descriptionOverride:
     'See kitchen, bath and whole-home ideas for Treasure Valley homes, then turn the ones you love into a written scope with a free in-home visit from our team.',
-})), '/testimonials');
+})), '/design-ideas');
 
 export default function TestimonialsPage() {
   const schemas = [
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: 'Design ideas', url: '/testimonials' },
+      { name: 'Design ideas', url: '/design-ideas' },
     ]),
     generateCollectionPageSchema({
       title: 'Remodeling design ideas for Boise homes',
       description:
         'Remodeling design inspiration for kitchens, bathrooms, whole homes, and additions across the Treasure Valley.',
-      url: '/testimonials',
+      url: '/design-ideas',
       items: GALLERY_PROJECTS.map((p) => ({
         name: p.title,
-        url: '/testimonials#gallery',
+        url: '/design-ideas#gallery',
       })),
     }),
     generateFAQSchema(TESTIMONIALS_FAQS),

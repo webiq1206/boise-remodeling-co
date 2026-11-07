@@ -109,7 +109,7 @@ export function ProjectGallerySection({
         {showViewAll && (
           <div className="mt-12">
             <Button variant="brandOutline" asChild>
-              <Link href="/testimonials">Explore remodeling ideas</Link>
+              <Link href="/design-ideas">Explore remodeling ideas</Link>
             </Button>
           </div>
         )}

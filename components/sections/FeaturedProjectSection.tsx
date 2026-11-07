@@ -49,7 +49,7 @@ export function FeaturedProjectSection() {
       <div className="container px-4 py-10 text-center">
         <Reveal delay={120}>
           <Button variant="brandOutline" asChild>
-            <Link href="/testimonials">Explore remodeling ideas</Link>
+            <Link href="/design-ideas">Explore remodeling ideas</Link>
           </Button>
         </Reveal>
       </div>
