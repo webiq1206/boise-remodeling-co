@@ -202,7 +202,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       {
         question: 'What remodeling services do you offer?',
         answer:
-          'Kitchen remodels, bathroom remodels, whole-home renovations, room additions, and ADU/guest house design-build.',
+          'Kitchen remodels, bathroom remodels, whole-home renovations and room additions. ADUs are built by our sister company Boise ADU Co; start at p5homeco.com/quote/adu.',
       },
       {
         question: 'How do I find remodeling costs for my city?',
@@ -326,9 +326,9 @@ export const GUIDE_PAGES: GuidePageData[] = [
     title: 'Boise ADU Guide: Rules, Costs & Building a Second Unit',
     seoTitle: 'Boise ADU Guide | Rules, Costs & Permits',
     metaDescription:
-      'Boise ADU guide: zoning rules, size limits, costs ($90k-$300k+), permits, and attached vs detached vs garage conversion for Treasure Valley lots.',
+      'Plan a Boise ADU with answers on zoning, size limits, permits and attached vs detached vs garage conversion. Start your request at p5homeco.com/quote/adu.',
     excerpt:
-      'Everything Treasure Valley homeowners need to plan an accessory dwelling unit: Boise zoning rules, realistic costs, permits, and design choices.',
+      'Everything Treasure Valley homeowners need to plan an accessory dwelling unit: Boise zoning rules, size limits, permits, and design choices.',
     content: BOISE_ADU_GUIDE_HTML,
     author: 'Boise Remodeling Co',
     hubSlug: 'home-additions',

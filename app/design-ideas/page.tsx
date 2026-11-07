@@ -6,35 +6,38 @@ import { ConsultCTA } from '@/components/modals/ConsultCTA';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { PageHeroBand } from '@/components/sections/PageHeroBand';
 import { ProjectGallerySection } from '@/components/sections/ProjectGallerySection';
+import { AeoParagraph, ContractorHubLink } from '@/components/seo/AeoParagraph';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { AnswerBlock } from '@/components/seo/AnswerBlock';
+import { VisibleFaqs } from '@/components/seo/VisibleFaqs';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildPageMetadata } from '@/lib/page-metadata';
 import {
-generateBreadcrumbSchema,
-generateCollectionPageSchema,
+  generateBreadcrumbSchema,
+  generateCollectionPageSchema,
+  generateFAQSchema,
 } from '@/lib/schema';
-import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import { CTA_PRIMARY, CTA_SECONDARY } from '@/shared/ctaCopy';
 import { GALLERY_PROJECTS } from '@/shared/galleryData';
+import { AEO, TESTIMONIALS_FAQS } from '@/shared/content/p5Visibility';
 import { GALLERY_IMAGES } from '@/shared/siteImages';
 import { ArrowRight } from 'lucide-react';
 
 export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'about',
   path: '/design-ideas',
-  titleOverride: 'Remodeling Design Ideas',
+  titleOverride: 'Remodeling Ideas for Boise Homes',
   descriptionOverride:
-    'Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners. Explore layouts, cabinetry, tile, lighting and finishes.',
-})), "/design-ideas");
+    'See kitchen, bath and whole-home ideas for Treasure Valley homes, then turn the ones you love into a written scope with a free in-home visit from our team.',
+})), '/design-ideas');
 
-export default function DesignIdeasPage() {
+export default function TestimonialsPage() {
   const schemas = [
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'Design ideas', url: '/design-ideas' },
     ]),
     generateCollectionPageSchema({
-      title: 'Remodeling Design Ideas',
+      title: 'Remodeling design ideas for Boise homes',
       description:
         'Remodeling design inspiration for kitchens, bathrooms, whole homes, and additions across the Treasure Valley.',
       url: '/design-ideas',
@@ -43,6 +46,7 @@ export default function DesignIdeasPage() {
         url: '/design-ideas#gallery',
       })),
     }),
+    generateFAQSchema(TESTIMONIALS_FAQS),
   ];
 
   return (
@@ -58,7 +62,9 @@ export default function DesignIdeasPage() {
           <h1 className="ed-display ed-statement-display mb-8">
             Remodeling design ideas for <em className="brc-accent">Boise</em> homes
           </h1>
-          <p className="ed-body max-w-2xl mb-6">
+          <AeoParagraph text={AEO.testimonials} tone="inverse" />
+          <ContractorHubLink tone="inverse" />
+          <p className="ed-body max-w-2xl mb-6 text-inverse-foreground/90">
             Browse kitchen, bath, whole-home and addition layouts, materials and finishes.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -66,10 +72,7 @@ export default function DesignIdeasPage() {
             <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
           </div>
         </PageHeroBand>
-        <AnswerBlock
-          question="What are these remodeling design ideas?"
-          answer="Explore kitchen layouts, primary bath finishes, whole-home plans, basement spaces, additions and outdoor living. Save the details you like, then bring them to a free in-home visit to discuss your written scope."
-        />
+        <VisibleFaqs faqs={TESTIMONIALS_FAQS} heading="Questions about design ideas" />
         <Section divider>
           <div className="container px-4">
             <p className="ed-body max-w-3xl">

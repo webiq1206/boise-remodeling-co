@@ -83,7 +83,7 @@ export default function HomePage() {
               <Reveal>
                 <p className="f-eyebrow">BEGIN A CONVERSATION</p>
                 <h2>Tell us about<br /><em style={{ color: "var(--f-accent)" }}>your home.</em></h2>
-                <p>We will reach out within one business day to schedule your free 60 to 90 minute in-home visit.</p>
+                <p>We will reach out to schedule your free in-home visit.</p>
                 <TextReplyLine className="fr-request-reply" />
                 <p>You will leave with planning guidance, design direction, and no obligation.</p>
                 <ul className="fr-request-list">

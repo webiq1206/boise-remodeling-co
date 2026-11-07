@@ -38,7 +38,7 @@ test('LocalBusiness schema hours are Mon-Fri 9-6, Sat 9-4, Sunday closed', () =>
 
 test('contact page states Mon-Fri 9-6, Sat 9-4 MT', () => {
   const contact = readFileSync('app/contact/page.tsx', 'utf8');
-  assert.match(contact, /Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT/);
+  assert.match(contact, /Mon to Fri 9 am to 6 pm · Sat 9 am to 4 pm MT/);
   assert.equal(contact.includes('7 am'), false);
   assert.equal(contact.includes('8 am'), false);
 });

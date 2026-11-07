@@ -52,8 +52,8 @@ export const FAMILY_BRAND: FamilyBrand = {
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
   ],
-  // One label, one destination: the short request on the homepage.
-  cta: { label: 'Request a quote', href: '/#request' },
+  // Primary action is call or text. The quote form stays on the page as the secondary ask.
+  cta: { label: 'Call or text us about your project.', href: SITE_CONFIG.phoneHref },
   phone: { display: SITE_CONFIG.phone, telHref: SITE_CONFIG.phoneHref, smsHref: SITE_CONFIG.phoneSmsHref },
   chat: {
     enabled: true, label: 'Chat', openEvent: 'p5:assistant-open',

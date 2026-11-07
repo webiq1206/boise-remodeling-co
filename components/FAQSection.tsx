@@ -10,10 +10,11 @@ import {
 import { Section } from "@/components/marketing/Section";
 import { Button } from "@/components/ui/button";
 import { HOMEPAGE_FAQS } from "@/shared/homepageFaqs";
+import { FaqAnswer } from "@/components/seo/FaqAnswer";
 
 export { HOMEPAGE_FAQS };
 
-const INITIAL_FAQ_COUNT = 6;
+const INITIAL_FAQ_COUNT = HOMEPAGE_FAQS.length;
 
 /**
  * Common questions.
@@ -63,8 +64,8 @@ export function FAQSection() {
                   <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:underline [&[data-state=open]]:underline-offset-4">
                     {faq.q}
                   </AccordionTrigger>
-                  <AccordionContent className="ed-body pb-7 text-[0.9375rem]">
-                    {faq.a}
+                  <AccordionContent forceMount className="ed-body pb-7 text-[0.9375rem]">
+                    <FaqAnswer text={faq.a} />
                   </AccordionContent>
                 </AccordionItem>
               ))}

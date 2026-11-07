@@ -174,7 +174,7 @@ async function fallback(browser,key,viewport,mode,options={}) {
         check((await p.locator('video').evaluate(v=>v.currentSrc)).endsWith('background-1080p.mp4'),'source switch did not resume desktop autoplay');
       }
       const cta=p.locator('[data-hero-cta]');await cta.focus();
-      check(await cta.evaluate(e=>document.activeElement===e&&e.getAttribute('href')==='/#request'),`${key}: quote keyboard access`);
+      check(await cta.evaluate(e=>document.activeElement===e&&String(e.getAttribute('href')||'').startsWith('tel:')),`${key}: call keyboard access`);
       await p.close();console.log(`Checked ${key}`);
     }
     await c.close();
@@ -182,7 +182,7 @@ async function fallback(browser,key,viewport,mode,options={}) {
     for(const [width,height]of [[390,844],[1440,900]])for(const mode of ['failed','unsupported','blocked'])await fallback(browser,`${mode}-${width}`,{width,height},mode);
     const nojs=await context(browser,{javaScriptEnabled:false,viewport:{width:390,height:844}}),n=await nojs.newPage();
     await n.goto(origin,{waitUntil:'networkidle'});
-    check(await n.locator('.fam-hero-img').isVisible()&&await n.locator('[data-hero-cta]').getAttribute('href')==='/#request','no-JavaScript fallback/copy missing');
+    check(await n.locator('.fam-hero-img').isVisible()&&String(await n.locator('[data-hero-cta]').getAttribute('href')||'').startsWith('tel:'),'no-JavaScript fallback/copy missing');
     check(nojs.mediaRequests.length===0,'no-JavaScript fetched a video');await geometry(n,'no-javascript');
     await n.screenshot({path:path.join(out,'no-javascript.png')});await nojs.close();
   } finally {await browser.close();}

@@ -52,12 +52,12 @@ test('bathroom near-me metadata matches the approved draft', () => {
     path: '/services/bathroom-remodel',
   }), '/services/[slug]');
   const title = renderedTitle(meta);
-  assert.equal(title, 'Bathroom Remodeling in Boise | Boise Remodeling Co');
+  assert.equal(title, 'Bathroom Remodeling in Boise, ID | Boise Remodeling Co');
   assert.ok(title.length <= 60, title);
   assert.equal(meta.description, BATHROOM_NEAR_ME_DESCRIPTION);
   // The draft labels this sentence 148 characters. The sentence itself is 142.
   assert.ok(BATHROOM_NEAR_ME_DESCRIPTION.length <= 160);
-  assert.match(String(meta.description), /Bathroom remodeling in Boise/);
+  assert.match(String(meta.description), /A bathroom that works for your mornings/);
   assert.equal(String(meta.description).includes('8381215'), false);
   assert.equal(String(meta.description).includes('$'), false);
   assert.equal(String(meta.openGraph?.description).includes('8381215'), false);
@@ -102,7 +102,9 @@ test('bathroom parent copy hits the five places and holds unverified claims', ()
   assert.equal(/built to last/i.test(copy), false);
   assert.equal(/award/i.test(copy), false);
   assert.equal(/best remodeler/i.test(copy), false);
-  assert.equal(bath.faqs.some((faq) => /how much/i.test(faq.question)), false);
+  const costFaq = bath.faqs.find((faq) => /how much/i.test(faq.question));
+  assert.equal(costFaq?.question, 'How much does a bathroom remodel cost in Boise?');
+  assert.equal(costFaq?.answer.includes('$'), false);
   assert.equal(bath.benefits.includes('Written workmanship guarantee on our labor'), true);
 
   const page = readFileSync('app/services/[slug]/page.tsx', 'utf8');

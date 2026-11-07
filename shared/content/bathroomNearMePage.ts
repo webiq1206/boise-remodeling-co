@@ -1,5 +1,6 @@
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
 import { SITE_CONFIG } from '@/shared/siteConfig';
+import { BATHROOM_NEW_FAQS } from '@/shared/content/p5Visibility';
 
 /**
  * Parent URL only: /services/bathroom-remodel.
@@ -10,7 +11,7 @@ import { SITE_CONFIG } from '@/shared/siteConfig';
 export const BATHROOM_NEAR_ME_TITLE = 'Bathroom Remodeling in Boise | Boise Remodeling Co';
 
 export const BATHROOM_NEAR_ME_DESCRIPTION =
-  'Bathroom remodeling in Boise and the Treasure Valley. Design-build bath remodels with a free in-home consultation and a written scope.';
+  'A bathroom that works for your mornings, planned in writing before demo. Design-build bath remodels in Boise with permits handled and one project manager.';
 
 export const BATHROOM_NEAR_ME_H1 = 'Bathroom remodeling in Boise and the Treasure Valley';
 
@@ -26,7 +27,7 @@ export const BATHROOM_NEAR_ME_OVERVIEW = [
 ].join(' ');
 
 export const BATHROOM_NEAR_ME_TIMELINE =
-  'Most bathroom remodels run 3 to 6 weeks from permit approval, depending on layout changes and custom material lead times.';
+  'Your project timeline is confirmed with your quote.';
 
 export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] = [
   {
@@ -40,12 +41,12 @@ export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] 
   },
   {
     title: 'Build',
-    description: 'Licensed trades coordinate waterproofing, tile, and trim with weekly updates.',
+    description: 'Licensed trades coordinate waterproofing, tile, and trim with progress updates.',
   },
   {
     title: 'Final walkthrough',
     description:
-      'We review every detail with you before sign-off. Two-year written workmanship guarantee on our labor.',
+      'We review every detail with you before sign-off. Written workmanship guarantee on our labor.',
   },
 ];
 
@@ -67,7 +68,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   },
   {
     question: 'How long does a typical bath remodel take?',
-    answer: BATHROOM_NEAR_ME_TIMELINE,
+    answer: 'It depends on layout changes and finishes. Your project timeline is confirmed with your quote.',
   },
   {
     question: 'Can you remodel a bathroom without moving plumbing?',
@@ -79,6 +80,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
     answer:
       'Yes. We remodel bathrooms throughout the Treasure Valley and handle permits in-house for the jurisdiction that applies to your address.',
   },
+  ...BATHROOM_NEW_FAQS,
 ];
 
 export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
@@ -86,14 +88,14 @@ export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
     heading: 'What a bathroom remodel covers',
     paragraphs: [
       'Primary baths, guest baths and powder rooms get a written scope covering waterproofing, plumbing, tile, vanity and fixtures before demolition starts.',
-      'We protect adjacent rooms during workdays and send a written update every Friday while construction is underway.',
+      'We protect adjacent rooms during the work and send a written update while construction is underway.',
     ],
   },
   {
     heading: 'Why design-build for your bathroom remodel',
     paragraphs: [
       'Design, estimating, permitting and construction stay under one contract and one accountable team, so layout and waterproofing decisions do not get lost between separate vendors.',
-      'You get a written scope before construction begins, clear allowances for selections, and a two-year workmanship guarantee when the project is complete.',
+      'You get a written scope before construction begins, clear allowances for selections, and a written workmanship guarantee when the project is complete.',
     ],
   },
 ];

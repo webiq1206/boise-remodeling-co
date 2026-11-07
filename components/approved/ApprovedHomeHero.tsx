@@ -3,6 +3,8 @@ import { ProofStrip } from "@/components/family/ProofStrip";
 import { DOPL_LICENSE_SEARCH, REGISTRATION_LINE } from "@/components/RegistrationLine";
 import { FAMILY_BRAND } from "@/lib/familyBrand";
 import { SERVICES } from "@/shared/contentData";
+import { AeoParagraph } from "@/components/seo/AeoParagraph";
+import { AEO } from "@/shared/content/p5Visibility";
 
 /** The published "planning from" figure on the kitchen service page, read from the same data. */
 const KITCHEN_PLANNING_FROM = SERVICES.find((service) => service.slug === "kitchen-remodel")?.planningFrom;
@@ -11,9 +13,8 @@ const KITCHEN_PLANNING_FROM = SERVICES.find((service) => service.slug === "kitch
  * Approved full-bleed remodeling video, a uniform black overlay, the existing
  * two-line brand statement and the site's common request action.
  *
- * The CTA goes where every other "Request a quote" on the site goes, the short
- * request in the final CTA band (/#request): one label, one destination, as the
- * approved checks pin it. The poster and H1 are in the first HTML.
+ * The primary action is call or text on the site number. The quote form stays
+ * on the page as the secondary ask. The poster and H1 are in the first HTML.
  */
 export function ApprovedHomeHero() {
   return (
@@ -25,6 +26,9 @@ export function ApprovedHomeHero() {
         support="We design, price and build kitchens, baths and whole-home remodels."
         primary={{ label: FAMILY_BRAND.cta.label, href: FAMILY_BRAND.cta.href }}
       />
+      <div className="fam-container py-8">
+        <AeoParagraph text={AEO.home} />
+      </div>
       {/* Facts already published on this site, nothing new: the DOPL-linked registration,
           the written scope, the warranty term and the kitchen planning-from figure. */}
       <ProofStrip
@@ -37,7 +41,7 @@ export function ApprovedHomeHero() {
             newTab: true,
           },
           { label: "Scope first", text: "Written scope before any price" },
-          { label: "Warranty", text: "Two-year workmanship warranty" },
+          { label: "Warranty", text: "Written workmanship warranty" },
           ...(KITCHEN_PLANNING_FROM
             ? [{ label: "Planning", text: `Kitchen remodels planning from ${KITCHEN_PLANNING_FROM}` }]
             : []),

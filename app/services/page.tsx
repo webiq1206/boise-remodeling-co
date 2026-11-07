@@ -10,7 +10,10 @@ import { Reveal } from '@/components/Reveal';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical,FEED_ALTERNATES,fitDescription } from '@/lib/page-metadata';
-import { generateBreadcrumbSchema } from '@/lib/schema';
+import { generateBreadcrumbSchema, generateFAQSchema } from '@/lib/schema';
+import { AeoParagraph, ContractorHubLink } from '@/components/seo/AeoParagraph';
+import { VisibleFaqs } from '@/components/seo/VisibleFaqs';
+import { AEO, SERVICES_FAQS } from '@/shared/content/p5Visibility';
 import { getBaseUrl } from '@/lib/seo';
 import { servicePath } from '@/lib/seo-routes';
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
@@ -77,7 +80,7 @@ export default function ServicesIndexPage() {
 
   return (
     <InteriorPage kind="services"><>
-      <JsonLd data={[breadcrumbSchema, itemListSchema]} />
+      <JsonLd data={[breadcrumbSchema, itemListSchema, generateFAQSchema(SERVICES_FAQS)]} />
 
       <InteriorHero
         layout="editorial"
@@ -90,6 +93,8 @@ export default function ServicesIndexPage() {
           Design-build expertise for every major{' '}
           <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>remodel</em>
         </h1>
+        <AeoParagraph text={AEO.services} tone="inverse" />
+        <ContractorHubLink tone="inverse" />
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           One accountable team handles design, estimating, permitting and construction under a
           single contract, from the first in-home visit through the final walkthrough.
@@ -139,6 +144,8 @@ export default function ServicesIndexPage() {
           </div>
         </div>
       </Section>
+
+      <VisibleFaqs faqs={SERVICES_FAQS} heading="Questions about our services" />
 
       <Section surface="gradient" spacing="lg" edge>
         <div className="ed-shell">

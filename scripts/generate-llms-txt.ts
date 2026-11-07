@@ -27,7 +27,7 @@ const today = '2026-10-16';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
   `Serving the ${SITE_CONFIG.address.serviceArea}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
-  `Idaho Registered Contractor #8381215, bonded and insured.`;
+  `Idaho Registered Contractor #8381215, insured.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
 const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
@@ -131,12 +131,13 @@ function buildFull(): string {
     `${SITE_CONFIG.name} is a residential design-build remodeling company serving the Treasure ` +
       `Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel ` +
       `existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ` +
-      `accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means ` +
+      `outdoor living spaces and aging-in-place work. ADUs are built by our sister company Boise ADU Co. ` +
+      `Start at p5homeco.com/quote/adu. Design-build means ` +
       `design direction, estimating, permitting and construction are delivered by one team under ` +
       `one contract, which removes the handoff between a designer and a general contractor and ` +
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
-      `scope before construction, a dedicated project manager, a written progress update every ` +
-      `Friday, and a workmanship guarantee at completion.`),
+      `scope before construction, a dedicated project manager, written progress updates, ` +
+      `and a workmanship guarantee at completion.`),
     '',
   );
   lines.push('- Business type: Residential design-build remodeling contractor');
@@ -207,7 +208,7 @@ function buildFull(): string {
       'weeks for a bathroom to several months for a whole-home renovation or addition.',
   );
   lines.push(
-    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured.',
   );
   lines.push(
     '- Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of ' +

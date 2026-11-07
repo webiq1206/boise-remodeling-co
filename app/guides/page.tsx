@@ -11,7 +11,10 @@ countSubstantiveWords,
 estimateReadingTime,
 } from '@/lib/content-utils';
 import { buildPageMetadata } from '@/lib/page-metadata';
-import { generateBreadcrumbSchema,generateWebPageSchema } from '@/lib/schema';
+import { generateBreadcrumbSchema,generateFAQSchema,generateWebPageSchema } from '@/lib/schema';
+import { AeoParagraph, ContractorHubLink } from '@/components/seo/AeoParagraph';
+import { VisibleFaqs } from '@/components/seo/VisibleFaqs';
+import { AEO, GUIDES_FAQS } from '@/shared/content/p5Visibility';
 import { getBlogHeroImage,getBlogImageAlt } from '@/shared/blogImages';
 import { contentImageAlt } from '@/shared/contentImageAlt';
 import { distinctHeroImage } from '@/shared/landingImages';
@@ -86,6 +89,10 @@ export default function GuidesIndexPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(GUIDES_FAQS)) }}
+      />
 
       <PageHeroBand
         imageSrc={heroImage}
@@ -95,6 +102,8 @@ export default function GuidesIndexPage() {
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
           Remodeling guides
         </h1>
+        <AeoParagraph text={AEO.guides} tone="inverse" />
+        <ContractorHubLink tone="inverse" />
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           In-depth guides for Boise, Meridian, Eagle, Nampa, and the entire Treasure Valley - costs,
           process, locations, and planning resources from Boise Remodeling Co.
@@ -107,6 +116,8 @@ export default function GuidesIndexPage() {
           <ArrowRight className="ml-1 h-4 w-4" />
         </Link>
       </PageHeroBand>
+
+      <VisibleFaqs faqs={GUIDES_FAQS} heading="Questions about the guides" />
 
       <Section spacing="default" className="pt-12 md:pt-16">
         <div className="container px-4 max-w-6xl mx-auto mb-16">

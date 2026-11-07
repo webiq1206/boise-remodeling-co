@@ -13,9 +13,13 @@ import { withBrandPageMetadata } from "@/lib/brand-page-metadata";
 import { buildPageMetadata } from "@/lib/page-metadata";
 import {
   generateBreadcrumbSchema,
+  generateFAQSchema,
   generateOrganizationSchema,
   generateWebPageSchema,
 } from "@/lib/schema";
+import { AeoParagraph } from "@/components/seo/AeoParagraph";
+import { VisibleFaqs } from "@/components/seo/VisibleFaqs";
+import { ABOUT_FAQS, ADU_QUOTE_LABEL, ADU_QUOTE_URL, AEO } from "@/shared/content/p5Visibility";
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
 import { CITIES, TREASURE_VALLEY_CITIES } from "@/shared/contentData";
 import { CTA_PRIMARY } from "@/shared/ctaCopy";
@@ -24,15 +28,14 @@ import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
 import Image from "next/image";
 import Link from "next/link";
 
-const SPEAKABLE_SUMMARY =
-  "Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four companies of P5 Home Co. It is run by Nick Perkins. Idaho Registered Contractor #8381215. Two-year workmanship warranty on remodels.";
+const SPEAKABLE_SUMMARY = AEO.about;
 
 const COMPANY_ITEMS = [
   "Written scope before construction",
-  "Dust barriers and floor protection daily",
-  "Friday written update",
+  "Dust barriers and floor protection",
+  "Written project updates",
   "Written change orders only",
-  "Two-year written workmanship guarantee",
+  "Written workmanship guarantee",
 ] as const;
 
 function HeroBreadcrumbs() {
@@ -71,6 +74,7 @@ export default function AboutPage() {
       url: "/about",
       speakable: true,
     }),
+    generateFAQSchema(ABOUT_FAQS),
     generateBreadcrumbSchema([
       { name: "Home", url: "/" },
       { name: "About", url: "/about" },
@@ -95,9 +99,9 @@ export default function AboutPage() {
             <h1 className="ed-display ed-statement-display mb-8">
               About Boise Remodeling <em className="brc-accent">Co</em>
             </h1>
+            <AeoParagraph text={AEO.about} tone="inverse" />
             <p className="interior-hero-support">
-              Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and one of the four
-              companies of P5 Home Co.
+              Boise Remodeling Co is a design-build remodeler in Meridian, Idaho, and part of P5 Home Co.
             </p>
             <InteriorHeroActions />
           </InteriorHero>
@@ -125,7 +129,6 @@ export default function AboutPage() {
                   </p>
                   <p className="ed-small interior-hero-more-note mt-6 max-w-2xl">
                     P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
-                    Two-year workmanship warranty on remodels.
                   </p>
                   <div className="mt-6">
                     <SaveContactLink
@@ -159,15 +162,19 @@ export default function AboutPage() {
                 <Reveal>
                   <p className="ed-lede">
                     Boise Remodeling Co remodels kitchens, bathrooms and whole homes with design, permits
-                    and construction under one contract. Room additions and ADUs are handled by Boise
-                    Construction Co. RE-10 inspection repairs are handled by Boise Handyman Co.
+                    and construction under one contract. Room additions on a new footprint are handled by Boise
+                    Construction Co. ADUs are built by our sister company Boise ADU Co; start at{' '}
+                    <a href={ADU_QUOTE_URL} className="underline underline-offset-2">
+                      {ADU_QUOTE_LABEL}
+                    </a>
+                    . RE-10 inspection repairs are handled by Boise Handyman Co.
                   </p>
                   <p className="ed-body mt-6">
                     Boise Remodeling Co is a trade name of P5 Home Co LLC, Idaho Registered Contractor
                     #8381215. Your contract is with P5 Home Co LLC doing business as Boise Remodeling Co.
                   </p>
                   <p className="ed-body mt-4">
-                    <RegistrationLink className="underline underline-offset-2" />. Bonded and insured.
+                    <RegistrationLink className="underline underline-offset-2" />. Insured.
                   </p>
                 </Reveal>
               </div>
@@ -241,6 +248,8 @@ export default function AboutPage() {
               </div>
             </div>
           </Section>
+
+          <VisibleFaqs faqs={ABOUT_FAQS} heading="Questions about the company" />
 
           <Section surface="gradient" spacing="xl" edge>
             <div className="ed-shell">

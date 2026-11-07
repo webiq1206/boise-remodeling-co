@@ -18,19 +18,14 @@ test('every sitemap page shows the registration line, plain text on the estimate
   assert.ok(paths.includes('/estimate'));
   for (const path of paths) {
     const mode = registrationPresentation(path);
-    // BOT-05 omits contractor #8381215 on the bathroom service page only.
-    if (path === '/services/bathroom-remodel') {
-      assert.equal(mode, 'hidden', path);
-      continue;
-    }
     assert.notEqual(mode, 'hidden', path);
     // Nested estimator app routes keep plain text; short-form /estimate is marketing chrome.
     if (path.startsWith('/estimate/')) {
       assert.equal(mode, 'plain', path);
     }
   }
-  assert.equal(registrationPresentation('/services/bathroom-remodel'), 'hidden');
-  assert.equal(registrationPresentation('/services/bathroom-remodel/'), 'hidden');
+  assert.equal(registrationPresentation('/services/bathroom-remodel'), 'link');
+  assert.equal(registrationPresentation('/services/bathroom-remodel/'), 'link');
   assert.equal(registrationPresentation('/services/bathroom-remodel/boise'), 'link');
   assert.equal(registrationPresentation('/'), 'link');
   assert.equal(registrationPresentation('/areas/boise'), 'link');
@@ -79,7 +74,7 @@ test('home organization JSON-LD uses the bonded registration sentence', () => {
 test('the Meridian area FAQ states the registration without a license claim', () => {
   const faq = AREA_CITY_COPY.meridian.faqs.find((item) => item.question === 'Are you a registered contractor and insured?');
   assert.ok(faq);
-  assert.equal(faq.answer, "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured.");
+  assert.equal(faq.answer, "Yes. We're an Idaho Registered Contractor #8381215 and insured.");
   assert.equal(/licensed/i.test(faq.answer), false);
 });
 

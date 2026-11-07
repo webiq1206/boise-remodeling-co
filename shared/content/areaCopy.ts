@@ -40,12 +40,12 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. The company is an Idaho Registered Contractor #8381215, bonded, and insured. Every finished Boise project also comes with a written workmanship guarantee.",
+          "Yes. The company is an Idaho Registered Contractor #8381215 and insured.",
       },
       {
         question: 'How do I start a project?',
         answer:
-          'Call (208) 477-1169, run the project estimator for a budget range, or schedule a free consultation at your house via the website. That visit takes 60 to 90 minutes, and you leave with design direction and planning guidance, no obligation. Estimator figures are budget ranges, not quotes.',
+          'Call (208) 477-1169, run the project estimator for a budget range, or schedule a free consultation at your house via the website. You leave with design direction and planning guidance, no obligation. Estimator figures are budget ranges, not quotes.',
       },
       {
         question: 'Do you serve Boise, Idaho?',
@@ -71,12 +71,12 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'What remodeling services do you offer?',
         answer:
-          'Kitchen and bath remodels, renovations of the whole home, and room additions. For Meridian homeowners each project runs design-build, meaning one team carries it from design through construction, with a written progress update every Friday.',
+          'Kitchen and bath remodels, renovations of the whole home, and room additions. For Meridian homeowners each project runs design-build, meaning one team carries it from design through construction, with a written progress update.',
       },
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured.",
       },
       {
         question: 'How do I start a project?',
@@ -91,7 +91,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'What does Meridian charge to file a remodel permit?',
         answer:
-          "Meridian's fee schedule lists a $50 application fee for residential additions and remodels, with the permit itself priced on project valuation. If work starts without a permit, the minimum charge doubles the regular fees, and permitting is already part of our design-build contract.",
+          "Meridian prices residential addition and remodel permits from its fee schedule, based on project valuation. Permitting is already part of our design-build contract.",
       },
       {
         question: 'How old are Meridian homes?',
@@ -112,7 +112,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured, and each finished project carries a written workmanship guarantee.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured.",
       },
       {
         question: 'How do I start a project?',
@@ -127,7 +127,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'How long does Eagle take to review a room addition?',
         answer:
-          "Eagle's Building Division currently lists six weeks (checked October 2026) for residential additions, the same window it gives new houses and shops, and that figure assumes plans need no revisions. Revisions add time, so our addition drawings go in complete.",
+          "Eagle's Building Division reviews residential additions on the same path it uses for new houses and shops. Revisions add time, so our addition drawings go in complete.",
       },
       {
         question: 'Do repairs and replacements need an Eagle building permit?',
@@ -148,7 +148,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured. Permits for your Nampa remodel are pulled in-house as part of our contract.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured. Permits for your Nampa remodel are pulled in-house as part of our contract.",
       },
       {
         question: 'How do I start a project?',
@@ -185,7 +185,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded and insured, and our workmanship guarantee applies at completion.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured.",
       },
       {
         question: 'How do I start a project?',
@@ -200,7 +200,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'What does a Kuna permit cost for a remodel?',
         answer:
-          "Kuna's Building Department fee schedule prices permits by project value. A project valued from $25,001 to $50,000 pays $326 for the first $25,001 plus $7.20 for each additional $1,000, and the $50,001 to $100,000 tier starts at $506. Mechanical work has separate fees on the same schedule.",
+          "Kuna's Building Department prices permits from its fee schedule by project value. Mechanical work is listed separately on the same schedule. We handle permitting as part of the design-build contract.",
       },
       {
         question: 'When is the best time for a deck or patio project in Kuna?',
@@ -221,7 +221,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, and we carry a bond and insurance.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured.",
       },
       {
         question: 'How do I start a project?',
@@ -257,7 +257,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded, and insured, and Middleton's permit portal references Idaho Code 54-5209 for the registration number on building permits.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured, and Middleton's permit portal references Idaho Code 54-5209 for the registration number on building permits.",
       },
       {
         question: 'How do I start a project?',
@@ -294,12 +294,12 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          'Yes. We are an Idaho Registered Contractor #8381215, bonded, and insured.',
+          'Yes. We are an Idaho Registered Contractor #8381215 and insured.',
       },
       {
         question: 'How do I start a project?',
         answer:
-          "Start with a call, a number from the project estimator, or a free in-home consultation booked online. You'll get a written scope before construction and a written progress update every Friday once work begins.",
+          "Start with a call, a number from the project estimator, or a free in-home consultation booked online. You'll get a written scope before construction and a written progress update once work begins.",
       },
       {
         question: 'Do you serve Caldwell, Idaho?',
@@ -309,12 +309,12 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'How much is a Caldwell building permit for a remodel?',
         answer:
-          "Caldwell's FY2026 schedule (Resolution 300-25) works from project valuation: a $25,000 to $49,999 remodel starts at $326.54 plus 0.85% of the value above $25,000, and a $50,000 to $99,999 project starts at $549.65 plus 0.565% above $50,000. Building plan review is another 40% on top.",
+          "Caldwell prices building permits from its fee schedule by project valuation, and plan review is a separate line on that schedule. We handle permitting as part of the design-build contract.",
       },
       {
         question: 'Do plumbing and electrical changes need separate permits in Caldwell?',
         answer:
-          "Yes. Caldwell's residential permit packet calls for separate electrical, plumbing, and mechanical permits, and the FY2026 fee schedule prices that trade work on existing homes per item: a $34 base fee plus, for example, $15.75 per plumbing fixture or $22.25 per electrical circuit extension.",
+          "Yes. Caldwell's residential permit packet calls for separate electrical, plumbing, and mechanical permits. We include those trade permits in the remodel scope.",
       },
     ],
   },

@@ -17,6 +17,7 @@ getBlogImageAlt,
 } from '@/shared/blogImages';
 import { getHubBySlug,guidePath } from '@/shared/contentHubs';
 import { GUIDE_PAGES,getGuideBySlug } from '@/shared/guideContent';
+import { GUIDE_AEO } from '@/shared/content/p5Visibility';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -129,7 +130,7 @@ export default async function GuidePage(props: { params: Promise<{ slug: string 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableSchema) }}
         />
       )}
-      <GuidePageLayout guide={guide} formatDate={formatDate} />
+      <GuidePageLayout guide={guide} formatDate={formatDate} answer={GUIDE_AEO[guide.slug]} />
     </></InteriorPage>
   );
 }

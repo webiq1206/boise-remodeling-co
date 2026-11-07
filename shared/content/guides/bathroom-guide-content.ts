@@ -2,6 +2,7 @@
  * Bespoke body + FAQs for the Boise Bathroom Remodeling Guide pillar.
  * Uses the guide callout system for an easy-to-follow, on-brand flow.
  */
+import { BATHROOM_GUIDE_NEW_FAQS } from '@/shared/content/p5Visibility';
 
 export const BATHROOM_GUIDE_CONTENT = `
 <p class="guide-lead">A bathroom remodel packs a lot of complexity into a small room - plumbing, waterproofing, tile, ventilation, and fixtures all in a few square feet. This guide walks you through it in order: budgeting, planning the layout, choosing a shower and vanity, the construction process and timeline, the waterproofing that makes or breaks the job, and designing for the long term. Read it top to bottom and you will know exactly how to get a bathroom that is beautiful and built to last.</p>
@@ -100,7 +101,7 @@ export const BATHROOM_GUIDE_FAQS = [
   {
     question: 'How long does a bathroom remodel take?',
     answer:
-      'Most bathrooms take about 3 to 6 weeks of on-site construction after design and permits. Tile work and its cure times are the longest phase, and shower glass is usually measured only after tile is set, adding a one-to-two-week fabrication wait. Counting design and selections, the full project spans a couple of months. Finalizing everything before demolition keeps it on schedule.',
+      'Tile work and its cure times are the longest phase, and shower glass is usually measured only after tile is set. Finalizing everything before demolition keeps it on schedule.',
   },
   {
     question: 'What is the most important part of a bathroom remodel?',
@@ -122,4 +123,5 @@ export const BATHROOM_GUIDE_FAQS = [
     answer:
       'Replacing fixtures in the same locations may not require a permit, but moving plumbing or electrical, changing the layout, or altering framing does. Permits ensure the work meets code and is inspected, which protects your safety, insurance, and resale value. A reputable design-build contractor handles permitting as part of the project.',
   },
+  ...BATHROOM_GUIDE_NEW_FAQS,
 ];

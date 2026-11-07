@@ -68,8 +68,7 @@ test('founding-year sentences stay in source while the flag is off', () => {
   const prompt = readFileSync('scripts/marketing-image-prompts.json', 'utf8');
   assert.match(pageMetadata, /founded 2020/);
   assert.match(pageMetadata, /Founded in 2020/);
-  assert.match(aboutCopy, /since 2020/);
-  assert.match(aboutCopy, /founded in 2020/);
+  assert.equal(/since 2020|founded in 2020/i.test(aboutCopy), false);
   assert.match(aboutPage, /SHOW_FOUNDING_YEAR/);
   assert.match(aboutPage, /founded P5 in Colorado in 2020/);
   assert.match(readFileSync('shared/siteContent.ts', 'utf8'), /Est\. \$\{PROOF_STATS\.established\}/);

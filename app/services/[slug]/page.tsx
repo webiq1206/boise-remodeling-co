@@ -25,6 +25,8 @@ import {
 } from '@/shared/content/bathroomNearMePage';
 import { SERVICE_SEO_CONTENT } from '@/shared/seoContent';
 import { ADU_CONVERSION_PAGE, ROOM_ADDITION_PAGE } from '@/shared/content/serviceOwnership';
+import { AduHandoff } from '@/components/seo/AduHandoff';
+import { AEO } from '@/shared/content/p5Visibility';
 import { getServiceImageSet } from '@/shared/serviceBackgrounds';
 import { notFound } from 'next/navigation';
 import { toSentenceCase } from '@/shared/sentenceCase';
@@ -87,7 +89,15 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
 
   const path = servicePath(service.slug);
   const isBathroomNearMe = service.slug === 'bathroom-remodel';
-  const faqs = (ownership?.faqs ?? content.faqs).slice(0, MAX_VISIBLE_FAQS);
+  if (service.slug === 'adu') {
+    return (
+      <InteriorPage kind="services">
+        <AduHandoff />
+      </InteriorPage>
+    );
+  }
+  const sourceFaqs = ownership?.faqs ?? content.faqs;
+  const faqs = isBathroomNearMe ? sourceFaqs : sourceFaqs.slice(0, MAX_VISIBLE_FAQS);
   const overview = ownership?.overview ?? content.overview;
   const images = getServiceImageSet(service.slug);
   // Ownership pages show no featured build: the gallery entries are a detached
@@ -178,6 +188,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
       <JsonLd data={schemas} />
       <LandingPageTemplate
         h1={content.headline}
+        aeo={isBathroomNearMe ? AEO.bathroom : undefined}
         speakableSummary={overview}
         overview={overview}
         heroImageUrl={ownership?.images?.hero ?? SERVICE_SCENES[service.slug]?.src ?? images.hero}
@@ -203,7 +214,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         faqs={faqs}
         faqDisplay="visible"
         subject={{ noun: content.noun ?? serviceLC }}
-        answer={content.answer}
+        answer={isBathroomNearMe ? undefined : content.answer}
         related={{ variant: 'service', serviceSlug: service.slug }}
       />
     </></InteriorPage>

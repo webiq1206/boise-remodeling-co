@@ -6,7 +6,8 @@ import { Section } from '@/components/marketing';
 import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
-import { RegistrationText } from '@/components/RegistrationLink';
+import { FaqAnswer } from '@/components/seo/FaqAnswer';
+import { AeoParagraph } from '@/components/seo/AeoParagraph';
 import { Reveal } from '@/components/Reveal';
 import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
 import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProjectRoomsSection';
@@ -114,6 +115,8 @@ interface LandingPageTemplateProps {
   subject?: { noun: string; place?: string };
   /** A 40 to 60 word direct answer, rendered right under the hero. */
   answer?: { question: string; text: string };
+  /** Plain paragraph directly under the H1. No card. */
+  aeo?: string;
   /**
    * 'visible' renders every question and answer as text (H3 plus paragraph)
    * instead of the accordion, whose closed panels are not in the HTML.
@@ -264,6 +267,7 @@ export function LandingPageTemplate({
   faqs,
   subject,
   answer,
+  aeo,
   faqDisplay = 'accordion',
   related,
 }: LandingPageTemplateProps) {
@@ -314,6 +318,7 @@ export function LandingPageTemplate({
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
+          {aeo ? <AeoParagraph text={aeo} tone="inverse" /> : null}
           {/* Interior hero budget (phase 3): H1, one support line, the planning-from
               chip, one primary action and the phone as a text link, so the whole
               designed hero fits 1280x720 and sits above the bottom bar on phones.
@@ -661,7 +666,7 @@ export function LandingPageTemplate({
                 {faqs.map((faq) => (
                   <div key={faq.question} className="border-b py-6" style={line}>
                     <h3 className="ed-h4 text-left">{faq.question}</h3>
-                    <p className="ed-body mt-3 text-[0.9375rem]"><RegistrationText text={faq.answer} /></p>
+                    <p className="ed-body mt-3 text-[0.9375rem]"><FaqAnswer text={faq.answer} /></p>
                   </div>
                 ))}
               </div>
@@ -672,7 +677,7 @@ export function LandingPageTemplate({
                     <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:underline [&[data-state=open]]:underline-offset-4">
                       {faq.question}
                     </AccordionTrigger>
-                    <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>
+                    <AccordionContent forceMount className="ed-body pb-7 text-[0.9375rem]"><FaqAnswer text={faq.answer} /></AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>
@@ -700,7 +705,7 @@ export function LandingPageTemplate({
               </h2>
             </Reveal>
             <Reveal delay={60}>
-              <p className="ed-lede">Free 60 to 90 minute in-home visit.</p>
+              <p className="ed-lede">Free in-home visit.</p>
               <p className="ed-body mt-3">Planning guidance, design direction, no obligation.</p>
               <div className="mt-8"><EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA></div>
             </Reveal>

@@ -4,10 +4,9 @@ import type { FAQItem } from '../seoContent';
 /**
  * ADU and additions ownership inside the P5 Home Co family (owner decision,
  * 31 October 2026):
- *   - Boise Construction Co owns NEW detached ADUs and STRUCTURAL additions
- *     (a new footprint, second stories).
- *   - Boise Remodeling Co owns interior remodels, attached ADU conversions
- *     (garage, basement, attic) and work within the existing footprint.
+ *   - Boise ADU Co builds ADUs. Start at p5homeco.com/quote/adu.
+ *   - Boise Construction Co owns STRUCTURAL additions (a new footprint, second stories).
+ *   - Boise Remodeling Co owns interior remodels and work within the existing footprint.
  *
  * /services/adu and /services/room-addition keep their URLs (747 and 2,019
  * Search Console impressions) and become the remodeling side of that split,
@@ -17,7 +16,6 @@ import type { FAQItem } from '../seoContent';
  * the service FAQs. Nothing here is new pricing.
  */
 
-export const CONSTRUCTION_ADU_URL = 'https://boiseconstruction.co/services/adu';
 export const CONSTRUCTION_ADDITIONS_URL = 'https://boiseconstruction.co/services/home-additions';
 
 interface OwnershipPage {
@@ -69,18 +67,18 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
       links: [{ label: 'Boise ADU guide: rules, costs and timelines', href: '/guides/boise-adu-guide' }],
     },
     {
-      heading: 'New detached ADUs are built by Boise Construction Co',
+      heading: 'ADUs are built by Boise ADU Co',
       paragraphs: [
-        'A new detached ADU or guest house needs its own foundation, structure and utility runs, the same permit path as other new construction, so it is built by Boise Construction Co, our sibling company in the P5 Home Co family. Boise ADU Co projects currently run through Boise Construction Co as well.',
+        'ADUs are built by our sister company Boise ADU Co, part of P5 Home Co. Start your ADU request at p5homeco.com/quote/adu.',
       ],
-      links: [{ label: 'New detached ADUs at Boise Construction Co', href: CONSTRUCTION_ADU_URL }],
+      links: [{ label: 'Start your ADU request', href: 'https://p5homeco.com/quote/adu' }],
     },
   ],
   faqs: [
     {
       question: 'Do I need a permit to convert a garage or basement into an ADU?',
       answer:
-        'Yes. ADUs require permits in all Treasure Valley jurisdictions, and requirements vary by city and lot. We handle permitting as part of the design-build scope.',
+        'Yes. ADUs require permits in all Treasure Valley jurisdictions. Boise ADU Co handles the ADU project; start at p5homeco.com/quote/adu.',
     },
     {
       question: 'Is a garage conversion cheaper than building a detached ADU?',

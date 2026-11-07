@@ -99,9 +99,11 @@ for(const [width,height] of viewports){
   check(await page.getByTestId('planning-figure').innerText()===range,`${key}: refresh lost selections/result`);
   check((await page.getByTestId('planning-step').innerText()).includes('Major layout changes'),`${key}: refresh lost layout`);
   await page.getByTestId('planning-step').getByRole('link',{name:'Request a quote',exact:true}).click();
+  await page.waitForURL(u=>u.hash==='#request');
   check(new URL(page.url()).hash==='#request',`${key}: quote destination`);
   check(await page.locator('#request').count()===1,`${key}: quote form target exists`);
   await page.goBack({waitUntil:'domcontentloaded'});
+  await page.getByTestId('planning-figure').waitFor();
   check(await page.getByTestId('planning-figure').innerText()===range,`${key}: browser Back lost result`);
   await page.evaluate(()=>sessionStorage.removeItem('brc-home-planning-v1'));
  }catch(e){failures.push(`${key}: ${e.message}`)}finally{await page.close()}

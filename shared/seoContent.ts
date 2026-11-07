@@ -67,7 +67,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Single design-build team, no juggling separate designers and contractors',
       'Written scope and finish selections before construction begins',
       'Ada and Canyon County permits handled in-house',
-      'Weekly written schedule updates every Friday',
+      'Written project updates',
     ],
     inclusions: [
       'Layout planning and design direction',
@@ -168,7 +168,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Consultation', description: 'We assess your bath, discuss storage and accessibility needs, and outline a planning range.' },
       { title: 'Selections and scope', description: 'Finishes and fixtures are documented before demolition.' },
-      { title: 'Build', description: 'Our crew and trade partners coordinate waterproofing, tile, and trim with weekly updates.' },
+      { title: 'Build', description: 'Our crew and trade partners coordinate waterproofing, tile, and trim with progress updates.' },
       { title: 'Final walkthrough', description: 'We review every detail with you before sign-off.' },
     ],
     faqs: BATHROOM_NEAR_ME_FAQS,
@@ -209,7 +209,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Discovery', description: 'We map goals room by room and identify must-haves vs. nice-to-haves.' },
       { title: 'Master scope', description: 'A written plan sequences work to minimize disruption.' },
-      { title: 'Phased construction', description: 'Trades follow an agreed schedule with Friday written updates.' },
+      { title: 'Phased construction', description: 'Trades follow an agreed schedule with written updates.' },
       { title: 'Completion', description: 'Final walkthrough covers every space in the scope.' },
     ],
     faqs: [
@@ -267,16 +267,16 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'ADU conversion',
     answer: {
       question: 'What is an ADU conversion, and who builds new ADUs?',
-      text: 'An ADU conversion turns space you already have, a garage, a basement or an attached wing, into a self-contained living unit. Boise Remodeling Co designs and builds those conversions with permits handled in-house. As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. New detached ADUs are built by Boise Construction Co.',
+      text: 'ADUs are built by our sister company Boise ADU Co, part of P5 Home Co. Start your ADU request at p5homeco.com/quote/adu.',
     },
     name: 'ADU / Guest House',
     headline: 'ADU conversions in the Treasure Valley',
     primaryKeyword: 'adu construction boise idaho',
     overview:
-      'Accessory dwelling units add livable square footage, rental income potential, and long-term property value without leaving your lot. Boise Remodeling Co designs and builds detached and attached ADUs with full permit handling, structural planning, and interior finishes under one accountable design-build team.',
+      'ADUs are built by our sister company Boise ADU Co, part of P5 Home Co. Start your ADU request at p5homeco.com/quote/adu.',
     benefits: [
       'Single team from design through final inspection, no coordinating separate trades',
-      'Ada and Canyon County ADU permitting handled in-house',
+      'ADU permitting is handled by Boise ADU Co. Start at p5homeco.com/quote/adu.',
       'Rental-ready finish packages designed for durability and appeal',
       'A conversion reuses the foundation and shell you already own',
     ],
@@ -287,23 +287,23 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Kitchen and bath fit-out with finish selections guidance',
       'Permit coordination and final inspection through certificate of occupancy',
     ],
-    timeline: 'Most ADU projects run 4 to 7 months from design through certificate of occupancy, depending on unit size, site conditions, and permit timelines.',
+    timeline: 'Your project timeline is confirmed with your quote. ADUs are built by our sister company Boise ADU Co. Start at p5homeco.com/quote/adu.',
     processSteps: [
       { title: 'Site visit and feasibility', description: 'We review your lot, setbacks, utility access, and HOA rules to confirm the ADU approach that works best.' },
       { title: 'Design and engineering', description: 'Plans are drawn to meet code, match your property, and maximize livability within your investment target.' },
-      { title: 'Permitting and construction', description: 'We file permits and manage every trade from foundation through finish with weekly written updates.' },
+      { title: 'Permitting and construction', description: 'Boise ADU Co handles ADU permitting and construction. Start at p5homeco.com/quote/adu.' },
       { title: 'Inspections and closeout', description: 'Final inspections are coordinated and we walk through every detail before handoff.' },
     ],
     faqs: [
       {
         question: 'How much does an ADU cost in the Treasure Valley?',
         answer:
-          'ADU investment typically ranges from $120,000 to $350,000 depending on size, detached or attached configuration, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope.',
+          'Site work, utility connections, finish level, and whether the unit is attached, detached, or a garage conversion are what move the cost. ADUs are built by our sister company Boise ADU Co, part of P5 Home Co. Start at p5homeco.com/quote/adu.',
       },
       {
         question: 'Do I need a permit for an ADU in Boise or Ada County?',
         answer:
-          'Yes. ADUs require permits in all Treasure Valley jurisdictions. Requirements vary by city and lot. We handle permitting as part of our design-build scope and are current on local ADU ordinances.',
+          'ADUs require permits in all Treasure Valley jurisdictions. ADUs are built by our sister company Boise ADU Co, part of P5 Home Co. Start at p5homeco.com/quote/adu.',
       },
       {
         question: 'Can an ADU be rented out as a long-term or short-term rental?',
@@ -318,7 +318,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'Is a garage conversion cheaper than building a detached ADU?',
         answer:
-          'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000, versus $180,000 to $300,000+ for a detached new build. The tradeoff is losing garage storage and parking.',
+          'Usually yes. A garage conversion reuses the existing foundation and shell. A detached unit needs its own foundation, envelope, and utility runs. ADUs are built by our sister company Boise ADU Co. Start at p5homeco.com/quote/adu.',
       },
       {
         question: 'Does an ADU need separate utilities?',
@@ -328,7 +328,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does an ADU take to build?',
         answer:
-          'Plan 4 to 7 months from design through certificate of occupancy: 6 to 10 weeks of design and engineering, plan review that varies by jurisdiction, then 3 to 5 months of construction for a detached unit.',
+          'Your project timeline is confirmed with your quote. ADUs are built by our sister company Boise ADU Co. Start at p5homeco.com/quote/adu.',
       },
       {
         question: 'Will an ADU increase my property value?',
@@ -339,8 +339,8 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'ADU cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. Attached ADUs and basement conversions plan $120,000 to $250,000, and detached new-build ADUs plan $180,000 to $300,000 or more depending on size, utility connections, and finish level.',
-        'These are planning ranges, not bids. Site conditions and utility strategy drive ADU budgets more than any other project type, which is why feasibility review comes first in our process.',
+        'ADU cost depends on whether the unit is a garage conversion, an attached unit, or a detached structure, plus site work, utility connections, and finish level.',
+        'ADUs are built by our sister company Boise ADU Co, part of P5 Home Co. Start your ADU request at p5homeco.com/quote/adu.',
       ],
     },
   },
@@ -374,7 +374,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Site visit', description: 'We review setbacks, access, and structural implications.' },
       { title: 'Design and engineering', description: 'Plans address code, loads, and aesthetic match.' },
-      { title: 'Construction', description: 'Foundation through finish with weekly communication.' },
+      { title: 'Construction', description: 'Foundation through finish with written project updates.' },
       { title: 'Inspections and closeout', description: 'We coordinate final inspections and walkthrough.' },
     ],
     faqs: [
@@ -413,7 +413,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'Addition or ADU - which adds more value?',
         answer:
-          'An addition grows your main living space; an ADU creates a separate rentable unit. If income potential matters, compare both paths - we build each and will price your lot honestly in either direction.',
+          'An addition grows your main living space; an ADU creates a separate dwelling. ADUs are built by our sister company Boise ADU Co. Start at p5homeco.com/quote/adu.',
       },
     ],
     costGuidance: {
@@ -429,7 +429,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'basement remodel',
     answer: {
       question: 'What does finishing a basement in the Treasure Valley involve?',
-      text: 'Finishing a basement adds livable square footage without changing the footprint: egress, framing, insulation, moisture control, mechanicals and finishes, all permitted and inspected. As of 2026, Boise-area basements commonly plan $40,000 to $100,000 or more, and most run 6 to 12 weeks after permits, depending on egress work and any bathroom or kitchenette.',
+      text: 'Finishing a basement adds livable square footage without changing the footprint: egress, framing, insulation, moisture control, mechanicals and finishes, all permitted and inspected.',
     },
     name: 'Basement Remodeling',
     headline: 'Basement remodeling and finishing in the Treasure Valley',
@@ -453,14 +453,14 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Assessment and moisture check', description: 'We evaluate ceiling height, moisture, existing mechanicals, and egress so the plan starts on a dry, code-ready foundation.' },
       { title: 'Design and layout', description: 'We design the lower level around how you will use it and confirm a written scope and allowances before construction.' },
-      { title: 'Permitting and construction', description: 'We file permits and manage framing, mechanicals, and finishes with weekly written updates.' },
+      { title: 'Permitting and construction', description: 'We file permits and manage framing, mechanicals, and finishes with written project updates.' },
       { title: 'Inspections and walkthrough', description: 'Final inspections are coordinated and we walk every detail with you before handoff.' },
     ],
     faqs: [
       {
         question: 'How much does it cost to finish a basement in Boise?',
         answer:
-          'Finishing a basement in the Treasure Valley commonly plans $40,000 to $100,000 or more. A simple open family room sits at the lower end; adding a bathroom, kitchenette, egress windows, or a bedroom suite moves it higher. Use our estimator for a planning range, then book a free in-home visit for a written scope.',
+          'Basement finishing depends on size, layout, egress, plumbing and moisture conditions. Start with a free in-home visit and a written scope before pricing.',
       },
       {
         question: 'Do I need a permit to finish a basement in Idaho?',
@@ -485,7 +485,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'Can a basement be turned into a rental or ADU?',
         answer:
-          'Sometimes. A basement apartment can qualify as an accessory dwelling unit if it meets egress, ceiling height, separate-entrance, and zoning requirements for your city. We review feasibility during design and can coordinate with our ADU service.',
+          'Sometimes. A basement apartment can qualify as an accessory dwelling unit if it meets egress, ceiling height, separate-entrance, and zoning requirements for your city. ADUs are built by our sister company Boise ADU Co. Start at p5homeco.com/quote/adu.',
       },
       {
         question: 'How long does finishing a basement take?',
@@ -496,8 +496,8 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'Basement finishing cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, finishing a basement in the Boise area commonly plans $40,000 to $100,000 or more. Open family rooms sit at the lower end; egress windows, a full bathroom, a kitchenette, or a bedroom suite reach the upper end.',
-        'These are planning ranges, not bids. Egress work, plumbing access, and moisture or radon mitigation drive basement budgets, which we confirm in a written scope after your free in-home visit.',
+        'Basement finishing depends on size, layout, egress, plumbing and moisture conditions. Open family rooms are a smaller scope; a bathroom, kitchenette, egress windows, or a bedroom suite adds work.',
+        'Egress work, plumbing access, and moisture or radon mitigation change the scope, which we confirm in a written scope after your free in-home visit.',
       ],
     },
   },
@@ -530,7 +530,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Site and design consultation', description: 'We review your yard, grade, and how you want to use the space, then design a deck or patio that fits your home.' },
       { title: 'Engineering and permitting', description: 'We handle footings, structural details, and permits so the build is safe and code-compliant.' },
-      { title: 'Construction', description: 'Our team builds framing, decking, covers, and finishes with weekly written updates.' },
+      { title: 'Construction', description: 'Our team builds framing, decking, covers, and finishes with written project updates.' },
       { title: 'Final walkthrough', description: 'We confirm every detail and finish with you before handoff.' },
     ],
     faqs: [
@@ -562,7 +562,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does a deck or patio take to build?',
         answer:
-          'Plan 3 to 8 weeks after permits. A straightforward deck builds fastest; covered structures, outdoor kitchens, and extended utilities add time for engineering and rough-ins.',
+          'Your project timeline is confirmed with your quote.',
       },
     ],
     costGuidance: {
@@ -602,7 +602,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     processSteps: [
       { title: 'Accessibility assessment', description: 'We review how you move through your home today and where safety, access, and comfort can improve.' },
       { title: 'Universal-design plan', description: 'We design changes that meet your needs now and adapt for the future, with a written scope before construction.' },
-      { title: 'Construction', description: 'Our team makes structural and finish changes with minimal disruption and weekly written updates.' },
+      { title: 'Construction', description: 'Our team makes structural and finish changes with minimal disruption and written project updates.' },
       { title: 'Walkthrough and orientation', description: 'We confirm every detail works for you and walk through how to use new features safely.' },
     ],
     faqs: [
@@ -666,7 +666,7 @@ export function getCityServiceIntro(
   const fact = localFact
     ? ` ${localFact}`
     : ` We understand ${county} permit requirements and typical ${city.name} home styles.`;
-  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, proactive weekly updates, and a written workmanship guarantee. Schedule a free in-home consultation or use our project estimator for a planning range.`;
+  return `Looking for ${service.name.toLowerCase()} in ${city.name}, Idaho?${fact} Boise Remodeling Co offers design-build ${service.name.toLowerCase()} with clear written scope, written updates, and a written workmanship guarantee. Schedule a free in-home consultation or use our project estimator for a planning range.`;
 }
 
 /** Letter names that start with a vowel sound, so an acronym such as ADU takes "an". */
@@ -721,7 +721,7 @@ export function getCityServiceFaqs(service: ServiceSEOContent, city: CityData): 
     },
     {
       question: `How do I get a quote for ${service.name.toLowerCase()} in ${city.name}?`,
-      answer: `Use our online project estimator for a planning range, then book a free 60 to 90 minute in-home visit. We will leave you with design direction and clear next steps.`,
+      answer: `Use our online project estimator for a planning range, then book a free in-home visit. We will follow up with a written scope and clear next steps.`,
     },
   ];
 }
@@ -801,7 +801,7 @@ export const AREA_PAGE_FAQS: FAQItem[] = [
   {
     question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured.',
   },
   {
     question: 'How do I start a project?',

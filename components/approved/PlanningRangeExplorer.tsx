@@ -158,16 +158,16 @@ export function PlanningRangeExplorer() {
           <div className={`${styles.compactResult}${plan.step === 4 && editing === null ? ` ${styles.reviewRange}` : ""}`} aria-live="polite"><span>{editing === null ? "Modeled planning range" : "Saved planning range"}</span><strong>{range}</strong></div>
           <div className={styles.navigation}>
             <button type="button" className={styles.back} onClick={() => editing !== null ? finishEdit(false) : summaryOpen ? toggleSummary(false) : go(Math.max(0, plan.step - 1))} disabled={plan.step === 0 && editing === null && !summaryOpen}>{editing !== null ? "Cancel" : "Back"}</button>
-            {editing !== null ? <button type="button" className={styles.next} onClick={() => finishEdit(true)}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => toggleSummary(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <a className={styles.next} href="/#request">Request a quote</a>}
+            {editing !== null ? <button type="button" className={styles.next} onClick={() => finishEdit(true)}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => toggleSummary(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <Link className={styles.next} href="/#request">Request a quote</Link>}
           </div>
-          {(plan.step < STEPS.length - 1 || editing !== null) && <a className={styles.contact} href="/#request">Request a quote <ArrowUpRight size={16} aria-hidden="true" /></a>}
+          {(plan.step < STEPS.length - 1 || editing !== null) && <Link className={styles.contact} href="/#request">Request a quote <ArrowUpRight size={16} aria-hidden="true" /></Link>}
         </div>
         <aside className={styles.result} aria-label="Your modeled planning range">
           <p className={styles.resultLabel}>{projectLabel} · {editing === null ? "modeled planning range" : "saved planning range"}</p>
           <p className={styles.figure} aria-live="polite" data-testid="planning-figure">{range}</p>
           <p className={styles.summary}>{plan.sqft.toLocaleString()} sq ft · {finishLabel} · {layoutLabel}</p>
           <p className={styles.notice}>{NOT_A_QUOTE_NOTICE}</p>
-          <a className={`f-button f-dark ${styles.quote}`} href="/#request" data-family-bar-yield="">Request a quote</a>
+          <Link className={`f-button f-dark ${styles.quote}`} href="/#request" data-family-bar-yield="">Request a quote</Link>
           <p className={styles.help}>A site visit and written scope come before a firm construction price.</p>
         </aside>
         <div className={styles.disclosures} aria-label="Planning range details">

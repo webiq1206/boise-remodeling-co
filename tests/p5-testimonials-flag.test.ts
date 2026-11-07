@@ -164,15 +164,16 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
   ].join('\n');
   for (const phrase of BANNED) assert.equal(surfaces.includes(phrase), false, phrase);
 
-  const page = text('../app/design-ideas/page.tsx');
-  assert.match(page, /Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners\. Explore layouts, cabinetry, tile, lighting and finishes\./);
+  const page = text('../app/design-ideas/page.tsx') + text('../shared/content/p5Visibility.ts');
+  assert.match(page, /See kitchen, bath and whole-home ideas for Treasure Valley homes, then turn the ones you love into a written scope with a free in-home visit from our team\./);
   assert.match(page, /Browse kitchen, bath, whole-home and addition layouts, materials and finishes\./);
-  assert.match(page, /What are these remodeling design ideas\?/);
+  assert.match(page, /Find design ideas that fit your Treasure Valley home/);
   assert.equal(/\b(?:completed|finished)\s+(?:(?:customer|client)\s+)?(?:projects?|jobs?|work)\b/i.test(page), false);
   assert.equal(/\bour\s+(?:completed|finished)\s+(?:projects?|jobs?|work)\b/i.test(page), false);
   assert.equal(/\bfirst projects\b/i.test(page), false);
   assert.equal(page.includes('Captioned for materials and layout, not invented project records'), false);
-  assert.match(page, /titleOverride: 'Remodeling Design Ideas'/);
+  assert.match(page, /titleOverride: 'Remodeling Ideas for Boise Homes'/);
+  assert.match(page, /path: '\/design-ideas'/);
   assert.equal(page.includes('Homeowner reviews'), false);
   assert.equal(page.includes('Project gallery'), false);
 
