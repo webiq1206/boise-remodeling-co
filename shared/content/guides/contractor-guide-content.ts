@@ -69,7 +69,7 @@ export const CONTRACTOR_GUIDE_CONTENT = `
 </div>
 
 <h2>Ready to talk with a team you can trust?</h2>
-<p>A great remodel starts with a great conversation - no pressure, just an honest discussion of your goals and what is possible. When you are ready, <a href="/contact">schedule a free consultation</a> or try the <a href="/#calculator">instant estimator</a>.</p>
+<p>A great remodel starts with a great conversation - no pressure, just an honest discussion of your goals and what is possible. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/#planning-ranges">explore planning ranges</a>.</p>
 `.trim();
 
 export const CONTRACTOR_GUIDE_FAQS = [

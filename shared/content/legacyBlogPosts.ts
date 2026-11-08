@@ -129,7 +129,7 @@ export const LEGACY_BLOG_POSTS: BlogPostData[] = [
       { url: '/contact' },
     ],
     faqs: [
-      { question: 'What is design-build?', answer: 'Design, estimating, and construction under one contract.' },
+      { question: 'What is design-build?', answer: 'Design, estimating, and construction from one accountable company with one point of contact.' },
       { question: 'Should I get multiple bids?', answer: 'Yes - with aligned scope and allowances.' },
       { question: 'What are red flags?', answer: 'Vague scope and large upfront cash demands.' },
       { question: 'Do you handle permits?', answer: 'Yes for Ada and Canyon County scope.' },

@@ -33,12 +33,12 @@ test('the visible registration line is the DOPL public search link', () => {
 
   const sentence = renderToStaticMarkup(
     React.createElement(RegistrationText, {
-      text: 'Yes. We are an Idaho Registered Contractor #8381215, bonded, and insured.',
+      text: 'Yes. We are an Idaho Registered Contractor #8381215 and insured.',
     }),
   );
   assert.equal(registrationAnchors(sentence).length, 1);
   assert.match(sentence, /Yes\. We are an /);
-  assert.match(sentence, /, bonded, and insured\./);
+  assert.match(sentence, / and insured\./);
   assert.equal(/8381215\s*\(/.test(sentence), false);
 });
 

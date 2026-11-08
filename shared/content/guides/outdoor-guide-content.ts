@@ -52,7 +52,7 @@ export const OUTDOOR_GUIDE_CONTENT = `
 <p>Outdoor living cost varies widely with size, features, materials, and structure. A quality, tasteful outdoor space can add appeal and value, especially where outdoor living is prized, though the return favors well-built, integrated builds over elaborate personalized ones. For most households, the primary payoff is <span class="sage">enjoyment</span> - transforming how you gather and spend time outdoors through the Treasure Valley seasons.</p>
 
 <h2>Ready to extend your living space outdoors?</h2>
-<p>A designer can help you plan outdoor living that fits your yard, your entertaining, and the local climate. When you are ready, <a href="/contact">schedule a free consultation</a> or try the <a href="/#calculator">instant estimator</a>.</p>
+<p>A designer can help you plan outdoor living that fits your yard, your entertaining, and the local climate. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/#request">request a quote</a>.</p>
 `.trim();
 
 export const OUTDOOR_GUIDE_FAQS = [

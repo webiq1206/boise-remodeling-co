@@ -96,7 +96,7 @@ const costPillarFaqs = [
   {
     question: 'How does design-build affect total cost?',
     answer:
-      'Design-build consolidates design, estimating, and construction under one contract, reducing change orders and gaps common when design and build are separate.',
+      'Design-build consolidates design, estimating, and construction with one accountable company, reducing change orders and gaps common when design and build are separate.',
   },
   {
     question: 'What is the cheapest remodel with the best ROI?',
@@ -116,7 +116,7 @@ const costPillarFaqs = [
   {
     question: 'How do I get a realistic remodeling number for my home?',
     answer:
-      'Start with our online estimator for a planning range, then schedule an in-home consultation for a written scope tied to your layout and selections.',
+      'Start with the planning ranges on our homepage, then schedule an in-home consultation for a written scope tied to your layout and selections.',
   },
   {
     question: 'Does Boise Remodeling Co publish starting-at prices?',
@@ -160,7 +160,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       { url: '/guides/boise-remodeling-guide' },
       { url: '/blog/category/remodeling-costs' },
       { url: '/areas' },
-      { url: '/#calculator' },
+      { url: '/#planning-ranges', anchor: 'Explore planning ranges' },
       // The cost guide is the site's highest-authority content asset; route
       // that authority to the money pages with cost-flavored anchors
       // (local-seo-audit/06-internal-linking-plan.md Gap 2).
@@ -218,7 +218,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       },
       {
         question: 'What is design-build remodeling?',
-        answer: 'One contract covers design, permits, and construction with a single accountable team.',
+        answer: 'One accountable company and one point of contact cover design, permits, and construction.',
       },
       {
         question: 'How do I compare remodeling contractors?',
@@ -250,7 +250,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       },
       {
         question: 'How do I start a project?',
-        answer: 'Contact us or use the online estimator, then schedule an in-home visit.',
+        answer: 'Request a quote or call us, then schedule an in-home visit.',
       },
     ],
     relatedLinks: [

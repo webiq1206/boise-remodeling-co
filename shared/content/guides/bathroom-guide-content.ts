@@ -88,7 +88,7 @@ export const BATHROOM_GUIDE_CONTENT = `
 <p>Bathrooms are among the more reliable value-adding remodels, and adding a bathroom where a home has too few can add significant value - see <a href="/blog/bathroom-remodel-roi">Bathroom Remodel ROI</a>. Avoid the common traps: beautiful finishes over poor waterproofing, over-personalizing beyond the neighborhood, and skimping on ventilation or storage. Quality where it counts pays off for decades.</p>
 
 <h2>Ready to plan your bathroom?</h2>
-<p>The best next step is to have a designer see your space and give you an honest budget. When you are ready, <a href="/contact">schedule a free consultation</a> or try the <a href="/#calculator">instant estimator</a>.</p>
+<p>The best next step is to have a designer see your space and give you an honest budget. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/#planning-ranges">explore planning ranges</a>.</p>
 `.trim();
 
 export const BATHROOM_GUIDE_FAQS = [

@@ -92,11 +92,16 @@
   {
     "route": "/terms-of-service",
     "file": "app/terms-of-service/page.tsx",
-    "seoSignature": "b15fc8105b5bf9f239439deb95357099e07feee12808ab4ba860477f28096031"
+    "seoSignature": "9de23570d135de1275fb457742c28104faaf5d7183a611f56b6a3d1ded567578"
   },
   {
     "route": "/testimonials",
     "file": "app/testimonials/page.tsx",
     "seoSignature": "d871b3cce05de025e182c2796367f3f438ee7943ef4e9bcae9c95fa8d30458e7"
+  },
+  {
+    "route": "/warranty",
+    "file": "app/warranty/page.tsx",
+    "seoSignature": "bab280ff4ff7b86707ce62405e17209d28ab08518f6dea4384dd3bf020f38165"
   }
 ]

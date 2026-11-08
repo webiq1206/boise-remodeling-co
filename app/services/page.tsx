@@ -91,8 +91,8 @@ export default function ServicesIndexPage() {
           <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>remodel</em>
         </h1>
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
-          One accountable team handles design, estimating, permitting and construction under a
-          single contract, from the first in-home visit through the final walkthrough.
+          One accountable company handles design, estimating, permitting and construction, with
+          one point of contact from first visit to final walkthrough.
         </p>
       </InteriorHero>
 

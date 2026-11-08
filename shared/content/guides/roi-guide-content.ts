@@ -47,7 +47,7 @@ export const ROI_GUIDE_CONTENT = `
 </div>
 
 <h2>Ready to remodel for value?</h2>
-<p>A designer can help you invest where it adds the most value and where it will make you happiest. When you are ready, <a href="/contact">schedule a free consultation</a> or try the <a href="/#calculator">instant estimator</a>.</p>
+<p>A designer can help you invest where it adds the most value and where it will make you happiest. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/#planning-ranges">explore planning ranges</a>.</p>
 `.trim();
 
 export const ROI_GUIDE_FAQS = [

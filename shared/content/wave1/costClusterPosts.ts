@@ -7,7 +7,7 @@ function clusterSections(topic: string, extra: ContentSection[]): ContentSection
       paragraphs: [
         `Homeowners in ${CITIES_LIST} ask us about ${topic.toLowerCase()} more than almost any other line item on a remodel budget. This article is part of our <a href="${PILLAR_COST}">Boise Remodeling Cost Guide</a> - the definitive hub for Treasure Valley remodeling costs.`,
         `Numbers below are planning ranges from design-build consultations, not advertisements. Your home, layout, and finish level will move you within or beyond these bands.`,
-        `Use our <a href="/#calculator">project estimator</a> for a rough range, then request an in-home visit for written scope.`,
+        `<a href="/#planning-ranges">Explore our planning ranges</a> for a rough range, then request an in-home visit for written scope.`,
       ],
     },
   ];
@@ -405,7 +405,7 @@ export const COST_CLUSTER_CONTENT: Record<
 
 const CLUSTER_LINK_FOOTER = `
 <h2>More planning resources</h2>
-<p>Explore our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley guide</a>, <a href="/guides/boise-remodeling-guide">Boise remodeling guide</a>, <a href="/areas">service areas</a>, <a href="/services/kitchen-remodel/boise">Boise kitchen remodels</a>, <a href="/services/bathroom-remodel/meridian">Meridian bathrooms</a>, <a href="/services/whole-home-remodel/eagle">Eagle whole-home</a>, <a href="/services/room-addition/nampa">Nampa additions</a>, <a href="/contact">schedule a consultation</a>, and <a href="/#calculator">project estimator</a>.</p>`;
+<p>Explore our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley guide</a>, <a href="/guides/boise-remodeling-guide">Boise remodeling guide</a>, <a href="/areas">service areas</a>, <a href="/services/kitchen-remodel/boise">Boise kitchen remodels</a>, <a href="/services/bathroom-remodel/meridian">Meridian bathrooms</a>, <a href="/services/whole-home-remodel/eagle">Eagle whole-home</a>, <a href="/services/room-addition/nampa">Nampa additions</a>, <a href="/contact">schedule a consultation</a>, and <a href="/#planning-ranges">planning ranges</a>.</p>`;
 
 export function getExpandedClusterHtml(slug: string): string {
   const base = COST_CLUSTER_CONTENT[slug]?.html ?? '';

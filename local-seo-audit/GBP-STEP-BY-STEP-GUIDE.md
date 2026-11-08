@@ -185,7 +185,7 @@ Add categories in this exact order:
 
 Go to **Edit profile → Business description**. Paste this description, leaving the founding year blank until documented:
 
-> Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.
+> Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.
 
 ### Step 3.5 — Add all services
 
@@ -277,7 +277,7 @@ Each product has a **Product URL** field — paste the full link for each item. 
 | Product name | Product URL | Description |
 |--------------|-------------|-------------|
 | Free In-Home Consultation | https://boiseremodeling.co/contact | 60 to 90 minute visit at your home. Planning range and design direction on the spot. No pressure, no obligation. |
-| Online Planning Range Estimator | https://boiseremodeling.co/#calculator | Instant planning range in 60 seconds. Kitchen, bath, whole-home, addition, or ADU. Not a bid - a starting point for conversation. |
+| Online Planning Ranges | https://boiseremodeling.co/#planning-ranges | Planning ranges online for kitchen, bath, and whole-home remodels. Not a bid - a starting point for conversation. For other projects, request a quote. |
 | Remodel Planning Resources Hub | https://boiseremodeling.co/resources | All free PDFs and guides in one place. |
 
 ---
@@ -305,10 +305,10 @@ In **More** or **Attributes**, set:
 
 | Attribute | Setting |
 |-----------|---------|
-| Online estimates | Yes |
+| Online estimates | No (planning ranges only; a written quote follows the in-home visit) |
 | Onsite services | Yes |
 | Payments | Cash, Check, Credit cards, Financing available |
-| Free estimates | Yes (in-home visit + online estimator) |
+| Free estimates | Yes (in-home visit; planning ranges online) |
 | Appointment required | Yes (for consultations) |
 
 Only set "Identifies as women-led / veteran-led" etc. if true. Leave blank otherwise.
@@ -337,7 +337,7 @@ Geotag photos to the project city when your phone allows it.
 In your Google profile, go to **Q&A**. Post each question yourself, then answer it as the business owner. Do all 12.
 
 **Q1: Do you provide free estimates?**  
-Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also get an instant planning range online at https://boiseremodeling.co/#calculator
+Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also explore kitchen, bath, and whole-home planning ranges at https://boiseremodeling.co/#planning-ranges
 
 **Q2: What areas do you serve?**  
 Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho - all of Ada and Canyon County in the Treasure Valley.
@@ -352,7 +352,7 @@ As of 2026, planning ranges run roughly $15,000 for a cosmetic refresh, $35,000-
 Guest baths typically plan $18,000-$45,000; primary baths $35,000-$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide
 
 **Q6: Are you a registered contractor and insured?**
-Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.
+Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured for residential remodeling across the Treasure Valley.
 
 **Q7: Do you build ADUs?**  
 Yes - attached, detached, and garage-conversion ADUs. Planning ranges from $90,000 for garage conversions to $180,000-$300,000+ for detached new builds. Guide: https://boiseremodeling.co/guides/boise-adu-guide
@@ -364,7 +364,7 @@ Yes. We finish and reconfigure basement space for living areas, guest suites, or
 One accountable team handles design direction, selections, permits, and construction - so you are not coordinating separate architect and contractor contracts. Learn more: https://boiseremodeling.co/about
 
 **Q10: Do you offer financing?**  
-Yes. Financing is available through partners including GreenSky and Mosaic with terms from 12 to 144 months. Soft credit check with same-day decisions in many cases.
+Yes. Financing is available through partners including GreenSky and Mosaic with terms from 12 to 144 months. Soft credit check to view offers.
 
 **Q11: How long does a kitchen remodel take?**  
 Timelines depend on scope. A refresh may take 4-6 weeks; a full gut with layout changes often runs 10-16 weeks. We provide a week-by-week schedule before demo day. Process guide: https://boiseremodeling.co/guides/boise-remodeling-process-guide
@@ -553,7 +553,7 @@ Either way, thank you again for choosing Boise Remodeling Co.
 |---------|-----|
 | Website | https://boiseremodeling.co |
 | Schedule a visit | https://boiseremodeling.co/contact |
-| Online estimator | https://boiseremodeling.co/#calculator |
+| Planning ranges | https://boiseremodeling.co/#planning-ranges |
 | Free resources | https://boiseremodeling.co/resources |
 | Verbal review link | boiseremodeling.co/review |
 | Facebook | https://www.facebook.com/boiseremodeling |

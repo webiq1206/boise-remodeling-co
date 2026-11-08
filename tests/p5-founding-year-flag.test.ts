@@ -91,7 +91,7 @@ test('satisfaction guaranteed stays in seo.ts and is omitted while the flag is o
     city: 'NotACity',
   });
   assert.equal(/satisfaction guaranteed/i.test(service), false);
-  assert.match(service, /Idaho Registered Contractor #8381215, bonded & insured/);
+  assert.match(service, /Idaho Registered Contractor #8381215, insured/);
   assert.equal(/satisfaction guaranteed/i.test(unknownCity), false);
   assert.match(unknownCity, /Free in-home consultation/);
 });

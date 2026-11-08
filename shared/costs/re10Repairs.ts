@@ -121,7 +121,7 @@ export const REVIEW_REASON_TEXT: Record<ReviewReason, string> = {
  * MEASURED AGAINST A REAL RE-10. On an actual Idaho RE-10 with twenty requests,
  * routing every one of these to "needs an onsite visit" left six items priced
  * and the range covering under a third of the job. A tool that answers "come
- * and look" to most of a normal repair list is not an instant estimate.
+ * and look" to most of a normal repair list is not a quick estimate.
  *
  * "concealed" was always in this set: a planning range for "some drywall behind
  * the leak" is useful as long as the caveat travels with it. The same logic

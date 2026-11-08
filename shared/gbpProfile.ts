@@ -67,13 +67,13 @@ export const GBP_CATEGORIES = {
 } as const;
 
 export const GBP_DESCRIPTION = publishFoundingCopy(
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Bonded and insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
 );
 
 export const GBP_LINKS = {
   website: SITE,
   appointment: `${SITE}/contact`,
-  estimator: `${SITE}/#calculator`,
+  estimator: `${SITE}/#planning-ranges`,
   resources: `${SITE}/resources`,
   review: `${SITE}/review`,
 } as const;
@@ -103,7 +103,7 @@ export const GBP_ATTRIBUTES = {
   onsiteServices: true,
   payments: ['Cash', 'Check', 'Credit cards', 'Financing available'],
   planning: 'Appointment required (for consultations)',
-  serviceOptions: 'Free estimates (in-home visit + online estimator)',
+  serviceOptions: 'Free estimates (in-home visit; planning ranges online)',
 } as const;
 
 export const GBP_MESSAGING = {
@@ -301,11 +301,11 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   },
   {
     category: 'Consultation & Tools',
-    name: 'Online Planning Range Estimator',
+    name: 'Online Planning Ranges',
     price: 'Free',
-    url: `${SITE}/#calculator`,
+    url: `${SITE}/#planning-ranges`,
     description:
-      'Preliminary planning range online. Kitchen, bath, whole-home, addition, or ADU. Not a bid - a starting point for conversation.',
+      'Planning ranges online for kitchen, bath, and whole-home remodels. Not a bid - a starting point for conversation. For other projects, request a quote.',
   },
   {
     category: 'Consultation & Tools',
@@ -388,7 +388,7 @@ export interface GbpQaEntry {
 export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'Do you provide free estimates?',
-    answer: `Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also get a preliminary planning range online at ${SITE}/#calculator`,
+    answer: `Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also explore kitchen, bath, and whole-home planning ranges at ${SITE}/#planning-ranges`,
   },
   {
     question: 'What areas do you serve?',
@@ -410,7 +410,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured for residential remodeling across the Treasure Valley.',
+      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured for residential remodeling across the Treasure Valley.',
   },
   {
     question: 'Do you build ADUs?',
@@ -427,7 +427,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'Do you offer financing?',
     answer:
-      'Yes. Financing is available through partners including GreenSky and Mosaic with terms from 12 to 144 months. Soft credit check with same-day decisions in many cases.',
+      'Yes. Financing is available through partners including GreenSky and Mosaic with terms from 12 to 144 months. Soft credit check to view offers.',
   },
   {
     question: 'How long does a kitchen remodel take?',

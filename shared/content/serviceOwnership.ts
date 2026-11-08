@@ -18,6 +18,11 @@ import type { FAQItem } from '../seoContent';
  */
 
 export const CONSTRUCTION_ADU_URL = 'https://boiseconstruction.co/services/adu';
+/**
+ * Owner decision (release 2, D5): until a Boise ADU Co site exists, ADU
+ * requests go to the P5 Home Co ADU quote request. Never link boiseadu.co.
+ */
+export const ADU_QUOTE_URL = 'https://p5homeco.com/quote/adu';
 export const CONSTRUCTION_ADDITIONS_URL = 'https://boiseconstruction.co/services/home-additions';
 
 interface OwnershipPage {
@@ -71,9 +76,12 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
     {
       heading: 'New detached ADUs are built by Boise Construction Co',
       paragraphs: [
-        'A new detached ADU or guest house needs its own foundation, structure and utility runs, the same permit path as other new construction, so it is built by Boise Construction Co, our sibling company in the P5 Home Co family. Boise ADU Co projects currently run through Boise Construction Co as well.',
+        'A new detached ADU or guest house needs its own foundation, structure and utility runs, the same permit path as other new construction, so it is built by Boise Construction Co, our sibling company in the P5 Home Co family. Boise ADU Co projects currently run through Boise Construction Co as well. Until the Boise ADU Co site is ready, a new ADU request goes through the P5 Home Co ADU quote request.',
       ],
-      links: [{ label: 'New detached ADUs at Boise Construction Co', href: CONSTRUCTION_ADU_URL }],
+      links: [
+        { label: 'New detached ADUs at Boise Construction Co', href: CONSTRUCTION_ADU_URL },
+        { label: 'Request an ADU quote from P5 Home Co', href: ADU_QUOTE_URL },
+      ],
     },
   ],
   faqs: [
