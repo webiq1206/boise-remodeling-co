@@ -306,13 +306,13 @@ export function HeroConversion({
             </h2>
             <p className="fold-success">
               {done.mode === "callback"
-                ? `We will call you at ${done.phone} within one business day.`
-                : "We reply within one business day with questions or a time to visit. You get a written scope before any price."}
+                ? `We will call you at ${done.phone} during business hours.`
+                : "We will answer your questions and help you find a time to visit. You get a written scope before any price."}
             </p>
           </div>
           {done.emailed && <p className="fold-next">A copy of your request is on its way to your inbox.</p>}
           <p className="fold-next">
-            Need us sooner? <a className="fold-inline-link" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a>
+            Prefer to talk now? <a className="fold-inline-link" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a>
           </p>
           <TextReplyLine className="fold-text-reply" />
 
@@ -570,7 +570,7 @@ export function HeroConversion({
                 {busy ? "Sending" : callback ? "Request a call" : "Send request"}
               </button>
               <p className="fold-next">
-                {callback ? "We call you back within one business day." : CTA_FORM_MICROCOPY}
+                {callback ? "We call you back during business hours." : CTA_FORM_MICROCOPY}
               </p>
             </div>
           </div>

@@ -12,7 +12,7 @@ import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
  */
 const TITLE = "Request a Remodel Quote";
 const DESCRIPTION = fitDescription(
-  "Request a remodel quote from Boise Remodeling Co. Share your project, city and photos. We reply within one business day with questions or a time to visit.",
+  "Request a remodel quote from Boise Remodeling Co. Share your project, city and photos. We answer your questions and help you find a time to visit.",
 );
 
 export const metadata: Metadata = withBrandPageMetadata(

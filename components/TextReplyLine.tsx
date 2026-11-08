@@ -3,7 +3,7 @@ import { SITE_CONFIG, TEXT_REPLY_HOURS, textReplyLine, textReplySmsHref } from "
 
 type TextReplyTag = "p" | "span";
 
-/** The confirmed text-reply sentence. The phone is the only link, so the existing sms click tracker sees it. */
+/** The text-us sentence. It states texting hours, never how fast a reply arrives (audit R03). The phone is the only link, so the existing sms click tracker sees it. */
 export function TextReplyLine({
   as: Tag = "p",
   className,
@@ -15,7 +15,7 @@ export function TextReplyLine({
     <Tag className={className} data-testid="text-reply-line">
       Prefer to text? Text{" "}
       <a href={textReplySmsHref()}>{SITE_CONFIG.phone}</a>
-      . We reply in minutes during business hours ({TEXT_REPLY_HOURS}).
+      . Texting hours: {TEXT_REPLY_HOURS}.
     </Tag>
   );
 }

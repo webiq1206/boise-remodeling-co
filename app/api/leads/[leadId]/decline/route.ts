@@ -54,7 +54,7 @@ export async function POST(request: Request, props: { params: Promise<{ leadId: 
       if (quote) {
         sendCustomerStatusUpdate(quote.email, quote.id, {
           status: 'under_review',
-          message: "Your quote is being reviewed by our team. We'll be in touch soon with your customized estimate.",
+          message: "Your quote is being reviewed by our team. We'll be in touch with your customized estimate.",
         }).catch(() => {});
       }
     }

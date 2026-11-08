@@ -6,14 +6,14 @@ import { textReplyLine } from "../siteConfig";
  *
  * Extracted from the contact page so the estimating assistant, the contact
  * page and the FAQ schema all speak from one list. If an answer changes -
- * response time, service area, permit handling - it changes here, once, and
+ * how we answer, service area, permit handling - it changes here, once, and
  * no surface can drift from another.
  */
 export const CONTACT_FAQS: { question: string; answer: string }[] = [
   {
-    question: "How quickly will you respond to my inquiry?",
+    question: "How do I ask a question about my project?",
     answer:
-      `We respond within one business day. ${textReplyLine()} Call us during business hours for an immediate conversation, or submit the form and we will reach out to schedule your free in-home visit.`,
+      `Call, text, email or send the form. We answer your questions and help you work out the next step. ${textReplyLine()} Call us during business hours to talk it through, or submit the form and we will be in touch to schedule your free in-home visit.`,
   },
   {
     question: "Is the in-home consultation really free?",

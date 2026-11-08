@@ -374,7 +374,7 @@ function FullConsultationForm({ onRevise, showTrust = false }: Omit<Consultation
               2
             </span>
             <div className="pt-0.5">
-              <span>We reach out within one business day to find a time that works.</span>
+              <span>We get in touch to answer your questions and find a time that works.</span>
               <TextReplyLine as="span" className="mt-1.5 block" />
             </div>
           </li>
@@ -453,7 +453,7 @@ function FullConsultationForm({ onRevise, showTrust = false }: Omit<Consultation
                 <Check className="h-3.5 w-3.5 flex-shrink-0 text-foreground/60" />
                 <span>
                   {item}
-                  {item === "Response within one business day" ? (
+                  {item === "We answer your questions" ? (
                     <TextReplyLine as="span" className="mt-1.5 block" />
                   ) : null}
                 </span>

@@ -412,7 +412,7 @@ async function runCaptureLead(
     isError: false,
     resultJson: JSON.stringify({
       saved: true,
-      followUp: "within one business day",
+      followUp: "The team will be in touch to answer questions and help with the next step. No response time is promised.",
     }),
   };
 }
