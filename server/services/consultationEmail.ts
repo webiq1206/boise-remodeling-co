@@ -770,12 +770,12 @@ export function buildCustomerEmailHtml(
       <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Thanks, ${escapeHtml(firstName)}. Here is the planning range you built.</p>
       ${buildEstimateSectionsHtml(estimate, overrides)}
       ${budgetNote}
-      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">We will reach out within one business day to book your free in-home visit, where we confirm the scope and give you a firm number. Until then, reply here or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a> with any questions.</p>
+      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">We will be in touch to answer your questions and book your free in-home visit, where we confirm the scope and give you a firm number. Until then, reply here or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a> with any questions.</p>
       ${textReplyLineHtml()}
       <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
     `
     : `
-      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">We received your consultation request and will reach out within one business day to schedule your free in-home visit.</p>
+      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">We received your consultation request. We will be in touch to answer your questions and schedule your free in-home visit.</p>
       ${textReplyLineHtml()}
       <p style="color:${EMAIL_BRAND.text};line-height:1.6;">In the meantime, feel free to call us at <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a>, <a href="${SITE_CONFIG.phoneSmsHref}" style="color:${EMAIL_BRAND.text};">send us a text</a>, or reply to this email with any questions.</p>
       <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>

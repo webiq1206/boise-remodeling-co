@@ -96,7 +96,7 @@ The latest owner instruction removes the business street address from every publ
 
 ## Available proof and tools
 
-The current approved source supports written scope before construction, a two-year workmanship warranty, a dedicated project manager, and Idaho contractor registration 8381215. The registration link remains the existing official DOPL destination. Do not invent ratings, project counts, business longevity, testimonials, or a customer-project history.
+The current approved source supports written scope before construction, a one-year workmanship warranty from documented Final Completion (covering our crews and subcontractors; manufacturer terms are separate), a dedicated project manager, and Idaho contractor registration 8381215. The registration link remains the existing official DOPL destination. Do not invent ratings, project counts, business longevity, testimonials, or a customer-project history.
 
 Keep the existing interactive planning ranges, service/city guidance, downloadable planning resources, permit guidance, and project-request workflow. Range inputs and service options remain governed by their existing data and controllers; estimates are planning guidance rather than a fixed construction price. Preserve the distinction between manufacturer and workmanship coverage. The existing source's proof statements are retained; this consolidation does not independently reverify external credentials or create a new claim approval.
 

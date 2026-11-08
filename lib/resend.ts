@@ -130,7 +130,7 @@ export async function sendQuoteConfirmationEmail(data: {
     subtitle: `Reference: ${data.quoteId.slice(0, 8)}`,
     content: `
       <p class="greeting">Hi ${escapeHtml(data.customerName)},</p>
-      <p>Thank you for requesting a quote from Boise Remodeling Co! We've received your request and will be in touch within one business day to schedule your free consultation.</p>
+      <p>Thank you for requesting a quote from Boise Remodeling Co! We've received your request. We will be in touch to answer your questions and schedule your free consultation.</p>
       ${textReplyLineHtml()}
       <div class="highlight-box">
         <h3 style="margin: 0 0 15px 0; color: inherit;">Quote Details</h3>

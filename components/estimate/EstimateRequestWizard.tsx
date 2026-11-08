@@ -338,7 +338,7 @@ export function EstimateRequestWizard() {
               Request received
             </h2>
             <p className="estimate-wizard-step-copy">
-              We reply within one business day with questions or a time to visit. You get a written
+              We will answer your questions and help you find a time to visit. You get a written
               scope before any price.
             </p>
             <TextReplyLine className="estimate-wizard-text-reply" />
@@ -386,7 +386,7 @@ export function EstimateRequestWizard() {
                 <h2 ref={headingRef} tabIndex={-1} className="estimate-wizard-step-title">
                   Your name
                 </h2>
-                <p className="estimate-wizard-step-copy">We reply within one business day.</p>
+                <p className="estimate-wizard-step-copy">We answer your questions and help you work out the next step.</p>
                 <TextReplyLine className="estimate-wizard-step-copy" />
                 <div className="estimate-field-stack">
                   <label>
@@ -513,7 +513,7 @@ export function EstimateRequestWizard() {
                   Review your request
                 </h2>
                 <p className="estimate-wizard-step-copy">
-                  Confirm the details, then send. Free to request. We reply within one business day.
+                  Confirm the details, then send. Free to request. We answer your questions and help you work out the next step.
                 </p>
                 <TextReplyLine className="estimate-wizard-step-copy" />
                 <dl className="estimate-review">

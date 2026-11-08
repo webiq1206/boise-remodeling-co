@@ -20,7 +20,7 @@ export const HERO_SUBHEAD =
 export const HERO_STATS = [
   { num: "60 to 90 minutes", label: "Free in-home visit" },
   { num: "In writing", label: "Planning range" },
-  { num: "Within one business day", label: "Reply" },
+  { num: "We answer them", label: "Your questions" },
 ] as const;
 
 export const DIFFERENTIATORS_HEADLINE = "Built for homeowners who want clarity, not chaos";
@@ -299,7 +299,7 @@ export const CONSULT_BULLETS = [
   "No commission-driven salespeople",
   "No pressure to decide on the spot",
   "Honest planning ranges, in writing",
-  "Response within one business day",
+  "We answer your questions",
 ];
 
 /**

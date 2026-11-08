@@ -20,7 +20,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "How long is the workmanship guarantee?",
-    a: "Two years on remodeling workmanship. We also pass through manufacturer warranties on fixtures and cabinetry we install.",
+    a: "One year on remodeling workmanship, from documented Final Completion: the agreed work is complete, required inspections have passed, and the final walkthrough and handover records are done. It covers our crews and our subcontractors. Manufacturer warranties on fixtures and cabinetry we install are separate, and we pass them through to you.",
   },
   {
     q: "Who does the work?",
@@ -37,7 +37,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   {
     q: "How are you different from other remodeling companies in the Treasure Valley?",
     a: publishFoundingCopy(
-      "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in Colorado in 2020 and part of P5 Home Co. A free in-home visit includes a written scope and a two-year workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are planning ranges, not quotes.",
+      "Boise Remodeling Co is a design-build remodeling contractor in Boise, founded in Colorado in 2020 and part of P5 Home Co. A free in-home visit includes a written scope and a one-year workmanship guarantee. Ada and Canyon permitting is part of the project. The first figures are planning ranges, not quotes.",
     ),
   },
   {

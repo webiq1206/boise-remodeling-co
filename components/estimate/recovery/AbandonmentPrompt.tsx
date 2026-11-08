@@ -95,8 +95,8 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
         </DialogTitle>
         <DialogDescription id="abandonment-prompt-desc" className="ed-body mt-2 text-[0.9375rem] text-inverse-muted">
           {state === "sent"
-            ? "Thanks. Someone from the team will call within one business day. You can keep going here or close this window."
-            : `A quick call or text answers most questions in a minute. Or leave a number and we will call you back within one business day.`}
+            ? "Thanks. Someone from the team will call you during business hours. You can keep going here or close this window."
+            : "Call or text and we will answer your questions. Or leave a number and we will call you back."}
         </DialogDescription>
         <TextReplyLine className="ed-body mt-3 text-[0.9375rem] text-inverse-muted" />
 

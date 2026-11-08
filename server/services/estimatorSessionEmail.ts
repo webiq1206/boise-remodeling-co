@@ -108,7 +108,7 @@ export function buildCallbackEmail(session: EstimatorSession): { subject: string
   const pretty = digits.length === 10 ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}` : session.contactPhone ?? "";
   const subject = `Callback requested: ${session.contactName ? `${session.contactName}, ` : ""}${pretty} (${flowLabel(session.flow)})`;
   const content = `
-    <p style="margin:0 0 18px;font-size:14px;line-height:1.6;">A visitor who was leaving the <strong>${escapeHtml(flowLabel(session.flow))}</strong> asked for a call back instead. Call them at the number below; they were told to expect a call within one business day.</p>
+    <p style="margin:0 0 18px;font-size:14px;line-height:1.6;">A visitor who was leaving the <strong>${escapeHtml(flowLabel(session.flow))}</strong> asked for a call back instead. Call them at the number below; they were told someone from the team will call them back during business hours, with no promised time.</p>
     <h2 style="margin:0 0 8px;font-size:15px;">Contact</h2>
     ${contactBlock(session)}
     <h2 style="margin:22px 0 8px;font-size:15px;">Where they were</h2>
