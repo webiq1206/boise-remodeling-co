@@ -42,7 +42,11 @@ export const SITE_CONFIG = {
   },
 } as const;
 
-/** Hours we answer texts. Call-desk hours elsewhere stay on their own schedule. */
+/**
+ * Hours we answer texts. These are hours, not a reply window: no surface may
+ * promise how fast a reply arrives (owner instruction, P5 family audit R03).
+ * Call-desk hours elsewhere stay on their own schedule.
+ */
 export const TEXT_REPLY_HOURS = "Mon–Fri 9–6, Sat 9–4 MT";
 
 export function textReplySmsHref(tel: string = SITE_CONFIG.phoneTel): string {
@@ -52,11 +56,11 @@ export function textReplySmsHref(tel: string = SITE_CONFIG.phoneTel): string {
 }
 
 export function textReplyLine(phone: string = SITE_CONFIG.phone): string {
-  return `Prefer to text? Text ${phone}. We reply in minutes during business hours (${TEXT_REPLY_HOURS}).`;
+  return `Prefer to text? Text ${phone}. Texting hours: ${TEXT_REPLY_HOURS}.`;
 }
 
 export function textReplyLineHtml(phone: string = SITE_CONFIG.phone): string {
-  return `<p style="margin:12px 0;line-height:1.6;">Prefer to text? Text <a href="${textReplySmsHref()}">${phone}</a>. We reply in minutes during business hours (${TEXT_REPLY_HOURS}).</p>`;
+  return `<p style="margin:12px 0;line-height:1.6;">Prefer to text? Text <a href="${textReplySmsHref()}">${phone}</a>. Texting hours: ${TEXT_REPLY_HOURS}.</p>`;
 }
 
 export function formatPhoneDisplay(tel: string = SITE_CONFIG.phoneTel): string {

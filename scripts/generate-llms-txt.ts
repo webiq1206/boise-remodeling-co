@@ -45,7 +45,7 @@ const SUMMARY = publishFoundingCopy(
 const POSITIONING =
   `Design-build means one accountable team handles design direction, estimating, Ada and ` +
   `Canyon County permitting, and construction under one contract, backed by a written scope ` +
-  `before work starts and a workmanship guarantee at completion. Planning ranges come from an ` +
+  `before work starts and a one-year workmanship guarantee from documented Final Completion. Planning ranges come from an ` +
   `on-site estimator that prices the room, the scope and the finish level rather than a flat ` +
   `price per square foot; they are budget ranges, not quotes, and a firm proposal follows a ` +
   `free in-home visit.`;
@@ -136,7 +136,7 @@ function buildFull(): string {
       `one contract, which removes the handoff between a designer and a general contractor and ` +
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
       `scope before construction, a dedicated project manager, a written progress update every ` +
-      `Friday, and a workmanship guarantee at completion.`),
+      `Friday, and a one-year workmanship guarantee from documented Final Completion.`),
     '',
   );
   lines.push('- Business type: Residential design-build remodeling contractor');

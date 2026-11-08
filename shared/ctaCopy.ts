@@ -24,7 +24,7 @@ export const CTA_PROJECT_DETAILS = "Send project details";
  */
 export const CTA_FORM_SEND = CTA_PRIMARY;
 /** Reassurance line under the form's send button. */
-export const CTA_FORM_MICROCOPY = "Free in-home visit, no obligation. We respond within one business day.";
+export const CTA_FORM_MICROCOPY = "Free in-home visit, no obligation. We answer your questions and help you work out the next step.";
 /** @deprecated Superseded by the single-step CTA_FORM_SEND. */
 export const CTA_FORM_REVIEW = "Review my request";
 /** @deprecated Superseded by the single-step CTA_FORM_SEND. */

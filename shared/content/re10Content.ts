@@ -198,9 +198,9 @@ export const RE10_FAQS: Re10Faq[] = [
       "Yes, and it is the efficient way to do it. Most RE-10 lists span several trades. We group the work so travel and set-up are shared across the list rather than charged separately for every item, which is usually cheaper than hiring each trade individually.",
   },
   {
-    question: "How quickly can you review a repair request?",
+    question: "How do you review a repair request?",
     answer:
-      "Most repair lists are reviewed within one business day of receiving the documents. Send them as early as you can. The earlier we see the list, the more honestly we can tell you what fits inside your deadline.",
+      "We read every item on the list and answer your questions about it. Send the documents as early as you can. The earlier we see the list, the more honestly we can tell you what fits inside your deadline.",
   },
   {
     question: "Can you complete repairs before closing?",

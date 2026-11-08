@@ -228,7 +228,7 @@ export default function ContactPage() {
                     <em className="brc-accent">home</em>.
                   </h2>
                   <p className="text-base leading-relaxed text-muted-foreground">
-                    Send a few details and we will reach out within one business day to schedule
+                    Send a few details. We answer your questions and help you schedule
                     your free 60 to 90 minute in-home visit - planning guidance, design direction,
                     and no obligation.
                   </p>
@@ -251,7 +251,7 @@ export default function ContactPage() {
                   <em className="brc-accent">connect</em>
                 </>
               }
-              description="Call, text, or email. We come to you. We respond within one business day and never use high-pressure sales tactics."
+              description="Call, text, or email. We come to you. We answer your questions and never use high-pressure sales tactics."
               className="max-w-3xl"
             />
             <div className="ed-grid-balance grid grid-cols-1 sm:grid-cols-2 gap-4 [&>*]:min-w-0">
@@ -286,7 +286,7 @@ export default function ContactPage() {
                 <ContactChannel
                   icon={<Mail className="h-5 w-5" strokeWidth={1.5} />}
                   label="Email us"
-                  subtext="Response within one business day"
+                  subtext="We answer your questions"
                 >
                   <EmailLink className="max-w-full min-w-0 break-all text-base hover:text-foreground/70 transition-colors" />
                 </ContactChannel>

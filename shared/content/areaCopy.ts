@@ -185,7 +185,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, bonded and insured, and our workmanship guarantee applies at completion.",
+          "Yes. We're an Idaho Registered Contractor #8381215, bonded and insured, and our workmanship guarantee starts at documented Final Completion.",
       },
       {
         question: 'How do I start a project?',
