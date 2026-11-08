@@ -31,7 +31,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'What is design-build kitchen remodeling?',
         answer:
-          'One contract covers design, estimating, permits, and construction so selections, allowances, and schedule stay aligned.',
+          'One accountable company and one point of contact cover design, estimating, permits, and construction so selections, allowances, and schedule stay aligned.',
       },
       {
         question: 'When should I order cabinets?',
@@ -378,7 +378,7 @@ export function getLocationFaqs(
     {
       question: 'Do you offer design-build in my neighborhood?',
       answer:
-        'Yes - one team handles design, permits, and construction under a single contract with local permit experience.',
+        'Yes - one team handles design, permits, and construction as one accountable company, with one point of contact and local permit experience.',
     },
   ];
 }

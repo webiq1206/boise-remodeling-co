@@ -109,7 +109,7 @@ export const PROOF_STATS = {
 const TRUST_ITEM_SOURCE = [
   `Est. ${PROOF_STATS.established}`,
   `${PROOF_STATS.projectsCompleted} Projects`,
-  "Bonded · Insured",
+  "Insured",
   "Permits In-House",
   "Workmanship Guarantee",
   "Free In-Home Visit",
@@ -157,7 +157,7 @@ export interface ClientPriority {
 export const CLIENT_PRIORITIES: ClientPriority[] = [
   {
     title: "Trust and credibility",
-    body: "Idaho Registered Contractor #8381215, bonded and insured, with permits handled in-house and a written scope before work begins.",
+    body: "Idaho Registered Contractor #8381215 and insured, with permits handled in-house and a written scope before work begins.",
     icon: ShieldCheck,
   },
   {
@@ -211,7 +211,7 @@ export const HOW_WE_BUILD_STEPS = [
   {
     number: "05",
     title: "Final walkthrough and workmanship guarantee",
-    desc: "We walk every inch with you. If we built it and it fails due to workmanship, we fix it free.",
+    desc: "We walk every inch with you. If work by our own team fails due to workmanship during the coverage period, we fix it free. Subcontractor work carries its own warranty, and you get the complete subcontractor list with contact information.",
   },
 ];
 
@@ -260,7 +260,7 @@ export const OPTIONAL_ENHANCEMENTS = {
 export const BUDGET_GUIDANCE_POINTS = [
   {
     title: "Planning ranges, not firm bids",
-    body: "Our online estimator and in-home visit provide planning ranges based on project type, size, finish level, and market conditions. Your detailed project evaluation happens at consultation.",
+    body: "Our planning ranges and in-home visit provide budget guidance based on project type, size, finish level, and market conditions. Your detailed project evaluation happens at consultation.",
   },
   {
     title: "Written scope before construction",
@@ -291,7 +291,6 @@ export const FINANCING_BULLETS = [
   "Terms from 12 to 144 months",
   "Soft credit check to view offers",
   "No prepayment penalties",
-  "Same-day approval decisions",
   "Works alongside cash, check, or wire",
 ];
 

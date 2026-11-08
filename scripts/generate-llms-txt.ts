@@ -27,7 +27,7 @@ const today = '2026-10-16';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
   `Serving the ${SITE_CONFIG.address.serviceArea}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
-  `Idaho Registered Contractor #8381215, bonded and insured.`;
+  `Idaho Registered Contractor #8381215 and insured.`;
 
 const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
 const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
@@ -44,7 +44,7 @@ const SUMMARY = publishFoundingCopy(
 
 const POSITIONING =
   `Design-build means one accountable team handles design direction, estimating, Ada and ` +
-  `Canyon County permitting, and construction under one contract, backed by a written scope ` +
+  `Canyon County permitting, and construction as one accountable company with one point of contact, backed by a written scope ` +
   `before work starts and a one-year workmanship guarantee from documented Final Completion. Planning ranges come from an ` +
   `on-site estimator that prices the room, the scope and the finish level rather than a flat ` +
   `price per square foot; they are budget ranges, not quotes, and a firm proposal follows a ` +
@@ -132,11 +132,15 @@ function buildFull(): string {
       `Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel ` +
       `existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ` +
       `accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means ` +
-      `design direction, estimating, permitting and construction are delivered by one team under ` +
-      `one contract, which removes the handoff between a designer and a general contractor and ` +
+      `design direction, estimating, permitting and construction are delivered by one accountable ` +
+      `company with one point of contact, which removes the handoff between a designer and a general contractor and ` +
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
       `scope before construction, a dedicated project manager, a written progress update every ` +
-      `Friday, and a one-year workmanship guarantee from documented Final Completion.`),
+      `Friday, and a one-year workmanship guarantee from documented Final Completion for work ` +
+      `performed by our own team. Subcontractor work (for example licensed plumbing, electrical and ` +
+      `HVAC) is covered by that subcontractor's own warranty, and at the end of every project we ` +
+      `provide a complete list of the subcontractors who worked on it, with their contact ` +
+      `information. Manufacturer warranties are separate. Warranty details: ${url('/warranty')}.`),
     '',
   );
   lines.push('- Business type: Residential design-build remodeling contractor');
@@ -207,7 +211,7 @@ function buildFull(): string {
       'weeks for a bathroom to several months for a whole-home renovation or addition.',
   );
   lines.push(
-    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+    '- Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured.',
   );
   lines.push(
     '- Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of ' +

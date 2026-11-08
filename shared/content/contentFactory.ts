@@ -39,7 +39,7 @@ function buildPillarSections(
       h2: `What should homeowners know about ${topic}?`,
       paragraphs: [
         `This overview covers ${topic.toLowerCase()} for ${CITIES_LIST}. Use the topic sections below, then follow linked articles for room-specific depth.`,
-        'Boise Remodeling Co provides design-build remodeling with permits and construction under one contract.',
+        'Boise Remodeling Co provides design-build remodeling with permits and construction handled by one accountable company and one point of contact.',
       ],
     },
     pillarEssentialsSection(topic),

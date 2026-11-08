@@ -61,6 +61,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     { path: '/sitemap', label: 'Site map', changeFrequency: 'monthly', priority: 0.3 },
     { path: '/privacy-policy', label: 'Privacy policy', changeFrequency: 'yearly', priority: 0.3 },
     { path: '/terms-of-service', label: 'Terms of service', changeFrequency: 'yearly', priority: 0.3 },
+    { path: '/warranty', label: 'Warranty', changeFrequency: 'yearly', priority: 0.4 },
   ];
 
   const services: SiteUrlEntry[] = SERVICES.map((s) => ({

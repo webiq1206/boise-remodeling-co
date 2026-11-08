@@ -201,7 +201,7 @@ test('operator docs leave the founding year blank and preserve confirmed registr
     assert.equal(/Founded in 2017|Founded 2017|Opening date: 2017/.test(text), false, file);
   }
   const guide = readFileSync('local-seo-audit/GBP-STEP-BY-STEP-GUIDE.md', 'utf8');
-  assert.match(guide, /Idaho Registered Contractor #8381215, bonded, and insured/);
+  assert.match(guide, /Idaho Registered Contractor #8381215 and insured/);
   const gap = readFileSync('seo-audit/competitor-gap-analysis.md', 'utf8');
   assert.equal(/BRC founded 2017/.test(gap), false);
   assert.match(gap, /leave blank until documented/);

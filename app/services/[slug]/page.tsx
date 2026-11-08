@@ -149,7 +149,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
     {
       heading: `Why design-build for your ${serviceLC}`,
       paragraphs: [
-        `As a design-build remodeler, we bring design, estimating, permitting, and construction under one contract and one accountable team. That removes the handoffs and finger-pointing that happen when a separate designer and general contractor are involved - and it keeps your ${serviceLC} on a single, coordinated schedule.`,
+        `As a design-build remodeler, we bring design, estimating, permitting, and construction with one accountable company and one point of contact for your project. That removes the handoffs and finger-pointing that happen when a separate designer and general contractor are involved - and it keeps your ${serviceLC} on a single, coordinated schedule.`,
         `You get a written scope before construction begins, clear allowances for selections, proactive communication throughout the build, and a workmanship guarantee from documented Final Completion.`,
       ],
     },

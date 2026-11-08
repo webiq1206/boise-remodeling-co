@@ -69,7 +69,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'Do I need an architect for an ADU?',
     answer:
-      'You need stamped plans that pass plan review. As a design-build company we handle design, engineering coordination, and permitting in one contract, so you do not have to hire and manage a separate architect.',
+      'You need stamped plans that pass plan review. As a design-build company we handle design, engineering coordination, and permitting as one accountable company with one point of contact, so you do not have to hire and manage a separate architect.',
   },
   {
     question: 'Can my parents live in an ADU year-round?',
@@ -110,7 +110,7 @@ export const BOISE_ADU_GUIDE_HTML = `
     <tr><td>Detached new-build ADU</td><td>$150,000 - $365,000</td><td>5 to 8 months</td></tr>
   </tbody>
 </table>
-<p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. Foundation work, separate utility runs, and premium finishes push detached units toward the top of the band. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or get a planning range from the <a href="/#calculator">project estimator</a>.</p>
+<p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. Foundation work, separate utility runs, and premium finishes push detached units toward the top of the band. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or <a href="/#request">request a quote</a> for your property.</p>
 
 <h2>Permits, timeline, and what to expect</h2>
 <p>Every legal ADU needs building, plumbing, electrical, and mechanical permits, plus zoning compliance. Typical sequence: feasibility and design (6 to 10 weeks), engineering and plan submission, plan review (varies by jurisdiction and season), then construction with inspections at each phase. We handle <a href="/blog/boise-permit-guide">permits</a> in-house for both Ada and Canyon County jurisdictions and build review time into the schedule from day one, so the calendar you see at design lock reflects reality.</p>
@@ -124,5 +124,5 @@ export const BOISE_ADU_GUIDE_HTML = `
 <p>A permitted ADU adds appraisable square footage and a rental income stream that many Treasure Valley buyers now actively search for. Long-term rental of a permitted unit is broadly allowed; short-term rental licensing is a separate, stricter track in Boise. Our <a href="/guides/best-remodeling-roi-boise">remodeling ROI guide</a> covers how second units compare to other high-return projects, and the <a href="/blog/addition-roi-remodeling">addition ROI article</a> covers the underlying math.</p>
 
 <h2>Next steps</h2>
-<p>Start with the <a href="/#calculator">project estimator</a> for a planning range, then <a href="/contact">schedule a free in-home visit</a>. We will walk your lot, flag setback and utility constraints on the spot, and leave you with a realistic range and design direction - no pressure, no obligation. Boise Remodeling Co designs and builds <a href="/services/adu">ADU conversions</a> of garages, basements and attached space; new detached ADUs and guest houses are built by <a href="https://boiseconstruction.co/services/adu">Boise Construction Co</a>, our P5 Home Co sibling. The broader <a href="/guides/boise-home-addition-guide">home addition guide</a> helps if you are still comparing an ADU against a conventional addition.</p>
+<p><a href="/#request">Request a quote</a> or <a href="/contact">schedule a free in-home visit</a>. We will walk your lot, flag setback and utility constraints on the spot, and leave you with a realistic range and design direction - no pressure, no obligation. Boise Remodeling Co designs and builds <a href="/services/adu">ADU conversions</a> of garages, basements and attached space; new detached ADUs and guest houses are built by <a href="https://boiseconstruction.co/services/adu">Boise Construction Co</a>, our P5 Home Co sibling. The broader <a href="/guides/boise-home-addition-guide">home addition guide</a> helps if you are still comparing an ADU against a conventional addition.</p>
 `;

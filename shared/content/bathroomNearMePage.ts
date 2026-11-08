@@ -92,7 +92,7 @@ export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
   {
     heading: 'Why design-build for your bathroom remodel',
     paragraphs: [
-      'Design, estimating, permitting and construction stay under one contract and one accountable team, so layout and waterproofing decisions do not get lost between separate vendors.',
+      'Design, estimating, permitting and construction stay with one accountable company and one point of contact for your project, so layout and waterproofing decisions do not get lost between separate vendors.',
       'You get a written scope before construction begins, clear allowances for selections, and a one-year workmanship guarantee from documented Final Completion.',
     ],
   },

@@ -98,7 +98,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       'How a remodeling workmanship guarantee works: what it covers, how long it runs, how manufacturer warranties fit in, and what to get in writing first.',
     excerpt: 'How a remodeling workmanship guarantee works and what to get in writing before you sign.',
     quickAnswer:
-      'A remodeling warranty has two layers: the contractor guarantees its own workmanship, and manufacturers warrant the products. Boise Remodeling Co guarantees remodeling workmanship in writing for one year from documented Final Completion, covering its own crews and its subcontractors, and passes through manufacturer warranties on fixtures and cabinetry it installs.',
+      'A remodeling warranty has two layers: the contractor guarantees its own workmanship, and manufacturers warrant the products. Boise Remodeling Co guarantees in writing, for one year from documented Final Completion, the remodeling workmanship performed by its own team. Subcontractor work is covered by that subcontractor\'s own warranty, with a complete subcontractor list and contact information at the end of every project, and manufacturer warranties on fixtures and cabinetry are separate.',
     takeaways: [
       'Workmanship and product warranties are two different promises.',
       'Get the guarantee, its length and its process in writing.',
@@ -110,7 +110,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Two warranties, two promises',
         paragraphs: [
           'A workmanship guarantee covers how the work was done: the installation, the framing, the tile setting, the trim. A manufacturer warranty covers the product itself: the faucet, the cabinet box, the window unit. When something fails, the first question is which of the two it is, which is why both belong in your paperwork.',
-          'Boise Remodeling Co guarantees remodeling workmanship for one year from documented Final Completion, covering our crews and our subcontractors, and passes through manufacturer warranties on fixtures and cabinetry we install. Manufacturer terms are separate from our workmanship coverage.',
+          'Boise Remodeling Co guarantees the remodeling workmanship performed by our own team for one year from documented Final Completion. Work performed by subcontractors, for example licensed plumbing, electrical and HVAC, is covered by that subcontractor\'s own warranty, and at the end of every project we provide a complete list of the subcontractors who worked on it, with their contact information. We pass through manufacturer warranties on fixtures and cabinetry; manufacturer terms are separate from our workmanship coverage.',
         ],
       },
       {
@@ -132,15 +132,15 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         list: [
           'How long is the workmanship guarantee, and is it written into the contract?',
           'Which manufacturer warranties pass through to me, and who registers them?',
-          'Who do I call, and how quickly will someone come out?',
+          'Who do I call if something goes wrong, and which work is covered by a subcontractor\'s own warranty?',
           'What would void the guarantee?',
         ],
       },
       {
         h2: 'Who stands behind the work',
         paragraphs: [
-          'A guarantee is only as good as the team behind it. At Boise Remodeling Co a core in-house team handles project management, design coordination and key trades, while plumbing, electrical and HVAC go to licensed trade partners we schedule and stand behind. Your project manager remains your single point of contact, during the build and after it.',
-          'Boise Remodeling Co is an Idaho Registered Contractor (#8381215), bonded and insured. Ask any contractor you compare for the same facts, and check them before you sign.',
+          'A guarantee is only as good as the team behind it. At Boise Remodeling Co a core in-house team handles project management, design coordination and key trades, while plumbing, electrical and HVAC go to licensed trade partners we schedule and coordinate. Their work carries their own warranty, and the subcontractor list you receive at the end of the project names each one with contact information. Your project manager remains your single point of contact, during the build and after it, and for subcontractor work we can point you to the right subcontractor from that list.',
+          'Boise Remodeling Co is an Idaho Registered Contractor (#8381215) and insured. Ask any contractor you compare for the same facts, and check them before you sign.',
         ],
       },
     ],

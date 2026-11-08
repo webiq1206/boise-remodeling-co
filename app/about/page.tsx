@@ -125,7 +125,8 @@ export default function AboutPage() {
                   </p>
                   <p className="ed-small interior-hero-more-note mt-6 max-w-2xl">
                     P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
-                    One-year workmanship warranty on remodels, from documented Final Completion.
+                    One-year workmanship warranty on remodels, from documented Final Completion, for work by our own team.
+                    Subcontractors provide their own warranty; you get the complete subcontractor list at the end of every project.
                   </p>
                   <div className="mt-6">
                     <SaveContactLink
@@ -159,7 +160,7 @@ export default function AboutPage() {
                 <Reveal>
                   <p className="ed-lede">
                     Boise Remodeling Co remodels kitchens, bathrooms and whole homes with design, permits
-                    and construction under one contract. Room additions and ADUs are handled by Boise
+                    and construction from one accountable company, with one point of contact for your project. Room additions and ADUs are handled by Boise
                     Construction Co. RE-10 inspection repairs are handled by Boise Handyman Co.
                   </p>
                   <p className="ed-body mt-6">
@@ -167,7 +168,7 @@ export default function AboutPage() {
                     #8381215. Your contract is with P5 Home Co LLC doing business as Boise Remodeling Co.
                   </p>
                   <p className="ed-body mt-4">
-                    <RegistrationLink className="underline underline-offset-2" />. Bonded and insured.
+                    <RegistrationLink className="underline underline-offset-2" />. Insured.
                   </p>
                 </Reveal>
               </div>

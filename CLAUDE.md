@@ -43,10 +43,12 @@ document list. It imports the POST handlers and calls them with constructed
 Requests, after scrubbing delivery env vars so accepted requests are pure
 computation (no email, no DB row, no CRM forward) even where secrets exist.
 
-**tsc baseline is 20 pre-existing errors.** Not zero. Compare against 20; do
-not "fix" them as a side quest.
+**tsc baseline is 0 errors.** Re-measured 2026-11-08 on `1748e2b` (origin/main
+at the start of release 2) with `npx tsc --noEmit -p .`: exit 0, no errors.
+The "20 pre-existing errors" this note used to claim was stale. Any tsc error
+is now a regression; do not compare against an older count.
 
-It said 22, and 22 was wrong - measured at 23 on `1617ae7`, `c19cf34` and
+History, kept as the lesson: an earlier note said 22, and 22 was wrong - measured at 23 on `1617ae7`, `c19cf34` and
 `a81d540`, so the doc had been stale for a while. A stale baseline is how a
 real regression hides: a genuine new error lands, the count reads "23, that is
 the doc's 22 plus the one I just added", and the hunt starts in the wrong
@@ -60,6 +62,18 @@ branch, so those three pages rendered with **no vertical section spacing at
 all** and their last line of content sat flush against the footer. A type
 error that was quietly a layout defect. Set to `spacing="default"`; the
 explicit `pt-28 md:pt-32` still governs the top.
+
+**Public claims are guarded.** `verify:public-claims` (in prebuild, with
+`tests/public-claims-guard.test.ts` and `tests/warranty-page.test.ts`) fails on
+"bonded", on workmanship coverage that includes subcontractors (our one-year
+warranty from documented Final Completion covers our own team; subcontractors
+give their own warranty and the customer gets a complete subcontractor list
+with contact information at project end), on universal one contract / one
+invoice promises, on instant or minutes-fast estimates, same-day financing
+approval, recurring billing and the old 48-hour satisfaction window. Owner
+decisions, release 2, 2026-11-08. Homepage content links to the working
+planning-range explorer go to `/#planning-ranges`; `/#calculator` has had no
+target since the optional intake was unmounted.
 
 **Never run `db:push` against the live database.** Add the schema, then tell
 the owner to run it.

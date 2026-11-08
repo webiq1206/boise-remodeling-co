@@ -133,7 +133,7 @@ const TV_CALLOUTS: Array<[string, string]> = [
   ],
   [
     '<h2>Planning ranges by project type</h2>',
-    '<div class="callout tip"><p class="callout-label">Get a rough number first</p><p>Try the <a href="/#calculator">project estimator</a> for a quick planning range, then see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a> for detailed bands by project. Read these as <span class="sage">planning ranges</span>, not quotes.</p></div>',
+    '<div class="callout tip"><p class="callout-label">Get a rough number first</p><p><a href="/#planning-ranges">Explore our planning ranges</a> for a starting point, then see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a> for detailed bands by project. Read these as <span class="sage">planning ranges</span>, not quotes.</p></div>',
   ],
 ];
 
