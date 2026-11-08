@@ -85,7 +85,7 @@ export const homeAdditionCostBoise: BlogPostData = {
   content: `
 <h2 id="how-much">How much does a home addition cost in Boise?</h2>
 <p><strong>As of 2026, a home addition in Boise typically costs $96,000-$224,000 or more, or roughly $240-$560 per square foot.</strong> Additions cost more per square foot than interior remodels for a simple reason: you are building new foundation, framing, roof, and systems from the ground up, rather than working within existing walls. Small bump-outs land at the low end; primary suites and second-story additions reach the top.</p>
-<p>These are planning ranges from real Treasure Valley design-build consultations, part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a quick starting number, use our <a href="/#calculator">project estimator</a>.</p>
+<p>These are planning ranges from real Treasure Valley design-build consultations, part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a number for your addition, <a href="/#request">request a quote</a>.</p>
 <table class="cost-table">
 <thead><tr><th>Addition type</th><th>2026 Boise planning range</th><th>Notes</th></tr></thead>
 <tbody>
@@ -156,6 +156,6 @@ export const homeAdditionCostBoise: BlogPostData = {
 <p>Local factors shape feasibility. Boise and Meridian lots vary in setback room; Eagle and Foothills lots may slope, adding foundation cost but offering views worth designing around; Kuna and Star often have larger lots with room to expand out rather than up. Zoning and HOA rules differ by city. Explore local addition pages for <a href="/services/room-addition/boise">Boise</a>, <a href="/services/room-addition/meridian">Meridian</a>, and <a href="/services/room-addition/eagle">Eagle</a>, or read the full <a href="/guides/boise-home-addition-guide">Boise Home Addition Guide</a>.</p>
 
 <h2 id="next-steps">Confirming feasibility and price</h2>
-<p>Additions start with a feasibility question - what your lot, structure, and budget allow - and that is exactly what our free in-home visit answers. We review setbacks, existing conditions, and your goals, then give you a clear plan and an honest range - with no pressure and no obligation. It is the fastest way to find out what your lot allows and what your project will really cost. When you are ready, <a href="/contact">schedule a consultation</a>, use the <a href="/#calculator">instant estimator</a>, or start with the <a href="/guides/boise-home-addition-guide">Boise Home Addition Guide</a>.</p>
+<p>Additions start with a feasibility question - what your lot, structure, and budget allow - and that is exactly what our free in-home visit answers. We review setbacks, existing conditions, and your goals, then give you a clear plan and an honest range - with no pressure and no obligation. It is the fastest way to find out what your lot allows and what your project will really cost. When you are ready, <a href="/contact">schedule a consultation</a>, <a href="/#request">request a quote</a>, or start with the <a href="/guides/boise-home-addition-guide">Boise Home Addition Guide</a>.</p>
 `.trim(),
 };

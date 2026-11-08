@@ -61,7 +61,7 @@ export const PROCESS_GUIDE_CONTENT = `
 <p>A clear, well-run process is one of the best signs of a contractor worth hiring. A <span class="sage">design-build</span> firm manages every phase above - design, selections, permits, and construction - under one roof, so one team is accountable from your first conversation to the final walk-through. See <a href="/blog/questions-to-ask-remodeling-contractor">Questions to Ask a Contractor</a>.</p>
 
 <h2>Ready to start the process?</h2>
-<p>The first step is a conversation about your goals and what is possible. When you are ready, <a href="/contact">schedule a free consultation</a> or try the <a href="/#calculator">instant estimator</a>.</p>
+<p>The first step is a conversation about your goals and what is possible. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/#planning-ranges">explore planning ranges</a>.</p>
 `.trim();
 
 export const PROCESS_GUIDE_FAQS = [

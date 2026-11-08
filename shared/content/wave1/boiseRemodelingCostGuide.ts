@@ -6,7 +6,7 @@ const sections: ContentSection[] = [
     paragraphs: [
       `Most residential remodels we scope across ${CITIES_LIST} fall into planning bands - not single sticker prices. A guest bath refresh in Meridian is not priced like a full kitchen gut in the North End. National averages rarely account for Ada County plan review, Canyon County submission portals, Idaho labor markets, or the finish level common in Eagle and Hidden Springs.`,
       `This guide is the pillar for our <strong>Boise Remodeling Costs</strong> hub. Use it to understand typical ranges, then read the linked articles on kitchen, bathroom, whole-home, addition, and luxury costs for project-specific detail.`,
-      `For a rough planning number before design, start with our <a href="/#calculator">project estimator</a>, then schedule an in-home consultation for a written scope.`,
+      `For a rough planning number before design, <a href="/#planning-ranges">explore our planning ranges</a>, then schedule an in-home consultation for a written scope.`,
     ],
   },
   {
@@ -47,7 +47,7 @@ const sections: ContentSection[] = [
   {
     h2: 'Whole-home remodel costs across Ada and Canyon County',
     paragraphs: [
-      'Whole-home programs coordinate flooring, lighting, layout, and often multiple wet areas under one contract. Sequencing matters: structural and MEP decisions should be locked before finish selections to avoid rework.',
+      'Whole-home programs coordinate flooring, lighting, layout, and often multiple wet areas with one accountable company and one point of contact. Sequencing matters: structural and MEP decisions should be locked before finish selections to avoid rework.',
       'Homes built in the 1970s–1990s in the Treasure Valley frequently need panel updates, insulation improvements, or asbestos/lead assessments when walls are opened. Hold a 10–15% contingency for unknowns behind drywall.',
       'Our <a href="/blog/whole-home-remodel-cost-boise">whole-home remodel cost guide</a> and <a href="/services/whole-home-remodel/meridian">whole-home remodeling in Meridian</a> pages go deeper.',
     ],
@@ -135,7 +135,7 @@ const sections: ContentSection[] = [
   {
     h2: 'Design-build vs bidding out: what it means for your number',
     paragraphs: [
-      'Design-build consolidates design, estimating, and construction under one agreement with a single point of accountability. Competitive bid chains can look cheaper on paper but often shift risk to the homeowner via allowances and change orders.',
+      'Design-build consolidates design, estimating, and construction with one accountable company and one point of contact. Competitive bid chains can look cheaper on paper but often shift risk to the homeowner via allowances and change orders.',
       'When comparing proposals, match line items: demo, haul-off, protection, permits, engineering, and finish install. Our <a href="/guides/choose-remodeling-contractor-boise">contractor selection guide</a> (publishing soon) covers vetting in depth.',
     ],
   },

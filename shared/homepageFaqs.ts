@@ -20,11 +20,11 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "How long is the workmanship guarantee?",
-    a: "One year on remodeling workmanship, from documented Final Completion: the agreed work is complete, required inspections have passed, and the final walkthrough and handover records are done. It covers our crews and our subcontractors. Manufacturer warranties on fixtures and cabinetry we install are separate, and we pass them through to you.",
+    a: "One year on remodeling workmanship, from documented Final Completion: the agreed work is complete, required inspections have passed, and the final walkthrough and handover records are done. It covers work performed by our own team. Work performed by subcontractors, for example licensed plumbing, electrical and HVAC, is covered by that subcontractor's own warranty, and at the end of every project we give you a complete list of the subcontractors who worked on it, with their contact information. Manufacturer warranties on fixtures and cabinetry are separate, and we pass them through to you. Our warranty page explains how to get help with a completed project, and for subcontractor work we can point you to the right subcontractor from the list.",
   },
   {
     q: "Who does the work?",
-    a: "A core in-house team handles project management, design coordination, and key trades. Plumbing, electrical and HVAC go to licensed trade partners we schedule and stand behind. Your project manager remains your single point of contact.",
+    a: "A core in-house team handles project management, design coordination, and key trades. Plumbing, electrical and HVAC go to licensed trade partners we schedule and coordinate; their work carries their own warranty, and you get a complete subcontractor list with contact information at the end of the project. Your project manager remains your single point of contact.",
   },
   {
     q: "What do home remodeling contractors typically handle?",
@@ -58,7 +58,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "What financing options do you offer?",
-    a: "We partner with GreenSky and Mosaic to offer flexible financing options on qualifying projects. Applications take about five minutes and you can get a decision the same day. We can walk you through options at your free in-home consultation.",
+    a: "We partner with GreenSky and Mosaic to offer flexible financing options on qualifying projects. We can walk you through options at your free in-home consultation.",
   },
   {
     q: "Do you work with subcontractors or your own employees?",

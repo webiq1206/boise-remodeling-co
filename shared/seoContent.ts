@@ -589,7 +589,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Universal design that is safe and accessible without looking institutional',
       'Curbless showers, grab bars, comfort-height fixtures, and slip-resistant surfaces',
       'Widened doorways, zero-step entries, and single-floor living adaptations',
-      'One team handling design, structural changes, and finishes under one contract',
+      'One accountable company and one point of contact for design, structural changes, and finishes',
     ],
     inclusions: [
       'Accessibility assessment of your home and daily routines',
@@ -801,7 +801,7 @@ export const AREA_PAGE_FAQS: FAQItem[] = [
   {
     question: 'Are you a registered contractor and insured?',
     answer:
-      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215, bonded, and insured.',
+      'Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured.',
   },
   {
     question: 'How do I start a project?',

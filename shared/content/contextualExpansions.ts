@@ -6,7 +6,7 @@ const BASE_TOPICS = [
   'Treasure Valley ranches and split-levels from the 1970s–1990s frequently need panel and insulation upgrades when walls are opened - budget contingency accordingly.',
   'Eagle neighborhoods, and Hidden Springs in the Boise foothills, may require HOA architectural review in addition to county permits - start design early.',
   'Dry Idaho summers favor exterior concrete and roofing; schedule hardscape and addition work outside winter freeze-thaw cycles when possible.',
-  'Design-build keeps design, permits, and construction under one contract - reducing gaps that cause change orders mid-project.',
+  'Design-build keeps design, permits, and construction with one accountable company - reducing gaps that cause change orders mid-project.',
   'Written scope with clear allowances beats a low bid that excludes haul-off, protection, or engineering.',
   'Kitchen appliance rough-in should be locked before drywall close-up - even when appliances are client-supplied.',
   'Curbless showers require precise slope and waterproofing - inspection failures delay master bath timelines.',

@@ -97,7 +97,7 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
       h2: 'Middleton and Canyon County permitting',
       paragraphs: [
         'Canyon County portals and review cadence differ from Ada - confirm jurisdiction early if your address is near county lines.',
-        'Cross-county trade coordination can add mobilization time; plan one contract with a team that works both corridors regularly.',
+        'Cross-county trade coordination can add mobilization time; plan with one accountable company that works both corridors regularly.',
       ],
     },
     {

@@ -90,7 +90,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   content: `
 <h2 id="how-much">How much does a bathroom remodel cost in Boise?</h2>
 <p><strong>As of 2026, a bathroom remodel in Boise typically costs $18,000-$29,000 for a guest or hall bath and $45,000-$65,000 or more for a primary bathroom.</strong> A small powder-room refresh can come in $7,000-$12,000, while a luxury primary suite with a curbless shower, freestanding tub, and heated floors exceeds $85,000. Guest and primary baths sit on very different budgets, so the first step is being clear about which one you are planning.</p>
-<p>The ranges below are planning ranges from real Treasure Valley design-build consultations. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a quick starting number, try our <a href="/#calculator">project estimator</a>.</p>
+<p>The ranges below are planning ranges from real Treasure Valley design-build consultations. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a starting point, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
 <table class="cost-table">
 <thead><tr><th>Bathroom type</th><th>2026 Boise planning range</th><th>Typical scope</th></tr></thead>
 <tbody>
@@ -176,6 +176,6 @@ export const bathroomRemodelCostBoise: BlogPostData = {
 <p>A few avoidable mistakes account for most bathroom-remodel regret. The first is <strong>skimping on waterproofing and ventilation</strong> to spend more on visible finishes - the hidden layers are what keep a bathroom from failing, and they are painful to redo. The second is <strong>choosing fixtures after construction starts</strong>, which drives change orders and delays; lock every selection before demo. The third is <strong>ignoring storage</strong>, leaving a beautiful room with nowhere to put anything. The fourth is <strong>hiring on price alone</strong> and discovering the low bid excluded permits, waterproofing details, or an allowance that was too low to hit your selections. Comparing aligned scopes - not just bottom-line numbers - is the single best protection, and it is why a clear written scope matters more in a bathroom than almost anywhere else in the home.</p>
 
 <h2 id="next-steps">From planning range to firm price</h2>
-<p>Every bathroom is different, and the only way to turn a planning range into a real number is a written scope after we walk your space and review existing conditions. Our free in-home visit gives you planning guidance and an honest range with no obligation. When you are ready, <a href="/contact">schedule a consultation</a>, start with the <a href="/#calculator">instant estimator</a>, or read the full <a href="/guides/boise-bathroom-remodeling-guide">Boise Bathroom Remodeling Guide</a>.</p>
+<p>Every bathroom is different, and the only way to turn a planning range into a real number is a written scope after we walk your space and review existing conditions. Our free in-home visit gives you planning guidance and an honest range with no obligation. When you are ready, <a href="/contact">schedule a consultation</a>, <a href="/#planning-ranges">explore planning ranges</a>, or read the full <a href="/guides/boise-bathroom-remodeling-guide">Boise Bathroom Remodeling Guide</a>.</p>
 `.trim(),
 };

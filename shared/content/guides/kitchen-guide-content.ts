@@ -111,7 +111,7 @@ export const KITCHEN_GUIDE_CONTENT = `
 <p>For the full list, see <a href="/blog/remodeling-mistakes-to-avoid">Remodeling Mistakes to Avoid</a>. And remember a kitchen remodel is also one of the strongest returns in a home - our <a href="/blog/kitchen-remodel-roi">Kitchen Remodel ROI</a> guide covers how to maximize it.</p>
 
 <h2>Ready to plan your kitchen?</h2>
-<p>The fastest way to turn these ideas into a real plan is to have a designer see your space. Our free in-home consultation pairs design direction with an honest budget, so you learn what is possible and what it costs in one conversation. When you are ready, <a href="/contact">schedule a consultation</a> or try the <a href="/#calculator">instant estimator</a>.</p>
+<p>The fastest way to turn these ideas into a real plan is to have a designer see your space. Our free in-home consultation pairs design direction with an honest budget, so you learn what is possible and what it costs in one conversation. When you are ready, <a href="/contact">schedule a consultation</a> or <a href="/#planning-ranges">explore planning ranges</a>.</p>
 `.trim();
 
 export const KITCHEN_GUIDE_FAQS = [
