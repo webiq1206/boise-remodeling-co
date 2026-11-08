@@ -48,7 +48,7 @@ Use after verification completes. Copy-paste content from `npm run gbp:print` or
 
 ---
 
-## Phase 11 — Google Posts (weekly)
+## Phase 11 — Google Posts
 
 - [ ] Week 1: Kitchen clarity in Boise → /services/kitchen-remodel/boise
 - [ ] Week 2: 2026 kitchen planning ranges → budget worksheet PDF

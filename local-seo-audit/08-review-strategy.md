@@ -18,7 +18,7 @@ There is nothing to "optimize" yet; this is a build-from-zero system.
 - **Sequence**: Day 0 in-person ask → Day 1 email with link → Day 7 single reminder. Stop after one reminder.
 
 ### 2. Keyword coverage targets
-Healthy review corpus mentions, over time: each of the 5 services, each of the 8 cities, and the differentiators (weekly updates, written scope, permits, on-time). Track in a simple sheet; when a service/city is missing, prioritize the next ask from that segment. Never tell a customer what words to use.
+Healthy review corpus mentions, over time: each of the 5 services, each of the 8 cities, and the differentiators (written updates, written scope, permits, on-time). Track in a simple sheet; when a service/city is missing, prioritize the next ask from that segment. Never tell a customer what words to use.
 
 ### 3. Response protocol (owner responds, within 48h)
 - Positive: thank by name, reflect the project back with city + service ("your North End kitchen"), 2-3 sentences. This is the one place the BUSINESS can legitimately add local keywords.

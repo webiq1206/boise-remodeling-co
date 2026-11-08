@@ -51,7 +51,7 @@ Code-level items from this audit are already implemented and verified (see 00-ex
 
 ## Recurring cadence
 
-- **Weekly**: 1 GBP post (city-tagged, deep-links a guide); review ask on every completed project
+- **Posts**: 1 GBP post (city-tagged, deep-links a guide); review ask on every completed project
 - **Monthly**: AI-engine spot checks ("best remodeling contractor Boise/Meridian", "kitchen remodel cost Boise") - log brand mentions and cited URLs; update `rating/reviewCount`; 2-4 new GBP photos
 - **Quarterly**: re-run `scripts/audit-url-data.ts` + `audit-url-matrix.ts` to refresh the URL matrix; cost-content refresh (`updatedAt` bumps); citation sweep: search `"Boise Remodeling Co" -site:boiseremodeling.co` and the old phone `(208) 405-8425` (should return nothing)
 
