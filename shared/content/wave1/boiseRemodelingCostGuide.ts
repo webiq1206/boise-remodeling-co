@@ -18,13 +18,13 @@ const sections: ContentSection[] = [
       className: 'cost-table',
       headers: ['Project type', 'Typical planning range', 'Typical timeline'],
       rows: [
-        ['Kitchen remodel (full)', '$50,000 – $131,000+', '6 – 16 weeks (construction)'],
-        ['Bathroom (guest)', '$15,500 – $45,000', '4 – 8 weeks'],
+        ['Kitchen remodel (full)', '$37,000 – $110,000+', '6 – 16 weeks (construction)'],
+        ['Bathroom (guest)', '$18,000 – $45,000', '4 – 8 weeks'],
         ['Bathroom (master)', '$35,000 – $85,000+', '6 – 12 weeks'],
         ['Whole-home remodel', '$180,000 – $425,000+', '4 – 12 months'],
         ['Room addition', '$93,000 – $189,000+', '4 – 9 months'],
-        ['ADU / guest house', '$123,000 – $388,000', '6 – 12 months'],
-        ['Luxury remodel', '$136,000 – $603,000+', '6 – 18 months'],
+        ['ADU / guest house', '$90,000 – $300,000+', '6 – 12 months'],
+        ['Luxury remodel', '$136,000 – $816,000+', '6 – 18 months'],
       ],
     },
   },
@@ -79,8 +79,8 @@ const sections: ContentSection[] = [
       headers: ['Project context', 'Planning $/SF (finished area affected)'],
       rows: [
         ['Cosmetic refresh (paint, trim, fixtures)', '$15 – $40'],
-        ['Mid-range kitchen or bath remodel', '$200 – $440+ (room SF)'],
-        ['Whole-home remodel (major)', '$100 – $236+'],
+        ['Mid-range kitchen or bath remodel', '$250 – $450+ (room SF)'],
+        ['Whole-home remodel (major)', '$100 – $200+'],
         ['Addition (new construction portion)', '$240 – $560'],
       ],
     },
@@ -226,7 +226,7 @@ export const BOISE_REMODELING_COST_GUIDE_HTML = COST_CALLOUTS.reduce(
 );
 
 export const BOISE_REMODELING_COST_QUICK_ANSWER =
-  'Treasure Valley remodels in 2026 typically range from about $8,000 for a small bath refresh to $425,000+ for whole-home or luxury programs, with most full kitchens between $50,000 and $131,000 and master baths from $35,000 to $85,000+. Exact cost depends on layout changes, finishes, permits (Ada or Canyon County), and existing home conditions - not national averages.';
+  'Treasure Valley remodels in 2026 typically range from about $18,000 for a small bath refresh to $425,000+ for whole-home or luxury programs, with most full kitchens between $37,000 and $110,000 and master baths from $35,000 to $85,000+. Exact cost depends on layout changes, finishes, permits (Ada or Canyon County), and existing home conditions - not national averages.';
 
 export const BOISE_REMODELING_COST_TAKEAWAYS = [
   'Use planning ranges by project type, not a single $/SF number for every remodel.',

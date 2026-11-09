@@ -8,7 +8,7 @@ export const BATHROOM_GUIDE_CONTENT = `
 
 <div class="callout cost">
   <p class="callout-label">Budget &amp; timeline snapshot</p>
-  <p>Guest and hall baths often plan <strong>$15,500-$45,000</strong>; primary baths with a curbless shower and layout changes commonly reach <strong>$35,000-$85,000+</strong>. Most bathrooms take about <strong>3-6 weeks of on-site construction</strong> after design and permits, driven largely by tile and its cure times.</p>
+  <p>Guest and hall baths often plan <strong>$18,000-$45,000</strong>; primary baths with a curbless shower and layout changes commonly reach <strong>$35,000-$85,000+</strong>. Most bathrooms take about <strong>3-6 weeks of on-site construction</strong> after design and permits, driven largely by tile and its cure times.</p>
 </div>
 
 <h2>1. Start with how the bathroom needs to work</h2>
@@ -95,7 +95,7 @@ export const BATHROOM_GUIDE_FAQS = [
   {
     question: 'How much does a bathroom remodel cost in Boise?',
     answer:
-      'Guest and hall bathrooms often plan $15,500 to $45,000, while primary baths with a curbless shower and layout changes commonly reach $35,000 to $85,000 or more. Cost scales with size, whether you move plumbing, and finish level. Keeping fixtures near their existing plumbing is one of the biggest ways to control the budget. Always hold a 10-15% contingency for surprises.',
+      'Guest and hall bathrooms often plan $18,000 to $45,000, while primary baths with a curbless shower and layout changes commonly reach $35,000 to $85,000 or more. Cost scales with size, whether you move plumbing, and finish level. Keeping fixtures near their existing plumbing is one of the biggest ways to control the budget. Always hold a 10-15% contingency for surprises.',
   },
   {
     question: 'How long does a bathroom remodel take?',

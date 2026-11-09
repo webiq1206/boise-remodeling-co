@@ -56,7 +56,7 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
     {
       heading: 'Garage, basement and attached ADU conversions',
       paragraphs: [
-        'A garage conversion reuses the existing foundation and shell, which is why it usually costs less than building new. As of 2026, garage conversions in the Boise area typically plan $123,000 to $227,000, and attached ADUs plan $155,000 to $388,000 and basement conversions $72,000 to $205,000. The tradeoff with a garage is the storage and parking you give up.',
+        'A garage conversion reuses the existing foundation and shell, which is why it usually costs less than building new. As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000, and attached ADUs and basement conversions plan $120,000 to $250,000. The tradeoff with a garage is the storage and parking you give up.',
         'These are planning ranges, not bids. The utility plan and the condition of the space drive a conversion budget, which is why feasibility comes first in our process.',
       ],
       links: [
@@ -93,7 +93,7 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
     {
       question: 'Is a garage conversion cheaper than building a detached ADU?',
       answer:
-        'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $123,000 to $227,000, versus $188,000 to $356,000 or more for a detached new build. The tradeoff is losing garage storage and parking.',
+        'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000, versus $180,000 to $300,000 or more for a detached new build. The tradeoff is losing garage storage and parking.',
     },
     {
       question: 'How big can an ADU be in Boise?',

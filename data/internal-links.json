@@ -339,7 +339,7 @@
           "anchor": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "title": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.431
+          "score": 0.423
         }
       ]
     },
@@ -3084,7 +3084,7 @@
           "anchor": "Eagle Foothills Remodeling Guide: What to Know Before You Remodel",
           "title": "Eagle Foothills Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.198
+          "score": 0.201
         }
       ]
     },
@@ -7276,11 +7276,11 @@
           "score": -0.053
         },
         {
-          "url": "/blog/material-selection-guide",
-          "anchor": "Material Selection Guide: Choosing Finishes for Your Remodel",
-          "title": "Material Selection Guide: Choosing Finishes for Your Remodel",
+          "url": "/blog/whole-home-remodel-cost-boise",
+          "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
+          "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
           "type": "blog",
-          "score": -0.06
+          "score": -0.058
         }
       ]
     },
@@ -7333,18 +7333,18 @@
           "score": 0.203
         },
         {
+          "url": "/blog/material-selection-guide",
+          "anchor": "Material Selection Guide: Choosing Finishes for Your Remodel",
+          "title": "Material Selection Guide: Choosing Finishes for Your Remodel",
+          "type": "blog",
+          "score": -0.06
+        },
+        {
           "url": "/blog/living-through-a-remodel",
           "anchor": "Living Through a Remodel: How to Survive Construction at Home",
           "title": "Living Through a Remodel: How to Survive Construction at Home",
           "type": "blog",
           "score": -0.063
-        },
-        {
-          "url": "/blog/whole-home-remodel-cost-boise",
-          "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
-          "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
-          "type": "blog",
-          "score": -0.064
         }
       ]
     },
@@ -9122,7 +9122,7 @@
           "anchor": "Bathroom Remodel Cost in Boise: 2026 Guest vs. Primary Bath",
           "title": "Bathroom Remodel Cost in Boise: 2026 Guest vs. Primary Bath",
           "type": "blog",
-          "score": -0.109
+          "score": -0.117
         },
         {
           "url": "/blog/addition-roi-remodeling",
@@ -9961,7 +9961,7 @@
           "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
           "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
           "type": "blog",
-          "score": -0.098
+          "score": -0.092
         },
         {
           "url": "/blog/home-addition-timeline-guide",

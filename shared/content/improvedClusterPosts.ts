@@ -280,7 +280,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Where to spend',
         paragraphs: ['The strongest returns generally come from the rooms and surfaces buyers notice first:'],
         list: [
-          'Kitchens, the room buyers scrutinize most. As of 2026, a mid-range Treasure Valley kitchen plans $50,000 to $67,000; see <a href="/services/kitchen-remodel">kitchen remodeling</a>.',
+          'Kitchens, the room buyers scrutinize most. As of 2026, a mid-range Treasure Valley kitchen plans $37,000 to $47,000; see <a href="/services/kitchen-remodel">kitchen remodeling</a>.',
           'Bathrooms, and adding one where a home has too few.',
           'Curb appeal: doors, siding, paint and landscaping.',
           'Energy efficiency: air sealing, insulation and efficient HVAC.',
@@ -330,7 +330,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Decking: composite or wood',
         paragraphs: [
-          'Both work well here. Composite resists Treasure Valley sun, snow and moisture with almost no maintenance and lasts decades, at a higher upfront cost. Cedar and hardwood cost less to install but need regular sealing. As of 2026, a new deck in the Treasure Valley commonly plans $25,000 to $75,000 or more, depending on size, height, railing and material.',
+          'Both work well here. Composite resists Treasure Valley sun, snow and moisture with almost no maintenance and lasts decades, at a higher upfront cost. Cedar and hardwood cost less to install but need regular sealing. As of 2026, a new deck in the Treasure Valley commonly plans $25,000 to $60,000 or more, depending on size, height, railing and material.',
         ],
       },
       {

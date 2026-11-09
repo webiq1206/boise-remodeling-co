@@ -98,7 +98,7 @@ const boiseSections: ContentSection[] = [
   {
     h2: 'Budgeting a Boise remodel',
     paragraphs: [
-      'As of 2026, a mid-range Treasure Valley kitchen plans $50,000 to $67,000, and pre-1990 homes deserve a 10 to 15 percent contingency for wiring, plumbing or framing found behind the walls.',
+      'As of 2026, a mid-range Treasure Valley kitchen plans $37,000 to $47,000, and pre-1990 homes deserve a 10 to 15 percent contingency for wiring, plumbing or framing found behind the walls.',
       `The <a href="${PILLAR_COST}">Boise remodeling cost guide</a> has planning ranges for every project type.`,
     ],
   },

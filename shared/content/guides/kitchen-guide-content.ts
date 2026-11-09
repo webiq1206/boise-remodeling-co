@@ -11,7 +11,7 @@ export const KITCHEN_GUIDE_CONTENT = `
 
 <div class="callout cost">
   <p class="callout-label">Budget &amp; timeline snapshot</p>
-  <p>Most full Treasure Valley kitchen remodels with new cabinets and layout changes land between <strong>$50,000 and $131,000+</strong>, and take about <strong>8-16 weeks of on-site construction</strong> after design and permits. Where you land depends on your kitchen's size, whether you move walls or plumbing, and your finish level - all covered below.</p>
+  <p>Most full Treasure Valley kitchen remodels with new cabinets and layout changes land between <strong>$37,000 and $110,000+</strong>, and take about <strong>8-16 weeks of on-site construction</strong> after design and permits. Where you land depends on your kitchen's size, whether you move walls or plumbing, and your finish level - all covered below.</p>
 </div>
 
 <h2>1. Start with your goals, not your finishes</h2>
@@ -31,7 +31,7 @@ export const KITCHEN_GUIDE_CONTENT = `
 <p>Kitchen remodels span a wide range because they cover everything from a finish refresh to a full gut with a new layout. It helps to think in three tiers:</p>
 <ul>
   <li><strong>Mid-range refresh</strong> - new cabinets or refacing, quality countertops, updated fixtures and appliances, keeping the existing layout. The most budget-friendly full remodel.</li>
-  <li><strong>Full remodel with layout changes</strong> - new cabinets, counters, and finishes plus moving the sink, appliances, or a wall. This is where most Treasure Valley kitchens land, typically <strong>$50,000-$131,000+</strong>.</li>
+  <li><strong>Full remodel with layout changes</strong> - new cabinets, counters, and finishes plus moving the sink, appliances, or a wall. This is where most Treasure Valley kitchens land, typically <strong>$37,000-$110,000+</strong>.</li>
   <li><strong>High-end / luxury</strong> - custom cabinetry, premium stone, professional appliances, and structural changes like opening to the living room. Costs rise well beyond the mid-range.</li>
 </ul>
 <div class="callout tip">
@@ -118,7 +118,7 @@ export const KITCHEN_GUIDE_FAQS = [
   {
     question: 'How much does a kitchen remodel cost in Boise?',
     answer:
-      'Most full Treasure Valley kitchen remodels with new cabinets and a layout change run about $50,000 to $131,000 or more, while a finish-level refresh that keeps the existing layout costs less and a high-end custom kitchen costs more. Cabinets are usually the largest line item, followed by countertops, appliances, and labor. Always budget a 10-15% contingency for surprises, especially in older homes.',
+      'Most full Treasure Valley kitchen remodels with new cabinets and a layout change run about $37,000 to $110,000 or more, while a finish-level refresh that keeps the existing layout costs less and a high-end custom kitchen costs more. Cabinets are usually the largest line item, followed by countertops, appliances, and labor. Always budget a 10-15% contingency for surprises, especially in older homes.',
   },
   {
     question: 'How long does a kitchen remodel take?',

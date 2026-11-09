@@ -45,19 +45,19 @@ export const SERVICES: ServiceData[] = [
     slug: 'whole-home-remodel',
     name: 'Whole-Home Remodel',
     shortDescription: 'Cohesive whole-home renovations with a single project manager start to finish.',
-    planningFrom: '$119k',
+    planningFrom: '$40k',
   },
   {
     slug: 'room-addition',
     name: 'Room Addition',
     shortDescription: 'Thoughtfully designed additions that feel like they were always part of your home.',
-    planningFrom: '$80k',
+    planningFrom: '$95k',
   },
   {
     slug: 'adu',
     name: 'ADU / Guest House',
     shortDescription: 'Detached or attached accessory dwelling units designed to maximize your property value.',
-    planningFrom: '$123k',
+    planningFrom: '$165k',
   },
   {
     slug: 'basement-remodel',

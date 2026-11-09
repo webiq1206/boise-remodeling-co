@@ -12,7 +12,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   metaDescription:
     'How much does a kitchen remodel cost in Boise? 2026 planning ranges by tier and size, a full cost breakdown, timelines, permits, and ways to save from a local design-build team.',
   excerpt:
-    'Most full kitchen remodels in Boise plan between $50,000 and $166,000, with cosmetic refreshes lower and luxury gut renovations higher. Here is exactly where the money goes and how to budget.',
+    'Most full kitchen remodels in Boise plan between $37,000 and $166,000, with cosmetic refreshes lower and luxury gut renovations higher. Here is exactly where the money goes and how to budget.',
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -35,9 +35,9 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   ],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A kitchen remodel in Boise typically costs $50,000 to $166,000 for a full renovation as of 2026, based on a 250-square-foot kitchen. Cosmetic refreshes run $14,000-$18,500, mid-range remodels run $50,000-$67,000, high-end renovations run $97,000-$131,000, and luxury gut renovations run $136,000-$166,000. Your final number depends on layout changes, cabinetry, and finish level far more than square footage.',
+    'A kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation as of 2026, based on a 250-square-foot kitchen. Cosmetic refreshes run $16,000-$21,000, mid-range remodels run $37,000-$47,000, high-end renovations run $85,000-$110,000, and luxury gut renovations run $136,000-$166,000. Your final number depends on layout changes, cabinetry, and finish level far more than square footage.',
   keyTakeaways: [
-    'Full Boise kitchen remodels plan $50,000-$166,000; refreshes start near $14,000, luxury reaches $166,000.',
+    'Full Boise kitchen remodels plan $37,000-$166,000; refreshes start near $16,000, luxury reaches $166,000.',
     'Cabinetry is the biggest single line item (30-40% of the budget), followed by labor and countertops.',
     'Layout and structural changes - moving plumbing, removing walls - drive cost more than size alone.',
     'Ada and Canyon County permits are required when you change layout, plumbing, gas, or electrical.',
@@ -56,17 +56,17 @@ export const kitchenRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does a kitchen remodel cost in Boise?',
       answer:
-        'As of 2026, most full kitchen remodels in Boise plan between $50,000 and $166,000. Cosmetic refreshes that keep the existing layout run $14,000-$18,500, while high-end and luxury gut renovations with custom cabinetry and layout changes run $97,000-$166,000. The biggest variables are cabinetry, whether you move plumbing or walls, and finish level.',
+        'As of 2026, most full kitchen remodels in Boise plan between $37,000 and $166,000. Cosmetic refreshes that keep the existing layout run $16,000-$21,000, while high-end and luxury gut renovations with custom cabinetry and layout changes run $85,000-$166,000. The biggest variables are cabinetry, whether you move plumbing or walls, and finish level.',
     },
     {
       question: 'What is the average kitchen remodel cost per square foot in Boise?',
       answer:
-        'A mid-range kitchen remodel in the Treasure Valley lands around $200-$270 per square foot of kitchen space, with cosmetic refreshes nearer $65 and luxury work running several times higher. Per-square-foot figures are misleading for kitchens because cost concentrates in cabinets, counters, and appliances rather than floor area, and the rate falls as the room gets bigger. A written scope tied to your selections is far more reliable than a per-square-foot rule of thumb.',
+        'A mid-range kitchen remodel in the Treasure Valley lands around $150-$190 per square foot of kitchen space, with cosmetic refreshes nearer $65 and luxury work running several times higher. Per-square-foot figures are misleading for kitchens because cost concentrates in cabinets, counters, and appliances rather than floor area, and the rate falls as the room gets bigger. A written scope tied to your selections is far more reliable than a per-square-foot rule of thumb.',
     },
     {
       question: 'How much does a 10x10 kitchen remodel cost?',
       answer:
-        'A 10x10 kitchen (about 100 square feet, roughly 20 linear feet of cabinets) commonly plans $35,000-$47,000 in Boise for a mid-range remodel, depending on cabinet line and countertop material. Adding an island, moving plumbing, or choosing custom cabinetry pushes it higher.',
+        'A 10x10 kitchen (about 100 square feet, roughly 20 linear feet of cabinets) commonly plans $22,000-$28,000 in Boise for a mid-range remodel, depending on cabinet line and countertop material. Adding an island, moving plumbing, or choosing custom cabinetry pushes it higher.',
     },
     {
       question: 'Do I need a permit to remodel my kitchen in Boise?',
@@ -91,21 +91,21 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a kitchen remodel cost in Boise?</h2>
-<p><strong>As of 2026, a kitchen remodel in Boise typically costs $50,000 to $166,000 for a full renovation of a 250-square-foot kitchen.</strong> Cosmetic refreshes that keep the existing footprint run $14,000-$18,500, mid-range remodels run $50,000-$67,000, and high-end or luxury gut renovations with custom cabinetry and layout changes run $97,000-$166,000. Your final number is driven far more by cabinetry, layout changes, and finish level than by the size of the room.</p>
+<p><strong>As of 2026, a kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation of a 250-square-foot kitchen.</strong> Cosmetic refreshes that keep the existing footprint run $16,000-$21,000, mid-range remodels run $37,000-$47,000, and high-end or luxury gut renovations with custom cabinetry and layout changes run $85,000-$166,000. Your final number is driven far more by cabinetry, layout changes, and finish level than by the size of the room.</p>
 <p>The ranges below are planning ranges from real design-build consultations across the Treasure Valley - not advertised teaser prices. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, the hub for Treasure Valley remodeling budgets. For a starting range by size and finish level, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
 <table class="cost-table">
 <thead><tr><th>Kitchen remodel tier</th><th>2026 Boise planning range</th><th>What it includes</th></tr></thead>
 <tbody>
-<tr><td>Cosmetic refresh</td><td>$14,000 - $18,500</td><td>New doors or refaced cabinets, countertops, backsplash, paint, hardware; same layout</td></tr>
-<tr><td>Mid-range remodel</td><td>$50,000 - $67,000</td><td>New semi-custom cabinets, quartz counters, tile, lighting, minor layout tweaks</td></tr>
-<tr><td>High-end remodel</td><td>$97,000 - $131,000</td><td>Custom or premium cabinetry, island, layout changes, upgraded appliances</td></tr>
+<tr><td>Cosmetic refresh</td><td>$16,000 - $21,000</td><td>New doors or refaced cabinets, countertops, backsplash, paint, hardware; same layout</td></tr>
+<tr><td>Mid-range remodel</td><td>$37,000 - $47,000</td><td>New semi-custom cabinets, quartz counters, tile, lighting, minor layout tweaks</td></tr>
+<tr><td>High-end remodel</td><td>$85,000 - $110,000</td><td>Custom or premium cabinetry, island, layout changes, upgraded appliances</td></tr>
 <tr><td>Luxury gut renovation</td><td>$136,000 - $166,000</td><td>Full custom millwork, stone, structural changes, high-end appliance package</td></tr>
 </tbody>
 </table>
 
 <h2 id="refresh-vs-full">Refresh vs. full remodel: which does your Boise kitchen need?</h2>
 <p>Before you settle on a budget, decide what problem you are actually solving. Not every kitchen needs a full remodel, and matching scope to the real issue is the single biggest way to control cost.</p>
-<p>A <strong>cosmetic refresh</strong> makes sense when the layout works and the bones are sound - you simply want it to look current. Refacing or replacing doors, adding quartz counters, a new backsplash, updated hardware, and paint can transform a dated kitchen for $14,000-$18,500 without moving a single pipe. Many 1990s and 2000s builder kitchens in Meridian, Kuna, and Nampa are strong candidates for a refresh.</p>
+<p>A <strong>cosmetic refresh</strong> makes sense when the layout works and the bones are sound - you simply want it to look current. Refacing or replacing doors, adding quartz counters, a new backsplash, updated hardware, and paint can transform a dated kitchen for $16,000-$21,000 without moving a single pipe. Many 1990s and 2000s builder kitchens in Meridian, Kuna, and Nampa are strong candidates for a refresh.</p>
 <p>A <strong>full remodel</strong> is worth it when the layout fights you daily: a closed-off wall you want opened, a cramped work triangle, too little storage, or failing plumbing and wiring hiding behind the cabinets. Once you are changing layout or systems, the incremental cost of doing it right - new cabinetry, better lighting, a functional island - is usually money well spent. If you are unsure, our free in-home visit will tell you honestly which path your kitchen needs.</p>
 
 <h2 id="breakdown">Kitchen remodel cost breakdown: where the money goes</h2>
@@ -138,10 +138,10 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <table class="cost-table">
 <thead><tr><th>Kitchen size</th><th>Approx. cabinet run</th><th>Mid-range planning range</th></tr></thead>
 <tbody>
-<tr><td>Small (10x10, ~100 sq ft)</td><td>~20 linear feet</td><td>$35,000 - $47,000</td></tr>
-<tr><td>Medium (12x12, ~144 sq ft)</td><td>~25-30 linear feet</td><td>$43,000 - $58,000</td></tr>
-<tr><td>Large / open (250 sq ft)</td><td>30+ linear feet + island</td><td>$58,000 - $78,000</td></tr>
-<tr><td>Very large / great room (400 sq ft)</td><td>35+ linear feet + island</td><td>$66,000 - $89,000</td></tr>
+<tr><td>Small (10x10, ~100 sq ft)</td><td>~20 linear feet</td><td>$22,000 - $28,000</td></tr>
+<tr><td>Medium (12x12, ~144 sq ft)</td><td>~25-30 linear feet</td><td>$27,000 - $34,000</td></tr>
+<tr><td>Large / open (250 sq ft)</td><td>30+ linear feet + island</td><td>$37,000 - $47,000</td></tr>
+<tr><td>Very large / great room (400 sq ft)</td><td>35+ linear feet + island</td><td>$48,000 - $61,000</td></tr>
 </tbody>
 </table>
 

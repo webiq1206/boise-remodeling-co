@@ -128,13 +128,13 @@ export const GBP_SERVICES: GbpService[] = [
     name: 'Bathroom remodeling',
     description:
       'Spa-quality bathroom transformations designed around how you actually live. Guest and primary baths.',
-    startingPrice: '$15,500',
+    startingPrice: '$18,000',
   },
   {
     name: 'Whole-home remodeling',
     description:
       'Cohesive whole-home renovations with a single project manager start to finish. Phased options available.',
-    startingPrice: '$119,000',
+    startingPrice: '$180,000',
   },
   {
     name: 'Room additions',
@@ -146,13 +146,13 @@ export const GBP_SERVICES: GbpService[] = [
     name: 'ADU construction',
     description:
       'Detached or attached accessory dwelling units designed to maximize your property value. Boise ordinance guidance included.',
-    startingPrice: '$155,000',
+    startingPrice: '$90,000',
   },
   {
     name: 'Garage conversion',
     description:
       'Convert an existing garage into livable ADU or guest space. Feasibility and utility strategy included.',
-    startingPrice: '$123,000',
+    startingPrice: '$90,000',
   },
   {
     name: 'Basement finishing',
@@ -214,7 +214,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Bathroom Remodel',
-    price: 'From $15,500',
+    price: 'From $18,000',
     url: `${SITE}/services/bathroom-remodel`,
     description:
       'Guest and primary bathroom remodels with written scope before construction. Ada and Canyon County permits handled in-house.',
@@ -222,7 +222,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Whole-Home Remodel',
-    price: 'From $119,000',
+    price: 'From $180,000',
     url: `${SITE}/services/whole-home-remodel`,
     description:
       'Single project manager from design through final walkthrough. Weekly written updates and workmanship guarantee included.',
@@ -238,7 +238,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'ADU / Guest House',
-    price: 'From $123,000',
+    price: 'From $90,000',
     url: `${SITE}/services/adu`,
     description:
       'Attached, detached, and garage-conversion ADUs. Feasibility review and Boise ordinance guidance.',
@@ -246,7 +246,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Garage Conversion',
-    price: 'From $123,000',
+    price: 'From $90,000',
     url: `${SITE}/services/adu`,
     description:
       'Convert existing garage space into livable ADU or guest quarters.',
@@ -401,11 +401,11 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   },
   {
     question: 'How much does a kitchen remodel cost in Boise?',
-    answer: `As of 2026, planning ranges run roughly $14,000–$18,500 for a cosmetic refresh, $50,000–$67,000 for mid-range scope, and $97,000–$166,000 for high-end and luxury gut renovations with layout changes. These are planning ranges, not bids. Full breakdown: ${SITE}/guides/boise-kitchen-remodeling-guide`,
+    answer: `As of 2026, planning ranges run roughly $16,000–$21,000 for a cosmetic refresh, $37,000–$47,000 for mid-range scope, and $85,000–$166,000 for high-end and luxury gut renovations with layout changes. These are planning ranges, not bids. Full breakdown: ${SITE}/guides/boise-kitchen-remodeling-guide`,
   },
   {
     question: 'How much does a bathroom remodel cost?',
-    answer: `Guest baths typically plan $15,500–$45,000; primary baths $35,000–$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
+    answer: `Guest baths typically plan $18,000–$45,000; primary baths $35,000–$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
   },
   {
     question: 'Are you a registered contractor and insured?',
@@ -414,7 +414,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   },
   {
     question: 'Do you build ADUs?',
-    answer: `Yes - attached, detached, and garage-conversion ADUs. Planning ranges run $123,000–$227,000 for garage conversions and $188,000–$356,000 for detached new builds. Guide: ${SITE}/guides/boise-adu-guide`,
+    answer: `Yes - attached, detached, and garage-conversion ADUs. Planning ranges from $90,000 for garage conversions to $180,000–$300,000+ for detached new builds. Guide: ${SITE}/guides/boise-adu-guide`,
   },
   {
     question: 'Do you finish basements?',
@@ -460,7 +460,7 @@ export const GBP_POSTS_STARTER: GbpPost[] = [
   {
     week: 2,
     headline: '2026 kitchen planning ranges',
-    body: 'Most Treasure Valley mid-range kitchen remodels plan $50K–$67K. Refresh from ~$15K. Use our free budget worksheet to compare bids apples-to-apples.',
+    body: 'Most Treasure Valley kitchen remodels plan $35K–$75K mid-range. Refresh from ~$15K. Use our free budget worksheet to compare bids apples-to-apples.',
     buttonLabel: 'Get the worksheet',
     buttonUrl: `${SITE}/downloads/remodel-budget-worksheet.pdf`,
     photoHint: 'Budget worksheet cover',
@@ -468,7 +468,7 @@ export const GBP_POSTS_STARTER: GbpPost[] = [
   {
     week: 3,
     headline: 'ADU options in the Treasure Valley',
-    body: 'Garage conversions $123K–$227K. Detached ADUs $188K–$356K. We handle feasibility, permits, and build. Free in-home visit.',
+    body: 'Garage conversions from ~$90K. Detached ADUs $180K–$300K+. We handle feasibility, permits, and build. Free in-home visit.',
     buttonLabel: 'ADU guide',
     buttonUrl: `${SITE}/guides/boise-adu-guide`,
     photoHint: 'ADU or garage conversion project',

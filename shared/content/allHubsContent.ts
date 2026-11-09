@@ -34,7 +34,7 @@ export const KITCHEN_PILLAR = buildPillarGuide({
   hubSlug: 'kitchen-remodeling',
   tags: ['kitchen', 'boise', 'design'],
   quickAnswer:
-    'Treasure Valley kitchen remodels typically run 8–16 weeks of construction after design and permits, with budgets often from $50,000 to $131,000+ for full gut renovations with layout changes.',
+    'Treasure Valley kitchen remodels typically run 8–16 weeks of construction after design and permits, with budgets often from $37,000 to $110,000+ for full gut renovations with layout changes.',
   takeaways: [
     'Lock layout and MEP before finish selections.',
     'Cabinet lead times can drive the calendar - order at design lock.',
@@ -94,7 +94,7 @@ export const BATHROOM_PILLAR = buildPillarGuide({
   hubSlug: 'bathroom-remodeling',
   tags: ['bathroom', 'boise'],
   quickAnswer:
-    'Guest bath remodels often plan $15,500–$45,000; master baths with curbless showers and layout changes commonly reach $35,000–$85,000+ in Ada and Canyon County.',
+    'Guest bath remodels often plan $18,000–$45,000; master baths with curbless showers and layout changes commonly reach $35,000–$85,000+ in Ada and Canyon County.',
   takeaways: [
     'Waterproofing and slope matter for walk-in and curbless showers.',
     'Ventilation and heat should be planned with layout.',

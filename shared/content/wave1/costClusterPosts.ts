@@ -18,7 +18,7 @@ const kitchenExtra: ContentSection[] = [
   {
     h2: 'What is a typical kitchen remodel budget in Boise?',
     paragraphs: [
-      'Most full kitchen remodels we plan in Ada County fall between roughly $50,000 and $131,000+, with layout changes and custom cabinetry at the upper end. Cosmetic refreshes - doors, counters, backsplash - can land lower if plumbing and gas stay put.',
+      'Most full kitchen remodels we plan in Ada County fall between roughly $37,000 and $110,000+, with layout changes and custom cabinetry at the upper end. Cosmetic refreshes - doors, counters, backsplash - can land lower if plumbing and gas stay put.',
       'Meridian and Eagle kitchens often include larger islands, walk-in pantries, and panel-ready appliances. Kuna and Star homes may have builder-grade layouts worth reconfiguring for open concept living.',
     ],
   },
@@ -93,7 +93,7 @@ const bathroomExtra: ContentSection[] = [
   {
     h2: 'Guest bath vs master bath costs in Idaho',
     paragraphs: [
-      'Guest baths and powder rooms in Star, Middleton, and Kuna often land between $15,500 and $45,000 for a full refresh. Master suites with curbless showers, niches, and premium tile commonly reach $35,000–$85,000+.',
+      'Guest baths and powder rooms in Star, Middleton, and Kuna often land between $18,000 and $45,000 for a full refresh. Master suites with curbless showers, niches, and premium tile commonly reach $35,000–$85,000+.',
     ],
   },
   {
@@ -198,7 +198,7 @@ const luxuryExtra: ContentSection[] = [
   {
     h2: 'What counts as a luxury remodel in Boise and Eagle?',
     paragraphs: [
-      'Custom millwork, book-matched stone, integrated lighting scenes, and high-performance windows define luxury programs - often $257,000–$603,000+ for multi-room scope.',
+      'Custom millwork, book-matched stone, integrated lighting scenes, and high-performance windows define luxury programs - often $200,000–$600,000+ for multi-room scope.',
     ],
   },
   {
@@ -235,9 +235,9 @@ const perSqFtExtra: ContentSection[] = [
       className: 'cost-table',
       headers: ['Context', '$/SF (indicative)'],
       rows: [
-        ['Whole-home major remodel', '$100 – $236+'],
+        ['Whole-home major remodel', '$100 – $200+'],
         ['Addition new construction portion', '$240 – $560'],
-        ['Mid kitchen (room SF only)', '$200 – $270'],
+        ['Mid kitchen (room SF only)', '$150 – $190'],
       ],
     },
   },
@@ -323,7 +323,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'kitchen-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('kitchen remodel cost', kitchenExtra)),
     quickAnswer:
-      'Full kitchen remodels in Boise and the Treasure Valley typically range from about $50,000 to $131,000+, driven by layout changes, cabinetry level, and finishes. Appliances are usually budgeted separately.',
+      'Full kitchen remodels in Boise and the Treasure Valley typically range from about $37,000 to $110,000+, driven by layout changes, cabinetry level, and finishes. Appliances are usually budgeted separately.',
     takeaways: [
       'Layout and structural changes are the largest cost swing.',
       'Cabinetry is often 30–40% of the construction budget.',
@@ -334,7 +334,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'bathroom-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('bathroom remodel cost', bathroomExtra)),
     quickAnswer:
-      'Guest bath remodels often run $15,500–$45,000; master baths with layout changes and curbless showers commonly reach $35,000–$85,000+ in Idaho.',
+      'Guest bath remodels often run $18,000–$45,000; master baths with layout changes and curbless showers commonly reach $35,000–$85,000+ in Idaho.',
     takeaways: [
       'Master and guest baths should not share one budget number.',
       'Curbless showers add waterproofing and labor.',
@@ -364,7 +364,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'luxury-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('luxury remodel cost', luxuryExtra)),
     quickAnswer:
-      'Luxury remodels in Eagle, the Foothills, and premium Boise neighborhoods often exceed $257,000 for multi-room scope, with heavy design development and custom finishes.',
+      'Luxury remodels in Eagle, the Foothills, and premium Boise neighborhoods often exceed $200,000 for multi-room scope, with heavy design development and custom finishes.',
     takeaways: [
       'Design time is part of the investment.',
       'HOA review affects calendar, not just aesthetics.',
@@ -374,7 +374,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'remodel-cost-per-square-foot-boise': {
     html: buildSectionsHtml(clusterSections('remodel cost per square foot', perSqFtExtra)),
     quickAnswer:
-      'Remodel cost per square foot in Boise varies by project type: whole-home major work often plans at $100–$236+ per affected SF; room-specific remodels should not use whole-house $/SF alone.',
+      'Remodel cost per square foot in Boise varies by project type: whole-home major work often plans at $100–$200+ per affected SF; room-specific remodels should not use whole-house $/SF alone.',
     takeaways: [
       'Use $/SF only with a defined scope.',
       'Kitchen $/SF is based on room size, not home SF.',
