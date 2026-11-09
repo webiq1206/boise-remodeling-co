@@ -34,7 +34,7 @@ export const KITCHEN_PILLAR = buildPillarGuide({
   hubSlug: 'kitchen-remodeling',
   tags: ['kitchen', 'boise', 'design'],
   quickAnswer:
-    'Treasure Valley kitchen remodels typically run 8–16 weeks of construction after design and permits, with budgets often from $45,000 to $120,000+ for full gut renovations with layout changes.',
+    'Treasure Valley kitchen remodels typically run 8–16 weeks of construction after design and permits, with budgets often from $37,000 to $110,000+ for full gut renovations with layout changes.',
   takeaways: [
     'Lock layout and MEP before finish selections.',
     'Cabinet lead times can drive the calendar - order at design lock.',

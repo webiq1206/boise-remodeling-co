@@ -339,7 +339,7 @@
           "anchor": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "title": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.44
+          "score": 0.423
         }
       ]
     },
@@ -2428,7 +2428,7 @@
           "anchor": "North End Remodeling Guide: What to Know Before You Remodel",
           "title": "North End Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.221
+          "score": 0.218
         }
       ]
     },
@@ -5033,7 +5033,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": -0.023
+          "score": -0.024
         },
         {
           "url": "/blog/punch-list-guide",
@@ -6889,7 +6889,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": 0.098
+          "score": 0.094
         },
         {
           "url": "/areas/boise",
@@ -7141,18 +7141,18 @@
           "score": 0.203
         },
         {
-          "url": "/blog/remodel-cost-per-square-foot-boise",
-          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "type": "blog",
-          "score": -0.046
-        },
-        {
           "url": "/blog/exterior-remodeling-roi",
           "anchor": "Exterior Remodeling ROI: Curb Appeal That Pays Off",
           "title": "Exterior Remodeling ROI: Curb Appeal That Pays Off",
           "type": "blog",
           "score": -0.047
+        },
+        {
+          "url": "/blog/design-build-vs-general-contractor",
+          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "type": "blog",
+          "score": -0.049
         }
       ]
     },
@@ -7205,9 +7205,9 @@
           "score": 0.203
         },
         {
-          "url": "/blog/design-build-vs-general-contractor",
-          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
-          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "url": "/blog/remodel-cost-per-square-foot-boise",
+          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
           "score": -0.049
         },
@@ -8290,7 +8290,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": 0.425
+          "score": 0.423
         },
         {
           "url": "/guides/eagle-remodeling-guide",
@@ -9122,7 +9122,7 @@
           "anchor": "Bathroom Remodel Cost in Boise: 2026 Guest vs. Primary Bath",
           "title": "Bathroom Remodel Cost in Boise: 2026 Guest vs. Primary Bath",
           "type": "blog",
-          "score": -0.1
+          "score": -0.117
         },
         {
           "url": "/blog/addition-roi-remodeling",

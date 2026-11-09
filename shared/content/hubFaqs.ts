@@ -11,7 +11,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How long does a kitchen remodel take?',
         answer:
-          'Expect 4–10 weeks for design and selections, 2–8 weeks for permits when layout changes, and 8–16 weeks of construction. Cabinet lead times often drive the calendar.',
+          'Expect 4–10 weeks for design and selections, 2–8 weeks for permits when layout changes, and 6–12 weeks of construction, up to about 16 for a full gut with layout changes. Cabinet lead times often drive the calendar.',
       },
       {
         question: 'Do I need permits for a kitchen remodel in Ada County?',

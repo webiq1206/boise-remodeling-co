@@ -11,7 +11,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   metaDescription:
     'How much does a bathroom remodel cost in Boise? 2026 planning ranges for guest and primary baths, walk-in showers, small bathrooms, permits, timelines, and ROI from a local design-build team.',
   excerpt:
-    'Guest bathroom remodels in Boise typically plan $18,000-$29,000, while primary bath and suite remodels run $45,000-$65,000. Here is the full cost breakdown and how to budget.',
+    'Mid-range guest bathroom remodels in Boise typically plan $18,000-$29,000, while high-end primary bath and suite remodels run $45,000-$65,000. Here is the full cost breakdown and how to budget.',
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -35,7 +35,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   quickAnswer:
     'A bathroom remodel in Boise typically costs $18,000-$29,000 for a mid-range guest or hall bath and $45,000-$65,000 for a high-end primary bathroom as of 2026. Small powder-room refreshes can run $7,000-$12,000, while luxury primary suites with curbless showers, freestanding tubs, and heated floors reach $73,000-$114,000. Tile work, plumbing changes, and fixture level drive the number most.',
   keyTakeaways: [
-    'Guest baths plan $18,000-$29,000; high-end primary baths $45,000-$65,000+ in Boise as of 2026.',
+    'Mid-range guest baths plan $18,000-$29,000; high-end primary baths $45,000-$65,000+ in Boise as of 2026.',
     'Tile and waterproofing labor is the biggest line item in most bathroom remodels.',
     'Moving plumbing, converting tub-to-shower, or going curbless adds meaningful cost.',
     'Permits are required when you change plumbing, electrical, or layout - handled in Ada or Canyon County.',
@@ -54,7 +54,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does it cost to remodel a bathroom in Boise?',
       answer:
-        'As of 2026, a guest or hall bathroom remodel in Boise typically plans $18,000-$29,000, and a primary bathroom runs $45,000-$65,000 or more. Powder-room updates can come in $7,000-$12,000. The largest variables are tile square footage, whether you move plumbing, and fixture level.',
+        'As of 2026, a mid-range guest or hall bathroom remodel in Boise typically plans $18,000-$29,000, and a high-end primary bathroom runs $45,000-$65,000 or more. Powder-room updates can come in $7,000-$12,000. The largest variables are tile square footage, whether you move plumbing, and fixture level.',
     },
     {
       question: 'How much does a small bathroom remodel cost in Boise?',
@@ -89,7 +89,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a bathroom remodel cost in Boise?</h2>
-<p><strong>As of 2026, a bathroom remodel in Boise typically costs $18,000-$29,000 for a guest or hall bath and $45,000-$65,000 or more for a primary bathroom.</strong> A small powder-room refresh can come in $7,000-$12,000, while a luxury primary suite with a curbless shower, freestanding tub, and heated floors exceeds $85,000. Guest and primary baths sit on very different budgets, so the first step is being clear about which one you are planning.</p>
+<p><strong>As of 2026, a bathroom remodel in Boise typically costs $18,000-$29,000 for a mid-range guest or hall bath and $45,000-$65,000 or more for a high-end primary bathroom.</strong> A small powder-room refresh can come in $7,000-$12,000, while a luxury primary suite with a curbless shower, freestanding tub, and heated floors exceeds $73,000. Guest and primary baths sit on very different budgets, so the first step is being clear about which one you are planning.</p>
 <p>The ranges below are planning ranges from real Treasure Valley design-build consultations. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a starting point, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
 <table class="cost-table">
 <thead><tr><th>Bathroom type</th><th>2026 Boise planning range</th><th>Typical scope</th></tr></thead>
@@ -97,7 +97,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
 <tr><td>Powder room</td><td>$8,000 - $15,000</td><td>Vanity, toilet, fixtures, paint, small tile area</td></tr>
 <tr><td>Guest / hall bath</td><td>$18,000 - $45,000</td><td>New tub or shower, vanity, tile, lighting, fixtures</td></tr>
 <tr><td>Primary bath</td><td>$35,000 - $85,000</td><td>Walk-in shower, double vanity, tile, upgraded fixtures</td></tr>
-<tr><td>Luxury primary suite</td><td>$85,000+</td><td>Curbless shower, freestanding tub, heated floors, custom tile</td></tr>
+<tr><td>Luxury primary suite</td><td>$73,000+</td><td>Curbless shower, freestanding tub, heated floors, custom tile</td></tr>
 </tbody>
 </table>
 

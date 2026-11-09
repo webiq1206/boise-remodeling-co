@@ -128,19 +128,19 @@ export const GBP_SERVICES: GbpService[] = [
     name: 'Bathroom remodeling',
     description:
       'Spa-quality bathroom transformations designed around how you actually live. Guest and primary baths.',
-    startingPrice: '$18,000',
+    startingPrice: '$7,000',
   },
   {
     name: 'Whole-home remodeling',
     description:
       'Cohesive whole-home renovations with a single project manager start to finish. Phased options available.',
-    startingPrice: '$180,000',
+    startingPrice: '$72,000',
   },
   {
     name: 'Room additions',
     description:
       'Thoughtfully designed additions that feel like they were always part of your home. Bump-outs to second-story additions.',
-    startingPrice: '$80,000',
+    startingPrice: '$25,000',
   },
   {
     name: 'ADU construction',
@@ -214,7 +214,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Bathroom Remodel',
-    price: 'From $18,000',
+    price: 'From $7,000',
     url: `${SITE}/services/bathroom-remodel`,
     description:
       'Guest and primary bathroom remodels with written scope before construction. Ada and Canyon County permits handled in-house.',
@@ -222,7 +222,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Whole-Home Remodel',
-    price: 'From $180,000',
+    price: 'From $72,000',
     url: `${SITE}/services/whole-home-remodel`,
     description:
       'Single project manager from design through final walkthrough. Weekly written updates and workmanship guarantee included.',
@@ -230,7 +230,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Room Addition',
-    price: 'From $80,000',
+    price: 'From $25,000',
     url: `${SITE}/services/room-addition`,
     description:
       'Bump-outs, primary suites, and second-story additions that look original to your home.',
@@ -431,7 +431,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   },
   {
     question: 'How long does a kitchen remodel take?',
-    answer: `Timelines depend on scope. A refresh may take 4–6 weeks; a full gut with layout changes often runs 10–16 weeks. We provide a week-by-week schedule before demo day. Process guide: ${SITE}/guides/boise-remodeling-process-guide`,
+    answer: `Timelines depend on scope. A refresh may take 4–6 weeks; a full gut with layout changes often runs 8–16 weeks of construction. We provide a week-by-week schedule before demo day. Process guide: ${SITE}/guides/boise-remodeling-process-guide`,
   },
   {
     question: 'How do I get started?',

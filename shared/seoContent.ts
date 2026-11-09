@@ -55,7 +55,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'kitchen remodel',
     answer: {
       question: 'What does a kitchen remodel in the Treasure Valley include and cost?',
-      text: 'A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of 2026, most mid-range Treasure Valley kitchens plan between $37,000 and $47,000, and most run 6 to 10 weeks from permit approval. Your exact range is confirmed after a free in-home visit.',
+      text: 'A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of 2026, most mid-range Treasure Valley kitchens plan between $37,000 and $47,000, and most run 6 to 12 weeks of on-site construction after permit approval, longer for a full gut with layout changes. Your exact range is confirmed after a free in-home visit.',
     },
     name: 'Kitchen Remodel',
     headline: 'Kitchen remodeling in Boise and the Treasure Valley',
@@ -76,7 +76,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Plumbing adjustments for sinks and fixtures',
       'Dust barriers, floor protection, and daily cleanup',
     ],
-    timeline: 'Most kitchen remodels run 6 to 10 weeks from permit approval, depending on layout changes and custom lead times.',
+    timeline: 'Most kitchen remodels run 6 to 12 weeks of on-site construction after permit approval, and up to about 16 weeks for a full gut with layout changes, depending on custom lead times.',
     processSteps: [
       { title: 'In-home consultation', description: 'We walk your space, discuss goals, and share a planning range on the spot.' },
       { title: 'Design and scope', description: 'You receive selections guidance and a written scope with your project investment.' },
@@ -107,7 +107,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does a kitchen remodel take in Boise?',
         answer:
-          'Most kitchen remodels run 6 to 10 weeks of construction after permit approval. Cabinet lead times can add several weeks before demo, so design lock is the real schedule driver.',
+          'Most kitchen remodels run 6 to 12 weeks of construction after permit approval, and up to about 16 weeks for a full gut with layout changes. Cabinet lead times can add several weeks before demo, so design lock is the real schedule driver.',
       },
       {
         question: 'Do I need a permit to remodel a kitchen in Idaho?',
@@ -298,7 +298,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does an ADU cost in the Treasure Valley?',
         answer:
-          'ADU investment typically ranges from $120,000 to $350,000 depending on size, detached or attached configuration, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope.',
+          'ADU investment typically ranges from $90,000 to $300,000 or more depending on size, detached or attached configuration, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope.',
       },
       {
         question: 'Do I need a permit for an ADU in Boise or Ada County?',
