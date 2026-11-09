@@ -55,7 +55,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'kitchen remodel',
     answer: {
       question: 'What does a kitchen remodel in the Treasure Valley include and cost?',
-      text: 'A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of 2026, most mid-range Treasure Valley kitchens plan between $37,000 and $47,000, and most run 6 to 10 weeks from permit approval. Your exact range is confirmed after a free in-home visit.',
+      text: 'A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of 2026, most mid-range Treasure Valley kitchens plan between $50,000 and $67,000, and most run 6 to 12 weeks of on-site construction after permit approval, longer for a full gut with layout changes. Your exact range is confirmed after a free in-home visit.',
     },
     name: 'Kitchen Remodel',
     headline: 'Kitchen remodeling in Boise and the Treasure Valley',
@@ -76,7 +76,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       'Plumbing adjustments for sinks and fixtures',
       'Dust barriers, floor protection, and daily cleanup',
     ],
-    timeline: 'Most kitchen remodels run 6 to 10 weeks from permit approval, depending on layout changes and custom lead times.',
+    timeline: 'Most kitchen remodels run 6 to 12 weeks of on-site construction after permit approval, and up to about 16 weeks for a full gut with layout changes, depending on custom lead times.',
     processSteps: [
       { title: 'In-home consultation', description: 'We walk your space, discuss goals, and share a planning range on the spot.' },
       { title: 'Design and scope', description: 'You receive selections guidance and a written scope with your project investment.' },
@@ -107,7 +107,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How long does a kitchen remodel take in Boise?',
         answer:
-          'Most kitchen remodels run 6 to 10 weeks of construction after permit approval. Cabinet lead times can add several weeks before demo, so design lock is the real schedule driver.',
+          'Most kitchen remodels run 6 to 12 weeks of construction after permit approval, and up to about 16 weeks for a full gut with layout changes. Cabinet lead times can add several weeks before demo, so design lock is the real schedule driver.',
       },
       {
         question: 'Do I need a permit to remodel a kitchen in Idaho?',
@@ -133,7 +133,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'Kitchen remodel cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, most Treasure Valley kitchen remodels plan between $37,000 and $47,000 for mid-range scope: new cabinetry, quartz or granite counters, tile backsplash, and updated plumbing and electrical. Cosmetic refreshes run $16,000 to $21,000, while full gut renovations with layout changes, custom cabinetry, and premium finishes commonly run $85,000 to $166,000.',
+        'As of 2026, most Treasure Valley kitchen remodels plan between $50,000 and $67,000 for mid-range scope: new cabinetry, quartz or granite counters, tile backsplash, and updated plumbing and electrical. Cosmetic refreshes run $14,000 to $18,500, while full gut renovations with layout changes, custom cabinetry, and premium finishes commonly run $97,000 to $166,000.',
         'These are planning ranges, not bids. Size, layout changes, and finish level drive the final number, which we confirm with a written scope after your free in-home visit.',
       ],
     },
@@ -175,7 +175,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'Bathroom remodel cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, guest bathroom remodels in the Boise area typically plan $18,000 to $45,000. Primary bathroom remodels with walk-in or curbless showers, double vanities, and tile work commonly plan $35,000 to $85,000 or more depending on layout changes and finish level.',
+        'As of 2026, guest bathroom remodels in the Boise area typically plan $15,500 to $45,000. Primary bathroom remodels with walk-in or curbless showers, double vanities, and tile work commonly plan $35,000 to $85,000 or more depending on layout changes and finish level.',
         'These are planning ranges, not bids. Waterproofing scope, plumbing relocations, and fixture selections drive the final number, which we confirm in a written scope after your free in-home visit.',
       ],
     },
@@ -267,7 +267,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'ADU conversion',
     answer: {
       question: 'What is an ADU conversion, and who builds new ADUs?',
-      text: 'An ADU conversion turns space you already have, a garage, a basement or an attached wing, into a self-contained living unit. Boise Remodeling Co designs and builds those conversions with permits handled in-house. As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. New detached ADUs are built by Boise Construction Co.',
+      text: 'An ADU conversion turns space you already have, a garage, a basement or an attached wing, into a self-contained living unit. Boise Remodeling Co designs and builds those conversions with permits handled in-house. As of 2026, garage conversions in the Boise area typically plan $123,000 to $227,000. New detached ADUs are built by Boise Construction Co.',
     },
     name: 'ADU / Guest House',
     headline: 'ADU conversions in the Treasure Valley',
@@ -298,7 +298,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does an ADU cost in the Treasure Valley?',
         answer:
-          'ADU investment typically ranges from $120,000 to $350,000 depending on size, detached or attached configuration, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope.',
+          'ADU investment typically ranges from $123,000 to $388,000 depending on size, detached or attached configuration, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope.',
       },
       {
         question: 'Do I need a permit for an ADU in Boise or Ada County?',
@@ -318,7 +318,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'Is a garage conversion cheaper than building a detached ADU?',
         answer:
-          'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000, versus $180,000 to $300,000+ for a detached new build. The tradeoff is losing garage storage and parking.',
+          'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $123,000 to $227,000, versus $188,000 to $356,000+ for a detached new build. The tradeoff is losing garage storage and parking.',
       },
       {
         question: 'Does an ADU need separate utilities?',
@@ -339,7 +339,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'ADU cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. Attached ADUs and basement conversions plan $120,000 to $250,000, and detached new-build ADUs plan $180,000 to $300,000 or more depending on size, utility connections, and finish level.',
+        'As of 2026, garage conversions in the Boise area typically plan $123,000 to $227,000. Attached ADUs plan $155,000 to $388,000, basement conversions plan $72,000 to $205,000, and detached new-build ADUs plan $188,000 to $356,000 or more depending on size, utility connections, and finish level.',
         'These are planning ranges, not bids. Site conditions and utility strategy drive ADU budgets more than any other project type, which is why feasibility review comes first in our process.',
       ],
     },
@@ -537,7 +537,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does a deck cost in Boise?',
         answer:
-          'A new deck in the Treasure Valley commonly plans $25,000 to $60,000 or more, depending on size, height, railing, and material. Composite decking costs more upfront than wood but lasts longer with less maintenance. Use our estimator for a planning range.',
+          'A new deck in the Treasure Valley commonly plans $25,000 to $75,000 or more, depending on size, height, railing, and material. Composite decking costs more upfront than wood but lasts longer with less maintenance. Use our estimator for a planning range.',
       },
       {
         question: 'Do I need a permit to build a deck or covered patio in Ada County?',

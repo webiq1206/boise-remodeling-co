@@ -27,8 +27,8 @@ export const BUDGET_WORKSHEET_BLOCKS: PdfBlock[] = [
     type: 'table',
     headers: ['Project', 'Low planning', 'High planning', 'Your target'],
     rows: [
-      ['Kitchen (full)', '$45,000', '$120,000+', '___________'],
-      ['Bath (guest)', '$18,000', '$45,000', '___________'],
+      ['Kitchen (full)', '$50,000', '$131,000+', '___________'],
+      ['Bath (guest)', '$15,500', '$45,000', '___________'],
       ['Bath (master)', '$35,000', '$85,000+', '___________'],
       ['Whole-home', '$180,000', '$425,000+', '___________'],
       ['Addition', '$80,000', '$250,000+', '___________'],

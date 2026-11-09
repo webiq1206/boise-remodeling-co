@@ -51,7 +51,7 @@ const costPillarFaqs = [
   {
     question: 'How much does a typical home remodel cost in Boise?',
     answer:
-      'Most homeowners should plan room-level budgets: kitchens often $37,000–$110,000+, master baths $35,000–$85,000+, and whole-home programs $180,000–$425,000+ depending on scope and finishes.',
+      'Most homeowners should plan room-level budgets: kitchens often $50,000–$131,000+, master baths $35,000–$85,000+, and whole-home programs $180,000–$425,000+ depending on scope and finishes.',
   },
   {
     question: 'Are remodeling costs higher in Eagle than in Meridian?',
@@ -286,7 +286,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       {
         question: 'How much does a kitchen remodel cost in Boise?',
         answer:
-          'Most full kitchen remodels plan between roughly $37,000 and $110,000+ depending on layout and cabinetry - see our cost guide for detail.',
+          'Most full kitchen remodels plan between roughly $50,000 and $131,000+ depending on layout and cabinetry - see our cost guide for detail.',
       },
       {
         question: 'What Boise neighborhoods do you serve?',
@@ -326,7 +326,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
     title: 'Boise ADU Guide: Rules, Costs & Building a Second Unit',
     seoTitle: 'Boise ADU Guide | Rules, Costs & Permits',
     metaDescription:
-      'Boise ADU guide: zoning rules, size limits, costs ($90k-$300k+), permits, and attached vs detached vs garage conversion for Treasure Valley lots.',
+      'Boise ADU guide: zoning rules, size limits, costs ($123k-$388k), permits, and attached vs detached vs garage conversion for Treasure Valley lots.',
     excerpt:
       'Everything Treasure Valley homeowners need to plan an accessory dwelling unit: Boise zoning rules, realistic costs, permits, and design choices.',
     content: BOISE_ADU_GUIDE_HTML,

@@ -175,7 +175,7 @@ const UNIVERSAL_ASSUMPTIONS = [
   "Work runs in one continuous phase with normal site access",
   "Standard lead times, with no expedited or special-order surcharges",
   "Finishes come from the allowances set during design",
-  "2025 Boise-area labor and material costs",
+  "Planning model built from 2025 Boise-area cost data; a written quote uses current pricing",
   // "A typical project with no major structural issues" used to sit here and
   // said the same thing as the first line, which already covers structure.
 ];

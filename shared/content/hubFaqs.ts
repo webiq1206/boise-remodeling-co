@@ -6,12 +6,12 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How much does a kitchen remodel cost in Boise?',
         answer:
-          'Most full kitchen remodels in the Treasure Valley plan between roughly $37,000 and $110,000+ depending on layout changes, cabinetry line, and finishes. Guest-scale refreshes cost less; open-concept structural work costs more.',
+          'Most full kitchen remodels in the Treasure Valley plan between roughly $50,000 and $131,000+ depending on layout changes, cabinetry line, and finishes. Guest-scale refreshes cost less; open-concept structural work costs more.',
       },
       {
         question: 'How long does a kitchen remodel take?',
         answer:
-          'Expect 4–10 weeks for design and selections, 2–8 weeks for permits when layout changes, and 8–16 weeks of construction. Cabinet lead times often drive the calendar.',
+          'Expect 4–10 weeks for design and selections, 2–8 weeks for permits when layout changes, and 6–12 weeks of construction, up to about 16 for a full gut with layout changes. Cabinet lead times often drive the calendar.',
       },
       {
         question: 'Do I need permits for a kitchen remodel in Ada County?',
@@ -48,7 +48,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How much does a bathroom remodel cost in Meridian or Boise?',
         answer:
-          'Guest bath refreshes often plan $18,000–$45,000. Master baths with curbless showers and layout changes commonly reach $35,000–$85,000+ in Ada County.',
+          'Guest bath refreshes often plan $15,500–$45,000. Master baths with curbless showers and layout changes commonly reach $35,000–$85,000+ in Ada County.',
       },
       {
         question: 'What is different about a curbless shower install?',
