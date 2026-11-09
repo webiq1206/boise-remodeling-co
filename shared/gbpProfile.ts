@@ -140,7 +140,7 @@ export const GBP_SERVICES: GbpService[] = [
     name: 'Room additions',
     description:
       'Thoughtfully designed additions that feel like they were always part of your home. Bump-outs to second-story additions.',
-    startingPrice: '$80,000',
+    startingPrice: '$96,000',
   },
   {
     name: 'ADU construction',
@@ -230,7 +230,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Room Addition',
-    price: 'From $80,000',
+    price: 'From $96,000',
     url: `${SITE}/services/room-addition`,
     description:
       'Bump-outs, primary suites, and second-story additions that look original to your home.',
