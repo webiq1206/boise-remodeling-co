@@ -6,7 +6,7 @@
  */
 
 export const BOISE_ADU_GUIDE_QUICK_ANSWER =
-  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. Most Treasure Valley ADU projects plan $135,000 to $365,000 depending on whether the unit is attached, detached, or a garage conversion, with compact units starting near $90,000, and take 4 to 8 months from design through final inspection.';
+  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. Most Treasure Valley ADU projects plan $90,000 to $300,000 or more depending on whether the unit is attached, detached, or a garage conversion, with compact units starting near $90,000, and take 4 to 8 months from design through final inspection.';
 
 export const BOISE_ADU_GUIDE_TAKEAWAYS = [
   'Boise updated its zoning code in December 2023 and made ADUs easier to approve in most residential zones - verify current standards with the City of Boise Planning Division before design.',
@@ -29,7 +29,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'How much does an ADU cost to build in the Treasure Valley?',
     answer:
-      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $65,000 to $135,000; attached ADUs $135,000 to $335,000; detached new-build ADUs $150,000 to $365,000. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
+      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $90,000 to $180,000; attached ADUs and basement conversions $120,000 to $250,000; detached new-build ADUs $180,000 to $300,000 or more. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
   },
   {
     question: 'Do ADUs need their own utility connections?',
@@ -105,9 +105,9 @@ export const BOISE_ADU_GUIDE_HTML = `
 <table class="cost-table">
   <thead><tr><th>ADU type</th><th>Planning range</th><th>Typical timeline</th></tr></thead>
   <tbody>
-    <tr><td>Garage conversion</td><td>$65,000 - $135,000</td><td>3 to 5 months</td></tr>
-    <tr><td>Attached ADU / basement conversion</td><td>$135,000 - $335,000</td><td>4 to 6 months</td></tr>
-    <tr><td>Detached new-build ADU</td><td>$150,000 - $365,000</td><td>5 to 8 months</td></tr>
+    <tr><td>Garage conversion</td><td>$90,000 - $180,000</td><td>3 to 5 months</td></tr>
+    <tr><td>Attached ADU / basement conversion</td><td>$120,000 - $250,000</td><td>4 to 6 months</td></tr>
+    <tr><td>Detached new-build ADU</td><td>$180,000 - $300,000+</td><td>5 to 8 months</td></tr>
   </tbody>
 </table>
 <p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. Foundation work, separate utility runs, and premium finishes push detached units toward the top of the band. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or <a href="/#request">request a quote</a> for your property.</p>

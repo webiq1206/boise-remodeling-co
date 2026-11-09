@@ -92,7 +92,7 @@ export const WAVE1_COST_CLUSTERS: BlogPostData[] = [
     'Kitchen Remodel Cost Boise (2026 Planning Ranges)',
     'Kitchen Remodel Cost Boise | Treasure Valley',
     'Kitchen remodel cost in Boise, Meridian, and Eagle: cabinets, layout changes, timelines, and budgeting tips from a local design-build team.',
-    'Full kitchen remodels in Boise typically range from about $45,000 to $120,000+ depending on layout, cabinetry, and finishes.',
+    'Full kitchen remodels in Boise typically range from about $37,000 to $110,000+ depending on layout, cabinetry, and finishes.',
     ['kitchen', 'cost', 'boise', 'meridian'],
   ),
   makeCostCluster(

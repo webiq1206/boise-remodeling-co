@@ -50,7 +50,7 @@ const kitchenExtra: ContentSection[] = [
   {
     h2: 'Timeline and how it affects cash flow',
     paragraphs: [
-      'Kitchen remodels typically run 8–16 weeks after permits and materials are released. Long-lead cabinets can add 8–12 weeks to the front of the schedule - order at design lock.',
+      'Kitchen remodels typically run 6–12 weeks of construction after permits and materials are released, and up to about 16 weeks for a full gut with layout changes. Long-lead cabinets can add 8–12 weeks to the front of the schedule - order at design lock.',
     ],
     table: {
       className: 'timeline-table',
@@ -236,8 +236,8 @@ const perSqFtExtra: ContentSection[] = [
       headers: ['Context', '$/SF (indicative)'],
       rows: [
         ['Whole-home major remodel', '$100 – $200+'],
-        ['Addition new construction portion', '$200 – $350+'],
-        ['Mid kitchen (room SF only)', '$250 – $450+'],
+        ['Addition new construction portion', '$240 – $560'],
+        ['Mid kitchen (room SF only)', '$150 – $190'],
       ],
     },
   },
@@ -323,7 +323,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'kitchen-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('kitchen remodel cost', kitchenExtra)),
     quickAnswer:
-      'Full kitchen remodels in Boise and the Treasure Valley typically range from about $45,000 to $120,000+, driven by layout changes, cabinetry level, and finishes. Appliances are usually budgeted separately.',
+      'Full kitchen remodels in Boise and the Treasure Valley typically range from about $37,000 to $110,000+, driven by layout changes, cabinetry level, and finishes. Appliances are usually budgeted separately.',
     takeaways: [
       'Layout and structural changes are the largest cost swing.',
       'Cabinetry is often 30–40% of the construction budget.',
