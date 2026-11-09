@@ -39,19 +39,19 @@ export const SERVICES: ServiceData[] = [
     slug: 'bathroom-remodel',
     name: 'Bathroom Remodel',
     shortDescription: 'Spa-quality bathroom transformations designed around how you actually live.',
-    planningFrom: '$18k',
+    planningFrom: '$7k',
   },
   {
     slug: 'whole-home-remodel',
     name: 'Whole-Home Remodel',
     shortDescription: 'Cohesive whole-home renovations with a single project manager start to finish.',
-    planningFrom: '$180k',
+    planningFrom: '$72k',
   },
   {
     slug: 'room-addition',
     name: 'Room Addition',
     shortDescription: 'Thoughtfully designed additions that feel like they were always part of your home.',
-    planningFrom: '$96k',
+    planningFrom: '$25k',
   },
   {
     slug: 'adu',
