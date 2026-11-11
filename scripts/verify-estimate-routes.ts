@@ -80,6 +80,22 @@ async function consultationShortRequests() {
     assert.equal(intake(callback.sent).best_time, 'Morning');
     assert.equal(intake(callback.sent).contact_preference, 'call');
 
+    // Step 1's optional project address (owner, 11 November 2026) is plain text on the same
+    // address field step 2 uses: it reaches the stored lead, the CRM forward and p5 intake.
+    // No address sends the same blank as before, and a callback carries none.
+    const addressed = await post({ name: 'Gus Verifier', phone: '2085550148', email: '', address: ' 456 Oak Ave, Boise, ID 83702 ', message: 'Hall bathroom remodel', contactPreference: 'text' });
+    assert.equal(addressed.status, 200, JSON.stringify(addressed.body));
+    assert.equal(crm(addressed.sent).propertyAddress, '456 Oak Ave, Boise, ID 83702');
+    assert.equal(intake(addressed.sent).address, '456 Oak Ave, Boise, ID 83702');
+    const { loadAcceptedRequest: loadAddressed } = await import('../server/services/inquiryAcceptance');
+    const addressedRow = await loadAddressed(addressed.body.requestId);
+    assert.deepEqual([addressedRow?.address, addressedRow?.zip], ['456 Oak Ave, Boise, ID 83702', '83702']);
+    assert.equal(crm(request.sent).propertyAddress, undefined, 'no address: nothing is sent');
+    const blankRow = await loadAddressed(request.body.requestId);
+    assert.equal(blankRow?.address, '', 'no address: the same blank as before');
+    const callbackAddressed = await post({ name: 'Gus Verifier', phone: '2085550148', callback: '1', contactPreference: 'call', address: '456 Oak Ave, Boise, ID 83702' });
+    assert.equal(crm(callbackAddressed.sent).propertyAddress, undefined, 'a callback is name and phone only');
+
     // With an email the written request still carries it to every destination.
     const emailed = await post({ name: 'Bo Verifier', phone: '2085550143', email: 'bo@example.com', message: 'Bathroom tile and a new vanity', contactPreference: 'email' });
     assert.equal(emailed.status, 200, JSON.stringify(emailed.body));
@@ -162,6 +178,38 @@ async function consultationShortRequests() {
     })();
     assert.equal((await details({ requestId, token: expired, details: { timing: 'Soon' } })).status, 410, 'an expired token is refused');
     assert.equal((await details({ requestId: 'isolated-999', token: issueRequestDetailsToken('isolated-999'), details: { timing: 'Soon' } })).status, 404, 'an unknown request is refused');
+
+    // The consult dialog (owner, 11 November 2026) is the short request too. With a carried
+    // planning range it posts JSON as requestKind "short": no email, no address, the notes
+    // built the way the multipart reader builds them, and the range recomputed server-side.
+    const postJson = async (payload: Record<string, unknown>) => {
+      sent.length = 0;
+      const response = await POST(new NextRequest('http://127.0.0.1/api/consultation', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ requestKind: 'short', inquiryId: crypto.randomUUID(), formStartedAt: Date.now() - 5000, website: '', ...payload }),
+      }));
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      return { status: response.status, body: await response.json(), sent: [...sent] };
+    };
+    const carried = { project: 'kitchen', finish: 'mid-range', sqft: 180, priceLow: 1, priceHigh: 2, roi: 0, confidence: 'Planning range' };
+    const dialog = await postJson({ name: 'Flo Verifier', phone: '2085550147', email: '', projectType: 'kitchen', message: 'New cabinets and an island\n\nPreferred contact: Text me', contactPreference: 'text', estimate: carried });
+    assert.equal(dialog.status, 200, JSON.stringify(dialog.body));
+    assert.equal(dialog.body.accepted, true);
+    assert.equal(typeof dialog.body.requestId, 'string', 'step 2 is offered on the dialog request too');
+    assert.equal(typeof dialog.body.detailsToken, 'string');
+    assert.equal(crm(dialog.sent).finalNotes, 'New cabinets and an island\n\nPreferred contact: Text me');
+    assert.equal(crm(dialog.sent).preferredContactMethod, 'text');
+    assert.deepEqual(crm(dialog.sent).projectTypes, ['kitchen'], 'the carried range names the project');
+    assert.equal(crm(dialog.sent).email, 'no-email+2085550147@boiseremodeling.co', 'email stays optional on the dialog request');
+    const carriedEstimate = crm(dialog.sent).estimate as { projectType: string; sizeSqft: number; priceLow: number; priceHigh: number };
+    assert.deepEqual([carriedEstimate.projectType, carriedEstimate.sizeSqft], ['kitchen', 180]);
+    assert.ok(carriedEstimate.priceLow > 1000 && carriedEstimate.priceHigh > carriedEstimate.priceLow, 'the range is recomputed server-side, never the client numbers');
+    assert.equal(intake(dialog.sent).request_kind, 'quote');
+    const dialogCallback = await postJson({ name: 'Flo Verifier', phone: '2085550147', email: '', projectType: 'kitchen', message: 'CALLBACK REQUEST: call Flo Verifier at 2085550147. Best time: Any time.', contactPreference: 'call', callback: true, bestTime: 'Any time', estimate: carried });
+    assert.equal(dialogCallback.status, 200, JSON.stringify(dialogCallback.body));
+    assert.equal(intake(dialogCallback.sent).request_kind, 'callback');
+    assert.equal((await postJson({ name: 'Flo Verifier', phone: '2085550147', projectType: 'kitchen', message: 'short', estimate: carried })).status, 400, 'a written dialog request still needs a description');
 
     // The full consultation form keeps its required email and address.
     const full = await POST(new NextRequest('http://127.0.0.1/api/consultation', {

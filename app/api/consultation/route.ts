@@ -21,7 +21,7 @@ import {
   formatUsd,
 } from "@/server/services/consultationEmail";
 import type { PropertyProfile } from "@/shared/propertyProfile";
-import { HOUSE_NUMBER_REGEX } from "@/shared/addressValidation";
+import { HOUSE_NUMBER_REGEX, extractZip } from "@/shared/addressValidation";
 import {
   EMPTY_REFINEMENTS,
   calculateEstimate,
@@ -327,6 +327,9 @@ async function readShortMultipart(
   const phone = String(form.get("phone") ?? "");
   const preference = String(form.get("contactPreference") ?? "").trim();
   const bestTime = String(form.get("bestTime") ?? "").trim().slice(0, 40);
+  // Optional project address (step 1, owner 11 November 2026): plain text, never required. It
+  // rides the same address field the full form and step 2 use; a callback carries none.
+  const address = callback ? "" : String(form.get("address") ?? "").trim().slice(0, 300);
   if (!callback && note.length < 8) {
     return {
       ok: false,
@@ -404,6 +407,7 @@ async function readShortMultipart(
       name,
       phone,
       email: String(form.get("email") ?? "").trim(),
+      ...(address ? { address, zip: extractZip(address) } : {}),
       projectType: SHORT_REQUEST_PROJECT_TYPE,
       message,
       ...(pendingFiles.length ? { pendingFiles } : {}),

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { Plus } from "lucide-react";
 import { AttachmentTile } from "@/components/approved/AttachmentTile";
 import { trackEvent } from "@/lib/analytics";
 import {
   saveRequestDetails,
+  uploadRequestFile,
   uploadRequestFiles,
   type FileUpload,
   type RequestFollowUp,
@@ -17,16 +19,28 @@ function validEmail(value: string): boolean {
 }
 
 /**
- * Step 2 of the short request: "Help us prepare (optional)", on the success screen.
- * Everything here is optional and adds to the SAME lead through /api/consultation/details.
- * Nothing step 1 already asked is asked again (email only appears when step 1 had none).
+ * Step 2 of the short request, on the success screen: ONE quiet text toggle (a native details,
+ * closed, no box), "Add photos, plans or details (optional)". Opened, its fields sit inline with
+ * no panel around them and add a few details and files to the SAME lead through
+ * /api/consultation/details. Nothing step 1 already asked is asked again (email only appears
+ * when step 1 had none), and leaving it closed needs no action.
+ *
+ * It used to sit open under the confirmation as "Help us prepare (optional)" with a Skip button,
+ * and a client read it as the form asking for more before the request counted (11 November
+ * 2026). There is no Skip now: leaving the dropdown closed is skipping.
+ *
+ * A file that fails to upload says so by name and offers "Try again" or texting it; the request
+ * itself is already saved and never depends on it.
  */
 export function RequestDetailsPanel({
   followUp,
   askEmail,
+  askAddress = true,
 }: {
   followUp: RequestFollowUp;
   askEmail: boolean;
+  /** False when step 1 already has the address: step 2 never re-asks what step 1 has. */
+  askAddress?: boolean;
 }) {
   const uid = useId();
   const ids = (name: string) => `${uid}-${name}`;
@@ -36,13 +50,15 @@ export function RequestDetailsPanel({
   const [email, setEmail] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [uploads, setUploads] = useState<FileUpload[]>([]);
-  const [state, setState] = useState<"open" | "saving" | "saved" | "skipped">("open");
+  const [state, setState] = useState<"open" | "saving" | "saved">("open");
   const [message, setMessage] = useState("");
   const [emailError, setEmailError] = useState("");
+  /** Some file did not upload when the details were saved: the saved state lists the files. */
+  const [retryable, setRetryable] = useState(false);
   const savedRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    if (state === "saved" || state === "skipped") savedRef.current?.focus({ preventScroll: true });
+    if (state === "saved") savedRef.current?.focus({ preventScroll: true });
   }, [state]);
 
   async function onSave(event: React.FormEvent<HTMLFormElement>) {
@@ -62,7 +78,7 @@ export function RequestDetailsPanel({
       ...(cleanEmail ? { email: cleanEmail } : {}),
     };
     if (!Object.keys(fields).length && !files.length) {
-      setMessage("Add a detail first, or skip this step.");
+      setMessage("Add a detail or a file above. If you have nothing to add, you are already done.");
       return;
     }
     setState("saving");
@@ -88,18 +104,21 @@ export function RequestDetailsPanel({
         files_added: keys.length,
       });
     }
-    setFiles(done.flatMap((upload) => (upload.status === "failed" ? [upload.file] : [])));
+    setFiles([]);
+    setRetryable(done.some((upload) => upload.status === "failed"));
     setState("saved");
   }
 
-  const failed = uploads.filter((upload) => upload.status === "failed");
-
-  if (state === "skipped") {
-    return (
-      <p className="fold-next" ref={savedRef} tabIndex={-1}>
-        No problem. We have what we need to get started.
-      </p>
-    );
+  /** After "Saved": one more try for a file that did not upload, added to the same lead. */
+  async function retryFile(index: number) {
+    const target = uploads[index];
+    if (!target || target.status !== "failed") return;
+    const set = (next: FileUpload) => setUploads((current) => current.map((upload, at) => (at === index ? next : upload)));
+    set({ file: target.file, status: "uploading" });
+    const result = await uploadRequestFile(followUp, target.file);
+    if (result.status !== "stored") return set(result);
+    const saved = await saveRequestDetails(followUp, {}, [result.key]);
+    set(saved.ok ? result : { file: target.file, status: "failed", message: "We could not add it to your request." });
   }
 
   if (state === "saved") {
@@ -108,33 +127,45 @@ export function RequestDetailsPanel({
         <p className="fold-details-title" ref={savedRef} tabIndex={-1}>
           Saved. Thank you.
         </p>
-        {failed.length > 0 && (
-          <p className="fold-field-error" role="status">
-            {failed.map((upload) => upload.file.name).join(", ")} did not upload.{" "}
-            <a className="fold-inline-link" href={SITE_CONFIG.phoneSmsHref}>
-              Text it to us
-            </a>{" "}
-            instead.
-          </p>
+        {retryable && (
+          <ul className="fold-upload-list" data-testid="request-uploads" aria-live="polite">
+            {uploads.map((upload, index) => (
+              <li key={`${upload.file.name}-${index}`} data-status={upload.status}>
+                <span className="fold-chip-name" data-clarity-mask="True">
+                  {upload.file.name}
+                </span>
+                <span className="fold-upload-state">
+                  {upload.status === "uploading" ? "Uploading" : upload.status === "stored" ? "Added" : "Did not upload"}
+                </span>
+                {upload.status === "failed" && (
+                  <span className="fold-upload-fail">
+                    {upload.message}{" "}
+                    <button type="button" className="fold-secondary" onClick={() => void retryFile(index)}>
+                      Try again<span className="sr-only"> {upload.file.name}</span>
+                    </button>{" "}
+                    or{" "}
+                    <a className="fold-inline-link" href={SITE_CONFIG.phoneSmsHref}>
+                      text it to us
+                    </a>
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     );
   }
 
   return (
-    <form
-      className="fold-details"
-      onSubmit={onSave}
-      noValidate
-      aria-labelledby={ids("title")}
-      data-clarity-mask="True"
-      data-testid="request-details"
-    >
-      <h3 className="fold-details-title" id={ids("title")}>
-        Help us prepare (optional)
-      </h3>
-      <p className="fold-hint">A few details help us give you a closer quote on the first call.</p>
-
+    // The panel keeps its test id on the wrapper; the dropdown inside it starts closed.
+    <section className="fold-details" data-clarity-mask="True" data-testid="request-details">
+      <details className="fold-toggle" data-testid="quote-details-disclosure">
+        <summary>
+          <Plus size={16} aria-hidden="true" />
+          <span id={ids("title")}>Add photos, plans or details (optional)</span>
+        </summary>
+        <form className="fold-toggle-body" onSubmit={onSave} noValidate aria-labelledby={ids("title")}>
       <fieldset className="fold-reach">
         <legend>Project type</legend>
         <div className="fold-pills fold-pills-wrap">
@@ -154,6 +185,7 @@ export function RequestDetailsPanel({
         </div>
       </fieldset>
 
+      {askAddress && (
       <div className="fold-field">
         <label htmlFor={ids("address")}>Address or ZIP code</label>
         <input
@@ -166,6 +198,7 @@ export function RequestDetailsPanel({
           maxLength={300}
         />
       </div>
+      )}
 
       <fieldset className="fold-reach">
         <legend>When would you like to start?</legend>
@@ -188,7 +221,7 @@ export function RequestDetailsPanel({
 
       {askEmail && (
         <div className="fold-field">
-          <label htmlFor={ids("email")}>Email (optional)</label>
+          <label htmlFor={ids("email")}>Email</label>
           <input
             id={ids("email")}
             data-clarity-mask="True"
@@ -208,7 +241,7 @@ export function RequestDetailsPanel({
         </div>
       )}
 
-      <AttachmentTile files={files} onChange={setFiles} title="Add more photos, plans or files" testId="request-details-attachments" />
+      <AttachmentTile files={files} onChange={setFiles} testId="request-details-attachments" />
 
       {state === "saving" && uploads.some((upload) => upload.status === "uploading") && (
         <p className="fold-next" role="status">
@@ -224,10 +257,9 @@ export function RequestDetailsPanel({
         <button className="fold-submit" type="submit" disabled={state === "saving"}>
           {state === "saving" ? "Saving" : "Save details"}
         </button>
-        <button type="button" className="fold-secondary" onClick={() => setState("skipped")}>
-          Skip
-        </button>
       </div>
-    </form>
+        </form>
+      </details>
+    </section>
   );
 }

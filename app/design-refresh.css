@@ -351,9 +351,6 @@
 }
 /* The short request (components/approved/HeroConversion): the form every "Request a quote"
    lands on. One column, labels always visible, 48px targets, native radio pills. */
-.approved-shell.site-remodeling .fold-call,
-.approved-shell.site-remodeling .fold-text,
-.approved-shell.site-remodeling .fold-chat,
 .approved-shell.site-remodeling .fold-submit,
 .approved-shell.site-remodeling .fold-optional-open {
   display: inline-flex;
@@ -375,9 +372,6 @@
   font-size: 16px;
   min-height: 56px;
 }
-.approved-shell.site-remodeling .fold-call,
-.approved-shell.site-remodeling .fold-text,
-.approved-shell.site-remodeling .fold-chat,
 .approved-shell.site-remodeling .fold-optional-open {
   background: transparent;
   color: var(--color-charcoal);
@@ -479,11 +473,34 @@
   padding: 0;
   min-width: 0;
 }
+/* "Send a request" | "Have us call you": two native radios drawn as one inline text link in the
+   quiet line under the send button. Only the mode you are not in shows. */
 .approved-shell.site-remodeling .fold-mode {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--color-charcoal);
-  border-radius: 2px;
+  display: inline;
+}
+.approved-shell.site-remodeling .fold-mode-option {
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  color: var(--color-charcoal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .fold-mode-option.sr-only { position: absolute; }
+.approved-shell.site-remodeling .fold-mode-option input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.approved-shell.site-remodeling .fold-mode[data-mode="request"] .fold-mode-option span { text-transform: lowercase; }
+.approved-shell.site-remodeling .fold-mode-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-charcoal);
+  outline-offset: 2px;
 }
 .approved-shell.site-remodeling .fold-reach > legend { margin-bottom: 6px; }
 .approved-shell.site-remodeling .fold-pills {
@@ -519,11 +536,6 @@
   font: 600 15px/1.2 var(--font-manrope), Arial, sans-serif;
   text-align: center;
 }
-.approved-shell.site-remodeling .fold-mode .fold-pill span {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-}
 .approved-shell.site-remodeling .fold-pill input:checked + span {
   background: var(--color-charcoal);
   border-color: var(--color-charcoal);
@@ -553,33 +565,82 @@
   color: #8a3b2b;
   font-size: 15px;
 }
-/* Call, text or chat sit right above the send button on a phone, beside it on a wide card. */
-.approved-shell.site-remodeling .fold-send {
-  display: grid;
-  gap: 14px;
-}
-.approved-shell.site-remodeling .fold-talk {
-  display: grid;
-  gap: 8px;
-  padding-top: 14px;
-  border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 14.9%, transparent);
-}
-.approved-shell.site-remodeling .fold-talk-title {
+/* Clean layout (owner, 11 November 2026: "it cannot look cluttered"): below the heading the form
+   has two text styles only, the field label and this one muted small line. */
+.approved-shell.site-remodeling .fold-quiet {
   margin: 0;
-  font: 600 15px/1.4 var(--font-manrope), Arial, sans-serif;
+  font: 500 14px/1.5 var(--font-manrope), Arial, sans-serif;
+  color: #555b56;
+}
+.approved-shell.site-remodeling .fold-quiet a,
+.approved-shell.site-remodeling .fold-quiet button {
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: var(--color-charcoal);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }
-.approved-shell.site-remodeling .fold-talk-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.approved-shell.site-remodeling .fold-talk-actions .fold-call { flex: 1 1 100%; }
-.approved-shell.site-remodeling .fold-talk-actions .fold-text,
-.approved-shell.site-remodeling .fold-talk-actions .fold-chat { flex: 1 1 0; }
-.approved-shell.site-remodeling .fold-send-main {
+/* Name and phone side by side from 640px, stacked below. */
+.approved-shell.site-remodeling .fold-row {
   display: grid;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+@media (min-width: 640px) {
+  .approved-shell.site-remodeling .fold-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+/* The quiet text toggle that holds everything optional: one muted line with a small plus, no
+   border, no background, no panel. Opened, its fields sit in the normal field flow. */
+.approved-shell.site-remodeling .fold-toggle { min-width: 0; }
+.approved-shell.site-remodeling .fold-toggle > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  list-style: none;
+  cursor: pointer;
+  font: 500 14px/1.5 var(--font-manrope), Arial, sans-serif;
+  color: #555b56;
+}
+.approved-shell.site-remodeling .fold-toggle > summary::-webkit-details-marker { display: none; }
+.approved-shell.site-remodeling .fold-toggle > summary:hover { color: var(--color-charcoal); }
+.approved-shell.site-remodeling .fold-toggle > summary:focus-visible {
+  outline: 2px solid var(--color-charcoal);
+  outline-offset: 2px;
+}
+.approved-shell.site-remodeling .fold-toggle > summary > svg {
+  flex: none;
+  transition: transform 0.15s ease;
+}
+.approved-shell.site-remodeling .fold-toggle[open] > summary > svg { transform: rotate(45deg); }
+.approved-shell.site-remodeling .fold-toggle-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin: 0;
+  padding-top: 16px;
+}
+/* The sent state: a tick beside the thanks. */
+.approved-shell.site-remodeling .fold-sent-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: clamp(26px, 3.4vw, 34px);
+}
+.approved-shell.site-remodeling .fold-tick {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  margin-top: 2px;
+  border-radius: 2px;
+  background: var(--color-charcoal);
+  color: #fbfaf6;
 }
 .approved-shell.site-remodeling .fold-submit { width: 100%; }
 .approved-shell.site-remodeling .fold-submit:disabled { opacity: 0.6; }
@@ -596,7 +657,7 @@
 }
 .approved-shell.site-remodeling .fold-done {
   display: grid;
-  gap: 12px;
+  gap: 16px;
 }
 .approved-shell.site-remodeling .fold-secondary {
   justify-self: start;
@@ -606,9 +667,9 @@
   text-underline-offset: 3px;
 }
 .approved-shell.site-remodeling .fold-success {
-  margin: 0;
+  margin: 12px 0 0;
   color: var(--color-charcoal);
-  font-size: 17px;
+  font: 500 16px/1.5 var(--font-manrope), Arial, sans-serif;
 }
 /* Where the bottom bar shows, a control scrolled or tabbed into view clears it instead of
    settling underneath it (the send button sat exactly under the bar at 1024px). */
@@ -769,13 +830,11 @@
 .approved-shell.site-remodeling .fold-details {
   display: grid;
   gap: 16px;
-  margin: 8px 0 0;
-  padding: 20px 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 14.9%, transparent);
+  margin: 0;
 }
 .approved-shell.site-remodeling .fold-details-title {
   margin: 0;
-  font: 600 18px/1.35 var(--font-manrope), Arial, sans-serif;
+  font: 600 15px/1.4 var(--font-manrope), Arial, sans-serif;
   color: var(--color-charcoal);
   outline: none;
 }
@@ -796,23 +855,10 @@
   gap: 8px 20px;
 }
 .approved-shell.site-remodeling .fold-details-actions .fold-submit { width: auto; flex: 1 1 220px; }
-.approved-shell.site-remodeling .fold-details-actions .fold-secondary {
-  min-height: 48px;
-  padding: 0 4px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-@media (min-width: 1024px) {
-  .approved-shell.site-remodeling .fold-send {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    align-items: start;
-    gap: 20px;
-    padding-top: 16px;
-    border-top: 1px solid color-mix(in srgb, var(--color-charcoal) 14.9%, transparent);
-  }
-  .approved-shell.site-remodeling .fold-send-main { order: -1; }
-  .approved-shell.site-remodeling .fold-talk { padding-top: 0; border-top: 0; }
+/* The consult dialog is a portal on <body>, outside the page shell: its content carries the
+   shell classes, so it is the same paper surface as the page and the form sits directly on it. */
+.approved-shell.site-remodeling.consult-dialog {
+  min-height: 0;
 }
 .approved-shell.site-remodeling .fold-optional {
   background: #f1ede4;
@@ -1070,9 +1116,11 @@ body[data-assistant-open="true"] [data-mobile-nav-bar] { display: none !importan
   font: 300 clamp(36px, 5vw, 52px) / 1.08 var(--font-cormorant), Georgia, serif;
   letter-spacing: -0.03em;
 }
-.approved-shell.site-remodeling .estimate-short-form .fold-form button[type="submit"],
-.approved-shell.site-remodeling .estimate-short-form .fold-submit {
-  min-height: 44px;
+.approved-shell.site-remodeling .estimate-short-form {
+  display: grid;
+  gap: 24px;
+  width: min(40rem, calc(100% - 48px));
+  margin: 40px auto 72px;
 }
 
 /*
@@ -1606,3 +1654,21 @@ body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wi
   }
 }
 .approved-shell.site-remodeling .fold-pill span { padding: 0 8px; }
+/* The quiet lines keep their links inline: the phone rule in globals.css (tel links outside a
+   paragraph become 44px flex rows on a phone) would break the sentence onto three lines. */
+.approved-shell.site-remodeling .fold-quiet a {
+  display: inline;
+  min-height: 0;
+}
+/* One heading at a time in the consult dialog: once the request is sent, the thanks is the heading
+   and the dialog title stays for screen readers only. */
+.approved-shell.site-remodeling.consult-dialog:has(.fold-done) > .fold-form-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+/* Keeps a link and the full stop after it on one line. */
+.approved-shell.site-remodeling .fold-nowrap { white-space: nowrap; }

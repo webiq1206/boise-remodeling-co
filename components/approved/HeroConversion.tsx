@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
-import { MessageSquare, Phone } from "lucide-react";
-import { AttachmentTile } from "@/components/approved/AttachmentTile";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
+import { Check, Plus } from "lucide-react";
 import { RequestDetailsPanel } from "@/components/approved/RequestDetailsPanel";
 import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
-import { TextReplyLine } from "@/components/TextReplyLine";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
 import {
   getOrCreateInquiryId,
@@ -15,16 +14,9 @@ import {
 } from "@/lib/inquiryTracking";
 import { hasPassedGate, PREFILL_UPDATED_EVENT, readStoredPrefill } from "@/lib/leadPrefill";
 import { captureMarketingAttribution } from "@/lib/marketingAttributionBrowser";
-import {
-  saveRequestDetails,
-  uploadRequestFile,
-  uploadRequestFiles,
-  type FileUpload,
-  type RequestFollowUp,
-} from "@/lib/requestFollowUp";
-import { CTA_FORM_MICROCOPY } from "@/shared/ctaCopy";
+import type { RequestFollowUp } from "@/lib/requestFollowUp";
 import { SHORT_REQUEST_PROJECT_TYPE } from "@/shared/requestDetails";
-import { SITE_CONFIG, TEXT_REPLY_HOURS } from "@/shared/siteConfig";
+import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /** Filed under this project type, as the short request always has been (GA4 generate_lead, CRM). */
 const PROJECT_TYPE = SHORT_REQUEST_PROJECT_TYPE;
@@ -34,6 +26,8 @@ type Reach = "call" | "text" | "email";
 type Field = "note" | "name" | "phone" | "email";
 type Errors = Partial<Record<Field, string>>;
 
+/** Text by default: this site has a text line (TextReplyLine) and the backend accepts "text". */
+const DEFAULT_REACH: Reach = "text";
 const REACH_OPTIONS: { value: Reach; label: string }[] = [
   { value: "call", label: "Call me" },
   { value: "text", label: "Text me" },
@@ -52,29 +46,62 @@ function validEmail(value: string): boolean {
 }
 
 /**
- * The short request: the one form every "Request a quote" lands on (homepage #request-form,
- * and the contact page through ConsultationForm variant="short").
+ * A planning range carried into the request (the consult dialog, components/modals/ConsultDialog).
+ * Plain data: this form never imports the estimate engine, so the homepage bundle stays small.
+ */
+export interface AttachedEstimatePayload {
+  project: string;
+  [key: string]: unknown;
+}
+
+/**
+ * The short request: the one form every "Request a quote" lands on (homepage #request-form, the
+ * contact page through ConsultationForm variant="short", and the consult dialog).
  *
- * Owner request, 1 November 2026: the easiest form there is. What they need first, then an
- * optional attachment tile, name, phone, optional email and how to reach them, one send. "Have us
- * call you" reduces it to name and phone (plus an optional best time) and posts through the same
- * /api/consultation pipeline, marked as a callback request. Call and text stay beside the send.
+ * Owner request, 1 November 2026: the easiest form there is. 11 November 2026, twice: nothing
+ * optional is shown until asked for, and then "it cannot look cluttered. It needs to look very
+ * clean." So the form holds fields, one button and two quiet lines, and nothing else:
  *
- * Quote form v2 (owner, 1 November 2026: "the more information we have, the better"): two steps.
- * Step 1 above captures the lead and nothing else waits on it. Files upload one by one AFTER the
- * lead is saved, and step 2 ("Help us prepare", on the success screen) adds details to the SAME
- * lead through the request id and short-lived token step 1 returned.
+ *   (the heading)
+ *   What can we help with?
+ *   Name, Phone  (side by side from 640px)
+ *   + Add address, email or contact preference (optional)   a quiet text toggle, no box
+ *   Send request
+ *   Prefer to talk? Call (number) or have us call you.
+ *   No obligation. Privacy Policy.
+ *
+ * After sending (components/approved/RequestDetailsPanel holds step 2): a tick, the thanks, one
+ * sentence ending "Nothing else is needed.", the quiet toggle "Add photos, plans or details
+ * (optional)" that adds to the SAME lead, and one line with the phone number.
+ *
+ * "Have us call you" is the same pair of native radios it always was (request-mode-request,
+ * request-mode-callback; scripts/p5-launcher-forms.mjs clicks their labels), drawn as the text
+ * link in the line under the button: only the mode you are not in shows. It reduces the form to
+ * name, phone and a best time (that script waits for the best time to be visible) and posts
+ * through the same /api/consultation pipeline, marked as a callback request.
  *
  * Native elements only (no Radix primitives), so nothing here sets state during hydration.
  */
 export function HeroConversion({
   blockId = "request-form",
   recovery = false,
+  showTitle = true,
+  intro,
+  estimate = null,
+  onAccepted,
 }: {
   /** Id of the form block. The homepage keeps "request-form" (scripts/verify-p5-mobile-seo.mjs). */
   blockId?: string;
   /** Report progress like the consultation form does (contact page). */
   recovery?: boolean;
+  /** False where the surface already shows its own heading (the consult dialog title). */
+  showTitle?: boolean;
+  /** Shown above the first field, in both modes (the dialog's "Planning range attached" chip). */
+  intro?: ReactNode;
+  /** A planning range to send with this request; the server recomputes it before storing it. */
+  estimate?: AttachedEstimatePayload | null;
+  /** Called once the request is accepted (the dialog clears its carried range). */
+  onAccepted?: () => void;
 } = {}) {
   const uid = useId();
   const ids = (name: string) => `${uid}-${name}`;
@@ -83,12 +110,14 @@ export function HeroConversion({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  // Optional, plain text, never validated beyond its length (owner, 11 November 2026).
+  const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
-  // Text by default: this site has a text line (TextReplyLine) and the backend accepts "text".
-  const [reach, setReach] = useState<Reach>("text");
+  const [reach, setReach] = useState<Reach>(DEFAULT_REACH);
+  /** The step 1 dropdown of optional fields (email, how to reach you); closed until asked for. */
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const [bestTime, setBestTime] = useState(BEST_TIMES[0]);
   const [website, setWebsite] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
   const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
   const [submitTried, setSubmitTried] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -99,10 +128,9 @@ export function HeroConversion({
     phone: string;
     emailed: boolean;
     hadEmail: boolean;
+    hadAddress: boolean;
     followUp: RequestFollowUp | null;
   } | null>(null);
-  const [uploads, setUploads] = useState<FileUpload[]>([]);
-  const [attachNote, setAttachNote] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLHeadingElement>(null);
   const callback = mode === "callback";
@@ -113,7 +141,15 @@ export function HeroConversion({
       const prefill = readStoredPrefill();
       if (prefill.name) setName((value) => value || prefill.name || "");
       if (prefill.phone) setPhone((value) => value || prefill.phone || "");
-      if (prefill.email) setEmail((value) => value || prefill.email || "");
+      if (prefill.address) {
+        setAddress((value) => value || prefill.address || "");
+        setOptionsOpen(true);
+      }
+      if (prefill.email) {
+        setEmail((value) => value || prefill.email || "");
+        // Anything already entered in the optional dropdown is shown, never hidden.
+        setOptionsOpen(true);
+      }
     };
     apply();
     try {
@@ -146,37 +182,7 @@ export function HeroConversion({
   const errors = validate();
   const shown = (field: Field) => ((submitTried || touched[field]) && errors[field]) || "";
   const touch = (field: Field) => () => setTouched((current) => ({ ...current, [field]: true }));
-  const engaged = Boolean(name || phone || note || email || files.length);
-
-  async function attach(followUp: RequestFollowUp, done: FileUpload[]) {
-    const keys = done.flatMap((upload) => (upload.status === "stored" ? [upload.key] : []));
-    if (!keys.length) return;
-    const saved = await saveRequestDetails(followUp, {}, keys);
-    if (!saved.ok) {
-      setUploads((current) =>
-        current.map((upload) =>
-          upload.status === "stored" && keys.includes(upload.key)
-            ? { file: upload.file, status: "failed", message: "We could not add it to your request." }
-            : upload,
-        ),
-      );
-    }
-  }
-
-  async function sendFiles(followUp: RequestFollowUp, list: File[]) {
-    const done = await uploadRequestFiles(followUp, list, setUploads);
-    await attach(followUp, done);
-  }
-
-  async function retryFile(index: number) {
-    const followUp = done?.followUp;
-    const target = uploads[index];
-    if (!followUp || !target) return;
-    setUploads((current) => current.map((upload, at) => (at === index ? { file: upload.file, status: "uploading" } : upload)));
-    const result = await uploadRequestFile(followUp, target.file);
-    setUploads((current) => current.map((upload, at) => (at === index ? result : upload)));
-    await attach(followUp, [result]);
-  }
+  const engaged = Boolean(name || phone || note || email || address);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -186,33 +192,68 @@ export function HeroConversion({
     const found = validate();
     const first = FIELD_ORDER.find((field) => found[field]);
     if (first) {
-      formRef.current?.querySelector<HTMLElement>(`[data-field="${first}"]`)?.focus();
+      const focusFirst = () => formRef.current?.querySelector<HTMLElement>(`[data-field="${first}"]`)?.focus();
+      if (first === "email" && !optionsOpen) {
+        // The email sits in the optional dropdown: open it, then focus the field.
+        setOptionsOpen(true);
+        window.requestAnimationFrame(focusFirst);
+      } else focusFirst();
       return;
     }
     setBusy(true);
     try {
-      const body = new FormData();
-      body.set("inquiryId", getOrCreateInquiryId());
-      body.set("formStartedAt", String(startedAt));
-      body.set("website", website);
-      body.set("name", name.trim());
-      body.set("phone", phone.trim());
-      if (callback) {
-        body.set("callback", "1");
-        body.set("contactPreference", "call");
-        body.set("bestTime", bestTime);
-      } else {
-        body.set("email", email.trim());
-        body.set("message", note.trim());
-        body.set("contactPreference", reach);
-      }
-      // Names only: the files themselves upload after the lead is saved. Files picked before
-      // switching to "Have us call you" still go, so nothing chosen silently vanishes.
-      if (files.length) body.set("pendingFiles", JSON.stringify(files.map((file) => file.name.slice(0, 120))));
-      if (hasPassedGate()) body.set("skipEmail", "1");
       const attribution = captureMarketingAttribution();
-      if (attribution) body.set("attribution", JSON.stringify(attribution));
-      const res = await fetch("/api/consultation", { method: "POST", body });
+      let res: Response;
+      if (estimate) {
+        // A carried planning range rides the JSON side of the same route, as a short request.
+        // The notes are built the way the route builds them for the multipart short request.
+        const reachLabel = REACH_OPTIONS.find((option) => option.value === reach)?.label;
+        const message = callback
+          ? `CALLBACK REQUEST: call ${name.trim()} at ${phone.trim()}. Best time: ${bestTime || "Any time"}.`
+          : [note.trim(), reachLabel ? `Preferred contact: ${reachLabel}` : ""].filter(Boolean).join("\n\n");
+        res = await fetch("/api/consultation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            requestKind: "short",
+            inquiryId: getOrCreateInquiryId(),
+            formStartedAt: startedAt,
+            website,
+            name: name.trim(),
+            phone: phone.trim(),
+            email: callback ? "" : email.trim(),
+            ...(!callback && address.trim() ? { address: address.trim() } : {}),
+            projectType: estimate.project,
+            message,
+            contactPreference: callback ? "call" : reach,
+            ...(callback ? { callback: true, bestTime } : {}),
+            estimate,
+            ...(hasPassedGate() ? { skipEmail: true } : {}),
+            ...(attribution ? { attribution } : {}),
+          }),
+        });
+      } else {
+        const body = new FormData();
+        body.set("inquiryId", getOrCreateInquiryId());
+        body.set("formStartedAt", String(startedAt));
+        body.set("website", website);
+        body.set("name", name.trim());
+        body.set("phone", phone.trim());
+        if (callback) {
+          body.set("callback", "1");
+          body.set("contactPreference", "call");
+          body.set("bestTime", bestTime);
+        } else {
+          body.set("email", email.trim());
+          body.set("address", address.trim());
+          body.set("message", note.trim());
+          body.set("contactPreference", reach);
+        }
+        // Files are added on step 2, after the lead is saved; step 1 sends none.
+        if (hasPassedGate()) body.set("skipEmail", "1");
+        if (attribution) body.set("attribution", JSON.stringify(attribution));
+        res = await fetch("/api/consultation", { method: "POST", body });
+      }
       const data = (await res.json().catch(() => null)) as
         | (AcceptedInquiryResponse & { message?: string; requestId?: string; detailsToken?: string })
         | null;
@@ -221,7 +262,7 @@ export function HeroConversion({
         setBusy(false);
         return;
       }
-      trackAcceptedInquiry(data, PROJECT_TYPE);
+      trackAcceptedInquiry(data, estimate?.project || PROJECT_TYPE);
       markEstimatorCompleted("consultation");
       rotateInquiryId();
       try {
@@ -229,9 +270,9 @@ export function HeroConversion({
       } catch {
         /* storage unavailable */
       }
+      onAccepted?.();
       const followUp =
         data.requestId && data.detailsToken ? { requestId: data.requestId, token: data.detailsToken } : null;
-      const toUpload = files;
       setDone({
         firstName: name.trim().split(/\s+/)[0] || name.trim(),
         mode,
@@ -239,11 +280,9 @@ export function HeroConversion({
         // The copy goes out with the internal email; say so only when delivery went through.
         emailed: !callback && Boolean(email.trim()) && data.delivery !== "pending_retry",
         hadEmail: !callback && Boolean(email.trim()),
+        hadAddress: !callback && Boolean(address.trim()),
         followUp,
       });
-      // The lead is saved. Files go now, one at a time; a failure costs only that file.
-      if (toUpload.length && followUp) void sendFiles(followUp, toUpload);
-      else if (toUpload.length) setAttachNote("Your files were not sent from here.");
     } catch {
       setServerError("We could not send that. Try again, or call us.");
       setBusy(false);
@@ -258,27 +297,19 @@ export function HeroConversion({
     </p>
   );
 
-  const talk = (
-    <div className="fold-talk">
-      <p className="fold-talk-title">Prefer to talk?</p>
-      <div className="fold-talk-actions">
-        <a className="fold-call" href={SITE_CONFIG.phoneHref}>
-          <Phone size={18} aria-hidden="true" />
-          Call {SITE_CONFIG.phone}
-        </a>
-        <a className="fold-text" href={SITE_CONFIG.phoneSmsHref}>
-          Text us
-        </a>
-        <button
-          type="button"
-          className="fold-chat"
-          onClick={() => window.dispatchEvent(new Event("p5:assistant-open"))}
-        >
-          <MessageSquare size={18} aria-hidden="true" />
-          Chat
-        </button>
-      </div>
-    </div>
+  const modeOption = (value: Mode, label: string) => (
+    <label className={mode === value ? "fold-mode-option sr-only" : "fold-mode-option"}>
+      <input
+        data-clarity-mask="True"
+        type="radio"
+        name="requestMode"
+        value={value}
+        checked={mode === value}
+        onChange={() => setMode(value)}
+        data-testid={`request-mode-${value}`}
+      />
+      <span>{label}</span>
+    </label>
   );
 
   return (
@@ -301,67 +332,23 @@ export function HeroConversion({
       {done ? (
         <div className="fold-done" data-testid="consultation-success" data-clarity-mask="True">
           <div role="status">
-            <h2 ref={successRef} tabIndex={-1} className="fold-form-title" data-clarity-mask="True">
-              Thanks, {done.firstName}. We have your request.
+            <h2 ref={successRef} tabIndex={-1} className="fold-form-title fold-sent-title" data-clarity-mask="True">
+              <span className="fold-tick" aria-hidden="true">
+                <Check size={18} />
+              </span>
+              <span>Thanks, {done.firstName}. We have your request.</span>
             </h2>
-            <p className="fold-success">
+            <p className="fold-success" data-testid="quote-all-set">
               {done.mode === "callback"
                 ? `We will call you at ${done.phone} during business hours.`
-                : "We will answer your questions and help you find a time to visit. You get a written scope before any price."}
+                : "We will answer your questions and help you find a time to visit."}{" "}
+              Nothing else is needed.
             </p>
           </div>
-          {done.emailed && <p className="fold-next">A copy of your request is on its way to your inbox.</p>}
-          <p className="fold-next">
-            Prefer to talk now? <a className="fold-inline-link" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a>
+          {done.followUp && <RequestDetailsPanel followUp={done.followUp} askEmail={!done.hadEmail} askAddress={!done.hadAddress} />}
+          <p className="fold-quiet">
+            Prefer to talk? <a className="fold-call" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a>.
           </p>
-          <TextReplyLine className="fold-text-reply" />
-
-          {uploads.length > 0 && (
-            <div className="fold-uploads" data-testid="request-uploads" aria-live="polite">
-              <p className="fold-details-title">
-                {uploads.some((upload) => upload.status === "uploading")
-                  ? `Adding your files (${uploads.filter((upload) => upload.status !== "uploading").length} of ${uploads.length})`
-                  : uploads.every((upload) => upload.status === "stored")
-                    ? `${uploads.length === 1 ? "Your file is" : `All ${uploads.length} files are`} on your request.`
-                    : "Some files did not upload."}
-              </p>
-              <ul className="fold-upload-list">
-                {uploads.map((upload, index) => (
-                  <li key={`${upload.file.name}-${index}`} data-status={upload.status}>
-                    <span className="fold-chip-name" data-clarity-mask="True">
-                      {upload.file.name}
-                    </span>
-                    <span className="fold-upload-state">
-                      {upload.status === "uploading" ? "Uploading" : upload.status === "stored" ? "Added" : "Did not upload"}
-                    </span>
-                    {upload.status === "failed" && (
-                      <span className="fold-upload-fail">
-                        {upload.message}{" "}
-                        <button type="button" className="fold-secondary" onClick={() => void retryFile(index)}>
-                          Try again<span className="sr-only"> {upload.file.name}</span>
-                        </button>{" "}
-                        or{" "}
-                        <a className="fold-inline-link" href={SITE_CONFIG.phoneSmsHref}>
-                          text it to us
-                        </a>
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {attachNote && (
-            <p className="fold-field-error" role="status">
-              {attachNote}{" "}
-              <a className="fold-inline-link" href={SITE_CONFIG.phoneSmsHref}>
-                Text them to {SITE_CONFIG.phone}
-              </a>
-              .
-            </p>
-          )}
-
-          {done.followUp && <RequestDetailsPanel followUp={done.followUp} askEmail={!done.hadEmail} />}
         </div>
       ) : (
         <form
@@ -371,39 +358,15 @@ export function HeroConversion({
           data-request-mode={mode}
           onSubmit={onSubmit}
           noValidate
-          aria-labelledby={ids("title")}
+          aria-labelledby={showTitle ? ids("title") : undefined}
+          aria-label={showTitle ? undefined : callback ? "Request a call" : "Request a quote"}
         >
-          <h2 className="fold-form-title" id={ids("title")}>
-            {callback ? "Request a call" : "Request a quote"}
-          </h2>
-
-          <fieldset className="fold-mode">
-            <legend className="sr-only">How do you want to start?</legend>
-            <label className="fold-pill">
-              <input
-                data-clarity-mask="True"
-                type="radio"
-                name="requestMode"
-                value="request"
-                checked={!callback}
-                onChange={() => setMode("request")}
-                data-testid="request-mode-request"
-              />
-              <span>Send a request</span>
-            </label>
-            <label className="fold-pill">
-              <input
-                data-clarity-mask="True"
-                type="radio"
-                name="requestMode"
-                value="callback"
-                checked={callback}
-                onChange={() => setMode("callback")}
-                data-testid="request-mode-callback"
-              />
-              <span>Have us call you</span>
-            </label>
-          </fieldset>
+          {showTitle && (
+            <h2 className="fold-form-title" id={ids("title")}>
+              {callback ? "Request a call" : "Request a quote"}
+            </h2>
+          )}
+          {intro}
 
           {!callback && (
             <>
@@ -427,11 +390,10 @@ export function HeroConversion({
                 />
                 {fieldError("note")}
               </div>
-
-              <AttachmentTile files={files} onChange={setFiles} />
             </>
           )}
 
+          <div className="fold-row">
           <div className="fold-field">
             <label htmlFor={ids("name")}>Name</label>
             <input
@@ -473,6 +435,7 @@ export function HeroConversion({
             />
             {fieldError("phone")}
           </div>
+          </div>
 
           {callback ? (
             <div className="fold-field">
@@ -491,14 +454,35 @@ export function HeroConversion({
                   </option>
                 ))}
               </select>
-              <p className="fold-hint">
-                We call during business hours ({TEXT_REPLY_HOURS}). You can add photos or details after you send.
-              </p>
             </div>
           ) : (
-            <>
+            // Everything optional sits behind this one quiet text toggle: no box, no panel.
+            <details
+              className="fold-toggle"
+              open={optionsOpen}
+              onToggle={(event) => setOptionsOpen(event.currentTarget.open)}
+              data-testid="quote-options"
+            >
+              <summary>
+                <Plus size={16} aria-hidden="true" />
+                Add address, email or contact preference (optional)
+              </summary>
+              <div className="fold-toggle-body">
               <div className="fold-field">
-                <label htmlFor={ids("email")}>Email (optional)</label>
+                <label htmlFor={ids("address")}>Project address</label>
+                <input
+                  id={ids("address")}
+                  data-clarity-mask="True"
+                  data-testid="input-address"
+                  name="address"
+                  autoComplete="street-address"
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
+                  maxLength={300}
+                />
+              </div>
+              <div className="fold-field">
+                <label htmlFor={ids("email")}>Email</label>
                 <input
                   id={ids("email")}
                   data-field="email"
@@ -511,13 +495,11 @@ export function HeroConversion({
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   onBlur={touch("email")}
+                  aria-required={reach === "email" ? "true" : undefined}
                   aria-invalid={shown("email") ? true : undefined}
-                  aria-describedby={describedBy("email", ids("email-hint"))}
+                  aria-describedby={describedBy("email")}
                   maxLength={200}
                 />
-                <p className="fold-hint" id={ids("email-hint")}>
-                  For a written copy of your request.
-                </p>
                 {fieldError("email")}
               </div>
 
@@ -540,7 +522,8 @@ export function HeroConversion({
                   ))}
                 </div>
               </fieldset>
-            </>
+              </div>
+            </details>
           )}
 
           <input
@@ -563,17 +546,37 @@ export function HeroConversion({
               Check the {Object.keys(errors).length === 1 ? "field" : "fields"} marked above.
             </p>
           ) : null}
-          <div className="fold-send">
-            {talk}
-            <div className="fold-send-main">
-              <button className="fold-submit" type="submit" disabled={busy} data-testid="button-send-request">
-                {busy ? "Sending" : callback ? "Request a call" : "Send request"}
-              </button>
-              <p className="fold-next">
-                {callback ? "We call you back during business hours." : CTA_FORM_MICROCOPY}
-              </p>
-            </div>
+          <button className="fold-submit" type="submit" disabled={busy} data-testid="button-send-request">
+            {busy ? "Sending" : callback ? "Request a call" : "Send request"}
+          </button>
+          {/* One quiet line. The two native mode radios live in it: only the mode you are not in
+              shows, as a text link; the active one stays in the DOM, checked and announced. */}
+          <div className="fold-quiet fold-talk">
+            {callback ? (
+              "Rather write it down? "
+            ) : (
+              <>
+                Prefer to talk? <a className="fold-call" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a> or{" "}
+              </>
+            )}
+            {/* The link and its full stop stay together: the label is an inline block, so the
+                full stop could otherwise wrap onto a line of its own on a phone. */}
+            <span className="fold-nowrap">
+              <fieldset className="fold-mode" data-mode={mode}>
+                <legend className="sr-only">How do you want to start?</legend>
+                {modeOption("request", "Send a request")}
+                {modeOption("callback", "Have us call you")}
+              </fieldset>
+              .
+            </span>
           </div>
+          <p className="fold-quiet">
+            No obligation.{" "}
+            <Link className="fold-quiet-link" href="/privacy-policy" prefetch={false}>
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </form>
       )}
     </div>

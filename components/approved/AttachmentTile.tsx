@@ -89,7 +89,7 @@ export function AttachmentTile({
             {title}
           </span>
           <span className="fold-tile-hint" id={`${uid}-hint`}>
-            Optional. Photos, PDFs or drawings. Up to {MAX_REQUEST_FILES} files, {MAX_REQUEST_FILE_MB} MB each.
+            Photos, PDFs or drawings. Up to {MAX_REQUEST_FILES} files, {MAX_REQUEST_FILE_MB} MB each.
           </span>
         </span>
         <input

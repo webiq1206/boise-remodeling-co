@@ -6,6 +6,9 @@ const hero = readFileSync("components/approved/ApprovedHomeHero.tsx", "utf8");
 const convert = readFileSync("components/approved/HeroConversion.tsx", "utf8");
 const tile = readFileSync("components/approved/AttachmentTile.tsx", "utf8");
 const detailsPanel = readFileSync("components/approved/RequestDetailsPanel.tsx", "utf8");
+const estimatePage = readFileSync("app/estimate/page.tsx", "utf8");
+const recoveryPrompt = readFileSync("components/estimate/recovery/AbandonmentPrompt.tsx", "utf8");
+const consultDialog = readFileSync("components/modals/ConsultDialog.tsx", "utf8");
 const followUpClient = readFileSync("lib/requestFollowUp.ts", "utf8");
 const home = readFileSync("components/approved/ApprovedHome.tsx", "utf8");
 const intake = readFileSync("components/approved/OptionalIntake.tsx", "utf8");
@@ -38,7 +41,8 @@ test("the first screen is the video and headline, and the short request is the f
   // two. The longer consultation form used to
   // sit in a closed "Prefer the longer form" disclosure under the short request; Step 2 on the
   // success screen now asks for the address and project type, so the homepage carries only
-  // the short request. The long form lives on in the consult dialog.
+  // the short request. Since 11 November 2026 the consult dialog shows the short request too
+  // (see the dialog test below); the long form is still in ConsultationForm.tsx, unmounted.
   assert.doesNotMatch(homePage, /<ConsultationForm/);
   assert.doesNotMatch(homePage, /home-request-more/);
   assert.doesNotMatch(css, /max-height:\s*56px/);
@@ -48,11 +52,14 @@ test("the first screen is the video and headline, and the short request is the f
   assert.match(css, /--site-bottom-bar-h:\s*calc\(72px/);
   assert.match(bar, /data-mobile-nav-bar=""/);
   assert.match(brand, /phoneActions: \['call', 'text', 'chat'\]/);
+  // Clean layout (owner, 11 November 2026): the form's quiet line carries the call link only;
+  // text and chat stay in the header and the bottom bar (phoneActions above).
   assert.match(convert, /className="fold-call"/);
-  assert.match(convert, /className="fold-chat"/);
-  assert.match(convert, /p5:assistant-open/);
+  assert.doesNotMatch(convert, /fold-chat|fold-text"|p5:assistant-open/);
   // Quote form v2: the file control is the attachment tile (a native input, visually hidden).
-  assert.match(convert, /<AttachmentTile files=\{files\} onChange=\{setFiles\} \/>/);
+  // Owner, 11 November 2026: nothing optional on step 1, so the tile lives on step 2 only.
+  assert.doesNotMatch(convert, /AttachmentTile/);
+  assert.match(detailsPanel, /<AttachmentTile files=\{files\} onChange=\{setFiles\} testId="request-details-attachments" \/>/);
   assert.match(tile, /type="file"/);
   assert.match(tile, /accept=\{REQUEST_FILE_ACCEPT\}/);
   // Owner request (1 November 2026): the easiest form there is. Email became optional on the
@@ -63,8 +70,18 @@ test("the first screen is the video and headline, and the short request is the f
   assert.match(convert, /Send request/);
   assert.match(convert, /data-clarity-mask="True"/);
   assert.match(convert, /type="email"/);
-  assert.match(convert, />Email \(optional\)</);
-  assert.match(convert, /For a written copy of your request\./);
+  // Round 3 (owner, 11 November 2026): the toggle already says "(optional)", so no label inside
+  // an opened optional section repeats it. It stays only where it is the one marker.
+  assert.match(convert, /<label htmlFor=\{ids\("email"\)\}>Email<\/label>/);
+  assert.match(detailsPanel, /<label htmlFor=\{ids\("email"\)\}>Email<\/label>/);
+  for (const [name, source] of [["step 1", convert], ["step 2", detailsPanel], ["tile", tile]] as const) {
+    const repeats = (source.replace(/\/\*[\s\S]*?\*\//g, "").match(/\(optional\)|Optional\./g) ?? []).length;
+    const allowed = name === "step 1" ? 2 : name === "step 2" ? 1 : 0;
+    assert.equal(repeats, allowed, `${name}: "(optional)" only on the toggle summary and on best time to call`);
+  }
+  // The mode link and its full stop never split across lines on a phone.
+  assert.match(convert, /<span className="fold-nowrap">\s*<fieldset className="fold-mode"[\s\S]{0,320}<\/fieldset>\s*\.\s*<\/span>/);
+  assert.match(css, /\.fold-nowrap \{ white-space: nowrap; \}/);
   assert.match(convert, /if \(cleanEmail && !validEmail\(cleanEmail\)\) errors\.email/);
   assert.match(convert, /!cleanEmail && reach === "email"/);
   assert.match(route, /email: z\.string\(\)\.email\(\)/);
@@ -78,24 +95,61 @@ test("the first screen is the video and headline, and the short request is the f
 // Owner request (1 November 2026): every Request a quote lands ON the form, the form is the
 // simplest one there is, and calling or being called back is always beside it.
 test("the short request is one native step with call, text and a callback beside it", () => {
-  // Quote form v2 order: what they need FIRST, the attachment tile, name, phone, optional email,
-  // how to reach them, send. The validation order follows it.
-  const order = ["What can we help with?", "<AttachmentTile", 'htmlFor={ids("name")}', 'htmlFor={ids("phone")}', 'htmlFor={ids("email")}', "How should we reach you?", 'className="fold-submit"'].map((marker) => convert.indexOf(marker));
-  assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1])), "field order");
+  // Clean layout (owner, 11 November 2026, "it cannot look cluttered"): the heading, what they
+  // need FIRST, name and phone in one row, ONE quiet text toggle holding everything optional
+  // (address, email, how to reach them), one send button, one quiet line with the call link and
+  // the mode radios, one small "No obligation" line. Nothing else is in the form.
+  const formStart = convert.indexOf("<form");
+  assert.ok(formStart > 0);
+  const order = ["{intro}", "What can we help with?", 'className="fold-row"', 'htmlFor={ids("name")}', 'htmlFor={ids("phone")}', 'data-testid="quote-options"', "Add address, email or contact preference (optional)", 'htmlFor={ids("address")}', 'htmlFor={ids("email")}', "How should we reach you?", "</details>", 'className="fold-submit"', 'className="fold-quiet fold-talk"', "Prefer to talk?", 'className="fold-mode"', "No obligation.", 'href="/privacy-policy"', "</form>"].map((marker) => convert.indexOf(marker, formStart));
+  assert.ok(order.every((at, i) => at > 0 && (i === 0 || at > order[i - 1])), `field order ${order.join(",")}`);
+  // The toggle is a native details that starts closed, opens for a prefilled address or email,
+  // and opens (then focuses the email) when validation needs the email. It is a line of text,
+  // never a box: no border and no background on the details or its summary.
+  assert.match(convert, /const \[optionsOpen, setOptionsOpen\] = useState\(false\);/);
+  assert.match(convert, /<details\s+className="fold-toggle"\s+open=\{optionsOpen\}/);
+  assert.match(convert, /if \(prefill\.address\) \{[\s\S]{0,160}setOptionsOpen\(true\);/);
+  assert.match(convert, /if \(prefill\.email\) \{[\s\S]{0,260}setOptionsOpen\(true\);/);
+  assert.match(convert, /if \(first === "email" && !optionsOpen\) \{[\s\S]{0,160}setOptionsOpen\(true\);\s*window\.requestAnimationFrame\(focusFirst\);/);
+  const toggleRules = [...css.matchAll(/\.fold-toggle[^{]*\{[^}]*\}/g)].map((rule) => rule[0]).join("\n");
+  assert.ok(toggleRules.length > 0);
+  assert.doesNotMatch(toggleRules, /border|background/);
+  // The optional address: plain text, never required or validated, sent on the same field the
+  // route already stores; a callback carries none, and step 2 does not ask for it again.
+  assert.match(convert, /<label htmlFor=\{ids\("address"\)\}>Project address<\/label>[\s\S]{0,260}autoComplete="street-address"/);
+  assert.doesNotMatch(convert, /errors\.address/);
+  assert.match(convert, /body\.set\("address", address\.trim\(\)\);/);
+  assert.match(convert, /\.\.\.\(!callback && address\.trim\(\) \? \{ address: address\.trim\(\) \} : \{\}\),/);
+  assert.match(convert, /askAddress=\{!done\.hadAddress\}/);
+  assert.match(detailsPanel, /\{askAddress && \(\s*<div className="fold-field">\s*<label htmlFor=\{ids\("address"\)\}>Address or ZIP code<\/label>/);
+  assert.match(route, /const address = callback \? "" : String\(form\.get\("address"\) \?\? ""\)\.trim\(\)\.slice\(0, 300\);/);
+  // Exactly one submit button, and nothing the clean layout removed has come back: no step
+  // indicator, no tabs, no footnote under the button, no boxed dropdown, no hint paragraphs.
+  assert.equal(convert.slice(formStart).match(/type="submit"/g)?.length, 1);
+  assert.doesNotMatch(convert, /RequestSteps|fold-pill"[\s\S]{0,200}requestMode|That is all we need|fold-disclosure|fold-hint|fold-next|fold-talk-actions|<TextReplyLine/);
+  assert.doesNotMatch(css, /\.fold-steps|\.fold-disclosure|\.fold-send\b|\.fold-estimate/);
+  // The mode switch is the same two native radios (scripts/p5-launcher-forms.mjs clicks their
+  // labels), drawn as one inline text link: the mode you are in is visually hidden, still checked.
+  assert.match(convert, /<label className=\{mode === value \? "fold-mode-option sr-only" : "fold-mode-option"\}>\s*<input[\s\S]{0,120}type="radio"\s*name="requestMode"[\s\S]{0,160}data-testid=\{`request-mode-\$\{value\}`\}/);
+  assert.match(convert, /\{modeOption\("request", "Send a request"\)\}\s*\{modeOption\("callback", "Have us call you"\)\}/);
+  assert.match(convert, /"Rather write it down\? "/);
+  assert.match(css, /\.fold-mode-option \{[^}]*text-decoration: underline;/);
+  assert.doesNotMatch(css, /\.fold-mode \.fold-pill/);
   assert.match(convert, /const FIELD_ORDER: Field\[\] = \["note", "name", "phone", "email"\];/);
   assert.match(convert, /autoComplete="name"/);
   assert.match(convert, /type="tel"[\s\S]{0,40}inputMode="tel"[\s\S]{0,40}autoComplete="tel"/);
   assert.match(convert, /<textarea[\s\S]{0,300}rows=\{3\}/);
   assert.match(convert, /placeholder="For example: /);
   // Text is the default reach: this site has a text line and the backend accepts "text".
-  assert.match(convert, /useState<Reach>\("text"\)/);
+  assert.match(convert, /const DEFAULT_REACH: Reach = "text";/);
+  assert.match(convert, /useState<Reach>\(DEFAULT_REACH\)/);
   assert.match(tile, /Add photos, plans or files/);
-  assert.match(tile, /Optional\. Photos, PDFs or drawings\. Up to \{MAX_REQUEST_FILES\} files, \{MAX_REQUEST_FILE_MB\} MB each\./);
+  assert.match(tile, /\n\s+Photos, PDFs or drawings\. Up to \{MAX_REQUEST_FILES\} files, \{MAX_REQUEST_FILE_MB\} MB each\./);
   assert.match(tile, /onDrop=/);
   assert.match(tile, /aria-label=\{`Remove \$\{file\.name\}`\}/);
+  // "Best time to call" stays visible in callback mode: scripts/p5-launcher-forms.mjs waits for it.
   for (const label of ["Call me", "Text me", "Email me", "Send a request", "Have us call you", "Best time to call (optional)", "Request a call", "Prefer to talk?"]) assert.ok(convert.includes(label), label);
   assert.match(convert, /We have your request\./);
-  assert.match(convert, /className="fold-text" href=\{SITE_CONFIG\.phoneSmsHref\}/);
   assert.match(convert, /className="fold-call" href=\{SITE_CONFIG\.phoneHref\}/);
   // Native controls only: no Radix primitive sets state while this form hydrates.
   assert.equal(/@radix-ui|components\/ui\//.test(convert), false);
@@ -106,11 +160,11 @@ test("the short request is one native step with call, text and a callback beside
   assert.equal(/autoFocus/.test(convert), false, "no field is focused on arrival");
   // Same pipeline, same tracking.
   assert.match(convert, /fetch\("\/api\/consultation"/);
-  assert.match(convert, /trackAcceptedInquiry\(data, PROJECT_TYPE\)/);
+  assert.match(convert, /trackAcceptedInquiry\(data, estimate\?\.project \|\| PROJECT_TYPE\)/);
   assert.match(convert, /body\.set\("callback", "1"\)/);
-  // Files never ride the lead: names go with step 1, the files upload after it is saved.
-  assert.equal(/body\.append\("files"/.test(convert), false);
-  assert.match(convert, /body\.set\("pendingFiles"/);
+  // Files never ride the lead: they are chosen and uploaded on step 2, after it is saved.
+  assert.equal(/body\.append\("files"|pendingFiles/.test(convert), false);
+  assert.match(detailsPanel, /uploadRequestFiles\(followUp, files, setUploads\)/);
   assert.match(followUpClient, /fetch\("\/api\/consultation\/files"/);
   assert.match(followUpClient, /fetch\("\/api\/consultation\/details"/);
   assert.match(route, /CALLBACK REQUEST: call/);
@@ -149,12 +203,26 @@ test("optional photos ride only the short multipart consultation path", () => {
 
 // Quote form v2: step 2 on the success screen adds to the SAME lead; one conversion only.
 test("step 2 is optional, on the success screen, and never a second conversion", () => {
-  assert.match(convert, /<RequestDetailsPanel followUp=\{done\.followUp\} askEmail=\{!done\.hadEmail\} \/>/);
-  assert.match(detailsPanel, /Help us prepare \(optional\)/);
-  assert.match(detailsPanel, /A few details help us give you a closer quote on the first call\./);
-  assert.match(detailsPanel, /Save details/);
+  assert.match(convert, /<RequestDetailsPanel followUp=\{done\.followUp\} askEmail=\{!done\.hadEmail\} askAddress=\{!done\.hadAddress\} \/>/);
+  // Owner, 11 November 2026: the sent screen is a tick and the thanks, ONE sentence ending
+  // "Nothing else is needed.", the quiet toggle, and one line with the phone. Step 2 is ONE
+  // native details that starts closed (no open attribute), a line of text with no panel around
+  // its fields. No Skip: leaving it closed is skipping.
+  const sent = convert.indexOf('data-testid="consultation-success"');
+  const sentEnd = convert.indexOf("<form", sent);
+  const sentOrder = ['className="fold-tick" aria-hidden="true"', "We have your request.", 'data-testid="quote-all-set"', "Nothing else is needed.", "<RequestDetailsPanel", "Prefer to talk?"].map((marker) => convert.indexOf(marker, sent));
+  assert.ok(sentOrder.every((at, i) => at > sent && at < sentEnd && (i === 0 || at > sentOrder[i - 1])), "sent screen order");
+  assert.equal(convert.slice(sent, sentEnd).match(/<p /g)?.length, 2, "one sentence and one phone line, nothing more");
+  const panel = detailsPanel.indexOf('data-testid="request-details"');
+  const disclosure = detailsPanel.indexOf('<details className="fold-toggle" data-testid="quote-details-disclosure">');
+  assert.ok(panel > 0 && disclosure > panel, "step 2 sits behind a closed toggle inside the panel");
+  const closes = detailsPanel.indexOf("</details>", disclosure);
+  for (const inside of ["Add photos, plans or details (optional)", "Project type", "Address or ZIP code", "When would you like to start?", "<AttachmentTile", "Save details"]) {
+    const at = detailsPanel.indexOf(inside, disclosure);
+    assert.ok(at > disclosure && at < closes, `${inside} is inside the toggle`);
+  }
+  assert.doesNotMatch(detailsPanel, />\s*Help us prepare|>\s*Skip\s*<|"skipped"|fold-hint|fold-disclosure/);
   assert.match(detailsPanel, /Saved\. Thank you\./);
-  assert.match(detailsPanel, />\s*Skip\s*</);
   assert.match(detailsPanel, /autoComplete="street-address"/);
   assert.match(detailsPanel, /\{askEmail && \(/);
   assert.match(detailsPanel, /trackEvent\("lead_details_added"/);
@@ -163,9 +231,40 @@ test("step 2 is optional, on the success screen, and never a second conversion",
   }
   assert.equal(convert.match(/trackAcceptedInquiry\(/g)?.length, 1, "generate_lead fires once, at step 1");
   // Upload failures are per file, with a retry and a text fallback, after the lead succeeded.
-  assert.match(convert, /Did not upload/);
-  assert.match(convert, /Try again/);
-  assert.match(convert, /text it to us/);
+  // They moved to step 2 with the attachment tile.
+  assert.match(detailsPanel, /Did not upload/);
+  assert.match(detailsPanel, /onClick=\{\(\) => void retryFile\(index\)\}>\s*Try again/);
+  assert.match(detailsPanel, /text it to us/);
+  assert.match(detailsPanel, /const result = await uploadRequestFile\(followUp, target\.file\);/);
+});
+
+// Owner request (11 November 2026): the consult dialog was the long form (project type, name,
+// phone, required email, required property address, optional note). It now shows the same short
+// request, through the same route and tracking, and still carries a planning range.
+test("the consult dialog is the short request and still carries a planning range", () => {
+  assert.match(consultDialog, /<HeroConversion\s+blockId="consult-dialog-form"\s+recovery\s+showTitle=\{false\}/);
+  assert.doesNotMatch(consultDialog, /<ConsultationForm|from "@\/components\/ConsultationForm"/);
+  // One heading, and the form sits directly on the dialog surface: the dialog content carries
+  // the shell classes (it is a portal outside the page shell), with no card inside it.
+  assert.match(consultDialog, /<DialogContent\s+className="approved-shell site-remodeling consult-dialog /);
+  assert.doesNotMatch(consultDialog, /DialogDescription|DialogHeader|className="[^"]*consult-dialog-form|fold-estimate/);
+  assert.equal(consultDialog.match(/<DialogTitle/g)?.length, 1);
+  assert.match(consultDialog, /sessionStorage\.getItem\("brc_estimate"\)/);
+  assert.match(consultDialog, /estimate=\{estimate && attached \? estimatePayload\(estimate\) : null\}/);
+  assert.match(consultDialog, /onAccepted=\{clear\}/);
+  // The attached range is one muted line with its Remove link, not a card.
+  assert.match(consultDialog, /<p className="fold-quiet" data-testid="estimate-attached">\s*Planning range attached:/);
+  for (const marker of ['data-testid="text-estimate-range"', 'data-testid="button-drop-estimate"', 'data-testid="button-reattach-estimate"']) assert.ok(consultDialog.includes(marker), marker);
+  // A carried range rides the JSON side of the same route as a short request, so email and
+  // address stay optional and the server recomputes the range (route: verifyEstimate).
+  assert.match(convert, /if \(estimate\) \{[\s\S]{0,900}requestKind: "short",[\s\S]{0,500}projectType: estimate\.project,[\s\S]{0,300}estimate,/);
+  assert.match(convert, /`CALLBACK REQUEST: call \$\{name\.trim\(\)\} at \$\{phone\.trim\(\)\}\. Best time: \$\{bestTime \|\| "Any time"\}\.`/);
+  assert.match(convert, /`Preferred contact: \$\{reachLabel\}`/);
+  assert.match(route, /if \(data\.requestKind === "short"\) \{/);
+  assert.match(route, /const estimate = data\.estimate \? verifyEstimate\(data\.estimate, pricingAlertKinds\) : null;/);
+  assert.match(css, /\.approved-shell\.site-remodeling\.consult-dialog \{\s*min-height: 0;/);
+  // The homepage form never imports the estimate engine at runtime (bundle weight).
+  assert.doesNotMatch(convert, /estimateEngine/);
 });
 
 test("the multi-step intake stays optional and the estimator is not the header ask", () => {
@@ -194,6 +293,20 @@ test("chat uses the visual viewport, a 16px field, and a light sheet", () => {
 
 test("partial completion emails stay off", () => {
   assert.match(sessions, /SEND_PARTIAL_COMPLETION_EMAILS[^\n]*= false/);
+});
+
+// Owner, 11 November 2026 ("applicable to all forms"): /estimate was a six-screen wizard with a
+// required email. It is the short request now, under the page's one h1.
+test("/estimate is the short request, and the recovery prompt hides its optional name", () => {
+  assert.match(estimatePage, /<h1 className="estimate-short-form-title">Request a remodel quote<\/h1>\s*<HeroConversion blockId="estimate-request-form" recovery showTitle=\{false\} \/>/);
+  assert.doesNotMatch(estimatePage, /EstimateRequestWizard \/>|import \{ EstimateRequestWizard/);
+  assert.match(estimatePage, /alternates: \{ canonical: buildCanonical\("\/estimate"\) \}/);
+  const toggle = recoveryPrompt.indexOf('<details className="mt-2" data-testid="recovery-name-toggle">');
+  const name = recoveryPrompt.indexOf('id="recovery-name"');
+  assert.ok(toggle > 0 && name > toggle && name < recoveryPrompt.indexOf("</details>", toggle), "the optional name sits behind the toggle");
+  assert.match(recoveryPrompt, /Add your name \(optional\)/);
+  assert.match(recoveryPrompt, /htmlFor="recovery-name">Your name<\/label>/);
+  assert.doesNotMatch(recoveryPrompt, /placeholder="Your name \(optional\)"/);
 });
 
 // One label, one destination (1 November 2026): every "Request a quote" goes to
