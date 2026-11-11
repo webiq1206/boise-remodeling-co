@@ -515,7 +515,7 @@
     "lib/p5/marketingAttribution.ts": "825ddd7c4a21979f76be832e38a462ae1a6893ce780f882e601df7a0cedb0753",
     "scripts/lib/navigationEntry.mjs": "6f9ae022bb7e6df5d86e848b1e2e0da2a402b59522cdb0c1ce3cda15a86a10b4",
     "tests/p5-navigation-entry.test.mjs": "c3074d9648326b9caf700ffa78089c4170512102b1efc1ee6e76535432baa8be",
-    "scripts/lib/shortBrandEntry.mjs": "35217b333841e87fa5ee2ebea316eccb1a50b05c262efb79dcfaafcec50e1874",
+    "scripts/lib/shortBrandEntry.mjs": "69b4830d542beb25a8bdfa1d37f9cd7a876c5948c9cb4f3669b0a3057ad31ffb",
     "scripts/lib/quoteEntry.mjs": "46f9fb18396b8e100dfdfe05c90b3bf21f7777e7feef45767e0e24432eb3b920"
   },
   "coordinatedIntakeBatch": {
@@ -683,6 +683,18 @@
           "file": "scripts/lib/shortBrandEntry.mjs",
           "before": "25bfe6351aa80da1fdfb833bf1d7bef18d5122b828e801c3b7a8f21d5862e9a5",
           "after": "35217b333841e87fa5ee2ebea316eccb1a50b05c262efb79dcfaafcec50e1874"
+        }
+      ],
+      "note": "Only explicitly listed files synchronized; other files and provenance retained. Runtime scope is restricted to mobile-action and route-presentation compatibility."
+    },
+    {
+      "source": "p5-home-co",
+      "commit": "308937f2d8a7b2b08210f1d0e3d4919f6c5e2186",
+      "files": [
+        {
+          "file": "scripts/lib/shortBrandEntry.mjs",
+          "before": "35217b333841e87fa5ee2ebea316eccb1a50b05c262efb79dcfaafcec50e1874",
+          "after": "69b4830d542beb25a8bdfa1d37f9cd7a876c5948c9cb4f3669b0a3057ad31ffb"
         }
       ],
       "note": "Only explicitly listed files synchronized; other files and provenance retained. Runtime scope is restricted to mobile-action and route-presentation compatibility."
