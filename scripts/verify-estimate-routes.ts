@@ -80,6 +80,22 @@ async function consultationShortRequests() {
     assert.equal(intake(callback.sent).best_time, 'Morning');
     assert.equal(intake(callback.sent).contact_preference, 'call');
 
+    // Step 1's optional project address (owner, 11 November 2026) is plain text on the same
+    // address field step 2 uses: it reaches the stored lead, the CRM forward and p5 intake.
+    // No address sends the same blank as before, and a callback carries none.
+    const addressed = await post({ name: 'Gus Verifier', phone: '2085550148', email: '', address: ' 456 Oak Ave, Boise, ID 83702 ', message: 'Hall bathroom remodel', contactPreference: 'text' });
+    assert.equal(addressed.status, 200, JSON.stringify(addressed.body));
+    assert.equal(crm(addressed.sent).propertyAddress, '456 Oak Ave, Boise, ID 83702');
+    assert.equal(intake(addressed.sent).address, '456 Oak Ave, Boise, ID 83702');
+    const { loadAcceptedRequest: loadAddressed } = await import('../server/services/inquiryAcceptance');
+    const addressedRow = await loadAddressed(addressed.body.requestId);
+    assert.deepEqual([addressedRow?.address, addressedRow?.zip], ['456 Oak Ave, Boise, ID 83702', '83702']);
+    assert.equal(crm(request.sent).propertyAddress, undefined, 'no address: nothing is sent');
+    const blankRow = await loadAddressed(request.body.requestId);
+    assert.equal(blankRow?.address, '', 'no address: the same blank as before');
+    const callbackAddressed = await post({ name: 'Gus Verifier', phone: '2085550148', callback: '1', contactPreference: 'call', address: '456 Oak Ave, Boise, ID 83702' });
+    assert.equal(crm(callbackAddressed.sent).propertyAddress, undefined, 'a callback is name and phone only');
+
     // With an email the written request still carries it to every destination.
     const emailed = await post({ name: 'Bo Verifier', phone: '2085550143', email: 'bo@example.com', message: 'Bathroom tile and a new vanity', contactPreference: 'email' });
     assert.equal(emailed.status, 200, JSON.stringify(emailed.body));

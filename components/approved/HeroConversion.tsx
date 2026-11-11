@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import Link from "next/link";
+import { Check, Plus } from "lucide-react";
 import { RequestDetailsPanel } from "@/components/approved/RequestDetailsPanel";
-import { RequestSteps } from "@/components/approved/RequestSteps";
 import { EstimatorRecovery } from "@/components/estimate/recovery/EstimatorRecovery";
-import { TextReplyLine } from "@/components/TextReplyLine";
 import { markEstimatorCompleted } from "@/lib/estimatorSession";
 import {
   getOrCreateInquiryId,
@@ -17,7 +16,7 @@ import { hasPassedGate, PREFILL_UPDATED_EVENT, readStoredPrefill } from "@/lib/l
 import { captureMarketingAttribution } from "@/lib/marketingAttributionBrowser";
 import type { RequestFollowUp } from "@/lib/requestFollowUp";
 import { SHORT_REQUEST_PROJECT_TYPE } from "@/shared/requestDetails";
-import { SITE_CONFIG, TEXT_REPLY_HOURS } from "@/shared/siteConfig";
+import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /** Filed under this project type, as the short request always has been (GA4 generate_lead, CRM). */
 const PROJECT_TYPE = SHORT_REQUEST_PROJECT_TYPE;
@@ -59,26 +58,26 @@ export interface AttachedEstimatePayload {
  * The short request: the one form every "Request a quote" lands on (homepage #request-form, the
  * contact page through ConsultationForm variant="short", and the consult dialog).
  *
- * Owner request, 1 November 2026: the easiest form there is. Owner request, 11 November 2026,
- * after a client found a family form confusing because "it just kept asking more questions":
- * nothing optional is shown until asked for, and every step says plainly where the visitor is.
- * Two steps, named above the form by components/approved/RequestSteps.
+ * Owner request, 1 November 2026: the easiest form there is. 11 November 2026, twice: nothing
+ * optional is shown until asked for, and then "it cannot look cluttered. It needs to look very
+ * clean." So the form holds fields, one button and two quiet lines, and nothing else:
  *
- * Step 1, "Your request": only what we need to call back.
- *   [Send a request | Have us call you]  (quiet tabs)
+ *   (the heading)
  *   What can we help with?
- *   Name, Phone
- *   "Add an email or choose how we reach you (optional)": one closed dropdown holding Email and
- *     How should we reach you
+ *   Name, Phone  (side by side from 640px)
+ *   + Add address, email or contact preference (optional)   a quiet text toggle, no box
  *   Send request
- *   Prefer to talk? Call, Text us, Chat  (one quiet line)
+ *   Prefer to talk? Call (number) or have us call you.
+ *   No obligation. Privacy Policy.
  *
- * Step 2, on the success screen (components/approved/RequestDetailsPanel): the confirmation that
- * the request is sent and nothing else is needed, then one closed dropdown, "Add photos, plans or
- * project details (optional)", that adds project type, address, timing and files to the SAME lead
- * through the request id and short-lived token step 1 returned. The lead never waits on it.
+ * After sending (components/approved/RequestDetailsPanel holds step 2): a tick, the thanks, one
+ * sentence ending "Nothing else is needed.", the quiet toggle "Add photos, plans or details
+ * (optional)" that adds to the SAME lead, and one line with the phone number.
  *
- * "Have us call you" reduces step 1 to name and phone (plus an optional best time) and posts
+ * "Have us call you" is the same pair of native radios it always was (request-mode-request,
+ * request-mode-callback; scripts/p5-launcher-forms.mjs clicks their labels), drawn as the text
+ * link in the line under the button: only the mode you are not in shows. It reduces the form to
+ * name, phone and a best time (that script waits for the best time to be visible) and posts
  * through the same /api/consultation pipeline, marked as a callback request.
  *
  * Native elements only (no Radix primitives), so nothing here sets state during hydration.
@@ -111,6 +110,8 @@ export function HeroConversion({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  // Optional, plain text, never validated beyond its length (owner, 11 November 2026).
+  const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
   const [reach, setReach] = useState<Reach>(DEFAULT_REACH);
   /** The step 1 dropdown of optional fields (email, how to reach you); closed until asked for. */
@@ -127,6 +128,7 @@ export function HeroConversion({
     phone: string;
     emailed: boolean;
     hadEmail: boolean;
+    hadAddress: boolean;
     followUp: RequestFollowUp | null;
   } | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -139,6 +141,10 @@ export function HeroConversion({
       const prefill = readStoredPrefill();
       if (prefill.name) setName((value) => value || prefill.name || "");
       if (prefill.phone) setPhone((value) => value || prefill.phone || "");
+      if (prefill.address) {
+        setAddress((value) => value || prefill.address || "");
+        setOptionsOpen(true);
+      }
       if (prefill.email) {
         setEmail((value) => value || prefill.email || "");
         // Anything already entered in the optional dropdown is shown, never hidden.
@@ -176,7 +182,7 @@ export function HeroConversion({
   const errors = validate();
   const shown = (field: Field) => ((submitTried || touched[field]) && errors[field]) || "";
   const touch = (field: Field) => () => setTouched((current) => ({ ...current, [field]: true }));
-  const engaged = Boolean(name || phone || note || email);
+  const engaged = Boolean(name || phone || note || email || address);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -216,6 +222,7 @@ export function HeroConversion({
             name: name.trim(),
             phone: phone.trim(),
             email: callback ? "" : email.trim(),
+            ...(!callback && address.trim() ? { address: address.trim() } : {}),
             projectType: estimate.project,
             message,
             contactPreference: callback ? "call" : reach,
@@ -238,6 +245,7 @@ export function HeroConversion({
           body.set("bestTime", bestTime);
         } else {
           body.set("email", email.trim());
+          body.set("address", address.trim());
           body.set("message", note.trim());
           body.set("contactPreference", reach);
         }
@@ -272,6 +280,7 @@ export function HeroConversion({
         // The copy goes out with the internal email; say so only when delivery went through.
         emailed: !callback && Boolean(email.trim()) && data.delivery !== "pending_retry",
         hadEmail: !callback && Boolean(email.trim()),
+        hadAddress: !callback && Boolean(address.trim()),
         followUp,
       });
     } catch {
@@ -288,25 +297,19 @@ export function HeroConversion({
     </p>
   );
 
-  // One quiet line under the send button. They were three outlined buttons stacked above it,
-  // and a client could not tell which button sent the request.
-  const talk = (
-    <p className="fold-talk">
-      <span className="fold-talk-title">Prefer to talk?</span>
-      <a className="fold-call" href={SITE_CONFIG.phoneHref}>
-        Call {SITE_CONFIG.phone}
-      </a>
-      <a className="fold-text" href={SITE_CONFIG.phoneSmsHref}>
-        Text us
-      </a>
-      <button
-        type="button"
-        className="fold-chat"
-        onClick={() => window.dispatchEvent(new Event("p5:assistant-open"))}
-      >
-        Chat
-      </button>
-    </p>
+  const modeOption = (value: Mode, label: string) => (
+    <label className={mode === value ? "fold-mode-option sr-only" : "fold-mode-option"}>
+      <input
+        data-clarity-mask="True"
+        type="radio"
+        name="requestMode"
+        value={value}
+        checked={mode === value}
+        onChange={() => setMode(value)}
+        data-testid={`request-mode-${value}`}
+      />
+      <span>{label}</span>
+    </label>
   );
 
   return (
@@ -328,7 +331,6 @@ export function HeroConversion({
       )}
       {done ? (
         <div className="fold-done" data-testid="consultation-success" data-clarity-mask="True">
-          <RequestSteps sent />
           <div role="status">
             <h2 ref={successRef} tabIndex={-1} className="fold-form-title fold-sent-title" data-clarity-mask="True">
               <span className="fold-tick" aria-hidden="true">
@@ -336,22 +338,17 @@ export function HeroConversion({
               </span>
               <span>Thanks, {done.firstName}. We have your request.</span>
             </h2>
-            <p className="fold-success">
+            <p className="fold-success" data-testid="quote-all-set">
               {done.mode === "callback"
                 ? `We will call you at ${done.phone} during business hours.`
-                : "We will answer your questions and help you find a time to visit. You get a written scope before any price."}
-            </p>
-            <p className="fold-all-set" data-testid="quote-all-set">
-              You are all set. Nothing else is needed.
+                : "We will answer your questions and help you find a time to visit."}{" "}
+              Nothing else is needed.
             </p>
           </div>
-          {done.emailed && <p className="fold-next">A copy of your request is on its way to your inbox.</p>}
-          <p className="fold-next">
-            Prefer to talk now? <a className="fold-inline-link" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a>
+          {done.followUp && <RequestDetailsPanel followUp={done.followUp} askEmail={!done.hadEmail} askAddress={!done.hadAddress} />}
+          <p className="fold-quiet">
+            Prefer to talk? <a className="fold-call" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a>.
           </p>
-          <TextReplyLine className="fold-text-reply" />
-
-          {done.followUp && <RequestDetailsPanel followUp={done.followUp} askEmail={!done.hadEmail} />}
         </div>
       ) : (
         <form
@@ -369,36 +366,6 @@ export function HeroConversion({
               {callback ? "Request a call" : "Request a quote"}
             </h2>
           )}
-          <RequestSteps sent={false} />
-
-          <fieldset className="fold-mode">
-            <legend className="sr-only">How do you want to start?</legend>
-            <label className="fold-pill">
-              <input
-                data-clarity-mask="True"
-                type="radio"
-                name="requestMode"
-                value="request"
-                checked={!callback}
-                onChange={() => setMode("request")}
-                data-testid="request-mode-request"
-              />
-              <span>Send a request</span>
-            </label>
-            <label className="fold-pill">
-              <input
-                data-clarity-mask="True"
-                type="radio"
-                name="requestMode"
-                value="callback"
-                checked={callback}
-                onChange={() => setMode("callback")}
-                data-testid="request-mode-callback"
-              />
-              <span>Have us call you</span>
-            </label>
-          </fieldset>
-
           {intro}
 
           {!callback && (
@@ -426,6 +393,7 @@ export function HeroConversion({
             </>
           )}
 
+          <div className="fold-row">
           <div className="fold-field">
             <label htmlFor={ids("name")}>Name</label>
             <input
@@ -467,6 +435,7 @@ export function HeroConversion({
             />
             {fieldError("phone")}
           </div>
+          </div>
 
           {callback ? (
             <div className="fold-field">
@@ -485,25 +454,33 @@ export function HeroConversion({
                   </option>
                 ))}
               </select>
-              <p className="fold-hint">
-                We call during business hours ({TEXT_REPLY_HOURS}). You can add photos or details after you send.
-              </p>
             </div>
           ) : (
-            // Everything optional lives in this one closed dropdown.
+            // Everything optional sits behind this one quiet text toggle: no box, no panel.
             <details
-              className="fold-disclosure"
+              className="fold-toggle"
               open={optionsOpen}
               onToggle={(event) => setOptionsOpen(event.currentTarget.open)}
               data-testid="quote-options"
             >
               <summary>
-                <span>
-                  Add an email or choose how we reach you <span className="fold-optional-mark">(optional)</span>
-                </span>
-                <ChevronDown size={20} aria-hidden="true" />
+                <Plus size={16} aria-hidden="true" />
+                Add address, email or contact preference (optional)
               </summary>
-              <div className="fold-disclosure-body">
+              <div className="fold-toggle-body">
+              <div className="fold-field">
+                <label htmlFor={ids("address")}>Project address</label>
+                <input
+                  id={ids("address")}
+                  data-clarity-mask="True"
+                  data-testid="input-address"
+                  name="address"
+                  autoComplete="street-address"
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
+                  maxLength={300}
+                />
+              </div>
               <div className="fold-field">
                 <label htmlFor={ids("email")}>Email (optional)</label>
                 <input
@@ -520,12 +497,9 @@ export function HeroConversion({
                   onBlur={touch("email")}
                   aria-required={reach === "email" ? "true" : undefined}
                   aria-invalid={shown("email") ? true : undefined}
-                  aria-describedby={describedBy("email", ids("email-hint"))}
+                  aria-describedby={describedBy("email")}
                   maxLength={200}
                 />
-                <p className="fold-hint" id={ids("email-hint")}>
-                  {reach === "email" ? "Needed so we can email you back." : "For a written copy of your request."}
-                </p>
                 {fieldError("email")}
               </div>
 
@@ -572,17 +546,33 @@ export function HeroConversion({
               Check the {Object.keys(errors).length === 1 ? "field" : "fields"} marked above.
             </p>
           ) : null}
-          <div className="fold-send">
-            <button className="fold-submit" type="submit" disabled={busy} data-testid="button-send-request">
-              {busy ? "Sending" : callback ? "Request a call" : "Send request"}
-            </button>
-            <p className="fold-next fold-send-note">
-              {callback
-                ? "We call you back during business hours."
-                : "That is all we need. You can add photos or plans after you send."}
-            </p>
-            {talk}
+          <button className="fold-submit" type="submit" disabled={busy} data-testid="button-send-request">
+            {busy ? "Sending" : callback ? "Request a call" : "Send request"}
+          </button>
+          {/* One quiet line. The two native mode radios live in it: only the mode you are not in
+              shows, as a text link; the active one stays in the DOM, checked and announced. */}
+          <div className="fold-quiet fold-talk">
+            {callback ? (
+              "Rather write it down? "
+            ) : (
+              <>
+                Prefer to talk? <a className="fold-call" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a> or{" "}
+              </>
+            )}
+            <fieldset className="fold-mode" data-mode={mode}>
+              <legend className="sr-only">How do you want to start?</legend>
+              {modeOption("request", "Send a request")}
+              {modeOption("callback", "Have us call you")}
+            </fieldset>
+            .
           </div>
+          <p className="fold-quiet">
+            No obligation.{" "}
+            <Link className="fold-quiet-link" href="/privacy-policy" prefetch={false}>
+              Privacy Policy
+            </Link>
+            .
+          </p>
         </form>
       )}
     </div>

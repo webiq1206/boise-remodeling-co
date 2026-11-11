@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 import { AttachmentTile } from "@/components/approved/AttachmentTile";
 import { trackEvent } from "@/lib/analytics";
 import {
@@ -19,8 +19,9 @@ function validEmail(value: string): boolean {
 }
 
 /**
- * Step 2 of the short request, on the success screen: ONE closed dropdown, "Add photos, plans or
- * project details (optional)". Opened, it adds a few details and files to the SAME lead through
+ * Step 2 of the short request, on the success screen: ONE quiet text toggle (a native details,
+ * closed, no box), "Add photos, plans or details (optional)". Opened, its fields sit inline with
+ * no panel around them and add a few details and files to the SAME lead through
  * /api/consultation/details. Nothing step 1 already asked is asked again (email only appears
  * when step 1 had none), and leaving it closed needs no action.
  *
@@ -34,9 +35,12 @@ function validEmail(value: string): boolean {
 export function RequestDetailsPanel({
   followUp,
   askEmail,
+  askAddress = true,
 }: {
   followUp: RequestFollowUp;
   askEmail: boolean;
+  /** False when step 1 already has the address: step 2 never re-asks what step 1 has. */
+  askAddress?: boolean;
 }) {
   const uid = useId();
   const ids = (name: string) => `${uid}-${name}`;
@@ -156,16 +160,12 @@ export function RequestDetailsPanel({
   return (
     // The panel keeps its test id on the wrapper; the dropdown inside it starts closed.
     <section className="fold-details" data-clarity-mask="True" data-testid="request-details">
-      <details className="fold-disclosure" data-testid="quote-details-disclosure">
+      <details className="fold-toggle" data-testid="quote-details-disclosure">
         <summary>
-          <h3 className="fold-details-title" id={ids("title")}>
-            Add photos, plans or project details <span className="fold-optional-mark">(optional)</span>
-          </h3>
-          <ChevronDown size={20} aria-hidden="true" />
+          <Plus size={16} aria-hidden="true" />
+          <span id={ids("title")}>Add photos, plans or details (optional)</span>
         </summary>
-        <form className="fold-disclosure-body" onSubmit={onSave} noValidate aria-labelledby={ids("title")}>
-      <p className="fold-hint">Answer any of these, or none. A few details help us give you a closer quote on the first call.</p>
-
+        <form className="fold-toggle-body" onSubmit={onSave} noValidate aria-labelledby={ids("title")}>
       <fieldset className="fold-reach">
         <legend>Project type</legend>
         <div className="fold-pills fold-pills-wrap">
@@ -185,6 +185,7 @@ export function RequestDetailsPanel({
         </div>
       </fieldset>
 
+      {askAddress && (
       <div className="fold-field">
         <label htmlFor={ids("address")}>Address or ZIP code</label>
         <input
@@ -197,6 +198,7 @@ export function RequestDetailsPanel({
           maxLength={300}
         />
       </div>
+      )}
 
       <fieldset className="fold-reach">
         <legend>When would you like to start?</legend>

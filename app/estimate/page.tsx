@@ -1,14 +1,17 @@
 import { withBrandPageMetadata } from "@/lib/brand-page-metadata";
 import type { Metadata } from "next";
-import { EstimateRequestWizard } from "@/components/estimate/EstimateRequestWizard";
+import { HeroConversion } from "@/components/approved/HeroConversion";
 import { InteriorPage } from "@/components/approved/InteriorLayout";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { buildCanonical, fitDescription } from "@/lib/page-metadata";
 import { generateBreadcrumbSchema, generateWebPageSchema } from "@/lib/schema";
 
 /**
- * D2 / C10: short quote request as a step wizard (no on-screen price).
- * Same lead path as consultation requests.
+ * The short request, the same form as the homepage and the contact page (owner, 11 November
+ * 2026: every form short and very clean). It was a six-screen wizard with a required email
+ * (components/estimate/EstimateRequestWizard, kept in the repo, mounted nowhere). No on-screen
+ * price. Same /api/consultation lead path and the same accepted-inquiry tracking; project type
+ * and photos are offered on step 2, after the request is sent.
  */
 const TITLE = "Request a Remodel Quote";
 const DESCRIPTION = fitDescription(
@@ -48,7 +51,10 @@ export default function EstimatePage() {
     <InteriorPage kind="estimate">
       <>
         <JsonLd data={schemas} />
-        <EstimateRequestWizard />
+        <div className="estimate-short-form f-container">
+          <h1 className="estimate-short-form-title">Request a remodel quote</h1>
+          <HeroConversion blockId="estimate-request-form" recovery showTitle={false} />
+        </div>
       </>
     </InteriorPage>
   );

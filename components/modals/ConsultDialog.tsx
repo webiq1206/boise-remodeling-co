@@ -1,16 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { HeroConversion, type AttachedEstimatePayload } from "@/components/approved/HeroConversion";
 import type { StoredEstimate } from "@/shared/estimateEngine";
-import { FINISH_LABELS, PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimateEngine";
+import { PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimateEngine";
 
 /**
  * The planning range the estimator left in this tab (sessionStorage "brc_estimate"), read the
@@ -78,74 +72,57 @@ function estimatePayload(estimate: StoredEstimate): AttachedEstimatePayload {
 /**
  * The consultation dialog, loaded by ModalProvider the first time it opens.
  *
- * Owner request, 11 November 2026 (every form short and clear, nothing optional shown until
- * asked for): the dialog shows the same short request as the homepage and the contact page.
- * It used to show the long consultation form (project type, name, phone, required email,
- * required property address, optional note). That form is still in
+ * Owner request, 11 November 2026 (every form short, clear and very clean): the dialog shows the
+ * same short request as the homepage and the contact page, under ONE heading, directly on the
+ * dialog surface. It used to show the long consultation form (project type, name, phone, required
+ * email, required property address, optional note). That form is still in
  * components/ConsultationForm.tsx (variant="full") but no page mounts it. Same
  * /api/consultation pipeline and the same accepted-inquiry tracking; project type and address
  * are offered on step 2, after the request is sent. A planning range carried over from the
- * estimator still rides the request, shown as the removable "Planning range attached" line.
+ * estimator still rides the request, shown as one muted line with its Remove link.
  */
-export function ConsultDialog({ open, onClose, onRevise }: { open: boolean; onClose: () => void; onRevise: () => void }) {
+export function ConsultDialog({ open, onClose }: { open: boolean; onClose: () => void; onRevise?: () => void }) {
   const { estimate, attached, setAttached, clear } = useCarriedEstimate();
   const projectLabel = estimate?.project ? PROJECT_LABELS[estimate.project]?.label : null;
-  const finishLabel = estimate?.finish ? FINISH_LABELS[estimate.finish]?.label : null;
 
-  const chip = !estimate ? null : attached ? (
-    <div className="fold-estimate" data-testid="estimate-attached">
-      <div>
-        <p className="fold-estimate-title">Planning range attached</p>
-        <p data-testid="text-estimate-summary">
-          {[projectLabel, finishLabel, estimate.sqft ? `${estimate.sqft.toLocaleString()} sqft` : null]
-            .filter(Boolean)
-            .join(", ")}
-        </p>
-        <p className="fold-estimate-range" data-testid="text-estimate-range">
-          {formatPlanningCurrency(estimate.priceLow)} to {formatPlanningCurrency(estimate.priceHigh)}
-        </p>
-      </div>
-      <div className="fold-estimate-actions">
-        <button type="button" className="fold-secondary" onClick={() => setAttached(false)} data-testid="button-drop-estimate">
-          Remove
-        </button>
-        <button type="button" className="fold-secondary" onClick={onRevise} data-testid="button-revise-estimate">
-          Revise
-        </button>
-      </div>
-    </div>
+  const line = !estimate ? null : attached ? (
+    <p className="fold-quiet" data-testid="estimate-attached">
+      Planning range attached: <span data-testid="text-estimate-summary">{projectLabel}</span>,{" "}
+      <span data-testid="text-estimate-range">
+        {formatPlanningCurrency(estimate.priceLow)} to {formatPlanningCurrency(estimate.priceHigh)}
+      </span>
+      .{" "}
+      <button type="button" onClick={() => setAttached(false)} data-testid="button-drop-estimate">
+        Remove
+      </button>
+    </p>
   ) : (
-    <div className="fold-estimate">
-      <p data-testid="status-estimate-dropped">Sending without a planning range.</p>
-      <button type="button" className="fold-secondary" onClick={() => setAttached(true)} data-testid="button-reattach-estimate">
+    <p className="fold-quiet">
+      <span data-testid="status-estimate-dropped">Sending without the planning range.</span>{" "}
+      <button type="button" onClick={() => setAttached(true)} data-testid="button-reattach-estimate">
         Attach it
       </button>
-    </div>
+    </p>
   );
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto" data-clarity-mask="true">
-        <DialogHeader>
-          <DialogTitle className="font-sans font-light text-xl text-foreground">
-            Schedule your free in-home visit
-          </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
-            No obligation - we&apos;ll walk your space and give you an honest planning range.
-          </DialogDescription>
-        </DialogHeader>
-        {/* The dialog is a portal on <body>, outside the page shell: this wrapper carries the
-            shell classes so the short request looks the same here as on the page. */}
-        <div className="approved-shell site-remodeling consult-dialog-form">
-          <HeroConversion
-            blockId="consult-dialog-form"
-            recovery
-            showTitle={false}
-            intro={chip}
-            estimate={estimate && attached ? estimatePayload(estimate) : null}
-            onAccepted={clear}
-          />
-        </div>
+      {/* The dialog is a portal on <body>, outside the page shell: it carries the shell classes
+          so it is the same paper surface as the page, and the form needs no card inside it. */}
+      <DialogContent
+        className="approved-shell site-remodeling consult-dialog max-w-lg w-[95vw] max-h-[90vh] overflow-y-auto"
+        data-clarity-mask="true"
+        aria-describedby={undefined}
+      >
+        <DialogTitle className="fold-form-title">Schedule your free in-home visit</DialogTitle>
+        <HeroConversion
+          blockId="consult-dialog-form"
+          recovery
+          showTitle={false}
+          intro={line}
+          estimate={estimate && attached ? estimatePayload(estimate) : null}
+          onAccepted={clear}
+        />
       </DialogContent>
     </Dialog>
   );
