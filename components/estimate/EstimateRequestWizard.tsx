@@ -115,6 +115,8 @@ export function EstimateRequestWizard() {
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [hydrated, setHydrated] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
+  /** Step 5's optional photos dropdown; closed until asked for. */
+  const [photosOpen, setPhotosOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
@@ -474,35 +476,45 @@ export function EstimateRequestWizard() {
                       maxLength={1000}
                     />
                   </label>
-                  <label className="estimate-file">
-                    <span>Photos or plans, optional</span>
-                    <input
-                      data-clarity-mask="True"
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,.heic,.heif"
-                      multiple
-                      onChange={(event) => {
-                        addFiles(event.target.files);
-                        event.target.value = "";
-                      }}
-                    />
-                  </label>
-                  {files.length > 0 && (
-                    <ul className="estimate-files">
-                      {files.map((file) => (
-                        <li key={`${file.name}-${file.size}`}>
-                          <span>{file.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => setFiles((current) => current.filter((item) => item !== file))}
-                          >
-                            Remove
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  <p className="estimate-file-note">JPEG, PNG, WebP, HEIC, or PDF. Up to 4 files, 8 MB each.</p>
+                  {/* The one optional item on this wizard sits in a closed dropdown (owner,
+                      11 November 2026: nothing optional is shown until asked for). */}
+                  <details
+                    className="estimate-file estimate-optional"
+                    open={photosOpen}
+                    onToggle={(event) => setPhotosOpen(event.currentTarget.open)}
+                    data-testid="estimate-photos-optional"
+                  >
+                    <summary>Add photos or plans (optional)</summary>
+                    <label>
+                      <span>Photos or plans</span>
+                      <input
+                        data-clarity-mask="True"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf,.heic,.heif"
+                        multiple
+                        onChange={(event) => {
+                          addFiles(event.target.files);
+                          event.target.value = "";
+                        }}
+                      />
+                    </label>
+                    {files.length > 0 && (
+                      <ul className="estimate-files">
+                        {files.map((file) => (
+                          <li key={`${file.name}-${file.size}`}>
+                            <span>{file.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => setFiles((current) => current.filter((item) => item !== file))}
+                            >
+                              Remove
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <p className="estimate-file-note">JPEG, PNG, WebP, HEIC, or PDF. Up to 4 files, 8 MB each.</p>
+                  </details>
                 </div>
               </>
             )}

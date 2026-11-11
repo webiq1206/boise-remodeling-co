@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { MessageSquare, Phone, PhoneCall } from "lucide-react";
+import { MessageSquare, Phone, PhoneCall, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TextReplyLine } from "@/components/TextReplyLine";
@@ -144,17 +144,23 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
                   {state === "sending" ? "Sending…" : "Call me"}
                 </Button>
               </div>
-              <label className="sr-only" htmlFor="recovery-name">Your name (optional)</label>
-              <input
-                data-clarity-mask="True"
-                id="recovery-name"
-                type="text"
-                autoComplete="name"
-                placeholder="Your name (optional)"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-2 h-11 w-full rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 text-sm text-inverse-foreground placeholder:text-inverse-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible"
-              />
+              {/* Optional, so it waits behind one quiet text toggle (owner, 11 November 2026). */}
+              <details className="mt-2" data-testid="recovery-name-toggle">
+                <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 text-[0.8125rem] text-inverse-muted hover:text-inverse-foreground [&::-webkit-details-marker]:hidden">
+                  <Plus className="h-3.5 w-3.5" aria-hidden />
+                  Add your name (optional)
+                </summary>
+                <label className="sr-only" htmlFor="recovery-name">Your name</label>
+                <input
+                  data-clarity-mask="True"
+                  id="recovery-name"
+                  type="text"
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="mt-2 h-11 w-full rounded-sm border border-inverse-foreground/25 bg-inverse-foreground/[0.06] px-3 text-sm text-inverse-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-legible"
+                />
+              </details>
               {message && (
                 <p id="recovery-callback-msg" role="alert" className="mt-2 text-[0.8125rem] text-red-300">
                   {message}
