@@ -482,7 +482,7 @@ export function HeroConversion({
                 />
               </div>
               <div className="fold-field">
-                <label htmlFor={ids("email")}>Email (optional)</label>
+                <label htmlFor={ids("email")}>Email</label>
                 <input
                   id={ids("email")}
                   data-field="email"
@@ -559,12 +559,16 @@ export function HeroConversion({
                 Prefer to talk? <a className="fold-call" href={SITE_CONFIG.phoneHref}>Call {SITE_CONFIG.phone}</a> or{" "}
               </>
             )}
-            <fieldset className="fold-mode" data-mode={mode}>
-              <legend className="sr-only">How do you want to start?</legend>
-              {modeOption("request", "Send a request")}
-              {modeOption("callback", "Have us call you")}
-            </fieldset>
-            .
+            {/* The link and its full stop stay together: the label is an inline block, so the
+                full stop could otherwise wrap onto a line of its own on a phone. */}
+            <span className="fold-nowrap">
+              <fieldset className="fold-mode" data-mode={mode}>
+                <legend className="sr-only">How do you want to start?</legend>
+                {modeOption("request", "Send a request")}
+                {modeOption("callback", "Have us call you")}
+              </fieldset>
+              .
+            </span>
           </div>
           <p className="fold-quiet">
             No obligation.{" "}

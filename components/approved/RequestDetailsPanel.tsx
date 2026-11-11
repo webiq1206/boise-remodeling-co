@@ -221,7 +221,7 @@ export function RequestDetailsPanel({
 
       {askEmail && (
         <div className="fold-field">
-          <label htmlFor={ids("email")}>Email (optional)</label>
+          <label htmlFor={ids("email")}>Email</label>
           <input
             id={ids("email")}
             data-clarity-mask="True"

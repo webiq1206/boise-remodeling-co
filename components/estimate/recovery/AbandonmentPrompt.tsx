@@ -150,7 +150,7 @@ export function AbandonmentPrompt({ open, flow, method, leaving, onStay, onConti
                   <Plus className="h-3.5 w-3.5" aria-hidden />
                   Add your name (optional)
                 </summary>
-                <label className="sr-only" htmlFor="recovery-name">Your name (optional)</label>
+                <label className="sr-only" htmlFor="recovery-name">Your name</label>
                 <input
                   data-clarity-mask="True"
                   id="recovery-name"

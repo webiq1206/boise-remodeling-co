@@ -1670,3 +1670,5 @@ body[data-estimate-keyboard="true"] .approved-shell.site-remodeling .estimate-wi
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+/* Keeps a link and the full stop after it on one line. */
+.approved-shell.site-remodeling .fold-nowrap { white-space: nowrap; }

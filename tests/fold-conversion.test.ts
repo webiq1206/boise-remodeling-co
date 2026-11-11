@@ -70,7 +70,18 @@ test("the first screen is the video and headline, and the short request is the f
   assert.match(convert, /Send request/);
   assert.match(convert, /data-clarity-mask="True"/);
   assert.match(convert, /type="email"/);
-  assert.match(convert, />Email \(optional\)</);
+  // Round 3 (owner, 11 November 2026): the toggle already says "(optional)", so no label inside
+  // an opened optional section repeats it. It stays only where it is the one marker.
+  assert.match(convert, /<label htmlFor=\{ids\("email"\)\}>Email<\/label>/);
+  assert.match(detailsPanel, /<label htmlFor=\{ids\("email"\)\}>Email<\/label>/);
+  for (const [name, source] of [["step 1", convert], ["step 2", detailsPanel], ["tile", tile]] as const) {
+    const repeats = (source.replace(/\/\*[\s\S]*?\*\//g, "").match(/\(optional\)|Optional\./g) ?? []).length;
+    const allowed = name === "step 1" ? 2 : name === "step 2" ? 1 : 0;
+    assert.equal(repeats, allowed, `${name}: "(optional)" only on the toggle summary and on best time to call`);
+  }
+  // The mode link and its full stop never split across lines on a phone.
+  assert.match(convert, /<span className="fold-nowrap">\s*<fieldset className="fold-mode"[\s\S]{0,320}<\/fieldset>\s*\.\s*<\/span>/);
+  assert.match(css, /\.fold-nowrap \{ white-space: nowrap; \}/);
   assert.match(convert, /if \(cleanEmail && !validEmail\(cleanEmail\)\) errors\.email/);
   assert.match(convert, /!cleanEmail && reach === "email"/);
   assert.match(route, /email: z\.string\(\)\.email\(\)/);
@@ -133,7 +144,7 @@ test("the short request is one native step with call, text and a callback beside
   assert.match(convert, /const DEFAULT_REACH: Reach = "text";/);
   assert.match(convert, /useState<Reach>\(DEFAULT_REACH\)/);
   assert.match(tile, /Add photos, plans or files/);
-  assert.match(tile, /Optional\. Photos, PDFs or drawings\. Up to \{MAX_REQUEST_FILES\} files, \{MAX_REQUEST_FILE_MB\} MB each\./);
+  assert.match(tile, /\n\s+Photos, PDFs or drawings\. Up to \{MAX_REQUEST_FILES\} files, \{MAX_REQUEST_FILE_MB\} MB each\./);
   assert.match(tile, /onDrop=/);
   assert.match(tile, /aria-label=\{`Remove \$\{file\.name\}`\}/);
   // "Best time to call" stays visible in callback mode: scripts/p5-launcher-forms.mjs waits for it.
@@ -294,6 +305,7 @@ test("/estimate is the short request, and the recovery prompt hides its optional
   const name = recoveryPrompt.indexOf('id="recovery-name"');
   assert.ok(toggle > 0 && name > toggle && name < recoveryPrompt.indexOf("</details>", toggle), "the optional name sits behind the toggle");
   assert.match(recoveryPrompt, /Add your name \(optional\)/);
+  assert.match(recoveryPrompt, /htmlFor="recovery-name">Your name<\/label>/);
   assert.doesNotMatch(recoveryPrompt, /placeholder="Your name \(optional\)"/);
 });
 
