@@ -8,7 +8,7 @@ import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICES } from '@/shared/contentData';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
-import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
+import { P5_GBP_URL } from '@/shared/gbpProfile';
 
 interface SchemaContext {
   '@context': string;
@@ -26,33 +26,42 @@ const baseUrl = getBaseUrl();
  * every per-city LocalBusiness reused `baseUrl` with different coordinates.
  */
 export const ORG_ID = `${baseUrl}/#organization`;
-export const LOCALBUSINESS_ID = `${baseUrl}/#localbusiness`;
+/** One business node for this brand. */
+export const LOCALBUSINESS_ID = `${baseUrl}/#business`;
 export const WEBSITE_ID = `${baseUrl}/#website`;
 
 /**
- * The parent entity. Every brand in this family is a DBA of P5 Home Co LLC,
- * not a separate company, and the P5 site already declares this site as one of
- * its `subOrganization` nodes using exactly this `@id` scheme
- * (`{childOrigin}/#organization`). Asserting `parentOrganization` back at P5
- * from this side closes the loop, so the two graphs join into one entity
- * instead of sitting on their domains as strangers.
- *
- * Hardcoded rather than derived: this is a fixed external origin, and the
- * `@id` must match the P5 graph byte for byte or the nodes will not merge.
+ * Boise Remodeling Co is a brand of P5 Home Co. LLC. parentOrganization points
+ * at P5's business node.
  */
 const P5_ORIGIN = 'https://p5homeco.com';
-export const P5_ORG_ID = `${P5_ORIGIN}/#organization`;
+export const P5_ORG_ID = `${P5_ORIGIN}/#business`;
 /** Shared person node. The @id lives on p5homeco.com so every brand merges to one Nick Perkins. */
 export const NICK_PERKINS_ID = `${P5_ORIGIN}/#nick-perkins`;
+/**
+ * Verified P5 profiles only. BBB, Houzz, and BuildZoom stay off.
+ * The existing kgmid entry stays. Nextdoor is the same P5 page, so this
+ * brand does not add it.
+ */
+export const P5_SAME_AS = [
+  'https://www.facebook.com/p5homeco',
+  'https://ezlocal.com/id/meridian/home-remodeling/0919899218',
+  'https://www.cylex.us.com/company/p5-home-co--llc-40749871.html',
+  'https://www.google.com/maps?cid=11869148461693849141',
+  P5_GBP_URL,
+] as const;
 export const P5_PARENT_ORGANIZATION = {
-  '@type': 'Organization',
   '@id': P5_ORG_ID,
   name: 'P5 Home Co',
   url: P5_ORIGIN,
-  // P5 Home Co's Facebook page and its Google Business Profile are the
-  // family's only profiles; listed here on the parent, never on this brand.
-  sameAs: [P5_FACEBOOK_URL, P5_GBP_URL],
+  sameAs: P5_SAME_AS,
 } as const;
+/**
+ * This brand's own sameAs. There is no Boise Remodeling Co Facebook or
+ * Instagram. Directory listings stay on the parent.
+ * TODO(Quinn): add this brand's GBP Maps URL and Yelp URL when they exist.
+ */
+export const BRAND_SAME_AS = [P5_ORIGIN] as const;
 /**
  * Year-free square mark. The seal still reads EST 2020, so schema logo uses
  * this icon instead. Square, and above Google's 112px floor.
@@ -82,6 +91,48 @@ const CITY_WIKIPEDIA: Record<string, string> = {
  * GeneralContractor stays so existing consumers of that type still match.
  */
 const CONTRACTOR_TYPES = ['HomeAndConstructionBusiness', 'GeneralContractor'] as const;
+
+/**
+ * Service-area locality only. No street and no postal code.
+ * streetAddress pending owner approval
+ */
+function publicPostalAddress() {
+  return {
+    '@type': 'PostalAddress' as const,
+    addressLocality: 'Meridian',
+    addressRegion: 'ID',
+    addressCountry: 'US',
+  };
+}
+
+/** Cities the site already lists, then the two counties those cities sit in. */
+function businessAreaServed() {
+  return [
+    ...BUSINESS_INFO.serviceArea.map((area) => ({
+      '@type': 'City' as const,
+      name: area,
+      ...(CITY_WIKIPEDIA[area] ? { sameAs: CITY_WIKIPEDIA[area] } : {}),
+    })),
+    { '@type': 'AdministrativeArea' as const, name: 'Ada County' },
+    { '@type': 'AdministrativeArea' as const, name: 'Canyon County' },
+  ];
+}
+
+/** Offers for the existing /services/[slug] pages only. */
+function serviceOfferCatalog() {
+  return {
+    '@type': 'OfferCatalog' as const,
+    name: 'Remodeling Services',
+    itemListElement: SERVICES.map((service) => ({
+      '@type': 'Offer' as const,
+      url: `${baseUrl}/services/${service.slug}`,
+      itemOffered: {
+        '@type': 'Service' as const,
+        name: service.name,
+      },
+    })),
+  };
+}
 
 /**
  * Schema.org telephone. Visible pages keep the display format in
@@ -134,47 +185,20 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
     contactPoint: customerServiceContactPoint(),
+    address: publicPostalAddress(),
     openingHoursSpecification: Object.entries(BUSINESS_INFO.hours).map(([day, hours]) => ({
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: day.charAt(0).toUpperCase() + day.slice(1),
       opens: hours === 'Closed' ? undefined : schemaTime(hours.split(' - ')[0]),
       closes: hours === 'Closed' ? undefined : schemaTime(hours.split(' - ')[1]),
     })).filter(spec => spec.opens),
-    priceRange: '$$',
-    areaServed: BUSINESS_INFO.serviceArea.map(area => ({
-      '@type': 'City',
-      name: area,
-      ...(CITY_WIKIPEDIA[area] ? { sameAs: CITY_WIKIPEDIA[area] } : {}),
-    })),
-    ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
-      ? {
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: BUSINESS_INFO.rating,
-            reviewCount: BUSINESS_INFO.reviewCount,
-            bestRating: 5,
-            worstRating: 1,
-          },
-        }
-      : {}),
+    areaServed: businessAreaServed(),
     ...(SHOW_FOUNDING_YEAR ? { foundingDate: BUSINESS_INFO.founded } : {}),
     slogan: 'Boise\'s Design-Build Remodeling Company',
     paymentAccepted: 'Cash, Credit Card, Check, Financing',
     currenciesAccepted: 'USD',
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: 'Remodeling Services',
-      itemListElement: SERVICES.map((s) => ({
-        '@type': 'Offer',
-        url: `${baseUrl}/services/${s.slug}`,
-        itemOffered: {
-          '@type': 'Service',
-          name: s.name,
-          description: s.shortDescription,
-        },
-      })),
-    },
-    sameAs: BUSINESS_INFO.sameAs,
+    hasOfferCatalog: serviceOfferCatalog(),
+    sameAs: [...BRAND_SAME_AS],
   };
 }
 
@@ -190,7 +214,7 @@ export function generateWebSiteSchema(): SchemaContext {
     url: baseUrl,
     description:
       'Design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell, and the Treasure Valley, Idaho.',
-    publisher: { '@id': ORG_ID },
+    publisher: { '@id': LOCALBUSINESS_ID },
     // NOTE: SearchAction intentionally omitted. The previous target
     // (/blog?q={search_term_string}) had no search handler, which advertised a
     // sitelinks search box that does not work. Re-add only when on-site search
@@ -209,10 +233,10 @@ export function generateServiceSchema(serviceName: string, serviceDescription: s
     description: serviceDescription,
     provider: {
       '@type': [...CONTRACTOR_TYPES],
+      '@id': LOCALBUSINESS_ID,
       name: BUSINESS_INFO.name,
       telephone: SCHEMA_TELEPHONE,
       email: BUSINESS_INFO.email,
-      priceRange: '$$',
       parentOrganization: P5_PARENT_ORGANIZATION,
     },
     // The page city is the service area. It is not a second PostalAddress.
@@ -284,6 +308,7 @@ export function generateOrganizationSchema(): SchemaContext {
       : {}),
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
+    address: publicPostalAddress(),
     knowsAbout: [
       'kitchen remodeling',
       'bathroom remodeling',
@@ -294,7 +319,7 @@ export function generateOrganizationSchema(): SchemaContext {
       'Ada County building permits',
       'Canyon County building permits',
     ],
-    sameAs: BUSINESS_INFO.sameAs,
+    sameAs: [...BRAND_SAME_AS],
     contactPoint: customerServiceContactPoint(),
   };
 }
@@ -537,7 +562,6 @@ export function generateHomePageSchemaGraph(
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      stripSchemaContext(generateOrganizationSchema()),
       stripSchemaContext(generateLocalBusinessSchema('Boise')),
       stripSchemaContext(generateWebSiteSchema()),
       stripSchemaContext(generateFAQSchema(faqs)),
