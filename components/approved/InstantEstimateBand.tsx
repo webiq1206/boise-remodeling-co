@@ -29,7 +29,7 @@ export function InstantEstimateBand() {
         </div>
         <div className="fr-cta-strip-actions">
           <Link className="f-button f-dark" href={ESTIMATOR_PATH} data-cta="primary">{CTA_PRIMARY}</Link>
-          <a className="f-link" href={REQUEST_PATH}>{CTA_REQUEST} <ArrowUpRight size={18} aria-hidden="true" /></a>
+          <Link className="f-link" href={REQUEST_PATH}>{CTA_REQUEST} <ArrowUpRight size={18} aria-hidden="true" /></Link>
         </div>
       </div>
     </section>
