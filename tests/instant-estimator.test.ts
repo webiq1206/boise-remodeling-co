@@ -95,6 +95,11 @@ test("only estimator_completed counts as a lead, once per page view", () => {
   assert.equal(analytics.match(/trackGoogleAdsLeadConversion\(/g)?.length, 1);
   assert.ok(analytics.indexOf("trackGoogleAdsLeadConversion(") > analytics.indexOf("leadSent.current = true;"), "the Ads conversion must sit behind the once-only lead guard");
   assert.match(analytics, /trackGoogleAdsLeadConversion\(\{ projectType: [^}]+\}, `instant:\$\{id\}`\)/);
+  // Owner, 13 November 2026: the same finished estimate is a Meta Lead, once, behind the same guard,
+  // sharing the lead's id and carrying a project category only.
+  assert.equal(analytics.match(/trackMetaEvent\(/g)?.length, 1);
+  assert.ok(analytics.indexOf("trackMetaEvent(") > analytics.indexOf("leadSent.current = true;"), "the Meta Lead must sit behind the once-only lead guard");
+  assert.match(analytics, /trackMetaEvent\(\s*"Lead",\s*\{ content_name: [^}]+content_category: ESTIMATOR_LEAD_SOURCE \},\s*undefined,\s*`instant:\$\{id\}`,?\s*\)/);
   // The "instant:" key must not make the Ads helper send a second generate_lead.
   assert.doesNotMatch("instant:abc", /^(?:intake|estimator):/);
   assert.match(analytics, /const ESTIMATOR_LEAD_SOURCE = "instant_estimator";/);
