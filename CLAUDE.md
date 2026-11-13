@@ -579,9 +579,11 @@ primary pricing call to action on every family site.
   edit it in one site; site differences are props.
 - `components/estimator/EstimatorAnalytics.tsx` forwards the frame's
   `p5-estimator-event` window events to `trackEvent`. Only
-  `estimator_completed` counts as a lead, once per page view, as a plain
-  `generate_lead` labelled `instant_estimator`: `trackAcceptedInquiry` needs an
-  inquiry id from this site's own API, which the estimator cannot supply.
+  `estimator_completed` counts as a lead, once per page view: a `generate_lead`
+  labelled `instant_estimator` plus the Google Ads lead conversion through
+  `trackGoogleAdsLeadConversion` (owner, 13 November 2026), keyed `instant:<id>`
+  with an id made in the browser. `trackAcceptedInquiry` is not used: it needs
+  an inquiry id from this site's own API, which the estimator cannot supply.
 - **CTAs** live in `shared/ctaCopy.ts` and `lib/familyBrand.ts` (`cta`). Header,
   menu and bottom bar say "Instant estimate"; in-page primary buttons say "Get
   an instant estimate"; both go to `/instant-estimate`. A service page opens the
