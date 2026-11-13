@@ -18,12 +18,12 @@ const SERVICE_ALT: Record<string, string> = {
 };
 
 const AREA_ALT: Record<string, string> = {
-  boise: 'Tree-lined residential street with sidewalks and front yards',
-  meridian: 'Wide residential street with sidewalks, lawns, and young trees',
-  eagle: 'Suburban street with single-story houses, front lawns, and trees',
+  boise: 'Residential street with two-story houses, young trees, and a grassy hillside beyond',
+  meridian: 'Two-story white house with dark trim, an attached garage, and a front lawn',
+  eagle: 'Single-story house with a dark metal roof, lit windows, and gravel landscaping at dusk',
   nampa: 'Residential street with two-story houses, driveways, and lawns',
-  kuna: 'Residential street with houses, front lawns, and trees',
-  star: 'Wide residential street with houses, lawns, and trees',
+  kuna: 'Single-story house with a dark metal roof, a wood-clad entry, and mountains beyond',
+  star: 'Two-story house with dark siding and a covered patio beside a river',
   middleton: 'Residential street with houses, lawns, and a sidewalk',
   caldwell: 'Residential street with houses, lawns, and trees',
 };
@@ -76,7 +76,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/bedroom-additions.webp':
     'Bright bedroom with large windows, a wood dresser and a woven rug',
   '/images/blog/adu-cost-boise.webp':
-    'Small detached cottage with a covered front porch beside a main house',
+    'Small detached backyard building with gray siding and a wood-clad entry beside a main house',
   '/images/blog/multigenerational-living-remodels.webp':
     'Living area with a kitchenette, a sofa and a doorway to a bedroom',
   '/images/blog/garage-conversions.webp':
