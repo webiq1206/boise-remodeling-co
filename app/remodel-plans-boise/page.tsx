@@ -98,7 +98,7 @@ export default function RemodelPlansPage() {
       <PageHeroBand
         compact
         imageSrc={SITE_IMAGES.budgetDetail}
-        imageAlt="Construction drawings for a Boise remodel laid out during estimating"
+        imageAlt="Sage green kitchen island with a white quartz top in a remodeled kitchen"
         scrim={0.75}
       >
         <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Estimate From Plans" }]} />

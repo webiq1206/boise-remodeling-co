@@ -13,12 +13,12 @@ import {ServiceArea} from '@/components/family/ServiceArea';
 const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
 
 const PHOTO_ALT:Record<string,string>={
- 'kitchen-remodel':'White kitchen with a wood island, brass lights, and a view to the living room',
- 'bathroom-remodel':'Bathroom with a freestanding tub, glass shower, and double wood vanity',
- 'whole-home-remodel':'Living room with wood floors, a gray sofa, and windows looking onto a patio',
- 'room-addition':'House exterior with horizontal siding and a covered porch',
- 'basement-remodel':'Finished lower-level room with light wood floors and a wall of windows',
- 'outdoor-living':'Covered patio with a wood dining table and a stone fireplace',
+ 'kitchen-remodel':'White shaker kitchen with a sage green island, brass pulls, and a black-framed window',
+ 'bathroom-remodel':'Bathroom with a white vanity, a brass-framed mirror, and a glass walk-in shower',
+ 'whole-home-remodel':'Living room with wood floors, a gray sofa, and a view into the kitchen',
+ 'room-addition':'Single-story house with a new addition, a sliding glass door, and a concrete patio',
+ 'basement-remodel':'Finished lower-level room with light wood floors, a gray sectional, and a carpeted stair',
+ 'outdoor-living':'Covered patio with a wood dining table and square black posts',
 };
 function photoAlt(slug:string){return PHOTO_ALT[slug]??'Photograph of a remodeling project';}
 function Title({lines}:{lines:string[]}){return <>{lines[0]}<br/><em>{lines[1]}</em></>}
@@ -83,12 +83,12 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
    accent="can become."
    intro="Warm white oak, quiet tile and light that lands well. Kitchens and baths planned around the way you actually use them, finished with the small details you notice every day."
    photos={[
-    {src:'/family/drive/landscape-1-white-and-oak-kitchen-island.webp',alt:'White kitchen with a white oak island, cream counter stools and a plaster range hood',label:'Kitchen',wide:true},
-    {src:'/family/drive/square-1-kitchen-counter-detail.webp',alt:'Loaf of bread on a wood board on a white quartz counter beside a crock of wooden spoons',label:'Counter detail'},
+    {src:'/family/drive/landscape-1-white-and-oak-kitchen-island.webp',alt:'White kitchen with a white oak island, two oak stools and a plaster range hood',label:'Kitchen',wide:true},
+    {src:'/family/drive/square-1-kitchen-counter-detail.webp',alt:'White quartz counter corner with a glazed tile backsplash and brass cabinet knobs',label:'Counter detail'},
     {src:'/family/drive/square-2-powder-room-vessel-sink.webp',alt:'Powder room with a marble vessel sink, brass wall faucet and an oak-framed mirror',label:'Powder room'},
-    {src:'/family/drive/landscape-2-freestanding-soaking-tub.webp',alt:'Freestanding white soaking tub against a marble wall with a brass floor-mounted faucet',label:'Primary bath',wide:true},
+    {src:'/family/drive/landscape-2-freestanding-soaking-tub.webp',alt:'Freestanding white soaking tub against a marble-look tile wall with a brass floor-mounted faucet',label:'Primary bath',wide:true},
     {src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:'Floating white oak double vanity with round black mirrors beside a glass walk-in shower',label:'Double vanity',wide:true},
-    {src:'/family/drive/square-3-tiled-shower-bench.webp',alt:'Tiled shower bench with a rolled white towel, soap and hanging eucalyptus',label:'Shower bench'},
+    {src:'/family/drive/square-3-tiled-shower-bench.webp',alt:'Tiled shower bench with a stone top, a wall niche and a brass handheld shower',label:'Shower bench'},
    ]}
   />
 
@@ -103,7 +103,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
 
   {/* 5. Why the price is fair. */}
   <section className="f-value">
-   <img src={b.valueImage} alt="Kitchen counter with wood cabinets, a white countertop, and a tile backsplash" loading="lazy" width="1200" height="900"/>
+   <img src={b.valueImage} alt="Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top" loading="lazy" width="1200" height="900"/>
    <div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2>{b.value.split(/(?<=\.)\s+/).filter(Boolean).map((sentence)=><p key={sentence}>{sentence}</p>)}<Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div>
   </section>
 

@@ -33,7 +33,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     afterImageUrl: GALLERY_IMAGES.kitchen.after,
     title: "A Kitchen Refresh Within the Existing Layout",
     description:
-      "Compare warm oak cabinetry with a white shaker finish, quartz work surfaces, updated appliances and oak flooring. The window, doorway and working layout stay in place.",
+      "Compare warm oak cabinetry with a white shaker finish, quartz work surfaces, updated appliances and wood flooring. The window, doorway and working layout stay in place.",
   },
   {
     serviceType: "bathroom-remodel",
