@@ -64,6 +64,7 @@ export function urlsForChangedFiles(files, catalogs = {}) {
       addCityServices(urls);
     }
     if (f === 'app/estimate/page.tsx' || f === 'lib/page-metadata.ts') urls.add('/estimate');
+    if (f.startsWith('app/instant-estimate/')) urls.add('/instant-estimate');
     if (f.startsWith('app/re-10')) urls.add('/re-10-repairs-boise');
     if (
       f.startsWith('app/blog/') ||

@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { ArticleFaqs } from './ArticleFaqs';
 import { ArticleSidebar,ArticleSidebarCta } from './ArticleSidebar';
 import { BlogEndCta } from './BlogEndCta';
+import { articleCtaDestination } from '@/shared/ctaCopy';
 import { BlogHeroBanner } from './BlogHeroBanner';
 import { Chip } from './Chip';
 import { GuideContentBlocks,GuideJumpChips } from './GuideContentBlocks';
@@ -47,6 +48,8 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
   const publishedClusters = getClustersForHub(guide.hubSlug, true);
   const resources = getResourcesForGuide(guide.slug);
   const showInlineEstimate = isCostRelatedContent(guide.slug, guide.hubSlug);
+  // The estimator, unless the hub's subject is one it has no project for.
+  const ctaDestination = articleCtaDestination(guide.hubSlug);
   const inlineFigures = getArticleInlineFigures(
     guide.slug,
     tocHeadings.length,
@@ -105,7 +108,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
                   inlineFigures={inlineFigures}
                 />
 
-                {showInlineEstimate && <InlineEstimateCTA />}
+                {showInlineEstimate && <InlineEstimateCTA destination={ctaDestination} />}
 
                 {publishedClusters.length > 0 && (
                   <div
@@ -163,12 +166,12 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
               )}
 
               <div className="lg:hidden mt-10">
-                <ArticleSidebarCta description="Tell us about the work. The free in-home visit ends with a planning range and design direction." />
+                <ArticleSidebarCta destination={ctaDestination} />
               </div>
             </div>
 
             <aside className="article-rail hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">
-              <ArticleSidebar tocHeadings={tocHeadings} />
+              <ArticleSidebar tocHeadings={tocHeadings} destination={ctaDestination} />
             </aside>
           </div>
         </div>
@@ -180,7 +183,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
         </div>
       </Section>
 
-      <BlogEndCta />
+      <BlogEndCta destination={ctaDestination} />
     </div>
   );
 }

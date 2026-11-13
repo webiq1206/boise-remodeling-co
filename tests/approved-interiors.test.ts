@@ -45,7 +45,7 @@ test('interior CSS follows the original family and system layers', () => {
 // "Request a consultation" link to the same form was removed on purpose.
 test('contact hero has one Request a quote action to the visit form', () => {
   const source = read('app/contact/page.tsx');
-  assert.match(source, /<div className="interior-contact-actions"><InteriorEstimateLink label=\{CTA_PRIMARY\} href="\/contact#consult"\/><\/div>/);
+  assert.match(source, /<div className="interior-contact-actions"><InteriorEstimateLink label=\{CTA_REQUEST\} href="\/contact#consult"\/><\/div>/);
   assert.doesNotMatch(source, /Request a consultation/);
   assert.doesNotMatch(source, /Get my online estimate|href="\/estimate"/);
   assert.match(read('components/approved/InteriorLayout.tsx'), /href='\/estimate'/);

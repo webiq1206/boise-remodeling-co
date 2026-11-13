@@ -106,7 +106,7 @@ export default function ServicesIndexPage() {
             <em className="not-italic" style={{ color: 'var(--ed-accent)' }}>commit</em>
           </>
         }
-        description="Request a quote for kitchen, bath, whole-home or addition work. The free in-home visit ends with a planning range and design direction."
+        description="Answer a few questions about your kitchen, bath, basement, whole-home or addition project and see a preliminary price range on screen. Free, any time, with no appointment."
       />
 
       <Section surface="bone" spacing="xl" edge>
@@ -149,7 +149,7 @@ export default function ServicesIndexPage() {
             </h2>
             <div>
               <p className="ed-body">
-                Book a free in-home visit or get a preliminary planning range for your project.
+                Get an instant preliminary estimate for your project, or book a free in-home visit.
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
                 <EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA>

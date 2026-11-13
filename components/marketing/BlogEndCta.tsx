@@ -1,6 +1,6 @@
 import { Section } from "./Section";
 import { familyButtonClass } from "@/components/family/Button";
-import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
+import { CTA_PRIMARY, CTA_REQUEST, CTA_SECONDARY } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { BusinessPhoneLink } from "@/components/BusinessPhoneContact";
@@ -17,7 +17,8 @@ import { SaveContactLink } from "@/components/SaveContactLink";
  */
 const link = familyButtonClass({ variant: "tertiary" });
 
-export function BlogEndCta() {
+export function BlogEndCta({ destination = "estimator" }: { destination?: "estimator" | "request" }) {
+  const request = destination === "request";
   return (
     <Section surface="gradient" spacing="xl" edge>
       <div className="ed-shell">
@@ -30,13 +31,14 @@ export function BlogEndCta() {
       </div>
       <div>
       <p className="ed-body">
-        Request a quote to set up a free in-home visit.
-        No obligation, no pressure.
+        {request
+          ? "Request a quote to set up a free in-home visit. No obligation, no pressure."
+          : "See a preliminary price range on screen, free and with no appointment. A firm written proposal follows a free in-home visit."}
       </p>
       {/* One primary action (C5); the visit, call and text are tertiary text links. */}
       <div className="mt-8 flex flex-col items-start gap-4">
-        <EstimateCTA tone="dark" size="lg" block data-testid="link-bottom-cta-estimate">
-          {CTA_PRIMARY}
+        <EstimateCTA tone="dark" size="lg" block destination={destination} data-testid="link-bottom-cta-estimate">
+          {request ? CTA_REQUEST : CTA_PRIMARY}
         </EstimateCTA>
         <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
           <a href="/contact#consult" className={link} data-testid="link-bottom-cta-consult">

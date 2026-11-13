@@ -82,7 +82,7 @@ export default function DesignIdeasPage() {
           </div>
         </Section>
         <ProjectGallerySection />
-        <EstimatePromptBand title="Tell us about your remodel" description="Share your project details so the team can discuss the scope and next steps." />
+        <EstimatePromptBand title="See what your remodel could cost" description="Answer a few questions and see a preliminary price range on screen. Free, any time, with no appointment." />
         <Section variant="inverse" divider>
           <div className="container px-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>

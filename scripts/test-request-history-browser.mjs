@@ -10,7 +10,9 @@ try {
   const browser=await engine.launch();
   try { for(const width of [390,1440]) {
    const entries=[['main','main a[href="/#request"]','request'],['direct',null,'request']];
-   if(width===1440)entries.push(['header','header a[href="/#request"]','request']);
+   // The header CTA is the central estimator now (owner decision, 13 November 2026), so the
+   // keyboard entry uses the first in-page "Request a quote" link instead of the header's.
+   if(width===1440)entries.push(['keyboard','main a[href="/#request"]','request']);
    for(const [entry,selector,target] of entries) {
     const context=await browser.newContext({viewport:{width,height:900}});
     await context.route('**/*',r=>{const u=new URL(r.request().url());return u.origin===origin&&!u.pathname.startsWith('/api/')&&r.request().method()==='GET'?r.continue():r.abort('blockedbyclient');});
@@ -19,7 +21,7 @@ try {
      await page.goto(base+'/',{waitUntil:'networkidle'});
      const homeHeading=await page.locator('h1').innerText();
      if(entry==='direct') {await page.goto('about:blank');await page.goto(base+'/#request',{waitUntil:'networkidle'});}
-     else {const entryLink=page.locator(selector).first(); if(entry==='header'){await entryLink.focus();await page.keyboard.press('Enter');}else await entryLink.click();}
+     else {const entryLink=page.locator(selector).first(); if(entry==='keyboard'){await entryLink.focus();await page.keyboard.press('Enter');}else await entryLink.click();}
      await page.waitForURL(u=>u.pathname==='/'&&u.hash==='#'+target);
      await page.waitForFunction(id=>{const r=document.getElementById(id)?.getBoundingClientRect();return r&&r.bottom>0&&r.top<innerHeight},target);
      assert.equal(await page.locator('#'+target).count(),1);

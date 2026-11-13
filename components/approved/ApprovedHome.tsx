@@ -5,6 +5,7 @@ import {ArrowUpRight} from 'lucide-react';
 import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/components/ui/accordion';
 import {FAQSection} from '@/components/FAQSection';
 import {PlanningRangeExplorer} from './PlanningRangeExplorer';
+import {InstantEstimateBand} from './InstantEstimateBand';
 import {brands,cities,serviceExtras} from './family-content';
 import {DesignGallery} from '@/components/sections/DesignGallery';
 import {ServiceArea} from '@/components/family/ServiceArea';
@@ -33,7 +34,7 @@ function Rows({items,numbered=false}:{items:[string,string][];numbered?:boolean}
 
 /**
  * The homepage below the hero, in the order a homeowner has the conversation:
- * what we do (picture cards), what it can look like (showcase), what it costs
+ * the instant estimate (the band that sells the central estimator), what we do (picture cards), what it can look like (showcase), what it costs
  * (planning ranges, on their own dark band so the number is the one thing on
  * screen), what happens next (process), why the price is fair (value band),
  * who you are hiring (founder), the way we work, where we work, and the last
@@ -44,6 +45,9 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
 
  return <div className={`family-site family-${b.id}`} style={{'--f-accent':b.accent} as CSSProperties}>
   {hero}
+
+  {/* The central estimator, sold right under the hero (owner decision, 13 November 2026). */}
+  <InstantEstimateBand />
 
   {/* 1. Services as picture cards: six rooms, one photograph each, sentence case. */}
   <section className="f-section f-container" id="services">

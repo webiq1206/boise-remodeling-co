@@ -21,8 +21,9 @@ import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 // Phase 2 family chrome: the shared components read every Remodeling fact from
 // lib/familyBrand.ts. These pin that the config says what the site says.
 test('the brand config carries this site’s facts, one CTA and one destination', () => {
-  assert.equal(FAMILY_BRAND.cta.label, 'Request a quote');
-  assert.equal(FAMILY_BRAND.cta.href, '/#request');
+  // Owner decision, 13 November 2026: the one CTA is the central estimator, framed at /instant-estimate.
+  assert.equal(FAMILY_BRAND.cta.label, 'Instant estimate');
+  assert.equal(FAMILY_BRAND.cta.href, '/instant-estimate');
   assert.equal(FAMILY_BRAND.phone.telHref, SITE_CONFIG.phoneHref);
   assert.equal(FAMILY_BRAND.phone.smsHref, SITE_CONFIG.phoneSmsHref);
   assert.equal(FAMILY_BRAND.phone.display, '(208) 477-1169');
@@ -102,9 +103,10 @@ test('the video hero preserves the family template copy, action and sourced proo
   assert.match(html, /Design-build remodeling in Boise/);
   const cta = html.match(/<a [^>]*data-hero-cta="primary"[^>]*>([^<]+)<\/a>/);
   assert.ok(cta, 'hero primary CTA');
-  assert.match(cta[0], /href="\/#request"/);
+  // Owner decision, 13 November 2026: the hero's action is the central estimator.
+  assert.match(cta[0], /href="\/instant-estimate"/);
   assert.match(cta[0], /fam-btn--hero fam-btn--lg/);
-  assert.equal(cta[1], 'Request a quote');
+  assert.equal(cta[1], 'Get an instant estimate');
   assert.match(html, /data-fit="viewport"/);
   assert.doesNotMatch(html, /class="fam-hero-link"/);
   assert.match(html, /data-video-hero=""/);

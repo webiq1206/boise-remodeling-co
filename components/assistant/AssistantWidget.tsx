@@ -224,7 +224,9 @@ export function AssistantWidget() {
     pathname.startsWith("/remodel-plans");
   if (wizardOwnsBottom && !open) return null;
 
-  const estimatorHref = pathname === "/" ? "/#calculator" : "/estimate";
+  // The central estimator (owner decision, 13 November 2026). /#calculator has had no target
+  // since the optional intake was unmounted.
+  const estimatorHref = "/instant-estimate";
 
   return (
     <>

@@ -102,6 +102,9 @@ function buildShort(): string {
   lines.push('## About and contact', '');
   lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.`));
   lines.push(`- [Contact](${url('/contact')})`);
+  lines.push(
+    `- [Instant remodel estimate](${url('/instant-estimate')}): answer a few questions and see a preliminary price range on screen. Free, with no appointment. It is a range for budgeting, not a final price; a firm written proposal follows a site visit.`,
+  );
   lines.push(`- [Send project details and photos for a quote](${url('/estimate')})`);
   lines.push(`- [Remodeling design ideas](${url('/design-ideas')})`);
   lines.push(`- [Planning resources and worksheets](${url('/resources')})`, '');
@@ -148,6 +151,7 @@ function buildFull(): string {
   lines.push('- Parent company: P5 Home Co (https://p5homeco.com)');
   lines.push('- Service model: One accountable team for design, permits, and construction');
   lines.push(`- Contact: ${SITE_CONFIG.email} (${url('/contact')})`);
+  lines.push(`- Instant estimate (a preliminary price range on screen, not a final price): ${url('/instant-estimate')}`);
   lines.push(`- Send project details: ${url('/estimate')}`, '');
 
   lines.push('## Service area', '');
@@ -234,6 +238,7 @@ function buildFull(): string {
   lines.push(`- About: ${url('/about')}`);
   lines.push(`- Services: ${url('/services')}`);
   lines.push(`- Service areas: ${url('/areas')}`);
+  lines.push(`- Instant estimate: ${url('/instant-estimate')}`);
   lines.push(`- Send project details: ${url('/estimate')}`);
   lines.push(`- Remodeling design ideas: ${url('/design-ideas')}`);
   lines.push(`- Blog: ${url('/blog')}`);

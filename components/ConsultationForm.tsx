@@ -483,7 +483,7 @@ function FullConsultationForm({ onRevise, showTrust = false }: Omit<Consultation
                 Estimate cost <ArrowRight className="h-4 w-4" />
               </Button>
             ) : (
-              <EstimateCTA size="sm" variant="brandOutline" className="w-full whitespace-normal px-4 py-3 text-center sm:w-auto sm:whitespace-nowrap sm:px-8" data-testid="button-start-estimate">
+              <EstimateCTA size="sm" variant="brandOutline" destination="request" className="w-full whitespace-normal px-4 py-3 text-center sm:w-auto sm:whitespace-nowrap sm:px-8" data-testid="button-start-estimate">
                 Estimate cost <ArrowRight className="h-4 w-4" />
               </EstimateCTA>
             )}

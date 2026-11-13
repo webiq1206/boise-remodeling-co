@@ -5,6 +5,7 @@ import { SaveContactLink } from "@/components/SaveContactLink";
 import { Section } from "@/components/marketing";
 import { AreaCard } from "@/components/marketing/AreaCard";
 import { SectionHeader } from "@/components/marketing/SectionHeader";
+import { ConsultCTA } from "@/components/modals/ConsultCTA";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { familyButtonClass } from "@/components/family/Button";
 import { Reveal } from "@/components/Reveal";
@@ -18,7 +19,7 @@ import {
 } from "@/lib/schema";
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
 import { CITIES, TREASURE_VALLEY_CITIES } from "@/shared/contentData";
-import { CTA_PRIMARY } from "@/shared/ctaCopy";
+import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
 import Image from "next/image";
@@ -83,7 +84,7 @@ export default function AboutPage() {
         <JsonLd data={schemas} />
         <div className="flex flex-col">
           {/* Interior hero budget (phase 5, the phase 3 pattern): the unchanged H1,
-              one support line, one primary "Request a quote" and the phone as a
+              one support line, one primary "Get an instant estimate" and the phone as a
               text link, so the action is in the first screen above the bottom bar
               on phones and inside 1280x720. The rest of the hero copy opens the
               band below, word for word. */}
@@ -249,11 +250,12 @@ export default function AboutPage() {
                 <h2 className="ed-h2-sm ed-statement-wide">Ready to start your remodel?</h2>
                 <div>
                   <p className="ed-body">
-                    Schedule a free in-home visit for planning guidance, design direction, and an honest
-                    project range.
+                    See a preliminary price range on screen now, or schedule a free in-home visit for
+                    planning guidance and design direction.
                   </p>
-                  <div className="mt-8">
+                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4 [&>*]:w-full sm:[&>*]:w-auto">
                     <EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA>
+                    <ConsultCTA>{CTA_SECONDARY}</ConsultCTA>
                   </div>
                 </div>
               </div>

@@ -52,8 +52,10 @@ export const FAMILY_BRAND: FamilyBrand = {
     { label: 'Blog', href: '/blog' },
     { label: 'Contact', href: '/contact' },
   ],
-  // One label, one destination: the short request on the homepage.
-  cta: { label: 'Request a quote', href: '/#request' },
+  // One label, one destination. Owner decision, 13 November 2026: the header, menu and
+  // bottom bar lead to the central estimator, framed at /instant-estimate. The short
+  // request (/#request) stays as the path to a person.
+  cta: { label: 'Instant estimate', href: '/instant-estimate' },
   phone: { display: SITE_CONFIG.phone, telHref: SITE_CONFIG.phoneHref, smsHref: SITE_CONFIG.phoneSmsHref },
   chat: {
     enabled: true, label: 'Chat', openEvent: 'p5:assistant-open',

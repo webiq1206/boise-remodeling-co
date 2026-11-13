@@ -103,7 +103,7 @@ export default function AreasHubPage() {
               <em className="brc-accent">city</em>?
             </>
           }
-          description="Permit paths and housing stock differ across Ada and Canyon County. Request a quote, and the free in-home visit covers your city's permit path and ends with a planning range."
+          description="Permit paths and housing stock differ across Ada and Canyon County. See a preliminary price range for your project on screen now. The free in-home visit covers your city's permit path."
         />
 
         <BlogEndCta />

@@ -23,9 +23,10 @@ try{
    assert.ok(controls.every(c=>c.height>=44),'Mobile action too small');
    await page.screenshot({path:`${out}/actions-${width}.png`});
    await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));await delay(150);assert.equal(await visible(bar),true,'Approved mobile CTA remains available after returning to hero');
-   const primary=bar.locator('a[href="/#request"]');assert.equal(await primary.count(),1,'One primary quote destination');
+   // Owner decision, 13 November 2026: the bar's one primary action is the central estimator, framed at /instant-estimate.
+   const primary=bar.locator('a[href="/instant-estimate"]');assert.equal(await primary.count(),1,'One primary estimator destination');assert.equal(await bar.locator('a[href="/#request"]').count(),0,'The bar has one primary action');
    assert.ok(await primary.evaluate(el=>{const r=el.getBoundingClientRect();return el.contains(document.elementFromPoint(r.left+r.width/2,r.top+r.height/2));}),'Primary CTA is unobstructed');
-   await primary.click();await page.waitForURL(url=>url.hash==='#request');await page.locator('#request-form form').waitFor({state:'visible'});assert.equal(new URL(page.url()).hash,'#request','CTA targets the actual homepage request form');assert.ok(await page.locator('#request-form input[name="name"]').isVisible());
+   await primary.click();await page.waitForURL(url=>url.pathname==='/instant-estimate');await page.locator('[data-estimator-frame="remodeling"]').waitFor({state:'attached'});assert.equal(new URL(page.url()).pathname,'/instant-estimate','CTA targets the page that frames the estimator');assert.ok(await page.locator('h1').first().isVisible());assert.equal(await page.locator('main a[href="/#request"]').count(),1,'The estimator page keeps the request form one tap away');
    results.mobile.push({width,visibleOverHero:true,visibleAfterHero:true,callLabeled:true});
   }
  }

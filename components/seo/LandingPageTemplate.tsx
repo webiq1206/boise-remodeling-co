@@ -21,7 +21,8 @@ import { contentImageAlt } from '@/shared/contentImageAlt';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
-import { CTA_PRIMARY } from '@/shared/ctaCopy';
+import { CTA_REQUEST, REQUEST_PATH, primaryCtaForService } from '@/shared/ctaCopy';
+import { familyButtonClass } from '@/components/family/Button';
 import type { GalleryProject } from '@/shared/galleryData';
 import type { FAQItem } from '@/shared/seoContent';
 import { ArrowRight,ChevronRight,Star } from 'lucide-react';
@@ -276,8 +277,13 @@ export function LandingPageTemplate({
     process: `How ${withArticle(noun)}${where} works, step by step`,
     proof: `Design ideas for ${withArticle(noun)}${where}`,
     faq: `Questions about ${withArticle(noun)}${where}`,
-    cta: `Request a quote for your ${noun}`,
   };
+  // Owner decision, 13 November 2026: the primary action is the central estimator, opened on
+  // this page's service. A service the estimator cannot price (ADU, outdoor living, aging in
+  // place) keeps "Request a quote". Area pages name no service, so the visitor picks a project.
+  const primaryCta = primaryCtaForService(related.serviceSlug);
+  const estimatorCta = primaryCta.kind === 'estimator';
+  const ctaHeading = estimatorCta ? `Get an instant estimate for your ${noun}` : `Request a quote for your ${noun}`;
   void showEstimatePrompt;
   void proofHeading;
   const heroCopy = splitHeroCopy(overview);
@@ -324,7 +330,7 @@ export function LandingPageTemplate({
               <span>Planning from</span> <strong>{planningFrom}</strong>
             </p>
           )}
-          <InteriorHeroActions />
+          <InteriorHeroActions serviceSlug={related.serviceSlug} />
         </InteriorHero>
       {(heroCopy.rest || planningFrom) && (
         <div className="interior-hero-more">
@@ -696,13 +702,26 @@ export function LandingPageTemplate({
             <Reveal>
               <p className="ed-eyebrow ed-eyebrow-accent">Start your project</p>
               <h2 className="ed-h2 ed-statement">
-                <Accented text={headings.cta} />
+                <Accented text={ctaHeading} />
               </h2>
             </Reveal>
             <Reveal delay={60}>
-              <p className="ed-lede">Free 60 to 90 minute in-home visit.</p>
-              <p className="ed-body mt-3">Planning guidance, design direction, no obligation.</p>
-              <div className="mt-8"><EstimateCTA tone="dark" size="lg">{CTA_PRIMARY}</EstimateCTA></div>
+              {estimatorCta ? (
+                <>
+                  <p className="ed-lede">See a preliminary price range on screen. Free, with no appointment.</p>
+                  <p className="ed-body mt-3">A firm written proposal follows a free 60 to 90 minute in-home visit.</p>
+                  <div className="mt-8 flex flex-col items-start gap-4">
+                    <EstimateCTA tone="dark" size="lg" project={primaryCta.project}>{primaryCta.label}</EstimateCTA>
+                    <a href={REQUEST_PATH} className={familyButtonClass({ variant: 'tertiary' })} data-testid="link-landing-cta-request">{CTA_REQUEST}</a>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <p className="ed-lede">Free 60 to 90 minute in-home visit.</p>
+                  <p className="ed-body mt-3">Planning guidance, design direction, no obligation.</p>
+                  <div className="mt-8"><EstimateCTA tone="dark" size="lg" destination="request">{primaryCta.label}</EstimateCTA></div>
+                </>
+              )}
             </Reveal>
           </div>
         </div>
