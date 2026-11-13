@@ -52,8 +52,8 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
     { src: '/images/gallery/featured-eagle-outdoor.webp', alt: 'Single-story ranch house with a front lawn, mature trees and dry hills beyond' },
   ],
   'treasure-valley-locations': [
-    { src: '/images/areas/boise.webp', alt: 'Craftsman-style houses along a tree-lined sidewalk with mountains in the distance' },
-    { src: '/images/areas/eagle.webp', alt: 'Stone-front house with a circular driveway and mountains beyond' },
+    { src: '/images/areas/boise.webp', alt: 'Residential street with two-story houses, young trees and a grassy hillside beyond' },
+    { src: '/images/areas/eagle.webp', alt: 'Single-story house with a dark metal roof, lit windows and gravel landscaping at dusk' },
     { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with lap siding, brick trim and an attached garage' },
   ],
 };
@@ -131,7 +131,7 @@ const INLINE_HUB_ALTS: Record<string, string> = {
   "remodeling-process": "Living room with carpet, a fireplace and broad windows",
   "remodeling-roi": "White kitchen with an island, pendant lights and wood flooring",
   "outdoor-living": "Backyard lawn beside a house with pale siding and a sliding glass door",
-  "treasure-valley-locations": "Craftsman-style houses along a tree-lined sidewalk with mountains in the distance"
+  "treasure-valley-locations": "Residential street with two-story houses, young trees and a grassy hillside beyond"
 };
 
 export function getArticleInlineFigures(

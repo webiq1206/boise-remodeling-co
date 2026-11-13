@@ -182,7 +182,7 @@ const ENTRIES = {
   },
   "adu-cost-boise": {
     hero: "/images/blog/adu-cost-boise.webp",
-    alt: "Detached cottage with lap siding, a small covered porch and a paved entry path",
+    alt: "Small detached backyard building with gray siding, a wood-clad entry and a stone path",
     topicTags: ["adu","addition","boise"],
     source: "blog",
   },
@@ -236,7 +236,7 @@ const ENTRIES = {
   },
   "remodeling-vs-moving": {
     hero: "/images/blog/remodeling-vs-moving.webp",
-    alt: "Two-story house with lap siding, a covered front porch and a lawn",
+    alt: "Two-story house with green lap siding, an attached garage and a front lawn",
     topicTags: ["whole-home","planning","boise"],
     source: "blog",
   },
@@ -380,7 +380,7 @@ const ENTRIES = {
   },
   "ada-vs-canyon-county-permit-timelines": {
     hero: "/images/blog/ada-vs-canyon-county-permit-timelines.webp",
-    alt: "House exterior with a garage, pickup truck and rolled drawings in the foreground",
+    alt: "Rolled drawings, a tape measure and a clipboard on a table in front of a gray house",
     topicTags: ["process","permits","ada-county","canyon-county"],
     source: "blog",
   },
@@ -470,13 +470,13 @@ const ENTRIES = {
   },
   "treasure-valley-remodeling-guide": {
     hero: "/images/areas/boise.webp",
-    alt: "Craftsman-style houses along a tree-lined sidewalk with mountains in the distance",
+    alt: "Residential street with two-story houses, young trees and a grassy hillside beyond",
     topicTags: ["location","treasure-valley","guide"],
     source: "areas",
   },
   "boise-remodeling-guide": {
     hero: "/images/blog/boise-remodeling-guide.webp",
-    alt: "Craftsman-style houses along a tree-lined sidewalk with mountains in the distance",
+    alt: "Residential street with two-story houses, young trees and a grassy hillside beyond",
     topicTags: ["location","boise","guide"],
     source: "blog",
     copyFrom: "/images/areas/boise.webp",
@@ -540,25 +540,25 @@ const ENTRIES = {
   },
   "meridian-remodeling-guide": {
     hero: "/images/areas/meridian.webp",
-    alt: "House with a stone entry, front lawn and neighboring homes",
+    alt: "Two-story white house with dark trim, an attached garage and a front lawn",
     topicTags: ["location","meridian","guide"],
     source: "areas",
   },
   "eagle-remodeling-guide": {
     hero: "/images/areas/eagle.webp",
-    alt: "Stone-front house with a circular driveway and mountains beyond",
+    alt: "Single-story house with a dark metal roof, lit windows and gravel landscaping at dusk",
     topicTags: ["location","eagle","guide"],
     source: "areas",
   },
   "kuna-remodeling-guide": {
     hero: "/images/areas/kuna.webp",
-    alt: "Single-story house with board-and-batten siding, a metal roof and a covered entry",
+    alt: "Single-story house with a dark metal roof, a wood-clad entry and mountains beyond",
     topicTags: ["location","kuna","guide"],
     source: "areas",
   },
   "star-remodeling-guide": {
     hero: "/images/areas/star.webp",
-    alt: "House beside a river with a lawn, mature trees and a hanging bench",
+    alt: "Two-story house with dark siding and a covered patio beside a river",
     topicTags: ["location","star","guide"],
     source: "areas",
   },
@@ -582,7 +582,7 @@ const ENTRIES = {
   },
   "north-end-remodeling-guide": {
     hero: "/images/blog/north-end-remodeling-guide.webp",
-    alt: "Craftsman-style bungalow with a covered porch, brick steps and mature trees",
+    alt: "Small white cottage with a steep gable roof, a wood front door and mature trees",
     topicTags: ["location","north-end","neighborhood","guide"],
     source: "blog",
   },
@@ -594,7 +594,7 @@ const ENTRIES = {
   },
   "harris-ranch-remodeling-guide": {
     hero: "/images/blog/harris-ranch-remodeling-guide.webp",
-    alt: "Row of houses along a curving street with mountains beyond",
+    alt: "Row of two-story houses with lap siding along a street below dry hills",
     topicTags: ["location","harris-ranch","neighborhood","guide"],
     source: "blog",
   },
@@ -606,13 +606,13 @@ const ENTRIES = {
   },
   "hidden-springs-remodeling-guide": {
     hero: "/images/blog/hidden-springs-remodeling-guide.webp",
-    alt: "Porches and tree-lined paths between houses with hills in the distance",
+    alt: "White and gray two-story houses with front porches below green hills",
     topicTags: ["location","hidden-springs","neighborhood","guide"],
     source: "blog",
   },
   "eagle-foothills-remodeling-guide": {
     hero: "/images/blog/eagle-foothills-remodeling-guide.webp",
-    alt: "Stone-front house with a circular driveway and mountains beyond",
+    alt: "Single-story house with a dark metal roof, lit windows and gravel landscaping at dusk",
     topicTags: ["location","eagle-foothills","neighborhood","guide"],
     source: "blog",
     copyFrom: "/images/areas/eagle.webp",

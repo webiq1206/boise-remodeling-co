@@ -9,12 +9,15 @@
  * project the visitor chose. It renders nothing.
  *
  * The lead: "estimator_completed" is the only event that counts as a lead, and
- * it is counted once per page view. It sends two things, the same two every
- * other lead on this site sends:
+ * it is counted once per page view. It sends three things:
  *   - the Google Ads lead conversion, through trackGoogleAdsLeadConversion
  *     (owner, 13 November 2026), so an estimator lead reaches Google Ads like
  *     a form lead and like the other family sites;
- *   - a GA4 generate_lead event, labelled instant_estimator.
+ *   - a GA4 generate_lead event, labelled instant_estimator;
+ *   - the Meta Lead event (Pixel and Conversions API, deduplicated by one
+ *     event id), so Meta campaigns for the instant estimate can optimize for
+ *     finished estimates (owner, 13 November 2026). It carries a project
+ *     category only, never contact details.
  * The site's form helper (trackAcceptedInquiry, lib/inquiryTracking.ts) is not
  * used: it needs the inquiry id this site's own API issues and acknowledges it
  * at /api/lead-conversion/ack, and the estimator's lead is accepted on
@@ -24,7 +27,7 @@
  */
 
 import { useEffect, useRef } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackMetaEvent } from "@/lib/analytics";
 import { trackGoogleAdsLeadConversion } from "@/lib/googleAdsConversion";
 import type { EstimatorEventDetail } from "./EstimatorFrame";
 
@@ -55,6 +58,12 @@ export default function EstimatorAnalytics() {
       // No personal details: a project category and an opaque id only.
       const id = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       trackGoogleAdsLeadConversion({ projectType: params.estimator_project || undefined }, `instant:${id}`);
+      trackMetaEvent(
+        "Lead",
+        { content_name: params.estimator_project || "unknown", content_category: ESTIMATOR_LEAD_SOURCE },
+        undefined,
+        `instant:${id}`,
+      );
     };
     window.addEventListener(ESTIMATOR_EVENT, onEstimatorEvent);
     return () => window.removeEventListener(ESTIMATOR_EVENT, onEstimatorEvent);
