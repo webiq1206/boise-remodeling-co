@@ -9,9 +9,15 @@
  *   D2  No "bonded" claims anywhere. Insured and registration claims stay.
  *   D3  No universal "one contract" / "one invoice" promise. Say "one
  *       accountable company and one point of contact for your project".
- *   D4  No instant estimator: the owner could never get it working. No
- *       "instant estimate", "estimate in minutes" or same-day financing
- *       approval claims.
+ *   D4  No same-day financing approval claims. D4 also used to forbid "instant
+ *       estimate" and "estimate in minutes" wording, because the instant
+ *       estimator of the time could not be made to work.
+ *       Owner decision, 13 November 2026: the central estimator at
+ *       /instant-estimate gives an on-screen preliminary range, so
+ *       instant-estimate wording is accurate and allowed; it must never be
+ *       called a quote or a final price. What is left of D4's wording rule:
+ *       no "instant quote", no quote "in minutes", and no specific number of
+ *       minutes or seconds for an estimate, price or range.
  *   D9  The generic 48-hour satisfaction window and recurring-billing terms
  *       are gone from the public terms and from marketing copy.
  *
@@ -39,11 +45,21 @@ export const PROHIBITED_PUBLIC_CLAIMS: { id: string; pattern: RegExp }[] = [
   { id: 'one-contract', pattern: /\b(?:under|in|with)\s+(?:one|a single|single)\s+(?:contract|agreement)\b/i },
   { id: 'one-contract-list', pattern: /\bone\s+team,\s+one\s+contract\b/i },
   { id: 'one-contract-covers', pattern: /\b(?:one|a single|single)\s+contract\s+covers\b/i },
-  // D4
-  { id: 'instant-estimate', pattern: /\binstant\s+(?:online\s+)?(?:estimates?|estimator|price|pricing|ranges?|planning\s+range|quotes?|starting\s+range|number)\b/i },
+  // D4, narrowed. Owner decision, 13 November 2026: the central estimator at
+  // /instant-estimate gives an on-screen preliminary range, so instant-estimate
+  // wording is accurate and allowed; it must never be called a quote or a
+  // final price. The two patterns this replaces forbade "instant
+  // estimate/estimator/price/range" and "estimate/price/range ... in minutes".
+  // Still forbidden: calling it a quote, and a specific number of minutes or
+  // seconds.
+  { id: 'instant-quote', pattern: /\binstant\s+(?:online\s+)?(?:quotes?|bids?|final\s+price|firm\s+price|guaranteed\s+price)\b/i },
   {
-    id: 'estimate-in-minutes',
-    pattern: /\b(?:estimates?|estimator|ranges?|price|quote)\b[^.]{0,60}?\bin\s+(?:a\s+few\s+|a\s+couple\s+of\s+|under\s+a\s+|\d+\s+)?(?:minutes?|seconds)\b/i,
+    id: 'quote-in-minutes',
+    pattern: /\bquotes?\b[^.]{0,60}?\bin\s+(?:a\s+few\s+|a\s+couple\s+of\s+|under\s+a\s+|\d+\s+)?(?:minutes?|seconds)\b/i,
+  },
+  {
+    id: 'estimate-in-timed-minutes',
+    pattern: /\b(?:estimates?|estimator|ranges?|price)\b[^.]{0,60}?\bin\s+(?:under\s+a\s+|\d+\s+)(?:minutes?|seconds)\b/i,
   },
   { id: 'same-day-approval', pattern: /\bsame[\s-]day\s+(?:approvals?|decisions?|credit)\b/i },
   { id: 'decision-same-day', pattern: /\bdecision\s+the\s+same\s+day\b/i },

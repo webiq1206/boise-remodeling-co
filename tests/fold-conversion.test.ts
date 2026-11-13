@@ -26,15 +26,16 @@ const homePage = readFileSync("app/page.tsx", "utf8");
 
 // Phase 2 family chrome (intended change): the hero uses the approved video, and the short
 // request moved from under the hero to the final CTA band, where #request and #request-form
-// still hold it. Every primary CTA (hero, header, bar) points there.
+// still hold it. Owner decision, 13 November 2026: the primary CTA (hero, header, bar) is the
+// central estimator at /instant-estimate; "Request a quote" links still land on that form.
 test("the first screen is the video and headline, and the short request is the final ask", () => {
   assert.equal(hero.includes("use client"), false);
   assert.match(hero, /<ApprovedVideoHero/);
   assert.match(hero, /<ProofStrip/);
   assert.equal(hero.includes("HeroConversion"), false);
   assert.equal(hero.includes("fold-form"), false);
-  assert.match(hero, /primary=\{\{ label: FAMILY_BRAND\.cta\.label, href: FAMILY_BRAND\.cta\.href \}\}/);
-  assert.match(brand, /cta: \{ label: 'Request a quote', href: '\/#request' \}/);
+  assert.match(hero, /primary=\{\{ label: CTA_PRIMARY, href: FAMILY_BRAND\.cta\.href \}\}/);
+  assert.match(brand, /cta: \{ label: 'Instant estimate', href: '\/instant-estimate' \}/);
   assert.match(homePage, /<div id="request"/);
   assert.match(homePage, /<HeroConversion \/>/);
   // Owner request (1 November 2026, "too many options might be cumbersome"): one form, not
@@ -267,13 +268,15 @@ test("the consult dialog is the short request and still carries a planning range
   assert.doesNotMatch(convert, /estimateEngine/);
 });
 
-test("the multi-step intake stays optional and the estimator is not the header ask", () => {
+// Owner decision, 13 November 2026: the header ask is the central estimator, framed at
+// /instant-estimate. The site's own multi-step intake stays optional and unmounted from the home.
+test("the multi-step intake stays optional and the header ask is the central estimator", () => {
   assert.equal(home.includes("<OptionalIntake"), false);
   assert.equal(home.includes("<ApprovedEstimate"), false);
   assert.match(intake, /Open the optional intake/);
   assert.match(intake, /<ApprovedEstimate/);
   assert.match(nav, /<SiteHeader \/>/);
-  assert.match(brand, /label: 'Request a quote'/);
+  assert.match(brand, /label: 'Instant estimate'/);
   assert.equal(brand.includes("Get an Estimate"), false);
   assert.equal(brand.includes("/estimate' }"), false);
 });
@@ -310,15 +313,24 @@ test("/estimate is the short request, and the recovery prompt hides its optional
 });
 
 // One label, one destination (1 November 2026): every "Request a quote" goes to
-// the short request at /#request, like the header and the bottom bar. Links to
-// /estimate (the six-step request, no on-screen price) carry their own label,
-// which promises no instant or online estimate.
-test("every Request a quote goes to /#request and /estimate links never use that label", async () => {
+// the short request at /#request. Owner decision, 13 November 2026: the primary
+// action is "Get an instant estimate" to the central estimator at
+// /instant-estimate, like the header and the bottom bar. Links to /estimate (the
+// short request page, no on-screen price) carry their own label, which never
+// borrows the estimator's wording.
+test("the primary CTA is the estimator, Request a quote goes to /#request and /estimate links use neither label", async () => {
   const cta = readFileSync("components/modals/EstimateCTA.tsx", "utf8");
-  assert.match(cta, /const href = "\/#request";/);
+  assert.match(cta, /const href = destination === "request" \? REQUEST_PATH : estimatorHref\(project\);/);
   assert.equal(cta.includes('"/estimate"'), false);
-  const { CTA_PRIMARY, CTA_PROJECT_DETAILS } = await import("../shared/ctaCopy.ts");
-  assert.equal(CTA_PRIMARY, "Request a quote");
+  const { CTA_PRIMARY, CTA_PRIMARY_SHORT, CTA_REQUEST, CTA_FORM_SEND, CTA_PROJECT_DETAILS, ESTIMATOR_PATH, REQUEST_PATH, estimatorHref } = await import("../shared/ctaCopy.ts");
+  assert.equal(CTA_PRIMARY, "Get an instant estimate");
+  assert.equal(CTA_PRIMARY_SHORT, "Instant estimate");
+  assert.equal(ESTIMATOR_PATH, "/instant-estimate");
+  assert.equal(estimatorHref(), "/instant-estimate");
+  assert.equal(estimatorHref("kitchen-remodel"), "/instant-estimate?project=kitchen-remodel");
+  assert.equal(CTA_REQUEST, "Request a quote");
+  assert.equal(REQUEST_PATH, "/#request");
+  assert.equal(CTA_FORM_SEND, "Request a quote");
   assert.equal(/quote|estimate|instant|online/i.test(CTA_PROJECT_DETAILS), false);
   const interior = readFileSync("components/approved/InteriorLayout.tsx", "utf8");
   assert.match(interior, /label=CTA_PROJECT_DETAILS,href='\/estimate'/);

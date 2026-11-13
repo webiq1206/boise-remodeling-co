@@ -8,6 +8,7 @@ import {
   calculateEstimate, formatPlanningCurrency, getProjectSizeConfig,
   type FinishLevel, type LayoutChanges,
 } from "@/shared/estimateEngine";
+import { CTA_PRIMARY, estimatorHref } from "@/shared/ctaCopy";
 import styles from "./PlanningRangeExplorer.module.css";
 
 const PROJECTS = [
@@ -28,6 +29,16 @@ const LAYOUTS: { value: LayoutChanges; label: string }[] = [
 ];
 const STEPS = ["Project", "Size", "Finish", "Layout", "Review"];
 const STORAGE_KEY = "brc-home-planning-v1";
+/**
+ * The central estimator's project for each planner project (owner decision,
+ * 13 November 2026). The planner stays as it is; its result panel offers the
+ * estimator, which asks about the home itself and shows a preliminary range.
+ */
+const ESTIMATOR_PROJECT: Record<(typeof PROJECTS)[number]["value"], string> = {
+  kitchen: "kitchen-remodel",
+  bathroom: "bathroom-remodel",
+  "whole-home": "whole-home",
+};
 type Project = (typeof PROJECTS)[number]["value"];
 type Plan = { project: Project; sqft: number; finish: FinishLevel; layout: LayoutChanges; step: number };
 const DEFAULT: Plan = { project: "kitchen", sqft: 250, finish: "mid-range", layout: "none", step: 0 };
@@ -167,7 +178,7 @@ export function PlanningRangeExplorer() {
           <p className={styles.figure} aria-live="polite" data-testid="planning-figure">{range}</p>
           <p className={styles.summary}>{plan.sqft.toLocaleString()} sq ft · {finishLabel} · {layoutLabel}</p>
           <p className={styles.notice}>{NOT_A_QUOTE_NOTICE}</p>
-          <a className={`f-button f-dark ${styles.quote}`} href="/#request" data-family-bar-yield="">Request a quote</a>
+          <a className={`f-button f-dark ${styles.quote}`} href={estimatorHref(ESTIMATOR_PROJECT[plan.project])} data-family-bar-yield="">{CTA_PRIMARY}</a>
           <p className={styles.help}>A site visit and written scope come before a firm construction price.</p>
         </aside>
         <div className={styles.disclosures} aria-label="Planning range details">

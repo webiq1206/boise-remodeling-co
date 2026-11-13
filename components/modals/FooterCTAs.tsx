@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useModals } from "./modalsContext";
-import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
+import { CTA_PRIMARY, CTA_SECONDARY, ESTIMATOR_PATH } from "@/shared/ctaCopy";
 
 const cls =
   "text-sm text-inverse-muted hover:text-inverse-foreground transition-colors text-left";
@@ -14,7 +14,7 @@ export function FooterCTAs() {
   return (
     <>
       <li>
-        <a href="/#request" className={cls}>
+        <a href={ESTIMATOR_PATH} className={cls}>
           {CTA_PRIMARY}
         </a>
       </li>

@@ -267,7 +267,8 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   assert.match(hero, /eyebrow="Design-build remodeling in Boise"/);
   assert.match(hero, /title="Boise home remodeling\."/);
   assert.match(hero, /We design, price and build kitchens, baths and whole-home remodels\./);
-  assert.match(hero, /FAMILY_BRAND\.cta\.label/);
+  // Owner decision, 13 November 2026: the hero action is the central estimator, with the in-page label.
+  assert.match(hero, /label: CTA_PRIMARY, href: FAMILY_BRAND\.cta\.href/);
   assert.equal(hero.includes('Love where you live'), false);
   assert.equal(hero.includes('<em>Love where you live.</em>'), false);
   const home = readFileSync('app/page.tsx', 'utf8');

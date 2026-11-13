@@ -12,6 +12,7 @@ Boise Remodeling Co is a residential design-build remodeling company serving the
 - Parent company: P5 Home Co (https://p5homeco.com)
 - Service model: One accountable team for design, permits, and construction
 - Contact: hello@boiseremodeling.co (https://boiseremodeling.co/contact)
+- Instant estimate (a preliminary price range on screen, not a final price): https://boiseremodeling.co/instant-estimate
 - Send project details: https://boiseremodeling.co/estimate
 
 ## Service area
@@ -107,6 +108,7 @@ Neighborhood guides:
 - About: https://boiseremodeling.co/about
 - Services: https://boiseremodeling.co/services
 - Service areas: https://boiseremodeling.co/areas
+- Instant estimate: https://boiseremodeling.co/instant-estimate
 - Send project details: https://boiseremodeling.co/estimate
 - Remodeling design ideas: https://boiseremodeling.co/design-ideas
 - Blog: https://boiseremodeling.co/blog

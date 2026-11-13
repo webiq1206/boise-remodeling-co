@@ -33,7 +33,7 @@ import { BUSINESS_INFO } from '@/lib/seo';
 import { areaPath } from '@/lib/seo-routes';
 import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
 import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
-import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
+import { CTA_PRIMARY,CTA_REQUEST,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { TextReplyAnswer, TextReplyLine } from '@/components/TextReplyLine';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
@@ -197,7 +197,7 @@ export default function ContactPage() {
               saveClassName="text-sm text-inverse-foreground/80 hover:text-inverse-foreground transition-colors"
               phoneTestId="link-hero-phone"
             />
-            <div className="interior-contact-actions"><InteriorEstimateLink label={CTA_PRIMARY} href="/contact#consult"/></div>
+            <div className="interior-contact-actions"><InteriorEstimateLink label={CTA_REQUEST} href="/contact#consult"/></div>
             <dl className="ed-hero-facts">
               {HERO_STATS.map((stat) => (
                 <div key={stat.label}>
@@ -222,7 +222,7 @@ export default function ContactPage() {
               </div>
               <div className="interior-contact-intro">
                 <Reveal>
-                  <p className="ed-eyebrow">{CTA_PRIMARY}</p>
+                  <p className="ed-eyebrow">{CTA_REQUEST}</p>
                   <h2 className="ed-h2 ed-statement-wide">
                     Tell us about your{' '}
                     <em className="brc-accent">home</em>.

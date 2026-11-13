@@ -76,7 +76,7 @@ export default function BlogPage() {
             <em className="brc-accent">range</em>
           </>
         }
-        description="Read enough to know what you want? Request a quote, and the free in-home visit ends with a planning range for your project. No obligation."
+        description="Read enough to know what you want? Answer a few questions and see a preliminary price range for your project on screen. Free, with no appointment and no obligation."
         variant="greige"
       />
     </></InteriorPage>

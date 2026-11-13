@@ -2,9 +2,13 @@
  * Build guard: fail if an unsupported public claim appears in customer-facing
  * source, emails, assistant output, llms files, GBP or outreach copy, or docs:
  * "bonded", workmanship coverage that includes subcontractors, a universal
- * one contract / one invoice promise, an instant or minutes-fast estimate,
- * same-day financing approval, recurring billing or a 48-hour satisfaction
- * window. Patterns live in scripts/lib/publicClaimsGuard.ts, shared with
+ * one contract / one invoice promise, an "instant quote" or a quote "in
+ * minutes", an estimate in a stated number of minutes or seconds, same-day
+ * financing approval, recurring billing or a 48-hour satisfaction window.
+ * Instant-estimate wording itself is allowed (owner decision, 13 November
+ * 2026: the central estimator at /instant-estimate gives an on-screen
+ * preliminary range; it must never be called a quote or a final price).
+ * Patterns live in scripts/lib/publicClaimsGuard.ts, shared with
  * tests/public-claims-guard.test.ts.
  *
  * Run: npm run verify:public-claims   (runs in prebuild)
@@ -17,4 +21,4 @@ if (problems.length) {
   for (const problem of problems) console.error(`  ${problem}`);
   process.exit(1);
 }
-console.log('verify:public-claims passed: no bonded, subcontractor-coverage, one-invoice, instant-estimate, same-day-approval, recurring-billing or 48-hour claims found.');
+console.log('verify:public-claims passed: no bonded, subcontractor-coverage, one-invoice, instant-quote, timed-estimate, same-day-approval, recurring-billing or 48-hour claims found.');

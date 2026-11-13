@@ -69,9 +69,15 @@ explicit `pt-28 md:pt-32` still governs the top.
 warranty from documented Final Completion covers our own team; subcontractors
 give their own warranty and the customer gets a complete subcontractor list
 with contact information at project end), on universal one contract / one
-invoice promises, on instant or minutes-fast estimates, same-day financing
-approval, recurring billing and the old 48-hour satisfaction window. Owner
-decisions, release 2, 2026-11-08. Homepage content links to the working
+invoice promises, on calling the instant estimate a quote ("instant quote", a
+quote "in minutes") or giving an estimate a specific number of minutes or
+seconds, same-day financing approval, recurring billing and the old 48-hour
+satisfaction window. Owner decisions, release 2, 2026-11-08. The guard used to
+fail on any "instant estimate" or "estimate in minutes" wording; the owner
+reversed that on 13 November 2026 for the central estimator at
+`/instant-estimate`, which gives an on-screen preliminary range, so
+instant-estimate wording is accurate and allowed. It must never be called a
+quote or a final price. Homepage content links to the working
 planning-range explorer go to `/#planning-ranges`; `/#calculator` has had no
 target since the optional intake was unmounted.
 
@@ -97,7 +103,10 @@ the owner to run it.
 - **Firm price, not a range.** A range anchored agents on the low end while the
   high end made us look expensive - we earned the bottom and were judged on the
   top. Firm price at the same margin-correct number was +50% effective revenue
-  without raising the price.
+  without raising the price. The central P5 estimator framed at
+  `/instant-estimate` shows a preliminary range by owner decision (13 November
+  2026); it is a separate tool from this site's own engines, which this rule
+  still governs.
 - **Market price bands gate the build.** Being competitive is a test, not a
   preference. See `MARKET_PRICE_BAND`.
 - **The disclosure wall is structural.** The customer email builder is never
@@ -554,6 +563,44 @@ offline, and every partial-scope chip still changes the priced result.
 CONTACT_FAQS moved to `shared/content/contactFaqs.ts` (contact page + assistant
 fact sheet read the same list). Assistant funnel events:
 `shared/assistant/analyticsEvents.ts`.
+
+## Central instant estimator (`/instant-estimate`) - framed, never copied
+
+Owner decision, 13 November 2026: the P5 family's central estimator is the
+primary pricing call to action on every family site.
+
+- **There is ONE estimator and it is not in this repository.** It runs on
+  p5homeco.com; questions, pricing, property lookup, QuickBooks, lead delivery
+  and attribution all happen there. This site frames
+  `https://p5homeco.com/estimator/embed?brand=remodeling&project=<id>` through
+  `components/estimator/EstimatorFrame.tsx`. Never copy estimator logic,
+  pricing, questions or QuickBooks code here.
+- `EstimatorFrame.tsx` is kept byte-identical across the family sites. Do not
+  edit it in one site; site differences are props.
+- `components/estimator/EstimatorAnalytics.tsx` forwards the frame's
+  `p5-estimator-event` window events to `trackEvent`. Only
+  `estimator_completed` counts as a lead, once per page view, as a plain
+  `generate_lead` labelled `instant_estimator`: `trackAcceptedInquiry` needs an
+  inquiry id from this site's own API, which the estimator cannot supply.
+- **CTAs** live in `shared/ctaCopy.ts` and `lib/familyBrand.ts` (`cta`). Header,
+  menu and bottom bar say "Instant estimate"; in-page primary buttons say "Get
+  an instant estimate"; both go to `/instant-estimate`. A service page opens the
+  estimator on its project (`ESTIMATOR_PROJECT_BY_SERVICE`). A service with no
+  estimator project (ADU, outdoor living, aging in place) keeps "Request a
+  quote" to `/#request`: never send a visitor to an estimator that cannot price
+  their project. "Request a quote" stays everywhere as the path to a person.
+- **Wording.** Allowed: instant estimate, instant preliminary estimate,
+  preliminary price range, in minutes, free, any time, no appointment, no
+  waiting for a callback, no obligation. Not allowed: calling it a quote, bid,
+  final, firm or guaranteed price; any promise about how fast a person replies
+  (`responsePromiseGuard.ts` is unchanged); "no contact information required"
+  (the estimator asks for name, email and phone before the range); a specific
+  number of minutes or seconds; invented numbers; em dashes; "near me".
+- **Existing tools stay until the owner retires them.** The homepage planning
+  ranges, the short request (`/#request`, `/estimate`), the plans upload, the
+  chat assistant and every API route are still mounted. Working lead generation
+  is not removed until the replacement is verified live.
+- Guard: `tests/instant-estimator.test.ts`.
 
 ## Environment
 

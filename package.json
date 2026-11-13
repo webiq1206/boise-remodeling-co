@@ -64,7 +64,7 @@
     "verify:family-chrome": "node scripts/verify-family-chrome.mjs",
     "verify:charcoal": "node --import tsx --test tests/brand-charcoal.test.ts",
     "verify:mobile": "node --import tsx --test tests/mobile-polish.test.ts",
-    "verify:public-claims": "node --import tsx scripts/verify-public-claims.ts && node --import tsx --test tests/public-claims-guard.test.ts tests/warranty-page.test.ts"
+    "verify:public-claims": "node --import tsx scripts/verify-public-claims.ts && node --import tsx --test tests/public-claims-guard.test.ts tests/warranty-page.test.ts tests/instant-estimator.test.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",

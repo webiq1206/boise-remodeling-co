@@ -1,7 +1,8 @@
 import { Section } from "./Section";
 import { Reveal } from "@/components/Reveal";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
-import { CTA_PRIMARY } from "@/shared/ctaCopy";
+import { familyButtonClass } from "@/components/family/Button";
+import { CTA_PRIMARY, CTA_REQUEST, REQUEST_PATH } from "@/shared/ctaCopy";
 
 interface EstimatePromptBandProps {
   eyebrow?: string;
@@ -15,7 +16,10 @@ interface EstimatePromptBandProps {
 
 /**
  * Contextual estimator prompt for service, area and content pages.
- * Opens the estimator; callers can provide a service-specific destination.
+ *
+ * Owner decision, 13 November 2026: the one action is the central estimator at
+ * /instant-estimate, which shows a preliminary range on screen. "Request a
+ * quote" sits under it as the path to a person.
  *
  * WAS a card inside a card: a bordered panel with an icon box, a left accent
  * rule and a 36px heading, centred in a 1024px container on a band the same
@@ -32,9 +36,9 @@ export function EstimatePromptBand({
   title,
   description,
   bullets = [
-    "Based on real Treasure Valley project costs",
-    "Project details reviewed by our team",
-    "Additional details or a site visit may be needed",
+    "Free and open day or night",
+    "No appointment needed to see your range",
+    "A preliminary range now, a firm written proposal after we visit",
   ],
 }: EstimatePromptBandProps) {
   return (
@@ -52,7 +56,10 @@ export function EstimatePromptBand({
               <EstimateCTA tone="dark" size="lg" block>
                 {CTA_PRIMARY}
               </EstimateCTA>
-              <p className="ed-small">Free · Not a binding quote</p>
+              <p className="ed-small">Free · A preliminary range, not a final price</p>
+              <a href={REQUEST_PATH} className={familyButtonClass({ variant: "tertiary" })} data-testid="link-prompt-band-request">
+                {CTA_REQUEST}
+              </a>
             </div>
           </Reveal>
         </div>

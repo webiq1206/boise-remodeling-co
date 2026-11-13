@@ -22,6 +22,7 @@ import Link from 'next/link';
 import { ArticleFaqs } from './ArticleFaqs';
 import { ArticleSidebar,ArticleSidebarCta } from './ArticleSidebar';
 import { BlogEndCta } from './BlogEndCta';
+import { articleCtaDestination } from '@/shared/ctaCopy';
 import { BlogHeroBanner } from './BlogHeroBanner';
 import { Chip } from './Chip';
 import { GuideContentBlocks,GuideJumpChips } from './GuideContentBlocks';
@@ -49,6 +50,8 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
   const pillarSlug = getHubPillarSlug(post.hubSlug);
   const resources = getResourcesForBlog(post.slug);
   const showInlineEstimate = isCostRelatedContent(post.slug, post.hubSlug);
+  // The estimator, unless the hub's subject is one it has no project for.
+  const ctaDestination = articleCtaDestination(post.hubSlug);
   const inlineFigures = getArticleInlineFigures(
     post.slug,
     tocHeadings.length,
@@ -138,7 +141,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
                   inlineFigures={inlineFigures}
                 />
 
-                {showInlineEstimate && <InlineEstimateCTA />}
+                {showInlineEstimate && <InlineEstimateCTA destination={ctaDestination} />}
               </GuideContentBlocks>
 
               {post.faqs && post.faqs.length > 0 && (
@@ -157,15 +160,12 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
               )}
 
               <div className="lg:hidden mt-10">
-                <ArticleSidebarCta description="Tell us about the work. The free in-home visit ends with a planning range and design direction." />
+                <ArticleSidebarCta destination={ctaDestination} />
               </div>
             </div>
 
             <aside className="article-rail hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">
-              <ArticleSidebar
-                tocHeadings={tocHeadings}
-                ctaDescription="Tell us about the work. The free in-home visit ends with a planning range and design direction."
-              />
+              <ArticleSidebar tocHeadings={tocHeadings} destination={ctaDestination} />
               {post.tags && post.tags.length > 0 && (
                 <div className="mt-6 rounded-lg border border-border p-4">
                   <div className="flex items-center gap-2 mb-3">
@@ -190,7 +190,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
         </div>
       </Section>
 
-      <BlogEndCta />
+      <BlogEndCta destination={ctaDestination} />
     </div>
   );
 }
