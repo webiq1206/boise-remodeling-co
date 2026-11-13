@@ -323,7 +323,7 @@ export default function ContactPage() {
             <div className="relative min-h-[260px] md:min-h-[520px] overflow-hidden bg-inverse order-2 md:order-1">
               <Image
                 src={SITE_IMAGES.aboutKitchen}
-                alt="Warm open kitchen with white oak cabinets, a large island and black-framed windows"
+                alt="White shaker kitchen with a sage green island, white quartz counters and a black-framed window"
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover img-brand-grade"

@@ -22,7 +22,7 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
           beforeSrc={beforeSrc}
           afterSrc={afterSrc}
           beforeAlt="Kitchen with oak cabinets and white appliances"
-          afterAlt="Kitchen with white shaker cabinets, quartz counters and oak flooring"
+          afterAlt="Kitchen with white shaker cabinets, quartz counters and wood flooring"
           beforeLabel="Oak cabinetry"
           afterLabel="White shaker"
           aspectClass="aspect-[3/2]"

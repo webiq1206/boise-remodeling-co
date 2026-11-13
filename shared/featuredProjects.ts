@@ -29,13 +29,13 @@ export const FEATURED_BOISE_BENCH_RANCH: FeaturedProjectSet = {
   city: "boise",
   title: "Ranch home finishes",
   description:
-    "Sage-grey lap siding over brick, black-framed windows, white shaker cabinetry with a sage island, and a primary bath with subway tile.",
+    "Sage-grey lap siding, black-framed windows, white shaker cabinetry with a sage island, and a primary bath with subway tile.",
   rooms: [
     {
       key: "exterior",
       label: "Exterior",
       src: `${BENCH}/exterior-after.webp`,
-      alt: "Ranch exterior with sage-grey lap siding, brick wainscot, and black-framed windows",
+      alt: "Ranch exterior with sage-grey lap siding, white trim, and black-framed windows",
     },
     {
       key: "kitchen",

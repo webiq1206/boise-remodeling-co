@@ -51,7 +51,7 @@ export default function DesignIdeasPage() {
         <JsonLd data={schemas} />
         <PageHeroBand
           imageSrc={GALLERY_IMAGES.kitchen.after}
-          imageAlt="White kitchen with wood island and brass lighting"
+          imageAlt="White shaker kitchen with a sage green island and brass hardware"
         >
           <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Design ideas' }]} />
           <p className="ed-eyebrow mt-6">Design ideas</p>

@@ -6,15 +6,15 @@
 
 const SERVICE_ALT: Record<string, string> = {
   'kitchen-remodel':
-    'Kitchen with a wood island, black metal lights, and light wood floors opening to a living room',
-  'bathroom-remodel': 'Bathroom with a glass walk-in shower, wood vanity, and white tile',
+    'White shaker kitchen with a sage green island, white quartz counters and a black-framed window',
+  'bathroom-remodel': 'Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile',
   'whole-home-remodel':
-    'Open living room with wood beams, a stone fireplace, and a view into the kitchen',
-  'room-addition': 'Single-story house exterior with a covered porch and a green lawn',
-  adu: 'Small backyard building with wood siding, a covered porch, and a gravel path',
-  'basement-remodel': 'Finished basement room with light wood floors, a wall of windows, and a ceiling fan',
-  'outdoor-living': 'Covered patio with a wood dining table, stone fireplace, and string lights',
-  'aging-in-place': 'Bathroom with a wood-look tile shower, a built-in bench, and a wood vanity',
+    'Open living and dining room with wood floors and a view into a white and sage green kitchen',
+  'room-addition': 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio',
+  adu: 'Small backyard building with grey lap siding, black-framed windows and a gravel path',
+  'basement-remodel': 'Finished basement room with a grey sectional sofa, plank flooring and a carpeted stair',
+  'outdoor-living': 'Covered patio with square black posts, a wood ceiling and a wood dining table',
+  'aging-in-place': 'Bathroom with a curbless tile shower, a fold-down bench, grab bars and an open vanity',
 };
 
 const AREA_ALT: Record<string, string> = {
@@ -38,10 +38,10 @@ const PATH_ALT: Record<string, string> = {
   '/images/services/outdoor-living.webp': SERVICE_ALT['outdoor-living'],
   '/images/services/aging-in-place.webp': SERVICE_ALT['aging-in-place'],
   '/images/kitchen-in-progress.webp': 'Kitchen during a remodel, with open cabinets and work underway',
-  '/images/process-design-review.webp': 'Remodel plans and finish samples on a kitchen counter',
-  '/images/hero-remodel-interior.webp': 'Open kitchen and living space with warm wood and stone',
+  '/images/process-design-review.webp': 'Remodel plans and finish samples on a kitchen island',
+  '/images/hero-remodel-interior.webp': 'White shaker kitchen with a sage green island, white quartz counters and a black-framed window',
   '/images/about-oak-kitchen.webp':
-    'Warm open kitchen with white oak cabinets, a large island and black-framed windows',
+    'White shaker kitchen with a sage green island, white quartz counters and a black-framed window',
   '/images/blog/whole-home-rough-in.webp':
     'Interior stripped to the studs with new wiring and floor protection during a whole-home renovation',
   // Existing images used as alternates on the landing template (shared/landingImages.ts).
@@ -50,7 +50,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/gallery/gallery-kitchen-eagle-after.webp':
     'Kitchen with wood cabinets, a stone island and a wide window looking out to the foothills',
   '/images/blog/kitchen-island-design-guide.webp':
-    'White kitchen island with a waterfall counter, woven pendant lights and upholstered stools',
+    'White kitchen island with a waterfall counter, three wood stools and white pendant lights',
   '/images/blog/small-kitchen-remodel-ideas-boise.webp':
     'Compact white kitchen with butcher-block counters, open shelving and a pull-out pantry',
   '/images/blog/walk-in-shower-guide.webp':
@@ -62,7 +62,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/luxury-bathroom-features.webp':
     'Primary bathroom with a freestanding tub, a glass shower and a dark double vanity',
   '/images/blog/whole-home-remodel-cost-boise.webp':
-    'Living and dining room with a stone fireplace, built-in shelves and wood floors',
+    'Living and dining room with wood floors, a plaster fireplace and oak shelves',
   '/images/blog/design-build-process-guide.webp':
     'Open living room with a sectional sofa, a ceiling fan and a kitchen beyond',
   '/images/blog/open-concept-kitchen-remodeling.webp':
@@ -70,7 +70,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/home-addition-timeline-guide.webp':
     'Wood framing for a home addition going up against the side of a house',
   '/images/blog/primary-suite-additions.webp':
-    'Bedroom with a vaulted beamed ceiling, tall windows and a seating area',
+    'Bedroom with an oak platform bed and large windows facing a lawn and dry hills',
   '/images/blog/home-addition-cost-boise.webp':
     'Single-story house with tan siding and a side addition on a green lawn',
   '/images/blog/bedroom-additions.webp':
@@ -90,9 +90,9 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/outdoor-living-roi.webp':
     'Paver patio with a fire pit, outdoor chairs and planted beds behind a house',
   '/images/blog/outdoor-kitchens-boise.webp':
-    'Covered outdoor kitchen with a stone counter, a built-in grill and evening lights',
+    'Outdoor kitchen with a built-in grill, a sink and a concrete counter under a wood patio roof',
   '/images/blog/outdoor-fireplaces-boise.webp':
-    'Covered patio with a stone fireplace and outdoor sofas at dusk',
+    'Covered patio with a plain stucco fireplace, an outdoor sofa and two chairs',
   '/images/blog/curbless-shower-guide.webp':
     'Curbless shower with a flush tile floor, a linear drain, a fold-down bench and grab bars',
   '/images/blog/aging-in-place-bathroom-design.webp':

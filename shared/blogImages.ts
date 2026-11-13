@@ -10,7 +10,7 @@ const DEFAULT_BLOG_IMAGE = SITE_IMAGES.hero;
 /** Secondary mid-article figures by hub so long posts get visual relief. */
 const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'remodeling-costs': [
-    { src: SITE_IMAGES.value, alt: 'Kitchen cabinetry, unfinished cabinet boxes and tools on a workbench' },
+    { src: SITE_IMAGES.value, alt: 'Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top' },
     { src: GALLERY_IMAGES.kitchen.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
   ],
   'kitchen-remodeling': [
@@ -19,32 +19,32 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
     { src: GALLERY_IMAGES.kitchenEagle.after, alt: 'Kitchen with wood cabinetry, a white counter and large windows' },
   ],
   'bathroom-remodeling': [
-    { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, black-framed mirrors and a glass shower' },
+    { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile' },
     { src: GALLERY_IMAGES.hallBathBoise.after, alt: 'Bathroom with a long white vanity and a black-framed glass walk-in shower' },
-    { src: GALLERY_IMAGES.bathroomNampa.after, alt: 'Bathroom with a white double vanity, black-framed mirrors and a glass walk-in shower' },
+    { src: GALLERY_IMAGES.bathroomNampa.after, alt: 'Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile' },
   ],
   'home-additions': [
-    { src: GALLERY_IMAGES.addition.after, alt: 'Single-story house with pale siding, a wide glass door and a paved patio' },
-    { src: GALLERY_IMAGES.additionEagle.after, alt: 'Single-story house with lap siding, brick trim and a paved rear patio' },
-    { src: GALLERY_IMAGES.additionMeridian.after, alt: 'Single-story house with lap siding, brick trim and a paved rear patio' },
+    { src: GALLERY_IMAGES.addition.after, alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio' },
+    { src: GALLERY_IMAGES.additionEagle.after, alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio' },
+    { src: GALLERY_IMAGES.additionMeridian.after, alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio' },
   ],
   'whole-home-remodeling': [
     { src: GALLERY_IMAGES.wholeHome.after, alt: 'Open living area and kitchen with wood floors, neutral furnishings and large windows' },
-    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with lap siding, brick trim and an attached garage' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with sage-grey lap siding, black-framed windows and an attached garage' },
     { src: '/images/gallery/featured-eagle-kitchen.webp', alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
   ],
   'contractor-selection': [
     { src: SITE_IMAGES.process, alt: 'Printed floor plan, tape measure and notebook on a kitchen island' },
-    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen with open cabinet boxes, a workbench and a spirit level' },
+    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen with open cabinet boxes, a plywood work top and a spirit level' },
   ],
   'remodeling-process': [
-    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen with open cabinet boxes, a workbench and a spirit level' },
+    { src: SITE_IMAGES.processInProgress, alt: 'Kitchen with open cabinet boxes, a plywood work top and a spirit level' },
     { src: SITE_IMAGES.process, alt: 'Printed floor plan, tape measure and notebook on a kitchen island' },
     { src: GALLERY_IMAGES.wholeHome.after, alt: 'Open living area and kitchen with wood floors, neutral furnishings and large windows' },
   ],
   'remodeling-roi': [
     { src: GALLERY_IMAGES.kitchen.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
-    { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, black-framed mirrors and a glass shower' },
+    { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile' },
   ],
   'outdoor-living': [
     { src: GALLERY_IMAGES.outdoor.after, alt: 'Covered rear patio with a wood dining table, lawn and dry hills beyond' },
@@ -54,7 +54,7 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'treasure-valley-locations': [
     { src: '/images/areas/boise.webp', alt: 'Residential street with two-story houses, young trees and a grassy hillside beyond' },
     { src: '/images/areas/eagle.webp', alt: 'Single-story house with a dark metal roof, lit windows and gravel landscaping at dusk' },
-    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with lap siding, brick trim and an attached garage' },
+    { src: '/images/gallery/featured-eagle-exterior.webp', alt: 'Single-story ranch house with sage-grey lap siding, black-framed windows and an attached garage' },
   ],
 };
 

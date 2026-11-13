@@ -68,7 +68,7 @@ export function ValueOverheadSection() {
               <div className="relative aspect-[4/5] overflow-hidden">
                 <Image
                   src={SITE_IMAGES.value}
-                  alt="kitchen installation with cabinet doors, tools and protected flooring"
+                  alt="Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top"
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover img-brand-grade"

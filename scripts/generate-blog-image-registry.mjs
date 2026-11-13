@@ -26,7 +26,7 @@ const ENTRIES = {
   },
   "whole-home-remodel-cost-boise": {
     hero: "/images/blog/whole-home-remodel-cost-boise.webp",
-    alt: "Living and dining room with wood floors, a stone fireplace and neutral furnishings",
+    alt: "Living and dining room with wood floors, a plaster fireplace and oak shelves",
     topicTags: ["whole-home","cost","boise"],
     source: "blog",
   },
@@ -38,7 +38,7 @@ const ENTRIES = {
   },
   "luxury-remodel-cost-boise": {
     hero: "/images/blog/luxury-remodel-cost-boise.webp",
-    alt: "Kitchen with dark wood cabinetry, a veined stone island and a beamed ceiling",
+    alt: "Kitchen with walnut cabinetry, a stone waterfall island and tall black-framed windows",
     topicTags: ["luxury","cost","eagle"],
     source: "blog",
   },
@@ -98,7 +98,7 @@ const ENTRIES = {
   },
   "kitchen-island-design-guide": {
     hero: "/images/blog/kitchen-island-design-guide.webp",
-    alt: "Kitchen island with counter seating, woven pendant lights and wood cabinetry",
+    alt: "White kitchen island with a waterfall counter, three wood stools and white pendant lights",
     topicTags: ["kitchen","island","boise"],
     source: "blog",
   },
@@ -176,7 +176,7 @@ const ENTRIES = {
   },
   "primary-suite-additions": {
     hero: "/images/blog/primary-suite-additions.webp",
-    alt: "Bedroom with a beamed ceiling, a sitting area and large windows facing dry hills",
+    alt: "Bedroom with an oak platform bed and large windows facing a lawn and dry hills",
     topicTags: ["addition","primary-suite","boise"],
     source: "blog",
   },
@@ -230,7 +230,7 @@ const ENTRIES = {
   },
   "room-addition-guide-treasure-valley": {
     hero: "/images/gallery/gallery-addition-after.webp",
-    alt: "Single-story house with pale siding, a wide glass door and a paved patio",
+    alt: "Single-story house with grey lap siding, a sliding glass door and a new concrete patio",
     topicTags: ["addition","treasure-valley"],
     source: "gallery",
   },
@@ -326,13 +326,13 @@ const ENTRIES = {
   },
   "how-to-choose-design-build-contractor": {
     hero: "/images/city-service/room-addition__kuna.webp",
-    alt: "Single-story house with lap siding, brick trim and a paved rear patio",
+    alt: "Single-story house with grey lap siding, a sliding glass door and a new concrete patio",
     topicTags: ["contractor","design-build","boise"],
     source: "city-service",
   },
   "remodeling-timeline-guide": {
     hero: "/images/city-service/room-addition__middleton.webp",
-    alt: "Single-story house with lap siding, brick trim and a paved rear patio",
+    alt: "Single-story house with grey lap siding, a sliding glass door and a new concrete patio",
     topicTags: ["process","timeline"],
     source: "city-service",
   },
@@ -344,7 +344,7 @@ const ENTRIES = {
   },
   "preconstruction-guide": {
     hero: "/images/gallery/gallery-kitchen-before.webp",
-    alt: "Kitchen with oak cabinets, light counters and a window beside the sink",
+    alt: "Kitchen with oak cabinets, laminate counters, white appliances and a window above the sink",
     topicTags: ["process","preconstruction"],
     source: "gallery",
   },
@@ -362,7 +362,7 @@ const ENTRIES = {
   },
   "construction-phase-guide": {
     hero: "/images/city-service/room-addition__caldwell.webp",
-    alt: "Single-story house with lap siding, brick trim and a paved rear patio",
+    alt: "Single-story house with grey lap siding, a sliding glass door and a new concrete patio",
     topicTags: ["process","construction"],
     source: "city-service",
   },
@@ -374,7 +374,7 @@ const ENTRIES = {
   },
   "warranty-guide-remodeling": {
     hero: "/images/gallery/gallery-basement-after.webp",
-    alt: "Living area with neutral sofas, wood flooring and a dining space beyond",
+    alt: "Finished basement room with a grey sectional sofa, plank flooring and a carpeted stair",
     topicTags: ["process","warranty"],
     source: "gallery",
   },
@@ -386,7 +386,7 @@ const ENTRIES = {
   },
   "addition-roi-remodeling": {
     hero: "/images/city-service/room-addition__star.webp",
-    alt: "Single-story house with lap siding, brick trim and a paved rear patio",
+    alt: "Single-story house with grey lap siding, a sliding glass door and a new concrete patio",
     topicTags: ["roi","addition","star"],
     source: "city-service",
   },
@@ -410,7 +410,7 @@ const ENTRIES = {
   },
   "remodeling-before-selling": {
     hero: "/images/city-service/bathroom-remodel__star.webp",
-    alt: "Bathroom with a white double vanity, black-framed mirrors and a glass walk-in shower",
+    alt: "Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile",
     topicTags: ["roi","selling","bathroom"],
     source: "city-service",
   },
@@ -422,7 +422,7 @@ const ENTRIES = {
   },
   "outdoor-kitchens-boise": {
     hero: "/images/blog/outdoor-kitchens-boise.webp",
-    alt: "Outdoor kitchen with a built-in grill and stone counters beneath a wood patio roof",
+    alt: "Outdoor kitchen with a built-in grill, a sink and a concrete counter under a wood patio roof",
     topicTags: ["outdoor","kitchen","boise"],
     source: "blog",
   },
@@ -440,7 +440,7 @@ const ENTRIES = {
   },
   "outdoor-fireplaces-boise": {
     hero: "/images/blog/outdoor-fireplaces-boise.webp",
-    alt: "Covered patio with a stone fireplace, outdoor sofas and a coffee table at dusk",
+    alt: "Covered patio with a plain stucco fireplace, an outdoor sofa and two chairs",
     topicTags: ["outdoor","fireplace","boise"],
     source: "blog",
   },
@@ -489,13 +489,13 @@ const ENTRIES = {
   },
   "boise-bathroom-remodeling-guide": {
     hero: "/images/services/bathroom-remodel.webp",
-    alt: "Bathroom with a white vanity, black-framed mirrors and a glass shower",
+    alt: "Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile",
     topicTags: ["bathroom","guide","pillar"],
     source: "services",
   },
   "boise-home-addition-guide": {
     hero: "/images/services/room-addition.webp",
-    alt: "Single-story house with pale siding, a wide glass door and a paved patio",
+    alt: "Single-story house with grey lap siding, a sliding glass door and a new concrete patio",
     topicTags: ["addition","guide","pillar"],
     source: "services",
   },
@@ -564,7 +564,7 @@ const ENTRIES = {
   },
   "middleton-remodeling-guide": {
     hero: "/images/areas/middleton.webp",
-    alt: "White farmhouse with a covered porch beside open fields",
+    alt: "Residential street of single-story houses with lawns, young trees and open fields beyond",
     topicTags: ["location","middleton","guide"],
     source: "areas",
   },
@@ -576,7 +576,7 @@ const ENTRIES = {
   },
   "caldwell-remodeling-guide": {
     hero: "/images/areas/caldwell.webp",
-    alt: "Stucco house with landscaped planting beds and open fields beyond",
+    alt: "Residential street of single-story houses with lawns and mature trees",
     topicTags: ["location","caldwell","guide"],
     source: "areas",
   },
