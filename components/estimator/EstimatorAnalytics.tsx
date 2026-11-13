@@ -9,16 +9,23 @@
  * project the visitor chose. It renders nothing.
  *
  * The lead: "estimator_completed" is the only event that counts as a lead, and
- * it is counted once per page view. The site's accepted-lead helper
- * (trackAcceptedInquiry, lib/inquiryTracking.ts) needs the inquiry id this
- * site's own API issues and then acknowledges it at /api/lead-conversion/ack.
- * The estimator's lead is accepted on p5homeco.com, so there is no such id
- * here. The lead is therefore sent as a plain generate_lead event, labelled
- * instant_estimator. No other estimator event may send a lead.
+ * it is counted once per page view. It sends two things, the same two every
+ * other lead on this site sends:
+ *   - the Google Ads lead conversion, through trackGoogleAdsLeadConversion
+ *     (owner, 13 November 2026), so an estimator lead reaches Google Ads like
+ *     a form lead and like the other family sites;
+ *   - a GA4 generate_lead event, labelled instant_estimator.
+ * The site's form helper (trackAcceptedInquiry, lib/inquiryTracking.ts) is not
+ * used: it needs the inquiry id this site's own API issues and acknowledges it
+ * at /api/lead-conversion/ack, and the estimator's lead is accepted on
+ * p5homeco.com. The conversion is keyed by an id made in the browser instead.
+ * The key starts "instant:" so the Ads helper does not add a second
+ * generate_lead of its own. No other estimator event may send a lead.
  */
 
 import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { trackGoogleAdsLeadConversion } from "@/lib/googleAdsConversion";
 import type { EstimatorEventDetail } from "./EstimatorFrame";
 
 const ESTIMATOR_EVENT = "p5-estimator-event";
@@ -45,6 +52,9 @@ export default function EstimatorAnalytics() {
         project_type: params.estimator_project || "unknown",
         ...params,
       });
+      // No personal details: a project category and an opaque id only.
+      const id = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      trackGoogleAdsLeadConversion({ projectType: params.estimator_project || undefined }, `instant:${id}`);
     };
     window.addEventListener(ESTIMATOR_EVENT, onEstimatorEvent);
     return () => window.removeEventListener(ESTIMATOR_EVENT, onEstimatorEvent);
