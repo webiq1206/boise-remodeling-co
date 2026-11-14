@@ -1,4 +1,5 @@
 import {ESTIMATOR_BRAND as brand} from './brand.ts';
+import {scheduleBlockHtml,scheduleBlockText} from './scheduleEmail.ts';
 import {estimateLinkUrl} from './estimateLinks.ts';
 import {legalIdentityLine} from './brandIdentity.ts';
 import {buildAdminSummary,adminBasis} from './adminEstimate.ts';
@@ -43,8 +44,8 @@ function customerHtml(doc:EstimateDocument,link=''){
  const first=doc.customer.name.split(' ')[0];
  parts.push(`<p style="margin:0 0 14px;font-size:16px;line-height:1.6;color:${C.ink}">${escape(first?`Hi ${first},`:'Hello,')}</p>`);
  parts.push(`<p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:${C.ink}">Thank you for using the ${escape(doc.brand.name)} online estimator. Your preliminary estimate is below, and the complete estimate is attached as a PDF.</p>`);
- // A signed link opens this saved estimate on any device to review or revise it (estimateLinks.ts).
- if(link)parts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;margin:0 0 18px"><tr><td align="center"><a href="${escape(link)}" style="display:inline-block;padding:13px 24px;border-radius:6px;background:${accent};color:#FFFFFF;font-size:15px;font-weight:700;text-decoration:none">View or update your estimate online</a></td></tr></table>`);
+ // Schedule now leads. The saved-estimate link stays, as the quieter action.
+ parts.push(scheduleBlockHtml({kind:'estimate',accent,secondary:link?{href:link,label:'View or update your estimate online'}:undefined}));
  // Total first: the number, what it is, and whether anything requested is still unpriced.
  parts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;margin:0 0 16px"><tr><td style="padding:18px 20px;background:${tint};border-top:2px solid ${accent}">${kicker(doc.total?.label||'Estimate status')}<p style="margin:0;font-size:28px;line-height:1.2;font-weight:700;color:${C.ink};${FONT}">${escape(doc.total?.amount||'Pricing pending review')}</p>${doc.partialNote?`<p style="margin:10px 0 0;font-size:14px;line-height:1.5;font-weight:700;color:${C.ink}">${escape(doc.partialNote)}</p>`:''}</td></tr></table>`);
  parts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;margin:0 0 8px"><tr><td style="padding:14px 18px;background:${tint};border-left:3px solid ${accent}">${kicker(doc.finish.heading)}<p style="margin:0 0 4px;font-size:16px;font-weight:700;color:${C.ink}">${escape(doc.finish.name)}</p><p style="margin:0 0 4px;font-size:14px;line-height:1.5;color:${C.muted}">${escape(doc.finish.detail)}</p><p style="margin:0;font-size:13px;line-height:1.5;color:${C.soft}">${escape(doc.finish.basis)}</p></td></tr></table>`);
@@ -94,7 +95,7 @@ function customerLayout(doc:EstimateDocument,body:string){
 </table></td></tr></table></body></html>`;
 }
 function customerText(doc:EstimateDocument,link=''){
- const lines:string[]=[doc.brand.name,'PRELIMINARY ONLINE ESTIMATE',doc.title,...(doc.projectName?[doc.projectName]:[]),`Estimate ${doc.reference}${doc.issuedLabel?` | Prepared ${doc.issuedLabel}`:''}`,'',...(link?[`View or update your estimate online: ${link}`,'']:[])];
+ const lines:string[]=[doc.brand.name,'PRELIMINARY ONLINE ESTIMATE',doc.title,...(doc.projectName?[doc.projectName]:[]),`Estimate ${doc.reference}${doc.issuedLabel?` | Prepared ${doc.issuedLabel}`:''}`,'',scheduleBlockText({kind:'estimate',secondary:link?{href:link,label:'View or update your estimate online'}:undefined}),''];
  lines.push(`${(doc.total?.label||'Estimate status').toUpperCase()}: ${doc.total?.amount||'Pricing pending review'}`);if(doc.partialNote)lines.push(doc.partialNote);lines.push('');
  lines.push(doc.finish.heading.toUpperCase(),doc.finish.name,doc.finish.detail,doc.finish.basis,'');
  if(doc.categories.length){lines.push('SCOPE & PRICING');for(const c of doc.categories){lines.push(`${c.number}  ${c.title}${c.amount?`: ${c.amount}`:''}`);for(const w of c.work)lines.push(`  - ${w}`);for(const a of c.allowances)lines.push(`  - Allowance included: ${a}`);}

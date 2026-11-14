@@ -282,8 +282,8 @@ async function processLead(leadgenId: string, formId: string | undefined, config
     source: "Facebook Lead Ad",
   });
 
-  /* 3 - Instant team notification, through the same admin email path. No
-     customer email: that template presents an estimate this lead never saw. */
+  /* 3 - Instant team notification, through the same admin email path. The
+     customer letter is the short confirmation, not the estimate template. */
   try {
     const { client, fromEmail } = await getUncachableEmailClient();
     const from = formatFromAddress(fromEmail);
@@ -314,6 +314,13 @@ async function processLead(leadgenId: string, formId: string | undefined, config
     console.info(`${LOG} Lead ${leadgenId} team notification sent.`);
   } catch (emailErr) {
     console.error(`${LOG} Team notification for lead ${leadgenId} failed:`, emailErr);
+  }
+
+  /* The consultation template presents an estimate this lead never saw, so the
+     confirmation is the short request letter: Schedule now, then the disclaimer. */
+  if (email) {
+    const { sendLeadConfirmation } = await import("@/server/services/leadConfirmation");
+    await sendLeadConfirmation({ email, name: fullName, intent: "walkthrough" });
   }
 }
 

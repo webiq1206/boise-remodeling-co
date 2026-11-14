@@ -1,3 +1,5 @@
+import { ESTIMATOR_BRAND } from "@/lib/p5/brand";
+import { scheduleBlockHtml } from "@/lib/p5/scheduleEmail";
 import { escapeHtml, wrapEmailHtml, EMAIL_BRAND } from "@/server/services/emailLayout";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { TRADE_LABELS, type Re10Estimate } from "@/shared/costs/re10Repairs";
@@ -131,7 +133,9 @@ export function buildRe10CustomerEmail(
       : "";
 
   const content = `
-    <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Thanks, ${escapeHtml(firstName)}. Here is the price for the repairs on the RE-10 you sent.</p>
+    <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hi ${escapeHtml(firstName)}, here is the price for the repairs on the RE-10 you sent.</p>
+
+    ${scheduleBlockHtml({ kind: "estimate", accent: ESTIMATOR_BRAND.accent, panel: true })}
 
     <div style="background:${EMAIL_BRAND.raised};border-left:3px solid ${EMAIL_BRAND.accent};padding:24px;margin:24px 0;border-radius:4px;">
       <p style="margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:0.14em;color:${EMAIL_BRAND.textMuted};">Price for the repairs below</p>
@@ -162,7 +166,7 @@ export function buildRe10CustomerEmail(
       <p style="margin:0;color:#e8dca6;font-size:13px;line-height:1.55;">${escapeHtml(RE10_PRICING_DISCLAIMER)}</p>
     </div>
 
-    <p style="color:${EMAIL_BRAND.text};line-height:1.6;">Next step is a short onsite visit to confirm the scope, price the items listed below as needing a look, and get you on the schedule. Reply here or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a> and we will get it scheduled against your deadline.</p>
+    <p style="color:${EMAIL_BRAND.text};line-height:1.6;">If you have questions, just reply to this email or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a>.</p>
     <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
   `;
 

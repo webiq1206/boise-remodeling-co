@@ -8,6 +8,7 @@ import {
   htmlToPlainText,
 } from "@/server/services/emailLayout";
 import { forwardToLeadDashboard } from "@/server/services/leadDashboardForward";
+import { sendLeadConfirmation } from "@/server/services/leadConfirmation";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /**
@@ -149,6 +150,14 @@ export async function deliverAssistantLead(
           emailed = true;
         }
       }
+    }
+    if (input.email) {
+      await sendLeadConfirmation({
+        email: input.email,
+        name: input.name,
+        intent: "walkthrough",
+        kind: input.estimate ? "estimate" : "request",
+      });
     }
   } catch (err) {
     console.error("[assistantLead] Email send failed:", err);
