@@ -13,6 +13,7 @@ import { forwardConsultationToP5Intake } from "@/server/services/p5IntakeBridge"
 import type { StoredShortRequest } from "@/server/services/requestDetailsMerge";
 import type { RequestFileRecord } from "@/shared/requestDetails";
 import { formatFileSize } from "@/shared/requestFiles";
+import { sendLeadConfirmation } from "@/server/services/leadConfirmation";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /**
@@ -30,6 +31,8 @@ export interface DetailsDeliveryInput {
   timing: string;
   projectType: string;
   files: RequestFileRecord[];
+  /** Step 2 is what first recorded an email, so the confirmation goes out once. */
+  customerEmailJustAdded?: boolean;
 }
 
 /**
@@ -131,9 +134,17 @@ export function deliverRequestDetails(
     files: input.files,
     submissionKind: "details",
   });
+  const confirmation = input.customerEmailJustAdded
+    ? sendLeadConfirmation({
+        email: input.request.email,
+        name: input.request.name,
+        intent: input.request.projectType === "Callback request" ? "consult" : "walkthrough",
+      })
+    : Promise.resolve();
   return Promise.all([
     p5,
     sendDashboard(input, options.dashboardWaitMs ?? DASHBOARD_DUPLICATE_WAIT_MS),
     sendDetailsEmail(input),
+    confirmation,
   ]).then(() => undefined);
 }

@@ -90,7 +90,7 @@
     "lib/p5/dynamicQuestions.ts": "a842e81acaac16c94cb51215631167ed740d1e40fbf6ceac77d4f72339b1684e",
     "lib/p5/estimateDocument.ts": "1bd90c212fbb54b1923ee98ec31f4982afa009e1cd91c41fe2b2baab0b337d9c",
     "lib/p5/estimateDriver.ts": "7e86bb8c32ba9e07680d45d3d4327d4f73521925c7d469f5669e900bca0245e9",
-    "lib/p5/estimateEmail.ts": "07e0197745fff54cbe3e50bfebc3e8c8f44afe0458f55cecb4c9de715ffb290b",
+    "lib/p5/estimateEmail.ts": "4863d70dc2ed544131b6f725b18bc2033fecad97dbb99a6a5cb35dbb9e08cee6",
     "lib/p5/estimateLinks.ts": "9dacd407e7c541e370670a7daa5650e8ebf792e534dd10f4b32899764520b6d5",
     "lib/p5/estimatePdf.ts": "14f02c090319226be358ad0b22c280199139ff1da4ffcac481508a445f3bb0c4",
     "lib/p5/estimateRevisions.ts": "8215ffd84e99684078b279cbaa96c5a9ec250f48721d728f31073a1be6212e58",
@@ -484,7 +484,7 @@
     "tests/p5-wizard-resume.test.ts": "423176433a701f191c5e88c99924a28748c001da3b4a746b892843cf52319085",
     "tests/p5-work-recovery.test.ts": "ef035f0257de7b9ddb4f8736044a72276a90d5599866587542f229db30debfdb",
     "app/api/p5-estimator/intake-file/route.ts": "076a2777043cd2a097d63882d95495967fdab7a11abb050364dccf9b6ec9542a",
-    "lib/p5/intakeEmail.ts": "ce5eb3eb3cf97736658c41e59af9a9eb722f2b2aa57cc232c4a8779439bb9909",
+    "lib/p5/intakeEmail.ts": "280e18611ba5241817009af0ff7554f8d4cfb79f9ec186a1dc62453766ea0786",
     "lib/p5/intakeEmailDelivery.ts": "900c312d877b98e385fe38e30e702cebaeb0b5ba457c4eb55a63c35a4b8151df",
     "lib/p5/intakeFileAccess.ts": "54c5a4f524d5d3cd666f0fa3a3adc44adf8688368cbecd776c69fcd98ca99620",
     "tests/p5-intake-email-files.test.ts": "81175b192b1328b9324d8b815904f680067a196c0debadbe5b67973fa75f07fb",
@@ -516,7 +516,8 @@
     "scripts/lib/navigationEntry.mjs": "6f9ae022bb7e6df5d86e848b1e2e0da2a402b59522cdb0c1ce3cda15a86a10b4",
     "tests/p5-navigation-entry.test.mjs": "c3074d9648326b9caf700ffa78089c4170512102b1efc1ee6e76535432baa8be",
     "scripts/lib/shortBrandEntry.mjs": "27f7270125bf48773c7564b9b98bb8ff4ca02321d7a2b8b4d5c0e857737570c2",
-    "scripts/lib/quoteEntry.mjs": "46f9fb18396b8e100dfdfe05c90b3bf21f7777e7feef45767e0e24432eb3b920"
+    "scripts/lib/quoteEntry.mjs": "46f9fb18396b8e100dfdfe05c90b3bf21f7777e7feef45767e0e24432eb3b920",
+    "lib/p5/scheduleEmail.ts": "1fad81742577e91b00b9bf9cb233799b71a941fc22b80e2a2b8d65bfdd48ed26"
   },
   "coordinatedIntakeBatch": {
     "base": "e6e125b83468a402264be2f1e82e5c0466baa178",

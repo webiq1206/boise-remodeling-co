@@ -665,7 +665,12 @@ export async function POST(request: NextRequest) {
         // writing without ever logging in.
         const customerResult = data.email
           ? await (async () => {
-              const customerHtml = buildCustomerEmailHtml(lead, estimate, unitCostOverrides);
+              const customerHtml = buildCustomerEmailHtml(
+                lead,
+                estimate,
+                unitCostOverrides,
+                data.callback ? "consult" : "walkthrough",
+              );
               return client.emails.send({
                 from,
                 replyTo: getReplyToAddress(),

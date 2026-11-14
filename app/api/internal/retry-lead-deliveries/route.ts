@@ -136,7 +136,12 @@ export async function POST(request: NextRequest) {
           adminEmail = results.every((result) => !result?.error) ? "sent" : "failed";
         }
         if ((customerEmail === "failed" || customerEmail === "pending") && row.email) {
-          const html = buildCustomerEmailHtml(lead, null);
+          const html = buildCustomerEmailHtml(
+            lead,
+            null,
+            undefined,
+            row.projectType === "Callback request" ? "consult" : "walkthrough",
+          );
           const result = await client.emails.send({
             from,
             to: row.email,

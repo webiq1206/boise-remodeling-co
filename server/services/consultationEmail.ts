@@ -3,6 +3,8 @@ import {
   wrapEmailHtml,
   EMAIL_BRAND,
 } from "@/server/services/emailLayout";
+import { ESTIMATOR_BRAND } from "@/lib/p5/brand";
+import { scheduleBlockHtml, type ScheduleIntent } from "@/lib/p5/scheduleEmail";
 import { SITE_CONFIG, textReplyLineHtml } from "@/shared/siteConfig";
 import {
   takeoffForRange,
@@ -749,10 +751,19 @@ export function buildAdminEmailHtml(
 export function buildCustomerEmailHtml(
   lead: LeadContact,
   estimate: VerifiedEstimate | null,
-  overrides?: UnitCostOverrides
+  overrides?: UnitCostOverrides,
+  /** A callback is a 15 minute phone consult. Everything else is a home walkthrough. */
+  intent: ScheduleIntent = "walkthrough",
 ): string {
-  const firstName = firstNameOf(lead.name);
+  const firstName = lead.name.trim().split(/\s+/)[0] || "there";
   const projectLabel = estimate ? PROJECT_LABELS[estimate.project].label : lead.projectType;
+  const schedule = scheduleBlockHtml({
+    kind: estimate ? "estimate" : "request",
+    intent,
+    accent: ESTIMATOR_BRAND.accent,
+    panel: true,
+  });
+  const contact = `<p style="color:${EMAIL_BRAND.text};line-height:1.6;">If you have questions, just reply to this email or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a>.</p>`;
 
   // Only when there is no computed comparison to show. Once the estimator has a
   // real number it renders the solved version - where their budget actually
@@ -765,25 +776,30 @@ export function buildCustomerEmailHtml(
     ? `<p style="margin:16px 0;color:${EMAIL_BRAND.text};line-height:1.6;">Your stated project budget is <strong>${escapeHtml(lead.budget)}</strong>. We will do everything we can to recommend solutions that fit within that budget while helping you achieve the goals you have shared. If your ideal scope runs beyond it, we will focus on the features that matter most to you, talk through phasing the work in stages, and explore materials and design options that stretch your investment further. Our job is to find the best path forward for your home, never to tell you your budget is not enough.</p>`
     : "";
 
+  const signoff = `<p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>`;
   const content = estimate
     ? `
-      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Thanks, ${escapeHtml(firstName)}. Here is the planning range you built.</p>
+      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hi ${escapeHtml(firstName)},</p>
+      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">Thanks for thinking of Boise Remodeling Co. Here is the planning range you built.</p>
+      ${schedule}
       ${buildEstimateSectionsHtml(estimate, overrides)}
       ${budgetNote}
-      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">We will be in touch to answer your questions and book your free in-home visit, where we confirm the scope and give you a firm number. Until then, reply here or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a> with any questions.</p>
+      ${contact}
       ${textReplyLineHtml()}
-      <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
+      ${signoff}
     `
     : `
-      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">We received your consultation request. We will be in touch to answer your questions and schedule your free in-home visit.</p>
+      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hi ${escapeHtml(firstName)},</p>
+      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">Thanks for reaching out to Boise Remodeling Co. We have your request, and someone from the team will follow up shortly.</p>
+      ${schedule}
+      ${contact}
       ${textReplyLineHtml()}
-      <p style="color:${EMAIL_BRAND.text};line-height:1.6;">In the meantime, feel free to call us at <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a>, <a href="${SITE_CONFIG.phoneSmsHref}" style="color:${EMAIL_BRAND.text};">send us a text</a>, or reply to this email with any questions.</p>
-      <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
+      ${signoff}
     `;
 
   return wrapEmailHtml({
-    title: estimate ? `Your ${projectLabel} planning range` : `Thanks, ${escapeHtml(lead.name)}!`,
-    subtitle: estimate ? "Saved so you have it in writing" : "We received your consultation request",
+    title: estimate ? `Your ${projectLabel} planning range` : "We have your request",
+    subtitle: estimate ? "Saved so you have it in writing" : undefined,
     content,
   });
 }
@@ -799,5 +815,5 @@ export function buildCustomerSubject(lead: LeadContact, estimate: VerifiedEstima
   const projectLabel = estimate ? PROJECT_LABELS[estimate.project].label : lead.projectType;
   return estimate
     ? `Your ${projectLabel} planning range | Boise Remodeling Co`
-    : "We received your request | Boise Remodeling Co";
+    : `We have your request, ${lead.name.trim().split(/\s+/)[0] || "there"}`;
 }

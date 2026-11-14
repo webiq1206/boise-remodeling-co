@@ -95,6 +95,7 @@ export async function POST(request: NextRequest) {
       timing: cleanDetails(details).timing,
       projectType: cleanDetails(details).projectType,
       files,
+      customerEmailJustAdded: Boolean(merge.patch.email),
     }).catch((error) => console.error("[request-details] Delivery failed:", error));
     try {
       after(() => delivery);
