@@ -1,5 +1,4 @@
-import { NATURAL_BAND } from "./costs/installedUnitCosts";
-import { buildUpTotal } from "./costCatalog";
+import { customerPlanningRange } from "./planningBookPrice";
 
 export type ProjectType = "kitchen" | "bathroom" | "whole-home" | "addition" | "adu" | "basement";
 export type FinishLevel = "refresh" | "mid-range" | "high-end" | "luxury";
@@ -317,13 +316,13 @@ export const PROFILE_SUMMARY: Record<ProjectType, Record<FinishLevel, string[]>>
     luxury: ["Full gut renovation", "Structural engineering", "All new systems", "Smart home integration"],
   },
   addition: {
-    refresh: [], "mid-range": ["New foundation, framing and roof", "Tied into existing HVAC", "Mid-range finishes", "Standard utility runs"],
-    "high-end": ["New foundation, framing and roof", "Custom windows and doors", "Extended utility runs", "High-end finishes"],
+    refresh: [], "mid-range": ["New foundation, framing and roof", "Tied into existing HVAC", "Signature finishes", "Standard utility runs"],
+    "high-end": ["New foundation, framing and roof", "Custom windows and doors", "Extended utility runs", "Premium finishes"],
     luxury: ["Structural engineering", "Premium finishes throughout", "Separate systems", "Custom design integration"],
   },
   adu: {
-    refresh: [], "mid-range": ["Full design-build unit", "Mid-range kitchen and bath", "Separate HVAC", "Permits through certificate of occupancy"],
-    "high-end": ["Custom kitchen and bath", "High-end finishes", "Engineered foundation", "Extended utility runs"],
+    refresh: [], "mid-range": ["Full design-build unit", "Signature kitchen and bath", "Separate HVAC", "Permits through certificate of occupancy"],
+    "high-end": ["Custom kitchen and bath", "Premium finishes", "Engineered foundation", "Extended utility runs"],
     luxury: ["Premium finishes throughout", "Smart home integration", "Structural engineering", "Fully separate systems"],
   },
   basement: {
@@ -454,16 +453,16 @@ export interface RefinementVisibility {
 /** Which optional detail fields appear for each project type. */
 export function getRefinementVisibility(project: ProjectType): RefinementVisibility {
   return {
-    layoutChanges:
-      project === "kitchen" ||
-      project === "bathroom" ||
-      project === "whole-home" ||
-      project === "basement",
-    plumbingElectrical: true,
-    cabinetTier: project === "kitchen",
-    fixtureCount: project === "bathroom",
+    // Only questions with a cost-book line are shown. Layout and plumbing
+    // have book adders on a kitchen. A cabinet grade is the finish tier.
+    // A fixture count has no single installed code.
+    layoutChanges: project === "kitchen",
+    plumbingElectrical: project === "kitchen",
+    cabinetTier: false,
+    fixtureCount: false,
     bathroomCount: ASSUMED_BATHROOMS[project] !== undefined,
-    kitchenIncluded: ASSUMED_KITCHENS[project] !== undefined,
+    // Whole-home and ADU assemblies do not publish a separable kitchen credit.
+    kitchenIncluded: project === "addition" || project === "basement",
     stories: project === "addition",
     aduConfiguration: project === "adu",
   };
@@ -517,9 +516,9 @@ export const PROJECT_LABELS: Record<ProjectType, { label: string; sub: string }>
 };
 
 export const FINISH_LABELS: Record<FinishLevel, { label: string; sub: string }> = {
-  refresh: { label: "Refresh", sub: "Cosmetic upgrades, repaint" },
-  "mid-range": { label: "Mid-Range", sub: "Replace and upgrade" },
-  "high-end": { label: "High-End", sub: "Premium finishes" },
+  refresh: { label: "Essential", sub: "Production-builder spec" },
+  "mid-range": { label: "Signature", sub: "The most common choice" },
+  "high-end": { label: "Premium", sub: "Custom cabinets and stone" },
   luxury: { label: "Luxury", sub: "No constraints" },
 };
 
@@ -587,6 +586,11 @@ export const CONFIDENCE_LABELS = PLANNING_DETAIL_LABELS;
  * lower effective rate per square foot, which is how remodel cost actually
  * behaves and is consistent with the guide's own rates falling as project size
  * rises across categories.
+ */
+/**
+ * RETIRED DOLLAR CELLS. calculateEstimate does not read low or high.
+ * The customer range comes from the shared cost book. The included text and
+ * the ROI figure are still read. Do not put a new price in this object.
  */
 export const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, PriceData>>> = {
   /*
@@ -679,7 +683,7 @@ export const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, Price
     },
     "mid-range": {
       low: 180000, high: 300000, roi: 68,
-      included: ["Kitchen and bath mid-range renovation", "Open-concept conversion", "New flooring throughout", "Updated HVAC and windows"],
+      included: ["Kitchen and bath Signature renovation", "Open-concept conversion", "New flooring throughout", "Updated HVAC and windows"],
     },
     "high-end": {
       low: 360000, high: 516000, roi: 62,
@@ -715,11 +719,11 @@ export const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, Price
   addition: {
     "mid-range": {
       low: 97000, high: 138000, roi: 63,
-      included: ["Bedroom or family room addition", "Full HVAC integration", "Updated electrical panel", "Mid-range finishes"],
+      included: ["Bedroom or family room addition", "Full HVAC integration", "Updated electrical panel", "Signature finishes"],
     },
     "high-end": {
       low: 162000, high: 227000, roi: 58,
-      included: ["400 to 600 sqft addition", "High-end finishes", "Full integration with existing layout", "Custom windows and doors"],
+      included: ["400 to 600 sqft addition", "Premium finishes", "Full integration with existing layout", "Custom windows and doors"],
     },
     luxury: {
       low: 276000, high: 373000, roi: 50,
@@ -742,11 +746,11 @@ export const PRICE_MATRIX: Record<ProjectType, Partial<Record<FinishLevel, Price
   adu: {
     "mid-range": {
       low: 155000, high: 221000, roi: 70,
-      included: ["Full design-build ADU", "Mid-range kitchen and bath finishes", "Separate HVAC system", "Permit coordination through CO"],
+      included: ["Full design-build ADU", "Signature kitchen and bath finishes", "Separate HVAC system", "Permit coordination through CO"],
     },
     "high-end": {
       low: 221000, high: 309000, roi: 65,
-      included: ["600+ sqft ADU or guest house", "High-end finishes throughout", "Custom kitchen and bath", "Engineered foundation and structural plans"],
+      included: ["600+ sqft ADU or guest house", "Premium finishes throughout", "Custom kitchen and bath", "Engineered foundation and structural plans"],
     },
     luxury: {
       low: 309000, high: 442000, roi: 58,
@@ -805,10 +809,11 @@ export function getPriceData(project: ProjectType, finish: FinishLevel): PriceDa
     // Unreachable as long as getAvailableFinishLevels matches PRICE_MATRIX keys.
     throw new Error(`No price data for ${project}/${normalized}`);
   }
+  const range = customerPlanningRange(project, normalized, PROJECT_SIZE_CONFIG[project].baselineSqft);
   return {
     ...data,
-    low: data.low * PLANNING_RANGE_ADJUSTMENT_LOW,
-    high: data.high * PLANNING_RANGE_ADJUSTMENT_HIGH,
+    low: range.low,
+    high: range.high,
   };
 }
 
@@ -1416,7 +1421,6 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
   const finish = normalizeFinishLevel(input.project, input.finish);
   const safeInput: EstimateInput = finish === input.finish ? input : { ...input, finish };
   const base = getPriceData(safeInput.project, safeInput.finish);
-  const refMult = getRefinementMultipliers(input.refinements, input.project);
   const maxFields = getMaxRefinementFields(input.project);
   const { level, percent } = getPlanningDetail(userRefinementCount, maxFields);
 
@@ -1432,96 +1436,31 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
   // and dragged the center upward. Scaling the midpoints instead keeps the
   // center a fair expected value while staying monotonic - a more intensive
   // selection still always moves it up.
-  const refMid = (refMult.low + refMult.high) / 2;
-
-  // Whole-home kitchen and bathroom counts are priced as modules added to or
-  // removed from the scaled base, not as multipliers. The adjustment is applied
-  // after size scaling because a bathroom costs what a bathroom costs whatever
-  // the size of the house, and is scaled by the planning adjustment so it stays
-  // consistent with every other figure the estimator shows.
-  const modules = getModuleAdjustment(
+  /*
+   * The centre is the shared cost book. Complete projects use the book's
+   * assembly for that project. Extra rooms, a kitchen island, and a relocated
+   * kitchen rough-in are separate book lines. Partial upgrade chips price
+   * their own book lines instead of the assembly. Nothing here is a local
+   * dollar table.
+   */
+  const range = customerPlanningRange(
     safeInput.project,
-    input.refinements,
     safeInput.finish,
     safeInput.sqft,
+    {
+      layoutChanges: input.refinements.layoutChanges,
+      plumbingElectrical: input.refinements.plumbingElectrical,
+      bathroomCount: input.refinements.bathroomCount,
+      kitchenIncluded: input.refinements.kitchenIncluded,
+      stories: input.refinements.stories,
+      aduConfig: input.refinements.aduConfig,
+      upgradeScope: input.refinements.upgradeScope,
+    },
   );
-  const moduleMid =
-    ((modules.low + modules.high) / 2) * PLANNING_RANGE_ADJUSTMENT;
-
-  // On a bathroom project the count multiplies rather than adds: three
-  // bathrooms is three of the thing being priced, not one large one. Reading it
-  // as a single big room and scaling sublinearly understated a three-bathroom
-  // project by roughly 43%, which is the direction that sets an expectation a
-  // proposal cannot meet.
-  const bathroomInstances =
-    safeInput.project === "bathroom" && input.refinements.bathroomCount !== null
-      ? Math.max(1, input.refinements.bathroomCount)
-      : 1;
-
-  // Partial-scope discount for kitchen and bathroom: doing only some of the
-  // upgrade components costs less than a full remodel. 1.0 when the scope is
-  // unspecified or complete, so a typical estimate is unchanged.
-  const scopeMult = getUpgradeScopeMultiplier(
-    safeInput.project,
-    input.refinements.upgradeScope,
-  );
-
-  /*
-   * THE CENTRE IS BUILT, NOT LOOKED UP.
-   *
-   * It used to be the PRICE_MATRIX midpoint scaled by a size elasticity - a
-   * fixed figure that the breakdown was then divided back out of. The matrix
-   * cells were wrong (owner, 2026-09-03). This sums the actual scope instead:
-   * every direct component's quantity at this size, priced at its installed
-   * (labor-inclusive) unit cost for this finish level, grossed up for the soft
-   * costs every job carries. Refinements, modules, bathroom count and partial
-   * scope still adjust it exactly as before.
-   *
-   * No size multiplier is applied any more, because the build-up scales itself:
-   * per-square-foot components grow with the project while lot-priced ones
-   * (fixtures, demolition, permits) do not. That reproduces the sublinear
-   * behaviour SIZE_ELASTICITY approximated - a 250 sqft kitchen is roughly 80%
-   * per-sqft work, an implicit elasticity near 0.85, which is what the
-   * hand-tuned curve carried.
-   */
-  const builtMid = buildUpTotal(safeInput.project, safeInput.finish, safeInput.sqft);
-
-  const center = Math.max(
-    1000,
-    (builtMid * refMid + moduleMid) * bathroomInstances * scopeMult,
-  );
-
-  // The BAND starts at the category's own natural spread and TIGHTENS as the
-  // user supplies more detail, so a fully-specified estimate is genuinely more
-  // precise - not just a higher "detail" score. This is what makes "improve
-  // estimate accuracy" real: fewer unknowns, a narrower range.
-  // The matrix's LEVELS were wrong, but the WIDTH of its ranges reflected real
-  // variance per work type, so that spread is retained as the starting band.
-  const rawBand = NATURAL_BAND[safeInput.project];
-  // Compress the category's natural spread so even a bare estimate reads as a
-  // confident, personalized range - not guesswork. A too-wide range erodes
-  // trust, and an inflated high end scares qualified homeowners off before we
-  // get to talk value. Clamp the starting spread to a sensible maximum.
-  // The base range now comes from the owner's own cost guide, so it IS the
-  // honest spread for a typical project. Compressing it (this previously
-  // multiplied by 0.82 to make ranges read as more confident) would quote a
-  // narrower range than our own published guidance, claiming precision the
-  // source does not support. The starting band therefore reproduces the guide
-  // exactly, and only real detail from the visitor tightens it below that.
-  const MAX_START_BAND = 0.28; // safety cap; no current category reaches it
-  const startBand = Math.min(MAX_START_BAND, rawBand);
-
-  const detailRatio = maxFields > 0 ? Math.min(1, userRefinementCount / maxFields) : 0;
-  const BAND_TIGHTENING = 0.6; // remove up to 60% of the band at full detail
-  const MIN_BAND = 0.1; // keep an honest band (~1.2x); never a false single number
-  const band = Math.max(MIN_BAND, startBand * (1 - BAND_TIGHTENING * detailRatio));
-
-  const priceLow = Math.round((center * (1 - band)) / 1000) * 1000;
-  const priceHigh = Math.round((center * (1 + band)) / 1000) * 1000;
 
   return {
-    priceLow,
-    priceHigh,
+    priceLow: range.low,
+    priceHigh: range.high,
     roi: base.roi,
     included: buildDynamicScope(safeInput),
     confidence: level,

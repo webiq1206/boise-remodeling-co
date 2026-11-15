@@ -17,9 +17,9 @@ const PROJECTS = [
   { value: "whole-home", label: "Whole home" },
 ] as const;
 const FINISHES: { value: FinishLevel; label: string }[] = [
-  { value: "refresh", label: "Refresh" },
-  { value: "mid-range", label: "Mid-range" },
-  { value: "high-end", label: "High-end" },
+  { value: "refresh", label: "Essential" },
+  { value: "mid-range", label: "Signature" },
+  { value: "high-end", label: "Premium" },
   { value: "luxury", label: "Luxury" },
 ];
 const LAYOUTS: { value: LayoutChanges; label: string }[] = [
@@ -157,10 +157,13 @@ export function PlanningRangeExplorer() {
               <div className={styles.sizeControls}><label htmlFor={`${id}-size`}>{projectLabel} area: <strong>{shown.sqft.toLocaleString()} sq ft</strong></label>
               <input data-clarity-mask="True" id={`${id}-size`} className={styles.slider} type="range" min={size.min} max={size.max} step={size.step} value={shown.sqft} onChange={e => change(p => ({ ...p, sqft: Number(e.target.value) }))} aria-valuetext={`${shown.sqft} square feet`} />
               <div className={styles.ends}><span>{size.min.toLocaleString()} sq ft</span><span>{size.max.toLocaleString()} sq ft</span></div>
-              <p className={styles.help}>Use the area being remodeled, not the whole property.</p></div>
+              <p className={styles.help}>{plan.project === "bathroom"
+                ? "A bathroom is priced per room. The area is kept with your request and does not change this range."
+                : "Use the area being remodeled, not the whole property."}</p></div>
             </fieldset>}
             {shownStep === 2 && options("Choose a finish level", FINISHES, shown.finish, finish => change(p => ({ ...p, finish })))}
             {shownStep === 3 && options("Will the layout change?", LAYOUTS, shown.layout, layout => change(p => ({ ...p, layout })))}
+            {shownStep === 3 && plan.project !== "kitchen" && <p className={styles.help}>Bathroom and whole-home ranges use the complete project price. A layout answer is kept for your request and does not change this range. A kitchen with a major layout change adds an island.</p>}
             {shownStep === 4 && <div><h3 className={styles.reviewTitle}>Review your starting point</h3>
               {review}
             </div>}

@@ -397,6 +397,10 @@ for (const project of PROJECTS) {
    job that rents scaffolding, runs temporary power and needs a container, and
    was previously carrying none of it. */
 const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
+  // 2026-11-15: the market ceiling is the homepage calculator's customer
+  // range from the shared pricing engine. Where that ceiling is above the
+  // line-item price, the earlier trim is released. Where it is still below,
+  // the quote stays trimmed.
   kitchen: {
     refresh: [13500, 18000],
     "mid-range": [28000, 38000],
@@ -416,21 +420,19 @@ const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
     luxury: [375000, 505000],
   },
   addition: {
-    "mid-range": [85000, 115000],
-    "high-end": [115000, 155000],
-    luxury: [155000, 215000],
+    "mid-range": [82000, 111000],
+    "high-end": [105000, 140000],
+    luxury: [140000, 190000],
   },
   adu: {
     "mid-range": [150000, 200000],
     "high-end": [205000, 275000],
-    luxury: [295000, 400000],
+    luxury: [280000, 380000],
   },
   basement: {
-    // Reprice 2026-09-03: wiring the wet bar (kitchenIncluded was shown to
-    // basement visitors and priced nothing) adds real scope at this tier.
     "mid-range": [53000, 72000],
     "high-end": [80000, 109000],
-    luxury: [120000, 165000],
+    luxury: [110000, 150000],
   },
 };
 
