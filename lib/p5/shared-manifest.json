@@ -293,7 +293,7 @@
     "scripts/p5-cli-acceptance.mts": "ed5b8fc80231c03b3c2b54de486fb6db7f259947e855ecf4985a9caf6f4ea6b8",
     "scripts/p5-component-review.mjs": "7035921690a6dc0648b1c3142b054ad09d67535c706e108817369e9e6de6ab26",
     "scripts/p5-contact-first-browser.mjs": "92f3646a7736ddf0169e8d700134ae1f4789c6eb01f6d28394deebaa792564f2",
-    "scripts/p5-estimator-browser.mjs": "0f4206a44f72ae8236dd0d5146ee870e8d9c0be0ed0bf2f80b4b296bd840c43a",
+    "scripts/p5-estimator-browser.mjs": "c770b2f0018e9043b215ea700f84a910197c3b89ff439e4639958327f9d7b2fa",
     "scripts/p5-exit-browser.mjs": "6b0556f4c8b17cd5f314f60d84246363b60e4dc54e191f91010e78374cf44a97",
     "scripts/p5-host-build.mjs": "2ac9f40425e0c279d930a54b56b47dda3b15e3841933a076ddc751e8275c9967",
     "scripts/p5-hub-notification-check.mjs": "e2d4216777feeb2e4099b93986ca257e4760f671312a6b343014ef7677148f06",
@@ -536,7 +536,9 @@
     "tests/p5-with-timeout.test.ts": "19144aa63a2d3e7991a67ec19e2f1ae867b40d55a499a3b7ad98e45ce8c3284e",
     "tests/p5-wizard-resume.test.ts": "423176433a701f191c5e88c99924a28748c001da3b4a746b892843cf52319085",
     "tests/p5-work-recovery.test.ts": "ef035f0257de7b9ddb4f8736044a72276a90d5599866587542f229db30debfdb",
-    "tests/p5-outbox-routing.test.ts": "f58f3828419ab4541b431bf08509ccdbc2f5b6008907fc5d003c9731ddea92bc"
+    "tests/p5-outbox-routing.test.ts": "f58f3828419ab4541b431bf08509ccdbc2f5b6008907fc5d003c9731ddea92bc",
+    "scripts/lib/browserSaveFaults.mjs": "682d1040701fb36c910797f1ba029f7485952624fa751d65ed0cfdd15683e603",
+    "tests/p5-browser-save-faults.test.ts": "8ad2b32d8adade6cf3d557bf84187b0a5161c60aa6205dc9c47a3333616a3ac1"
   },
   "intentionalDrifts": [
     {
