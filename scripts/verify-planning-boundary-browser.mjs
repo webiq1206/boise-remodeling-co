@@ -10,12 +10,16 @@ mkdirSync(output, { recursive: true });
 const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH, args: ["--no-sandbox"] } : {}) });
 const context = await browser.newContext({ serviceWorkers: "block", reducedMotion: "reduce" });
 const records = [], errors = [], blocked = [];
-let mode = "normal", releaseOld, pricingRequests = 0;
+let mode = "normal", releaseOld, releaseHang, pricingRequests = 0;
 await context.route("**/*", async route => {
   const request = route.request(), url = new URL(request.url());
   if (url.origin === base.origin && url.pathname === "/api/planning-range" && request.method() === "POST") {
     pricingRequests++;
     if (mode === "fail") return route.fulfill({ status: 503, json: { error: "Synthetic isolated outage" } });
+    if (mode === "hang") {
+      await new Promise(resolve => { releaseHang = resolve; });
+      return route.fulfill({ status: 200, json: { priceLow: 111, priceHigh: 222 } }).catch(() => {});
+    }
     if (mode === "race" && request.postDataJSON().project === "kitchen") {
       await new Promise(resolve => { releaseOld = resolve; });
       return route.fulfill({ status: 200, json: { priceLow: 111, priceHigh: 222 } }).catch(() => {});
@@ -53,6 +57,19 @@ try {
   await waitRange(page);
   assert.equal(await figure.innerText(), "$24.9k to $27.6k");
   records.push({ state: "retry", range: await figure.innerText() });
+
+  mode = "hang";
+  await card.getByRole("radio", { name: "Kitchen", exact: true }).check();
+  await page.waitForFunction(() => document.querySelector("[data-testid=planning-figure]")?.textContent === "Range unavailable");
+  assert.ok(releaseHang, "the timeout branch actually had a pending request");
+  releaseHang();
+  mode = "normal";
+  await card.getByRole("button", { name: "Try range again", exact: true }).click();
+  await waitRange(page);
+  assert.equal(await figure.innerText(), start);
+  records.push({ state: "timeout-recovery", range: await figure.innerText() });
+  await card.getByRole("radio", { name: "Bathroom", exact: true }).check();
+  await waitRange(page);
 
   mode = "race";
   const oldRequest = page.waitForRequest(request => request.url() === new URL("/api/planning-range", base).href && request.postDataJSON().project === "kitchen");
@@ -111,6 +128,35 @@ try {
   assert.ok(!blocked.some(request => request.method !== "GET"), "no lead, customer or analytics submission was attempted");
   await page.screenshot({ path: path.join(output, "recovered-390x844.png"), fullPage: false });
   await page.close();
-  writeFileSync(path.join(output, "report.json"), JSON.stringify({ viewport: { width: 390, height: 844 }, records, pageErrors: errors, blocked }, null, 2));
+  mode = "fail";
+  const failureLayouts = [];
+  for (const [width, height] of [[320, 568], [360, 640], [390, 844], [430, 932], [768, 1024], [1024, 768], [1280, 720], [1440, 900], [1920, 1080], [844, 390]]) {
+    const failurePage = await context.newPage();
+    await failurePage.setViewportSize({ width, height });
+    await failurePage.goto(base.href, { waitUntil: "networkidle" });
+    await failurePage.evaluate(() => sessionStorage.removeItem("brc-home-planning-v1"));
+    await failurePage.reload({ waitUntil: "networkidle" });
+    await failurePage.waitForFunction(() => document.querySelector("[data-testid=planning-figure]")?.textContent === "Range unavailable");
+    const failureCard = failurePage.getByTestId("planning-step");
+    for (let step = 0; step < 5; step++) {
+      await failurePage.evaluate(() => { const card = document.querySelector("[data-testid=planning-step]"), header = document.querySelector("[data-family-header]"); scrollBy({ top: card.getBoundingClientRect().top - header.getBoundingClientRect().height - 16, behavior: "instant" }); });
+      await failurePage.waitForTimeout(100);
+      const geometry = await failureCard.evaluate(card => {
+        const rect = card.getBoundingClientRect(), header = document.querySelector("[data-family-header]").getBoundingClientRect();
+        const back = [...card.querySelectorAll("button")].find(button => button.textContent === "Back"), navigation = back.parentElement.getBoundingClientRect();
+        return { width: innerWidth, height: innerHeight, visualWidth: visualViewport?.width, visualHeight: visualViewport?.height, top: rect.top, bottom: rect.bottom, headerBottom: header.bottom, navigationTop: navigation.top, documentWidth: document.documentElement.scrollWidth };
+      });
+      assert.ok(geometry.top >= geometry.headerBottom - 1, `error ${width}x${height} step ${step}: header obstruction`);
+      assert.ok(geometry.bottom <= (width < 640 ? geometry.navigationTop : height) + 1, `error ${width}x${height} step ${step}: step overflow`);
+      assert.ok(geometry.documentWidth <= width + 1, `error ${width}x${height} step ${step}: horizontal overflow`);
+      assert.equal(await failureCard.getByRole("button", { name: "Try range again", exact: true }).isVisible(), width < 1024);
+      failureLayouts.push({ step, requested: { width, height }, actual: geometry });
+      await failurePage.screenshot({ path: path.join(output, `error-step-${step}-${width}x${height}.png`) });
+      if (step < 4) await failureCard.getByRole("button", { name: "Next", exact: true }).click();
+    }
+    await failurePage.close();
+  }
+  records.push({ state: "all-error-steps", captures: failureLayouts.length });
+  writeFileSync(path.join(output, "report.json"), JSON.stringify({ viewport: { width: 390, height: 844 }, emulation: true, records, failureLayouts, pageErrors: errors, blocked }, null, 2));
   console.log(JSON.stringify({ passed: records.length, states: records.map(record => record.state), blockedRequests: blocked.length }));
 } finally { await browser.close(); }
