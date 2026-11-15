@@ -48,7 +48,6 @@ function citationPacket(o) {
     fields: {
       businessName: NAP.name,
       category: "Design-Build Remodeling Contractor / General Contractor",
-      street: NAP.street,
       city: NAP.city,
       state: NAP.state,
       postalCode: NAP.postalCode,
