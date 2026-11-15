@@ -18,7 +18,7 @@ generateBreadcrumbSchema,
 generateWebPageSchema,
 } from "@/lib/schema";
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
-import { CITIES,TREASURE_VALLEY_CITIES } from "@/shared/contentData";
+import { SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE } from "@/shared/contentData";
 import { CTA_PRIMARY,CTA_SECONDARY } from "@/shared/ctaCopy";
 import { FEATURED_BOISE_BENCH_IMAGES } from "@/shared/siteImages";
 import { ArrowRight } from "lucide-react";
@@ -28,14 +28,14 @@ export const metadata = withBrandPageMetadata((buildPageMetadata({
   path: "/areas",
   titleOverride: "Treasure Valley Service Areas",
   descriptionOverride:
-    "Design-build remodeling across the Treasure Valley: Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho.",
+    "Design-build remodeling in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.",
 })), "/areas");
 
 export default function AreasHubPage() {
   const schemas = [
     generateWebPageSchema({
       title: "Treasure Valley Service Areas",
-      description: `Design-build remodeling serving ${TREASURE_VALLEY_CITIES}.`,
+      description: `Design-build remodeling serving ${SERVICE_AREA_SENTENCE}.`,
       url: "/areas",
     }),
     generateBreadcrumbSchema([
@@ -59,7 +59,7 @@ export default function AreasHubPage() {
             <em className="brc-accent">areas</em>
           </h1>
           <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
-            We serve homeowners across {TREASURE_VALLEY_CITIES}, and surrounding communities with
+            We serve homeowners in {SERVICE_AREA_SENTENCE} with
             kitchen, bathroom, whole-home, and addition remodeling under one design-build team.
           </p>
           <p className="sr-only" data-speakable="summary">
@@ -75,19 +75,19 @@ export default function AreasHubPage() {
 
         <AnswerBlock
           question="Where does Boise Remodeling Co work?"
-          answer="Boise Remodeling Co remodels homes in eight Treasure Valley cities: Boise, Meridian, Eagle, Kuna and Star in Ada County, and Nampa, Middleton and Caldwell in Canyon County. Each city has its own page with local permit paths and housing notes, and every project runs through one design-build team with a written scope before construction."
+          answer="Boise Remodeling Co remodels homes in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Each city has its own page with local permit paths and housing notes, and every project runs through one design-build team with a written scope before construction."
         />
 
         <Section surface="bone" spacing="xl">
           <div className="ed-shell">
             <SectionHeader
               eyebrow="Treasure Valley"
-              title={<>Eight cities, one design-build team</>}
+              title={<>Seven cities, one design-build team</>}
               description="Kitchen, bath, whole-home, and addition remodeling across Ada and Canyon County."
               align="left"
             />
             <div className="grid gap-5 sm:grid-cols-2 min-[1180px]:grid-cols-4">
-              {CITIES.map((city, i) => (
+              {SERVICE_AREA_CITIES.map((city, i) => (
                 <Reveal key={city.slug} delay={i * 40}>
                   <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />
                 </Reveal>

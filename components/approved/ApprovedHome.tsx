@@ -141,7 +141,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   <ServiceArea image={{src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:'Oak double vanity beside a tiled walk-in shower',width:1200,height:628}}>
    <p className="f-eyebrow">AT HOME IN IDAHO</p>
    <h2>Local people.<br/><em>Valley-wide reach.</em></h2>
-   <p>Serving homeowners throughout the Treasure Valley.</p>
+   <p>Serving homeowners in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.</p>
    <nav className="fr-cities" aria-label="Service area cities">{cities.map(city=><a key={city} href={`/areas/${city.toLowerCase().replaceAll(" ","-")}`} aria-label={`Remodeling contractors in ${city}`}>{city}</a>)}</nav>
   </ServiceArea>
 

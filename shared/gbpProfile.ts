@@ -47,12 +47,13 @@ export function publicGbpNap() {
 export const GBP_SERVICE_AREAS = [
   'Boise, ID',
   'Meridian, ID',
-  'Eagle, ID',
   'Nampa, ID',
+  'Eagle, ID',
   'Kuna, ID',
-  'Star, ID',
-  'Middleton, ID',
   'Caldwell, ID',
+  'Star, ID',
+  'Ada County, ID',
+  'Canyon County, ID',
 ] as const;
 
 export const GBP_CATEGORIES = {
@@ -67,7 +68,7 @@ export const GBP_CATEGORIES = {
 } as const;
 
 export const GBP_DESCRIPTION = publishFoundingCopy(
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, Idaho, across Ada County and Canyon County. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
 );
 
 export const GBP_LINKS = {
@@ -332,19 +333,19 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   },
   {
     category: 'Areas We Serve',
-    name: 'Remodeling in Eagle, ID',
-    price: 'Free consultation',
-    url: `${SITE}/areas/eagle`,
-    description:
-      'Design-build remodeling contractor serving Eagle, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
-  },
-  {
-    category: 'Areas We Serve',
     name: 'Remodeling in Nampa, ID',
     price: 'Free consultation',
     url: `${SITE}/areas/nampa`,
     description:
       'Design-build remodeling contractor serving Nampa, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
+  },
+  {
+    category: 'Areas We Serve',
+    name: 'Remodeling in Eagle, ID',
+    price: 'Free consultation',
+    url: `${SITE}/areas/eagle`,
+    description:
+      'Design-build remodeling contractor serving Eagle, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
   },
   {
     category: 'Areas We Serve',
@@ -356,27 +357,19 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   },
   {
     category: 'Areas We Serve',
-    name: 'Remodeling in Star, ID',
-    price: 'Free consultation',
-    url: `${SITE}/areas/star`,
-    description:
-      'Design-build remodeling contractor serving Star, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
-  },
-  {
-    category: 'Areas We Serve',
-    name: 'Remodeling in Middleton, ID',
-    price: 'Free consultation',
-    url: `${SITE}/areas/middleton`,
-    description:
-      'Design-build remodeling contractor serving Middleton, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
-  },
-  {
-    category: 'Areas We Serve',
     name: 'Remodeling in Caldwell, ID',
     price: 'Free consultation',
     url: `${SITE}/areas/caldwell`,
     description:
       'Design-build remodeling contractor serving Caldwell, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
+  },
+  {
+    category: 'Areas We Serve',
+    name: 'Remodeling in Star, ID',
+    price: 'Free consultation',
+    url: `${SITE}/areas/star`,
+    description:
+      'Design-build remodeling contractor serving Star, Idaho. Kitchen, bath, whole-home, additions, ADUs, and basement finishing.',
   },
 ];
 
@@ -393,7 +386,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'What areas do you serve?',
     answer:
-      'Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho - all of Ada and Canyon County in the Treasure Valley.',
+      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, Idaho, across Ada County and Canyon County.',
   },
   {
     question: 'Do you handle permits?',

@@ -14,12 +14,11 @@ const tvSections: ContentSection[] = [
     list: [
       '<a href="/guides/boise-remodeling-guide">Boise</a>',
       '<a href="/guides/meridian-remodeling-guide">Meridian</a>',
+      '<a href="/guides/nampa-remodeling-guide">Nampa</a>',
       '<a href="/guides/eagle-remodeling-guide">Eagle</a>',
       '<a href="/guides/kuna-remodeling-guide">Kuna</a>',
-      '<a href="/guides/nampa-remodeling-guide">Nampa</a>',
-      '<a href="/guides/star-remodeling-guide">Star</a>',
-      '<a href="/guides/middleton-remodeling-guide">Middleton</a>',
       '<a href="/guides/caldwell-remodeling-guide">Caldwell</a>',
+      '<a href="/guides/star-remodeling-guide">Star</a>',
     ],
     paragraphs: ['Each guide links local housing notes, permits, and service URLs.'],
   },
@@ -129,7 +128,7 @@ function injectCallouts(html: string, callouts: Array<[string, string]>): string
 const TV_CALLOUTS: Array<[string, string]> = [
   [
     '<h2>Ada County vs Canyon County</h2>',
-    '<div class="callout note"><p class="callout-label">Which county are you in?</p><p><strong>Ada County:</strong> Boise, Meridian, Eagle, Kuna, and Star. <strong>Canyon County:</strong> Nampa, Middleton, and Caldwell. The two use <span class="sage">different permit portals and review cadences</span>, which affects your timeline - your design-build contractor handles the right path for you.</p></div>',
+    '<div class="callout note"><p class="callout-label">Which county are you in?</p><p><strong>Ada County:</strong> Boise, Meridian, Eagle, Kuna, and Star. <strong>Canyon County:</strong> Nampa and Caldwell. The two use <span class="sage">different permit portals and review cadences</span>, which affects your timeline. Your design-build contractor handles the right path for you.</p></div>',
   ],
   [
     '<h2>Planning ranges by project type</h2>',
@@ -158,7 +157,7 @@ export const BOISE_GUIDE_HTML = expandLocation(
 );
 
 export const TV_QUICK_ANSWER =
-  'The Treasure Valley covers Boise, Meridian, Eagle, Kuna, Star, Middleton, Nampa, and Caldwell - Ada and Canyon Counties use different permit paths. Pick your city guide, then the topic guide for your project.';
+  'The service area is Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Permit paths differ by county. Pick your city guide, then the topic guide for your project.';
 
 export const BOISE_QUICK_ANSWER =
   'Remodeling in Boise starts with the age of the house: North End bungalows and Bench ranches often need electrical and layout work, while newer Harris Ranch homes need finish upgrades. Property inside city limits is permitted by the City of Boise, and pre-1990 homes deserve a 10 to 15 percent contingency.';

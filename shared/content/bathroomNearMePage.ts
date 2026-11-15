@@ -56,9 +56,9 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
       'Vanity, shower or tub planning, tile and flooring guidance, ventilation and lighting improvements, and plumbing or electrical updates as scoped. Exact inclusions are written into your proposal.',
   },
   {
-    question: 'Do you serve Middleton?',
+    question: 'Which cities do you serve?',
     answer:
-      'Yes. See the Middleton bathroom remodel page, or request a free in-home consultation from the main bathroom service page.',
+      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
   },
   {
     question: 'How does the quote process work?',
@@ -77,7 +77,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'Do you work in both Ada and Canyon County?',
     answer:
-      'Yes. We remodel bathrooms throughout the Treasure Valley and handle permits in-house for the jurisdiction that applies to your address.',
+      'Yes. We remodel bathrooms in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, and we handle permits in-house for the jurisdiction that applies to your address.',
   },
 ];
 

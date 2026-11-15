@@ -1,4 +1,4 @@
-import { TREASURE_VALLEY_CITIES } from "../contentData";
+import { SERVICE_AREA_SENTENCE } from "../contentData";
 import { textReplyLine } from "../siteConfig";
 
 /**
@@ -22,7 +22,7 @@ export const CONTACT_FAQS: { question: string; answer: string }[] = [
   },
   {
     question: "What areas do you serve?",
-    answer: `We serve ${TREASURE_VALLEY_CITIES}, and surrounding Treasure Valley communities across Ada and Canyon County.`,
+    answer: `We serve ${SERVICE_AREA_SENTENCE}.`,
   },
   {
     question: "Do you handle permits?",

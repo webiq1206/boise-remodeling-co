@@ -4,6 +4,7 @@
  * for service and location pages
  */
 
+import { SERVICE_AREA_CITY_NAMES } from '@/shared/contentData';
 import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { getExternalProfileUrls } from '@/shared/gbpProfile';
@@ -561,7 +562,7 @@ export const BUSINESS_INFO = {
     sunday: 'Closed',
   },
   founded: '2020',
-  serviceArea: ['Boise', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'],
+  serviceArea: [...SERVICE_AREA_CITY_NAMES],
   serviceRadius: '35 miles',
   licenses: ['Idaho Registered Contractor #8381215'],
   certifications: ['Design-Build Remodeling', 'Insured'],

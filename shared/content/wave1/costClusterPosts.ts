@@ -117,7 +117,7 @@ const bathroomExtra: ContentSection[] = [
   {
     h2: 'City-specific service links',
     paragraphs: [
-      '<a href="/services/bathroom-remodel/boise">Boise bathroom remodel</a>, <a href="/services/bathroom-remodel/meridian">Meridian</a>, <a href="/services/bathroom-remodel/nampa">Nampa</a>, <a href="/services/bathroom-remodel/eagle">Eagle</a>, <a href="/areas/middleton">Middleton</a>, <a href="/areas/caldwell">Caldwell</a>.',
+      '<a href="/services/bathroom-remodel/boise">Boise bathroom remodel</a>, <a href="/services/bathroom-remodel/meridian">Meridian</a>, <a href="/services/bathroom-remodel/nampa">Nampa</a>, <a href="/services/bathroom-remodel/eagle">Eagle</a>, <a href="/services/bathroom-remodel/kuna">Kuna</a>, <a href="/services/bathroom-remodel/caldwell">Caldwell</a>, and <a href="/services/bathroom-remodel/star">Star</a>.',
     ],
   },
   {
@@ -311,7 +311,7 @@ const budgetExtra: ContentSection[] = [
   {
     h2: 'Work with a local design-build team',
     paragraphs: [
-      '<a href="/contact">Contact Boise Remodeling Co</a> for a consultation across Boise, Meridian, Eagle, Kuna, Star, Middleton, Nampa, and Caldwell.',
+      '<a href="/contact">Contact Boise Remodeling Co</a> for a consultation in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
     ],
   },
 ];

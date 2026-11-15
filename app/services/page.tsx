@@ -14,7 +14,7 @@ import { generateBreadcrumbSchema } from '@/lib/schema';
 import { getBaseUrl } from '@/lib/seo';
 import { servicePath } from '@/lib/seo-routes';
 import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
-import { CITIES,SERVICES } from '@/shared/contentData';
+import { SERVICE_AREA_CITIES,SERVICES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { contentImageAlt } from '@/shared/contentImageAlt';
 import { distinctHeroImage } from '@/shared/landingImages';
@@ -131,7 +131,7 @@ export default function ServicesIndexPage() {
             </Reveal>
           </div>
           <div className="mt-[clamp(40px,5vw,72px)] grid gap-4 sm:grid-cols-2 min-[1180px]:grid-cols-4">
-            {CITIES.map((city, i) => (
+            {SERVICE_AREA_CITIES.map((city, i) => (
               <Reveal key={city.slug} delay={Math.min(i, 7) * 40}>
                 <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />
               </Reveal>

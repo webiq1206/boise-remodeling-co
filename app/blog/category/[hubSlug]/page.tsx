@@ -161,7 +161,7 @@ export default async function BlogCategoryHubPage(
           <p className="text-lg text-muted-foreground mb-4 max-w-2xl">{hub.description}</p>
           <p className="text-base text-muted-foreground mb-6 max-w-2xl leading-relaxed">
             Every article below is written by the Boise Remodeling Co design-build team for
-            homeowners across Boise, Meridian, Eagle, Nampa and the wider Treasure Valley, with
+            homeowners in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, with
             real planning ranges, Ada and Canyon County permit context, and lessons from projects
             we have actually built. Start with the complete guide for the full overview, or jump
             to a specific article below.

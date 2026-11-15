@@ -27,7 +27,7 @@ export function landingServiceSchema(
 }
 
 export function landingAreaBusinessSchema(cityName: string) {
-  // The page city is named in the description; areaServed remains the eight-city coverage.
+  // The page city is named in the description. areaServed stays the seven cities plus Ada County and Canyon County.
   return generateLocalBusinessSchema(cityName);
 }
 
