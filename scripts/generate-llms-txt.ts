@@ -100,7 +100,7 @@ function buildShort(): string {
   lines.push('');
 
   lines.push('## About and contact', '');
-  lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co LLC.`));
+  lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co.`));
   lines.push(`- [Contact](${url('/contact')})`);
   lines.push(
     `- [Instant remodel estimate](${url('/instant-estimate')}): answer a few questions and see a preliminary price range on screen. Free, with no appointment. It is a range for budgeting, not a final price; a firm written proposal follows a site visit.`,
@@ -132,7 +132,7 @@ function buildFull(): string {
   lines.push(
     publishFoundingCopy(
     `${SITE_CONFIG.name} is a residential design-build remodeling company serving the Treasure ` +
-      `Valley since 2020 and one of the P5 Home Co family of companies (P5 Home Co LLC). We remodel ` +
+      `Valley since 2020 and one of the P5 Home Co family of companies. We remodel ` +
       `existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ` +
       `accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means ` +
       `design direction, estimating, permitting and construction are delivered by one accountable ` +

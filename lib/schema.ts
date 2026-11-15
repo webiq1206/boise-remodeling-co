@@ -6,6 +6,7 @@ import {schemaTime} from './schemaTime';
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
 import { SERVICE_AREA_CITIES, SERVICE_AREA_COUNTIES, SERVICES } from '@/shared/contentData';
+import { SITE_CONFIG } from '@/shared/siteConfig';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
@@ -113,6 +114,20 @@ const CONTRACTOR_TYPES = ['HomeAndConstructionBusiness', 'GeneralContractor'] as
  */
 const SCHEMA_TELEPHONE = '+1-208-477-1169';
 
+/**
+ * Published address: city, state and ZIP. No streetAddress. The country code
+ * is US here; the contact card spells the same country as USA.
+ */
+function publicPostalAddress() {
+  return {
+    '@type': 'PostalAddress' as const,
+    addressLocality: SITE_CONFIG.address.city,
+    addressRegion: SITE_CONFIG.address.state,
+    postalCode: SITE_CONFIG.address.postalCode,
+    addressCountry: 'US',
+  };
+}
+
 /** Customer-service contact shared by the public organization graph. */
 function customerServiceContactPoint() {
   return {
@@ -131,8 +146,8 @@ export function contractorDescription(city = 'Boise'): string {
 }
 
 export function generateLocalBusinessSchema(city?: string): SchemaContext {
-  // Served cities belong in areaServed; no home street or exact home pin is published.
-  // The optional city customizes only the human-readable description.
+  // Served cities belong in areaServed. The address is the Meridian locality
+  // only: no street and no map pin. The optional city customizes the description.
   return {
     '@context': 'https://schema.org',
     '@type': [...CONTRACTOR_TYPES],
@@ -157,6 +172,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     },
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
+    address: publicPostalAddress(),
     contactPoint: customerServiceContactPoint(),
     openingHoursSpecification: Object.entries(BUSINESS_INFO.hours).map(([day, hours]) => ({
       '@type': 'OpeningHoursSpecification',
@@ -301,6 +317,7 @@ export function generateOrganizationSchema(): SchemaContext {
       : {}),
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
+    address: publicPostalAddress(),
     areaServed: serviceAreaNodes(),
     knowsAbout: [
       'kitchen remodeling',

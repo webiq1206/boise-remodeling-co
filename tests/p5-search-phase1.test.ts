@@ -46,14 +46,28 @@ function renderedTitle(meta: { title?: unknown }): string {
   return '';
 }
 
-test('contractor schema preserves contacts, served cities and parent without publishing the business address', () => {
+const PUBLIC_POSTAL_ADDRESS = {
+  '@type': 'PostalAddress',
+  addressLocality: 'Meridian',
+  addressRegion: 'ID',
+  postalCode: '83646',
+  addressCountry: 'US',
+};
+
+test('contractor schema preserves contacts, served cities and parent without a street address', () => {
   const business = generateLocalBusinessSchema('Eagle');
   assert.deepEqual(business['@type'], ['HomeAndConstructionBusiness', 'GeneralContractor']);
-  assert.equal(business.address, undefined);
+  assert.deepEqual(business.address, PUBLIC_POSTAL_ADDRESS);
+  assert.equal((business.address as { streetAddress?: string }).streetAddress, undefined);
+  assert.equal(JSON.stringify(business.address).includes('streetAddress'), false);
+  assert.equal(business.legalName, 'P5 Home Co LLC');
+  assert.equal((business.parentOrganization as { name: string }).name, 'P5 Home Co');
   assert.equal(business.geo, undefined);
   assert.equal(business.employee, undefined);
   assert.equal(business.telephone, '+1-208-477-1169');
+  assert.equal(business.email, 'hello@boiseremodeling.co');
   assert.equal(SITE_CONFIG.phone, '(208) 477-1169');
+  assert.equal(BUSINESS_INFO.phone, '(208) 477-1169');
   assert.equal((business.contactPoint as { name?: string }).name, undefined);
   assert.equal((business.contactPoint as { contactType: string }).contactType, 'customer service');
   assert.equal((business.contactPoint as { telephone: string }).telephone, '+1-208-477-1169');
@@ -91,21 +105,31 @@ test('contractor schema preserves contacts, served cities and parent without pub
   assert.equal((organization.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
   assert.equal(organization.employee, undefined);
   assert.deepEqual(organization.sameAs, BUSINESS_INFO.sameAs);
-  assert.deepEqual(organization.address, business.address);
-  const contact = organization.contactPoint as { contactType: string; name?: string; telephone?: string };
+  assert.deepEqual(organization.address, PUBLIC_POSTAL_ADDRESS);
+  assert.equal((organization.address as { streetAddress?: string }).streetAddress, undefined);
+  assert.equal(JSON.stringify(organization).includes('streetAddress'), false);
+  assert.equal(organization.legalName, 'P5 Home Co LLC');
+  assert.equal(organization.email, 'hello@boiseremodeling.co');
+  assert.equal(organization.telephone, '+1-208-477-1169');
+  const contact = organization.contactPoint as { contactType: string; name?: string; telephone?: string; email?: string };
   assert.equal(contact.name, undefined);
   assert.equal(contact.contactType, 'customer service');
   assert.equal(contact.telephone, '+1-208-477-1169');
-  assert.equal(organization.telephone, '+1-208-477-1169');
+  assert.equal(contact.email, 'hello@boiseremodeling.co');
+  assert.equal(JSON.stringify(business).includes('streetAddress'), false);
+  assert.equal(JSON.stringify(business).includes('Wapoot'), false);
 
   for (const service of SERVICES) {
     for (const city of CITIES) {
       const schema = generateServiceSchema(service.name, service.shortDescription, city.name);
-      const provider = schema.provider as { address?: unknown; '@type': string[] };
+      const provider = schema.provider as { address?: unknown; streetAddress?: unknown; '@type': string[] };
       assert.deepEqual(provider['@type'], ['HomeAndConstructionBusiness', 'GeneralContractor']);
       assert.equal(provider.address, undefined);
+      assert.equal(provider.streetAddress, undefined);
+      assert.equal(JSON.stringify(provider).includes('streetAddress'), false);
       assert.equal((schema.areaServed as { name: string }).name, city.name);
       assert.equal(JSON.stringify(schema).includes('Garden City'), false);
+      assert.equal(JSON.stringify(schema).includes('streetAddress'), false);
     }
   }
 });

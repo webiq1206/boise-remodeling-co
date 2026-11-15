@@ -96,7 +96,7 @@ export function getAssistantProjectOptions(): AssistantProjectOption[] {
 export function buildAssistantFactSheet(): string {
   const lines: string[] = [
     `BUSINESS FACTS`,
-    `Company: ${SITE_CONFIG.name} (${SITE_CONFIG.legalName})`,
+    `Company: ${SITE_CONFIG.name}, part of P5 Home Co`,
     `Phone: ${SITE_CONFIG.phone}  Email: ${SITE_CONFIG.email}`,
     `Based in ${SITE_CONFIG.address.cityState}; service area: ${SITE_CONFIG.address.serviceArea}`,
     ``,

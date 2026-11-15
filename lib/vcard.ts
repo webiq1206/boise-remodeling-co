@@ -68,13 +68,27 @@ export function buildBusinessVCard(): string {
     `Hours: ${hoursSummary}`,
   ].join("\n");
 
+  // City, state and ZIP only. Post office box, extended address and street
+  // stay empty, which is the ;;; before Meridian.
+  const locality = [
+    "",
+    "",
+    "",
+    escapeVCard(SITE_CONFIG.address.city),
+    escapeVCard(SITE_CONFIG.address.state),
+    escapeVCard(SITE_CONFIG.address.postalCode),
+    "USA",
+  ].join(";");
+
   const lines = [
     "BEGIN:VCARD",
     "VERSION:3.0",
-    foldLine(`FN:${escapeVCard(SITE_CONFIG.name)}`),
-    foldLine(`ORG:${escapeVCard(SITE_CONFIG.legalName)}`),
+    foldLine("N:Perkins;Nick;;;"),
+    foldLine("FN:Nick Perkins"),
+    foldLine(`ORG:${escapeVCard(SITE_CONFIG.name)}`),
     foldLine(`TEL;TYPE=WORK,VOICE:${tel}`),
     foldLine(`EMAIL;TYPE=WORK:${escapeVCard(SITE_CONFIG.email)}`),
+    foldLine(`ADR;TYPE=WORK:${locality}`),
     foldLine(`URL:${escapeVCard(SITE_CONFIG.siteUrl)}`),
     foldLine(`NOTE:${escapeVCard(note)}`),
     ...socialLines,
