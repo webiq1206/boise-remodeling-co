@@ -106,31 +106,31 @@ test('PDF and email render the same saved revision, keep its date on every re-re
  }
  // "margin" is checked on the text layers only; the HTML carries CSS margins.
  for(const output of [first,mail.text])assert.doesNotMatch(output,/margin/i);
- if(site.id!=='p5')for(const output of [first,mail.text,mail.html]){
-  assert.match(output,/A P5 Home Co brand/);
-  assert.doesNotMatch(output,/A P5 Home Co\. brand/);
+ if(site.id!=='p5'){
+  assert.match(first,/A P5 Home Co brand/);
+  assert.doesNotMatch(first,/A P5 Home Co\. brand/);
+  assert.doesNotMatch(`${mail.text}\n${mail.html}`,/P5 Home Co|p5homeco\.com/);
  }
  assert.match(mail.html,/mailto:[^"]+\?subject=Project%20review%20request%20-%20estimate%20P5-0F1E2D3C/);
 });
-test('a child brand prints P5 Home Co as the brand and keeps the contracting company line',async()=>{
- const legal='Boise Remodeling Co is a DBA of P5 Home Co, LLC.';
+test('estimator email names this brand and leaves P5 Home Co to the From header',async()=>{
+ const legal='Boise Remodeling Co prepared this estimate.';
  const doc=buildEstimateDocument({id:ID,result:re10,brand:brand('remodeling'),issue:{service:'kitchen'},legalLine:legal});
  assert.equal(doc.legalLine,legal);
- for(const file of ['estimateEmail.ts','estimatePdf.ts']){
-  const source=readFileSync(new URL('../lib/p5/'+file,import.meta.url),'utf8');
-  assert.match(source,/A P5 Home Co brand/);
-  assert.doesNotMatch(source,/A P5 Home Co\. brand/);
- }
+ const emailSource=readFileSync(new URL('../lib/p5/estimateEmail.ts',import.meta.url),'utf8');
+ assert.doesNotMatch(emailSource,/P5 Home Co|p5homeco\.com/);
+ const pdfSource=readFileSync(new URL('../lib/p5/estimatePdf.ts',import.meta.url),'utf8');
+ assert.match(pdfSource,/A P5 Home Co brand/);
+ assert.doesNotMatch(pdfSource,/A P5 Home Co\. brand/);
  const text=customerText(doc);
  const html=customerLayout(doc,'<p>Scope</p>');
  const pdf=(await pdfTextLayers(await renderEstimatePdf(doc))).join('\n');
- for(const output of [text,html,pdf]){
-  assert.match(output,/A P5 Home Co brand/);
-  assert.doesNotMatch(output,/A P5 Home Co\. brand/);
-  assert.match(output,/Boise Remodeling Co is a DBA of P5 Home Co, LLC\./);
- }
- assert.match(html,/alt="P5 Home Co"/);
- assert.doesNotMatch(html,/alt="P5"(?! Home Co)/);
+ assert.doesNotMatch(`${text}\n${html}`,/P5 Home Co|p5homeco\.com/);
+ assert.match(html,/boiseremodeling\.co\/brand\/png\/wordmark/);
+ assert.match(html,/#7D9479/i);
+ assert.match(text,/Boise Remodeling Co prepared this estimate\./);
+ assert.match(pdf,/A P5 Home Co brand/);
+ assert.match(pdf,/Boise Remodeling Co prepared this estimate\./);
 });
 test('customer text cannot inject markup into the email',()=>{
  const issue=issueRecord({brandId:site.id,id:ID,revision:1,now:new Date('2026-09-21T18:00:00Z'),contact:{...contact,name:'<img src=x onerror=alert(1)>'},scope:scope('handyman',{},'<script>alert(1)</script> fix the door.')});
