@@ -158,15 +158,16 @@ assert(
   "neutral refinements keep the estimate center",
 );
 assert(
-  width(kitchenNeutral) < width(kitchenBase),
-  "providing detail (even neutral) narrows the range",
+  width(kitchenNeutral) === width(kitchenBase),
+  "a neutral answer adds no book line, so the shared engine leaves the range unchanged",
 );
-
-// The uncertainty band tightens as detail is added: a fully-specified estimate
-// is strictly narrower (as a spread) than the starting range.
 assert(
-  kitchenDetailed.priceHigh / kitchenDetailed.priceLow < kitchenBase.priceHigh / kitchenBase.priceLow,
-  "adding detail narrows the range spread",
+  mid(kitchenDetailed) > mid(kitchenBase),
+  "kitchen book adders raise the customer price",
+);
+assert(
+  Math.abs(kitchenDetailed.priceHigh / kitchenDetailed.priceLow - kitchenBase.priceHigh / kitchenBase.priceLow) < 0.08,
+  "the shared engine sets the band; answering questions does not tighten it by hand",
 );
 
 // ADU configuration: detached carries a premium over attached; neither uses
@@ -317,7 +318,7 @@ for (const project of projects) {
       check(Number.isFinite(r.priceLow) && Number.isFinite(r.priceHigh), `${where}: finite price`);
       check(r.priceLow > 0, `${where}: positive low`);
       check(r.priceLow < r.priceHigh, `${where}: low below high`);
-      check(r.priceLow % 1000 === 0 && r.priceHigh % 1000 === 0, `${where}: rounded to 1k`);
+      check(r.priceLow % 5 === 0 && r.priceHigh % 5 === 0, `${where}: rounded on the shared engine step`);
       const spread = r.priceHigh / r.priceLow;
       check(spread >= 1.1, `${where}: band at least 1.1x (got ${spread.toFixed(2)})`);
       check(spread <= 2.2, `${where}: band at most 2.2x (got ${spread.toFixed(2)})`);

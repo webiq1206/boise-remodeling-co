@@ -1,16 +1,26 @@
 import type { FinishLevel, ProjectType } from "./estimateEngine";
 import { PRICE_BOOK } from "../lib/p5/priceBookData";
+import {
+  COST_CATEGORIES,
+  DEFAULT_FINANCE,
+  calculateP5Estimate,
+  type CostCategory,
+  type DirectCostLine,
+  type Service,
+} from "../lib/p5/pricing";
 
 type FinishTier = "builder" | "mid" | "high" | "luxury";
 
 /**
- * Homepage planning ranges, priced only from the shared cost book.
+ * Homepage planning ranges.
  *
- * The dollar math is sharedBookRate in lib/p5/priceBook.ts: tier price times
- * the remodel premium when the book has one. This module does not import
- * priceBook.ts because that file pulls in node:crypto, which the browser
- * bundle cannot load. tests/cost-book-v2-calculator.test.ts locks every
- * total to sharedBookRate.
+ * Direct unit costs follow sharedBookRate (tier price, plus the book's remodel
+ * premium). The number a customer sees is not that rate. It is the planning
+ * range from calculateP5Estimate, the shared engine: contingency, overhead,
+ * profit, band, and rounding. This file does not import priceBook.ts, because
+ * that module loads node:crypto and the browser bundle cannot. The calculator
+ * test locks every direct unit to sharedBookRate and every shown range to the
+ * engine.
  */
 
 export interface PlanningRefinements {
@@ -209,7 +219,7 @@ export function lineAmount(line: PlanningLine, finish: FinishLevel): number {
   return bookAmount(line.code, tierOf(finish), line.remodel) * line.quantity;
 }
 
-/** Direct total for this planning input. Every dollar is a cost-book rate. */
+/** Direct total for this planning input. Every dollar is a cost-book rate. Not a customer price. */
 export function planningTotal(
   project: ProjectType,
   finish: FinishLevel,
@@ -220,6 +230,92 @@ export function planningTotal(
     (sum, line) => sum + lineAmount(line, finish),
     0,
   );
+}
+
+function serviceFor(project: ProjectType): Service {
+  if (project === "basement") return "remodel";
+  if (project === "kitchen" || project === "bathroom" || project === "whole-home" || project === "addition" || project === "adu") return project;
+  return "remodel";
+}
+
+function categoryFor(code: string): CostCategory {
+  if (code.startsWith("00-20")) return "permits-inspections";
+  if (code === "01-01-07") return "other-direct";
+  return "subcontractors";
+}
+
+/** The book's minimum service charge, as a balance line, only when direct cost is below it. */
+function withMinimum(lines: PlanningLine[], finish: FinishLevel): PlanningLine[] {
+  const priced = lines.filter((line) => line.quantity > 0);
+  const direct = priced.reduce((sum, line) => sum + lineAmount(line, finish), 0);
+  const minimum = bookAmount("01-01-07", tierOf(finish), false);
+  if (direct <= 0 || direct >= minimum) return priced;
+  const quantity = Math.ceil(((minimum - direct) / minimum) * 100) / 100;
+  return [...priced, { code: "01-01-07", quantity, remodel: false }];
+}
+
+/**
+ * Customer planning range for these direct book lines.
+ * Markup, overhead, the band, and rounding all come from calculateP5Estimate.
+ */
+export function customerRangeForLines(
+  lines: PlanningLine[],
+  project: ProjectType,
+  finish: FinishLevel,
+): { low: number; high: number } {
+  const priced = withMinimum(lines, finish);
+  if (!priced.length) throw new Error("No cost-book line to price");
+  const directLines: DirectCostLine[] = priced.map((line, index) => ({
+    id: `plan-${index + 1}`,
+    category: categoryFor(line.code),
+    description: `Cost book ${line.code}`,
+    quantity: line.quantity,
+    unit: "unit",
+    unitCost: bookAmount(line.code, tierOf(finish), line.remodel),
+    priceBasis: "direct-cost" as const,
+    estimatingBasis: "owner-average-cost" as const,
+    quantitySource: "Customer planning selection",
+    evidence: {
+      basis: "owner-estimating-schedule" as const,
+      reference: `PB-${line.code}`,
+      verifiedAt: "2026-11-15",
+      validUntil: "2027-11-15",
+    },
+  }));
+  const used = new Set(directLines.map((line) => line.category));
+  const estimate = calculateP5Estimate({
+    estimatePurpose: "preliminary",
+    bookPriced: true,
+    service: serviceFor(project),
+    revision: "planning-1",
+    scopeSummary: `${project} planning range`,
+    lines: directLines,
+    coverage: COST_CATEGORIES.map((category) => used.has(category)
+      ? { category, status: "included" as const, reason: "Priced from the shared cost book." }
+      : { category, status: "not-applicable" as const, reason: "Not in this planning assembly." }),
+    risks: [],
+    assumptions: [],
+    exclusions: [],
+    missingInformation: [],
+    allowances: [],
+    uncertainty: "medium",
+    locationProvided: false,
+  }, DEFAULT_FINANCE, [], new Date("2026-11-15T12:00:00.000Z"));
+  if (!estimate.publishable || !estimate.planningRange) {
+    const blocked = estimate.warnings.filter((warning) => warning.severity === "block").map((warning) => warning.message);
+    throw new Error(blocked.join("; ") || "The shared engine did not publish a range");
+  }
+  return estimate.planningRange;
+}
+
+/** The range a customer is shown. Direct book rates never leave this function. */
+export function customerPlanningRange(
+  project: ProjectType,
+  finish: FinishLevel,
+  sqft: number,
+  refinements: PlanningRefinements = EMPTY,
+): { low: number; high: number } {
+  return customerRangeForLines(planningLines(project, finish, sqft, refinements), project, finish);
 }
 
 /** Projects the book prices per room or per dwelling, not per square foot. */

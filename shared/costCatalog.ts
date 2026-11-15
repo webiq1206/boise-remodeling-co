@@ -51,7 +51,7 @@
 
 import type { FinishLevel, ProjectType } from "./estimateEngine";
 import { DIRECT_COST_SHARE } from "./costs/installedUnitCosts";
-import { planningTotal } from "./planningBookPrice";
+import { customerPlanningRange, planningTotal } from "./planningBookPrice";
 
 /**
  * Bump when shares, quantity ratios, or unit costs change. Stored on every
@@ -676,5 +676,6 @@ export function buildUpTotal(
   finish: FinishLevel,
   sqft: number
 ): number {
-  return planningTotal(project, finish, sqft);
+  const range = customerPlanningRange(project, finish, sqft);
+  return (range.low + range.high) / 2;
 }
