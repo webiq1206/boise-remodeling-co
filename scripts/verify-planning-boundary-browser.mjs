@@ -93,6 +93,20 @@ try {
     assert.equal(response.status(), 200); assert.deepEqual(await response.json(), { priceLow, priceHigh });
   }
   records.push({ state: "real-endpoint-credit-parity", cases: 4 });
+  const signatures = ["P5 Cost Database 2026.xlsx (Master sheet)", "Door hardware install / replace, per door (labor)", "Jared Brost: unified overhead instruction, September 10, 2026"];
+  for (const [name, headers] of [["public-home.html", {}], ["public-home.rsc", { RSC: "1" }]]) {
+    const response = await context.request.get(base.href, { headers });
+    assert.equal(response.status(), 200);
+    const body = await response.text();
+    for (const signature of signatures) assert.ok(!body.includes(signature), `${name} exposed private pricing`);
+    assert.ok(!/annualOverhead["']?\s*:\s*(?:420000|42e4)\b/.test(body));
+    writeFileSync(path.join(output, name), body);
+    records.push({ state: name, contentType: response.headers()["content-type"], bytes: Buffer.byteLength(body) });
+  }
+  const publicRange = await context.request.post(new URL("/api/planning-range", base).href, { data: { project: "kitchen", finish: "mid-range", sqft: 250 } });
+  const publicValue = await publicRange.json();
+  assert.deepEqual(publicValue, { priceLow: 57900, priceHigh: 64100 });
+  writeFileSync(path.join(output, "public-range.json"), JSON.stringify(publicValue));
   assert.deepEqual(errors, []);
   assert.ok(!blocked.some(request => request.method !== "GET"), "no lead, customer or analytics submission was attempted");
   await page.screenshot({ path: path.join(output, "recovered-390x844.png"), fullPage: false });
