@@ -21,6 +21,7 @@
 .ends { display:flex; justify-content:space-between; font-size:14px; }
 .help { font-size:14px; line-height:1.5; margin-top:16px; }
 .compactResult { display:none; }
+.compactResult.rangeFailure { flex-direction:row; align-items:center; justify-content:space-between; gap:8px; }
 .navigation { display:flex; gap:12px; margin-top:24px; }
 .back,.next { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:12px 20px; font:600 16px/1.2 var(--font-manrope),Arial,sans-serif; border:1px solid var(--planner-ink); text-align:center; }
 .back { background:transparent; color:var(--planner-ink); }
@@ -79,6 +80,7 @@
  .summaryToggle { max-width:100px; }
  .choice { gap:8px; padding:10px 8px; }
  .compactResult { margin-top:12px; gap:0; }
+ .compactResult.rangeFailure { margin-top:8px; }
  .contact { line-height:1.3; }
  .reviewTitle { margin-bottom:8px; }
 }
