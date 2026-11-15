@@ -5,6 +5,7 @@ import {INTAKE_SITES} from './intakePolicy.ts';
 import type {IntakeDeliveryReason} from './intakeDeliveryPolicy.ts';
 import type {IntakeTransport} from './intakeDelivery.ts';
 import {deliverKeyedCrm} from './keyedCrm.ts';
+import {ATTRIBUTION_ANSWER,attributionCrmMetadata} from './marketingAttribution.ts';
 
 const endpoint='https://leads.boiseremodeling.co/api/external/project-reviews';
 /** Resolve only the verified existing BRC target. Unknown overrides require review. */
@@ -27,7 +28,7 @@ export function intakeProjectReview(envelope:IntakeDeliveryEnvelope,qaAllowlist=
  const payload={schema:1,requestType:'project_review_v1',source:INTAKE_SITES[s.currentSite].domain,
   externalLeadId:(qa?'qa-':'')+envelope.leadKey,snapshotDigest:envelope.snapshotDigest,deliveryMode:qa?'synthetic_qa':'live',
   request:{projectId:s.projectId,...(s.reference?{reference:s.reference}:{}),draftId:s.draftId,revision:s.revision,savedAt:s.savedAt,originSite:s.originSite,currentSite:s.currentSite,
-   contact:s.contact,scope:{text:s.scope.text,answers:s.scope.answers,uploads:s.scope.uploads.map(f=>({id:f.id,name:f.name,type:f.type,size:f.size,sha256:f.sha256}))},
+   contact:s.contact,scope:{text:s.scope.text,answers:{...s.scope.answers,...(s.attribution?{[ATTRIBUTION_ANSWER]:JSON.stringify(attributionCrmMetadata(s.attribution,INTAKE_SITES[s.currentSite].name))}:{})},uploads:s.scope.uploads.map(f=>({id:f.id,name:f.name,type:f.type,size:f.size,sha256:f.sha256}))},
    details:{desiredOutcome:s.details.desiredOutcome,workContext:s.details.workContext,budget:s.details.budget,transcript:s.details.transcript},
    routing:{primaryTeam:s.routing.primaryTeam,supportingServices:s.routing.supportingServices},unresolved:s.unresolved}};
  const parsed=projectReviewSchema.safeParse(payload);

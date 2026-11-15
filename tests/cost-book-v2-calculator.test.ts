@@ -55,3 +55,30 @@ test("Signature direct unit prices match the book and are not the shown range", 
     assert.equal(sharedBookRate(code, "mid", remodel)?.amount, amount, code);
   }
 });
+
+test("an explicit bathroom credit lowers the direct cost and customer range exactly once", () => {
+  for (const [project, count, direct, low, high] of [
+    ["whole-home", 1, 183335, 289000, 320000],
+    ["whole-home", 2, 198575, 313000, 346000],
+    ["adu", 0, 108860, 172000, 190000],
+    ["adu", 1, 124100, 196000, 216000],
+  ] as const) {
+    const refinements = { ...EMPTY_REFINEMENTS, bathroomCount: count };
+    const lines = planningLines(project, "mid-range", 1800, refinements);
+    assert.equal(planningTotal(project, "mid-range", 1800, refinements), direct);
+    assert.deepEqual(customerRangeForLines(lines, project, "mid-range"), { low, high });
+    const shown = calculateEstimate({ project, finish: "mid-range", sqft: 1800, refinements });
+    assert.equal(shown.priceLow, low);
+    assert.equal(shown.priceHigh, high);
+  }
+});
+
+test("planning credits cannot create a nonpositive job, negative category, or invalid quantity", () => {
+  const line = { code: "90-30-02", quantity: 1, remodel: true };
+  assert.throws(() => customerRangeForLines([line, { ...line, quantity: -1 }], "bathroom", "mid-range"), /must be positive/);
+  assert.throws(() => customerRangeForLines([line, { ...line, quantity: -2 }], "bathroom", "mid-range"), /must be positive/);
+  assert.throws(() => customerRangeForLines([{ ...line, quantity: NaN }], "bathroom", "mid-range"), /must be finite/);
+  assert.throws(() => customerRangeForLines([
+    { code: "00-20-03", quantity: 20, remodel: false }, { ...line, quantity: -1 },
+  ], "bathroom", "mid-range"), /exceeds its category/);
+});

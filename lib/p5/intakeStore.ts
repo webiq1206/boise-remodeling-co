@@ -41,7 +41,10 @@ export function intakeStore(query:IntakeQuery,now=()=>new Date().toISOString()) 
     return {...intakeReceipt(snapshot,{customer:channels.customer?.status||'pending',team:channels.team?.status||'pending',crm:channels.crm?.status||'pending'}),deliveryDetails:{customer:deliveryReason(channels.customer?.reason),team:deliveryReason(channels.team?.reason),crm:deliveryReason(channels.crm?.reason)}};
   }
   async function save(input:Omit<IntakeSnapshot,'savedAt'>):Promise<IntakeReceipt>{
-    const digest=intakeDigest(input),snapshot={...input,savedAt:now()};
+    // Marketing observations cannot change the identity of an accepted revision.
+    // ON CONFLICT retains the first immutable snapshot, including its attribution.
+    const {attribution:_attribution,...identity}=input;
+    const digest=intakeDigest(identity),snapshot={...input,savedAt:now()};
     const job={schema:1,projectId:input.projectId,revision:input.revision,channels:{
       customer:{status:input.contact.email?'pending':'not-requested',recipient:input.contact.email,attempts:0,reason:input.contact.email?'runtime-proof-pending':undefined},team:{status:'pending',recipient:INTAKE_RECIPIENTS[input.currentSite],attempts:0,reason:'runtime-proof-pending'},crm:{status:'pending',attempts:0,reason:'crm-contract-pending'}}};
     await query(SAVE_INTAKE_SQL,[input.draftId,input.revision,input.currentSite,snapshotKey(input.revision),JSON.stringify({digest,snapshot}),deliveryKey(input.revision),JSON.stringify(job),INTAKE_SUBMISSION_KEY]);

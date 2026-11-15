@@ -246,10 +246,12 @@ function categoryFor(code: string): CostCategory {
 
 /** The book's minimum service charge, as a balance line, only when direct cost is below it. */
 function withMinimum(lines: PlanningLine[], finish: FinishLevel): PlanningLine[] {
-  const priced = lines.filter((line) => line.quantity > 0);
+  if (lines.some((line) => !Number.isFinite(line.quantity))) throw new Error("A planning quantity must be finite");
+  const priced = lines.filter((line) => line.quantity !== 0);
   const direct = priced.reduce((sum, line) => sum + lineAmount(line, finish), 0);
+  if (!Number.isFinite(direct) || direct <= 0) throw new Error("The adjusted planning cost must be positive");
   const minimum = bookAmount("01-01-07", tierOf(finish), false);
-  if (direct <= 0 || direct >= minimum) return priced;
+  if (direct >= minimum) return priced;
   const quantity = Math.ceil(((minimum - direct) / minimum) * 100) / 100;
   return [...priced, { code: "01-01-07", quantity, remodel: false }];
 }
@@ -265,7 +267,7 @@ export function customerRangeForLines(
 ): { low: number; high: number } {
   const priced = withMinimum(lines, finish);
   if (!priced.length) throw new Error("No cost-book line to price");
-  const directLines: DirectCostLine[] = priced.map((line, index) => ({
+  let directLines: DirectCostLine[] = priced.map((line, index) => ({
     id: `plan-${index + 1}`,
     category: categoryFor(line.code),
     description: `Cost book ${line.code}`,
@@ -282,6 +284,30 @@ export function customerRangeForLines(
       validUntil: "2027-11-15",
     },
   }));
+  // The engine accepts positive cost lines. Apply explicit assembly credits to
+  // their own category first, so the same net direct cost feeds every margin,
+  // contingency and rounding step once. A credit may never create a negative
+  // category or turn an invalid job total into a minimum-service job.
+  if (priced.some((line) => line.quantity < 0)) {
+    const groups = new Map<CostCategory, { amount: number; references: string[] }>();
+    for (const line of directLines) {
+      const group = groups.get(line.category) ?? { amount: 0, references: [] };
+      group.amount += line.quantity * line.unitCost;
+      group.references.push(`${line.evidence.reference} x ${line.quantity}`);
+      groups.set(line.category, group);
+    }
+    directLines = [...groups].flatMap(([category, group], index) => {
+      const amount = roundMoney(group.amount);
+      if (amount < 0) throw new Error("A planning credit exceeds its category cost");
+      if (amount === 0) return [];
+      return [{
+        ...directLines[0], id: `plan-net-${index + 1}`, category,
+        description: "Cost-book scope after explicit assembly adjustments",
+        quantity: 1, unitCost: amount,
+        evidence: { ...directLines[0].evidence, reference: group.references.join("; ") },
+      }];
+    });
+  }
   const used = new Set(directLines.map((line) => line.category));
   const estimate = calculateP5Estimate({
     estimatePurpose: "preliminary",

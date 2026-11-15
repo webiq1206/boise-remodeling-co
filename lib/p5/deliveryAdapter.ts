@@ -25,7 +25,7 @@ async function sendOnce(input:{to:string;replyTo?:string;subject:string;text:str
   if(!id||id==="noop"||result?.skipped)throw new Error("Email delivery is not configured");
   return String(id);
 }
-export async function sendEmail(input:{to:string;replyTo?:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer;contentType?:string}[];key:string}){
+export async function sendEmail(input:{to:string;suppressFailureAlert?:boolean;replyTo?:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer;contentType?:string}[];key:string}){
   try{return await sendOnce(input);}
   catch(error){
     console.error(`[p5-delivery] send failed, retrying once: ${error instanceof Error?error.message.slice(0,200):"delivery failed"}`);

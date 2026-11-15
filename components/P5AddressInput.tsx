@@ -37,7 +37,7 @@ export function P5AddressInput({id,value,onChange,label='Project address, city o
  },[value,focused,disabled,provider]);
  useEffect(()=>{if(active>=0)document.getElementById(`${id}-option-${active}`)?.scrollIntoView({block:'nearest'});},[active,id]);
  const choose=(item:AddressSuggestion)=>{const next=retainAddressUnit(item.address,value);selected.current=next;cancel();onChange(next);setStatus('Address selected. You can edit it, including the apartment or unit.');};
- return <div className={styles.root}>
+ return <div className={styles.root} data-clarity-mask="true">
   <label htmlFor={id}>{label}</label>
   <input id={id} type="text" autoComplete="street-address" value={value} disabled={disabled}
    role={provider?'combobox':undefined} aria-autocomplete={provider?'list':undefined} aria-expanded={provider?open:undefined} aria-controls={provider?`${id}-suggestions`:undefined} aria-activedescendant={open&&active>=0?`${id}-option-${active}`:undefined} aria-describedby={`${id}-help ${id}-status`}

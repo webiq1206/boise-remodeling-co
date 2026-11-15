@@ -8,6 +8,7 @@ import {intakeContact,intakeUnresolved,snapshotRouting,emptyIntakeDetails,intake
 import {intakeStore,IntakeConflict} from './intakeStore.ts';
 import {SCOPE_FIELDS} from './scope.ts';
 import {kickDriver} from './estimateDriver.ts';
+import {submissionAttribution} from './marketingAttribution.ts';
 
 export async function getIntake(request:Request){try{
   protectRequest(request);const {id,key}=draftCredentials(request);const draft=await readDraft(id,key);
@@ -18,7 +19,8 @@ export async function getIntake(request:Request){try{
 export async function postIntake(request:Request){try{
   protectRequest(request,20);const {id,key}=draftCredentials(request);const draft=await readDraft(id,key);
   if(!draft||draft.brand!==ESTIMATOR_BRAND.id)throw new DraftError('Save your project before sending it.',404);
-  const body=JSON.parse(new TextDecoder().decode(await limitedBody(request,2048)));
+  const body=JSON.parse(new TextDecoder().decode(await limitedBody(request,16384)));
+  let attribution;try{attribution=submissionAttribution(body.attribution,request.headers);}catch{throw new DraftError('Invalid attribution metadata. Reload the page and retry.');}
   if(body.revision!==draft.revision||body.confirmed!==true)throw new DraftError('Review and confirm the latest project details before sending.',409);
   if(!intakeScopeReviewed(draft))throw new DraftError('Confirm the whole project type, supporting work and exclusions against the current description before sending.',409);
   const site=intakeSite(draft.brand);if(!site)throw new DraftError('Project intake is not configured.',503);
@@ -29,7 +31,7 @@ export async function postIntake(request:Request){try{
   const projectId=draft.intake?.projectId||`${site}:${id}`;
   const reference=await reserveIntakeReference(query,projectId,site);
   const receipt=await intakeStore(query).save({schema:1,projectId,reference,originSite:draft.intake?.originSite||site,currentSite:site,draftId:id,revision:draft.revision,contextVersion:draft.intake?.version||0,
-    contact,details,scope:{text:draft.text,answers:draft.answers,extraction:draft.extraction,uploads:draft.uploads},routing,
+    contact,details,...(attribution?{attribution}:{}),scope:{text:draft.text,answers:draft.answers,extraction:draft.extraction,uploads:draft.uploads},routing,
     unresolved:[...new Set([...routing.unresolved,...intakeUnresolved(draft,SCOPE_FIELDS)])]});
   kickDriver('intake-saved');
   return json(receipt);

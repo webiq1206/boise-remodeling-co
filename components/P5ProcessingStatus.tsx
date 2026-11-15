@@ -65,7 +65,7 @@ export default function P5ProcessingStatus({message,processing,uploadPercent,onP
         <button type="button" className={styles.secondary} data-active={choice==='stay'?true:undefined} onClick={()=>setChoice('stay')}>Stay here</button>
         <button type="button" className={styles.primary} onClick={()=>setChoice('email')}>Email me when it&apos;s ready</button></div>}
       {choice==='stay'&&<p className={styles.processingMessage}>Staying here. Your estimate will appear as soon as it is ready, and you can still choose email above.</p>}
-      {choice==='email'&&<div className={styles.waitEmail}>
+      {choice==='email'&&<div className={styles.waitEmail} data-clarity-mask="true">
         <label className={styles.field} htmlFor="p5-wait-email"><span>Email for your estimate</span><input id="p5-wait-email" type="email" autoComplete="email" value={email} onChange={e=>{setEmail(e.target.value);setEmailError('');}} maxLength={200} aria-invalid={emailError?true:undefined}/></label>
         {emailError&&<p className={styles.processingMessage} role="alert">{emailError}</p>}
         <div className={styles.waitButtons}><button type="button" className={styles.primary} disabled={sending} onClick={()=>{void sendEmail();}}>{sending?'Saving...':'Email me'}</button><button type="button" className={styles.secondary} onClick={()=>setChoice('stay')}>Stay here instead</button></div></div>}

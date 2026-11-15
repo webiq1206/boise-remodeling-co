@@ -49,11 +49,11 @@ for(const [width,height] of viewports){
    check((await card.innerText()).includes('Saved planning range'),`${key}: draft range labeling`);
    await page.screenshot({path:path.join(output,`edit-${key}.png`)});
    await card.getByRole('button',{name:'Cancel',exact:true}).click();
-   check((await card.innerText()).includes('Mid-range'),`${key}: Cancel changed committed finish`);
+   check((await card.innerText()).includes('Signature'),`${key}: Cancel changed committed finish`);
    await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Edit finish');
    check(await page.evaluate(()=>document.activeElement?.getAttribute('aria-label'))==='Edit finish',`${key}: Cancel lost edit focus`);
    await card.getByRole('button',{name:'Edit finish',exact:true}).click();
-   await card.getByRole('radio',{name:'High-end',exact:true}).check();
+   await card.getByRole('radio',{name:'Premium',exact:true}).check();
    await card.getByRole('button',{name:'Save changes',exact:true}).click();
    check((await card.innerText()).includes('Step 1 of 5'),`${key}: early Edit skipped steps`);
    await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Edit finish');
@@ -88,7 +88,7 @@ for(const [width,height] of viewports){
   check(await card.getByRole('slider').inputValue()==='200',`${key}: maximum keyboard input`);
   await page.keyboard.press('Enter');
   await card.getByRole('button',{name:'Edit finish',exact:true}).click();
-  await card.getByRole('radio',{name:'High-end',exact:true}).check();
+  await card.getByRole('radio',{name:'Premium',exact:true}).check();
   await card.getByRole('button',{name:'Save changes',exact:true}).click();
   await card.getByRole('button',{name:'Edit layout',exact:true}).click();
   await card.getByRole('radio',{name:'Major layout changes',exact:true}).check();
