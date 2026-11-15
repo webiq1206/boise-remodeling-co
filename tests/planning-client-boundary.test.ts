@@ -37,7 +37,13 @@ function clientEntries(dir: string): string[] {
   return readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap(entry => {
     const file = path.join(dir, entry.name);
     if (entry.isDirectory()) return clientEntries(file);
-    return /\.(?:ts|tsx)$/.test(file) && /^\s*["']use client["'];?/m.test(readFileSync(path.join(root, file), "utf8").slice(0, 1500)) ? [file] : [];
+    if (!/\.(?:ts|tsx)$/.test(file)) return [];
+    const source = ts.createSourceFile(file, readFileSync(path.join(root, file), "utf8"), ts.ScriptTarget.Latest, true);
+    for (const statement of source.statements) {
+      if (!ts.isExpressionStatement(statement) || !ts.isStringLiteral(statement.expression)) break;
+      if (statement.expression.text === "use client") return [file];
+    }
+    return [];
   });
 }
 

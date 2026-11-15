@@ -1,13 +1,14 @@
 import assert from "node:assert/strict";
 import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
-import { chromium } from "@playwright/test";
+import { chromium, webkit } from "@playwright/test";
 
 const base = new URL(process.env.PLANNING_TEST_BASE_URL || "http://127.0.0.1:34864");
 if (!["127.0.0.1", "localhost", "[::1]"].includes(base.hostname) || !["http:", "https:"].includes(base.protocol) || base.username || base.password) throw new Error("Use a loopback preview");
 const output = path.resolve(process.env.PLANNING_EVIDENCE_DIR || "test-results/planning-boundary");
 mkdirSync(output, { recursive: true });
-const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH, args: ["--no-sandbox"] } : {}) });
+const engine = process.env.PLANNING_TEST_BROWSER === "webkit" ? webkit : chromium;
+const browser = await engine.launch({ headless: true, ...(engine === chromium && process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH, args: ["--no-sandbox"] } : {}) });
 const context = await browser.newContext({ serviceWorkers: "block", reducedMotion: "reduce" });
 const records = [], errors = [], blocked = [];
 let mode = "normal", releaseOld, releaseHang, pricingRequests = 0;
@@ -157,6 +158,6 @@ try {
     await failurePage.close();
   }
   records.push({ state: "all-error-steps", captures: failureLayouts.length });
-  writeFileSync(path.join(output, "report.json"), JSON.stringify({ viewport: { width: 390, height: 844 }, emulation: true, records, failureLayouts, pageErrors: errors, blocked }, null, 2));
+  writeFileSync(path.join(output, "report.json"), JSON.stringify({ browser: browser.version(), engine: process.env.PLANNING_TEST_BROWSER || "chromium", viewport: { width: 390, height: 844 }, emulation: true, records, failureLayouts, pageErrors: errors, blocked }, null, 2));
   console.log(JSON.stringify({ passed: records.length, states: records.map(record => record.state), blockedRequests: blocked.length }));
 } finally { await browser.close(); }

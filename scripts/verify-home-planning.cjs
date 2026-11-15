@@ -1,5 +1,5 @@
 /* Offline public-homepage-only visual and interaction QA. No forms are submitted. */
-const {chromium}=require('playwright');
+const {chromium,webkit}=require('playwright');
 const fs=require('node:fs');
 const path=require('node:path');
 const baseline=process.argv.includes('--baseline');
@@ -13,7 +13,8 @@ const viewports=[[320,568],[360,640],[390,844],[430,932],[768,1024],[1024,768],[
 const failures=[],records=[];
 const check=(ok,text)=>{if(!ok)failures.push(text)};
 (async()=>{
-const browser=await chromium.launch({headless:true,...(process.env.PLAYWRIGHT_CHROMIUM_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_PATH,args:['--no-sandbox']}: {})});
+const engine=process.env.PLANNING_TEST_BROWSER==='webkit'?webkit:chromium;
+const browser=await engine.launch({headless:true,...(engine===chromium&&process.env.PLAYWRIGHT_CHROMIUM_PATH?{executablePath:process.env.PLAYWRIGHT_CHROMIUM_PATH,args:['--no-sandbox']}: {})});
 const context=await browser.newContext({serviceWorkers:'block',reducedMotion:'reduce'});
 await context.route('**/*',r=>{
  const u=new URL(r.request().url());
@@ -71,7 +72,7 @@ for(const [width,height] of viewports){
    // Actual header dimensions, not a hard-coded viewport subtraction.
    await page.evaluate(()=>{const c=document.querySelector('[data-testid=planning-step]');const h=document.querySelector('[data-family-header]');scrollBy({top:c.getBoundingClientRect().top-(h?.getBoundingClientRect().height||76)-16,behavior:"instant"})});
    await page.waitForTimeout(200);
-   const metrics=await card.evaluate(c=>{const b=c.getBoundingClientRect();const h=document.querySelector('[data-family-header]')?.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,headerBottom:h?.bottom||0,viewportHeight:innerHeight,overflow:document.documentElement.scrollWidth>innerWidth+1,escaped:[...c.querySelectorAll('label')].some(e=>{const r=e.getBoundingClientRect();return r.right>b.right+1||r.left<b.left-1}),barTop:[...c.querySelectorAll('button')].find(e=>e.textContent==='Back')?.parentElement.getBoundingClientRect().top,contentBottom:Math.max(...[...c.querySelectorAll('fieldset,dl,a')].filter(e=>getComputedStyle(e.parentElement).position!=='fixed').map(e=>e.getBoundingClientRect().bottom)),controls:[...c.querySelectorAll('button,a,input')].filter(e=>e.type!=='radio').map(e=>{const r=e.getBoundingClientRect();return {text:e.textContent,height:r.height,width:r.width}})}});
+   const metrics=await card.evaluate(c=>{const b=c.getBoundingClientRect();const h=document.querySelector('[data-family-header]')?.getBoundingClientRect();return {top:b.top,bottom:b.bottom,height:b.height,headerBottom:h?.bottom||0,viewportWidth:innerWidth,viewportHeight:innerHeight,visualViewport:{width:window.visualViewport?.width,height:window.visualViewport?.height,scale:window.visualViewport?.scale,offsetTop:window.visualViewport?.offsetTop,offsetLeft:window.visualViewport?.offsetLeft},overflow:document.documentElement.scrollWidth>innerWidth+1,escaped:[...c.querySelectorAll('label')].some(e=>{const r=e.getBoundingClientRect();return r.right>b.right+1||r.left<b.left-1}),barTop:[...c.querySelectorAll('button')].find(e=>e.textContent==='Back')?.parentElement.getBoundingClientRect().top,contentBottom:Math.max(...[...c.querySelectorAll('fieldset,dl,a')].filter(e=>getComputedStyle(e.parentElement).position!=='fixed').map(e=>e.getBoundingClientRect().bottom)),controls:[...c.querySelectorAll('button,a,input')].filter(e=>e.type!=='radio').map(e=>{const r=e.getBoundingClientRect();return {text:e.textContent,height:r.height,width:r.width}})}});
    record.steps.push({step,metrics});
    check(!metrics.overflow,`${key} step ${step}: horizontal overflow`);
    check(!metrics.escaped,`${key} step ${step}: choice escapes card`);
@@ -113,5 +114,5 @@ for(const [width,height] of viewports){
   await page.evaluate(()=>sessionStorage.removeItem('brc-home-planning-v1'));
  }catch(e){failures.push(`${key}: ${e.message}`)}finally{await page.close()}
 }
-await browser.close();fs.writeFileSync(path.join(output,'report.json'),JSON.stringify({phase,records,failures},null,2));console.log(JSON.stringify({phase,count:records.length,failures}));if(failures.length)process.exitCode=1;
+const browserVersion=browser.version();await browser.close();fs.writeFileSync(path.join(output,'report.json'),JSON.stringify({phase,browser:browserVersion,engine:process.env.PLANNING_TEST_BROWSER||'chromium',emulation:true,records,failures},null,2));console.log(JSON.stringify({phase,count:records.length,failures}));if(failures.length)process.exitCode=1;
 })().catch(e=>{console.error(e);process.exitCode=1});
