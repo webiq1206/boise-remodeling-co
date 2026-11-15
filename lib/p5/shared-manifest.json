@@ -90,7 +90,7 @@
     "lib/p5/dynamicQuestions.ts": "a842e81acaac16c94cb51215631167ed740d1e40fbf6ceac77d4f72339b1684e",
     "lib/p5/estimateDocument.ts": "9a440d822bda286090e4eed16be6af2ea237a6fce597e0384154c12a46177798",
     "lib/p5/estimateDriver.ts": "7e86bb8c32ba9e07680d45d3d4327d4f73521925c7d469f5669e900bca0245e9",
-    "lib/p5/estimateEmail.ts": "d351ffd85ac6b0f15f66b87384203dd0389a4cef138f78fbc097bae29c8cad92",
+    "lib/p5/estimateEmail.ts": "370c1493139afbf3e4cb7c85cd4db340215e3ae38e14ff74a4589a6f311df51e",
     "lib/p5/estimateLinks.ts": "9dacd407e7c541e370670a7daa5650e8ebf792e534dd10f4b32899764520b6d5",
     "lib/p5/estimatePdf.ts": "fbc8da123b356ceeb0e357599b988995b6b3daa56f9651dc079b995c6779971a",
     "lib/p5/estimateRevisions.ts": "8215ffd84e99684078b279cbaa96c5a9ec250f48721d728f31073a1be6212e58",
@@ -366,7 +366,7 @@
     "tests/p5-dynamic-questions.test.ts": "9754b040b415466c152d9c798a4568227e944b7c943278cc1b74ae3e12f97631",
     "tests/p5-endpoint-concurrency.test.ts": "b4f8e3658ada6ea602e7c30ff0f5e5bddda8ea3aaa6335f849c73db566e8f498",
     "tests/p5-entry-point-model.test.ts": "449403aa0343283c20ae2f70a5d4a7609d3fdef846b9c131636bb0fd6ee37f53",
-    "tests/p5-estimate-document.test.ts": "5e2e0e198dc0e13fb5f87de34470663d51a1fa14b857f99e556bc2cb5d1411b4",
+    "tests/p5-estimate-document.test.ts": "b5362e5b9d9f0d74e7019fc589919a1f370a69f96faf28ea15a9df8e5916c53e",
     "tests/p5-estimator-chrome.test.ts": "425b977517ec38bdef842515a4d5bc59c5a31673f1c9213cb84e9cfcaf34182c",
     "tests/p5-estimator-flow.test.ts": "21151612380c9a0b381cf7393c2d5cc277a3bd2a8605e1e2b306964f1fa938c7",
     "tests/p5-evidence-repair.test.ts": "1f0b2297e9a326cc7542d4221ed9e815755404be3207d646eeec50e5103add5c",
@@ -518,7 +518,7 @@
     "scripts/lib/shortBrandEntry.mjs": "27f7270125bf48773c7564b9b98bb8ff4ca02321d7a2b8b4d5c0e857737570c2",
     "scripts/lib/quoteEntry.mjs": "46f9fb18396b8e100dfdfe05c90b3bf21f7777e7feef45767e0e24432eb3b920",
     "lib/p5/scheduleEmail.ts": "1fad81742577e91b00b9bf9cb233799b71a941fc22b80e2a2b8d65bfdd48ed26",
-    "lib/p5/emailKit.ts": "95dd4ff70206196d8b9f742c06696592e3f85d52f7a80d8ff55a66cbe548ae33",
+    "lib/p5/emailKit.ts": "1d37f803382b44cded12989a52f85b99e4d1e759dcc8e12ea68579e28cf84c77",
     "lib/p5/phoneHref.ts": "acb0d1322aac2b4fbf97f007614107adf3b648612b41b867188c5260c26c0249",
     "tests/p5-email-brand.test.ts": "ddd332fdda9502dc2d07e45fe2fd29b636ff001f590d1a62ebff259ad8d6a864",
     "tests/p5-phone-href.test.ts": "7f0ecbdae2b50303740dfff01c50a208836c721d52a8e6b6bc6c9a7606b83e30"
@@ -822,7 +822,7 @@
   ],
   "estimatorEmailKit": {
     "source": "p5-home-co",
-    "commit": "9506a1a59b09496ada627ea758e3c16bb8b932d2",
+    "commit": "b789c483871d9d390db265300f760a1104562eac",
     "manifestCommit": "7c7eeb2054c6c688978beead98b9f4b2505085fe",
     "files": [
       "lib/p5/emailKit.ts",
@@ -837,6 +837,6 @@
       "lib/p5/phoneHref.ts",
       "lib/p5/estimatePdf.ts"
     ],
-    "note": "Byte-identical shared estimator mail and the PDF phone link. brand.ts and deliveryAdapter.ts stay site-owned. priceBookData.ts was not touched."
+    "note": "Byte-identical shared estimator mail from p5-home-co b789c483. One next step, preliminary note last, phone nowrap, admin button spacing. brand.ts and deliveryAdapter.ts stay site-owned. priceBookData.ts was not touched."
   }
 }
