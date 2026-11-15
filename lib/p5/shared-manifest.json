@@ -4,7 +4,7 @@
   "generatedAt": "2026-11-15T15:46:27.566Z",
   "note": "Shared estimator engine published from p5-home-co. Edit shared files there and run scripts/p5-sync.mjs; hash checks remain mandatory in every brand. Local reconciliation preserves the union of PR158/PR159 shared files; changed-file hashes reflect the combined candidate. Brand main attribution and immutable acceptance are retained. Cost-book numeric fixtures and expected checksum reconciled to canonical PR233. Existing brand-main Clarity masks restored where child sync removed them; source exceptions intentionally preserve the brand main.",
   "files": {
-    "app/admin/p5-estimators/page.tsx": "8aa7a7f8da2dd048a8f847f8ce73ac69a5a9ca2e8cfaaef69f4c84b55f1de858",
+    "app/admin/p5-estimators/page.tsx": "19465bc1f08dc5777e518e53c12ae3891c394f0b087fe6b172adf24fda4f4086",
     "app/api/admin/p5-intake/file/route.ts": "e8b49e0f2e19508d1f21903445fdcd36b2e3f6aa95edbc6ecdac110a625b11dc",
     "app/api/admin/p5-intake/route.ts": "37e3a9c9c2c112499afe91c911810c99ba86b3c9987361097d9ed97da5430a72",
     "app/api/p5-estimator/benchmark/route.ts": "a6e9e90bbd86323f790742e6fa40bef0ca80c934911bffef47d10d3ee8bb379c",
