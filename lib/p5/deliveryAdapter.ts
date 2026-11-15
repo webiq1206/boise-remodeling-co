@@ -1,19 +1,36 @@
 import {safeEmailReplyTo} from './emailReplyTo.ts';
 import { getUncachableEmailClient } from "../../server/services/emailTransport";
-import { getAdminRecipientEmails,formatFromAddress } from "../../server/services/emailLayout";
+import { getAdminRecipientEmails } from "../../server/services/emailLayout";
 import { ESTIMATOR_BRAND as brand } from "./brand.ts";
 import {buildCrmPayload} from "./crmPayload.ts";
 import {crmIdentity,deliverKeyedCrm} from "./keyedCrm.ts";
 export async function adminRecipients(){return [...new Set(await getAdminRecipientEmails(brand.email))];}
 export const EMAIL_SUPPORTS_IDEMPOTENCY=true;
-export async function sendEmail(input:{to:string;replyTo?:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer;contentType?:string}[];key:string}){
-  const {client,fromEmail}=await getUncachableEmailClient();
+/** Jared ruling: every estimator email is From P5 Home Co. Another p5homeco.com mailbox may be set with SMTP_FROM. The display name does not change. */
+const P5_FROM_NAME="P5 Home Co";
+const P5_FROM_MAILBOX="hello@p5homeco.com";
+export function estimatorFromAddress(env:NodeJS.ProcessEnv=process.env):string{
+  const raw=String(env.SMTP_FROM??"").trim();
+  const named=raw.match(/^[^<>@\r\n]*<([^<>]+)>$/);
+  const mailbox=(named?named[1]:raw).trim();
+  const address=/^[^\s@<>,;]+@p5homeco\.com$/i.test(mailbox)&&!/[\r\n]/.test(raw)?mailbox:P5_FROM_MAILBOX;
+  return `${P5_FROM_NAME} <${address}>`;
+}
+async function sendOnce(input:{to:string;replyTo?:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer;contentType?:string}[];key:string}){
+  const {client}=await getUncachableEmailClient();
   const sender=client.emails as unknown as {send:(body:unknown,options:unknown)=>Promise<any>};
-  const result=await sender.send({from:formatFromAddress(fromEmail),to:input.to,replyTo:safeEmailReplyTo(input.replyTo,brand.email),subject:input.subject,text:input.text,html:input.html,attachments:input.attachments},{idempotencyKey:input.key});
+  const result=await sender.send({from:estimatorFromAddress(),to:input.to,replyTo:safeEmailReplyTo(input.replyTo,brand.email),subject:input.subject,text:input.text,html:input.html,attachments:input.attachments},{idempotencyKey:input.key});
   if(result?.error)throw new Error("Email provider rejected delivery");
   const id=result?.data?.id||result?.id;
   if(!id||id==="noop"||result?.skipped)throw new Error("Email delivery is not configured");
   return String(id);
+}
+export async function sendEmail(input:{to:string;replyTo?:string;subject:string;text:string;html?:string;attachments:{filename:string;content:Buffer;contentType?:string}[];key:string}){
+  try{return await sendOnce(input);}
+  catch(error){
+    console.error(`[p5-delivery] send failed, retrying once: ${error instanceof Error?error.message.slice(0,200):"delivery failed"}`);
+    return sendOnce(input);
+  }
 }
 export async function syncCrm(record:any,key:string){
   const identity=crmIdentity(record,key,brand.domain);
