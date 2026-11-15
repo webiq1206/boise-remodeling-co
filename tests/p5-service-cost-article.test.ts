@@ -13,6 +13,7 @@ import {
 import { SITE_CONFIG } from '../shared/siteConfig';
 import { BUSINESS_INFO } from '../lib/seo';
 import { buildBusinessVCard } from '../lib/vcard';
+import { RETIRED_STREET } from './retiredStreet';
 
 const boise = CITIES.find((city) => city.slug === 'boise');
 if (!boise) throw new Error('Boise is missing from CITIES');
@@ -113,7 +114,8 @@ test('contact card preserves useful contact facts without a business street addr
   assert.equal(/^LABEL[;:]/m.test(card), false);
   assert.equal(card.includes('P5 Home Co LLC'), false);
   assert.equal(card.includes('P5 Home Co.'), false);
-  assert.equal(/Wapoot|4031|public representative|staffed storefront/i.test(card), false);
+  assert.equal(/public representative|staffed storefront/i.test(card), false);
+  assert.equal(RETIRED_STREET.test(card), false);
   assert.match(card, /EMAIL;TYPE=WORK:hello@boiseremodeling\.co/);
   assert.match(card, /URL:https:\/\/boiseremodeling\.co/);
   assert.match(card, /Treasure Valley/);

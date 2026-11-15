@@ -27,8 +27,9 @@ for (const f of ["config/scoring.json", "config/quality-gates.json", "config/pro
 // 2. NAP completeness
 try {
   const nap = JSON.parse(readFileSync(P("config/scoring.json"), "utf8")).site.nap;
-  for (const k of ["name", "street", "city", "state", "postalCode", "phone", "url"])
+  for (const k of ["name", "city", "state", "postalCode", "phone", "url"])
     if (!nap?.[k]) fail.push(`NAP missing ${k}`);
+  if (typeof nap?.street === "string" && nap.street.trim()) fail.push("NAP includes a street; public address is city, state and ZIP only");
   if (nap?.name) ok.push("NAP present");
 } catch { /* covered above */ }
 

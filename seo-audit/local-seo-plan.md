@@ -8,7 +8,7 @@ NAP consistency, GBP alignment, citations, local schema, and local proof.
 
 | Source | Value |
 |---|---|
-| Schema / contact | 4031 W Wapoot St, Meridian, ID 83646 |
+| Schema / contact | Meridian, ID 83646 |
 | Footer | "Boise, Idaho · Treasure Valley" (no street) |
 | Phone | (208) 477-1169 |
 

@@ -24,6 +24,7 @@ import { CITIES, SERVICES } from '../shared/contentData.ts';
 import { CONTENT_HUBS, categoryHubPath, guidePath, isCategoryHubIndexable } from '../shared/contentHubs.ts';
 import { GUIDE_PAGES } from '../shared/guideContent.ts';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
+import { RETIRED_STREET } from './retiredStreet.ts';
 
 const BRAND = ' | Boise Remodeling Co';
 const AREAS = [
@@ -117,7 +118,7 @@ test('contractor schema preserves contacts, served cities and parent without a s
   assert.equal(contact.telephone, '+1-208-477-1169');
   assert.equal(contact.email, 'hello@boiseremodeling.co');
   assert.equal(JSON.stringify(business).includes('streetAddress'), false);
-  assert.equal(JSON.stringify(business).includes('Wapoot'), false);
+  assert.equal(RETIRED_STREET.test(JSON.stringify(business)), false);
 
   for (const service of SERVICES) {
     for (const city of CITIES) {
@@ -305,7 +306,8 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   assert.match(contact, /Call, text, or email\. We come to you\./);
   assert.match(contact, /never use high-pressure sales tactics/);
   assert.match(contact, /TREASURE_VALLEY_CITIES/);
-  assert.equal(/public representative|staffed storefront|Wapoot/i.test(contact), false);
+  assert.equal(/public representative|staffed storefront/i.test(contact), false);
+  assert.equal(RETIRED_STREET.test(contact), false);
   assert.equal(contact.includes('Call, email, or visit'), false);
   const email = readFileSync('components/EmailLink.tsx', 'utf8');
   assert.match(email, /mailto:\$\{address\}/);
@@ -335,7 +337,8 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   const llms = readFileSync('public/llms.txt', 'utf8');
   const full = readFileSync('public/llms-full.txt', 'utf8');
   for (const file of [llms, full]) {
-    assert.equal(/Public representative|staffed storefront|Wapoot/i.test(file), false);
+    assert.equal(/Public representative|staffed storefront/i.test(file), false);
+    assert.equal(RETIRED_STREET.test(file), false);
     assert.match(file, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star/);
     assert.match(file, /hello@boiseremodeling\.co/);
     assert.match(file, /Last updated: 2026-10-16/);

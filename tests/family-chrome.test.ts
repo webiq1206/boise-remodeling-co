@@ -15,6 +15,7 @@ import { SERVICES } from '../shared/contentData.ts';
 import { P5_FACEBOOK_URL, P5_GBP_URL } from '../shared/gbpProfile.ts';
 import { GUIDE_PAGES } from '../shared/guideContent.ts';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
+import { RETIRED_STREET } from './retiredStreet.ts';
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
@@ -45,7 +46,8 @@ test('the brand config carries this site’s facts, one CTA and one destination'
     ],
   );
   assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Middleton|Garden City|Emmett/.test(link.label)), false);
-  assert.doesNotMatch(FAMILY_BRAND.nap.line, /Wapoot|4031|Public representative|staffed storefront/i);
+  assert.equal(RETIRED_STREET.test(FAMILY_BRAND.nap.line), false);
+  assert.doesNotMatch(FAMILY_BRAND.nap.line, /Public representative|staffed storefront/i);
   assert.deepEqual(FAMILY_BRAND.header.phoneActions, ['call', 'text', 'chat']);
   assert.equal(FAMILY_BRAND.registration.href, DOPL_LICENSE_SEARCH);
   // Approved C7 check (scripts/verify-p5-mobile-seo.mjs): the bar is on the first screen below 1180px.
@@ -93,7 +95,8 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.equal(/rel="noopener noreferrer">(P5 Home Co|Boise)/.test(html), false);
   assert.match(html, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star/);
   assert.equal(html.includes('Middleton'), false);
-  assert.doesNotMatch(html, /Wapoot|4031|Public representative|staffed storefront/i);
+  assert.equal(RETIRED_STREET.test(html), false);
+  assert.doesNotMatch(html, /Public representative|staffed storefront/i);
   assert.match(html, /data-testid="link-footer-call"/);
   assert.match(html, /href="sms:\+12084771169"[^>]*data-testid="link-footer-text"/);
   assert.match(html, /type="button"[^>]*data-testid="button-chat-footer"/);

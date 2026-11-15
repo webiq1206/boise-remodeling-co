@@ -15,7 +15,7 @@
 
 ## On-site NAP audit - CONSISTENT (verified in code)
 
-`shared/siteConfig.ts` drives phone/email/locality everywhere (footer, contact, schema, meta descriptions). One phone, one locality, no street leakage. No action needed on-site. Two stale repo docs (`SEO-AUDIT-CONTEXT.md` root, old `audits/`) contain the retired `(208) 352-2011` and a Wapoot St address - internal only, no SEO impact, but flagged for archival to avoid future confusion.
+`shared/siteConfig.ts` drives phone/email/locality everywhere (footer, contact, schema, meta descriptions). One phone, one locality, no street leakage. The public address is Meridian, ID 83646. No action needed on-site. Stale repo docs (`SEO-AUDIT-CONTEXT.md` root, old `audits/`) contain the retired `(208) 352-2011`. They are internal only, with no SEO impact, and are flagged for archival to avoid future confusion.
 
 ## Off-site NAP audit - 1 critical conflict, near-zero footprint
 
