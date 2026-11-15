@@ -314,7 +314,7 @@
     "scripts/test-p5-unit-rate-store.mts": "f9d95d84ec8a785ba1ceb1ede37c1f15311c3fd1c2f460f7c1c0182b6e0b0003",
     "scripts/test-p5-upload-adversarial.mts": "11ffdf2bfd3d606454e6fb3a9c5d337d063435dc7cc4ab44153c4a3d25e9662f",
     "scripts/test-p5-upload.mts": "04c7baca5d2d07bb37e1374d59115f9a1161380e3e585136e868d9e0633d76de",
-    "scripts/test-p5-workflow.mts": "319802183fb499db8f69b245159f2af32c0c86735e922161807d0e34ff82797a",
+    "scripts/test-p5-workflow.mts": "a12a101b7c5c87c25568080fff75f27dc84eae0a4fa1590942222080f9c32304",
     "tests/fixtures/crmReceiverValidation571c6f6d.ts": "75bb102dcb5d85d929a85014e7574ac22669f34944ac0ff9a200b347bd23bef7",
     "tests/fixtures/p5-final-minor-work-copy.json": "ebb7e43ae2fe687db3d05a7b1b043ad409838cdfdbe3cde18cc42558f7a2e8cc",
     "tests/fixtures/p5-main11-saved-failure.json": "8689566ab270bb3066c581ec8458d1260483a4a8c2cf07c977892ee88da267fb",

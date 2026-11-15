@@ -40,7 +40,7 @@ const fixtureId=randomUUID();
 // pricing note reaches the saved customer result; the administrative record
 // keeps the inspected note.
 const leakingCustomer={...customer,assumptions:[...(customer.assumptions||[]),`Preliminary trim allowance based on ${leakingAssumption}; confirm field quantity.`]};
-const customerEmail=estimateEmail(fixtureId,{customer:leakingCustomer,internal,contact:{name:'Test Customer'}},false);
+const customerEmail=estimateEmail(fixtureId,{customer:leakingCustomer,internal,contact:{name:'Sample Customer'}},false);
 assert.ok(!JSON.stringify(customerPresentation(leakingCustomer)).includes(leakingAssumption),'customer API result must not carry internal pricing arithmetic');
 assert.ok(!JSON.stringify(estimateSections(leakingCustomer)).includes(leakingAssumption),'customer page sections must not carry internal pricing arithmetic');
 assert.ok(!customerEmail.text.includes(leakingAssumption)&&!customerEmail.html.includes(leakingAssumption),'customer email must not carry internal pricing arithmetic');
@@ -74,7 +74,7 @@ try{
  const module=(name:string)=>import(pathToFileURL(path.join(runtime,name+'.ts')).href);
  const store=await module('store');const outbox=await module('outbox');const db=await module('database');const transport=await module('deliveryAdapter');
  const id=randomUUID(),key=randomBytes(32).toString('hex');
- const payload={text:'TEST project',answers:{service:'kitchen'},extraction:null,reviewed:null,contact:{name:'Test Customer',email:'customer@example.invalid',phone:''}};
+ const payload={text:'TEST project',answers:{service:'kitchen'},extraction:null,reviewed:null,contact:{name:'Sample Customer',email:'customer@example.invalid',phone:''}};
  let draft=await store.saveDraft(id,key,'test',payload,0);assert.equal(draft.revision,1);
  await assert.rejects(store.readDraft(id,randomBytes(32).toString('hex')));
  const raced=await Promise.allSettled([store.saveDraft(id,key,'test',payload,1),store.saveDraft(id,key,'test',payload,1)]);

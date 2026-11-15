@@ -64,6 +64,8 @@ const EXCLUDED_FILES = new Set([
   join('scripts', 'verify-no-em-dash.ts'),
   join('scripts', 'fix-em-dash.ts'),
   join('public', 'brand', 'brand-kit.html'),
+  // Shared mail kit. Its dash detector names the character by escape. The file is copied byte-identical.
+  join('lib', 'p5', 'emailKit.ts'),
 ]);
 
 interface Violation {

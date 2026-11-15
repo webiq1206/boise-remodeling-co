@@ -38,7 +38,8 @@ function assertThisBrand(html: string, text: string, where: string, options: { c
   assert.doesNotMatch(body, /P5 Home Co/, where);
   assert.doesNotMatch(body, /p5homeco\.com/, where);
   assert.doesNotMatch(body, /showroom|\bshop\b/i, where);
-  assert.doesNotMatch(body, /[\u2013\u2014]/, where);
+  const dash = new RegExp("[" + String.fromCharCode(0x2013, 0x2014) + "]");
+  assert.doesNotMatch(body, dash, where);
   assert.doesNotMatch(body, /4031|Wapoot/i, where);
   assertCopy(html, text, { customerAddresses: ["100 Example Ave, Boise, ID 83702"] });
 }
