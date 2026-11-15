@@ -66,6 +66,8 @@ const EXCLUDED_FILES = new Set([
   join('public', 'brand', 'brand-kit.html'),
   // Shared mail kit. Its dash detector names the character by escape. The file is copied byte-identical.
   join('lib', 'p5', 'emailKit.ts'),
+  // Shared kit test, copied byte-identical. Its assertion contains the character it rejects.
+  join('tests', 'p5-email-brand.test.ts'),
 ]);
 
 interface Violation {

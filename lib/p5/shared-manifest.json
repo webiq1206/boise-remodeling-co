@@ -26,7 +26,7 @@
     "components/P5AddressInput.tsx": "5372b8587c55264c433f633ea8de6958d5a645d186bf35c8503f31abde49b011",
     "components/P5EstimateDetails.tsx": "ad36be0cb27f55e51ee63f222af7c749b3037e1fb12ff7131be62a6db93565d0",
     "components/P5Estimator.module.css": "e2e0523658049944e5e65aee990523691a6d98e7a19f6fa9d3b92bae3a0b8c6b",
-    "components/P5Estimator.tsx": "59cf9a4cdbb17eff7f288ab5361a6575c3be66aed628f13483fc5b69fd580f72",
+    "components/P5Estimator.tsx": "164b8174dd27b9a6d01f8b31e2ba286ae83c358964dadea62a144c350e10e060",
     "components/P5EstimatorNavigation.tsx": "427346f6a31453e01f54900b1350c222c59a74d9c23691a6fc346b5cc26da8f3",
     "components/P5IntakeQueue.tsx": "cb9638fa46c9e88bf6f7609cd08e4cf26c24564c20bba50d124dc1c3bf5c8fab",
     "components/P5IntakeReview.tsx": "6990daa7ec816470e9537917f266be43cb06a05c291208e6c33419ca6b363c8d",
@@ -39,7 +39,7 @@
     "components/P5ProjectReview.module.css": "acf5143d5c61ca7f08cca1e233643d05fe04dd9c8c2e870f013f6c180c4889d9",
     "components/P5ProjectReview.tsx": "d239b792271f9656c6e00ee977b5b54e1745150e3cd80f20436a7d870356b219",
     "components/P5ReferenceCostBudget.tsx": "81f85ff0199fdaa7484d36b56d7d404c568c0010bf7588430471a9f6201414dd",
-    "components/P5ReviewRequest.tsx": "5a5c1b6f27df99fb0b1d5ae814f9aec898ba6fdc7fd7a7117c2aed5737eff60c",
+    "components/P5ReviewRequest.tsx": "5ec1d112ee3e49e82d95d57615187c4ffe5acc3610a0c386d61d21f03fe2f0ef",
     "lib/p5/adaptive.ts": "d874b26921c2c77a028d6609d2530a084e193699b0e9786d06e44a03f52430f4",
     "lib/p5/adminEndpoint.ts": "8cccba7746097375b7277845a2682c0547bfd2653ae0387eefa6e1b03ff0b239",
     "lib/p5/adminEstimate.ts": "0a324a6dfaa166e9369705381f4ce45b7d89d5b960ac9bccb125adcf51d2f024",
@@ -88,9 +88,9 @@
     "lib/p5/driveEndpoint.ts": "7ea92a11f464715d5ff7ffe94b4fdb581d099b550726a04934d94edfef328730",
     "lib/p5/duplicateCharges.ts": "d14e035ffbfba9a6ee1d9c383909340b7687cccd67501b3878794566b59c9f68",
     "lib/p5/dynamicQuestions.ts": "a842e81acaac16c94cb51215631167ed740d1e40fbf6ceac77d4f72339b1684e",
-    "lib/p5/estimateDocument.ts": "1bd90c212fbb54b1923ee98ec31f4982afa009e1cd91c41fe2b2baab0b337d9c",
+    "lib/p5/estimateDocument.ts": "9a440d822bda286090e4eed16be6af2ea237a6fce597e0384154c12a46177798",
     "lib/p5/estimateDriver.ts": "7e86bb8c32ba9e07680d45d3d4327d4f73521925c7d469f5669e900bca0245e9",
-    "lib/p5/estimateEmail.ts": "41136a5d1c1ee6a4796f522e00d03c6bef90e49463fb83902c872e1e2d45dd01",
+    "lib/p5/estimateEmail.ts": "d351ffd85ac6b0f15f66b87384203dd0389a4cef138f78fbc097bae29c8cad92",
     "lib/p5/estimateLinks.ts": "9dacd407e7c541e370670a7daa5650e8ebf792e534dd10f4b32899764520b6d5",
     "lib/p5/estimatePdf.ts": "fbc8da123b356ceeb0e357599b988995b6b3daa56f9651dc079b995c6779971a",
     "lib/p5/estimateRevisions.ts": "8215ffd84e99684078b279cbaa96c5a9ec250f48721d728f31073a1be6212e58",
@@ -213,7 +213,7 @@
     "lib/p5/resumableUpload.ts": "17bc8f10fed11532389420ac280da07388677338f809c92d49a59fa83e783bfa",
     "lib/p5/retainedAuditCopy.ts": "42fa2e0236f1930afa2b7685a769ac7d888c043e761a3498f9371e03b891bf9e",
     "lib/p5/retainedClarification.ts": "857c66110e48211f3233316f22fee98f1ef9bb31a2eddb13d2f452e25ad0b7ea",
-    "lib/p5/reviewRequest.ts": "bfbeb71b83cb5772feea356687a8e56e6e30652c680906865b94b25a7ba4a19b",
+    "lib/p5/reviewRequest.ts": "02f86aa1a48a05e7a8f6ffc6cd7a64da2e30ac9e870febb52ce26c3ef0777a22",
     "lib/p5/revisionEndpoint.ts": "9b1bde9e251fe0ad4e836085e6fa5424743e25384702b299dbde78cf91ad420a",
     "lib/p5/savedAnalysis.ts": "6621baefa5995031e4315b348c52e81e55693464478539265ee55b1c0271ec5f",
     "lib/p5/savedCustomerCopy.ts": "78e26e278431286c8bece4b56c2119c3b55fa6c846cb63f68b33890018ddac89",
@@ -366,7 +366,7 @@
     "tests/p5-dynamic-questions.test.ts": "9754b040b415466c152d9c798a4568227e944b7c943278cc1b74ae3e12f97631",
     "tests/p5-endpoint-concurrency.test.ts": "b4f8e3658ada6ea602e7c30ff0f5e5bddda8ea3aaa6335f849c73db566e8f498",
     "tests/p5-entry-point-model.test.ts": "449403aa0343283c20ae2f70a5d4a7609d3fdef846b9c131636bb0fd6ee37f53",
-    "tests/p5-estimate-document.test.ts": "9bc0137f50f869ebf678e942ff7f0d082c3dd481d63789e6d825bb21e2d97aca",
+    "tests/p5-estimate-document.test.ts": "5e2e0e198dc0e13fb5f87de34470663d51a1fa14b857f99e556bc2cb5d1411b4",
     "tests/p5-estimator-chrome.test.ts": "425b977517ec38bdef842515a4d5bc59c5a31673f1c9213cb84e9cfcaf34182c",
     "tests/p5-estimator-flow.test.ts": "21151612380c9a0b381cf7393c2d5cc277a3bd2a8605e1e2b306964f1fa938c7",
     "tests/p5-evidence-repair.test.ts": "1f0b2297e9a326cc7542d4221ed9e815755404be3207d646eeec50e5103add5c",
@@ -518,8 +518,10 @@
     "scripts/lib/shortBrandEntry.mjs": "27f7270125bf48773c7564b9b98bb8ff4ca02321d7a2b8b4d5c0e857737570c2",
     "scripts/lib/quoteEntry.mjs": "46f9fb18396b8e100dfdfe05c90b3bf21f7777e7feef45767e0e24432eb3b920",
     "lib/p5/scheduleEmail.ts": "1fad81742577e91b00b9bf9cb233799b71a941fc22b80e2a2b8d65bfdd48ed26",
-    "lib/p5/emailKit.ts": "9484f6578df8dd9ad35f82ccd3dd3cb585634e2407bc5886b1a412202acdafb1",
-    "lib/p5/phoneHref.ts": "acb0d1322aac2b4fbf97f007614107adf3b648612b41b867188c5260c26c0249"
+    "lib/p5/emailKit.ts": "95dd4ff70206196d8b9f742c06696592e3f85d52f7a80d8ff55a66cbe548ae33",
+    "lib/p5/phoneHref.ts": "acb0d1322aac2b4fbf97f007614107adf3b648612b41b867188c5260c26c0249",
+    "tests/p5-email-brand.test.ts": "ddd332fdda9502dc2d07e45fe2fd29b636ff001f590d1a62ebff259ad8d6a864",
+    "tests/p5-phone-href.test.ts": "7f0ecbdae2b50303740dfff01c50a208836c721d52a8e6b6bc6c9a7606b83e30"
   },
   "coordinatedIntakeBatch": {
     "base": "e6e125b83468a402264be2f1e82e5c0466baa178",
@@ -820,15 +822,21 @@
   ],
   "estimatorEmailKit": {
     "source": "p5-home-co",
-    "commit": "5bf60e1ed35d174b99fce50baa959203b34d3ec3",
+    "commit": "9506a1a59b09496ada627ea758e3c16bb8b932d2",
+    "manifestCommit": "7c7eeb2054c6c688978beead98b9f4b2505085fe",
     "files": [
       "lib/p5/emailKit.ts",
       "lib/p5/estimateEmail.ts",
+      "lib/p5/reviewRequest.ts",
+      "lib/p5/estimateDocument.ts",
+      "tests/p5-email-brand.test.ts",
+      "tests/p5-estimate-document.test.ts",
+      "tests/p5-phone-href.test.ts",
       "lib/p5/intakeEmail.ts",
       "lib/p5/outbox.ts",
-      "lib/p5/reviewRequest.ts",
-      "lib/p5/phoneHref.ts"
+      "lib/p5/phoneHref.ts",
+      "lib/p5/estimatePdf.ts"
     ],
-    "note": "Byte-identical shared estimator mail. City line, value-tier wording, legal line, and internal ops inbox come from the kit. brand.ts and deliveryAdapter.ts stay site-owned."
+    "note": "Byte-identical shared estimator mail and the PDF phone link. brand.ts and deliveryAdapter.ts stay site-owned. priceBookData.ts was not touched."
   }
 }
