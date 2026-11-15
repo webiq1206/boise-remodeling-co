@@ -10,7 +10,9 @@ import { execFileSync } from "node:child_process";
 const pattern = ["wap", "oot"].join("") + "|" + ["40", "31"].join("") + " W";
 
 try {
-  const out = execFileSync("git", ["grep", "-n", "-i", "-I", "-E", pattern], {
+  // Actions checks this repo out inside a container whose git does not trust
+  // the workspace. The override is this command only.
+  const out = execFileSync("git", ["-c", "safe.directory=*", "grep", "-n", "-i", "-I", "-E", pattern], {
     encoding: "utf8",
   });
   console.error("verify:no-street-address FAILED. Public address is Meridian, ID 83646 only.");
