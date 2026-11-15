@@ -31,7 +31,7 @@ for(const [width,height] of viewports){
   const section=page.locator('#planning-ranges');await section.waitFor();
   await page.screenshot({path:path.join(output,`first-${key}.png`)});
   await section.scrollIntoViewIfNeeded();
-  await section.screenshot({path:path.join(output,`section-${key}.png`)});
+  await page.screenshot({path:path.join(output,`section-${key}.png`)});
   if(baseline){records.push({viewport:key,baseline:true});await page.close();continue;}
   await waitRange(page);
   const card=page.getByTestId('planning-step');
