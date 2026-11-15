@@ -50,7 +50,8 @@
  */
 
 import type { FinishLevel, ProjectType } from "./estimateEngine";
-import { installedUnitCost, DIRECT_COST_SHARE } from "./costs/installedUnitCosts";
+import { DIRECT_COST_SHARE } from "./costs/installedUnitCosts";
+import { planningTotal } from "./planningBookPrice";
 
 /**
  * Bump when shares, quantity ratios, or unit costs change. Stored on every
@@ -345,9 +346,9 @@ export function buildTakeoff(
   const components = getComponents(project).map((component) => {
     const override = overrides?.[component.id];
     if (isValidOverrideValue(override)) return { ...component, unitCost: override };
-    if (component.group !== "direct") return component;
-    const installed = installedUnitCost(project, component.id, finish);
-    return installed === undefined ? component : { ...component, unitCost: installed };
+    // The quote total comes from the cost book. This breakdown only allocates
+    // that total. It does not read the retired installed-cost table.
+    return component;
   });
 
   const priced = components.map((component) => {
@@ -661,14 +662,7 @@ export function buildUpDirectCost(
   finish: FinishLevel,
   sqft: number
 ): number {
-  let direct = 0;
-  for (const component of getComponents(project)) {
-    if (component.group !== "direct") continue;
-    const unit = installedUnitCost(project, component.id, finish);
-    if (unit === undefined) continue;
-    direct += quantityFor(component.quantity, sqft) * unit;
-  }
-  return direct;
+  return planningTotal(project, finish, sqft);
 }
 
 /**
@@ -682,5 +676,5 @@ export function buildUpTotal(
   finish: FinishLevel,
   sqft: number
 ): number {
-  return buildUpDirectCost(project, finish, sqft) / DIRECT_COST_SHARE;
+  return planningTotal(project, finish, sqft);
 }

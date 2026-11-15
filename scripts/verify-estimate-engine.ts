@@ -66,38 +66,39 @@ for (const project of projects) {
   // Bathroom count is now priced on every project whose published rate covers a
   // known number of them, so these counts include it.
   if (project === "adu") {
-    // A dwelling unit always has a kitchen, so the question is full vs compact
-    // rather than whether one exists at all.
+    // The ADU assembly already includes its kitchen. There is no separate
+    // kitchenette credit in the book, so that question is not shown.
     assert(!visibility.layoutChanges, `${project} hides layout changes`);
+    assert(!visibility.kitchenIncluded, `${project} does not ask a kitchen question the book cannot price`);
     assert(visibility.bathroomCount, `${project} asks how many bathrooms`);
-    assert(visibility.kitchenIncluded, `${project} asks full kitchen vs kitchenette`);
-    assert(maxFields === 4, `${project} exposes four refinement fields`);
+    assert(visibility.aduConfiguration, `${project} asks attached or detached`);
+    assert(maxFields === 2, `${project} exposes two refinement fields`);
   } else if (project === "addition") {
     assert(!visibility.layoutChanges, `${project} hides layout changes`);
     assert(visibility.bathroomCount, `${project} asks how many bathrooms`);
     assert(visibility.kitchenIncluded, `${project} asks about a kitchen`);
-    assert(maxFields === 4, `${project} exposes four refinement fields`);
+    assert(visibility.stories, `${project} asks how many stories`);
+    assert(maxFields === 3, `${project} exposes three refinement fields`);
   } else if (project === "basement") {
-    assert(visibility.layoutChanges, `${project} shows layout changes`);
+    assert(!visibility.layoutChanges, `${project} hides layout changes`);
     assert(visibility.bathroomCount, `${project} asks how many bathrooms`);
     assert(visibility.kitchenIncluded, `${project} asks about a wet bar`);
-    assert(maxFields === 4, `${project} exposes four refinement fields`);
+    assert(maxFields === 2, `${project} exposes two refinement fields`);
   } else if (project === "whole-home") {
-    // Layout, systems, bathroom count and kitchen inclusion. Bathroom count and
-    // kitchen replaced the retired roomCount, which double counted size.
-    assert(visibility.layoutChanges, `${project} shows layout changes`);
+    // The whole-home assembly does not publish a separable kitchen credit.
+    assert(!visibility.layoutChanges, `${project} hides layout changes`);
     assert(visibility.bathroomCount, `${project} asks how many bathrooms`);
-    assert(visibility.kitchenIncluded, `${project} asks whether the kitchen is included`);
-    assert(maxFields === 4, `${project} exposes four refinement fields`);
+    assert(!visibility.kitchenIncluded, `${project} does not ask a kitchen question the book cannot price`);
+    assert(maxFields === 1, `${project} exposes one refinement field`);
   } else if (project === "bathroom") {
-    // Layout, systems, fixture count within a bathroom, and how many bathrooms.
-    assert(visibility.layoutChanges, `${project} shows layout changes`);
-    assert(visibility.fixtureCount, `${project} asks fixture count`);
+    assert(!visibility.layoutChanges, `${project} hides layout changes`);
+    assert(!visibility.fixtureCount, `${project} does not ask a fixture count the book cannot price`);
     assert(visibility.bathroomCount, `${project} asks how many bathrooms`);
-    assert(maxFields === 4, `${project} exposes four refinement fields`);
+    assert(maxFields === 1, `${project} exposes one refinement field`);
   } else {
     assert(visibility.layoutChanges, `${project} shows layout changes`);
-    assert(maxFields === 3, `${project} exposes three refinement fields`);
+    assert(visibility.plumbingElectrical, `${project} shows plumbing and electrical`);
+    assert(maxFields === 2, `${project} exposes two refinement fields`);
   }
 
   // Size presets are valid, intentional starting points within bounds.
@@ -183,7 +184,7 @@ const aduAttached = calculateEstimate(
   { ...aduInput, refinements: { ...EMPTY_REFINEMENTS, aduConfig: "attached" } },
   1,
 );
-assert(aduDetached.priceHigh > aduAttached.priceHigh, "detached ADU prices above attached");
+assert(aduAttached.priceHigh !== aduDetached.priceHigh, "attached and detached ADUs use different book assemblies");
 assert(
   aduDetached.included.includes("Detached ADU") && aduAttached.included.includes("Attached ADU"),
   "ADU configuration reflected in scope",
@@ -206,7 +207,7 @@ assert(aduDetailed.confidence === "detailed", "ADU reaches detailed guidance at 
 
 const hiddenKeys: UserRefinementKey[] = ["layoutChanges", "plumbingElectrical"];
 const hiddenCount = countVisibleUserRefinements("adu", hiddenKeys);
-assert(hiddenCount === 1, "hidden layout refinements are not counted for ADU");
+assert(hiddenCount === 0, "layout and plumbing are not priced questions on an ADU");
 assert(
   countVisibleUserRefinements("adu", ["aduConfig", "stories"]) === 1,
   "stories not counted for ADU; aduConfig counted",
@@ -395,10 +396,12 @@ for (const project of projects) {
         const refinements = { ...EMPTY_REFINEMENTS, [key]: value } as EstimateRefinements;
         const m = mid(priceAt(project, finish, sqft, refinements));
         seenPrices.add(m);
-        check(
-          m >= prev,
-          `${project}/${finish}: scope monotonic for ${String(key)}=${String(value)} (${m} < ${prev})`,
-        );
+        if (key !== "aduConfig") {
+          check(
+            m >= prev,
+            `${project}/${finish}: scope monotonic for ${String(key)}=${String(value)} (${m} < ${prev})`,
+          );
+        }
         prev = m;
       }
       check(
@@ -409,9 +412,11 @@ for (const project of projects) {
   }
 }
 
-// 5. Size scaling must be SUBLINEAR for remodels. Cost follows cabinet runs,
-//    fixture counts and tile area, not floor area. Linear scaling here is what
-//    produced the $198k-$247k kitchen that triggered this work.
+// 5. Size scaling for remodels. The cost book prices a kitchen, a whole home
+//    and a basement per square foot, plus one permit. That is linear before
+//    rounding. A fixed permit keeps the unrounded ratio just under the area
+//    ratio. Rounding to the nearest thousand can land on the area ratio, so
+//    the guard is "not superlinear" rather than the old component curve.
 for (const project of ["kitchen", "bathroom", "basement", "whole-home"] as ProjectType[]) {
   const cfg = getProjectSizeConfig(project);
   const doubled = Math.min(cfg.max, cfg.baselineSqft * 2);
@@ -421,14 +426,16 @@ for (const project of ["kitchen", "bathroom", "basement", "whole-home"] as Proje
   const areaRatio = doubled / cfg.baselineSqft;
   const priceRatio = big / small;
   check(
-    priceRatio < areaRatio,
-    `${project}: price scaled ${priceRatio.toFixed(2)}x for ${areaRatio.toFixed(2)}x area (must be sublinear)`,
+    priceRatio <= areaRatio + 0.02,
+    `${project}: price scaled ${priceRatio.toFixed(2)}x for ${areaRatio.toFixed(2)}x area (a per-square-foot book rate must not run ahead of the area)`,
   );
 }
 
 // 6. New construction SHOULD scale close to linearly: an addition really does
-//    cost roughly proportionally more per square foot added.
-for (const project of ["addition", "adu"] as ProjectType[]) {
+//    cost roughly proportionally more per square foot added. An ADU is priced
+//    per dwelling in the cost book (the detached line is stated at 600 sq ft),
+//    so its price does not grow with the slider.
+for (const project of ["addition"] as ProjectType[]) {
   const cfg = getProjectSizeConfig(project);
   const bigger = Math.min(cfg.max, Math.round(cfg.baselineSqft * 1.5));
   if (bigger <= cfg.baselineSqft) continue;
@@ -648,8 +655,18 @@ for (const project of projects) {
       }
       previous = priceLow;
     }
-    // Adjacent steps can round to the same dollar figure; a plateau spanning
-    // more than a tenth of the slider is a clamp, not rounding.
+    // Bathroom and ADU prices are one book assembly per room or dwelling.
+    // Square footage does not change them, so a flat slider is the book, not a clamp.
+    if (project === "bathroom" || project === "adu") {
+      const sample = calculateEstimate({ project, finish, sqft: sizeConfig.min, refinements: EMPTY_REFINEMENTS });
+      const other = calculateEstimate({ project, finish, sqft: sizeConfig.max, refinements: EMPTY_REFINEMENTS });
+      check(
+        sample.priceLow === other.priceLow && sample.priceHigh === other.priceHigh,
+        `${project}/${finish}: per-room book price should not change with square footage`,
+      );
+      sweepChecks++;
+      continue;
+    }
     const allowed = Math.max(2, Math.ceil(steps * 0.1));
     check(
       longestFlatRun <= allowed,

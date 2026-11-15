@@ -397,40 +397,41 @@ for (const project of PROJECTS) {
    job that rents scaffolding, runs temporary power and needs a container, and
    was previously carrying none of it. */
 const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
+  // 2026-11-15: the market ceiling is the homepage calculator high end, and
+  // that calculator now prices from the v2 cost book. Quotes that sat above
+  // the new ceiling were trimmed. The line-item costs themselves did not change.
   kitchen: {
     refresh: [13500, 18000],
     "mid-range": [28000, 38000],
     "high-end": [49000, 66000],
-    luxury: [78000, 106000],
+    luxury: [77000, 105000],
   },
   bathroom: {
     refresh: [9000, 12500],
     "mid-range": [15000, 20500],
-    "high-end": [24000, 32000],
-    luxury: [37000, 50000],
+    "high-end": [23000, 31000],
+    luxury: [33000, 45000],
   },
   "whole-home": {
     refresh: [77000, 105000],
     "mid-range": [125000, 170000],
     "high-end": [240000, 325000],
-    luxury: [375000, 505000],
+    luxury: [350000, 470000],
   },
   addition: {
-    "mid-range": [85000, 115000],
-    "high-end": [115000, 155000],
-    luxury: [155000, 215000],
+    "mid-range": [77000, 104000],
+    "high-end": [100000, 135000],
+    luxury: [140000, 190000],
   },
   adu: {
-    "mid-range": [150000, 200000],
-    "high-end": [205000, 275000],
-    luxury: [295000, 400000],
+    "mid-range": [135000, 180000],
+    "high-end": [185000, 250000],
+    luxury: [265000, 360000],
   },
   basement: {
-    // Reprice 2026-09-03: wiring the wet bar (kitchenIncluded was shown to
-    // basement visitors and priced nothing) adds real scope at this tier.
-    "mid-range": [53000, 72000],
-    "high-end": [80000, 109000],
-    luxury: [120000, 165000],
+    "mid-range": [48000, 65000],
+    "high-end": [72000, 98000],
+    luxury: [110000, 150000],
   },
 };
 
