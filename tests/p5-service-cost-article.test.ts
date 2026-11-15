@@ -106,13 +106,43 @@ test('company tel links use +1 and the visible number stays the same', () => {
 
 test('contact card preserves useful contact facts without a business street address', () => {
   const card = buildBusinessVCard();
-  assert.equal(/^ADR[;:]|^LABEL[;:]/m.test(card), false);
-  assert.equal(/Wapoot|public representative|staffed storefront/i.test(card), false);
-  assert.match(card, /TEL;TYPE=WORK,VOICE:\+12084771169/);
+  assert.match(card, /FN:Nick Perkins\r\n/);
+  assert.match(card, /ORG:Boise Remodeling Co\r\n/);
+  assert.match(card, /TEL;TYPE=WORK,VOICE:\+12084771169\r\n/);
+  assert.match(card, /ADR;TYPE=WORK:;;;Meridian;ID;83646;USA\r\n/);
+  assert.equal(/^LABEL[;:]/m.test(card), false);
+  assert.equal(card.includes('P5 Home Co LLC'), false);
+  assert.equal(card.includes('P5 Home Co.'), false);
+  assert.equal(/Wapoot|4031|public representative|staffed storefront/i.test(card), false);
   assert.match(card, /EMAIL;TYPE=WORK:hello@boiseremodeling\.co/);
   assert.match(card, /URL:https:\/\/boiseremodeling\.co/);
   assert.match(card, /Treasure Valley/);
   assert.match(card.replace(/\r\n /g, ''), /Hours:/);
+});
+
+test('visible copy uses P5 Home Co as a name, not P5 Home Co. or the LLC form', () => {
+  const periodInTheName = /P5 Home Co\.(?=\s+[a-z])/;
+  const paths = [
+    'app/about/page.tsx',
+    'app/contact/page.tsx',
+    'app/terms-of-service/page.tsx',
+    'app/privacy-policy/page.tsx',
+    'lib/familyBrand.ts',
+    'lib/vcard.ts',
+    'shared/assistant/knowledge.ts',
+    'scripts/generate-llms-txt.ts',
+    'public/llms.txt',
+    'public/llms-full.txt',
+  ];
+  for (const path of paths) {
+    const text = readFileSync(path, 'utf8');
+    assert.equal(periodInTheName.test(text), false, path);
+    assert.equal(text.includes('P5 Home Co LLC'), false, path);
+  }
+  const card = buildBusinessVCard();
+  assert.equal(periodInTheName.test(card), false);
+  assert.equal(SITE_CONFIG.phone, '(208) 477-1169');
+  assert.equal(BUSINESS_INFO.phone, '(208) 477-1169');
 });
 
 test('every vCard line is at most 75 octets and lines use CRLF', () => {

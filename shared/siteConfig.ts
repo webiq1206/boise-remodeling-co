@@ -34,10 +34,12 @@ export const SITE_CONFIG = {
   phoneSmsHref: companyTelHref(process.env.NEXT_PUBLIC_PHONE_TEL ?? DEFAULT_PHONE_TEL).replace(/^tel:/, "sms:"),
   email: process.env.NEXT_PUBLIC_EMAIL ?? DEFAULT_EMAIL,
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? DEFAULT_SITE_URL,
-  // Public service locality and coverage. Verification records retain the business address.
+  // Public locality. City, state and ZIP are published. The street stays in
+  // verification records and is not part of this address.
   address: {
     city: "Meridian",
     state: "ID",
+    postalCode: "83646",
     cityState: "Meridian, ID",
     serviceArea: SERVICE_AREA_SENTENCE,
   },

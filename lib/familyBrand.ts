@@ -121,8 +121,8 @@ export const FAMILY_BRAND: FamilyBrand = {
       { label: 'Terms of service', href: '/terms-of-service' },
       { label: 'Subcontractor login', href: '/subcontractor', rel: 'nofollow' },
     ],
-    // Required parent-company disclosure: this brand is a DBA of P5 Home Co LLC.
-    disclosure: { before: `${SITE_CONFIG.name} is a DBA of `, linkLabel: SITE_CONFIG.legalName, href: 'https://p5homeco.com', after: '' },
+    // Public parent name. The schema legalName stays the registered entity.
+    disclosure: { before: `${SITE_CONFIG.name} is a DBA of `, linkLabel: 'P5 Home Co', href: 'https://p5homeco.com', after: '' },
     copyrightName: SITE_CONFIG.name,
   },
   // Boise ADU Co is left out until its own site exists; its projects run through Boise Construction Co.
