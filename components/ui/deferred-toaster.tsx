@@ -34,7 +34,9 @@ export function DeferredToaster() {
       if (event.code === "F8") list.current?.focus()
     }
     const preload = () => {
-      void load()
+      // A native navigation can cancel this optional prewarm. The actual
+      // toast still uses dynamic(load), which can retry its own load later.
+      void load().catch(() => undefined)
     }
     document.addEventListener("keydown", focusOnHotkey)
     window.addEventListener("pointerdown", preload, { once: true, passive: true })
