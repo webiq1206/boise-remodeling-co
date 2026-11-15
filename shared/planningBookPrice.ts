@@ -1,4 +1,4 @@
-import type { FinishLevel, ProjectType } from "./estimateEngine";
+import type { FinishLevel, ProjectType } from "./estimatePresentation";
 import { PRICE_BOOK } from "../lib/p5/priceBookData";
 import {
   COST_CATEGORIES,
@@ -9,6 +9,8 @@ import {
   type Service,
 } from "../lib/p5/pricing";
 
+if (typeof window !== "undefined") throw new Error("The private planning cost book is server only");
+
 type FinishTier = "builder" | "mid" | "high" | "luxury";
 
 /**
@@ -17,10 +19,9 @@ type FinishTier = "builder" | "mid" | "high" | "luxury";
  * Direct unit costs follow sharedBookRate (tier price, plus the book's remodel
  * premium). The number a customer sees is not that rate. It is the planning
  * range from calculateP5Estimate, the shared engine: contingency, overhead,
- * profit, band, and rounding. This file does not import priceBook.ts, because
- * that module loads node:crypto and the browser bundle cannot. The calculator
- * test locks every direct unit to sharedBookRate and every shown range to the
- * engine.
+ * profit, band, and rounding. This server-only module never enters the public
+ * planner bundle. The calculator test locks every direct unit to sharedBookRate
+ * and every shown range to the engine.
  */
 
 export interface PlanningRefinements {

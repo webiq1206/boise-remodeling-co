@@ -3,11 +3,12 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { usePlanningRange } from "@/hooks/usePlanningRange";
 import {
   EMPTY_REFINEMENTS, NOT_A_QUOTE_NOTICE, buildEstimateDisclosure,
-  calculateEstimate, formatPlanningCurrency, getProjectSizeConfig,
+  formatPlanningCurrency, getProjectSizeConfig,
   type FinishLevel, type LayoutChanges,
-} from "@/shared/estimateEngine";
+} from "@/shared/estimatePresentation";
 import { CTA_PRIMARY, estimatorHref } from "@/shared/ctaCopy";
 import styles from "./PlanningRangeExplorer.module.css";
 
@@ -43,7 +44,7 @@ type Project = (typeof PROJECTS)[number]["value"];
 type Plan = { project: Project; sqft: number; finish: FinishLevel; layout: LayoutChanges; step: number };
 const DEFAULT: Plan = { project: "kitchen", sqft: 250, finish: "mid-range", layout: "none", step: 0 };
 
-/** Homepage-only proof. Reuses the unchanged local engine; never calls an API or sends a lead. */
+/** Homepage-only proof. Requests a customer range from the pure planning endpoint; never sends a lead. */
 export function PlanningRangeExplorer() {
   const [plan, setPlan] = useState<Plan>(DEFAULT);
   const [ready, setReady] = useState(false);
@@ -81,12 +82,14 @@ export function PlanningRangeExplorer() {
   const input = { project: plan.project, sqft: plan.sqft, finish: plan.finish,
     refinements: { ...EMPTY_REFINEMENTS, layoutChanges: plan.layout } };
   // Do not tighten the range based on preselected answers or claim increased confidence.
-  const result = calculateEstimate(input, 0);
+  const pricing = usePlanningRange(input);
   const disclosure = buildEstimateDisclosure(input);
   const projectLabel = PROJECTS.find(p => p.value === plan.project)!.label;
   const finishLabel = FINISHES.find(f => f.value === plan.finish)!.label;
   const layoutLabel = LAYOUTS.find(l => l.value === plan.layout)!.label;
-  const range = `${formatPlanningCurrency(result.priceLow)} to ${formatPlanningCurrency(result.priceHigh)}`;
+  const range = pricing.range
+    ? `${formatPlanningCurrency(pricing.range.priceLow)} to ${formatPlanningCurrency(pricing.range.priceHigh)}`
+    : pricing.error ? "Range unavailable" : "Updating range…";
   function alignCard() {
     const headerHeight = document.querySelector("[data-family-header]")?.getBoundingClientRect().height ?? 76;
     if (card.current) window.scrollBy({ top: card.current.getBoundingClientRect().top - headerHeight - 16, behavior: "instant" });
@@ -169,7 +172,7 @@ export function PlanningRangeExplorer() {
             </div>}
             </>}
           </div>
-          <div className={`${styles.compactResult}${plan.step === 4 && editing === null ? ` ${styles.reviewRange}` : ""}`} aria-live="polite"><span>{editing === null ? "Modeled planning range" : "Saved planning range"}</span><strong>{range}</strong></div>
+          <div className={`${styles.compactResult}${plan.step === 4 && editing === null ? ` ${styles.reviewRange}` : ""}`} aria-live="polite" aria-busy={pricing.loading}><span>{editing === null ? "Modeled planning range" : "Saved planning range"}</span>{pricing.error ? <button type="button" className={styles.retry} onClick={pricing.retry} aria-label="Try range again">Range unavailable. Try again.</button> : <strong>{range}</strong>}</div>
           <div className={styles.navigation}>
             <button type="button" className={styles.back} onClick={() => editing !== null ? finishEdit(false) : summaryOpen ? toggleSummary(false) : go(Math.max(0, plan.step - 1))} disabled={plan.step === 0 && editing === null && !summaryOpen}>{editing !== null ? "Cancel" : "Back"}</button>
             {editing !== null ? <button type="button" className={styles.next} onClick={() => finishEdit(true)}>Save changes</button> : summaryOpen ? <button type="button" className={styles.next} onClick={() => toggleSummary(false)}>Continue planning</button> : plan.step < STEPS.length - 1 ? <button type="button" className={styles.next} onClick={() => go(plan.step + 1)}>Next</button> : <a className={styles.next} href="/#request">Request a quote</a>}
@@ -178,7 +181,8 @@ export function PlanningRangeExplorer() {
         </div>
         <aside className={styles.result} aria-label="Your modeled planning range">
           <p className={styles.resultLabel}>{projectLabel} · {editing === null ? "modeled planning range" : "saved planning range"}</p>
-          <p className={styles.figure} aria-live="polite" data-testid="planning-figure">{range}</p>
+          <p className={styles.figure} aria-live="polite" aria-busy={pricing.loading} data-testid="planning-figure">{range}</p>
+          {pricing.error && <button type="button" className={styles.retry} onClick={pricing.retry}>Try range again</button>}
           <p className={styles.summary}>{plan.sqft.toLocaleString()} sq ft · {finishLabel} · {layoutLabel}</p>
           <p className={styles.notice}>{NOT_A_QUOTE_NOTICE}</p>
           <a className={`f-button f-dark ${styles.quote}`} href={estimatorHref(ESTIMATOR_PROJECT[plan.project])} data-family-bar-yield="">{CTA_PRIMARY}</a>

@@ -1,0 +1,102 @@
+import assert from "node:assert/strict";
+import { mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { chromium } from "@playwright/test";
+
+const base = new URL(process.env.PLANNING_TEST_BASE_URL || "http://127.0.0.1:34864");
+if (!["127.0.0.1", "localhost", "[::1]"].includes(base.hostname) || !["http:", "https:"].includes(base.protocol) || base.username || base.password) throw new Error("Use a loopback preview");
+const output = path.resolve(process.env.PLANNING_EVIDENCE_DIR || "test-results/planning-boundary");
+mkdirSync(output, { recursive: true });
+const browser = await chromium.launch({ headless: true, ...(process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH, args: ["--no-sandbox"] } : {}) });
+const context = await browser.newContext({ serviceWorkers: "block", reducedMotion: "reduce" });
+const records = [], errors = [], blocked = [];
+let mode = "normal", releaseOld, pricingRequests = 0;
+await context.route("**/*", async route => {
+  const request = route.request(), url = new URL(request.url());
+  if (url.origin === base.origin && url.pathname === "/api/planning-range" && request.method() === "POST") {
+    pricingRequests++;
+    if (mode === "fail") return route.fulfill({ status: 503, json: { error: "Synthetic isolated outage" } });
+    if (mode === "race" && request.postDataJSON().project === "kitchen") {
+      await new Promise(resolve => { releaseOld = resolve; });
+      return route.fulfill({ status: 200, json: { priceLow: 111, priceHigh: 222 } }).catch(() => {});
+    }
+    return route.continue();
+  }
+  const asset = /\.(?:png|webp|jpe?g|svg|ico|woff2?|ttf|css|js|map)$/.test(url.pathname);
+  if (url.origin === base.origin && request.method() === "GET" && !url.pathname.startsWith("/api/") && (url.pathname === "/" || url.pathname.startsWith("/_next/") || asset)) return route.continue();
+  blocked.push({ method: request.method(), path: url.origin === base.origin ? url.pathname : "external" });
+  return route.abort();
+});
+await context.routeWebSocket("**/*", socket => socket.close());
+const waitRange = page => page.waitForFunction(() => { const element = document.querySelector("[data-testid=planning-figure]"); return element && element.getAttribute("aria-busy") !== "true" && element.textContent.startsWith("$"); });
+try {
+  const page = await context.newPage();
+  page.on("pageerror", error => errors.push(error.message));
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base.href, { waitUntil: "networkidle", timeout: 180000 });
+  await waitRange(page);
+  const card = page.getByTestId("planning-step"), figure = page.getByTestId("planning-figure");
+  await card.scrollIntoViewIfNeeded();
+  const start = await figure.innerText();
+  assert.equal(start, "$57.9k to $64.1k");
+  records.push({ state: "initial", range: start });
+
+  mode = "fail";
+  await card.getByRole("radio", { name: "Bathroom", exact: true }).check();
+  await page.waitForFunction(() => document.querySelector("[data-testid=planning-figure]")?.textContent === "Range unavailable");
+  assert.equal(await figure.innerText(), "Range unavailable");
+  assert.equal(await card.getByRole("button", { name: "Try range again", exact: true }).isVisible(), true);
+  await page.screenshot({ path: path.join(output, "error-390x844.png"), fullPage: false });
+  records.push({ state: "failure", noStaleRange: true });
+  mode = "normal";
+  await card.getByRole("button", { name: "Try range again", exact: true }).click();
+  await waitRange(page);
+  assert.equal(await figure.innerText(), "$24.9k to $27.6k");
+  records.push({ state: "retry", range: await figure.innerText() });
+
+  mode = "race";
+  const oldRequest = page.waitForRequest(request => request.url() === new URL("/api/planning-range", base).href && request.postDataJSON().project === "kitchen");
+  await card.getByRole("radio", { name: "Kitchen", exact: true }).check();
+  await oldRequest;
+  for (let i = 0; !releaseOld && i < 100; i++) await page.waitForTimeout(10);
+  assert.ok(releaseOld, "the delayed request was observed");
+  await card.getByRole("radio", { name: "Bathroom", exact: true }).check();
+  await waitRange(page);
+  releaseOld();
+  await page.waitForTimeout(250);
+  assert.equal(await figure.innerText(), "$24.9k to $27.6k", "an old response must not replace the current selection");
+  records.push({ state: "late-response", range: await figure.innerText() });
+  mode = "normal";
+  const beforeDebounce = pricingRequests;
+  await card.evaluate(element => {
+    const option = value => element.querySelector(`input[type=radio][value="${value}"]`);
+    option("kitchen").click(); option("bathroom").click(); option("kitchen").click();
+  });
+  await waitRange(page);
+  await page.waitForTimeout(250);
+  assert.equal(await figure.innerText(), start);
+  assert.equal(pricingRequests - beforeDebounce, 1, "rapid selections are debounced into one request");
+  records.push({ state: "debounce", requests: pricingRequests - beforeDebounce });
+
+  for (const [project, bathroomCount, priceLow, priceHigh] of [
+    ["whole-home", 1, 289000, 320000], ["whole-home", 2, 313000, 346000],
+    ["adu", 0, 172000, 190000], ["adu", 1, 196000, 216000],
+  ]) {
+    const response = await context.request.post(new URL("/api/planning-range", base).href, { data: { project, finish: "mid-range", sqft: 1800, refinements: { bathroomCount } } });
+    // ADUs use the supported size bounds, but are priced per dwelling.
+    if (project === "adu") { assert.equal(response.status(), 400); continue; }
+    assert.equal(response.status(), 200);
+    assert.deepEqual(await response.json(), { priceLow, priceHigh });
+  }
+  for (const [bathroomCount, priceLow, priceHigh] of [[0, 172000, 190000], [1, 196000, 216000]]) {
+    const response = await context.request.post(new URL("/api/planning-range", base).href, { data: { project: "adu", finish: "mid-range", sqft: 600, refinements: { bathroomCount } } });
+    assert.equal(response.status(), 200); assert.deepEqual(await response.json(), { priceLow, priceHigh });
+  }
+  records.push({ state: "real-endpoint-credit-parity", cases: 4 });
+  assert.deepEqual(errors, []);
+  assert.ok(!blocked.some(request => request.method !== "GET"), "no lead, customer or analytics submission was attempted");
+  await page.screenshot({ path: path.join(output, "recovered-390x844.png"), fullPage: false });
+  await page.close();
+  writeFileSync(path.join(output, "report.json"), JSON.stringify({ viewport: { width: 390, height: 844 }, records, pageErrors: errors, blocked }, null, 2));
+  console.log(JSON.stringify({ passed: records.length, states: records.map(record => record.state), blockedRequests: blocked.length }));
+} finally { await browser.close(); }

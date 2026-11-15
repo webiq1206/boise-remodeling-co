@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { HeroConversion, type AttachedEstimatePayload } from "@/components/approved/HeroConversion";
-import type { StoredEstimate } from "@/shared/estimateEngine";
-import { PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimateEngine";
+import type { StoredEstimate } from "@/shared/estimatePresentation";
+import { PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimatePresentation";
 
 /**
  * The planning range the estimator left in this tab (sessionStorage "brc_estimate"), read the

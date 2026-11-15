@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { AnimatedPrice } from "@/components/estimate/EstimateResultPanel";
 import { requestHideMobileNavBar } from "@/lib/mobileNavBar";
-import type { EstimateResult } from "@/shared/estimateEngine";
+import type { EstimateResult } from "@/shared/estimatePresentation";
 
 const SHEET_SCOPE_COUNT = 4;
 

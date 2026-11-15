@@ -8,7 +8,9 @@ test('home keywords and the current ungated planning calculator survive phone po
   assert.match(hero, /title="Boise home remodeling\."/);
   assert.match(hero, /titleAccent="One team, start to finish\."/);
   assert.match(ranges, /Your remodel\.<br \/><em>A clearer starting point\.<\/em>/);
-  assert.match(ranges, /calculateEstimate\(input, 0\)/);
+  assert.match(ranges, /usePlanningRange\(input\)/);
+  assert.match(readFileSync("hooks/usePlanningRange.ts", "utf8"), /fetch\("\/api\/planning-range"/);
+  assert.doesNotMatch(ranges, /calculateEstimate|planningBookPrice|priceBookData/);
   assert.match(ranges, /See a modeled budget immediately, without sharing contact details/);
   assert.match(ranges, /\["Project", "Size", "Finish", "Layout", "Review"\]/);
   assert.equal(ranges.includes('const RANGES ='), false);

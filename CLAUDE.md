@@ -86,6 +86,22 @@ the owner to run it.
 
 ## Pricing rules, learned the hard way
 
+### Public planning boundary, November 15, 2026
+
+The homepage planner requests `POST /api/planning-range`. This endpoint performs
+only bounded, validated calculation and returns `priceLow` and `priceHigh`.
+Keep customer information, persistence, provider calls and delivery out of it.
+Private cost-book rows and finance policy remain behind `shared/estimateEngine.ts`
+and `shared/planningBookPrice.ts`; client components import only
+`shared/estimatePresentation.ts` and the `usePlanningRange` request hook.
+Preserve the existing selections, Back/refresh state, negative bathroom credits,
+and exact customer ranges. Debounce requests, ignore stale replies, and retain
+the loading/error/retry states. `verify:planning-boundary` pins 3,420 scenarios
+to the reviewed pre-boundary source. The production build also scans actual
+browser assets and static HTML for private cost-book and finance data.
+Apply the current website quality standard and this brand's
+[`docs/brand-profile.md`](docs/brand-profile.md) when changing the planner.
+
 - **True gross margin**, never markup: `price = cost / (1 - margin)`. The two
   engines run DIFFERENT margin policies on purpose: RE-10 repairs floor at 50%
   (`RE10_MARGIN_FLOOR` - small jobs, real mobilization cost), the main remodel

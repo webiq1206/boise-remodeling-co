@@ -26,8 +26,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Check, CheckCircle2, ArrowRight, Phone, Plus, X, ChevronDown } from "lucide-react";
-import type { StoredEstimate } from "@/shared/estimateEngine";
-import { FINISH_LABELS, PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimateEngine";
+import type { StoredEstimate } from "@/shared/estimatePresentation";
+import { FINISH_LABELS, PROJECT_LABELS, formatPlanningCurrency } from "@/shared/estimatePresentation";
 // Direct path, not the components/marketing barrel: the barrel re-exports
 // BlogPostLayout, which pulls every blog post (about 850KB of source) into any
 // client bundle that imports it. This form is in the root layout via the

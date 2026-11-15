@@ -33,6 +33,7 @@
 .summary { font-size:16px; line-height:1.5; margin-top:16px; }
 .notice { font-size:16px; line-height:1.6; margin-top:16px; }
 .quote { margin-top:24px; }
+.retry { min-height:44px; padding:8px 12px; text-decoration:underline; font-size:14px; text-align:left; }
 .details { border-top:1px solid var(--fr-line); margin-top:16px; font-size:16px; line-height:1.6; }
 .details summary { padding:12px 0; min-height:48px; cursor:pointer; font-weight:600; }
 .details ul { list-style:disc; padding-left:20px; }

@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, Circle, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { EstimateResult, ProjectType } from "@/shared/estimateEngine";
-import { INCLUDED_SCOPE_NOTE, APPLIANCE_DISCLAIMER, formatPlanningCurrency } from "@/shared/estimateEngine";
+import type { EstimateResult, ProjectType } from "@/shared/estimatePresentation";
+import { INCLUDED_SCOPE_NOTE, APPLIANCE_DISCLAIMER, formatPlanningCurrency } from "@/shared/estimatePresentation";
 
 const ANIM_DURATION = 320;
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
