@@ -1,5 +1,6 @@
 // Content Data for Boise Remodeling Co
-// Serves the Treasure Valley: Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton
+// Public service area: Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star,
+// plus Ada County and Canyon County. Published city pages can be a longer set.
 
 export interface ServiceData {
   slug: string;
@@ -85,6 +86,12 @@ export const SERVICES: ServiceData[] = [
 // Alias so existing imports stay compatible
 export const PRIORITY_SERVICES = SERVICES;
 
+/**
+ * Every city with a published page. Towns outside the public service area
+ * (Middleton, and any later page such as Garden City or Emmett) stay here so
+ * their URLs, sitemap entries, and guides remain. They are not listed in nav
+ * or service-area copy.
+ */
 export const CITIES: CityData[] = [
   { slug: 'boise', name: 'Boise', county: 'ada', isPrimary: true },
   { slug: 'meridian', name: 'Meridian', county: 'ada', isPrimary: false },
@@ -96,7 +103,39 @@ export const CITIES: CityData[] = [
   { slug: 'caldwell', name: 'Caldwell', county: 'canyon', isPrimary: false },
 ];
 
-export const TREASURE_VALLEY_CITIES = CITIES.map((c) => c.name).join(', ');
+/**
+ * Owner decision: the public service area matches the P5 Home Co Google
+ * Business Profile. Order is the display order.
+ */
+export const SERVICE_AREA_CITY_NAMES = [
+  'Boise',
+  'Meridian',
+  'Nampa',
+  'Eagle',
+  'Kuna',
+  'Caldwell',
+  'Star',
+] as const;
+
+export const SERVICE_AREA_COUNTIES = ['Ada County', 'Canyon County'] as const;
+
+export const SERVICE_AREA_CITIES: CityData[] = SERVICE_AREA_CITY_NAMES.map((name) => {
+  const city = CITIES.find((entry) => entry.name === name);
+  if (!city) throw new Error(`Service area city ${name} has no published page`);
+  return city;
+});
+
+function joinNames(names: readonly string[]): string {
+  if (names.length <= 1) return names[0] ?? '';
+  if (names.length === 2) return `${names[0]} and ${names[1]}`;
+  return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
+}
+
+/** City names in service-area order, with a serial comma. */
+export const TREASURE_VALLEY_CITIES = joinNames(SERVICE_AREA_CITY_NAMES);
+
+/** Cities plus the two counties, for visible service-area sentences. */
+export const SERVICE_AREA_SENTENCE = `${TREASURE_VALLEY_CITIES}, across ${joinNames(SERVICE_AREA_COUNTIES)}`;
 
 export function getServiceBySlug(slug: string): ServiceData | undefined {
   return SERVICES.find((s) => s.slug === slug);

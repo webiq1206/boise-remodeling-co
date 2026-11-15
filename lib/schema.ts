@@ -5,7 +5,7 @@ import {schemaTime} from './schemaTime';
  */
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
-import { SERVICES } from '@/shared/contentData';
+import { SERVICE_AREA_CITIES, SERVICE_AREA_COUNTIES, SERVICES } from '@/shared/contentData';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
@@ -77,6 +77,30 @@ const CITY_WIKIPEDIA: Record<string, string> = {
   Caldwell: 'https://en.wikipedia.org/wiki/Caldwell,_Idaho',
 };
 
+const COUNTY_WIKIPEDIA: Record<string, string> = {
+  'Ada County': 'https://en.wikipedia.org/wiki/Ada_County,_Idaho',
+  'Canyon County': 'https://en.wikipedia.org/wiki/Canyon_County,_Idaho',
+};
+
+/**
+ * Company-wide areaServed: seven City nodes in service-area order, then
+ * Ada County and Canyon County. Page-level Service schema still names the
+ * page city when one is passed in.
+ */
+export function serviceAreaNodes(): Array<{ '@type': string; name: string; sameAs?: string }> {
+  const cities = SERVICE_AREA_CITIES.map((city) => ({
+    '@type': 'City',
+    name: city.name,
+    ...(CITY_WIKIPEDIA[city.name] ? { sameAs: CITY_WIKIPEDIA[city.name] } : {}),
+  }));
+  const counties = SERVICE_AREA_COUNTIES.map((name) => ({
+    '@type': 'AdministrativeArea',
+    name,
+    ...(COUNTY_WIKIPEDIA[name] ? { sameAs: COUNTY_WIKIPEDIA[name] } : {}),
+  }));
+  return [...cities, ...counties];
+}
+
 /**
  * Public contractor type. HomeAndConstructionBusiness is the specific type;
  * GeneralContractor stays so existing consumers of that type still match.
@@ -141,11 +165,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
       closes: hours === 'Closed' ? undefined : schemaTime(hours.split(' - ')[1]),
     })).filter(spec => spec.opens),
     priceRange: '$$',
-    areaServed: BUSINESS_INFO.serviceArea.map(area => ({
-      '@type': 'City',
-      name: area,
-      ...(CITY_WIKIPEDIA[area] ? { sameAs: CITY_WIKIPEDIA[area] } : {}),
-    })),
+    areaServed: serviceAreaNodes(),
     ...(SHOW_TESTIMONIALS && BUSINESS_INFO.reviewCount > 0
       ? {
           aggregateRating: {
@@ -189,7 +209,7 @@ export function generateWebSiteSchema(): SchemaContext {
     name: BUSINESS_INFO.name,
     url: baseUrl,
     description:
-      'Design-build remodeling contractor serving Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell, and the Treasure Valley, Idaho.',
+      'Design-build remodeling contractor serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, Idaho.',
     publisher: { '@id': ORG_ID },
     // NOTE: SearchAction intentionally omitted. The previous target
     // (/blog?q={search_term_string}) had no search handler, which advertised a
@@ -221,10 +241,7 @@ export function generateServiceSchema(serviceName: string, serviceDescription: s
       name: city,
       addressCountry: 'US',
       addressRegion: 'ID',
-    } : BUSINESS_INFO.serviceArea.map(area => ({
-      '@type': 'City',
-      name: area,
-    })),
+    } : serviceAreaNodes(),
     serviceType: serviceName,
     offers: {
       '@type': 'Offer',
@@ -284,6 +301,7 @@ export function generateOrganizationSchema(): SchemaContext {
       : {}),
     telephone: SCHEMA_TELEPHONE,
     email: BUSINESS_INFO.email,
+    areaServed: serviceAreaNodes(),
     knowsAbout: [
       'kitchen remodeling',
       'bathroom remodeling',

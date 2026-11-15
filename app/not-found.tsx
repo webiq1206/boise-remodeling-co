@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Home, ArrowRight, MessageSquare, Phone, Wrench } from "lucide-react";
 import { DisplayNum } from "@/components/marketing";
+import { SERVICE_AREA_CITY_NAMES } from "@/shared/contentData";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { SaveContactLink } from "@/components/SaveContactLink";
 
@@ -87,10 +88,10 @@ export default function NotFound() {
 
         <div className="mt-12">
           <p className="text-sm text-muted-foreground mb-3">
-            We serve the full Treasure Valley
+            We serve Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star
           </p>
           <div className="flex flex-wrap justify-center gap-2">
-            {["Boise", "Meridian", "Eagle", "Nampa", "Kuna", "Star", "Middleton"].map((city) => (
+            {SERVICE_AREA_CITY_NAMES.map((city) => (
               <span key={city} className="text-sm text-muted-foreground">
                 {city}
               </span>

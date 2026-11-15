@@ -15,8 +15,8 @@
 import fs from 'fs';
 import path from 'path';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '../shared/publicClaims';
-import { SITE_CONFIG } from '../shared/siteConfig';
-import { SERVICES, CITIES } from '../shared/contentData';
+import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig';
+import { SERVICES, CITIES, SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE } from '../shared/contentData';
 import { GUIDE_PAGES } from '../shared/guideContent';
 import { CONTENT_HUBS } from '../shared/contentHubs';
 import { BLOG_POSTS } from '../shared/blogContent';
@@ -26,11 +26,11 @@ const url = (p: string) => `${BASE}${p}`;
 const today = '2026-10-16';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
-  `Serving the ${SITE_CONFIG.address.serviceArea}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
+  `${publicFooterLine()}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
   `Idaho Registered Contractor #8381215 and insured.`;
 
-const adaCities = CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
-const canyonCities = CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
+const adaCities = SERVICE_AREA_CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
+const canyonCities = SERVICE_AREA_CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
 
 const pillarGuides = GUIDE_PAGES.filter((g) => g.guideType === 'hub-pillar' || g.guideType === 'master');
 const cityGuides = GUIDE_PAGES.filter((g) => g.guideType === 'location');
@@ -39,7 +39,7 @@ const neighborhoodGuides = GUIDE_PAGES.filter((g) => g.guideType === 'neighborho
 const SUMMARY = publishFoundingCopy(
   `Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, ` +
   `basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. ` +
-  `Serving ${CITIES.map((c) => c.name).join(', ')}. Phone ${SITE_CONFIG.phone}.`,
+  `Serving ${SERVICE_AREA_SENTENCE}. Phone ${SITE_CONFIG.phone}.`,
 );
 
 const POSITIONING =
@@ -155,7 +155,7 @@ function buildFull(): string {
   lines.push(`- Send project details: ${url('/estimate')}`, '');
 
   lines.push('## Service area', '');
-  lines.push('We remodel homes in the following Treasure Valley cities across Ada and Canyon County:', '');
+  lines.push('We remodel homes in these cities, across Ada County and Canyon County:', '');
   if (adaCities.length) lines.push(`- Ada County: ${adaCities.join(', ')}`);
   if (canyonCities.length) lines.push(`- Canyon County: ${canyonCities.join(', ')}`);
   lines.push(

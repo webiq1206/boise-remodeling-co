@@ -2,6 +2,7 @@
  * Central site configuration - NAP, URLs, and contact strings.
  * Override via env for staging; replace placeholder values before launch.
  */
+import { SERVICE_AREA_SENTENCE } from "./contentData";
 
 const DEFAULT_PHONE = "(208) 477-1169";
 const DEFAULT_PHONE_TEL = "2084771169";
@@ -38,7 +39,7 @@ export const SITE_CONFIG = {
     city: "Meridian",
     state: "ID",
     cityState: "Meridian, ID",
-    serviceArea: "Treasure Valley · Ada and Canyon County",
+    serviceArea: SERVICE_AREA_SENTENCE,
   },
 } as const;
 
@@ -73,5 +74,5 @@ export function formatPhoneDisplay(tel: string = SITE_CONFIG.phoneTel): string {
 
 /** Customer-facing coverage line, shared by the contact page and footer. */
 export function publicFooterLine(): string {
-  return `Serving the ${SITE_CONFIG.address.serviceArea}`;
+  return `Serving ${SITE_CONFIG.address.serviceArea}`;
 }

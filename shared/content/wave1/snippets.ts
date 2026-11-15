@@ -1,7 +1,7 @@
 /** Reusable HTML snippets for Treasure Valley long-form content */
 
 export const CITIES_LIST =
-  'Boise, Meridian, Eagle, Kuna, Star, Middleton, Nampa, and Caldwell';
+  'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star';
 
 export const PILLAR_COST = '/guides/boise-remodeling-cost-guide';
 export const PILLAR_TV = '/guides/treasure-valley-remodeling-guide';

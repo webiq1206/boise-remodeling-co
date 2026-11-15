@@ -2,7 +2,7 @@
 
 const BASE_TOPICS = [
   'Ada County plan review often adds weeks when plumbing, electrical, or structural sheets are required - build that into your calendar before ordering demo.',
-  'Canyon County projects in Nampa, Middleton, and Caldwell use different portals than Ada; your contractor should submit in the correct jurisdiction from day one.',
+  'Canyon County projects in Nampa and Caldwell use different portals than Ada County; your contractor should submit in the correct jurisdiction from day one.',
   'Treasure Valley ranches and split-levels from the 1970s–1990s frequently need panel and insulation upgrades when walls are opened - budget contingency accordingly.',
   'Eagle neighborhoods, and Hidden Springs in the Boise foothills, may require HOA architectural review in addition to county permits - start design early.',
   'Dry Idaho summers favor exterior concrete and roofing; schedule hardscape and addition work outside winter freeze-thaw cycles when possible.',

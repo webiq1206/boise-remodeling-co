@@ -1,6 +1,6 @@
 import { toSentenceCase } from '@/shared/sentenceCase';
 import Link from 'next/link';
-import { CITIES, SERVICES } from '@/shared/contentData';
+import { CITIES, SERVICE_AREA_CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
 import { isIndexedPath } from '@/lib/siteUrls';
 
@@ -96,7 +96,7 @@ export function RelatedLinks({ serviceSlug, citySlug, variant }: RelatedLinksPro
 
   if (variant === 'city-service' && serviceSlug && citySlug) {
     // Same index rule as the sitemap: noindexed combos are never linked.
-    const otherCities = CITIES.filter(
+    const otherCities = SERVICE_AREA_CITIES.filter(
       (c) => c.slug !== citySlug && isIndexedPath(cityServicePath(serviceSlug, c.slug)),
     ).slice(0, 4);
     const otherServices = SERVICES.filter(

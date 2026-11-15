@@ -12,7 +12,7 @@
 import type { FamilyBrand } from '@/lib/family/types';
 import { DOPL_LICENSE_SEARCH, REGISTRATION_LINE } from '@/components/RegistrationLine';
 import { CONTENT_HUBS } from '@/shared/contentHubs';
-import { CITIES, SERVICES } from '@/shared/contentData';
+import { SERVICE_AREA_CITIES, SERVICES } from '@/shared/contentData';
 import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
 import { publicFooterLine, SITE_CONFIG } from '@/shared/siteConfig';
 import { toSentenceCase } from '@/shared/sentenceCase';
@@ -113,7 +113,7 @@ export const FAMILY_BRAND: FamilyBrand = {
     areas: {
       label: 'Service areas',
       href: '/areas',
-      links: CITIES.map((city) => ({ label: `${city.name}, Idaho`, href: `/areas/${city.slug}` })),
+      links: SERVICE_AREA_CITIES.map((city) => ({ label: `${city.name}, Idaho`, href: `/areas/${city.slug}` })),
     },
     legal: [
       { label: 'Site map', href: '/sitemap' },

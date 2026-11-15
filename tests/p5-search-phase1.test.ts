@@ -26,7 +26,17 @@ import { GUIDE_PAGES } from '../shared/guideContent.ts';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 
 const BRAND = ' | Boise Remodeling Co';
-const AREAS = ['Boise', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'];
+const AREAS = [
+  'Boise',
+  'Meridian',
+  'Nampa',
+  'Eagle',
+  'Kuna',
+  'Caldwell',
+  'Star',
+  'Ada County',
+  'Canyon County',
+];
 
 function renderedTitle(meta: { title?: unknown }): string {
   const title = meta.title as { absolute?: string; default?: string } | string | undefined;
@@ -51,6 +61,20 @@ test('contractor schema preserves contacts, served cities and parent without pub
   assert.equal((business.parentOrganization as { '@id': string })['@id'], 'https://p5homeco.com/#organization');
   assert.equal((business.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
   assert.deepEqual(
+    (business.areaServed as Array<{ '@type': string; name: string }>).map((area) => [area['@type'], area.name]),
+    [
+      ['City', 'Boise'],
+      ['City', 'Meridian'],
+      ['City', 'Nampa'],
+      ['City', 'Eagle'],
+      ['City', 'Kuna'],
+      ['City', 'Caldwell'],
+      ['City', 'Star'],
+      ['AdministrativeArea', 'Ada County'],
+      ['AdministrativeArea', 'Canyon County'],
+    ],
+  );
+  assert.deepEqual(
     (business.areaServed as Array<{ name: string }>).map((area) => area.name),
     AREAS,
   );
@@ -60,6 +84,10 @@ test('contractor schema preserves contacts, served cities and parent without pub
   assert.equal(encoded.includes('Jared'), false);
 
   const organization = generateOrganizationSchema();
+  assert.deepEqual(
+    (organization.areaServed as Array<{ name: string }>).map((area) => area.name),
+    AREAS,
+  );
   assert.equal((organization.parentOrganization as { '@id': string })['@id'], P5_ORG_ID);
   assert.equal(organization.employee, undefined);
   assert.deepEqual(organization.sameAs, BUSINESS_INFO.sameAs);
@@ -91,6 +119,8 @@ test('noindex ADU city pages stay out of the sitemap', () => {
     assert.equal(getAllSiteUrls().some((entry) => entry.path === `/services/adu/${city}`), false);
   }
   assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/adu'), true);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/areas/middleton'), true);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/guides/middleton-remodeling-guide'), true);
   for (const city of ['boise', 'meridian', 'eagle', 'nampa']) {
     assert.equal(getAllSiteUrls().some((entry) => entry.path === `/services/room-addition/${city}`), true);
   }
@@ -106,6 +136,7 @@ test('IndexNow changed URLs skip noindex ADU pages', () => {
   }
   assert.equal(urls.includes('/'), true);
   assert.equal(urls.includes('/areas/eagle'), true);
+  assert.equal(urls.includes('/areas/middleton'), true);
   assert.equal(urls.includes('/services/kitchen-remodel'), true);
   assert.equal(urls.includes('/blog/example'), true);
 });
@@ -229,7 +260,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {
-  const footerLine = 'Serving the Treasure Valley · Ada and Canyon County';
+  const footerLine = 'Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County';
   // Phase 2: the footer is the shared family SiteFooter; this site's facts live in lib/familyBrand.ts.
   // The family row names every live family site; Boise ADU Co is left out until its own site exists.
   const footer = readFileSync('lib/familyBrand.ts', 'utf8');
@@ -281,7 +312,7 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   const full = readFileSync('public/llms-full.txt', 'utf8');
   for (const file of [llms, full]) {
     assert.equal(/Public representative|staffed storefront|Wapoot/i.test(file), false);
-    assert.match(file, /Serving the Treasure Valley/);
+    assert.match(file, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star/);
     assert.match(file, /hello@boiseremodeling\.co/);
     assert.match(file, /Last updated: 2026-10-16/);
     assert.match(file, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);

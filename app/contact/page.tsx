@@ -32,7 +32,7 @@ generateWebPageSchema,
 import { BUSINESS_INFO } from '@/lib/seo';
 import { areaPath } from '@/lib/seo-routes';
 import { CONTACT_FAQS } from '@/shared/content/contactFaqs';
-import { CITIES,TREASURE_VALLEY_CITIES } from '@/shared/contentData';
+import { SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE, TREASURE_VALLEY_CITIES } from '@/shared/contentData';
 import { CTA_PRIMARY,CTA_REQUEST,CTA_SECONDARY } from '@/shared/ctaCopy';
 import { TextReplyAnswer, TextReplyLine } from '@/components/TextReplyLine';
 import { SITE_CONFIG } from '@/shared/siteConfig';
@@ -295,7 +295,7 @@ export default function ContactPage() {
                 <ContactChannel
                   icon={<MapPin className="h-5 w-5" strokeWidth={1.5} />}
                   label="Where we work"
-                  subtext={SITE_CONFIG.address.serviceArea}
+                  subtext="Ada County and Canyon County"
                 >
                   <p className="leading-relaxed">
                     {TREASURE_VALLEY_CITIES}
@@ -306,7 +306,7 @@ export default function ContactPage() {
                 <ContactChannel
                   icon={<MapPin className="h-5 w-5" strokeWidth={1.5} />}
                   label="Service area"
-                  subtext="Free in-home visits across the Treasure Valley"
+                  subtext="Free in-home visits across Ada County and Canyon County"
                 >
                   <span className="text-sm leading-relaxed">{TREASURE_VALLEY_CITIES}</span>
                 </ContactChannel>
@@ -414,11 +414,11 @@ export default function ContactPage() {
                   Where we <em className="brc-accent">work</em>
                 </>
               }
-              description={`We serve homeowners in ${TREASURE_VALLEY_CITIES}, and surrounding communities.`}
+              description={`We serve homeowners in ${SERVICE_AREA_SENTENCE}.`}
               className="max-w-3xl"
             />
             <nav aria-label="Service areas" className="grid grid-cols-2 lg:grid-cols-4 border-t border-l border-border">
-              {CITIES.map((city) => (
+              {SERVICE_AREA_CITIES.map((city) => (
                 <Link
                   key={city.slug}
                   href={areaPath(city.slug)}

@@ -819,7 +819,7 @@ export const HOMEPAGE_FAQS_FOR_SCHEMA: FAQItem[] = [
   {
     question: 'What areas do you serve?',
     answer:
-      'Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Caldwell, and the greater Treasure Valley.',
+      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
   },
   {
     question: 'Do you handle permits?',

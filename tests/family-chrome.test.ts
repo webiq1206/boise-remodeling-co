@@ -31,7 +31,20 @@ test('the brand config carries this site’s facts, one CTA and one destination'
   assert.equal(FAMILY_BRAND.parentFacebook.href, P5_FACEBOOK_URL);
   assert.deepEqual(FAMILY_BRAND.parentGoogle, { href: P5_GBP_URL, label: 'P5 Home Co on Google' });
   assert.equal(FAMILY_BRAND.nap.line, publicFooterLine());
-  assert.match(FAMILY_BRAND.nap.line, /Serving the Treasure Valley/);
+  assert.match(FAMILY_BRAND.nap.line, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County/);
+  assert.deepEqual(
+    FAMILY_BRAND.footer.areas.links.map((link) => link.label),
+    [
+      'Boise, Idaho',
+      'Meridian, Idaho',
+      'Nampa, Idaho',
+      'Eagle, Idaho',
+      'Kuna, Idaho',
+      'Caldwell, Idaho',
+      'Star, Idaho',
+    ],
+  );
+  assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Middleton|Garden City|Emmett/.test(link.label)), false);
   assert.doesNotMatch(FAMILY_BRAND.nap.line, /Wapoot|4031|Public representative|staffed storefront/i);
   assert.deepEqual(FAMILY_BRAND.header.phoneActions, ['call', 'text', 'chat']);
   assert.equal(FAMILY_BRAND.registration.href, DOPL_LICENSE_SEARCH);
@@ -78,7 +91,8 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   }
   assert.match(html, /<span class="fam-footer-current" aria-current="true">Boise Remodeling Co<\/span>/);
   assert.equal(/rel="noopener noreferrer">(P5 Home Co|Boise)/.test(html), false);
-  assert.match(html, /Serving the Treasure Valley/);
+  assert.match(html, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star/);
+  assert.equal(html.includes('Middleton'), false);
   assert.doesNotMatch(html, /Wapoot|4031|Public representative|staffed storefront/i);
   assert.match(html, /data-testid="link-footer-call"/);
   assert.match(html, /href="sms:\+12084771169"[^>]*data-testid="link-footer-text"/);

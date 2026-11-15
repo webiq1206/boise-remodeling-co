@@ -255,7 +255,7 @@ export const RE10_FAQS: Re10Faq[] = [
   {
     question: "Do you work throughout the Treasure Valley?",
     answer:
-      "Yes. Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, Garden City and Caldwell, across Ada and Canyon County.",
+      "Yes. Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.",
   },
   {
     question: "How do I submit an RE-10 or inspection report?",
@@ -268,13 +268,11 @@ export const RE10_FAQS: Re10Faq[] = [
 export const RE10_SERVICE_AREAS = [
   "Boise",
   "Meridian",
-  "Eagle",
   "Nampa",
+  "Eagle",
   "Kuna",
-  "Star",
-  "Middleton",
-  "Garden City",
   "Caldwell",
+  "Star",
 ];
 
 /**
