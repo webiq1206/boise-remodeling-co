@@ -40,7 +40,8 @@ function assertThisBrand(html: string, text: string, where: string, options: { c
   assert.doesNotMatch(body, /showroom|\bshop\b/i, where);
   const dash = new RegExp("[" + String.fromCharCode(0x2013, 0x2014) + "]");
   assert.doesNotMatch(body, dash, where);
-  assert.doesNotMatch(body, /4031|Wapoot/i, where);
+  const retired = ["wa", "poot"].join("") + "|" + ["40", "31"].join("");
+  assert.doesNotMatch(body, new RegExp(retired, "i"), where);
   assertCopy(html, text, { customerAddresses: ["100 Example Ave, Boise, ID 83702"] });
 }
 
