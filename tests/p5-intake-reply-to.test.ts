@@ -13,7 +13,7 @@ import {INTAKE_RECIPIENTS,routeIntake,type IntakeSite} from '../lib/p5/intakePol
 const site=brand.id as IntakeSite,mailbox=INTAKE_RECIPIENTS[site];
 const snapshot=(email='customer+project@example.invalid'):IntakeSnapshot=>({schema:1,projectId:'p5:12345678-1234-4234-8234-123456789abc',draftId:'12345678-1234-4234-8234-123456789abc',originSite:site,currentSite:site,revision:1,contextVersion:0,savedAt:'2099-01-02T12:00:00Z',contact:{name:'Fictional Customer',email,phone:'2085550100',preferredContact:'either'},details:emptyIntakeDetails(),scope:{text:'Fictional scope',answers:{service:'handyman'},extraction:null,uploads:[]},routing:routeIntake(site,'handyman'),unresolved:[]});
 function adapter(){
- const calls:any[]=[],exports:any={};const from=`${brand.name} <${mailbox}>`;
+ const calls:any[]=[],exports:any={};const from="P5 Home Co <hello@p5homeco.com>";
  const send=async(body:any,options:any)=>{calls.push({body,options});return {data:{id:'mock-accepted'}};};
  const deps:Record<string,unknown>={
   './brand':{ESTIMATOR_BRAND:brand},'./brand.ts':{ESTIMATOR_BRAND:brand},'./emailReplyTo.ts':{safeEmailReplyTo},

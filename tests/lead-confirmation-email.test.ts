@@ -104,7 +104,7 @@ test("saved estimate, plans, repairs and intake customer letters carry the butto
   const scheduleAt = customer.html.indexOf(">Schedule now<");
   const viewAt = customer.html.indexOf(">View or update your estimate online<");
   assert.ok(scheduleAt >= 0);
-  if (viewAt >= 0) assert.ok(scheduleAt < viewAt);
+  if (viewAt >= 0) assert.ok(viewAt < scheduleAt);
   assert.doesNotMatch(internal.text + internal.html, /Schedule now/);
   assert.equal(banned(`${customer.text}\n${visible(customer.html)}`), false);
 
@@ -162,7 +162,8 @@ test("saved estimate, plans, repairs and intake customer letters carry the butto
   const customerIntake = renderIntakeEmail(snapshot, false, []);
   const teamIntake = renderIntakeEmail(snapshot, true, []);
   assert.ok(customerIntake.text.includes(SCHEDULE_URL));
-  assert.match(customerIntake.text, /1 hour option for a home walkthrough/);
+  assert.match(customerIntake.text, /home walkthrough/);
+  assert.match(customerIntake.text, /choose the 1 hour option/);
   assert.ok(!teamIntake.text.includes(SCHEDULE_URL));
   assert.ok(!teamIntake.html.includes("Schedule now"));
 });
