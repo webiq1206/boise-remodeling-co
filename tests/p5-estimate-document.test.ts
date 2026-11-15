@@ -128,7 +128,10 @@ test('estimator email names this brand and leaves P5 Home Co to the From header'
  assert.doesNotMatch(`${text}\n${html}`,/P5 Home Co|p5homeco\.com/);
  assert.match(html,/boiseremodeling\.co\/brand\/png\/wordmark/);
  assert.match(html,/#7D9479/i);
- assert.match(text,/Boise Remodeling Co prepared this estimate\./);
+ assert.match(html,/Meridian, ID 83646/);
+ assert.match(text,/Meridian, ID 83646/);
+ assert.match(text,/Boise remodeling Co prepared this estimate\./);
+ assert.doesNotMatch(`${text}\n${html}`,/is a DBA of/);
  assert.match(pdf,/A P5 Home Co brand/);
  assert.match(pdf,/Boise Remodeling Co prepared this estimate\./);
 });

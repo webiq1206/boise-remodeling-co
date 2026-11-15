@@ -247,6 +247,7 @@ test('Every customer document says which company stands behind the brand',async(
   const pdf=(await pdfTextLayers(await customerPdf('dba-check',result))).join('\n');
   assert.doesNotMatch(`${mail.html}\n${mail.text}`,/P5 Home Co|p5homeco\.com/);
   assert.match(mail.text,/Boise Remodeling Co prepared this estimate\./);
+  assert.match(`${mail.html}\n${mail.text}`,/Meridian, ID 83646/);
   assert.match(pdf,/A P5 Home Co brand/);
 });
 // Owner report 2026-09-22, from a live Handyman estimate: allowance rows read

@@ -19,6 +19,19 @@ export const REVIEW_BG = "#fbf1e3";
 
 export const SCHEDULE_URL = "https://meetings-na2.hubspot.com/client3";
 
+/**
+ * Internal operations mailbox. Test-mode mail and the alert sent when a
+ * customer email fails always go here. Normal brand admin recipients do not.
+ */
+export const INTERNAL_OPS_EMAIL = "hello@p5homeco.com";
+
+/** Test mode and the failed-customer alert ignore the brand inbox. */
+export function internalDeliveryTo(purpose: "test" | "alert", _brand?: { email?: string; name?: string }): string {
+  void purpose;
+  void _brand;
+  return INTERNAL_OPS_EMAIL;
+}
+
 /** t1886u. Kept verbatim on every customer estimate email. */
 export const ESTIMATE_DISCLAIMER =
   "We work hard to make that estimate as realistic as we can, but we can't give you a true bid until we walk the property. Depending on the scope and what we find, the bid may come in higher or lower than this first estimate. Either way, we'll work with you to get you what you want, within your budget.";
@@ -61,6 +74,16 @@ export type BrandSource = {
   cityLine?: string;
 };
 
+/**
+ * City and ZIP for an email footer. A line that starts with a street number
+ * is left off, so a street address is never printed.
+ */
+export function footerCityLine(value: string | null | undefined): string {
+  const line = String(value ?? "").replace(/\s+/g, " ").trim();
+  if (!line || /^\d/.test(line)) return "";
+  return line;
+}
+
 export function phoneTelFrom(phone: string): string {
   const digits = phone.replace(/\D/g, "");
   if (digits.length === 10) return `+1${digits}`;
@@ -102,6 +125,18 @@ export function valueTier(high: number | null | undefined): ValueTier {
   if (high < VALUE_TIERS.smallUnder) return "small";
   if (high > VALUE_TIERS.majorOver) return "major";
   return "standard";
+}
+
+/**
+ * Next-step wording for the three value tiers. Wording only: the numbers
+ * never change. Each sentence is distinct.
+ */
+export function tierNextStep(high: number | null | undefined): string {
+  const schedule = "On the scheduling page, choose the 1 hour option.";
+  const tier = valueTier(high);
+  if (tier === "small") return `The next step is a quick visit, or we can confirm the work by phone. ${schedule}`;
+  if (tier === "major") return `The next step is a planning consultation. We will go through plans and permits with you. ${schedule}`;
+  return `The next step is a home walkthrough, so we can see the property and turn this estimate into a true bid. ${schedule}`;
 }
 
 export function formatMoney(amount: number, cents = true): string {
@@ -261,9 +296,7 @@ export function notice(kind: "info" | "review" | "confidential", text: string): 
 }
 
 export function scheduleBlock(brand: EmailBrand, note?: string): { html: string; text: string } {
-  const line =
-    note?.trim() ||
-    "The next step is a home walkthrough, so we can see the property and turn this estimate into a true bid. On the scheduling page, choose the 1 hour option.";
+  const line = note?.trim() || tierNextStep(null);
   const html = `<p style="margin:0 0 14px;font-size:16px;line-height:1.6;color:${CHARCOAL};">${esc(line)}</p>${button({
     href: SCHEDULE_URL,
     label: "Schedule now",
@@ -340,7 +373,7 @@ export function toText(blocks: readonly Block[]): string {
 
 function footerBits(brand: EmailBrand): string[] {
   const site = brand.siteUrl.replace(/^https:\/\//, "").replace(/\/+$/, "");
-  return [brand.name, brand.cityLine, brand.phoneDisplay, site].map((part) => part.trim()).filter(Boolean);
+  return [brand.name, footerCityLine(brand.cityLine), brand.phoneDisplay, site].map((part) => part.trim()).filter(Boolean);
 }
 
 function footerText(brand: EmailBrand, footerNote?: string): string[] {
@@ -366,7 +399,7 @@ export function layout(input: {
     ? `<a href="tel:${esc(input.brand.phoneTel)}" style="color:#f4f4f2;text-decoration:underline;">${esc(input.brand.phoneDisplay)}</a>`
     : esc(input.brand.phoneDisplay);
   const siteLink = /^https:\/\//i.test(site) ? `<a href="${esc(site)}" style="color:#f4f4f2;text-decoration:underline;">${esc(site.replace(/^https:\/\//, ""))}</a>` : "";
-  const footer = [esc(input.brand.name), esc(input.brand.cityLine), phone, siteLink].filter((part) => part && part !== "undefined").join(" · ");
+  const footer = [esc(input.brand.name), esc(footerCityLine(input.brand.cityLine)), phone, siteLink].filter((part) => part && part !== "undefined").join(" · ");
   const extra = input.footerNote?.trim() ? `<p style="margin:8px 0 0;font-size:12px;line-height:1.5;color:#d9d9d6;">${esc(input.footerNote.trim())}</p>` : "";
   const kicker = input.kicker?.trim()
     ? `<p style="margin:0 0 6px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:${MUTED};">${esc(input.kicker.trim())}</p>`

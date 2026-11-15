@@ -33,7 +33,7 @@ function assertThisBrand(html: string, text: string, where: string, options: { c
   assert.match(html, new RegExp(LOGO.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")), where);
   assert.match(html, new RegExp(ESTIMATOR_BRAND.domain), where);
   assert.match(html, new RegExp(ESTIMATOR_BRAND.accent, "i"), where);
-  if (options.city) assert.match(body, /Meridian, ID 83646/, where);
+  if (options.city !== false) assert.match(body, /Meridian, ID 83646/, where);
   if (options.phone) assert.match(body, /\(208\) 477-1169/, where);
   assert.doesNotMatch(body, /P5 Home Co/, where);
   assert.doesNotMatch(body, /p5homeco\.com/, where);
@@ -75,8 +75,8 @@ test("every remodeling estimate email uses this brand and the stored range", () 
     assert.deepEqual(fixture, before, "rendering does not change the stored fixture");
     assert.ok(customer.html.startsWith("<!doctype html>"), fixture.id);
     assert.ok(admin.html.startsWith("<!doctype html>"), fixture.id);
-    assertThisBrand(customer.html, customer.text, `${fixture.id} customer`, { phone: true });
-    assertThisBrand(admin.html, admin.text, `${fixture.id} admin`);
+    assertThisBrand(customer.html, customer.text, `${fixture.id} customer`, { phone: true, city: true });
+    assertThisBrand(admin.html, admin.text, `${fixture.id} admin`, { city: false });
     const amount = storedAmount(fixture);
     if (amount && fixture.high != null) {
       const tier = valueTier(fixture.high);
@@ -87,6 +87,17 @@ test("every remodeling estimate email uses this brand and the stored range", () 
       assert.ok(customer.text.includes(ESTIMATE_DISCLAIMER), fixture.id);
       assert.match(customer.html, /Schedule now/);
       assert.match(customer.text, /https:\/\/meetings-na2\.hubspot\.com\/client3/);
+      if (tier === "small") {
+        assert.match(customer.text, /quick visit/);
+        assert.doesNotMatch(customer.text, /home walkthrough|planning consultation/);
+      } else if (tier === "major") {
+        assert.match(customer.text, /planning consultation/);
+        assert.match(customer.text, /plans and permits/);
+        assert.doesNotMatch(customer.text, /quick visit|home walkthrough/);
+      } else {
+        assert.match(customer.text, /home walkthrough/);
+        assert.doesNotMatch(customer.text, /quick visit|planning consultation/);
+      }
     } else {
       roles.add("withheld");
       assert.match(customer.text, /Pricing pending review/);
@@ -120,8 +131,8 @@ test("intake and review mail for this brand keep P5 Home Co out of the message",
   } as IntakeSnapshot;
   const customer = renderIntakeEmail(snapshot, false, []);
   const team = renderIntakeEmail(snapshot, true, []);
-  assertThisBrand(customer.html, customer.text, "intake customer", { phone: true });
-  assertThisBrand(team.html, team.text, "intake team", { phone: true });
+  assertThisBrand(customer.html, customer.text, "intake customer", { phone: true, city: true });
+  assertThisBrand(team.html, team.text, "intake team", { phone: true, city: true });
   assert.match(customer.text, /Schedule now/);
   assert.doesNotMatch(team.html, /Schedule now/);
   assert.match(customer.html, /#7D9479/i);
