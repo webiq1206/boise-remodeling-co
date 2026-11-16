@@ -1,6 +1,10 @@
 /**
  * The short lead confirmation: greeting, Schedule now, disclaimer.
  *
+ * When the lead already saw an estimate (kind "estimate") the letter opens
+ * with "Hey", invites changes before the disclaimer and ends with the family
+ * P.S. after the sign-off. A plain request confirmation has none of that.
+ *
  * Used when a form saves a lead and does not already send its own customer
  * letter (assistant chat, Facebook instant form, and the short-request step
  * that first records an email). A missing address is a no-op. A send failure
@@ -9,6 +13,8 @@
 
 import { ESTIMATOR_BRAND } from "@/lib/p5/brand";
 import {
+  ESTIMATE_FAMILY_PS,
+  estimatePostscriptHtml,
   scheduleBlockHtml,
   scheduleBlockText,
   type ScheduleIntent,
@@ -44,16 +50,18 @@ export function buildLeadConfirmation(input: {
   const contact = `If you have questions, just reply to this email or call ${SITE_CONFIG.phone}.`;
   const signoff = `The ${brandName} team`;
   const block = scheduleBlockText({ kind, intent: input.intent });
-  const text = [`Hi ${first},`, "", thanks, "", block, "", contact, "", signoff].join("\n");
+  const greeting = kind === "estimate" ? `Hey ${first},` : `Hi ${first},`;
+  const text = [greeting, "", thanks, "", block, "", contact, "", signoff, ...(kind === "estimate" ? ["", ESTIMATE_FAMILY_PS] : [])].join("\n");
   const html = wrapEmailHtml({
     title: "We have your request",
     content: `
-      <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">${escapeHtml(greeting)}</p>
       <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">${escapeHtml(thanks)}</p>
       ${scheduleBlockHtml({ kind, intent: input.intent, accent: ESTIMATOR_BRAND.accent, panel: true })}
       <p style="margin:0 0 16px;font-size:16px;line-height:1.6;">${escapeHtml(contact)}</p>
       ${textReplyLineHtml()}
       <p style="margin:24px 0 0;font-size:16px;line-height:1.6;">${escapeHtml(signoff)}</p>
+      ${kind === "estimate" ? estimatePostscriptHtml() : ""}
     `,
   });
   return {

@@ -1,5 +1,5 @@
 import { ESTIMATOR_BRAND } from "@/lib/p5/brand";
-import { scheduleBlockHtml } from "@/lib/p5/scheduleEmail";
+import { estimatePostscriptHtml, scheduleBlockHtml } from "@/lib/p5/scheduleEmail";
 import { escapeHtml, wrapEmailHtml, EMAIL_BRAND } from "@/server/services/emailLayout";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import type { AdminView, LeadView } from "@/shared/costs";
@@ -128,7 +128,7 @@ export function buildPlanCustomerEmail(
 
   const body = `
     <p style="margin:0 0 18px;color:${EMAIL_BRAND.text};font-size:15px;line-height:1.7;">
-      Hi ${escapeHtml(firstName)}, here is your planning range.
+      Hey ${escapeHtml(firstName)}, here is your planning range.
     </p>
 
     ${scheduleBlockHtml({ kind: "estimate", accent: ESTIMATOR_BRAND.accent, panel: true })}
@@ -181,6 +181,7 @@ export function buildPlanCustomerEmail(
     <p style="margin:0;color:${EMAIL_BRAND.text};font-size:14px;line-height:1.7;">
       If you have questions, just reply to this email or call ${escapeHtml(SITE_CONFIG.phone)}.
     </p>
+    ${estimatePostscriptHtml({ color: EMAIL_BRAND.text, fontSize: 14 })}
   `;
 
   return wrapEmailHtml({ title: "Your planning range", content: body });

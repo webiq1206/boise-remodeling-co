@@ -20,6 +20,7 @@ import {
   type PlanContact,
 } from "../server/services/planEmail";
 import { estimateProject } from "../shared/costs";
+import { ESTIMATE_ADJUST_NOTE, ESTIMATE_DISCLAIMER, ESTIMATE_FAMILY_PS, SCHEDULE_URL } from "../lib/p5/scheduleEmail";
 import { LEAD_FORBIDDEN_PHRASES } from "../shared/costs/outputs";
 import { planMeasurements } from "../shared/plans/estimateInput";
 import type { PlanExtractionResult } from "../shared/plans/extraction";
@@ -208,6 +209,30 @@ const adminHtml = buildPlanAdminEmail(CONTACT, ESTIMATE.admin, VIEW, {
   sheetsUsed: READ.sheetsUsed,
 });
 const adminText = strip(adminHtml);
+
+/* After an estimate (owner request, 16 November 2026): Schedule now stays, the
+   adjust note sits before the disclaimer and the family P.S. is the last
+   paragraph of the customer's letter. The team's copy carries none of it. */
+{
+  const seen = strip(customerHtml);
+  check(customerHtml.includes(`href="${SCHEDULE_URL}"`), "the customer email lost the Schedule now link");
+  check(
+    seen.includes(ESTIMATE_ADJUST_NOTE) && seen.indexOf(ESTIMATE_ADJUST_NOTE) < seen.indexOf(ESTIMATE_DISCLAIMER),
+    "the customer email does not invite changes before the disclaimer",
+  );
+  check(
+    seen.split(ESTIMATE_FAMILY_PS).length === 2 &&
+      /^<\/p>\s*<\/div>\s*<div class="footer"/.test(
+        customerHtml.slice(customerHtml.indexOf(ESTIMATE_FAMILY_PS) + ESTIMATE_FAMILY_PS.length),
+      ),
+    "the family P.S. is not the last paragraph of the customer email",
+  );
+  check(/\bHey [A-Z]/.test(seen) && !/\bHi [A-Z]/.test(seen), "the customer email does not open with Hey");
+  check(
+    !adminText.includes("P.S.") && !adminText.includes(ESTIMATE_ADJUST_NOTE) && !adminText.includes("Schedule now"),
+    "the team email carries the customer's after-estimate wording",
+  );
+}
 check(
   adminText.includes(Math.round(ESTIMATE.admin.totalInternalCost).toLocaleString("en-US")),
   "the admin email does not carry the internal cost",

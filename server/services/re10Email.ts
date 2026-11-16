@@ -1,5 +1,5 @@
 import { ESTIMATOR_BRAND } from "@/lib/p5/brand";
-import { scheduleBlockHtml } from "@/lib/p5/scheduleEmail";
+import { estimatePostscriptHtml, scheduleBlockHtml } from "@/lib/p5/scheduleEmail";
 import { escapeHtml, wrapEmailHtml, EMAIL_BRAND } from "@/server/services/emailLayout";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { TRADE_LABELS, type Re10Estimate } from "@/shared/costs/re10Repairs";
@@ -133,7 +133,7 @@ export function buildRe10CustomerEmail(
       : "";
 
   const content = `
-    <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hi ${escapeHtml(firstName)}, here is the price for the repairs on the RE-10 you sent.</p>
+    <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hey ${escapeHtml(firstName)}, here is the price for the repairs on the RE-10 you sent.</p>
 
     ${scheduleBlockHtml({ kind: "estimate", accent: ESTIMATOR_BRAND.accent, panel: true })}
 
@@ -168,6 +168,7 @@ export function buildRe10CustomerEmail(
 
     <p style="color:${EMAIL_BRAND.text};line-height:1.6;">If you have questions, just reply to this email or call <a href="${SITE_CONFIG.phoneHref}" style="color:${EMAIL_BRAND.text};">${escapeHtml(SITE_CONFIG.phone)}</a>.</p>
     <p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>
+    ${estimatePostscriptHtml({ color: EMAIL_BRAND.text })}
   `;
 
   return wrapEmailHtml({
