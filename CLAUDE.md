@@ -619,6 +619,20 @@ republishes the previous commit. This has now cost one full validation round:
 serving `b6abaa0`. Pull, then Redeploy, then confirm against a behaviour only
 the new build has rather than against the fact that a deploy ran.
 
+## Scope and one total for customers (owner decision, 16 November 2026)
+
+Every customer-facing estimate shows the full scope of work and ONE price (the
+range, or a firm total) for the whole project: no line item, unit, category,
+division, room, building or allowance price. This covers the framed instant
+estimator (enforced on p5homeco.com) and this site's copy of the shared
+document estimator (`lib/p5`: `/estimate/scope`, staff-published estimates,
+the customer email, PDF and saved links). `customerPresentation()` in
+`lib/p5/customerProjection.ts` is the one customer boundary; edit it in
+p5-home-co and apply the same change here, then update
+`lib/p5/shared-manifest.json`. Internal records, team emails, the
+administrative PDF, the admin page, the CRM payload and QuickBooks keep every
+price.
+
 ## Publishing to Replit: never approve a DROP
 
 Replit's Republish compares the development database with production and

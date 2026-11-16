@@ -62,7 +62,7 @@ const STEPS: { title: string; text: string }[] = [
   },
   {
     title: "See your preliminary range on screen",
-    text: "Your preliminary price range appears with a breakdown by division of work.",
+    text: "Your preliminary price range appears with the full scope of work, organized by division.",
   },
 ];
 
