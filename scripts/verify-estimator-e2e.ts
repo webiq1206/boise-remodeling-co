@@ -32,6 +32,12 @@ import { assessBudget } from "../shared/costs/budget";
 import { buildCustomerEmailHtml, buildAdminEmailHtml } from "../server/services/consultationEmail";
 import { buildLeadEstimateRecord } from "../server/services/leadRecord";
 import {
+  ESTIMATE_ADJUST_NOTE,
+  ESTIMATE_DISCLAIMER,
+  ESTIMATE_FAMILY_PS,
+  SCHEDULE_URL,
+} from "../lib/p5/scheduleEmail";
+import {
   EMPTY_REFINEMENTS,
   calculateEstimate,
   getAvailableFinishLevels,
@@ -377,6 +383,26 @@ for (const project of PROJECTS) {
   // Admin gets the internal breakdown; the customer must not.
   t(`consistency/${project}/admin-has-breakdown`, adminHtml.includes("Internal breakdown"));
   t(`consistency/${project}/customer-lacks-breakdown`, !custHtml.includes("Internal breakdown"));
+
+  // After an estimate (owner request, 16 November 2026): the customer letter opens
+  // with "Hey", invites changes before the disclaimer, keeps Schedule now and closes
+  // with the family P.S. after the sign-off. The team's copy carries none of it.
+  t(`consistency/${project}/customer-email-greeting`, custHtml.includes(">Hey QA,<") && !custHtml.includes(">Hi QA,<"));
+  t(`consistency/${project}/customer-email-schedule-link`, custHtml.includes(`href="${SCHEDULE_URL}"`));
+  t(
+    `consistency/${project}/customer-email-adjust-before-disclaimer`,
+    custHtml.includes(ESTIMATE_ADJUST_NOTE) && custHtml.indexOf(ESTIMATE_ADJUST_NOTE) < custHtml.indexOf(ESTIMATE_DISCLAIMER),
+  );
+  t(
+    `consistency/${project}/customer-email-ps-after-signoff`,
+    custHtml.split(ESTIMATE_FAMILY_PS).length === 2 &&
+      custHtml.indexOf(ESTIMATE_FAMILY_PS) > custHtml.indexOf("The Boise Remodeling Co team") &&
+      /^<\/p>\s*<\/div>\s*<div class="footer"/.test(custHtml.slice(custHtml.indexOf(ESTIMATE_FAMILY_PS) + ESTIMATE_FAMILY_PS.length)),
+  );
+  t(
+    `consistency/${project}/admin-email-no-customer-wording`,
+    !adminHtml.includes("P.S.") && !adminHtml.includes(ESTIMATE_ADJUST_NOTE) && !adminHtml.includes("Schedule now"),
+  );
 
   // The admin rollup must reconcile to the quoted centre.
   const resolved = resolveInternalEstimate(project, quality, base, refinements)!;

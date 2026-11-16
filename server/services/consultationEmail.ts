@@ -4,7 +4,7 @@ import {
   EMAIL_BRAND,
 } from "@/server/services/emailLayout";
 import { ESTIMATOR_BRAND } from "@/lib/p5/brand";
-import { scheduleBlockHtml, type ScheduleIntent } from "@/lib/p5/scheduleEmail";
+import { estimatePostscriptHtml, scheduleBlockHtml, type ScheduleIntent } from "@/lib/p5/scheduleEmail";
 import { SITE_CONFIG, textReplyLineHtml } from "@/shared/siteConfig";
 import {
   takeoffForRange,
@@ -779,7 +779,7 @@ export function buildCustomerEmailHtml(
   const signoff = `<p style="margin-top:24px;color:${EMAIL_BRAND.text};">The Boise Remodeling Co team</p>`;
   const content = estimate
     ? `
-      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hi ${escapeHtml(firstName)},</p>
+      <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hey ${escapeHtml(firstName)},</p>
       <p style="color:${EMAIL_BRAND.text};line-height:1.6;">Thanks for thinking of Boise Remodeling Co. Here is the planning range you built.</p>
       ${schedule}
       ${buildEstimateSectionsHtml(estimate, overrides)}
@@ -787,6 +787,7 @@ export function buildCustomerEmailHtml(
       ${contact}
       ${textReplyLineHtml()}
       ${signoff}
+      ${estimatePostscriptHtml({ color: EMAIL_BRAND.text })}
     `
     : `
       <p class="greeting" style="font-size:18px;color:${EMAIL_BRAND.text};margin:0 0 20px;">Hi ${escapeHtml(firstName)},</p>

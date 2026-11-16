@@ -10,6 +10,15 @@
  *
  * Copied from the parent confirmation in p5-home-co (app/lib/leads/scheduleEmail.ts).
  * Brand facts stay with the caller. This module does not name a shop or showroom.
+ *
+ * After an estimate (owner request, 16 November 2026) the customer is also
+ * invited to adjust it and asked one question, as a P.S., with the family
+ * note for this brand. Those words are the ones approved for the family's
+ * central estimator. They live here and nowhere else in this repository:
+ * ESTIMATE_ADJUST_NOTE rides inside the estimate block, before the
+ * disclaimer, and every customer email that embeds the estimate block ends
+ * with ESTIMATE_FAMILY_PS (text) or estimatePostscriptHtml() (HTML), after
+ * its sign-off. Request confirmations and team emails carry neither.
  */
 
 /** HubSpot meetings page. Durations on the page are 15, 30, 60 and 120 minutes. */
@@ -26,6 +35,17 @@ export const ESTIMATE_DISCLAIMER =
 
 export const SHARED_DISCLAIMER =
   "We work hard to make any estimate we share as realistic as we can, but we can't give you a true bid until we walk the property. Depending on the scope and what we find, the bid may come in higher or lower than that first estimate. Either way, we'll work with you to get you what you want, within your budget.";
+
+/** An estimate is easy to change, and the customer should hear that before the disclaimer. */
+export const ESTIMATE_ADJUST_NOTE =
+  "If something is missing, or you'd like to change the scope, the finishes or the timing, tell us. It's easy to adjust, and we'd rather get it right than have you guessing.";
+
+/**
+ * The last paragraph of every customer email about an estimate. Always a
+ * question, never a pitch, and it names the family this brand belongs to.
+ */
+export const ESTIMATE_FAMILY_PS =
+  "P.S. Anything else on your list? Boise Remodeling Co is part of P5 Home Co, the company behind Boise Construction Co, Boise Cabinet Co and Boise Handyman Co. So whether it's a few repairs, new cabinets, a full kitchen or bath remodel, an addition or a new home, tell us and we'll plan it alongside this project.";
 
 export function scheduleIntentFor(input: { requestKind?: string | null; form?: string | null }): ScheduleIntent {
   const kind = (input.requestKind ?? "").trim().toLowerCase();
@@ -55,6 +75,17 @@ function safeHref(value: string): string {
 
 function safeAccent(value: string | undefined): string {
   return /^#[0-9a-fA-F]{6}$/.test(value ?? "") ? (value as string) : "#7D9479";
+}
+
+/**
+ * The P.S. as the closing HTML paragraph. The caller places it last, after
+ * its sign-off. With no colour it inherits the email's own text colour, so
+ * it reads on the charcoal letters and the light ones alike.
+ */
+export function estimatePostscriptHtml(options: { color?: string; fontSize?: number } = {}): string {
+  const color = /^#[0-9a-fA-F]{6}$/.test(options.color ?? "") ? `color:${options.color};` : "";
+  const size = Number.isFinite(options.fontSize) && (options.fontSize as number) >= 12 && (options.fontSize as number) <= 20 ? Math.round(options.fontSize as number) : 16;
+  return `<p style="margin:24px 0 0;font-size:${size}px;line-height:1.6;${color}">${esc(ESTIMATE_FAMILY_PS)}</p>`;
 }
 
 /**
@@ -137,6 +168,7 @@ function disclaimerFor(kind: ScheduleBlockInput["kind"]): string {
 export function scheduleBlockText(input: ScheduleBlockInput): string {
   const lines = [nextSentence(input), "", `Schedule now: ${SCHEDULE_URL}`, ""];
   if (input.secondary) lines.push(`${input.secondary.label}: ${safeHref(input.secondary.href)}`, "");
+  if (input.kind === "estimate") lines.push(ESTIMATE_ADJUST_NOTE, "");
   lines.push(disclaimerFor(input.kind));
   return lines.join("\n");
 }
@@ -145,7 +177,10 @@ function paragraph(text: string): string {
   return `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:${BUTTON_CHARCOAL};">${esc(text)}</p>`;
 }
 
-/** HTML block: the duration sentence, the charcoal button, the URL, the disclaimer. */
+/**
+ * HTML block: the duration sentence, the charcoal button, the URL, the
+ * disclaimer. The estimate variant invites changes just before the disclaimer.
+ */
 export function scheduleBlockHtml(input: ScheduleBlockInput): string {
   const accent = input.accent;
   const inner = [
@@ -155,6 +190,7 @@ export function scheduleBlockHtml(input: ScheduleBlockInput): string {
     input.secondary
       ? `<div style="height:4px;line-height:4px;font-size:0;">&nbsp;</div>${bulletproofButton({ href: input.secondary.href, label: input.secondary.label, variant: "secondary" })}`
       : "",
+    input.kind === "estimate" ? paragraph(ESTIMATE_ADJUST_NOTE) : "",
     paragraph(disclaimerFor(input.kind)),
   ].join("");
   if (!input.panel) return inner;

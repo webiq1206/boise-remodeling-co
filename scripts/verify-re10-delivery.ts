@@ -15,6 +15,7 @@ import {
   type Re10Contact,
 } from "../server/services/re10Email";
 import { estimateRe10, type RepairItemInput, type RepairKind } from "../shared/costs/re10Repairs";
+import { ESTIMATE_ADJUST_NOTE, ESTIMATE_DISCLAIMER, ESTIMATE_FAMILY_PS, SCHEDULE_URL } from "../lib/p5/scheduleEmail";
 import { findForbiddenPhrase } from "../shared/costCatalog";
 import { RE10_EVENTS, RE10_FUNNEL_ORDER } from "../shared/re10/analyticsEvents";
 import { EXTRACTABLE_KINDS, EXTRACTION_SCHEMA, EXTRACTION_REVIEW_REASONS } from "../shared/re10/extraction";
@@ -127,6 +128,21 @@ for (const contact of CONTACTS) {
     check(!ct.includes("$" + est.low.toLocaleString("en-US")), `${label}: customer email leaks the internal band low`);
     check(!ct.includes("$" + est.high.toLocaleString("en-US")), `${label}: customer email leaks the internal band high`);
     check(ct.includes(contact.propertyAddress), `${label}: customer email is missing the property address`);
+    // After an estimate (owner request, 16 November 2026): Schedule now stays, the
+    // adjust note sits before the disclaimer and the family P.S. is the last
+    // paragraph. The team's copy carries none of that wording.
+    check(cust.includes(`href="${SCHEDULE_URL}"`), `${label}: customer email lost the Schedule now link`);
+    check(
+      ct.includes(ESTIMATE_ADJUST_NOTE) && ct.indexOf(ESTIMATE_ADJUST_NOTE) < ct.indexOf(ESTIMATE_DISCLAIMER),
+      `${label}: customer email does not invite changes before the disclaimer`,
+    );
+    check(
+      ct.split(ESTIMATE_FAMILY_PS).length === 2 &&
+        /^<\/p>\s*<\/div>\s*<div class="footer"/.test(cust.slice(cust.indexOf(ESTIMATE_FAMILY_PS) + ESTIMATE_FAMILY_PS.length)),
+      `${label}: the family P.S. is not the last paragraph of the customer email`,
+    );
+    check(/\bHey [A-Z]/.test(ct) && !/\bHi [A-Z]/.test(ct), `${label}: customer email does not open with Hey`);
+    check(!at.includes("P.S.") && !at.includes(ESTIMATE_ADJUST_NOTE), `${label}: the team email carries the customer's after-estimate wording`);
     check(
       /priced separately once we see them/i.test(ct),
       `${label}: customer email does not say the onsite items are excluded`,

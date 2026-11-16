@@ -1,5 +1,5 @@
 import {ESTIMATOR_BRAND as brand} from './brand.ts';
-import {scheduleBlockHtml,scheduleBlockText} from './scheduleEmail.ts';
+import {ESTIMATE_FAMILY_PS,estimatePostscriptHtml,scheduleBlockHtml,scheduleBlockText} from './scheduleEmail.ts';
 import {estimateLinkUrl} from './estimateLinks.ts';
 import {legalIdentityLine} from './brandIdentity.ts';
 import {buildAdminSummary,adminBasis} from './adminEstimate.ts';
@@ -42,7 +42,7 @@ function customerHtml(doc:EstimateDocument,link=''){
  const list=(items:string[],note='')=>`<ul style="margin:0;padding:0 0 0 20px">${items.map(x=>`<li style="margin:0 0 6px;font-size:15px;line-height:1.55;color:${C.ink}">${escape(x)}</li>`).join('')}</ul>${note?`<p style="margin:6px 0 0;font-size:13px;line-height:1.5;color:${C.soft}">${escape(note)}</p>`:''}`;
  const parts:string[]=[];
  const first=doc.customer.name.split(' ')[0];
- parts.push(`<p style="margin:0 0 14px;font-size:16px;line-height:1.6;color:${C.ink}">${escape(first?`Hi ${first},`:'Hello,')}</p>`);
+ parts.push(`<p style="margin:0 0 14px;font-size:16px;line-height:1.6;color:${C.ink}">${escape(first?`Hey ${first},`:'Hello,')}</p>`);
  parts.push(`<p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:${C.ink}">Thank you for using the ${escape(doc.brand.name)} online estimator. Your preliminary estimate is below, and the complete estimate is attached as a PDF.</p>`);
  // Schedule now leads. The saved-estimate link stays, as the quieter action.
  parts.push(scheduleBlockHtml({kind:'estimate',accent,secondary:link?{href:link,label:'View or update your estimate online'}:undefined}));
@@ -70,6 +70,8 @@ function customerHtml(doc:EstimateDocument,link=''){
  parts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse">${doc.nextSteps.map(([title,body],i)=>`<tr><td style="padding:0 12px 12px 0;vertical-align:top;font-size:16px;font-weight:700;color:${C.ink};width:28px">${String(i+1).padStart(2,'0')}</td><td style="padding:0 0 12px;vertical-align:top"><p style="margin:0 0 2px;font-size:15px;font-weight:700;color:${C.ink}">${escape(title)}</p><p style="margin:0;font-size:14px;line-height:1.5;color:${C.muted}">${escape(body)}</p></td></tr>`).join('')}</table>`);
  parts.push(`<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;margin:8px 0 16px"><tr><td align="center" style="padding:18px 16px;background:${tint};border:1px solid ${accent}"><a href="${escape(doc.review.mailto)}" style="display:inline-block;padding:12px 22px;border:1px solid ${C.ink};border-radius:6px;background:#FFFFFF;font-size:15px;font-weight:700;color:${C.ink};text-decoration:none;${FONT}">${escape(doc.review.label)}</a><p style="margin:10px 0 0;font-size:14px;color:${C.muted}"><a href="${escape(doc.review.mailto)}" style="color:${C.muted}">${escape(doc.review.email)}</a> &nbsp;|&nbsp; <a href="${escape(doc.review.tel)}" style="color:${C.muted};text-decoration:none">${escape(doc.review.phone)}</a></p></td></tr></table>`);
  parts.push(`<p style="margin:0;font-size:13px;line-height:1.55;color:${C.muted}"><b style="color:${C.ink}">${escape(doc.notice.lead)}</b> ${escape(doc.notice.text)}</p>`);
+ // The P.S. closes the letter (scheduleEmail.ts owns the words). Nothing follows it but the footer.
+ parts.push(estimatePostscriptHtml({color:C.ink,fontSize:15}));
  return parts.join('');
 }
 export function customerLayout(doc:EstimateDocument,body:string){
@@ -106,6 +108,8 @@ export function customerText(doc:EstimateDocument,link=''){
  lines.push('',`${doc.review.label}: ${doc.review.email} | ${doc.review.phone}`,'',`${doc.notice.lead} ${doc.notice.text}`,'',`${doc.brand.name} | ${doc.brand.phone} | ${doc.brand.email} | ${doc.brand.domain}`);
  if(doc.brand.endorsed)lines.push('A P5 Home Co brand');if(doc.legalLine)lines.push(doc.legalLine);
  lines.push('','Your complete estimate is attached as a PDF.');
+ // The P.S. is the last paragraph of the letter.
+ lines.push('',ESTIMATE_FAMILY_PS);
  return lines.join('\n');
 }
 /**
