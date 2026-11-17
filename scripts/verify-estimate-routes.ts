@@ -345,6 +345,7 @@ async function oneTeamEmailPerRequest() {
     assert.equal(intakeFor('Hal Verifier', 'initial').length, 1, 'the bridge is already on its way');
     assert.equal(intakeFor('Hal Verifier', 'initial')[0].team_alert, 'confirm');
     assert.deepEqual(intakeFor('Hal Verifier', 'initial')[0].team_notes, ['Lead dashboard: https://leads.boiseremodeling.co', `Website request id: ${slow.body.requestId}`]);
+    assert.equal('team_internal_notes' in intakeFor('Hal Verifier', 'initial')[0], false, 'no planning range: no internal pricing notes');
     assert.deepEqual(mail.filter((message) => message.to.includes('hal@example.com')).length, 1, 'the customer email is sent before p5 answers');
     assert.deepEqual(teamMail('Hal Verifier'), [], 'the team email is undecided until p5 answers');
     release();
@@ -378,10 +379,11 @@ async function oneTeamEmailPerRequest() {
     p5Answer = async () => json({ ok: true });
     await post({ name: 'Cam Verifier', phone: '2085550171', callback: '1', contactPreference: 'call', bestTime: 'Morning' });
     await expectSiteTeamEmail('Cam Verifier', /^Callback request: Cam Verifier · 2085550171$/, 'a callback request p5 did not confirm');
+    assert.equal('team_internal_notes' in intakeFor('Cal Verifier', 'initial')[0], false, 'a callback has no planning range');
 
     // 4. A request with a planning range attached. Confirmed: no site email, and the range, the
     // price of each trade and the county record ride to p5 as team notes instead. Our costs and
-    // margins do not: they reach the team only in the site's own email, the fallback.
+    // margins ride beside them in team_internal_notes, never in team_notes.
     const carried = { project: 'kitchen', finish: 'mid-range', sqft: 180, priceLow: 1, priceHigh: 2, roi: 0, confidence: 'Planning range' };
     const propertyProfile = { formattedAddress: '123 Main St, Boise, ID 83702', city: 'Boise', state: 'ID', zip: '83702', parcelId: 'R1234567890', zoning: 'R-1C', lotSizeSqFt: 8276, lotSizeAcres: 0.19, permittingAuthority: 'City of Boise' };
     p5Answer = async () => json({ ok: true, alert: 'sent' });
@@ -399,7 +401,26 @@ async function oneTeamEmailPerRequest() {
     assert.ok(notes.filter((line) => /^Price by trade, [^:]+: \$[\d,]+( \(.+\))?$/.test(line)).length >= 8);
     // Costs and margins stay out of HubSpot, and the p5 team email is copied there: nothing in
     // the body the bridge posts names a cost, margin, markup, profit, contingency or overhead.
-    assert.doesNotMatch(JSON.stringify(intakeFor('Ivy Verifier', 'initial')[0]), /cost|margin|mark-?up|profit|contingenc|overhead|recompute-mismatch/i);
+    // Outside team_internal_notes, that is: team_notes names none of it, alert kinds included.
+    const { team_internal_notes: internalNotes, ...ivyRest } = intakeFor('Ivy Verifier', 'initial')[0] as { team_internal_notes: string[] } & Record<string, unknown>;
+    assert.doesNotMatch(JSON.stringify(ivyRest), /cost|margin|mark-?up|profit|contingenc|overhead|recompute-mismatch/i);
+    // Internal pricing in the one team email (owner, 17 November 2026): our cost, margin and the
+    // alert wording ride in their own field. p5 then sends "Lead and pricing", which its inbox
+    // sync does not copy into HubSpot. Totals and alert wording first, our cost by trade after.
+    assert.ok(Array.isArray(internalNotes) && internalNotes.length <= 60 && internalNotes.every((line) => typeof line === 'string' && line.length <= 300 && /^[^:\n]{2,60}: \S/.test(line)), 'internal pricing notes are well formed');
+    assert.match(internalNotes[0], /^Direct cost: \$[\d,]+$/);
+    assert.match(internalNotes[1], /^Contingency: \$[\d,]+$/);
+    assert.match(internalNotes[2], /^Total internal cost: \$[\d,]+$/);
+    assert.match(internalNotes[3], /^Gross profit: \$[\d,]+$/);
+    assert.match(internalNotes[4], /^Margin: [\d.]+% gross margin \([\d.]+% markup\)/);
+    assert.match(internalNotes[5], /^Quoted range basis: [\d.]+x to [\d.]+x of \$[\d,]+$/);
+    assert.equal(internalNotes[6], 'Pricing alerts: recompute-mismatch', 'the alert is named here and only counted in team_notes');
+    const internalTrades = internalNotes.filter((line) => /^Trade, [^:]+: our cost \$[\d,]+, customer \$[\d,]+/.test(line));
+    assert.ok(internalTrades.length >= 8);
+    assert.equal(internalTrades.length, notes.filter((line) => line.startsWith('Price by trade, ')).length, 'one cost line for every priced trade');
+    const usd = (line: string) => Number(line.match(/\$([\d,]+)/)![1].replace(/,/g, ''));
+    assert.ok(Math.abs(usd(internalNotes[0]) + usd(internalNotes[1]) - usd(internalNotes[2])) <= 1, 'direct cost plus contingency is the total internal cost');
+    for (const line of notes) assert.equal(internalNotes.includes(line), false, 'the two fields never share a line');
     assert.ok(notes.some((line) => line === 'County record: Parcel: R1234567890; Zoning: R-1C; Lot: 0.19 acres (8,276 sq ft)'));
     assert.ok(notes.some((line) => line === 'Permits: City of Boise'));
     assert.equal(mail.filter((message) => message.to.includes('ivy@example.com')).length, 1, 'the customer still gets their planning range');
@@ -419,6 +440,7 @@ async function oneTeamEmailPerRequest() {
     const detailsBody = intakeFor('Hal Verifier', 'details')[0];
     assert.equal(detailsBody.team_alert, 'confirm');
     assert.deepEqual(detailsBody.team_notes, ['Lead dashboard: https://leads.boiseremodeling.co', `Website request id: ${requestId}`]);
+    assert.equal('team_internal_notes' in detailsBody, false, 'step 2 sends no internal pricing notes');
     // "none" is what p5 answers when the details arrive before it has filed the request.
     p5Answer = async () => json({ ok: true, alert: 'none' });
     const addedAgain = await postDetails({ requestId, token: detailsToken, details: { projectType: 'Kitchen remodel' } });

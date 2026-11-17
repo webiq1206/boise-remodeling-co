@@ -15,7 +15,11 @@ import {
 } from "@/shared/costCatalog";
 import { resolveInternalEstimate } from "@/shared/costs/resolve";
 import { classifyTouch, type MarketingAttribution } from "@/lib/p5/marketingAttribution";
-import { TEAM_NOTE_MAX_LENGTH, TEAM_NOTES_MAX_LINES } from "@/server/services/p5IntakeBridge";
+import {
+  TEAM_INTERNAL_NOTES_MAX_LINES,
+  TEAM_NOTE_MAX_LENGTH,
+  TEAM_NOTES_MAX_LINES,
+} from "@/server/services/p5IntakeBridge";
 import { assessBudget, budgetGuidance } from "@/shared/costs/budget";
 import {
   getRefinementVisibility,
@@ -757,14 +761,15 @@ export function buildAdminEmailHtml(
  * team email per request, and it is the p5 one). p5 prints these in its team
  * email under "From the website".
  *
- * NEVER a cost, margin, markup, profit, contingency or overhead figure. The p5
- * team email is copied into HubSpot, body and all, by p5's inbox sync, and
- * costs and margins stay out of HubSpot (owner's rule). So the internal
- * breakdown in buildAdminEmailHtml (our cost by trade, direct cost,
- * contingency, total internal cost, gross profit, the margin line and the
- * "needs review" warnings) does NOT travel: it reaches the team only in this
- * site's own email, which is the fallback. What travels is what the customer
- * was shown or priced at: the planning range, their selections, their budget,
+ * NEVER a cost, margin, markup, profit, contingency or overhead figure. A p5
+ * email that carries only these lines is a "New lead" email, which p5's inbox
+ * sync copies into HubSpot, body and all, and costs and margins stay out of
+ * HubSpot (owner's rule). So the internal breakdown in buildAdminEmailHtml
+ * (our cost by trade, direct cost, contingency, total internal cost, gross
+ * profit, the margin line and the "needs review" warnings) does NOT travel
+ * here: it travels in buildConsultationTeamInternalNotes below, the separate
+ * team_internal_notes field. What travels here is what the customer was shown
+ * or priced at: the planning range, their selections, their budget,
  * the price of each trade (the "Customer" column of the admin email, never the
  * "Our cost" one), a COUNT of pricing alerts, the county record, the lead
  * dashboard link, this site's request id and the marketing source. The bridge
@@ -853,6 +858,57 @@ export function buildConsultationTeamNotes(input: {
       ? trades.map((line) => `Price by trade, ${line}`)
       : packTeamNotes("Price by trade", trades);
   return [...head, ...tradeLines, ...tail];
+}
+
+/**
+ * The internal pricing behind a planning range, as plain `Label: value` lines
+ * for the bridge's team_internal_notes (owner, 17 November 2026: cost and
+ * margin are back in the one team email, without reaching HubSpot). p5 prints
+ * them under "Internal pricing" and, because they are there, sends the email
+ * as "Lead and pricing" instead of "New lead": its inbox sync copies only
+ * "New lead" mail into HubSpot. These lines must never go in team_notes.
+ *
+ * Same figures as the "Internal breakdown (not shown to the lead)" block of
+ * buildAdminEmailHtml, from the same resolveInternalEstimate() view. The
+ * totals and the alert and needs-review wording come first, so the 60-line
+ * limit can never cut them; our cost by trade follows, packed several to a
+ * line only if one line each would not fit.
+ *
+ * Nothing for a request with no planning range.
+ */
+export function buildConsultationTeamInternalNotes(input: {
+  estimate: VerifiedEstimate | null;
+  /** Pricing-alert kinds the route raised while verifying the estimate. Named here, counted in team_notes. */
+  pricingAlerts?: ReadonlyArray<string>;
+}): string[] {
+  const est = input.estimate;
+  if (!est) return [];
+  const head: string[] = [];
+  const trades: string[] = [];
+
+  const admin = resolveInternalEstimate(est.project, est.finish, est.sqft, est.refinements)?.admin;
+  if (admin) {
+    head.push(`Direct cost: ${formatUsd(admin.directCost)}`);
+    head.push(`Contingency: ${formatUsd(admin.contingency)}`);
+    head.push(`Total internal cost: ${formatUsd(admin.totalInternalCost)}`);
+    head.push(`Gross profit: ${formatUsd(admin.grossProfit)}`);
+    head.push(`Margin: ${admin.marginLabel}`);
+    head.push(`Quoted range basis: ${admin.rangeLabel}`);
+  }
+  if (input.pricingAlerts?.length) head.push(`Pricing alerts: ${input.pricingAlerts.join(", ")}`);
+  for (const warning of admin?.warnings ?? []) head.push(`Needs review: ${warning.message}`);
+  for (const trade of admin?.trades ?? []) {
+    const scope = trade.scopeSummary ? ` (${trade.scopeSummary})` : "";
+    trades.push(
+      `${trade.division}: our cost ${formatUsd(trade.internalCost)}, customer ${formatUsd(trade.customerAmount)}${scope}`,
+    );
+  }
+
+  const tradeLines =
+    head.length + trades.length <= TEAM_INTERNAL_NOTES_MAX_LINES
+      ? trades.map((line) => `Trade, ${line}`)
+      : packTeamNotes("Trades", trades);
+  return [...head, ...tradeLines];
 }
 
 /** `Label: a; b; c`, as many to a line as the p5 line limit allows. */
