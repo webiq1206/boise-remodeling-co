@@ -9,10 +9,13 @@ import { SITE_CONFIG, textReplyLineHtml } from "@/shared/siteConfig";
 import {
   takeoffForRange,
   takeoffForClient,
-  formatQuantity,  TAKEOFF_SCOPE_NOTICE,
+  formatQuantity,
+  TAKEOFF_SCOPE_NOTICE,
   type UnitCostOverrides,
 } from "@/shared/costCatalog";
 import { resolveInternalEstimate } from "@/shared/costs/resolve";
+import { classifyTouch, type MarketingAttribution } from "@/lib/p5/marketingAttribution";
+import { TEAM_NOTE_MAX_LENGTH, TEAM_NOTES_MAX_LINES } from "@/server/services/p5IntakeBridge";
 import { assessBudget, budgetGuidance } from "@/shared/costs/budget";
 import {
   getRefinementVisibility,
@@ -411,18 +414,23 @@ function renderTradeRollupHtml(est: VerifiedEstimate): string {
  * Returns empty when no budget was given. Silence is correct: this feature only
  * exists because the homeowner volunteered a number.
  */
-function renderBudgetHtml(est: VerifiedEstimate, audience: "admin" | "client"): string {
-  if (!est.statedBudget || est.statedBudget <= 0) return "";
+/** The stated budget against the quoted range. Null when no budget was given. */
+function assessStatedBudget(est: VerifiedEstimate) {
+  if (!est.statedBudget || est.statedBudget <= 0) return null;
   const resolved = resolveInternalEstimate(est.project, est.finish, est.sqft, est.refinements);
-  if (!resolved) return "";
-
-  const a = assessBudget(
+  if (!resolved) return null;
+  return assessBudget(
     est.project,
     { quality: est.finish as never, sqft: est.sqft, ...est.refinements } as never,
     { low: est.priceLow, high: est.priceHigh },
     est.statedBudget,
     resolved.admin.trades.slice(0, 2).map((t) => t.division),
   );
+}
+
+function renderBudgetHtml(est: VerifiedEstimate, audience: "admin" | "client"): string {
+  const a = assessStatedBudget(est);
+  if (!a || !est.statedBudget) return "";
   const guidance = budgetGuidance(a);
 
   const alternatives =
@@ -741,6 +749,127 @@ export function buildAdminEmailHtml(
       <p style="font-size:12px;color:${EMAIL_BRAND.textMuted};margin-top:16px;">Reply to this email to respond directly to ${escapeHtml(firstName)}. Submitted via ${escapeHtml(SITE_CONFIG.siteUrl)}.</p>
     `,
   });
+}
+
+/**
+ * What this site's team email carries that the p5 intake body does not, as plain
+ * `Label: value` lines for the bridge's team_notes (owner, 17 November 2026: one
+ * team email per request, and it is the p5 one). p5 prints these in its team
+ * email under "From the website".
+ *
+ * NEVER a cost, margin, markup, profit, contingency or overhead figure. The p5
+ * team email is copied into HubSpot, body and all, by p5's inbox sync, and
+ * costs and margins stay out of HubSpot (owner's rule). So the internal
+ * breakdown in buildAdminEmailHtml (our cost by trade, direct cost,
+ * contingency, total internal cost, gross profit, the margin line and the
+ * "needs review" warnings) does NOT travel: it reaches the team only in this
+ * site's own email, which is the fallback. What travels is what the customer
+ * was shown or priced at: the planning range, their selections, their budget,
+ * the price of each trade (the "Customer" column of the admin email, never the
+ * "Our cost" one), a COUNT of pricing alerts, the county record, the lead
+ * dashboard link, this site's request id and the marketing source. The bridge
+ * also drops any line that names one of those words (cleanTeamNotes), so a
+ * future edit here cannot leak one.
+ *
+ * Never repeats what the bridge already sends (name, phone, email, address,
+ * project type, message, timing, files). The contract allows 40 lines of 300
+ * characters, so the selections and the county record are packed several to a
+ * line, and the trades are too when one line each would not fit. Order is
+ * priority: if a future change still overflows, the bridge keeps the first 40.
+ */
+export function buildConsultationTeamNotes(input: {
+  estimate: VerifiedEstimate | null;
+  profile?: PropertyEnrichment | null;
+  /** Pricing-alert kinds the route raised while verifying the estimate. Counted, never named. */
+  pricingAlerts?: ReadonlyArray<string>;
+  attribution?: MarketingAttribution | null;
+  /** This site's id for the stored request (the consultation_requests row). */
+  requestId?: string | null;
+}): string[] {
+  const head: string[] = [`Lead dashboard: ${LEADS_DASHBOARD_URL}`];
+  const trades: string[] = [];
+  const tail: string[] = [];
+  const est = input.estimate;
+  const requestId = input.requestId?.trim();
+  if (requestId) head.push(`Website request id: ${requestId}`);
+
+  if (est) {
+    const roi = est.roi ? `, typical resale ROI about ${Math.round(est.roi)}%` : "";
+    head.push(
+      `Planning range shown to the visitor: ${formatUsd(est.priceLow)} to ${formatUsd(est.priceHigh)} (${est.confidence})${roi}`,
+    );
+    const budget = assessStatedBudget(est);
+    if (est.statedBudget && est.statedBudget > 0) {
+      head.push(`Their budget: ${formatUsd(est.statedBudget)}${budget ? `. ${budget.headline}` : ""}`);
+    }
+
+    // Project type is the bridge's own field; the rest are the visitor's selections.
+    const selections = buildSelectionRows(
+      est.project,
+      est.finish,
+      est.sqft,
+      est.refinements,
+      est.layoutLabel,
+      est.upgradeLabels,
+    ).filter((row) => row.label !== "Project type");
+    head.push(...packTeamNotes("Selections", selections.map((row) => `${row.label}: ${row.value}`)));
+
+    // From the internal view, ONLY the price of each trade and how many warnings
+    // there are. Its cost, contingency, profit and margin fields are never read here.
+    const admin = resolveInternalEstimate(est.project, est.finish, est.sqft, est.refinements)?.admin;
+    const alerts = (input.pricingAlerts?.length ?? 0) + (admin?.warnings.length ?? 0);
+    if (alerts > 0) head.push(`Pricing alerts: ${alerts}`);
+    for (const trade of admin?.trades ?? []) {
+      const scope = trade.scopeSummary ? ` (${trade.scopeSummary})` : "";
+      trades.push(`${trade.division}: ${formatUsd(trade.customerAmount)}${scope}`);
+    }
+  }
+
+  if (input.profile) {
+    const rows = buildPropertyRows(input.profile);
+    tail.push(
+      ...packTeamNotes(
+        "County record",
+        rows.filter(([label]) => label !== "Permits").map(([label, value]) => `${label}: ${value}`),
+      ),
+    );
+    for (const [label, value] of rows) if (label === "Permits") tail.push(`Permits: ${value}`);
+  }
+
+  // Marketing observations the p5 body does not carry (it sends a fixed source).
+  if (input.attribution) {
+    const touch = input.attribution.latest;
+    const seen = classifyTouch(touch);
+    const bits = [`${seen.channel}, ${seen.source}`];
+    if (touch.utm_campaign) bits.push(`campaign ${touch.utm_campaign}`);
+    if (touch.utm_term) bits.push(`term ${touch.utm_term}`);
+    if (touch.gclid || touch.gbraid || touch.wbraid) bits.push("Google Ads click ID on file");
+    tail.push(`Marketing source: ${bits.join("; ")}`);
+    tail.push(`Landing page: ${input.attribution.first.landingPage}`);
+  }
+
+  const tradeLines =
+    head.length + trades.length + tail.length <= TEAM_NOTES_MAX_LINES
+      ? trades.map((line) => `Price by trade, ${line}`)
+      : packTeamNotes("Price by trade", trades);
+  return [...head, ...tradeLines, ...tail];
+}
+
+/** `Label: a; b; c`, as many to a line as the p5 line limit allows. */
+function packTeamNotes(label: string, items: string[]): string[] {
+  const lines: string[] = [];
+  let current = "";
+  for (const item of items) {
+    const next = current ? `${current}; ${item}` : `${label}: ${item}`;
+    if (current && next.length > TEAM_NOTE_MAX_LENGTH) {
+      lines.push(current);
+      current = `${label}: ${item}`;
+    } else {
+      current = next;
+    }
+  }
+  if (current) lines.push(current);
+  return lines;
 }
 
 /**

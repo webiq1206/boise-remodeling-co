@@ -143,6 +143,8 @@ test("the p5 intake payload carries the v2 contract on the initial post and the 
     request_kind: "callback",
     contact_preference: "call",
     best_time: "Morning",
+    // One team email per request (17 November 2026): p5 confirms its own team email.
+    team_alert: "confirm",
   });
 
   const file = { key: "k", name: "plans.pdf", url: "https://boiseremodeling.co/api/documents/local/requests%2Fid%2Fplans.pdf", contentType: "application/pdf", size: 52_000 };
@@ -157,8 +159,11 @@ test("the p5 intake payload carries the v2 contract on the initial post and the 
     timeline: "1 to 3 months",
     files: [file],
     submissionKind: "details",
+    teamNotes: ["Lead dashboard: https://leads.boiseremodeling.co", `Website request id: ${stored.id}`],
   });
   assert.equal(details.submission_kind, "details");
+  assert.equal(details.team_alert, "confirm", "the details post asks for the same confirmation");
+  assert.deepEqual(details.team_notes, ["Lead dashboard: https://leads.boiseremodeling.co", `Website request id: ${stored.id}`]);
   assert.equal(details.external_id, initial.external_id, "external_id is stable across step 1 and step 2");
   assert.equal(details.externalLeadId, initial.externalLeadId, "an older intake files it on the same deal");
   assert.equal(details.projectType, "kitchen");

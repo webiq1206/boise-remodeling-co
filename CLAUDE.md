@@ -604,6 +604,69 @@ primary pricing call to action on every family site.
   is not removed until the replacement is verified live.
 - Guard: `tests/instant-estimator.test.ts`.
 
+## One team email per request (owner decision, 17 November 2026)
+
+A consultation request used to put two emails in the shared inbox: this site's
+own team email and the "New lead" email p5homeco.com sends when the request is
+forwarded to its intake. The p5 email is the one that stays. This site's team
+email is the FALLBACK, sent only when p5 does not confirm that its own email
+went. A lead must never end with zero team emails: every doubt sends.
+
+- **The bridge** (`server/services/p5IntakeBridge.ts`) sends
+  `team_alert: "confirm"` on every post and returns
+  `{ forwarded, alert }`, where `alert` is p5's answer read defensively:
+  `"sent"`, `"failed"`, `"none"`, or `"unknown"` for anything else (an older
+  p5, an HTTP error, a timeout, a thrown fetch). It never throws. The timeout
+  is 30 seconds, because p5 waits for HubSpot and its mail server in this mode.
+- **The rule** lives in `server/services/teamEmailFallback.ts`.
+  `sendSiteTeamEmail()` waits for the bridge, then: `alert === "sent"` leaves
+  the shared family inbox to p5 (`isSharedFamilyInbox()`: `hello@` at any of
+  the six family domains, one mailbox) and still emails any other admin
+  recipient; anything else emails every recipient exactly as before.
+  `getAdminRecipientEmails()` returns only the shared inbox today, so a
+  confirmed p5 email means this site sends no team email at all.
+- **Where it runs.** Step 1 (`app/api/consultation/route.ts`: request,
+  callback, request with a planning range) and step 2
+  (`server/services/requestDetailsDelivery.ts`: "Details added"). The TEAM
+  email waits for the bridge inside `after()`. The VISITOR RESPONSE and the
+  CUSTOMER email never wait on p5: nothing on the visitor's path may await the
+  bridge. The response's `delivery` now reports the lead dashboard forward and
+  the customer's email only; the team email is recorded afterwards
+  (`adminEmail` is `pending` with the delivery lock kept, then `sent`,
+  `failed`, or `skipped` when p5 confirmed). If the `after()` work never
+  finishes, `/api/internal/retry-lead-deliveries` sends the team email once the
+  lock lapses.
+- **Team notes.** `buildConsultationTeamNotes()` in `consultationEmail.ts`
+  sends, as `team_notes`, what this site's team email has that the p5 body does
+  not: the lead dashboard link, this site's request id, the planning range
+  shown to the visitor, their budget, their selections, the price of each trade
+  (the admin email's "Customer" column), a COUNT of pricing alerts, the county
+  record with the permitting authority, and the marketing source.
+  `Label: value` lines, at most 40 of at most 300 characters. Never repeat a
+  field the bridge already sends.
+- **No cost or margin in team notes, ever.** The p5 team email is copied into
+  HubSpot with its full body by p5's inbox sync, and costs and margins stay out
+  of HubSpot. So no note carries our cost, a margin, a markup, a profit, a
+  contingency or an overhead figure, and pricing alerts and "needs review"
+  warnings travel as a count, never their wording. The internal breakdown (our
+  cost by trade, direct cost, contingency, total internal cost, gross profit,
+  the margin line) is therefore emailed only in this site's own team email, the
+  fallback; when p5 answers `sent` it is not emailed at all. `cleanTeamNotes()`
+  in the bridge is the wall behind the builder: a line that names one of those
+  words (`TEAM_NOTE_BLOCKED`) never leaves the site, and p5 drops such lines
+  too. Do not reword a line to get past it; leave the figure out.
+  `tests/team-email-fallback.test.ts` checks every project, finish and size by
+  value as well as by word.
+- **Not covered, on purpose:** the RE-10, plans, assistant, document estimator
+  and Facebook lead emails do not forward to the p5 intake, so they still send
+  their own team email. Do not gate them on this rule.
+- Guards, all in prebuild: `tests/p5-intake-bridge.test.ts`,
+  `tests/team-email-fallback.test.ts` and `tests/request-form-v2.test.ts`
+  (`verify:p5-intake`), and `verify:estimate-routes`, which drives the real
+  POST handlers with mail captured through a stubbed fetch (a placeholder
+  `RESEND_API_KEY`, nothing leaves the process) and holds p5 open to prove the
+  visitor is answered first.
+
 ## Environment
 
 `ANTHROPIC_API_KEY` is set in Replit Secrets (production only - not local, so

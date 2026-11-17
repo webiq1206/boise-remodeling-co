@@ -231,6 +231,212 @@ async function consultationShortRequests() {
   console.log('Short request, callback request, file upload and step 2 details contracts passed.');
 }
 
+/**
+ * One team email per request (owner, 17 November 2026), through the real POST handlers.
+ *
+ * The p5 intake's "New lead" email is the team email. This site's own team email is the fallback:
+ * it waits for the bridge's answer inside after() and goes to the shared inbox only when p5 did
+ * not confirm. The visitor's response and the customer's email never wait on p5.
+ *
+ * Mail is captured, not sent: RESEND_API_KEY is a placeholder, so the Resend client the route
+ * builds posts through the stubbed fetch below and nothing leaves the process. The p5 intake is
+ * the same stub, answering with whatever `alert` each case sets.
+ */
+async function oneTeamEmailPerRequest() {
+  for (const name of ['REPLIT_CONNECTORS_HOSTNAME', 'REPL_IDENTITY', 'WEB_REPL_RENEWAL', 'DATABASE_URL']) delete process.env[name];
+  process.env.RESEND_API_KEY = 're_isolated_verifier';
+  process.env.LEAD_ROUTE_ISOLATED_TEST = '1';
+  process.env.LEAD_DASHBOARD_KEY = 'isolated-verifier';
+  const priorSecret = process.env.SESSION_SECRET;
+  if (!priorSecret || priorSecret.length < 16) process.env.SESSION_SECRET = 'isolated-verifier-session-secret-0123456789';
+  // Let anything the earlier checks left running finish before fetch is replaced.
+  await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const SHARED_INBOX = 'hello@boiseremodeling.co';
+  const mail: { to: string[]; subject: string }[] = [];
+  const intake: Record<string, unknown>[] = [];
+  const logs: string[] = [];
+  const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
+  let p5Answer: () => Promise<Response> = async () => json({ ok: true });
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const body = typeof init?.body === 'string' ? JSON.parse(init.body) : {};
+    if (url.startsWith('https://api.resend.com/')) {
+      mail.push({ to: ([] as string[]).concat(body.to), subject: String(body.subject) });
+      return json({ id: `captured-${mail.length}` });
+    }
+    if (url.startsWith('https://p5homeco.com/')) {
+      intake.push(body);
+      return p5Answer();
+    }
+    return json({});
+  }) as typeof fetch;
+  const log = console.log, warn = console.warn, error = console.error, info = console.info;
+  console.warn = console.error = () => {};
+  console.info = (...args: unknown[]) => { logs.push(args.map(String).join(' ')); };
+  const { installInquiryAcceptanceTestAdapter } = await import('../server/services/inquiryAcceptance');
+  const uninstall = installInquiryAcceptanceTestAdapter();
+  const { NextRequest } = await import('next/server');
+  const { POST } = await import('../app/api/consultation/route');
+  const { POST: POST_DETAILS } = await import('../app/api/consultation/details/route');
+
+  const until = async (done: () => boolean, what: string) => {
+    for (let waited = 0; waited < 4000 && !done(); waited += 5) await new Promise((resolve) => setTimeout(resolve, 5));
+    assert.ok(done(), what);
+  };
+  // A handler that waited on p5 would hang here while p5 is held; fail instead.
+  const answered = async (handler: Promise<Response>, what: string) => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const late = new Promise<never>((_resolve, reject) => { timer = setTimeout(() => reject(new Error(what)), 4000); });
+    try { return await Promise.race([handler, late]); } finally { clearTimeout(timer); }
+  };
+  const post = async (fields: Record<string, string>) => {
+    const form = new FormData();
+    form.set('inquiryId', crypto.randomUUID());
+    form.set('formStartedAt', String(Date.now() - 5000));
+    form.set('website', '');
+    for (const [key, value] of Object.entries(fields)) form.set(key, value);
+    const response = await answered(POST(new NextRequest('http://127.0.0.1/api/consultation', { method: 'POST', body: form })), 'the visitor response waited on the p5 bridge');
+    return { status: response.status, body: await response.json() };
+  };
+  const postJson = async (payload: Record<string, unknown>) => {
+    const response = await answered(POST(new NextRequest('http://127.0.0.1/api/consultation', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ inquiryId: crypto.randomUUID(), formStartedAt: Date.now() - 5000, website: '', ...payload }),
+    })), 'the visitor response waited on the p5 bridge');
+    return { status: response.status, body: await response.json() };
+  };
+  const postDetails = async (payload: Record<string, unknown>) => {
+    const response = await answered(POST_DETAILS(new NextRequest('http://127.0.0.1/api/consultation/details', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) })), 'the step 2 response waited on the p5 bridge');
+    return { status: response.status, body: await response.json() };
+  };
+  /** This site's team email for one visitor: to the shared inbox, with their name in the subject. */
+  const teamMail = (name: string) => mail.filter((message) => message.to.includes(SHARED_INBOX) && message.subject.includes(name));
+  const intakeFor = (name: string, kind: string) => intake.filter((body) => body.name === name && body.submission_kind === kind);
+  const leftToP5 = (label: string) => logs.filter((line) => line.includes(`[${label}] Team email left to p5`)).length;
+  /** p5 confirmed: wait for the fallback to decide, then show the site sent the shared inbox nothing. */
+  const expectLeftToP5 = async (label: string, before: number, name: string, what: string) => {
+    await until(() => leftToP5(label) > before, `${what}: the fallback never decided`);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.deepEqual(teamMail(name), [], `${what}: p5 confirmed its email, so the site sends the shared inbox none`);
+  };
+  /** p5 did not confirm: exactly one team email from the site, as before. */
+  const expectSiteTeamEmail = async (name: string, subject: RegExp, what: string) => {
+    await until(() => teamMail(name).length > 0, `${what}: the site's team email was not sent`);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.equal(teamMail(name).length, 1, `${what}: one team email, not two`);
+    assert.match(teamMail(name)[0].subject, subject, what);
+  };
+
+  try {
+    // 1. p5 is slow (it waits for HubSpot and its mail server), then confirms. The visitor is
+    // answered and the customer has their email while p5 has still not answered.
+    let release: () => void = () => {};
+    const held = new Promise<void>((resolve) => { release = resolve; });
+    p5Answer = async () => { await held; return json({ ok: true, accepted: true, alert: 'sent' }, 201); };
+    let before = leftToP5('consultation');
+    const slow = await post({ name: 'Hal Verifier', phone: '2085550150', email: 'hal@example.com', message: 'Kitchen remodel with an island', contactPreference: 'email' });
+    assert.equal(slow.status, 200, JSON.stringify(slow.body));
+    assert.equal(slow.body.accepted, true);
+    assert.equal(slow.body.delivery, 'sent', 'the visitor is told about their own delivery, without waiting for the team email');
+    assert.equal(typeof slow.body.requestId, 'string');
+    assert.equal(intakeFor('Hal Verifier', 'initial').length, 1, 'the bridge is already on its way');
+    assert.equal(intakeFor('Hal Verifier', 'initial')[0].team_alert, 'confirm');
+    assert.deepEqual(intakeFor('Hal Verifier', 'initial')[0].team_notes, ['Lead dashboard: https://leads.boiseremodeling.co', `Website request id: ${slow.body.requestId}`]);
+    assert.deepEqual(mail.filter((message) => message.to.includes('hal@example.com')).length, 1, 'the customer email is sent before p5 answers');
+    assert.deepEqual(teamMail('Hal Verifier'), [], 'the team email is undecided until p5 answers');
+    release();
+    await expectLeftToP5('consultation', before, 'Hal Verifier', 'a written request');
+    assert.equal(mail.filter((message) => message.to.includes('hal@example.com')).length, 1, 'still one customer email');
+
+    // 2. Anything short of a confirmation: the site's team email goes out exactly as before.
+    const unconfirmed: [string, () => Promise<Response>][] = [
+      ['failed', async () => json({ ok: true, alert: 'failed' })],
+      ['none', async () => json({ ok: true, alert: 'none' })],
+      ['an older p5 with no alert field', async () => json({ ok: true, accepted: true })],
+      ['an HTTP error', async () => json({ alert: 'sent' }, 500)],
+      ['a thrown fetch', async () => { throw new Error('network down'); }],
+      ['a timeout', async () => { throw new DOMException('The operation was aborted due to timeout', 'TimeoutError'); }],
+    ];
+    for (let index = 0; index < unconfirmed.length; index += 1) {
+      const [what, answer] = unconfirmed[index];
+      const name = `Una Verifier${index}`;
+      p5Answer = answer;
+      const response = await post({ name, phone: `20855501${60 + index}`, email: '', message: 'Hall bathroom remodel', contactPreference: 'text' });
+      assert.equal(response.status, 200, JSON.stringify(response.body));
+      await expectSiteTeamEmail(name, new RegExp(`^New consultation request: ${name}$`), what);
+    }
+
+    // 3. "Have us call you": the same rule, with its own subject.
+    p5Answer = async () => json({ ok: true, alert: 'sent' });
+    before = leftToP5('consultation');
+    await post({ name: 'Cal Verifier', phone: '2085550170', callback: '1', contactPreference: 'call', bestTime: 'Morning' });
+    assert.equal(intakeFor('Cal Verifier', 'initial')[0].request_kind, 'callback');
+    await expectLeftToP5('consultation', before, 'Cal Verifier', 'a callback request');
+    p5Answer = async () => json({ ok: true });
+    await post({ name: 'Cam Verifier', phone: '2085550171', callback: '1', contactPreference: 'call', bestTime: 'Morning' });
+    await expectSiteTeamEmail('Cam Verifier', /^Callback request: Cam Verifier · 2085550171$/, 'a callback request p5 did not confirm');
+
+    // 4. A request with a planning range attached. Confirmed: no site email, and the range, the
+    // price of each trade and the county record ride to p5 as team notes instead. Our costs and
+    // margins do not: they reach the team only in the site's own email, the fallback.
+    const carried = { project: 'kitchen', finish: 'mid-range', sqft: 180, priceLow: 1, priceHigh: 2, roi: 0, confidence: 'Planning range' };
+    const propertyProfile = { formattedAddress: '123 Main St, Boise, ID 83702', city: 'Boise', state: 'ID', zip: '83702', parcelId: 'R1234567890', zoning: 'R-1C', lotSizeSqFt: 8276, lotSizeAcres: 0.19, permittingAuthority: 'City of Boise' };
+    p5Answer = async () => json({ ok: true, alert: 'sent' });
+    before = leftToP5('consultation');
+    const ranged = await postJson({ name: 'Ivy Verifier', phone: '2085550172', email: 'ivy@example.com', address: '123 Main St, Boise, ID 83702', zip: '83702', projectType: 'kitchen', message: 'New cabinets and an island', estimate: carried, propertyProfile });
+    assert.equal(ranged.status, 200, JSON.stringify(ranged.body));
+    await expectLeftToP5('consultation', before, 'Ivy Verifier', 'a request with a planning range');
+    const notes = intakeFor('Ivy Verifier', 'initial')[0].team_notes as string[];
+    assert.ok(Array.isArray(notes) && notes.length <= 40 && notes.every((line) => typeof line === 'string' && line.length <= 300 && /^[^:\n]{2,60}: \S/.test(line)), 'team notes are well formed');
+    assert.equal(notes[0], 'Lead dashboard: https://leads.boiseremodeling.co');
+    assert.match(notes[1], /^Website request id: isolated-\d+$/);
+    assert.match(notes[2], /^Planning range shown to the visitor: \$[\d,]+ to \$[\d,]+ /);
+    assert.doesNotMatch(notes[2], /\$1 to \$2 /, 'the range is the server\'s, never the client numbers');
+    assert.ok(notes.some((line) => line === 'Pricing alerts: 1'), 'pricing alerts ride as a count, never by name');
+    assert.ok(notes.filter((line) => /^Price by trade, [^:]+: \$[\d,]+( \(.+\))?$/.test(line)).length >= 8);
+    // Costs and margins stay out of HubSpot, and the p5 team email is copied there: nothing in
+    // the body the bridge posts names a cost, margin, markup, profit, contingency or overhead.
+    assert.doesNotMatch(JSON.stringify(intakeFor('Ivy Verifier', 'initial')[0]), /cost|margin|mark-?up|profit|contingenc|overhead|recompute-mismatch/i);
+    assert.ok(notes.some((line) => line === 'County record: Parcel: R1234567890; Zoning: R-1C; Lot: 0.19 acres (8,276 sq ft)'));
+    assert.ok(notes.some((line) => line === 'Permits: City of Boise'));
+    assert.equal(mail.filter((message) => message.to.includes('ivy@example.com')).length, 1, 'the customer still gets their planning range');
+    p5Answer = async () => json({ ok: true, alert: 'failed' });
+    await postJson({ name: 'Ian Verifier', phone: '2085550173', email: 'ian@example.com', address: '125 Main St, Boise, ID 83702', zip: '83702', projectType: 'kitchen', message: 'New cabinets and an island', estimate: carried });
+    await expectSiteTeamEmail('Ian Verifier', /^New lead: Ian Verifier · Kitchen · \$[\d,]+ to \$[\d,]+$/, 'a request with a planning range p5 did not confirm');
+
+    // 5. Step 2 "Details added": the same rule on the details post.
+    const { requestId, detailsToken } = slow.body as { requestId: string; detailsToken: string };
+    p5Answer = async () => json({ ok: true, alert: 'sent' });
+    before = leftToP5('request-details');
+    const added = await postDetails({ requestId, token: detailsToken, details: { timing: '1 to 3 months' } });
+    assert.equal(added.status, 200, JSON.stringify(added.body));
+    await until(() => leftToP5('request-details') > before, 'step 2: the fallback never decided');
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.deepEqual(mail.filter((message) => message.subject.startsWith('Details added')), [], 'step 2: p5 confirmed, so no "Details added" email from the site');
+    const detailsBody = intakeFor('Hal Verifier', 'details')[0];
+    assert.equal(detailsBody.team_alert, 'confirm');
+    assert.deepEqual(detailsBody.team_notes, ['Lead dashboard: https://leads.boiseremodeling.co', `Website request id: ${requestId}`]);
+    // "none" is what p5 answers when the details arrive before it has filed the request.
+    p5Answer = async () => json({ ok: true, alert: 'none' });
+    const addedAgain = await postDetails({ requestId, token: detailsToken, details: { projectType: 'Kitchen remodel' } });
+    assert.equal(addedAgain.status, 200, JSON.stringify(addedAgain.body));
+    await expectSiteTeamEmail('Hal Verifier', /^Details added: Hal Verifier$/, 'step 2 details p5 did not confirm');
+  } finally {
+    uninstall();
+    globalThis.fetch = realFetch;
+    Object.assign(console, { log, warn, error, info });
+    delete process.env.RESEND_API_KEY;
+    delete process.env.LEAD_DASHBOARD_KEY;
+    delete process.env.LEAD_ROUTE_ISOLATED_TEST;
+    if (priorSecret === undefined) delete process.env.SESSION_SECRET;
+    else process.env.SESSION_SECRET = priorSecret;
+  }
+  console.log('One team email per request: p5 confirmation, site fallback and undelayed visitor response passed.');
+}
+
 async function main(){
   {const {POST}=await import('../app/api/estimate-lead/route'); const response=await POST(); const body=await response.json(); assert.equal(response.status,410); assert.equal(body.nextStep,'/estimate'); assert.equal(body.priceable,false); assert.equal(body.estimate,undefined);}
   {const {POST}=await import('../app/api/re10/estimate/route'); const response=await POST(); const body=await response.json(); assert.equal(response.status,410); assert.equal(body.nextStep,'/estimate'); assert.equal(body.priceable,false); assert.equal(body.estimate,undefined);}
@@ -239,5 +445,6 @@ async function main(){
   {const {POST}=await import('../app/api/plans/analyze/route'); const response=await POST(); const body=await response.json(); assert.equal(response.status,410); assert.equal(body.nextStep,'/estimate'); assert.equal(body.priceable,false); assert.equal(body.estimate,undefined);}
   console.log('Retired estimator API contracts passed.');
   await consultationShortRequests();
+  await oneTeamEmailPerRequest();
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

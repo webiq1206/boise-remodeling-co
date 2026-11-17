@@ -277,7 +277,7 @@ export function HeroConversion({
         firstName: name.trim().split(/\s+/)[0] || name.trim(),
         mode,
         phone: phone.trim(),
-        // The copy goes out with the internal email; say so only when delivery went through.
+        // The visitor's copy is sent with the request; say so only when delivery went through.
         emailed: !callback && Boolean(email.trim()) && data.delivery !== "pending_retry",
         hadEmail: !callback && Boolean(email.trim()),
         hadAddress: !callback && Boolean(address.trim()),

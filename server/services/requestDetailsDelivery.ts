@@ -9,7 +9,8 @@ import {
 } from "@/server/services/emailLayout";
 import { LEADS_DASHBOARD_URL, formatLeadReplyTo } from "@/server/services/consultationEmail";
 import { dashboardEmail, forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
-import { forwardConsultationToP5Intake } from "@/server/services/p5IntakeBridge";
+import { forwardConsultationToP5Intake, type P5BridgeResult } from "@/server/services/p5IntakeBridge";
+import { sendSiteTeamEmail } from "@/server/services/teamEmailFallback";
 import type { StoredShortRequest } from "@/server/services/requestDetailsMerge";
 import type { RequestFileRecord } from "@/shared/requestDetails";
 import { formatFileSize } from "@/shared/requestFiles";
@@ -18,11 +19,15 @@ import { SITE_CONFIG } from "@/shared/siteConfig";
 
 /**
  * Step 2 (and files) reach every destination the lead reached at step 1:
- * - the internal email, as a short follow-up "Details added: {name}";
+ * - p5 intake (and so HubSpot), as submission_kind "details" with the same external_id. p5 sends
+ *   the team its own "Details added" email and says whether it went;
+ * - the internal email, a short follow-up "Details added: {name}", as the FALLBACK to that p5
+ *   email (owner, 17 November 2026: one team email per request). It waits for the p5 answer and
+ *   goes to the shared inbox only when p5 did not confirm; see teamEmailFallback.ts;
  * - the lead dashboard, as a post with the same contact and the DETAILS ADDED block as its notes
- *   (its receiver has no update route; see the note on DASHBOARD_DUPLICATE_WAIT_MS);
- * - p5 intake (and so HubSpot), as submission_kind "details" with the same external_id.
- * Each one fails alone and is logged; none can change what the visitor is told.
+ *   (its receiver has no update route; see the note on DASHBOARD_DUPLICATE_WAIT_MS).
+ * Each one fails alone and is logged; none can change what the visitor is told. All of it runs
+ * inside the route's after(), so the visitor's response never waits on p5.
  */
 
 export interface DetailsDeliveryInput {
@@ -69,25 +74,30 @@ export function buildDetailsEmailHtml(input: DetailsDeliveryInput): string {
   });
 }
 
-async function sendDetailsEmail(input: DetailsDeliveryInput): Promise<void> {
-  try {
-    const { client, fromEmail } = await getUncachableEmailClient();
-    const html = buildDetailsEmailHtml(input);
-    const recipients = await getAdminRecipientEmails(SITE_CONFIG.email);
-    for (const to of recipients) {
-      const result = await client.emails.send({
-        from: formatFromAddress(fromEmail),
-        ...(input.request.email ? { replyTo: formatLeadReplyTo(input.request.name, input.request.email) } : {}),
-        to,
-        subject: `Details added: ${input.request.name}`,
-        html,
-        text: htmlToPlainText(html),
-      });
-      if (result?.error) console.error("[request-details] Email failed:", JSON.stringify(result.error));
-    }
-  } catch (error) {
-    console.error("[request-details] Email failed:", error instanceof Error ? error.message : error);
-  }
+/** The site's own "Details added" email: sent only to whoever p5's email did not reach. */
+async function sendDetailsEmail(
+  input: DetailsDeliveryInput,
+  bridge: Promise<P5BridgeResult>,
+): Promise<void> {
+  await sendSiteTeamEmail({
+    bridge,
+    label: "request-details",
+    recipients: () => getAdminRecipientEmails(SITE_CONFIG.email),
+    open: async () => {
+      const { client, fromEmail } = await getUncachableEmailClient();
+      const html = buildDetailsEmailHtml(input);
+      const text = htmlToPlainText(html);
+      return (to) =>
+        client.emails.send({
+          from: formatFromAddress(fromEmail),
+          ...(input.request.email ? { replyTo: formatLeadReplyTo(input.request.name, input.request.email) } : {}),
+          to,
+          subject: `Details added: ${input.request.name}`,
+          html,
+          text,
+        });
+    },
+  });
 }
 
 export function dashboardDetailsPayload(input: DetailsDeliveryInput) {
@@ -133,6 +143,8 @@ export function deliverRequestDetails(
     timeline: input.timing || null,
     files: input.files,
     submissionKind: "details",
+    // What the site's "Details added" email has that this body does not. Never a cost or margin.
+    teamNotes: [`Lead dashboard: ${LEADS_DASHBOARD_URL}`, `Website request id: ${input.request.id}`],
   });
   const confirmation = input.customerEmailJustAdded
     ? sendLeadConfirmation({
@@ -144,7 +156,7 @@ export function deliverRequestDetails(
   return Promise.all([
     p5,
     sendDashboard(input, options.dashboardWaitMs ?? DASHBOARD_DUPLICATE_WAIT_MS),
-    sendDetailsEmail(input),
+    sendDetailsEmail(input, p5),
     confirmation,
   ]).then(() => undefined);
 }
