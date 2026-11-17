@@ -676,12 +676,35 @@ went. A lead must never end with zero team emails: every doubt sends.
   fields for every project, finish and size: by word and by value that
   `team_notes` has no internal figure, and by value that the internal notes
   equal the admin email's own rows.
+- **The planning range as figures: `estimate`** (owner decisions, 13 and 17
+  November 2026: every estimate a visitor is given becomes a customer and an
+  UNSENT estimate in QuickBooks). p5 creates both from the `estimate` field of
+  a Step 1 request that has a planning range.
+  `buildConsultationP5Estimate()` in `consultationEmail.ts` builds it:
+  `kind: "planning-range"`, `low` and `high` (the range the visitor was shown),
+  a plain-words `label`, `verified: true` (this route recomputes the range on
+  the server and never uses the browser's numbers), and one line per trade
+  with that trade's CUSTOMER amount, from the same
+  `resolveInternalEstimate().admin` view as the internal notes. p5 totals the
+  lines and that total is the QuickBooks estimate, so the lines are the
+  customer price split to the cent with nothing lost to rounding; no `base`
+  is sent. **Customer amounts only**: QuickBooks holds the customer's
+  estimate, so no cost, margin, markup, profit, contingency or overhead may
+  appear in any field of it, titles and descriptions included. The builder
+  reads only `customerAmount` and `customerPrice`, and `cleanP5Estimate()` in
+  the bridge is the wall behind it: any such word, a bad number or more than
+  60 lines withholds the WHOLE estimate (never one line: that would book a
+  wrong total). Building it never throws; on any problem the request goes
+  without the field. Nothing is sent for a request with no planning range,
+  for a callback (even one that carries a range), or for step 2.
 - **Not covered, on purpose:** the RE-10, plans, assistant, document estimator
   and Facebook lead emails do not forward to the p5 intake, so they still send
   their own team email. Do not gate them on this rule.
 - Guards, all in prebuild: `tests/p5-intake-bridge.test.ts`,
-  `tests/team-email-fallback.test.ts` and `tests/request-form-v2.test.ts`
-  (`verify:p5-intake`), and `verify:estimate-routes`, which drives the real
+  `tests/team-email-fallback.test.ts` (both notes fields and the `estimate`,
+  by value for every project, finish and size) and
+  `tests/request-form-v2.test.ts` (`verify:p5-intake`), and
+  `verify:estimate-routes`, which drives the real
   POST handlers with mail captured through a stubbed fetch (a placeholder
   `RESEND_API_KEY`, nothing leaves the process) and holds p5 open to prove the
   visitor is answered first.

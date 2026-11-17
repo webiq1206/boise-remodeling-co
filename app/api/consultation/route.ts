@@ -17,6 +17,7 @@ import {
   buildCustomerSubject,
   buildConsultationTeamNotes,
   buildConsultationTeamInternalNotes,
+  buildConsultationP5Estimate,
   formatLeadReplyTo,
   type VerifiedEstimate,
   type PropertyEnrichment,
@@ -583,6 +584,9 @@ export async function POST(request: NextRequest) {
         submissionKind: "initial",
         teamNotes,
         teamInternalNotes,
+        // The planning range as figures: p5 creates the QuickBooks customer and an UNSENT
+        // estimate from it. Customer amounts only, never for a callback, never throws.
+        estimate: data.callback ? null : buildConsultationP5Estimate(estimate),
       });
       after(() => bridge);
     } catch (bridgeErr) {

@@ -19,6 +19,8 @@ import {
   TEAM_INTERNAL_NOTES_MAX_LINES,
   TEAM_NOTE_MAX_LENGTH,
   TEAM_NOTES_MAX_LINES,
+  type P5EstimateLine,
+  type P5PlanningEstimate,
 } from "@/server/services/p5IntakeBridge";
 import { assessBudget, budgetGuidance } from "@/shared/costs/budget";
 import {
@@ -909,6 +911,86 @@ export function buildConsultationTeamInternalNotes(input: {
       ? trades.map((line) => `Trade, ${line}`)
       : packTeamNotes("Trades", trades);
   return [...head, ...tradeLines];
+}
+
+/**
+ * The planning range as figures for the bridge's `estimate` field, from which
+ * p5 creates the QuickBooks customer and an UNSENT estimate (owner, 13 and 17
+ * November 2026: every estimate a visitor is given is booked that way).
+ *
+ * CUSTOMER amounts only: QuickBooks holds the customer's estimate. One line per
+ * trade carrying that trade's customer price, the "Customer" column of
+ * buildAdminEmailHtml, from the same resolveInternalEstimate() view as the
+ * internal notes. Only `customerAmount` and `customerPrice` are read from that
+ * view; its cost, contingency and profit fields never are, and the bridge
+ * withholds the whole estimate if any text in it names one (cleanP5Estimate).
+ *
+ * p5 totals the lines to the cent and that total is the QuickBooks estimate,
+ * so the lines are the customer price (the midpoint the range is quoted
+ * around) split to the cent with nothing lost to rounding. `verified: true`
+ * because the consultation route recomputes the range on the server and never
+ * uses the browser's numbers.
+ *
+ * Never throws: on any problem it returns null and the request goes without
+ * the field. Null for a request with no planning range.
+ */
+export function buildConsultationP5Estimate(est: VerifiedEstimate | null): P5PlanningEstimate | null {
+  if (!est) return null;
+  try {
+    const estimate: P5PlanningEstimate = {
+      kind: "planning-range",
+      low: est.priceLow,
+      high: est.priceHigh,
+      label: `${PROJECT_LABELS[est.project].label}, ${FINISH_LABELS[est.finish].label} finish, ${est.sqft.toLocaleString("en-US")} sq ft`,
+      verified: true,
+    };
+    const admin = resolveInternalEstimate(est.project, est.finish, est.sqft, est.refinements)?.admin;
+    if (!admin) return estimate;
+
+    // Split the customer price to the cent: whole cents per trade, then the cents
+    // rounding left over go to the trades that were rounded down the most.
+    const target = Math.round(admin.customerPrice * 100);
+    const exact = admin.trades.map((trade) => trade.customerAmount * 100);
+    if (!Number.isFinite(target) || target <= 0) return estimate;
+    const split = exact.map((value) => Math.floor(value));
+    let left = target - split.reduce((sum, value) => sum + value, 0);
+    const reconciles = exact.every((value) => Number.isFinite(value) && value >= 0) && left >= 0 && left <= split.length;
+    if (!reconciles) {
+      // The trades do not add up to the customer price: send the one figure, not a wrong split.
+      estimate.base = target / 100;
+      return estimate;
+    }
+    const byRemainder = exact
+      .map((value, index) => ({ index, remainder: value - Math.floor(value) }))
+      .sort((a, b) => b.remainder - a.remainder || a.index - b.index);
+    for (const { index } of byRemainder) {
+      if (left <= 0) break;
+      split[index] += 1;
+      left -= 1;
+    }
+
+    const lines: P5EstimateLine[] = [];
+    admin.trades.forEach((trade, index) => {
+      if (split[index] <= 0) return;
+      const line: P5EstimateLine = { title: trade.division, division: trade.division, amount: split[index] / 100 };
+      // One clear quantity ("180 SF") travels as quantity and unit. Several ("1 MO, 0 EA")
+      // are said in words instead.
+      const single = /^(\d[\d,]*) ([A-Za-z]+)$/.exec(trade.scopeSummary.trim());
+      const quantity = single ? Number(single[1].replace(/,/g, "")) : 0;
+      if (single && quantity > 0) {
+        line.quantity = quantity;
+        line.unit = single[2];
+      } else if (trade.scopeSummary.trim()) {
+        line.description = trade.scopeSummary.trim();
+      }
+      lines.push(line);
+    });
+    if (lines.length) estimate.lines = lines;
+    return estimate;
+  } catch (error) {
+    console.error("[p5-intake] Estimate could not be built:", error instanceof Error ? error.message : error);
+    return null;
+  }
 }
 
 /** `Label: a; b; c`, as many to a line as the p5 line limit allows. */

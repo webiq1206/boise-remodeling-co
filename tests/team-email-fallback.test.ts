@@ -12,11 +12,13 @@ import assert from "node:assert/strict";
  */
 
 import {
+  P5_ESTIMATE_MAX_LINES,
   TEAM_INTERNAL_NOTES_MAX_LINES,
   TEAM_NOTES_MAX_LINES,
   TEAM_NOTE_BLOCKED,
   TEAM_NOTE_MAX_LENGTH,
   buildP5IntakeBody,
+  cleanP5Estimate,
   cleanTeamInternalNotes,
   cleanTeamNotes,
   forwardConsultationToP5Intake,
@@ -27,7 +29,7 @@ import {
   sendSiteTeamEmail,
   siteTeamEmailRecipients,
 } from "../server/services/teamEmailFallback.ts";
-import { buildAdminEmailHtml, buildConsultationTeamInternalNotes, buildConsultationTeamNotes, formatUsd, type VerifiedEstimate } from "../server/services/consultationEmail.ts";
+import { buildAdminEmailHtml, buildConsultationP5Estimate, buildConsultationTeamInternalNotes, buildConsultationTeamNotes, formatUsd, type VerifiedEstimate } from "../server/services/consultationEmail.ts";
 import { escapeHtml } from "../server/services/emailLayout.ts";
 import { readFileSync } from "node:fs";
 import { calculateEstimate, getProjectSizeConfig, EMPTY_REFINEMENTS, type EstimateRefinements } from "../shared/estimateEngine.ts";
@@ -588,4 +590,206 @@ test("the bridge cleans team_internal_notes like team_notes, without the blocked
   assert.deepEqual(body.team_notes, [`Long: ${"x".repeat(291)}...`, "Pricing alerts: 2"]);
   assert.deepEqual(body.team_internal_notes, cleaned);
   assert.equal(body.team_alert, "confirm");
+});
+
+/**
+ * The planning range as figures (owner, 13 and 17 November 2026): every estimate a visitor is
+ * given becomes a customer and an UNSENT estimate in QuickBooks, and p5 creates both from the
+ * `estimate` field. QuickBooks holds the customer's estimate, so it carries customer amounts
+ * only: the price of each trade, never what it costs us.
+ */
+test("the estimate carries the customer price by trade, to the cent, for every project, finish and size", () => {
+  const toCents = (value: number) => Math.round(value * 100);
+  let checked = 0;
+  let measured = 0;
+  let described = 0;
+  for (const project of PROJECTS) {
+    const size = getProjectSizeConfig(project);
+    for (const finish of FINISHES) {
+      for (const sqft of [size.min, Math.round((size.min + size.max) / 2), size.max]) {
+        const verified = estimateFor(project, finish, sqft);
+        const where = `${project} ${finish} ${sqft}`;
+        const admin = resolveInternalEstimate(verified.project, verified.finish, verified.sqft, verified.refinements)!.admin;
+        const estimate = buildConsultationP5Estimate(verified)!;
+        assert.ok(estimate, where);
+
+        // The range the customer was shown, verified by this site's server, with no base:
+        // p5 totals the lines.
+        assert.equal(estimate.kind, "planning-range", where);
+        assert.equal(estimate.low, verified.priceLow, where);
+        assert.equal(estimate.high, verified.priceHigh, where);
+        assert.equal(estimate.verified, true, where);
+        assert.equal("base" in estimate, false, where);
+        assert.match(estimate.label!, /^[A-Z][A-Za-z\/ -]+, (Refresh|Mid-Range|High-End|Luxury) finish, [\d,]+ sq ft$/, where);
+        assert.deepEqual(Object.keys(estimate).sort(), ["high", "kind", "label", "lines", "low", "verified"], where);
+
+        // One line per trade with a price, in the admin email's order, named as the trade.
+        const priced = admin.trades.filter((trade) => toCents(trade.customerAmount) > 0);
+        const lines = estimate.lines!;
+        assert.equal(lines.length, priced.length, where);
+        assert.ok(lines.length >= 8 && lines.length <= P5_ESTIMATE_MAX_LINES, where);
+        lines.forEach((line, index) => {
+          const trade = priced[index];
+          assert.equal(line.title, trade.division, where);
+          assert.equal(line.division, trade.division, where);
+          // The CUSTOMER amount of that trade (the email's "Customer" column), to the cent...
+          assert.ok(Math.abs(line.amount - trade.customerAmount) <= 0.0101, `${where}: ${line.title} ${line.amount} vs ${trade.customerAmount}`);
+          assert.ok(Math.abs(line.amount * 100 - toCents(line.amount)) < 1e-6, `${where}: ${line.amount} is whole cents`);
+          // ...and never what the trade costs us.
+          assert.notEqual(toCents(line.amount), toCents(trade.internalCost), `${where}: ${line.title}`);
+          assert.ok(line.amount > trade.internalCost, `${where}: ${line.title} is a price, above its cost`);
+          // One clear quantity travels as quantity and unit; several are said in words.
+          const single = /^(\d[\d,]*) ([A-Za-z]+)$/.exec(trade.scopeSummary);
+          if (single && Number(single[1].replace(/,/g, "")) > 0) {
+            assert.deepEqual([line.quantity, line.unit, line.description], [Number(single[1].replace(/,/g, "")), single[2], undefined], `${where}: ${line.title}`);
+            measured += 1;
+          } else {
+            assert.deepEqual([line.quantity, line.unit, line.description], [undefined, undefined, trade.scopeSummary || undefined], `${where}: ${line.title}`);
+            described += 1;
+          }
+          assert.deepEqual(Object.keys(line).filter((key) => !["title", "division", "amount", "quantity", "unit", "description"].includes(key)), [], where);
+        });
+
+        // The lines sum to the customer price to the cent, and that total sits inside the range.
+        const total = lines.reduce((sum, line) => sum + toCents(line.amount), 0);
+        assert.equal(total, toCents(admin.customerPrice), `${where}: lines sum to the customer price`);
+        assert.ok(total >= toCents(estimate.low) && total <= toCents(estimate.high), `${where}: ${total / 100} is inside ${estimate.low} to ${estimate.high}`);
+
+        // No cost or margin word anywhere in it, and no internal figure by value.
+        assert.doesNotMatch(JSON.stringify(estimate), /cost|margin|mark-?up|profit|contingenc|overhead|internal/i, where);
+        const figures = new Set([toCents(estimate.low), toCents(estimate.high), ...lines.map((line) => toCents(line.amount))]);
+        for (const [label, value] of [
+          ["total internal cost", admin.totalInternalCost],
+          ["direct cost", admin.directCost],
+          ["contingency", admin.contingency],
+          ["gross profit", admin.grossProfit],
+        ] as const) {
+          assert.equal(figures.has(toCents(value)), false, `${where}: ${label} is in the estimate`);
+        }
+
+        // The bridge sends it unchanged, beside the notes, and the rest of the body is as before.
+        assert.deepEqual(cleanP5Estimate(estimate), estimate, where);
+        const body = buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", estimate });
+        assert.deepEqual(body.estimate, estimate, where);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, PROJECTS.length * FINISHES.length * 3);
+  assert.ok(measured > 0 && described > 0, "the sweep covers single quantities and several");
+
+  // Plain words in the label.
+  assert.equal(buildConsultationP5Estimate(estimateFor("kitchen", "mid-range", 180))!.label, "Kitchen, Mid-Range finish, 180 sq ft");
+  assert.equal(buildConsultationP5Estimate(estimateFor("whole-home", "luxury", 2400))!.label, "Whole-Home, Luxury finish, 2,400 sq ft");
+});
+
+test("no planning range, a callback and step 2 send no estimate, and building one never throws", () => {
+  assert.equal(buildConsultationP5Estimate(null), null);
+  for (const estimate of [undefined, null]) {
+    const body = buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", teamNotes: ["Lead dashboard: https://leads.boiseremodeling.co"], estimate });
+    assert.equal("estimate" in body, false);
+  }
+  // A broken estimate is no estimate, never an exception: the request still goes.
+  assert.equal(buildConsultationP5Estimate({ project: "pool", finish: "mid-range", sqft: 180 } as never), null);
+  assert.equal(buildConsultationP5Estimate({} as never), null);
+  const body = buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", estimate: { kind: "planning-range", low: Number.NaN, high: 10 } });
+  assert.equal("estimate" in body, false);
+  assert.equal(body.team_alert, "confirm");
+  assert.equal(body.name, "Ada Example");
+
+  // Step 1 sends it only when there is a range and the request is not a callback.
+  const route = readFileSync(new URL("../app/api/consultation/route.ts", import.meta.url), "utf8");
+  assert.match(route, /estimate: data\.callback \? null : buildConsultationP5Estimate\(estimate\),/);
+  assert.equal(route.match(/buildConsultationP5Estimate\(/g)?.length, 1, "one place builds it");
+  // Step 2 ("Details added") never does: nothing in its bridge call is an estimate.
+  const details = readFileSync(new URL("../server/services/requestDetailsDelivery.ts", import.meta.url), "utf8");
+  const call = details.slice(details.indexOf("forwardConsultationToP5Intake({"), details.indexOf("});", details.indexOf("forwardConsultationToP5Intake({")));
+  assert.ok(call.length > 100);
+  assert.equal(/\bestimate\b/.test(call), false);
+  assert.equal(/buildConsultationP5Estimate/.test(details), false);
+});
+
+test("the bridge is the wall behind the estimate: customer amounts only, all or nothing, never an exception", () => {
+  assert.equal(P5_ESTIMATE_MAX_LINES, 60);
+  const good = {
+    kind: "planning-range" as const,
+    low: 21000,
+    high: 28500,
+    label: "Kitchen, Mid-Range finish, 180 sq ft",
+    verified: true as const,
+    lines: [
+      { title: "COUNTERTOPS + CABINETRY", division: "COUNTERTOPS + CABINETRY", amount: 12296.4, quantity: 20, unit: "LF" },
+      { title: "ADMINISTRATION", division: "ADMINISTRATION", amount: 1871.13, description: "1 MO, 0 EA" },
+    ],
+  };
+  assert.deepEqual(cleanP5Estimate(good), good);
+
+  // A cost or margin word in any text withholds the whole estimate.
+  for (const leaked of [
+    { ...good, label: "Kitchen at 30% gross margin" },
+    { ...good, lines: [{ ...good.lines[0], description: "our cost $7,825" }, good.lines[1]] },
+    { ...good, lines: [{ ...good.lines[0], title: "Contingency" }, good.lines[1]] },
+    { ...good, lines: [good.lines[0], { ...good.lines[1], division: "OVERHEAD + PROFIT" }] },
+    { ...good, lines: [{ ...good.lines[0], unit: "markup" }, good.lines[1]] },
+  ]) {
+    assert.equal(cleanP5Estimate(leaked), null, JSON.stringify(leaked).slice(0, 120));
+    assert.equal("estimate" in buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", estimate: leaked as never }), false);
+  }
+
+  // Bad numbers, a bad shape or too many lines: no estimate, because p5 totals the lines.
+  for (const bad of [
+    null,
+    undefined,
+    5,
+    "planning-range",
+    [],
+    {},
+    { ...good, kind: "document" },
+    { ...good, low: Number.NaN },
+    { ...good, high: Number.POSITIVE_INFINITY },
+    { ...good, low: 0 },
+    { ...good, low: -5 },
+    { ...good, low: 30000, high: 28500 },
+    { ...good, low: "21000" },
+    { ...good, lines: "none" },
+    { ...good, lines: [null] },
+    { ...good, lines: [{ title: "", amount: 5 }] },
+    { ...good, lines: [{ title: "FLOORING" }] },
+    { ...good, lines: [{ title: "FLOORING", amount: -1 }] },
+    { ...good, lines: [{ title: "FLOORING", amount: Number.NaN }] },
+    { ...good, lines: [{ title: "FLOORING", amount: "900" }] },
+    { ...good, lines: Array.from({ length: 61 }, (_, index) => ({ title: `Trade ${index + 1}`, amount: 100 })) },
+  ]) {
+    assert.equal(cleanP5Estimate(bad), null, JSON.stringify(bad)?.slice(0, 80));
+  }
+  assert.doesNotThrow(() => cleanP5Estimate(Object.defineProperty({}, "kind", { get() { throw new Error("boom"); } })));
+  assert.equal(cleanP5Estimate(Object.defineProperty({}, "kind", { get() { throw new Error("boom"); } })), null);
+
+  // What is tidied rather than refused: zero lines left out, cents, single lines, only a true `verified`.
+  const tidied = cleanP5Estimate({
+    kind: "planning-range",
+    low: 21000.004,
+    high: 28500.006,
+    label: "  Kitchen,\nMid-Range finish  ",
+    verified: "true",
+    base: 24800.126,
+    lines: [
+      { title: "FLOORING", amount: 1701.234, quantity: 180, unit: " SF ", division: "FLOORING" },
+      { title: "FREE", amount: 0 },
+      { title: "PLUMBING", amount: 982.005, quantity: 0, unit: "SF", description: "" },
+    ],
+  });
+  assert.deepEqual(tidied, {
+    kind: "planning-range",
+    low: 21000,
+    high: 28500.01,
+    label: "Kitchen, Mid-Range finish",
+    base: 24800.13,
+    lines: [
+      { title: "FLOORING", amount: 1701.23, division: "FLOORING", quantity: 180, unit: "SF" },
+      { title: "PLUMBING", amount: 982.01 },
+    ],
+  });
+  assert.equal(cleanP5Estimate({ ...good, lines: Array.from({ length: 60 }, (_, index) => ({ title: `Trade ${index + 1}`, amount: 100 })) })!.lines!.length, 60);
+  assert.deepEqual(cleanP5Estimate({ kind: "planning-range", low: 100, high: 200 }), { kind: "planning-range", low: 100, high: 200 });
 });
