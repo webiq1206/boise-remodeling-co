@@ -12,10 +12,12 @@ import assert from "node:assert/strict";
  */
 
 import {
+  TEAM_INTERNAL_NOTES_MAX_LINES,
   TEAM_NOTES_MAX_LINES,
   TEAM_NOTE_BLOCKED,
   TEAM_NOTE_MAX_LENGTH,
   buildP5IntakeBody,
+  cleanTeamInternalNotes,
   cleanTeamNotes,
   forwardConsultationToP5Intake,
 } from "../server/services/p5IntakeBridge.ts";
@@ -25,7 +27,9 @@ import {
   sendSiteTeamEmail,
   siteTeamEmailRecipients,
 } from "../server/services/teamEmailFallback.ts";
-import { buildAdminEmailHtml, buildConsultationTeamNotes, formatUsd, type VerifiedEstimate } from "../server/services/consultationEmail.ts";
+import { buildAdminEmailHtml, buildConsultationTeamInternalNotes, buildConsultationTeamNotes, formatUsd, type VerifiedEstimate } from "../server/services/consultationEmail.ts";
+import { escapeHtml } from "../server/services/emailLayout.ts";
+import { readFileSync } from "node:fs";
 import { calculateEstimate, getProjectSizeConfig, EMPTY_REFINEMENTS, type EstimateRefinements } from "../shared/estimateEngine.ts";
 import { resolveInternalEstimate, resolveQuotedRange } from "../shared/costs/resolve.ts";
 
@@ -426,4 +430,162 @@ test("team notes fit the p5 limits for every project, finish and size, with noth
     }
   }
   assert.ok(fullest >= 28, "the fullest case is a real test of the limit");
+});
+
+/**
+ * Internal pricing in the one team email (owner, 17 November 2026). Our cost, margin and the
+ * wording of pricing checks travel in team_internal_notes, a field of their own: when it is
+ * present p5 sends "Lead and pricing" instead of "New lead", and only "New lead" mail is copied
+ * into HubSpot. team_notes is unchanged and still never carries any of it.
+ */
+test("internal pricing travels in team_internal_notes, with the admin email's own figures, and never in team_notes", () => {
+  const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const alerts = ["recompute-mismatch", "implausible-total"];
+  let checked = 0;
+  let fullest = 0;
+  let warned = 0;
+  for (const project of PROJECTS) {
+    const size = getProjectSizeConfig(project);
+    for (const finish of FINISHES) {
+      for (const sqft of [size.min, Math.round((size.min + size.max) / 2), size.max]) {
+        const estimate = estimateFor(project, finish, sqft);
+        const where = `${project} ${finish} ${sqft}`;
+        const admin = resolveInternalEstimate(estimate.project, estimate.finish, estimate.sqft, estimate.refinements)!.admin;
+        const internal = buildConsultationTeamInternalNotes({ estimate, pricingAlerts: alerts });
+
+        // The totals and the alert and needs-review wording come first, in this order, so the
+        // 60-line limit can never cut them. Our cost by trade follows, one line each.
+        const expected = [
+          `Direct cost: ${formatUsd(admin.directCost)}`,
+          `Contingency: ${formatUsd(admin.contingency)}`,
+          `Total internal cost: ${formatUsd(admin.totalInternalCost)}`,
+          `Gross profit: ${formatUsd(admin.grossProfit)}`,
+          `Margin: ${admin.marginLabel}`,
+          `Quoted range basis: ${admin.rangeLabel}`,
+          "Pricing alerts: recompute-mismatch, implausible-total",
+          ...admin.warnings.map((warning) => `Needs review: ${warning.message}`),
+          ...admin.trades.map(
+            (trade) =>
+              `Trade, ${trade.division}: our cost ${formatUsd(trade.internalCost)}, customer ${formatUsd(trade.customerAmount)}${trade.scopeSummary ? ` (${trade.scopeSummary})` : ""}`,
+          ),
+        ];
+        assert.deepEqual(internal, expected, where);
+        assert.ok(admin.trades.length >= 8, where);
+        warned += admin.warnings.length;
+
+        // By value against the site's own team email for the same request: the same numbers, in
+        // the same rows of its "Internal breakdown" block.
+        const html = buildAdminEmailHtml({ name: "Ada Example", phone: "2085550100", email: "", address: "", projectType: project }, estimate, profile);
+        assert.ok(html.includes("Internal breakdown (not shown to the lead)"), where);
+        for (const [label, value] of [
+          ["Direct cost", admin.directCost],
+          ["Contingency", admin.contingency],
+          ["Total internal cost", admin.totalInternalCost],
+          ["Gross profit", admin.grossProfit],
+        ] as const) {
+          assert.match(html, new RegExp(`>${label}</td><td[^>]*>${escapeRegExp(formatUsd(value))}</td>`), `${where}: ${label}`);
+        }
+        assert.ok(html.includes(`${escapeHtml(admin.marginLabel)}<br>`), `${where}: margin line`);
+        assert.ok(html.includes(`Quoted range ${escapeHtml(admin.rangeLabel)}`), `${where}: quoted range basis`);
+        for (const warning of admin.warnings) assert.ok(html.includes(escapeHtml(warning.message)), `${where}: needs review`);
+        for (const trade of admin.trades) {
+          assert.match(
+            html,
+            new RegExp(`${escapeRegExp(escapeHtml(trade.division))}<br>[^\\n]*?>${escapeRegExp(formatUsd(trade.internalCost))}</td><td[^>]*>${escapeRegExp(formatUsd(trade.customerAmount))}</td>`),
+            `${where}: ${trade.division}`,
+          );
+        }
+
+        // Within the p5 limits, and the bridge sends them unchanged.
+        fullest = Math.max(fullest, internal.length);
+        assert.ok(internal.length <= TEAM_INTERNAL_NOTES_MAX_LINES, `${where}: ${internal.length} lines`);
+        for (const line of internal) {
+          assert.ok(line.length <= TEAM_NOTE_MAX_LENGTH, `${where}: ${line.length} characters: ${line}`);
+          assert.match(line, /^[^:\n]{2,60}: \S/, `${where}: not Label: value: ${line}`);
+          assert.equal(/[\r\n\t]/.test(line), false, `${where}: one note is one line`);
+        }
+        assert.deepEqual(cleanTeamInternalNotes(internal), internal, where);
+
+        // The two fields never share a line, and team_notes for the same request stays clean.
+        const notes = buildConsultationTeamNotes({ estimate, profile, pricingAlerts: alerts, attribution, requestId: "isolated-1" });
+        for (const line of notes) {
+          assert.equal(internal.includes(line), false, `${where}: ${line}`);
+          assert.equal(TEAM_NOTE_BLOCKED.test(line), false, `${where}: ${line}`);
+        }
+        const body = buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", teamNotes: notes, teamInternalNotes: internal });
+        assert.deepEqual(body.team_internal_notes, internal, where);
+        assert.deepEqual(body.team_notes, notes, where);
+        assert.doesNotMatch(JSON.stringify(body.team_notes), /cost|margin|mark-?up|profit|contingenc|overhead|recompute-mismatch|implausible-total/i, where);
+        // Outside team_internal_notes, nothing in the posted body names a cost or margin.
+        const { team_internal_notes: _internal, ...rest } = body;
+        assert.doesNotMatch(JSON.stringify(rest), /cost|margin|mark-?up|profit|contingenc|overhead/i, where);
+        checked += 1;
+      }
+    }
+  }
+  assert.equal(checked, PROJECTS.length * FINISHES.length * 3);
+  assert.ok(fullest >= 25 && fullest <= 40, `the fullest case is ${fullest} lines, well inside 60`);
+  assert.ok(warned > 0, "the sweep includes estimates with a needs-review warning");
+
+  // No alert kinds: no alerts line, and the totals still lead.
+  const quiet = buildConsultationTeamInternalNotes({ estimate: estimateFor("kitchen", "mid-range", 180) });
+  assert.ok(quiet[0].startsWith("Direct cost: $"));
+  assert.equal(quiet.some((line) => line.startsWith("Pricing alerts:")), false);
+});
+
+test("a request with no planning range sends no team_internal_notes, and step 2 never does", () => {
+  assert.deepEqual(buildConsultationTeamInternalNotes({ estimate: null }), []);
+  assert.deepEqual(buildConsultationTeamInternalNotes({ estimate: null, pricingAlerts: ["zero-total"] }), []);
+  for (const teamInternalNotes of [undefined, null, [], ["", "   ", "\n"]]) {
+    const body = buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", teamNotes: ["Lead dashboard: https://leads.boiseremodeling.co"], teamInternalNotes });
+    assert.equal("team_internal_notes" in body, false, JSON.stringify(teamInternalNotes));
+    assert.deepEqual(body.team_notes, ["Lead dashboard: https://leads.boiseremodeling.co"]);
+  }
+  // Step 2 ("Details added") has no planning range of its own: it never sets the field.
+  const details = readFileSync(new URL("../server/services/requestDetailsDelivery.ts", import.meta.url), "utf8");
+  assert.equal(/teamInternalNotes|team_internal_notes/.test(details), false);
+  // Step 1 builds both, each from its own builder, and hands each to its own bridge input.
+  const route = readFileSync(new URL("../app/api/consultation/route.ts", import.meta.url), "utf8");
+  assert.match(route, /teamNotes = buildConsultationTeamNotes\(/);
+  assert.match(route, /teamInternalNotes = buildConsultationTeamInternalNotes\(/);
+  assert.doesNotMatch(route, /teamNotes:\s*teamInternalNotes|teamNotes\.push|teamNotes\.concat|\.\.\.teamInternalNotes/);
+});
+
+test("the bridge cleans team_internal_notes like team_notes, without the blocked-word wall, and caps them at 60", () => {
+  assert.equal(TEAM_INTERNAL_NOTES_MAX_LINES, 60);
+  const internal = [
+    "Direct cost: $12,343",
+    "  Contingency:   $1,234  ",
+    "Total internal cost: $13,577",
+    "Gross profit: $5,819",
+    "Margin: 30% gross margin (42.9% markup)",
+    "Needs review:\nthe margin was\ttrimmed",
+    "",
+    "   ",
+    `Long: ${"x".repeat(400)}`,
+  ];
+  const cleaned = cleanTeamInternalNotes(internal);
+  assert.deepEqual(cleaned.slice(0, 6), [
+    "Direct cost: $12,343",
+    "Contingency: $1,234",
+    "Total internal cost: $13,577",
+    "Gross profit: $5,819",
+    "Margin: 30% gross margin (42.9% markup)",
+    "Needs review: the margin was trimmed",
+  ]);
+  assert.equal(cleaned.length, 7, "blank lines are dropped, cost and margin lines are kept");
+  assert.equal(cleaned[6].length, TEAM_NOTE_MAX_LENGTH);
+  assert.ok(cleaned[6].endsWith("..."));
+  assert.deepEqual(cleanTeamInternalNotes([null, 12, { a: 1 }, "Our cost: $5,649"]), ["Our cost: $5,649"], "only strings travel");
+  assert.deepEqual(cleanTeamInternalNotes(null), []);
+
+  const many = cleanTeamInternalNotes(Array.from({ length: 75 }, (_, index) => `Trade ${index + 1}: our cost $${index + 1}`));
+  assert.equal(many.length, 60);
+  assert.equal(many[59], "Trade 60: our cost $60", "the first 60 lines are kept, in order");
+
+  // The same lines in the wrong field are still withheld: the wall on team_notes has not moved.
+  const body = buildP5IntakeBody({ name: "Ada Example", phone: "2085550100", teamNotes: [...internal, "Pricing alerts: 2"], teamInternalNotes: internal });
+  assert.deepEqual(body.team_notes, [`Long: ${"x".repeat(291)}...`, "Pricing alerts: 2"]);
+  assert.deepEqual(body.team_internal_notes, cleaned);
+  assert.equal(body.team_alert, "confirm");
 });

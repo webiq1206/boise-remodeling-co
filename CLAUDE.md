@@ -644,19 +644,38 @@ went. A lead must never end with zero team emails: every doubt sends.
   record with the permitting authority, and the marketing source.
   `Label: value` lines, at most 40 of at most 300 characters. Never repeat a
   field the bridge already sends.
-- **No cost or margin in team notes, ever.** The p5 team email is copied into
-  HubSpot with its full body by p5's inbox sync, and costs and margins stay out
-  of HubSpot. So no note carries our cost, a margin, a markup, a profit, a
+- **No cost or margin in team notes, ever.** A p5 email that carries only
+  `team_notes` is a "New lead" email, and p5's inbox sync copies "New lead"
+  mail into HubSpot with its full body; costs and margins stay out of HubSpot.
+  So no team note carries our cost, a margin, a markup, a profit, a
   contingency or an overhead figure, and pricing alerts and "needs review"
-  warnings travel as a count, never their wording. The internal breakdown (our
-  cost by trade, direct cost, contingency, total internal cost, gross profit,
-  the margin line) is therefore emailed only in this site's own team email, the
-  fallback; when p5 answers `sent` it is not emailed at all. `cleanTeamNotes()`
-  in the bridge is the wall behind the builder: a line that names one of those
-  words (`TEAM_NOTE_BLOCKED`) never leaves the site, and p5 drops such lines
-  too. Do not reword a line to get past it; leave the figure out.
-  `tests/team-email-fallback.test.ts` checks every project, finish and size by
-  value as well as by word.
+  warnings travel there as a count, never their wording. `cleanTeamNotes()` in
+  the bridge is the wall behind the builder: a line that names one of those
+  words (`TEAM_NOTE_BLOCKED`) never leaves the site in `team_notes`, and p5
+  withholds such lines there too. Do not reword a line to get past it, and do
+  not loosen the wall; internal figures have their own field.
+- **Internal pricing notes** (owner decision, 17 November 2026: cost and
+  margin are back in the one team email, without reaching HubSpot).
+  `buildConsultationTeamInternalNotes()` in `consultationEmail.ts` sends, as
+  `team_internal_notes`, the internal breakdown the admin email shows for a
+  request with a planning range: direct cost, contingency, total internal
+  cost, gross profit, the margin and markup line, the quoted range basis, the
+  pricing-alert kinds and the "needs review" warnings by name, then our cost
+  (beside the customer price) for each trade. Totals and wording come first so
+  the limit cannot cut them. `Label: value` lines, at most 60 of at most 300
+  characters, cleaned by `cleanTeamInternalNotes()` (the same clean-up, no
+  blocked-word wall). p5 prints them under "Internal pricing" and, because
+  they are present, sends the email as "Lead and pricing: ..." instead of
+  "New lead: ...", which its inbox sync does not copy into HubSpot. That
+  subject is the only thing keeping these figures out of HubSpot, so they go
+  in this field and nowhere else in the body. Nothing is sent for a request
+  with no planning range (so callbacks and plain requests stay "New lead"),
+  and nothing for step 2. So when p5 answers `sent`, the team still gets the
+  whole internal breakdown, in the p5 email; an older p5 that does not know
+  the field ignores it. `tests/team-email-fallback.test.ts` checks both
+  fields for every project, finish and size: by word and by value that
+  `team_notes` has no internal figure, and by value that the internal notes
+  equal the admin email's own rows.
 - **Not covered, on purpose:** the RE-10, plans, assistant, document estimator
   and Facebook lead emails do not forward to the p5 intake, so they still send
   their own team email. Do not gate them on this rule.

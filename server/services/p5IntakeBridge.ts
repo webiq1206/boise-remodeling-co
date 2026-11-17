@@ -9,9 +9,13 @@
  * the BRC dashboard forward stay independent of it.
  *
  * One team email per request (owner, 17 November 2026). Every post asks p5 to
- * confirm its own team email (team_alert "confirm") and carries team_notes,
- * the lines this site's team email has that the p5 body does not, minus every
- * cost and margin (that email is copied into HubSpot). The answer's
+ * confirm its own team email (team_alert "confirm") and carries two sets of
+ * lines this site's team email has that the p5 body does not. team_notes:
+ * what the visitor was shown and priced at, never a cost or margin, because a
+ * p5 email that carries only these is a "New lead" email and is copied into
+ * HubSpot. team_internal_notes: our cost, margin and pricing checks for a
+ * planning range. When any are sent, p5 uses the subject "Lead and pricing"
+ * instead, which its inbox sync does not copy into HubSpot. The answer's
  * `alert` comes back as the bridge result, and the caller sends this site's
  * own team email only when p5 did not confirm (see teamEmailFallback.ts).
  * Only the TEAM email waits for that result, inside after(); the visitor
@@ -48,6 +52,9 @@ export const P5_INTAKE_TIMEOUT_MS = 30_000;
 /** The p5 contract for team_notes: at most 40 plain single lines of at most 300 characters. */
 export const TEAM_NOTES_MAX_LINES = 40;
 export const TEAM_NOTE_MAX_LENGTH = 300;
+
+/** The p5 contract for team_internal_notes: at most 60 lines, each within TEAM_NOTE_MAX_LENGTH. */
+export const TEAM_INTERNAL_NOTES_MAX_LINES = 60;
 
 /**
  * What p5 said about its own team email.
@@ -137,6 +144,12 @@ export type ConsultationBridgeInput = {
    * body above does not carry, and never a cost or margin: see TEAM_NOTE_BLOCKED.
    */
   teamNotes?: ReadonlyArray<string> | null;
+  /**
+   * `Label: value` lines p5 prints under "Internal pricing": our cost, margin and pricing
+   * checks. Internal figures go HERE and nowhere else in the body. When any are sent, p5 sends
+   * its email as "Lead and pricing", which is not copied into HubSpot.
+   */
+  teamInternalNotes?: ReadonlyArray<string> | null;
 };
 
 export type P5IntakeBody = Record<
@@ -217,6 +230,27 @@ function composeAddress(address?: string | null, zip?: string | null): string | 
   return `${street}, ${postal}`;
 }
 
+/**
+ * Plain single lines within the p5 limits for team_internal_notes. The same clean-up as
+ * cleanTeamNotes, WITHOUT the blocked-word wall: this field exists to carry costs and margins,
+ * and p5 keeps an email that has it out of HubSpot. Order is priority: lines past 60 are dropped.
+ */
+export function cleanTeamInternalNotes(notes: ReadonlyArray<unknown> | null | undefined): string[] {
+  const lines: string[] = [];
+  for (const raw of notes ?? []) {
+    if (typeof raw !== "string") continue;
+    const line = raw.replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim();
+    if (!line) continue;
+    lines.push(
+      line.length > TEAM_NOTE_MAX_LENGTH
+        ? `${line.slice(0, TEAM_NOTE_MAX_LENGTH - 3).trimEnd()}...`
+        : line,
+    );
+    if (lines.length === TEAM_INTERNAL_NOTES_MAX_LINES) break;
+  }
+  return lines;
+}
+
 export function buildP5IntakeBody(input: ConsultationBridgeInput): P5IntakeBody {
   const visitorType = input.projectType?.trim() ?? "";
   const projectType = p5ProjectType(visitorType);
@@ -276,6 +310,9 @@ export function buildP5IntakeBody(input: ConsultationBridgeInput): P5IntakeBody 
   body.team_alert = "confirm";
   const teamNotes = cleanTeamNotes(input.teamNotes);
   if (teamNotes.length) body.team_notes = teamNotes;
+  // Internal figures travel only in their own field, never in team_notes.
+  const teamInternalNotes = cleanTeamInternalNotes(input.teamInternalNotes);
+  if (teamInternalNotes.length) body.team_internal_notes = teamInternalNotes;
   return body;
 }
 

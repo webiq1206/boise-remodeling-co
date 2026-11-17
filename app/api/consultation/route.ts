@@ -16,6 +16,7 @@ import {
   buildAdminSubject,
   buildCustomerSubject,
   buildConsultationTeamNotes,
+  buildConsultationTeamInternalNotes,
   formatLeadReplyTo,
   type VerifiedEstimate,
   type PropertyEnrichment,
@@ -532,9 +533,11 @@ export async function POST(request: NextRequest) {
     //
     // One team email per request (owner, 17 November 2026): the bridge asks p5 to
     // confirm its team email and carries, as team notes, what this site's own team
-    // email has that the p5 body does not, never a cost or margin (the p5 email is
-    // copied into HubSpot). Its result decides this site's team email further down,
-    // inside after(). Nothing on the visitor's path awaits it.
+    // email has that the p5 body does not: team notes (never a cost or margin, a
+    // "New lead" email is copied into HubSpot) and, for a planning range, internal
+    // pricing notes (p5 then sends "Lead and pricing", which is not copied). Its
+    // result decides this site's team email further down, inside after(). Nothing
+    // on the visitor's path awaits it.
     const location = (data.propertyProfile as { city?: string; zip?: string } | null) ?? null;
     const crmProfile = (data.propertyProfile as PropertyEnrichment | null) ?? null;
     let bridge: Promise<P5BridgeResult> | null = null;
@@ -550,6 +553,17 @@ export async function POST(request: NextRequest) {
         });
       } catch (notesErr) {
         console.error("[p5-intake] Team notes could not be built:", notesErr);
+      }
+      // Our cost, margin and the alert wording for a planning range. Their own field:
+      // p5 keeps an email that carries them out of HubSpot. Empty with no range.
+      let teamInternalNotes: string[] = [];
+      try {
+        teamInternalNotes = buildConsultationTeamInternalNotes({
+          estimate,
+          pricingAlerts: pricingAlertKinds,
+        });
+      } catch (notesErr) {
+        console.error("[p5-intake] Internal pricing notes could not be built:", notesErr);
       }
       bridge = forwardConsultationToP5Intake({
         name: data.name,
@@ -568,6 +582,7 @@ export async function POST(request: NextRequest) {
         bestTime: data.callback ? data.bestTime || "Any time" : null,
         submissionKind: "initial",
         teamNotes,
+        teamInternalNotes,
       });
       after(() => bridge);
     } catch (bridgeErr) {
