@@ -15,6 +15,7 @@ import {
   buildCustomerEmailHtml,
   buildAdminSubject,
   buildCustomerSubject,
+  buildConsultationTeamNotes,
   formatLeadReplyTo,
   type VerifiedEstimate,
   type PropertyEnrichment,
@@ -34,7 +35,8 @@ import {
 import { resolveQuotedRange } from "@/shared/costs/resolve";
 import { IMPLAUSIBLE_QUOTE_CEILING, logPricingAlert } from "@/server/services/pricingAlerts";
 import { dashboardEmail, forwardToLeadDashboardAsync } from "@/server/services/leadDashboardForward";
-import { forwardConsultationToP5Intake } from "@/server/services/p5IntakeBridge";
+import { forwardConsultationToP5Intake, type P5BridgeResult } from "@/server/services/p5IntakeBridge";
+import { sendSiteTeamEmail } from "@/server/services/teamEmailFallback";
 import { issueRequestDetailsToken } from "@/server/services/requestDetailsToken";
 import { absoluteStoredUrl } from "@/server/services/requestFiles";
 import { MAX_REQUEST_FILES, checkRequestFile, safeRequestFileName } from "@/shared/requestFiles";
@@ -521,15 +523,35 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // HubSpot contact, mapped deal, and lead_created mail live on p5 intake.
-    // Started as soon as the lead is durable so it overlaps Resend, and kept
-    // alive with after() so the visitor response does not wait on it.
-    // Failures stay inside the bridge and cannot change this status.
+    // HubSpot contact, mapped deal, and the team's "New lead" email live on p5 intake.
+    // Started as soon as the lead is durable so it overlaps the dashboard forward and
+    // the customer's email, and kept alive with after() so the visitor response does
+    // not wait on it. Failures stay inside the bridge and cannot change this status.
     // Duplicate replays returned above, and InquiryRejectedError / 503 paths
     // never reach here. The short multipart form uses this same accept path.
+    //
+    // One team email per request (owner, 17 November 2026): the bridge asks p5 to
+    // confirm its team email and carries, as team notes, what this site's own team
+    // email has that the p5 body does not, never a cost or margin (the p5 email is
+    // copied into HubSpot). Its result decides this site's team email further down,
+    // inside after(). Nothing on the visitor's path awaits it.
     const location = (data.propertyProfile as { city?: string; zip?: string } | null) ?? null;
+    const crmProfile = (data.propertyProfile as PropertyEnrichment | null) ?? null;
+    let bridge: Promise<P5BridgeResult> | null = null;
     try {
-      const bridge = forwardConsultationToP5Intake({
+      let teamNotes: string[] = [];
+      try {
+        teamNotes = buildConsultationTeamNotes({
+          estimate,
+          profile: crmProfile,
+          pricingAlerts: pricingAlertKinds,
+          attribution,
+          requestId: acceptance.rowId,
+        });
+      } catch (notesErr) {
+        console.error("[p5-intake] Team notes could not be built:", notesErr);
+      }
+      bridge = forwardConsultationToP5Intake({
         name: data.name,
         email: data.email || null,
         phone: data.phone,
@@ -545,6 +567,7 @@ export async function POST(request: NextRequest) {
         contactPreference: data.contactPreference ?? null,
         bestTime: data.callback ? data.bestTime || "Any time" : null,
         submissionKind: "initial",
+        teamNotes,
       });
       after(() => bridge);
     } catch (bridgeErr) {
@@ -566,8 +589,6 @@ export async function POST(request: NextRequest) {
     // Real unit costs entered in the admin pricing panel, applied to every
     // breakdown this request renders so the panel, emails and CRM agree.
     const unitCostOverrides = await readUnitCostOverrides();
-
-    const crmProfile = (data.propertyProfile as PropertyEnrichment | null) ?? null;
 
     const crmResult = await forwardToLeadDashboardAsync({
       fullName: data.name,
@@ -614,73 +635,40 @@ export async function POST(request: NextRequest) {
     });
 
     const shouldSendEmail = !data.skipEmail;
-    let adminEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail ? "sent" : "skipped";
     // No email given (optional on the short request): nothing to send the visitor a copy at.
     let customerEmailStatus: "sent" | "failed" | "skipped" = shouldSendEmail && data.email ? "sent" : "skipped";
     let deliveryError = crmResult.error;
-    if (shouldSendEmail) {
+    const lead = {
+      name: data.name,
+      phone: data.phone,
+      email: data.email ?? "",
+      address: data.address || "",
+      zip: data.zip || "",
+      projectType: data.projectType,
+      message: data.message,
+    };
+
+    // ---- Customer / lead email ----------------------------------------------
+    // Sent on the visitor's path, and never gated on the p5 bridge or on the team
+    // email. Includes the full estimate + every selection so the lead has it in
+    // writing without ever logging in.
+    if (shouldSendEmail && data.email) {
       try {
         const { client, fromEmail } = await getUncachableEmailClient();
-        const from = formatFromAddress(fromEmail);
-
-        const lead = {
-          name: data.name,
-          phone: data.phone,
-          email: data.email ?? "",
-          address: data.address || "",
-          zip: data.zip || "",
-          projectType: data.projectType,
-          message: data.message,
-        };
-        const enrichment = (data.propertyProfile as PropertyEnrichment | null) ?? null;
-
-        // ---- Admin / internal-team email ------------------------------------
-        // Reply-To is the LEAD, so hitting Reply in any mail client goes straight
-        // to the customer.
-        const adminHtml = buildAdminEmailHtml(lead, estimate, enrichment, unitCostOverrides);
-        const adminEmails = await getAdminRecipientEmails(SITE_CONFIG.email);
-        for (const adminEmail of adminEmails) {
-          const adminResult = await client.emails.send({
-            from,
-            ...(data.email ? { replyTo: formatLeadReplyTo(data.name, data.email) } : {}),
-            to: adminEmail,
-            subject: data.callback
-              ? `Callback request: ${data.name} · ${data.phone}`
-              : buildAdminSubject(lead, estimate),
-            html: adminHtml,
-            text: htmlToPlainText(adminHtml),
-          });
-          if (adminResult?.error) {
-            adminEmailStatus = "failed";
-            deliveryError = deliveryError || JSON.stringify(adminResult.error);
-            console.error(
-              `[consultation] Admin email to ${adminEmail} failed:`,
-              JSON.stringify(adminResult.error)
-            );
-          }
-        }
-
-        // ---- Customer / lead email ------------------------------------------
-        // Includes the full estimate + every selection so the lead has it in
-        // writing without ever logging in.
-        const customerResult = data.email
-          ? await (async () => {
-              const customerHtml = buildCustomerEmailHtml(
-                lead,
-                estimate,
-                unitCostOverrides,
-                data.callback ? "consult" : "walkthrough",
-              );
-              return client.emails.send({
-                from,
-                replyTo: getReplyToAddress(),
-                to: data.email as string,
-                subject: buildCustomerSubject(lead, estimate),
-                html: customerHtml,
-                text: htmlToPlainText(customerHtml),
-              });
-            })()
-          : null;
+        const customerHtml = buildCustomerEmailHtml(
+          lead,
+          estimate,
+          unitCostOverrides,
+          data.callback ? "consult" : "walkthrough",
+        );
+        const customerResult = await client.emails.send({
+          from: formatFromAddress(fromEmail),
+          replyTo: getReplyToAddress(),
+          to: data.email,
+          subject: buildCustomerSubject(lead, estimate),
+          html: customerHtml,
+          text: htmlToPlainText(customerHtml),
+        });
         if (customerResult?.error) {
           customerEmailStatus = "failed";
           deliveryError = deliveryError || JSON.stringify(customerResult.error);
@@ -690,23 +678,77 @@ export async function POST(request: NextRequest) {
           );
         }
       } catch (emailErr) {
-        adminEmailStatus = "failed";
-        if (data.email) customerEmailStatus = "failed";
+        customerEmailStatus = "failed";
         deliveryError = deliveryError || (emailErr instanceof Error ? emailErr.message : String(emailErr));
-        console.error("[consultation] Email send failed:", emailErr);
+        console.error("[consultation] Customer email send failed:", emailErr);
       }
     }
 
-    const allDelivered =
-      crmResult.sent &&
-      adminEmailStatus !== "failed" &&
-      customerEmailStatus !== "failed";
-    await recordDeliveryStatus(acceptance.rowId, {
-      crm: crmResult.sent ? "sent" : "failed",
-      adminEmail: adminEmailStatus,
-      customerEmail: customerEmailStatus,
-      ...(deliveryError ? { lastError: deliveryError.slice(0, 1000) } : {}),
-    }).catch((err) => console.error("[consultation] Delivery status update failed:", err));
+    // What the visitor's path knows. The team email is still undecided, so it is
+    // recorded as pending and the delivery lock is kept: if the after() work below
+    // never finishes, /api/internal/retry-lead-deliveries sends the team email once
+    // the lock lapses, and not before.
+    const crmStatus = crmResult.sent ? "sent" : "failed";
+    await recordDeliveryStatus(
+      acceptance.rowId,
+      {
+        crm: crmStatus,
+        adminEmail: shouldSendEmail ? "pending" : "skipped",
+        customerEmail: customerEmailStatus,
+        ...(deliveryError ? { lastError: deliveryError.slice(0, 1000) } : {}),
+      },
+      { keepLock: shouldSendEmail },
+    ).catch((err) => console.error("[consultation] Delivery status update failed:", err));
+
+    // ---- Admin / internal-team email ----------------------------------------
+    // The fallback to p5's own team email, decided once the bridge has answered
+    // (see teamEmailFallback.ts). It waits for p5, so it runs inside after() and
+    // the visitor's response never does. Reply-To is the LEAD, so hitting Reply
+    // in any mail client goes straight to the customer.
+    if (shouldSendEmail) {
+      const teamEmail = sendSiteTeamEmail({
+        bridge,
+        label: "consultation",
+        recipients: () => getAdminRecipientEmails(SITE_CONFIG.email),
+        open: async () => {
+          const { client, fromEmail } = await getUncachableEmailClient();
+          const from = formatFromAddress(fromEmail);
+          const adminHtml = buildAdminEmailHtml(lead, estimate, crmProfile, unitCostOverrides);
+          const adminText = htmlToPlainText(adminHtml);
+          const subject = data.callback
+            ? `Callback request: ${data.name} · ${data.phone}`
+            : buildAdminSubject(lead, estimate);
+          return (to) =>
+            client.emails.send({
+              from,
+              ...(data.email ? { replyTo: formatLeadReplyTo(data.name, data.email) } : {}),
+              to,
+              subject,
+              html: adminHtml,
+              text: adminText,
+            });
+        },
+      })
+        .then((outcome) => {
+          const lastError = deliveryError || outcome.error;
+          return recordDeliveryStatus(acceptance.rowId, {
+            crm: crmStatus,
+            adminEmail: outcome.status,
+            customerEmail: customerEmailStatus,
+            ...(lastError ? { lastError: lastError.slice(0, 1000) } : {}),
+          });
+        })
+        .catch((err) => console.error("[consultation] Team email follow-up failed:", err));
+      try {
+        after(() => teamEmail);
+      } catch {
+        /* outside a request scope (route verifier): the promise is already running */
+      }
+    }
+
+    // The visitor is told about their own delivery: the lead dashboard forward and
+    // their confirmation email. The team email is decided after this response.
+    const allDelivered = crmResult.sent && customerEmailStatus !== "failed";
 
     return NextResponse.json({
       accepted: true,

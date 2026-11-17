@@ -313,9 +313,17 @@ export async function acceptInquiry(
   };
 }
 
+/**
+ * `keepLock` records an interim status without releasing the delivery lock. The
+ * consultation route uses it while the team email is still waiting on the p5
+ * bridge inside after(): the retry worker leaves a locked row alone for ten
+ * minutes, so it cannot send the team email a second time in that window, and
+ * still picks the row up if the after() work never finishes.
+ */
 export async function recordDeliveryStatus(
   rowId: string,
   status: NonNullable<typeof consultationRequests.$inferInsert.deliveryStatus>,
+  options: { keepLock?: boolean } = {},
 ): Promise<void> {
   if (isolatedTestAdapter) {
     const row = isolatedTestAdapter.rows.get(rowId);
@@ -330,7 +338,7 @@ export async function recordDeliveryStatus(
         ...status,
         lastAttemptAt: new Date().toISOString(),
       },
-      deliveryLockedAt: null,
+      ...(options.keepLock ? {} : { deliveryLockedAt: null }),
       updatedAt: new Date(),
     })
     .where(eq(consultationRequests.id, rowId));
