@@ -346,6 +346,7 @@ async function oneTeamEmailPerRequest() {
     assert.equal(intakeFor('Hal Verifier', 'initial')[0].team_alert, 'confirm');
     assert.deepEqual(intakeFor('Hal Verifier', 'initial')[0].team_notes, ['Lead dashboard: https://leads.boiseremodeling.co', `Website request id: ${slow.body.requestId}`]);
     assert.equal('team_internal_notes' in intakeFor('Hal Verifier', 'initial')[0], false, 'no planning range: no internal pricing notes');
+    assert.equal('estimate' in intakeFor('Hal Verifier', 'initial')[0], false, 'no planning range: no estimate for QuickBooks');
     assert.deepEqual(mail.filter((message) => message.to.includes('hal@example.com')).length, 1, 'the customer email is sent before p5 answers');
     assert.deepEqual(teamMail('Hal Verifier'), [], 'the team email is undecided until p5 answers');
     release();
@@ -380,6 +381,7 @@ async function oneTeamEmailPerRequest() {
     await post({ name: 'Cam Verifier', phone: '2085550171', callback: '1', contactPreference: 'call', bestTime: 'Morning' });
     await expectSiteTeamEmail('Cam Verifier', /^Callback request: Cam Verifier · 2085550171$/, 'a callback request p5 did not confirm');
     assert.equal('team_internal_notes' in intakeFor('Cal Verifier', 'initial')[0], false, 'a callback has no planning range');
+    assert.equal('estimate' in intakeFor('Cal Verifier', 'initial')[0], false, 'a callback sends no estimate');
 
     // 4. A request with a planning range attached. Confirmed: no site email, and the range, the
     // price of each trade and the county record ride to p5 as team notes instead. Our costs and
@@ -421,12 +423,55 @@ async function oneTeamEmailPerRequest() {
     const usd = (line: string) => Number(line.match(/\$([\d,]+)/)![1].replace(/,/g, ''));
     assert.ok(Math.abs(usd(internalNotes[0]) + usd(internalNotes[1]) - usd(internalNotes[2])) <= 1, 'direct cost plus contingency is the total internal cost');
     for (const line of notes) assert.equal(internalNotes.includes(line), false, 'the two fields never share a line');
+    // The planning range as figures (owner, 13 and 17 November 2026): p5 creates the QuickBooks
+    // customer and an UNSENT estimate from `estimate`. The range the server recomputed, verified,
+    // and one line per trade with the CUSTOMER amount, summing to the customer price to the cent.
+    type SentEstimate = { kind: string; low: number; high: number; label: string; verified: boolean; base?: number; lines: { title: string; division: string; amount: number; quantity?: number; unit?: string; description?: string }[] };
+    const sentEstimate = ivyRest.estimate as SentEstimate;
+    assert.equal(sentEstimate.kind, 'planning-range');
+    assert.equal(sentEstimate.verified, true, 'the server recomputed the range, so it is sent as verified');
+    assert.equal(sentEstimate.label, 'Kitchen, Mid-Range finish, 180 sq ft');
+    assert.equal('base' in sentEstimate, false, 'with lines, p5 totals the lines');
+    const shown = notes[2].match(/\$([\d,]+) to \$([\d,]+)/)!.slice(1).map((figure) => Number(figure.replace(/,/g, '')));
+    assert.deepEqual([sentEstimate.low, sentEstimate.high], shown, 'low and high are the range the visitor was shown');
+    assert.ok(sentEstimate.low > 1000 && sentEstimate.high > sentEstimate.low, 'never the client numbers');
+    const priceNotes = notes.filter((line) => line.startsWith('Price by trade, '));
+    assert.equal(sentEstimate.lines.length, priceNotes.length, 'one line for every priced trade');
+    assert.ok(sentEstimate.lines.length >= 8 && sentEstimate.lines.length <= 60);
+    sentEstimate.lines.forEach((line, index) => {
+      assert.ok(line.title && line.title === line.division, 'title and division are the trade');
+      assert.ok(priceNotes[index].startsWith(`Price by trade, ${line.title}: $`), 'the same trades, in the same order, as the team notes');
+      assert.ok(Number.isFinite(line.amount) && line.amount > 0 && Math.abs(line.amount * 100 - Math.round(line.amount * 100)) < 1e-6, 'a positive amount in whole cents');
+      // The customer price of the trade: the dollar figure the team notes print for it, not our cost.
+      assert.ok(Math.abs(line.amount - usd(priceNotes[index])) <= 0.51, `${line.title}: the customer amount`);
+      const ourCost = usd(internalTrades[index]);
+      assert.ok(internalTrades[index].startsWith(`Trade, ${line.title}: our cost $`) && line.amount > ourCost + 1, `${line.title}: never our cost`);
+    });
+    const estimateTotal = sentEstimate.lines.reduce((sum, line) => sum + Math.round(line.amount * 100), 0) / 100;
+    assert.ok(estimateTotal >= sentEstimate.low && estimateTotal <= sentEstimate.high, 'the lines total a price inside the range');
+    // The customer price is the total internal cost plus the gross profit, to the dollar the notes print.
+    assert.ok(Math.abs(estimateTotal - (usd(internalNotes[2]) + usd(internalNotes[3]))) <= 1.01, 'the lines sum to the customer price the team email shows');
+    assert.doesNotMatch(JSON.stringify(sentEstimate), /cost|margin|mark-?up|profit|contingenc|overhead|internal/i, 'customer amounts only');
+    for (const index of [0, 1, 2, 3]) {
+      assert.equal(sentEstimate.lines.some((line) => Math.round(line.amount) === usd(internalNotes[index])), false, `${internalNotes[index].split(':')[0]} is not a line of the estimate`);
+    }
     assert.ok(notes.some((line) => line === 'County record: Parcel: R1234567890; Zoning: R-1C; Lot: 0.19 acres (8,276 sq ft)'));
     assert.ok(notes.some((line) => line === 'Permits: City of Boise'));
     assert.equal(mail.filter((message) => message.to.includes('ivy@example.com')).length, 1, 'the customer still gets their planning range');
     p5Answer = async () => json({ ok: true, alert: 'failed' });
     await postJson({ name: 'Ian Verifier', phone: '2085550173', email: 'ian@example.com', address: '125 Main St, Boise, ID 83702', zip: '83702', projectType: 'kitchen', message: 'New cabinets and an island', estimate: carried });
     await expectSiteTeamEmail('Ian Verifier', /^New lead: Ian Verifier · Kitchen · \$[\d,]+ to \$[\d,]+$/, 'a request with a planning range p5 did not confirm');
+    assert.deepEqual((intakeFor('Ian Verifier', 'initial')[0].estimate as { low: number; high: number }).low, sentEstimate.low, 'the estimate is sent whatever p5 answers about its email');
+    // A callback that carries a planning range (the consult dialog): internal pricing for the
+    // team, but no estimate for QuickBooks.
+    p5Answer = async () => json({ ok: true, alert: 'sent' });
+    before = leftToP5('consultation');
+    const rangedCallback = await postJson({ requestKind: 'short', name: 'Kay Verifier', phone: '2085550174', email: '', projectType: 'kitchen', message: 'CALLBACK REQUEST: call Kay Verifier at 2085550174. Best time: Any time.', contactPreference: 'call', callback: true, bestTime: 'Any time', estimate: carried });
+    assert.equal(rangedCallback.status, 200, JSON.stringify(rangedCallback.body));
+    await expectLeftToP5('consultation', before, 'Kay Verifier', 'a callback with a planning range');
+    assert.equal(intakeFor('Kay Verifier', 'initial')[0].request_kind, 'callback');
+    assert.equal('estimate' in intakeFor('Kay Verifier', 'initial')[0], false, 'a callback sends no estimate, even with a range');
+    assert.ok(Array.isArray(intakeFor('Kay Verifier', 'initial')[0].team_internal_notes), 'its internal pricing still reaches the team');
 
     // 5. Step 2 "Details added": the same rule on the details post.
     const { requestId, detailsToken } = slow.body as { requestId: string; detailsToken: string };
@@ -441,6 +486,7 @@ async function oneTeamEmailPerRequest() {
     assert.equal(detailsBody.team_alert, 'confirm');
     assert.deepEqual(detailsBody.team_notes, ['Lead dashboard: https://leads.boiseremodeling.co', `Website request id: ${requestId}`]);
     assert.equal('team_internal_notes' in detailsBody, false, 'step 2 sends no internal pricing notes');
+    assert.equal('estimate' in detailsBody, false, 'step 2 sends no estimate');
     // "none" is what p5 answers when the details arrive before it has filed the request.
     p5Answer = async () => json({ ok: true, alert: 'none' });
     const addedAgain = await postDetails({ requestId, token: detailsToken, details: { projectType: 'Kitchen remodel' } });

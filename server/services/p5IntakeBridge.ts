@@ -15,7 +15,11 @@
  * p5 email that carries only these is a "New lead" email and is copied into
  * HubSpot. team_internal_notes: our cost, margin and pricing checks for a
  * planning range. When any are sent, p5 uses the subject "Lead and pricing"
- * instead, which its inbox sync does not copy into HubSpot. The answer's
+ * instead, which its inbox sync does not copy into HubSpot. A request with a
+ * planning range also carries `estimate`: the range and the customer's price
+ * by trade as figures, from which p5 creates the QuickBooks customer and an
+ * UNSENT estimate (owner, 13 and 17 November 2026). Customer amounts only.
+ * The answer's
  * `alert` comes back as the bridge result, and the caller sends this site's
  * own team email only when p5 did not confirm (see teamEmailFallback.ts).
  * Only the TEAM email waits for that result, inside after(); the visitor
@@ -150,11 +154,43 @@ export type ConsultationBridgeInput = {
    * its email as "Lead and pricing", which is not copied into HubSpot.
    */
   teamInternalNotes?: ReadonlyArray<string> | null;
+  /**
+   * The planning range as figures, so p5 can create the QuickBooks customer and an UNSENT
+   * estimate. Step 1 only, and only when the request has a planning range. CUSTOMER amounts
+   * only: see cleanP5Estimate.
+   */
+  estimate?: P5PlanningEstimate | null;
 };
+
+/** One line of the customer's price: a trade and what the customer pays for it. Never our cost. */
+export type P5EstimateLine = {
+  title: string;
+  description?: string;
+  quantity?: number;
+  unit?: string;
+  amount: number;
+  division?: string;
+};
+
+/** The p5 contract for `estimate` (its docs/lead-intake-contract.md). Do not change it here alone. */
+export type P5PlanningEstimate = {
+  kind: "planning-range";
+  /** The range the customer was shown. */
+  low: number;
+  high: number;
+  label?: string;
+  /** Only the boolean true, and only when this site's server recomputed the figures itself. */
+  verified?: true;
+  /** The one figure for QuickBooks. Omitted when lines are sent: p5 totals the lines. */
+  base?: number;
+  lines?: P5EstimateLine[];
+};
+
+export const P5_ESTIMATE_MAX_LINES = 60;
 
 export type P5IntakeBody = Record<
   string,
-  string | ReadonlyArray<string> | ReadonlyArray<Record<string, string | number>>
+  string | ReadonlyArray<string> | ReadonlyArray<Record<string, string | number>> | P5PlanningEstimate
 >;
 
 /**
@@ -251,6 +287,82 @@ export function cleanTeamInternalNotes(notes: ReadonlyArray<unknown> | null | un
   return lines;
 }
 
+const cents = (value: number) => Math.round(value * 100) / 100;
+
+function estimateText(value: unknown, max: number): string {
+  if (typeof value !== "string") return "";
+  return value.replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
+}
+
+/**
+ * The `estimate` p5 will book into QuickBooks, checked before it leaves this site.
+ *
+ * QuickBooks holds the CUSTOMER's estimate, so this carries customer amounts only. Like
+ * team_notes, it has a wall behind its builder: if any text in it names a cost, margin, markup,
+ * profit, contingency or overhead (TEAM_NOTE_BLOCKED), the whole estimate is withheld. Those
+ * figures travel in team_internal_notes and nowhere else.
+ *
+ * All or nothing, because p5 totals the lines: dropping or cutting one line would book a wrong
+ * total. So a bad number, a line with no title or more than 60 lines returns null, and the
+ * request goes without the field. A zero-amount line is simply left out, as p5 would. Never throws.
+ */
+export function cleanP5Estimate(input: unknown): P5PlanningEstimate | null {
+  try {
+    if (!input || typeof input !== "object") return null;
+    const raw = input as Record<string, unknown>;
+    if (raw.kind !== "planning-range") return null;
+    const { low, high } = raw;
+    if (typeof low !== "number" || typeof high !== "number") return null;
+    if (!Number.isFinite(low) || !Number.isFinite(high) || low <= 0 || high <= 0 || low > high) return null;
+
+    const estimate: P5PlanningEstimate = { kind: "planning-range", low: cents(low), high: cents(high) };
+    const texts: string[] = [];
+    const label = estimateText(raw.label, 200);
+    if (label) {
+      estimate.label = label;
+      texts.push(label);
+    }
+    if (raw.verified === true) estimate.verified = true;
+    if (typeof raw.base === "number" && Number.isFinite(raw.base) && raw.base > 0) estimate.base = cents(raw.base);
+
+    if (raw.lines !== undefined && raw.lines !== null) {
+      if (!Array.isArray(raw.lines)) return null;
+      const lines: P5EstimateLine[] = [];
+      for (const entry of raw.lines) {
+        if (!entry || typeof entry !== "object") return null;
+        const item = entry as Record<string, unknown>;
+        const title = estimateText(item.title, 200);
+        if (!title) return null;
+        if (typeof item.amount !== "number" || !Number.isFinite(item.amount) || item.amount < 0) return null;
+        const amount = cents(item.amount);
+        if (amount === 0) continue;
+        const line: P5EstimateLine = { title, amount };
+        const description = estimateText(item.description, 1000);
+        if (description) line.description = description;
+        const division = estimateText(item.division, 80);
+        if (division) line.division = division;
+        if (typeof item.quantity === "number" && Number.isFinite(item.quantity) && item.quantity > 0) {
+          line.quantity = item.quantity;
+          const unit = estimateText(item.unit, 20);
+          if (unit) line.unit = unit;
+        }
+        texts.push(title, description, division, line.unit ?? "");
+        lines.push(line);
+      }
+      if (lines.length > P5_ESTIMATE_MAX_LINES) return null;
+      if (lines.length) estimate.lines = lines;
+    }
+
+    if (texts.some((text) => TEAM_NOTE_BLOCKED.test(text))) {
+      console.error("[p5-intake] Estimate withheld: it names a cost or margin. Customer amounts only.");
+      return null;
+    }
+    return estimate;
+  } catch {
+    return null;
+  }
+}
+
 export function buildP5IntakeBody(input: ConsultationBridgeInput): P5IntakeBody {
   const visitorType = input.projectType?.trim() ?? "";
   const projectType = p5ProjectType(visitorType);
@@ -313,6 +425,9 @@ export function buildP5IntakeBody(input: ConsultationBridgeInput): P5IntakeBody 
   // Internal figures travel only in their own field, never in team_notes.
   const teamInternalNotes = cleanTeamInternalNotes(input.teamInternalNotes);
   if (teamInternalNotes.length) body.team_internal_notes = teamInternalNotes;
+  // The planning range as figures, for the QuickBooks customer and unsent estimate p5 creates.
+  const estimate = cleanP5Estimate(input.estimate);
+  if (estimate) body.estimate = estimate;
   return body;
 }
 
