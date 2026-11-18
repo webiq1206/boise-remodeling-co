@@ -135,7 +135,7 @@
     "lib/p5/laborFacts.ts": "fdd04d11d9528b2a514279be2996526c4c64c362bbcbfdd2be301282c9e140bb",
     "lib/p5/learnedBook.ts": "99f1672ba668be013adeeb787274f2993978fb8ba976bd85206181636ca11eeb",
     "lib/p5/legacyContinuation.ts": "dd26a7c83008fcf38fa1fc98ca6799c9b3be92755167ac2f14b1d86566e73300",
-    "lib/p5/manualReview.ts": "e3ed20a0be818321c4f722b355c0c93e795227e18ab40388a596271fe8246c2d",
+    "lib/p5/manualReview.ts": "5ca06845c122ec946a7385673c7e7492f02adac9817ea7ab4a6e29ccc1a737f7",
     "lib/p5/minorWorkAllowance.ts": "ea07a899a831f87f03c7fbdbdd4f46cb94350bf995afa6feb29a504b29151009",
     "lib/p5/minorWorkAudit.ts": "f3fd7940d0c62b2cb0bcfd4c20ab8333f94139f7d70c5940c0b5858ba1c8b784",
     "lib/p5/missingFields.ts": "5a4c67c25f91e3751d9f8f8b1453fa4724791a6493c8e4e800888ba7e8affb34",
@@ -232,7 +232,7 @@
     "lib/p5/spreadsheetValues.ts": "35a63345db960eb6a1df96311dfde8f9862cc99b3806f848f53133af46f19bdc",
     "lib/p5/spreadsheetXml.ts": "ec3cf6c55c81c361c71007ad9f07bd16c8bc9d00c4f805be0884a10e7f1b0128",
     "lib/p5/store.ts": "06c49f4b951e5758cac52fe0663900cfee481acbf3f65dd17725b25375f02fef",
-    "lib/p5/submitEndpoint.ts": "b31ebb0613bc8d3e5b0cd11b35b693d86d43ffdc81e0ed833975346c9e26dcc7",
+    "lib/p5/submitEndpoint.ts": "0f832f48dac5c3d47464ba6414db8f59f97269031c3e9a342f73c5ebf2d0967f",
     "lib/p5/submitProgress.ts": "777d5a5d9b5c4045107589654f5215f5b82f73c5fe712918c6ea581d0674b414",
     "lib/p5/theme.ts": "0b2cd965c0baf52e46ef6e3a8400c747bf75156f32f5da42a9ad0aca54fb478e",
     "lib/p5/tradeVocabulary.ts": "4598fcd6cc56c781279e45f58dd2c0120d1fce6b2fcc4935f6c1774fce8cbb46",
@@ -517,7 +517,10 @@
     "tests/p5-navigation-entry.test.mjs": "c3074d9648326b9caf700ffa78089c4170512102b1efc1ee6e76535432baa8be",
     "scripts/lib/shortBrandEntry.mjs": "27f7270125bf48773c7564b9b98bb8ff4ca02321d7a2b8b4d5c0e857737570c2",
     "scripts/lib/quoteEntry.mjs": "46f9fb18396b8e100dfdfe05c90b3bf21f7777e7feef45767e0e24432eb3b920",
-    "lib/p5/scheduleEmail.ts": "a26d14934afd022bc66bf8149016d37596e2df79fea947c62db71139449cdd75"
+    "lib/p5/scheduleEmail.ts": "a26d14934afd022bc66bf8149016d37596e2df79fea947c62db71139449cdd75",
+    "lib/p5/documentEstimateFigures.ts": "bcfb00ee4c343c8578bae359258306cdc93f3f34b19ca1870663a558da661793",
+    "lib/p5/p5LeadIntake.ts": "622a1aa11d0e4c241e7dc1f4524836a890d4d5b208cbab950776a282f25cac16",
+    "tests/p5-lead-intake.test.ts": "da130020d2d897a0c9121306c76d77e0c88142b4f2ffe2fdcda41ae05bef6156"
   },
   "coordinatedIntakeBatch": {
     "base": "e6e125b83468a402264be2f1e82e5c0466baa178",

@@ -8,12 +8,30 @@ import {intakeDeliveryWorker,type IntakeTransport} from './intakeDelivery.ts';
 import {INTAKE_RUNTIME_PROOF} from './intakeDeliveryPolicy.ts';
 import {suppressSyntheticEstimateNotifications} from './estimatorNotifications.ts';
 import {qaOperationContext} from './qaOperationContext.ts';
-import {canonicalReviewTransport} from './canonicalReviewTransport.ts';
+import {p5LeadIntakeTransport} from './p5LeadIntake.ts';
 
-/** Existing adapters only. Configuration values and provider errors never enter status payloads.
- * Runtime proof is a reviewed source gate, not a user-supplied option or a credential toggle.
- * This specialty site emails the customer and its own team through the brand's existing
- * transport, and hands the unpriced request to the shared project_review_v1 receiver. */
+/**
+ * How a saved project request leaves boiseremodeling.co. Existing adapters only: configuration
+ * values and provider errors never enter status payloads. The email runtime proof is a reviewed
+ * source gate, not a user-supplied option or a credential toggle.
+ *
+ * - `customer` and `team`: this site emails the customer and its own team through the brand's
+ *   existing transport (deliveryAdapter.ts). The team email is the ONE team email for a request.
+ * - `crm`: the request is posted to P5 Home Co's lead intake (owner decisions, 13, 17 and 18
+ *   November 2026), where it becomes a P5 lead and a HubSpot deal in the first stage, filed under
+ *   the primary team it was routed to. It carries no price, so nothing goes to QuickBooks, and it
+ *   says `team_alert: "site"`, so P5 sends no second team email. The shared transport is
+ *   `p5LeadIntakeTransport()` in p5LeadIntake.ts; the contract is docs/lead-intake-contract.md in
+ *   p5-home-co.
+ *   - On only while `P5_CRM_DELIVERY` is `on` (`crm-disabled` otherwise), and only for requests
+ *     saved since the lead system began taking them (`PROJECT_REQUEST_LEADS_SINCE` there;
+ *     `P5_REQUEST_LEADS_SINCE`, an ISO moment, brings older ones in on purpose).
+ *   - A synthetic QA request is never posted, and a failed post is retried with the same id, so
+ *     P5 keeps one lead.
+ *
+ * The canonical review receiver (canonicalReview*.ts) is not used here. It stays in the
+ * repository, gated and untouched.
+ */
 export async function runtimeIntakeTransports():Promise<Record<'customer'|'team'|'crm',IntakeTransport>>{
  const email:IntakeTransport={retryWindowMs:0,identityScope:`${ESTIMATOR_BRAND.id}-email-no-automatic-replay`,
   // The brand adapter owns transport configuration. Loaded lazily, like send, so an
@@ -22,8 +40,8 @@ export async function runtimeIntakeTransports():Promise<Record<'customer'|'team'
   prepare:(snapshot,envelope)=>prepareIntakeEmail(snapshot,envelope,{query,readBytes:readStoredBytes,secret:linkSecret}),
   send:async envelope=>{if(!envelope.email)throw new Error('payload-review');const {sendEmail}=await import('./deliveryAdapter.ts');return sendEmail({...envelope.email,attachments:envelope.email.attachments.map(f=>({filename:f.filename,content:Buffer.from(f.base64,'base64'),contentType:f.contentType})),key:envelope.key});},
  };
- // Canonical source-specific credential; never repurpose a dashboard credential.
- const crm=canonicalReviewTransport({enabled:process.env.P5_CRM_DELIVERY==='on',token:process.env.P5_CANONICAL_REVIEW_TOKEN||'',proof:INTAKE_RUNTIME_PROOF.crm});
+ // No credential: the P5 lead intake is public, and the post names this request by its lead key.
+ const crm=p5LeadIntakeTransport({enabled:process.env.P5_CRM_DELIVERY==='on',since:process.env.P5_REQUEST_LEADS_SINCE});
  return {customer:email,team:email,crm};
 }
 export async function processIntakeDeliveries(limit=2){
