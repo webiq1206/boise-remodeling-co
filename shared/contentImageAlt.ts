@@ -126,7 +126,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/kitchen-layout-ideas-boise-homes.webp':
     'Kitchen with an oak island, three black stools and a window over the sink',
   '/images/gallery/gallery-kitchen-eagle-after.webp':
-    'Kitchen with wood cabinets, a stone island and a wide window looking out to the foothills',
+    'Kitchen with white shaker cabinets, a charcoal island with three stools and a black-framed window over the sink',
   '/images/blog/kitchen-island-design-guide.webp':
     'White kitchen island with a waterfall counter, three wood stools and white pendant lights',
   '/images/blog/small-kitchen-remodel-ideas-boise.webp':
@@ -178,7 +178,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/material-selection-guide.webp':
     'Finish samples: quartz, wood flooring, cabinet door, tile and brass hardware',
   '/images/blog/consultation-process-remodeling.webp':
-    'Remodel plans, finish samples and a laptop on a dining table during a planning meeting',
+    'Clipboard with a project checklist, a tape measure and a level on a kitchen island',
 };
 
 import { localAlt, subjectForService, type LocalAltContext } from './localAlt';

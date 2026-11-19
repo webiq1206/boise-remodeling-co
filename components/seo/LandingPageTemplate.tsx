@@ -342,9 +342,9 @@ export function LandingPageTemplate({
         <li><strong>One written scope</strong><span>Agreed before construction begins, with one accountable team</span></li>
       </ul>
       {(heroCopy.rest || planningFrom) && (
-        <div className="interior-hero-more">
+        <div className="interior-hero-more lx-hero-more">
           <div className="ed-shell">
-            {heroCopy.rest && <p className="ed-lede">{heroCopy.rest}</p>}
+            {heroCopy.rest && <ReadMore label="Read the overview"><p className="ed-lede">{heroCopy.rest}</p></ReadMore>}
             {planningFrom && <p className="ed-small interior-hero-more-note">Your exact range is confirmed at the free in-home visit</p>}
           </div>
         </div>
@@ -363,7 +363,7 @@ export function LandingPageTemplate({
           </div>
         </Section>
       )}
-<div className="interior-detail-body"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
+<div className="interior-detail-body lx-detail"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
 
       {/* ─── Cost and timeline expectation ───
           Cost guidance follows the concise scope and estimate sidebar. */}
@@ -588,6 +588,8 @@ export function LandingPageTemplate({
                             )}
                           </p>
                         ));
+                          // Tier cards already carry the figures, so on phones the whole cost prose folds.
+                          if (section.tiers && section.tiers.length > 0 && rendered.length > 0) return <ReadMore label="Read the cost detail">{rendered}</ReadMore>;
                           if (rendered.length < 2) return rendered;
                           return <>{rendered[0]}<ReadMore>{rendered.slice(1)}</ReadMore></>;
                         })()}
@@ -599,18 +601,26 @@ export function LandingPageTemplate({
                             ))}
                           </div>
                         ))}
-                        {section.links && section.links.length > 0 && (
-                          <ul className="ed-rule-list mt-8">
-                            {section.links.map((link) => (
-                              <li key={link.href}>
-                                <Link href={link.href} className="ed-rule-link">
-                                  {link.label}
-                                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                        {section.links && section.links.length > 0 && (() => {
+                          // A run of "<service> in <city>" links: on phones each shows its city in two
+                          // columns, and the full anchor text stays in the HTML for search and screen readers.
+                          const cityRun = section.links.length >= 4 && section.links.every((link) => / in [A-Z][A-Za-z ]+$/.test(link.label));
+                          return (
+                            <ul className={cityRun ? 'ed-rule-list lx-city-links mt-8' : 'ed-rule-list mt-8'}>
+                              {section.links.map((link) => {
+                                const at = link.label.lastIndexOf(' in ');
+                                return (
+                                  <li key={link.href}>
+                                    <Link href={link.href} className="ed-rule-link">
+                                      {cityRun ? <span><span className="lx-city-prefix">{link.label.slice(0, at + 4)}</span>{link.label.slice(at + 4)}</span> : link.label}
+                                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          );
+                        })()}
                       </Reveal>
                     </div>
                   );

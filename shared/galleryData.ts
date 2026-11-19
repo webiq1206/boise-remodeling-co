@@ -113,7 +113,7 @@ export const GALLERY_PROJECTS: GalleryProject[] = [
     city: "eagle",
     beforeImageUrl: GALLERY_IMAGES.kitchenEagle.before,
     afterImageUrl: GALLERY_IMAGES.kitchenEagle.after,
-    title: "Eagle Foothills Kitchen",
+    title: "Eagle Kitchen",
     description:
       "Cabinetry, work surfaces, storage, and lighting.",
   },

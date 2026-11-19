@@ -894,3 +894,26 @@ last in `app/layout.tsx`); the homepage is untouched.
     photograph, name) after the lead item; long-form landing paragraphs after
     the first sit behind "Read more" (`components/marketing/ReadMore.tsx`, a
     native details that is always open from tablet up).
+
+- **Phone length (19 November 2026).** Landing pages shorten on phones without
+  removing copy from the HTML: the hero overview and the prose of a cost
+  section sit in `ReadMore` (closed on phones, open from 701px), the project
+  aside beside the scope list is hidden on phones (the sticky bar carries the
+  same action), a run of four or more "<service> in <city>" links shows as two
+  columns of city names (`lx-city-links`, the service words stay for screen
+  readers) and cost tiers are compact rows (`lx-tiers`). Do not delete copy to
+  save height.
+- **No photograph stretched past its own pixels.** `shared/smallSourceImages.ts`
+  lists every blog photograph narrower than the 1260px article banner; the
+  banner stays at that width, centred. Six remain at 1024px because the Photo
+  Dump has no unused 2000px photograph of those subjects. Replace the file,
+  delete its line. Guard: `tests/small-source-images.test.ts`.
+- **No photograph twice on a page.** Article figures and "Related resources"
+  cards compare pictures by `imageIdentity()`, not by path.
+- **Guards in prebuild:** `verify:interior-images` (`tests/local-alt.test.ts`,
+  `tests/landing-image-adjacency.test.ts`, `tests/cost-tiers.test.ts`,
+  `tests/small-source-images.test.ts`).
+- Contact has one area card, call and text side by side and no repeated
+  photo band; seven-card grids use `lx-seven` (four, then three that fill the
+  row); document pages (warranty, legal) use one gutter on phones.
+

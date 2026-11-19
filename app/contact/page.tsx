@@ -13,7 +13,6 @@ import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { SaveContactLink } from '@/components/SaveContactLink';
-import { StatementBandSection } from '@/components/sections/StatementBandSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import {
 Accordion,
@@ -107,7 +106,7 @@ function ContactChannel({
 }: ContactChannelProps) {
   const inner = (
     <MarketingCard
-      className={`min-w-0 transition-colors ${
+      className={`w-full min-w-0 transition-colors ${
         href ? 'group-hover:border-foreground/25' : ''
       } ${featured ? 'md:p-10' : ''}`}
       padding={featured ? 'lg' : 'default'}
@@ -256,13 +255,12 @@ export default function ContactPage() {
               className="max-w-3xl"
             />
             <div className="ed-grid-balance grid grid-cols-1 sm:grid-cols-2 gap-4 [&>*]:min-w-0">
-              <Reveal className="sm:col-span-2">
+              <Reveal>
                 <ContactChannel
                   icon={<Phone className="h-5 w-5" strokeWidth={1.5} />}
                   label="Call us"
                   href={SITE_CONFIG.phoneHref}
                   subtext="Mon – Fri 9 am – 6 pm · Sat 9 am – 4 pm MT"
-                  featured
                   companion={
                     <SaveContactLink className="text-sm text-muted-foreground hover:text-foreground transition-colors" />
                   }
@@ -270,15 +268,12 @@ export default function ContactPage() {
                   <span className="brc-display-num tabular-nums">{BUSINESS_INFO.phone}</span>
                 </ContactChannel>
               </Reveal>
-              <Reveal delay={30} className="sm:col-span-2">
+              <Reveal delay={30}>
                 <ContactChannel
                   icon={<MessageSquare className="h-5 w-5" strokeWidth={1.5} />}
                   label="Text us"
                   href={SITE_CONFIG.phoneSmsHref}
                   subtext="Quick questions? Send us a text"
-                  companion={
-                    <SaveContactLink className="text-sm text-muted-foreground hover:text-foreground transition-colors" />
-                  }
                 >
                   <span className="brc-display-num tabular-nums">{BUSINESS_INFO.phone}</span>
                 </ContactChannel>
@@ -296,27 +291,17 @@ export default function ContactPage() {
                 <ContactChannel
                   icon={<MapPin className="h-5 w-5" strokeWidth={1.5} />}
                   label="Where we work"
-                  subtext="Ada County and Canyon County"
+                  subtext="Free in-home visits across Ada County and Canyon County"
                 >
                   <p className="leading-relaxed">
                     {TREASURE_VALLEY_CITIES}
                   </p>
                 </ContactChannel>
               </Reveal>
-              <Reveal delay={180} className="sm:col-span-2">
-                <ContactChannel
-                  icon={<MapPin className="h-5 w-5" strokeWidth={1.5} />}
-                  label="Service area"
-                  subtext="Free in-home visits across Ada County and Canyon County"
-                >
-                  <span className="text-sm leading-relaxed">{TREASURE_VALLEY_CITIES}</span>
-                </ContactChannel>
-              </Reveal>
             </div>
           </div>
         </Section>
 
-        <StatementBandSection />
 
         {/* ─── What to expect split ─── */}
         <Section variant="canvas" spacing="none" divider className="p-0">
@@ -401,7 +386,6 @@ export default function ContactPage() {
           </div>
         </Section>
 
-        <StatementBandSection />
 
 
         {/* ─── Service areas ─── */}
@@ -418,12 +402,12 @@ export default function ContactPage() {
               description={`We serve homeowners in ${SERVICE_AREA_SENTENCE}.`}
               className="max-w-3xl"
             />
-            <nav aria-label="Service areas" className="grid grid-cols-2 lg:grid-cols-4 border-t border-l border-border">
+            <nav aria-label="Service areas" className="grid grid-cols-2 lg:grid-cols-7 border-t border-l border-border">
               {SERVICE_AREA_CITIES.map((city) => (
                 <Link
                   key={city.slug}
                   href={areaPath(city.slug)}
-                  className="flex min-h-14 items-center justify-between gap-3 border-b border-r border-border px-4 py-3 text-sm text-foreground transition-colors hover:bg-card focus-visible:bg-card"
+                  className="flex min-h-14 items-center justify-between gap-3 border-b border-r border-border px-4 py-3 text-sm last:col-span-2 lg:last:col-span-1 text-foreground transition-colors hover:bg-card focus-visible:bg-card"
                 >
                   {city.name}
                   <ArrowRight className="h-4 w-4 shrink-0" aria-hidden />

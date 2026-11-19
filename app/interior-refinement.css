@@ -432,3 +432,52 @@
   .approved-shell .approved-interior .interior-service-card > p:not(.interior-price) { display: none; }
   .approved-shell .approved-interior .interior-service-card > p.interior-price { grid-column: 2; margin-top: var(--space-1, 4px); align-self: start; }
 }
+
+/* Phone length (owner, 19 November 2026): the overview paragraph, the cost prose
+   under tier cards and the scope aside repeat what the hero, the fact row, the
+   tier cards and the bottom bar already say. On phones the first two fold behind
+   "Read more" (still in the HTML) and the aside, a second copy of the hero
+   action, is not shown; its timeline sentence appears in its own section. */
+@media (max-width: 700px) {
+  .approved-shell .lx-hero-more { padding-block: var(--space-2, 8px) var(--space-4, 16px); }
+  .approved-shell .lx-hero-more .lx-more > summary { margin-top: 0; }
+  .approved-shell .lx-hero-more .lx-more[open] > .ed-lede { margin-top: var(--space-4, 16px); }
+  .approved-shell .lx-hero-more .interior-hero-more-note { display: none; }
+  .approved-shell .interior-detail-body.lx-detail > .interior-project-aside { display: none; }
+}
+
+/* City link runs on phones: two columns of city names. The service words stay
+   in the link text, visually hidden, so the anchor text is unchanged. */
+@media (max-width: 700px) {
+  .approved-shell .ed-rule-list.lx-city-links { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-5, 20px); }
+  .approved-shell .lx-city-links .ed-rule-link { position: relative; }
+  .approved-shell .lx-city-prefix { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  /* Tier cards as compact rows: label and range on one line, the note beneath. */
+  .approved-shell .lx-tiers { gap: var(--space-2, 8px); }
+  .approved-shell .lx-tiers > li { grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: var(--space-1, 4px) var(--space-3, 12px); padding: var(--space-4, 16px); }
+  .approved-shell .lx-tiers strong { font-size: 22px; white-space: nowrap; }
+  .approved-shell .lx-tier-note { grid-column: 1 / -1; font-size: 14px; }
+}
+
+/* A photograph narrower than the banner keeps its own width, centred (shared/smallSourceImages.ts). */
+@media (min-width: 701px) {
+  .approved-shell .approved-interior .interior-article-image.lx-source-cap { margin-inline: auto; }
+}
+@media (max-width: 700px) {
+  .approved-shell .approved-interior .interior-article-image.lx-source-cap { max-width: none !important; }
+}
+
+/* Seven cards on a wide screen: four, then three that fill the row (About, service areas). */
+@media (min-width: 1180px) {
+  .approved-shell .lx-seven:has(> :nth-child(7):last-child) { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .approved-shell .lx-seven:has(> :nth-child(7):last-child) > * { grid-column: span 3; }
+  .approved-shell .lx-seven:has(> :nth-child(7):last-child) > :nth-child(n + 5) { grid-column: span 4; }
+}
+
+/* Document pages (warranty, legal): one gutter on phones, the heading close to the header, paragraphs apart. */
+.approved-shell .interior-document-main p + p { margin-top: 1em; }
+@media (max-width: 700px) {
+  .approved-shell .approved-interior > div > section:has(.interior-document),
+  .approved-shell .approved-interior > section:has(.interior-document) { padding-top: 8px; }
+  .approved-shell .approved-interior .container > .interior-document { width: 100%; }
+}

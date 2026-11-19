@@ -5,6 +5,7 @@ import { getManifestLinks, type ManifestLink } from "@/lib/internal-links";
 import { getBlogHeroImage, getBlogImageAlt } from "@/shared/blogImages";
 import { getCityServiceImage } from "@/shared/cityServiceImages";
 import { contentImageAlt } from "@/shared/contentImageAlt";
+import { imageIdentity } from "@/shared/imageIdentity";
 
 interface RelatedPostCardsProps {
   path: string;
@@ -65,8 +66,22 @@ export function RelatedPostCards({
     );
   }
 
+  // No photograph twice: a link whose picture is already on a card waits behind the others.
+  const seen = new Set<string>();
+  const fresh: ManifestLink[] = [];
+  const repeats: ManifestLink[] = [];
+  for (const link of getManifestLinks(path).filter((item) => !skip.has(item.url))) {
+    const image = linkImage(link);
+    const id = image ? imageIdentity(image.src) : link.url;
+    if (seen.has(id)) repeats.push(link);
+    else {
+      seen.add(id);
+      fresh.push(link);
+    }
+  }
+  const ordered = [...fresh, ...repeats];
   // Three or six cards fill their rows; any other count would leave one alone.
-  const shown = links.length >= 6 ? links.slice(0, 6) : links.slice(0, 3);
+  const shown = ordered.length >= 6 && fresh.length >= 6 ? ordered.slice(0, 6) : ordered.slice(0, 3);
   return (
     <div>
       <h2 className="ed-h2-sm ed-statement-wide mb-8">{title}</h2>

@@ -323,7 +323,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'consultation-process-remodeling': {
     hero: '/images/blog/consultation-process-remodeling.webp',
-    alt: 'Printed plans, finish samples, a laptop and mugs on a kitchen table',
+    alt: 'Clipboard with a project checklist, a tape measure and a level on a kitchen island',
     topicTags: ["process","consultation","boise"],
     source: 'blog',
   },
