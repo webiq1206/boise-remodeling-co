@@ -1,3 +1,4 @@
+import { localAlt } from '@/shared/localAlt';
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -49,7 +50,7 @@ export function ServiceReferral({
           {imageSrc ? (
             <figure className="referral-visual">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={imageSrc} alt={imageAlt || ""} width={1280} height={720} />
+              <img src={imageSrc} alt={imageAlt ? localAlt(imageAlt) : ""} width={1280} height={720} />
             </figure>
           ) : null}
           <div className="referral-panel-body">

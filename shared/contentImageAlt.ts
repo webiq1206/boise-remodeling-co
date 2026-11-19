@@ -111,6 +111,11 @@ const PATH_ALT: Record<string, string> = {
   '/images/services/outdoor-living.webp': SERVICE_ALT['outdoor-living'],
   '/images/services/aging-in-place.webp': SERVICE_ALT['aging-in-place'],
   '/images/kitchen-in-progress.webp': 'Kitchen during a remodel, with open cabinets and work underway',
+  '/images/statement-great-room.webp': 'Open living and dining room with wood floors and a view into a white and sage green kitchen',
+  '/images/hero-great-room.webp': 'Open living and dining room with wood floors and a view into a white and sage green kitchen',
+  '/images/value-craftsmanship-materials.webp': 'Kitchen during a remodel, with open cabinets and work underway',
+  '/images/consult-lifestyle.webp': 'White shaker kitchen with a sage green island, white quartz counters and a black-framed window',
+  '/images/budget-kitchen-detail.webp': 'Sage green kitchen island with a white quartz counter',
   '/images/process-design-review.webp': 'Remodel plans and finish samples on a kitchen island',
   '/images/hero-remodel-interior.webp': 'White shaker kitchen with a sage green island, white quartz counters and a black-framed window',
   '/images/about-oak-kitchen.webp':
@@ -176,7 +181,25 @@ const PATH_ALT: Record<string, string> = {
     'Remodel plans, finish samples and a laptop on a dining table during a planning meeting',
 };
 
-export function contentImageAlt(src: string | undefined, fallback = 'Photograph of a home interior'): string {
+import { localAlt, subjectForService, type LocalAltContext } from './localAlt';
+
+const CITY_BY_SLUG: Record<string, string> = {
+  boise: 'Boise', meridian: 'Meridian', eagle: 'Eagle', nampa: 'Nampa', kuna: 'Kuna', star: 'Star', middleton: 'Middleton', caldwell: 'Caldwell',
+};
+
+/** What the file itself is about, read from its path, for callers that give no page context. */
+function contextFromPath(path: string): LocalAltContext {
+  const cityService = path.match(/\/city-service\/([^_/]+)__([^./]+)\.webp$/);
+  if (cityService) return { subject: subjectForService(cityService[1]), city: CITY_BY_SLUG[cityService[2]] };
+  const area = path.match(/\/areas\/([^./]+)\.webp$/);
+  if (area) return { city: CITY_BY_SLUG[area[1]] };
+  const service = path.match(/\/services\/([^./]+)\.webp$/);
+  if (service) return { subject: subjectForService(service[1]) };
+  return {};
+}
+
+/** What the picture shows, with no local wording. */
+export function imageDescription(src: string | undefined, fallback = 'Photograph of a home interior'): string {
   if (!src) return fallback;
   const path = src.split('?')[0];
   if (PATH_ALT[path]) return PATH_ALT[path];
@@ -187,4 +210,14 @@ export function contentImageAlt(src: string | undefined, fallback = 'Photograph 
   const service = path.match(/\/services\/([^./]+)\.webp$/);
   if (service && SERVICE_ALT[service[1]]) return SERVICE_ALT[service[1]];
   return fallback;
+}
+
+/**
+ * The alt for a content photograph: the work and the place, then what the
+ * picture shows. Pass the page's own subject and city; without them the file's
+ * path supplies what it can and Boise is the place.
+ */
+export function contentImageAlt(src: string | undefined, fallback = 'Photograph of a home interior', context?: LocalAltContext): string {
+  const fromPath = src ? contextFromPath(src.split('?')[0]) : {};
+  return localAlt(imageDescription(src, fallback), { subject: context?.subject ?? fromPath.subject, city: context?.city ?? fromPath.city });
 }

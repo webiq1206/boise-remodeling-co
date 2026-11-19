@@ -859,3 +859,13 @@ last in `app/layout.tsx`); the homepage is untouched.
 - `.guide-section-details[open] .guide-section-summary > span` must keep the
   child combinator: without it the rule hid the last two words of every
   article heading (`.m-keep`).
+- **Image alt text is local** (owner, 19 November 2026). Every content image's
+  alt is "<work> in <city>, Idaho: <what the picture shows>", built by
+  `localAlt()` in `shared/localAlt.ts`. `contentImageAlt()` and
+  `getBlogImageAlt()` apply it; a page passes its own service and city, and a
+  file's path or a post's topic tags supply them otherwise, with Boise as the
+  default place. Owner direction: no qualifier ("idea", "concept",
+  "representative") in or beside an image description. New images go through
+  one of those helpers, never a bare string. Guard: `tests/local-alt.test.ts`.
+  Brand lockups in the shared header and footer keep an empty alt because
+  their link carries the company name.

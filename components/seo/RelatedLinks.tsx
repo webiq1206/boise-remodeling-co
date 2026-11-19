@@ -10,6 +10,8 @@ import { getBlogHeroImage } from '@/shared/blogImages';
 import { getCityServiceImage } from '@/shared/cityServiceImages';
 import { getServiceBackground } from '@/shared/serviceBackgrounds';
 import { SITE_IMAGES } from '@/shared/siteImages';
+import { getBlogImageAlt } from '@/shared/blogImages';
+import { contentImageAlt } from '@/shared/contentImageAlt';
 
 /**
  * A city x service link that respects the sitemap's index rule: a noindexed
@@ -45,8 +47,8 @@ const SERVICE_GUIDE: Record<string, { href: string; label: string }> = {
  * 2026: the four stacked link lists read as clutter). Places and services are
  * photo cards (a swipe row on phones, four across from tablet up), each with the
  * photograph of the page it opens; guides and related pages are one list with
- * thumbnails. The photographs are decorative (empty alt): the label beside each
- * one names the page. A
+ * thumbnails. Every photograph carries the alt of the page it opens: the work
+ * and the place, then what the picture shows. A
  * link appears once: nothing already in a cell or in the page body is repeated
  * in the list. Cells keep the full anchor text for search and screen readers
  * and show only the part that differs.
@@ -54,6 +56,12 @@ const SERVICE_GUIDE: Record<string, { href: string; label: string }> = {
 interface Cell { href: string; label: string; context?: string; image?: string }
 
 /** The photograph that belongs to the page a link opens. */
+function pageImageAlt(href: string, src: string): string {
+  const [section, slug] = href.split('/').filter(Boolean);
+  if ((section === 'blog' || section === 'guides') && slug) return getBlogImageAlt(slug);
+  return contentImageAlt(src);
+}
+
 function pageImage(href: string): string | undefined {
   const [section, slug] = href.split('/').filter(Boolean);
   if ((section === 'blog' || section === 'guides') && slug) return getBlogHeroImage(slug);
@@ -79,7 +87,7 @@ function Cells({ cells }: { cells: Cell[] }) {
           <Link href={cell.href} className="lx-cell">
             {(cell.image ?? pageImage(cell.href)) ? (
               <span className="lx-cell-photo">
-                <Image src={(cell.image ?? pageImage(cell.href)) as string} alt="" fill sizes="(max-width: 700px) 46vw, 300px" className="object-cover img-brand-grade" />
+                <Image src={(cell.image ?? pageImage(cell.href)) as string} alt={pageImageAlt(cell.href, (cell.image ?? pageImage(cell.href)) as string)} fill sizes="(max-width: 700px) 46vw, 300px" className="object-cover img-brand-grade" />
               </span>
             ) : null}
             <span className="lx-cell-label">
@@ -151,7 +159,7 @@ function Reading({ links }: { links: { href: string; label: string }[] }) {
               <Link href={link.href} className="lx-reading-link">
                 {image ? (
                   <span className="lx-reading-photo">
-                    <Image src={image} alt="" fill sizes="72px" className="object-cover img-brand-grade" />
+                    <Image src={image} alt={pageImageAlt(link.href, image)} fill sizes="72px" className="object-cover img-brand-grade" />
                   </span>
                 ) : null}
                 <span className="lx-reading-title">{link.label}</span>

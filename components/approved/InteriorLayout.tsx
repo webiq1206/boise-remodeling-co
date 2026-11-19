@@ -1,3 +1,4 @@
+import { localAlt } from '@/shared/localAlt';
 import { ArrowUpRight } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { familyButtonClass } from '@/components/family/Button';
@@ -18,7 +19,7 @@ export function InteriorEstimateLink({label=CTA_PROJECT_DETAILS,href='/estimate'
 export function InteriorHero({children,imageSrc,imageAlt='',layout='split',estimateAction=false,className}:{children:ReactNode;imageSrc?:string;imageAlt?:string;layout?:'split'|'editorial'|'contact';estimateAction?:boolean;className?:string}) {
   return <section className={`interior-hero interior-hero-${layout}${imageSrc?'':' interior-hero-text'}${className?` ${className}`:''}`}>
     <div className="interior-hero-copy">{children}{estimateAction&&<div className="interior-hero-action"><InteriorEstimateLink/></div>}</div>
-    {imageSrc&&<div className="interior-hero-image"><img src={imageSrc} alt={imageAlt} width={1400} height={1100} fetchPriority="high"/></div>}
+    {imageSrc&&<div className="interior-hero-image"><img src={imageSrc} alt={imageAlt ? localAlt(imageAlt) : ''} width={1400} height={1100} fetchPriority="high"/></div>}
   </section>;
 }
 

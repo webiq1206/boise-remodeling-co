@@ -1,3 +1,4 @@
+import { localAlt } from '@/shared/localAlt';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
@@ -68,7 +69,7 @@ export function ValueOverheadSection() {
               <div className="relative aspect-[4/5] overflow-hidden">
                 <Image
                   src={SITE_IMAGES.value}
-                  alt="Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top"
+                  alt={localAlt('Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top', { subject: 'kitchen remodel' })}
                   fill
                   sizes="(max-width: 1024px) 100vw, 40vw"
                   className="object-cover img-brand-grade"

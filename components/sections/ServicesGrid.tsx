@@ -1,3 +1,4 @@
+import { localAlt } from '@/shared/localAlt';
 import { toSentenceCase } from '@/shared/sentenceCase';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
@@ -69,7 +70,7 @@ export function ServicesGrid() {
               <div className="relative min-h-[clamp(280px,38vw,460px)] overflow-hidden">
                 <Image
                   src={getServiceBackground(lead.slug)}
-                  alt={`${lead.name.toLowerCase()} design`}
+                  alt={localAlt(`${lead.name.toLowerCase()} design`)}
                   fill
                   sizes="(max-width: 1024px) 100vw, 55vw"
                   quality={72}

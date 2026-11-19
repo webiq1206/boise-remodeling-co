@@ -11,6 +11,7 @@ import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBefore
 import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProjectRoomsSection';
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
+import { localAlt, subjectForService } from '@/shared/localAlt';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
@@ -301,6 +302,9 @@ export function LandingPageTemplate({
     sectionSlots: breatherIndices.length,
     subject: imageSubject ?? serviceSlug,
   });
+  // Every photograph names this page's work and place before it describes the picture.
+  const altContext = { subject: subjectForService(related.serviceSlug) ?? (noun === 'remodel' ? undefined : noun), city: subject?.place };
+  const pageAlt = (src: string | undefined, fallback?: string) => contentImageAlt(src, fallback, altContext);
   const breatherImage = imageSlots.breather;
   const processImage = imageSlots.process;
   const showTimelineBelow = !!timeline && !costGuidance;
@@ -310,7 +314,7 @@ export function LandingPageTemplate({
     <div className="flex flex-col ">
       {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
       {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
-      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split" className="interior-hero-budget lx-hero">
+      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ? localAlt(heroImageAlt, altContext) : pageAlt(heroImageUrl)} layout="split" className="interior-hero-budget lx-hero">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
@@ -429,8 +433,8 @@ export function LandingPageTemplate({
 
       {/* ─── Full-bleed image breather ─── */}
       {breatherImage && (
-        <section className="relative h-[clamp(220px,28vw,360px)] overflow-hidden" aria-hidden>
-          <Image src={breatherImage} alt="" fill sizes="100vw" className="object-cover img-brand-grade" />
+        <section className="relative h-[clamp(220px,28vw,360px)] overflow-hidden">
+          <Image src={breatherImage} alt={pageAlt(breatherImage)} fill sizes="100vw" className="object-cover img-brand-grade" />
           <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
         </section>
       )}
@@ -448,7 +452,7 @@ export function LandingPageTemplate({
           <div className="ed-panel ed-panel-reverse">
             <div className="ed-panel-media">
               {processImage && (
-                <Image src={processImage} alt={contentImageAlt(processImage, 'Remodel work in progress')} fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
+                <Image src={processImage} alt={pageAlt(processImage, 'Remodel work in progress')} fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
               )}
               <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
             </div>
@@ -553,7 +557,7 @@ export function LandingPageTemplate({
                       {breatherSrc && (
                         <LandingSectionBreather
                           src={breatherSrc}
-                          alt={contentImageAlt(breatherSrc, 'Remodeling design inspiration')}
+                          alt={pageAlt(breatherSrc, 'Remodeling design inspiration')}
                         />
                       )}
                       <Reveal delay={Math.min(i, 4) * 60}>
@@ -617,7 +621,7 @@ export function LandingPageTemplate({
                     <article className="flex h-full flex-col" style={{ border: '1px solid var(--ed-line)' }}>
                       <ProjectInspirationImage
                         afterSrc={imageSlots.proof[index] ?? project.afterImageUrl}
-                        afterAlt={project.title}
+                        afterAlt={localAlt(toSentenceCase(project.title), altContext)}
                         aspectClass={proof.projects!.length === 1 ? 'aspect-[16/10] md:aspect-[21/9]' : undefined}
                         sizes={proof.projects!.length === 1 ? '(max-width: 1023px) 100vw, 80vw' : undefined}
                       />

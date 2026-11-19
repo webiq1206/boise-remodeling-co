@@ -1,3 +1,4 @@
+import { cityFromTags, localAlt, subjectFromTags } from './localAlt';
 import {
   BLOG_IMAGE_REGISTRY,
   HUB_HERO_IMAGES,
@@ -75,7 +76,12 @@ export function getBlogImageForSlug(
 }
 
 export function getBlogImageAlt(slug: string): string {
-  return BLOG_IMAGE_REGISTRY[slug]?.alt ?? 'Kitchen and living-area finishes';
+  const entry = BLOG_IMAGE_REGISTRY[slug];
+  // The work and the place first (from the post's topic tags), then what the picture shows.
+  return localAlt(entry?.alt ?? 'Kitchen and living-area finishes', {
+    subject: subjectFromTags(entry?.topicTags),
+    city: cityFromTags(entry?.topicTags),
+  });
 }
 
 export function getBlogHeroImage(
@@ -158,8 +164,8 @@ export function getArticleInlineFigures(
       pushFigure(
         Math.max(1, Math.floor(sectionCount / 3) - 1),
         hubHero,
-        Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
-          ?? INLINE_HUB_ALTS[hubSlug] ?? `${hubSlug.replace(/-/g, ' ')} imagery`,
+        localAlt(Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
+          ?? INLINE_HUB_ALTS[hubSlug] ?? `${hubSlug.replace(/-/g, ' ')} imagery`),
       );
     }
 
@@ -169,7 +175,7 @@ export function getArticleInlineFigures(
       const candidate = gallery[i % Math.max(gallery.length, 1)];
       if (!candidate) break;
       const afterSectionIndex = Math.min(slots[i], sectionCount - 1);
-      pushFigure(afterSectionIndex, candidate.src, candidate.alt);
+      pushFigure(afterSectionIndex, candidate.src, localAlt(candidate.alt));
     }
   }
 
