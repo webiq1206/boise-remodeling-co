@@ -31,7 +31,7 @@ export function ServiceReferral({
   const external = ctaHref.startsWith("http");
   const buttonClass = "f-button f-dark";
   return (
-    <section className="f-section f-container referral" aria-labelledby="referral-title">
+    <section className="f-section f-container referral" style={{ paddingTop: "clamp(48px, 6vw, 88px)" }} aria-labelledby="referral-title">
       <div className="referral-grid">
         <div>
           <p className="f-eyebrow">{eyebrow}</p>

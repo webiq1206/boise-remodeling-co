@@ -190,11 +190,11 @@ export default function GuidesIndexPage() {
             Browse by topic
           </h2>
           {/* Ten short text cards: two by five on tablets, five by two from 1280px. Never a lone last card. */}
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid gap-2 sm:gap-4 sm:grid-cols-2 xl:grid-cols-5">
             {sortedHubs.map((hub) => (
-              <MarketingCard key={hub.hubSlug} className="p-5">
+              <MarketingCard key={hub.hubSlug} className="px-5 py-3 sm:p-5">
                 <h3 className="font-normal mb-1">{toSentenceCase(hub.title)}</h3>
-                <p className="text-sm text-muted-foreground mb-3">{hub.description}</p>
+                <p className="hidden sm:block text-sm text-muted-foreground mb-3">{hub.description}</p>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
                   <Link
                     href={guidePath(hub.pillarSlug)}

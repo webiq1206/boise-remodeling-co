@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/components/marketing/Section";
 import { BlogCard } from "@/components/marketing/BlogCard";
 import { Chip } from "@/components/marketing/Chip";
+import { toSentenceCase } from "@/shared/sentenceCase";
 // Posts arrive as card summaries from the server page (lib/blogPagination
 // blogIndexPosts). Importing BLOG_POSTS here shipped every article body, about
 // 290KB gzipped, to the browser on /blog and to every page that prefetched it.
@@ -133,7 +134,7 @@ export function BlogIndexClient({ posts, page = 1 }: { posts: BlogIndexPost[]; p
                         active={activeHub === hub.hubSlug}
                         onClick={() => setActiveHub(hub.hubSlug)}
                       >
-                        {hub.title}
+                        {toSentenceCase(hub.title)}
                       </Chip>
                     ))}
                   </div>

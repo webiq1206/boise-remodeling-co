@@ -953,3 +953,15 @@ last in `app/layout.tsx`); the homepage is untouched.
   photo band; seven-card grids use `lx-seven` (four, then three that fill the
   row); document pages (warranty, legal) use one gutter on phones.
 
+- **Every-page sweep (19 November 2026).** Every public route was read at
+  390, 768 and 1440. Pages outside the landing, article and guide templates
+  follow the same rules: questions are tap-to-open (`/remodel-plans-boise`
+  uses native `<details name="plans-faq">`), seven city cards use `lx-seven`
+  (now two, two and three on tablets too), document pages stack their "On
+  this page" rail above the text from 701px to 1023px, and the permit flow's
+  seven steps sit two across on phones (`lx-permit-steps`). The 404 page and
+  the RE-10 referral page set their own top padding: `.approved-interior`
+  zeroes `--ed-hero-top`, so a first section with no breadcrumb sat flush
+  under the header. Hub and topic names render through `toSentenceCase()`
+  wherever they are a label (blog card chips, the blog topic filter). The
+  subcontractor landing is sentence case like every other heading.
