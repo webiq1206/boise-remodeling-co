@@ -51,10 +51,11 @@ const nextConfig = {
     // ?v=<content hash> to every replaced file (lib/imageVersion.ts,
     // shared/generated/imageVersions.ts, npm run images:versions,
     // tests/image-versions.test.ts). A custom images.loader is not the way:
-    // it switches the /_next/image route off. No localPatterns is set, so a
-    // local path with a query string is accepted; if localPatterns is ever
-    // added (Next 16 asks for it), allow the search part.
+    // it switches the /_next/image route off. localPatterns below names every
+    // local path and leaves the search part open, which is what lets a local
+    // image carry ?v=: Next 15 warns without it and Next 16 refuses.
     minimumCacheTTL: 31536000,
+    localPatterns: [{ pathname: '/**' }],
     remotePatterns: [
       {
         protocol: 'https',

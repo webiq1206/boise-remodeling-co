@@ -62,3 +62,8 @@ test('the optimizer route stays on: no custom loader in next.config.js', () => {
   const config = readFileSync('next.config.js', 'utf8');
   assert.doesNotMatch(config, /^\s*loader(File)?:/m);
 });
+
+test('next.config.js allows a local image to carry a query string', () => {
+  const config = readFileSync('next.config.js', 'utf8');
+  assert.match(config, /localPatterns: \[\{ pathname: '\/\*\*' \}\]/);
+});
