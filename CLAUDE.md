@@ -905,14 +905,50 @@ last in `app/layout.tsx`); the homepage is untouched.
   save height.
 - **No photograph stretched past its own pixels.** `shared/smallSourceImages.ts`
   lists every blog photograph narrower than the 1260px article banner; the
-  banner stays at that width, centred. Six remain at 1024px because the Photo
-  Dump has no unused 2000px photograph of those subjects. Replace the file,
-  delete its line. Guard: `tests/small-source-images.test.ts`.
+  banner stays at that width, centred. The list is empty since 19 November
+  2026: every blog photograph is at least banner width. A narrower file added
+  later must be listed. Guard: `tests/small-source-images.test.ts`.
+- **Four blog pictures are AI stills the owner approved on 19 November 2026**,
+  because the Photo Dump had no wide photograph of the subject: basement
+  finishing (an empty finished basement), bedroom additions (an addition being
+  framed), how long a bathroom remodel takes (a tub alcove mid-remodel) and
+  multigenerational living (a kitchenette beside an empty room; also the hero
+  of the ADU conversion page). They are not photographs of our work. Their alt
+  text, captions and any label beside them say only what the picture shows:
+  never "completed", "recent project", "our work" or a customer, and no
+  qualifier word either. Their social cards (`-og.jpg`) were regenerated with
+  `scripts/generate-og-images.mjs`.
+- **The blog registry is edited in two places by hand.**
+  `scripts/generate-blog-image-registry.mjs` and `shared/blogImageRegistry.ts`
+  have drifted (the generated file carries later descriptions), so running the
+  generator would overwrite reviewed alt text. Until they are reconciled,
+  change a description in both files and do not run `images:blog`.
+- **A replaced photograph gets a new URL.** The optimizer answers with a
+  one-year `Cache-Control` and keys its disk cache by URL
+  (`minimumCacheTTL`), so a file replaced under the same name kept showing the
+  old picture to anyone who had seen it. `components/VersionedImage.tsx` wraps
+  `next/image` and appends `?v=<content hash>` for every replaced file
+  (`lib/imageVersion.ts`, list in `shared/generated/imageVersions.ts`, seeded
+  with the 157 files replaced in November 2026). Page code keeps plain paths
+  for alt text, picture identity, sitemaps and structured data. After adding
+  or replacing an image run `npm run images:versions`; import
+  `@/components/VersionedImage`, never `next/image`. Do not set a custom
+  `images.loader`: it switches `/_next/image` off. The shared
+  `components/family/HeroPhoto.tsx` is not wrapped (it has no caller here); a
+  caller would pass `versionedSrc(src)`. Guard: `tests/image-versions.test.ts`
+  (in `verify:interior-images`).
 - **No photograph twice on a page.** Article figures and "Related resources"
   cards compare pictures by `imageIdentity()`, not by path.
+- **`docs/interior-route-audit.json` pins each interior page's metadata and
+  schema code** (`tests/approved-interiors.test.ts`, `verify:interiors`, in
+  prebuild since 19 November 2026). It sat stale and unrun through five
+  deliberate SEO commits and the removal of `/testimonials` (now a redirect to
+  `/design-ideas`). A deliberate SEO change updates the page's `seoSignature`
+  in the same commit; a removed page leaves the audit.
 - **Guards in prebuild:** `verify:interior-images` (`tests/local-alt.test.ts`,
   `tests/landing-image-adjacency.test.ts`, `tests/cost-tiers.test.ts`,
-  `tests/small-source-images.test.ts`).
+  `tests/small-source-images.test.ts`,
+  `tests/image-versions.test.ts`).
 - Contact has one area card, call and text side by side and no repeated
   photo band; seven-card grids use `lx-seven` (four, then three that fill the
   row); document pages (warranty, legal) use one gutter on phones.

@@ -43,9 +43,19 @@ const nextConfig = {
     imageSizes: [96, 256, 384],
     // Next defaults this to 60 SECONDS, so optimized variants expired and were
     // re-encoded about once a minute - the main reason images felt slow again
-    // and again. Optimized URLs are keyed by src + width + quality, so a long
-    // TTL is safe: changing an image changes its URL.
+    // and again. Optimized URLs are keyed by src + width + quality, and both
+    // the optimizer's disk cache and the browser (Cache-Control max-age) hold
+    // an answer for this long. That is only safe while changing an image
+    // changes its URL, which a photograph replaced under the same file name
+    // does not do by itself: components/VersionedImage.tsx appends
+    // ?v=<content hash> to every replaced file (lib/imageVersion.ts,
+    // shared/generated/imageVersions.ts, npm run images:versions,
+    // tests/image-versions.test.ts). A custom images.loader is not the way:
+    // it switches the /_next/image route off. localPatterns below names every
+    // local path and leaves the search part open, which is what lets a local
+    // image carry ?v=: Next 15 warns without it and Next 16 refuses.
     minimumCacheTTL: 31536000,
+    localPatterns: [{ pathname: '/**' }],
     remotePatterns: [
       {
         protocol: 'https',

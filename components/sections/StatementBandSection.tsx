@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { SITE_IMAGES } from "@/shared/siteImages";
 
 /** Full-bleed photography band to break long light section stretches. */

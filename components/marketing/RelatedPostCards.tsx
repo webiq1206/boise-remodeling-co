@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getManifestLinks, type ManifestLink } from "@/lib/internal-links";

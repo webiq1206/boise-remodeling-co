@@ -19,7 +19,7 @@ import { CONTENT_HUBS,guidePath } from '@/shared/contentHubs';
 import { GUIDE_PAGES,type GuidePageData } from '@/shared/guideContent';
 import { ArrowRight,BookOpen,MapPin } from 'lucide-react';
 import { Metadata } from 'next';
-import Image from 'next/image';
+import Image from '@/components/VersionedImage';
 import Link from 'next/link';
 
 function guideCardMeta(guide: GuidePageData) {

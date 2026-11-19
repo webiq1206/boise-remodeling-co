@@ -20,7 +20,7 @@ test('every blog photograph narrower than the article banner is listed with its 
   assert.deepEqual(SMALL_SOURCE_WIDTH, found);
 });
 
-test('the cap is read by path, and a full-size photograph has none', () => {
-  assert.equal(sourceWidthCap('/images/blog/bedroom-additions.webp'), 1024);
-  assert.equal(sourceWidthCap('/images/blog/kitchen-remodel-roi.webp'), undefined);
+test('a photograph with no entry has no cap, with or without a query string', () => {
+  assert.equal(sourceWidthCap('/images/blog/bedroom-additions.webp'), undefined);
+  assert.equal(sourceWidthCap('/images/blog/kitchen-remodel-roi.webp?v=1'), undefined);
 });

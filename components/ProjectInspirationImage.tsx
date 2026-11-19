@@ -1,5 +1,5 @@
 import { localAlt } from '@/shared/localAlt';
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 
 /** Gallery photograph. Its labels are plain subject labels and never claim a completed customer project. */

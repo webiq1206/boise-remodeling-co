@@ -39,7 +39,7 @@ import { SITE_CONFIG } from '@/shared/siteConfig';
 import { CONSULT_BULLETS,HERO_STATS } from '@/shared/siteContent';
 import { SITE_IMAGES } from '@/shared/siteImages';
 import { ArrowRight,Check,ChevronRight,Mail,MapPin,MessageSquare,Phone } from 'lucide-react';
-import Image from 'next/image';
+import Image from '@/components/VersionedImage';
 import Link from 'next/link';
 
 

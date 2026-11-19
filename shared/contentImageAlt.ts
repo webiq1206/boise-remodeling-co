@@ -152,17 +152,17 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/home-addition-cost-boise.webp':
     'Single-story house with tan siding and a side addition on a green lawn',
   '/images/blog/bedroom-additions.webp':
-    'Bedroom with a low platform bed, wood floors and a doorway to a bathroom',
+    'Single-story addition framed with roof trusses and wrapped in white house wrap behind a gray house',
   '/images/blog/adu-cost-boise.webp':
     'Small detached backyard building with gray siding and a wood-clad entry beside a main house',
   '/images/blog/multigenerational-living-remodels.webp':
-    'In-law suite with a kitchenette, a bed and a doorway to a bathroom',
+    'Kitchenette with white flat-panel cabinets, a sink and an under-counter refrigerator beside a wide opening to an empty room with a window',
   '/images/blog/garage-conversions.webp':
     'Converted garage room with wood floors, a large window and a desk',
   '/images/gallery/gallery-basement-meridian-before.webp':
     'Unfinished basement with a concrete floor, exposed joists and a wood stair',
   '/images/blog/basement-finishing-boise.webp':
-    'Finished basement with a sectional sofa, carpet, a window and a stair',
+    'Finished basement room with gray plank flooring, white walls and an egress window, with no furniture',
   '/images/blog/covered-patios-boise.webp':
     'Covered patio with a wood ceiling, black posts, a dining table and a built-in grill',
   '/images/blog/outdoor-living-roi.webp':

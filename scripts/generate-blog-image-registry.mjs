@@ -146,13 +146,13 @@ const ENTRIES = {
   },
   "how-long-does-a-bathroom-remodel-take": {
     hero: "/images/blog/how-long-does-a-bathroom-remodel-take.webp",
-    alt: "Bathroom with a navy vanity, white counter and tiled shower-tub enclosure",
+    alt: "Tub alcove lined with gray cement backer board, with a new white tub covered for protection and the valve roughed in",
     topicTags: ["bathroom","timeline","boise"],
     source: "blog",
   },
   "small-bathroom-remodel-ideas": {
     hero: "/images/blog/small-bathroom-remodel-ideas.webp",
-    alt: "Compact bathroom with a shower-tub enclosure, single vanity and light finishes",
+    alt: "Hall bathroom with an oak vanity, a black-framed mirror, a toilet and a tub with a glass panel",
     topicTags: ["bathroom","small","boise"],
     source: "blog",
   },
@@ -188,13 +188,13 @@ const ENTRIES = {
   },
   "basement-finishing-boise": {
     hero: "/images/blog/basement-finishing-boise.webp",
-    alt: "Lower-level family room with a sectional sofa, broad window and media wall",
+    alt: "Finished basement room with gray plank flooring, white walls and an egress window, with no furniture",
     topicTags: ["addition","basement","boise"],
     source: "blog",
   },
   "bedroom-additions": {
     hero: "/images/blog/bedroom-additions.webp",
-    alt: "Bedroom with large windows, a wood floor, a neutral rug and a white bed",
+    alt: "Single-story addition framed with roof trusses and wrapped in white house wrap behind a gray house",
     topicTags: ["addition","bedroom","boise"],
     source: "blog",
   },
@@ -218,7 +218,7 @@ const ENTRIES = {
   },
   "multigenerational-living-remodels": {
     hero: "/images/blog/multigenerational-living-remodels.webp",
-    alt: "Sitting area beside a compact kitchenette with wood cabinets and light counters",
+    alt: "Kitchenette with white flat-panel cabinets, a sink and an under-counter refrigerator beside a wide opening to an empty room with a window",
     topicTags: ["adu","addition","multigenerational","boise"],
     source: "blog",
   },
@@ -260,7 +260,7 @@ const ENTRIES = {
   },
   "remodeling-mistakes-to-avoid": {
     hero: "/images/blog/remodeling-mistakes-to-avoid.webp",
-    alt: "Living area with a sectional sofa, wood table and a view toward a dining space",
+    alt: "White baseboard on a wood floor with a hammer, a putty knife and a caulk gun on a drop cloth",
     topicTags: ["whole-home","planning","boise"],
     source: "blog",
   },

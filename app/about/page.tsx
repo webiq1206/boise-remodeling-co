@@ -22,7 +22,7 @@ import { SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE } from "@/shared/contentData
 import { CTA_PRIMARY, CTA_SECONDARY } from "@/shared/ctaCopy";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { SHOW_FOUNDING_YEAR } from "@/shared/publicClaims";
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import Link from "next/link";
 
 const SPEAKABLE_SUMMARY =

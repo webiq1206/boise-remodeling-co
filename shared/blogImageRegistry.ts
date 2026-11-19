@@ -149,13 +149,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'how-long-does-a-bathroom-remodel-take': {
     hero: '/images/blog/how-long-does-a-bathroom-remodel-take.webp',
-    alt: 'Bathroom stripped to the studs with a shower pan and drain roughed in',
+    alt: 'Tub alcove lined with gray cement backer board, with a new white tub covered for protection and the valve roughed in',
     topicTags: ["bathroom","timeline","boise"],
     source: 'blog',
   },
   'small-bathroom-remodel-ideas': {
     hero: '/images/blog/small-bathroom-remodel-ideas.webp',
-    alt: 'Hall bathroom with an oak vanity, a tub with a glass panel and black fixtures',
+    alt: 'Hall bathroom with an oak vanity, a black-framed mirror, a toilet and a tub with a glass panel',
     topicTags: ["bathroom","small","boise"],
     source: 'blog',
   },
@@ -191,13 +191,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'basement-finishing-boise': {
     hero: '/images/blog/basement-finishing-boise.webp',
-    alt: 'Finished basement with a sectional sofa, carpet, a window and a stair',
+    alt: 'Finished basement room with gray plank flooring, white walls and an egress window, with no furniture',
     topicTags: ["addition","basement","boise"],
     source: 'blog',
   },
   'bedroom-additions': {
     hero: '/images/blog/bedroom-additions.webp',
-    alt: 'Bedroom with a low platform bed, wood floors and a doorway to a bathroom',
+    alt: 'Single-story addition framed with roof trusses and wrapped in white house wrap behind a gray house',
     topicTags: ["addition","bedroom","boise"],
     source: 'blog',
   },
@@ -221,7 +221,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'multigenerational-living-remodels': {
     hero: '/images/blog/multigenerational-living-remodels.webp',
-    alt: 'In-law suite with a kitchenette, a bed and a doorway to a bathroom',
+    alt: 'Kitchenette with white flat-panel cabinets, a sink and an under-counter refrigerator beside a wide opening to an empty room with a window',
     topicTags: ["adu","addition","multigenerational","boise"],
     source: 'blog',
   },
@@ -263,7 +263,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodeling-mistakes-to-avoid': {
     hero: '/images/blog/remodeling-mistakes-to-avoid.webp',
-    alt: 'Floor opened up to move plumbing lines, with wall studs exposed',
+    alt: 'White baseboard on a wood floor with a hammer, a putty knife and a caulk gun on a drop cloth',
     topicTags: ["whole-home","planning","boise"],
     source: 'blog',
   },
