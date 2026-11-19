@@ -1,5 +1,5 @@
 import { toSentenceCase } from '@/shared/sentenceCase';
-import Image from 'next/image';
+import Image from '@/components/VersionedImage';
 import Link from 'next/link';
 import { CITIES, SERVICE_AREA_CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';

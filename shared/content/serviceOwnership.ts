@@ -38,7 +38,7 @@ interface OwnershipPage {
 export const ADU_CONVERSION_PAGE: OwnershipPage = {
   images: {
     hero: '/images/blog/multigenerational-living-remodels.webp',
-    heroAlt: 'Living area with a kitchenette, a sofa and a doorway to a bedroom',
+    heroAlt: 'Kitchenette with white flat-panel cabinets, a sink and an under-counter refrigerator beside a wide opening to an empty room with a window',
     breather: '/images/blog/garage-conversions.webp',
   },
   overview:

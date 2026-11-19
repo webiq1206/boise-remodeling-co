@@ -2,7 +2,7 @@
 
 import { localAlt } from '@/shared/localAlt';
 import { useId, useRef, useState } from "react";
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { MoveHorizontal } from "lucide-react";
 
 interface BeforeAfterSliderProps {

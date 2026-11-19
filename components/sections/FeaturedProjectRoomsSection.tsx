@@ -1,6 +1,6 @@
 import { localAlt } from '@/shared/localAlt';
 import { toSentenceCase } from '@/shared/sentenceCase';
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { Reveal } from "@/components/Reveal";
 import {
   FEATURED_EAGLE_WHOLE_HOME,

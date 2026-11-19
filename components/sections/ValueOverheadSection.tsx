@@ -1,5 +1,5 @@
 import { localAlt } from '@/shared/localAlt';
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { Reveal } from "@/components/Reveal";
 import { Section } from "@/components/marketing/Section";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";

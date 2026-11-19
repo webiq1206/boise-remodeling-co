@@ -1,5 +1,5 @@
 import { contentImageAlt } from '@/shared/contentImageAlt';
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { Reveal } from "@/components/Reveal";
 import { ArrowRight, Check } from "lucide-react";
 import { Section } from "@/components/marketing/Section";

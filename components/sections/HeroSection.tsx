@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from '@/components/VersionedImage';
 import { Reveal } from "@/components/Reveal";
 import { EstimateCTA } from "@/components/modals/EstimateCTA";
 import { ConsultCTA } from "@/components/modals/ConsultCTA";

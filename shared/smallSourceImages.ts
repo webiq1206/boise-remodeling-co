@@ -6,10 +6,8 @@
  * Guard: tests/small-source-images.test.ts.
  */
 export const SMALL_SOURCE_WIDTH: Readonly<Record<string, number>> = {
-  '/images/blog/basement-finishing-boise.webp': 1024,
-  '/images/blog/bedroom-additions.webp': 1024,
-  '/images/blog/how-long-does-a-bathroom-remodel-take.webp': 1024,
-  '/images/blog/multigenerational-living-remodels.webp': 1024,
+  // Empty since 19 November 2026: every blog photograph is at least as wide as
+  // the article banner. A narrower file added later must be listed here.
 };
 
 export function sourceWidthCap(src: string): number | undefined {

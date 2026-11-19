@@ -35,6 +35,7 @@
     "verify:estimate-routes": "node --import tsx scripts/verify-estimate-routes.ts",
     "verify:assistant": "node --import tsx scripts/verify-assistant.ts",
     "verify:documents": "node --import tsx scripts/verify-documents.ts",
+    "images:versions": "node scripts/build-image-versions.mjs",
     "images:blog": "node scripts/generate-blog-image-registry.mjs && node scripts/setup-blog-images.mjs",
     "images:generate": "node scripts/generate-blog-images.mjs",
     "images:placeholders": "node scripts/generate-placeholder-images.mjs",
@@ -66,7 +67,7 @@
     "verify:charcoal": "node --import tsx --test tests/brand-charcoal.test.ts",
     "verify:mobile": "node --import tsx --test tests/mobile-polish.test.ts",
     "verify:interiors": "node --import tsx --test tests/approved-interiors.test.ts",
-    "verify:interior-images": "node --import tsx --test tests/local-alt.test.ts tests/landing-image-adjacency.test.ts tests/cost-tiers.test.ts tests/small-source-images.test.ts",
+    "verify:interior-images": "node --import tsx --test tests/local-alt.test.ts tests/landing-image-adjacency.test.ts tests/cost-tiers.test.ts tests/small-source-images.test.ts tests/image-versions.test.ts",
     "verify:public-claims": "node --import tsx scripts/verify-public-claims.ts && node --import tsx --test tests/public-claims-guard.test.ts tests/warranty-page.test.ts tests/instant-estimator.test.ts"
   },
   "dependencies": {

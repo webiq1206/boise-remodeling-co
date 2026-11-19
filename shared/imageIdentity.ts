@@ -21,7 +21,6 @@ export const VISUAL_DUPLICATE_GROUPS: readonly (readonly string[])[] = [
   ["/images/about/perkins-family-full.webp", "/images/about/perkins-family-meridian-idaho-1x1.webp", "/images/about/perkins-family-meridian-idaho.webp"],
   ["/images/areas/boise.webp", "/images/blog/boise-remodeling-guide.webp"],
   ["/images/areas/eagle.webp", "/images/blog/eagle-foothills-remodeling-guide.webp"],
-  ["/images/blog/bedroom-additions.webp", "/images/city-service/room-addition__star.webp"],
   ["/images/blog/design-build-process-guide.webp", "/images/city-service/whole-home-remodel__kuna.webp"],
   ["/images/blog/luxury-bathroom-features.webp", "/images/city-service/bathroom-remodel__eagle.webp"],
   ["/images/blog/remodel-cost-per-square-foot-boise.webp", "/images/city-service/whole-home-remodel__meridian.webp"],

@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from '@/components/VersionedImage';
 import { sourceWidthCap } from '@/shared/smallSourceImages';
 
 interface BlogHeroBannerProps {src:string;alt:string;priority?:boolean}
