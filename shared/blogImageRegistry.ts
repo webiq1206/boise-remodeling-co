@@ -155,7 +155,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'small-bathroom-remodel-ideas': {
     hero: '/images/blog/small-bathroom-remodel-ideas.webp',
-    alt: 'Hall bathroom with an oak vanity, a tub with a glass panel and black fixtures',
+    alt: 'Hall bathroom with an oak vanity, a black-framed mirror, a toilet and a tub with a glass panel',
     topicTags: ["bathroom","small","boise"],
     source: 'blog',
   },
@@ -263,7 +263,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodeling-mistakes-to-avoid': {
     hero: '/images/blog/remodeling-mistakes-to-avoid.webp',
-    alt: 'Floor opened up to move plumbing lines, with wall studs exposed',
+    alt: 'White baseboard on a wood floor with a hammer, a putty knife and a caulk gun on a drop cloth',
     topicTags: ["whole-home","planning","boise"],
     source: 'blog',
   },

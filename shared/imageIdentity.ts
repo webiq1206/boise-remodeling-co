@@ -25,6 +25,7 @@ export const VISUAL_DUPLICATE_GROUPS: readonly (readonly string[])[] = [
   ["/images/blog/design-build-process-guide.webp", "/images/city-service/whole-home-remodel__kuna.webp"],
   ["/images/blog/luxury-bathroom-features.webp", "/images/city-service/bathroom-remodel__eagle.webp"],
   ["/images/blog/remodel-cost-per-square-foot-boise.webp", "/images/city-service/whole-home-remodel__meridian.webp"],
+  ["/images/blog/small-bathroom-remodel-ideas.webp", "/images/city-service/bathroom-remodel__caldwell.webp"],
   ["/images/city-service/adu__boise.webp", "/images/gallery/gallery-adu-boise-after.webp", "/images/services/adu.webp"],
   ["/images/city-service/bathroom-remodel__middleton.webp", "/images/gallery/featured-eagle-bath.webp", "/images/gallery/gallery-aging-meridian-after.webp", "/images/gallery/gallery-bathroom-after.webp", "/images/gallery/gallery-bathroom-nampa-after.webp", "/images/gallery/gallery-hall-bath-boise-after.webp", "/images/projects/boise-bench-ranch/bath-after.webp", "/images/service-scenes/bathroom.webp", "/images/services/bathroom-remodel.webp"],
   ["/images/city-service/kitchen-remodel__middleton.webp", "/images/gallery/gallery-kitchen-eagle-after.webp"],

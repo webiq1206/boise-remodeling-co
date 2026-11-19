@@ -905,11 +905,21 @@ last in `app/layout.tsx`); the homepage is untouched.
   save height.
 - **No photograph stretched past its own pixels.** `shared/smallSourceImages.ts`
   lists every blog photograph narrower than the 1260px article banner; the
-  banner stays at that width, centred. Six remain at 1024px because the Photo
-  Dump has no unused 2000px photograph of those subjects. Replace the file,
+  banner stays at that width, centred. Four remain at 1024px (basement
+  finishing, bedroom additions, how long a bathroom remodel takes,
+  multigenerational living): the Photo Dump has no wider photograph of those
+  subjects that is not already another post's picture or already on the same
+  landing page. Small bathroom ideas and remodeling mistakes were given
+  wider Photo Dump photographs on 19 November 2026. Replace the file,
   delete its line. Guard: `tests/small-source-images.test.ts`.
 - **No photograph twice on a page.** Article figures and "Related resources"
   cards compare pictures by `imageIdentity()`, not by path.
+- **`docs/interior-route-audit.json` pins each interior page's metadata and
+  schema code** (`tests/approved-interiors.test.ts`, `verify:interiors`, in
+  prebuild since 19 November 2026). It sat stale and unrun through five
+  deliberate SEO commits and the removal of `/testimonials` (now a redirect to
+  `/design-ideas`). A deliberate SEO change updates the page's `seoSignature`
+  in the same commit; a removed page leaves the audit.
 - **Guards in prebuild:** `verify:interior-images` (`tests/local-alt.test.ts`,
   `tests/landing-image-adjacency.test.ts`, `tests/cost-tiers.test.ts`,
   `tests/small-source-images.test.ts`).

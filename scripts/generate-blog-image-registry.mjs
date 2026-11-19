@@ -152,7 +152,7 @@ const ENTRIES = {
   },
   "small-bathroom-remodel-ideas": {
     hero: "/images/blog/small-bathroom-remodel-ideas.webp",
-    alt: "Compact bathroom with a shower-tub enclosure, single vanity and light finishes",
+    alt: "Hall bathroom with an oak vanity, a black-framed mirror, a toilet and a tub with a glass panel",
     topicTags: ["bathroom","small","boise"],
     source: "blog",
   },
@@ -260,7 +260,7 @@ const ENTRIES = {
   },
   "remodeling-mistakes-to-avoid": {
     hero: "/images/blog/remodeling-mistakes-to-avoid.webp",
-    alt: "Living area with a sectional sofa, wood table and a view toward a dining space",
+    alt: "White baseboard on a wood floor with a hammer, a putty knife and a caulk gun on a drop cloth",
     topicTags: ["whole-home","planning","boise"],
     source: "blog",
   },
