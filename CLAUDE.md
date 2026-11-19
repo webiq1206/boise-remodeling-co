@@ -869,3 +869,11 @@ last in `app/layout.tsx`); the homepage is untouched.
   one of those helpers, never a bare string. Guard: `tests/local-alt.test.ts`.
   Brand lockups in the shared header and footer keep an empty alt because
   their link carries the company name.
+- **No qualifier labels near photographs** (owner, 19 November 2026). Eyebrows,
+  headings, captions, card titles and image-sitemap titles do not say "design
+  inspiration", "see the possibilities", "design ideas for", "concept",
+  "representative" or "final layouts are tailored to your property". Sections
+  use plain subject labels ("A closer look", "Inside a kitchen remodel in
+  Meridian", "Gallery"). The same labels must not claim a photograph is a
+  completed customer job ("recent project", "our client's kitchen"). The
+  `/design-ideas` page keeps its name and URL.

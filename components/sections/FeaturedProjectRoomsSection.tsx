@@ -34,7 +34,7 @@ export function FeaturedProjectRoomsSection({
           ? "relative overflow-hidden bg-background"
           : "relative overflow-hidden bg-background section-divider border-t border-border/60"
       }
-      aria-label={`${project.title} design inspiration`}
+      aria-label={project.title}
     >
       {!compact && (
         <div className="container px-4 pt-16 md:pt-24 pb-8 md:pb-10">

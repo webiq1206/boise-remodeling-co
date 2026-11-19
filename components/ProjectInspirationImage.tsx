@@ -2,7 +2,7 @@ import { localAlt } from '@/shared/localAlt';
 import Image from "next/image";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 
-/** Unverified concept assets must never imply a completed customer project. */
+/** Gallery photograph. Its labels are plain subject labels and never claim a completed customer project. */
 export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption, aspectClass = "aspect-[4/3]", sizes = "(max-width: 1023px) 100vw, 55vw" }: {
   afterSrc: string;
   afterAlt: string;

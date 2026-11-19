@@ -15,7 +15,7 @@ export function FeaturedBeforeAfterSection({
   project,
   title = (
     <>
-      See the <em className="brc-accent">possibilities</em>
+      A closer <em className="brc-accent">look</em>
     </>
   ),
 }: FeaturedBeforeAfterSectionProps) {
@@ -23,9 +23,7 @@ export function FeaturedBeforeAfterSection({
     <Section divider>
       <div className="container px-4 max-w-5xl">
         <SectionHeader
-          eyebrow="Design inspiration"
           title={title}
-          description="Explore a design direction for your own home. Final layouts and materials are tailored to your property."
           className="mb-8 max-w-3xl"
         />
         <Reveal>

@@ -269,7 +269,7 @@ export function LandingPageTemplate({
     start: `Where to start ${withArticle(noun).replace(/^an? /, 'your ')}`,
     benefits: `What you can count on during ${withArticle(noun)}${where}`,
     process: `How ${withArticle(noun)}${where} works, step by step`,
-    proof: `Design ideas for ${withArticle(noun)}${where}`,
+    proof: `Inside ${withArticle(noun)}${where}`,
     faq: `Questions about ${withArticle(noun)}${where}`,
   };
   // Owner decision, 13 November 2026: the primary action is the central estimator, opened on
@@ -557,7 +557,7 @@ export function LandingPageTemplate({
                       {breatherSrc && (
                         <LandingSectionBreather
                           src={breatherSrc}
-                          alt={pageAlt(breatherSrc, 'Remodeling design inspiration')}
+                          alt={pageAlt(breatherSrc, 'Remodeled home interior')}
                         />
                       )}
                       <Reveal delay={Math.min(i, 4) * 60}>
@@ -608,7 +608,7 @@ export function LandingPageTemplate({
         <Section surface="deep" spacing="xl" edge>
           <div className="ed-shell">
             <Reveal>
-              <p className="ed-eyebrow">Design inspiration</p>
+              <p className="ed-eyebrow">A closer look</p>
               <h2 className="ed-h2 ed-statement-wide">
                 <Accented text={headings.proof} />
               </h2>

@@ -36,7 +36,7 @@ export default function DesignIdeasPage() {
     generateCollectionPageSchema({
       title: 'Remodeling Design Ideas',
       description:
-        'Remodeling design inspiration for kitchens, bathrooms, whole homes, and additions across the Treasure Valley.',
+        'Kitchen, bathroom, whole-home and addition remodeling across the Treasure Valley.',
       url: '/design-ideas',
       items: GALLERY_PROJECTS.map((p) => ({
         name: p.title,
