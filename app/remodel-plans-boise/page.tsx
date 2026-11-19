@@ -220,25 +220,24 @@ export default function RemodelPlansPage() {
           feeds the FAQPage JSON-LD above, so the schema cannot drift from what
           a reader sees. */}
       <Section id="faq" variant="greige" divider>
-        <div className="container px-4 max-w-3xl mx-auto">
-          <SectionHeader
-            eyebrow="Common questions"
-            size="display"
-            title={
-              <>
+        <div className="ed-shell">
+          <div className="ed-split ed-split-narrow">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <p className="ed-eyebrow">Common questions</p>
+              <h2 className="ed-h2 ed-statement">
                 What people ask before sending{" "}
                 <em className="brc-accent">their plans</em>
-              </>
-            }
-            className="mb-10"
-          />
-          <div className="space-y-8">
-            {PLANS_FAQS.map((f) => (
-              <div key={f.question}>
-                <h3 className="text-base font-normal text-foreground mb-2">{f.question}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.answer}</p>
-              </div>
-            ))}
+              </h2>
+            </div>
+            {/* Native disclosure: every answer stays in the HTML, one question open at a time. */}
+            <div className="lx-faq w-full border-t" style={{ borderColor: "var(--ed-line)" }}>
+              {PLANS_FAQS.map((f, i) => (
+                <details key={f.question} name="plans-faq" open={i === 0} className="border-b" style={{ borderColor: "var(--ed-line)" }}>
+                  <summary><h3 className="ed-h4 text-left">{f.question}</h3></summary>
+                  <p className="ed-body text-[0.9375rem]">{f.answer}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </Section>

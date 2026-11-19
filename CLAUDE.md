@@ -953,3 +953,32 @@ last in `app/layout.tsx`); the homepage is untouched.
   photo band; seven-card grids use `lx-seven` (four, then three that fill the
   row); document pages (warranty, legal) use one gutter on phones.
 
+- **Every-page sweep (19 November 2026).** Every public route was read at
+  390, 768 and 1440. Pages outside the landing, article and guide templates
+  follow the same rules: questions are tap-to-open (`/remodel-plans-boise`
+  uses native `<details name="plans-faq">`), seven city cards use `lx-seven`
+  (now two, two and three on tablets too), document pages stack their "On
+  this page" rail above the text from 701px to 1023px, and the permit flow's
+  seven steps sit two across on phones (`lx-permit-steps`). The 404 page and
+  the RE-10 referral page set their own top padding: `.approved-interior`
+  zeroes `--ed-hero-top`, so a first section with no breadcrumb sat flush
+  under the header. Hub and topic names render through `toSentenceCase()`
+  wherever they are a label (blog card chips, the blog topic filter). The
+  subcontractor landing is sentence case like every other heading.
+- **Sweep follow-up (19 November 2026).** Buttons on interior pages use
+  `familyButtonClass()` from `@/components/family/Button` (sentence case,
+  charcoal primary, outlined secondary); the `components/ui/button` `brand`
+  and `brandOutline` variants are uppercase and letter-spaced and do not belong
+  on a page. The 404 page lays its three out as one row from 640px (primary,
+  then call and text) and stacks them on phones. The permit flow's last step
+  spans its row at every width. Keep exploring card rows set
+  `--lx-cols-tablet` to the card count up to three, so two nearby areas fill a
+  tablet row. Stored titles render through `toSentenceCase()` wherever they are
+  a label: landing link lists ("Kitchen remodel in Boise"), Keep exploring
+  reading rows, related-resource cards, guide download titles and the city
+  permit paragraph in `seoContent.ts`. A label whose radio input sits inside
+  it carries `data-clarity-mask="True"` in the markup (the Clarity script
+  stamps it before hydration; without it the homepage planning ranges failed
+  hydration). The site map's link groups may continue into the next column so
+  the three columns balance. Not changed, for want of photographs: on service
+  pages the before/after slider's "after" is the hero picture.

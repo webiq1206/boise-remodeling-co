@@ -22,17 +22,10 @@ function FlowStep({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        'rounded-lg border border-border bg-card p-4 relative',
-        className,
-      )}
-    >
-      <span className="absolute -top-2.5 -left-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-accent text-xs font-normal text-accent-foreground">
-        {n}
-      </span>
-      <p className="font-normal text-sm text-foreground mt-1">{title}</p>
-      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{body}</p>
+    <div className={cn('h-full border border-border bg-card p-5', className)}>
+      <span className="ed-step-n" aria-hidden="true">{String(n).padStart(2, '0')}</span>
+      <p className="ed-h4 mt-3">{title}</p>
+      <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{body}</p>
     </div>
   );
 }
@@ -49,8 +42,8 @@ function CountyColumn({
   accentClass: string;
 }) {
   return (
-    <div className={cn('rounded-xl border-2 p-5 md:p-6', accentClass)}>
-      <h3 className="text-lg font-normal text-foreground">{title}</h3>
+    <div className={cn('border p-5 md:p-6', accentClass)}>
+      <h3 className="ed-h4">{title}</h3>
       <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
       <ul className="mt-4 space-y-1.5 text-sm text-foreground">
         {cities.map((c) => (
@@ -71,16 +64,10 @@ export function PermitFlowGraphic() {
         <h2 className="text-sm font-normal uppercase tracking-wider text-muted-foreground mb-4">
           Typical permit path
         </h2>
-        <div className="ed-cards-3 gap-3">
-          {STEPS.map((step, i) => (
-            <div key={step.n} className="relative">
+        <div className="ed-cards-3 lx-permit-steps gap-3">
+          {STEPS.map((step) => (
+            <div key={step.n}>
               <FlowStep {...step} />
-              {i < STEPS.length - 1 && (
-                <div
-                  className="hidden lg:block absolute top-1/2 -right-2 w-4 h-px bg-border"
-                  aria-hidden
-                />
-              )}
             </div>
           ))}
         </div>
@@ -106,7 +93,7 @@ export function PermitFlowGraphic() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-dashed border-border p-5 bg-muted/20">
+      <div className="border border-border p-5 md:p-6 bg-muted/20">
         <h2 className="text-sm font-normal text-foreground mb-3">Usually needs permits</h2>
         <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm text-muted-foreground">
           <span>Wall removal / beams</span>

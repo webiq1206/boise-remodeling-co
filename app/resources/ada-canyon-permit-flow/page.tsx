@@ -1,3 +1,4 @@
+import { familyButtonClass } from '@/components/family/Button';
 import { InteriorDocument,InteriorPage } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing/Section';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
@@ -91,20 +92,13 @@ export default function AdaCanyonPermitFlowPage() {
           </section>
 
           <div className="flex flex-wrap gap-3 mb-10">
-            <a
-              href="/downloads/ada-canyon-permit-guide.pdf"
-              download
-              className="inline-flex items-center gap-2 rounded-md bg-accent text-accent-foreground px-4 py-2 text-sm font-normal hover:opacity-90"
-            >
-              <Download className="h-4 w-4" />
+            <a href="/downloads/ada-canyon-permit-guide.pdf" download className={familyButtonClass({ variant: "primary" })}>
+              <Download className="h-4 w-4" aria-hidden="true" />
               Download PDF reference
             </a>
-            <Link
-              href="/blog/boise-permit-guide"
-              className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm hover:bg-muted/50"
-            >
+            <Link href="/blog/boise-permit-guide" className={familyButtonClass({ variant: "secondary" })}>
               Read the Boise permit guide
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
 

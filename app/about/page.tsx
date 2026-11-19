@@ -105,7 +105,7 @@ export default function AboutPage() {
 
           {/* Who we are: the lede beside the one family photograph, capped to the copy's
               height, instead of a 2048px square across the whole shell. */}
-          <Section divider className="pt-0">
+          <Section divider className="pt-10 lg:pt-0">
             <div className="ed-shell">
               <div className="ed-split ed-split-narrow ed-split-center">
                 <Reveal>

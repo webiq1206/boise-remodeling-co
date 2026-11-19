@@ -1,3 +1,4 @@
+import { toSentenceCase } from "@/shared/sentenceCase";
 import Image from '@/components/VersionedImage';
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -97,7 +98,7 @@ export function RelatedPostCards({
               )}
               <span className="lx-related-copy">
                 <span className="lx-related-kind">{KIND_LABEL[link.type] ?? "Related"}</span>
-                <span className="ed-h4 group-hover:underline group-hover:underline-offset-4">{link.anchor}</span>
+                <span className="ed-h4 group-hover:underline group-hover:underline-offset-4">{toSentenceCase(link.anchor)}</span>
               </span>
             </Link>
           );

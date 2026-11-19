@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Download, FileText, Workflow } from 'lucide-react';
 import type { GuideResource } from '@/shared/guideResources';
+import { toSentenceCase } from '@/shared/sentenceCase';
 
 interface GuideResourceDownloadsProps {
   resources: GuideResource[];
@@ -48,7 +49,7 @@ function ResourceRow({ resource }: { resource: GuideResource }) {
         <Icon className="h-4 w-4 text-accent-legible" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-normal text-foreground">{resource.title}</p>
+        <p className="text-sm font-normal text-foreground">{toSentenceCase(resource.title)}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{resource.description}</p>
         {resource.fileLabel && (
           <p className="text-xs text-muted-foreground mt-1">{resource.fileLabel}</p>

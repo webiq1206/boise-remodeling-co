@@ -65,7 +65,7 @@ export default function AreasHubPage() {
           <p className="sr-only" data-speakable="summary">
             Treasure Valley design-build remodeling service areas.
           </p>
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap [&>*]:w-full sm:[&>*]:w-auto">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap [&>*]:w-full sm:[&>*]:w-auto">
             <EstimateCTA variant="brand">
               {CTA_PRIMARY} <ArrowRight className="h-4 w-4" />
             </EstimateCTA>
@@ -86,7 +86,7 @@ export default function AreasHubPage() {
               description="Kitchen, bath, whole-home, and addition remodeling across Ada and Canyon County."
               align="left"
             />
-            <div className="grid gap-5 sm:grid-cols-2 min-[1180px]:grid-cols-4">
+            <div className="lx-seven grid gap-5 sm:grid-cols-2 min-[1180px]:grid-cols-4">
               {SERVICE_AREA_CITIES.map((city, i) => (
                 <Reveal key={city.slug} delay={i * 40}>
                   <AreaCard city={city} imageSrc={CITY_HERO_IMAGES[city.slug]} />
