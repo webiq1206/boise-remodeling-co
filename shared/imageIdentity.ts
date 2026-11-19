@@ -1,10 +1,11 @@
 /**
  * Visual identity of the site's image files.
  *
- * Many files under public/images are the same render saved under different
- * names (one kitchen render alone has 18 copies: every kitchen city-service
- * hero, the service hero, several gallery "after" images and the Bench ranch
- * kitchen). Comparing paths therefore cannot tell whether two sections show
+ * Some files under public/images are the same render saved under different
+ * names (the service hero, several gallery "after" images and the Bench ranch
+ * kitchen are one picture). City-service heroes were given their own
+ * photographs on 19 November 2026 and are no longer copies of the service
+ * hero. Comparing paths therefore cannot tell whether two sections show
  * the same picture. Each group below is one picture; any file not listed is
  * its own picture.
  *
@@ -16,14 +17,14 @@
  * added copy fails the test until it is listed here.
  */
 export const VISUAL_DUPLICATE_GROUPS: readonly (readonly string[])[] = [
-  ["/images/about-oak-kitchen.webp", "/images/city-service/kitchen-remodel__boise.webp", "/images/city-service/kitchen-remodel__caldwell.webp", "/images/city-service/kitchen-remodel__eagle.webp", "/images/city-service/kitchen-remodel__kuna.webp", "/images/city-service/kitchen-remodel__meridian.webp", "/images/city-service/kitchen-remodel__middleton.webp", "/images/city-service/kitchen-remodel__nampa.webp", "/images/city-service/kitchen-remodel__star.webp", "/images/consult-lifestyle.webp", "/images/gallery/featured-eagle-kitchen.webp", "/images/gallery/gallery-kitchen-after.webp", "/images/gallery/gallery-kitchen-meridian-after.webp", "/images/gallery/kitchen-refresh-design-after.webp", "/images/hero-remodel-interior.webp", "/images/projects/boise-bench-ranch/kitchen-after.webp", "/images/service-scenes/kitchen.webp", "/images/services/kitchen-remodel.webp"],
+  ["/images/about-oak-kitchen.webp", "/images/consult-lifestyle.webp", "/images/gallery/featured-eagle-kitchen.webp", "/images/gallery/gallery-kitchen-after.webp", "/images/gallery/gallery-kitchen-meridian-after.webp", "/images/gallery/kitchen-refresh-design-after.webp", "/images/hero-remodel-interior.webp", "/images/projects/boise-bench-ranch/kitchen-after.webp", "/images/service-scenes/kitchen.webp", "/images/services/kitchen-remodel.webp"],
   ["/images/about/perkins-family-full.webp", "/images/about/perkins-family-meridian-idaho-1x1.webp", "/images/about/perkins-family-meridian-idaho.webp"],
   ["/images/areas/boise.webp", "/images/blog/boise-remodeling-guide.webp"],
   ["/images/areas/eagle.webp", "/images/blog/eagle-foothills-remodeling-guide.webp"],
-  ["/images/city-service/adu__boise.webp", "/images/city-service/adu__caldwell.webp", "/images/city-service/adu__eagle.webp", "/images/city-service/adu__kuna.webp", "/images/city-service/adu__meridian.webp", "/images/city-service/adu__middleton.webp", "/images/city-service/adu__nampa.webp", "/images/city-service/adu__star.webp", "/images/gallery/gallery-adu-boise-after.webp", "/images/services/adu.webp"],
-  ["/images/city-service/bathroom-remodel__boise.webp", "/images/city-service/bathroom-remodel__caldwell.webp", "/images/city-service/bathroom-remodel__eagle.webp", "/images/city-service/bathroom-remodel__kuna.webp", "/images/city-service/bathroom-remodel__meridian.webp", "/images/city-service/bathroom-remodel__middleton.webp", "/images/city-service/bathroom-remodel__nampa.webp", "/images/city-service/bathroom-remodel__star.webp", "/images/gallery/featured-eagle-bath.webp", "/images/gallery/gallery-aging-meridian-after.webp", "/images/gallery/gallery-bathroom-after.webp", "/images/gallery/gallery-bathroom-nampa-after.webp", "/images/gallery/gallery-hall-bath-boise-after.webp", "/images/projects/boise-bench-ranch/bath-after.webp", "/images/service-scenes/bathroom.webp", "/images/services/bathroom-remodel.webp"],
-  ["/images/city-service/room-addition__boise.webp", "/images/city-service/room-addition__caldwell.webp", "/images/city-service/room-addition__eagle.webp", "/images/city-service/room-addition__kuna.webp", "/images/city-service/room-addition__meridian.webp", "/images/city-service/room-addition__middleton.webp", "/images/city-service/room-addition__nampa.webp", "/images/city-service/room-addition__star.webp", "/images/gallery/gallery-addition-after.webp", "/images/gallery/gallery-addition-eagle-after.webp", "/images/gallery/gallery-addition-meridian-after.webp", "/images/services/room-addition.webp"],
-  ["/images/city-service/whole-home-remodel__boise.webp", "/images/city-service/whole-home-remodel__caldwell.webp", "/images/city-service/whole-home-remodel__eagle.webp", "/images/city-service/whole-home-remodel__kuna.webp", "/images/city-service/whole-home-remodel__meridian.webp", "/images/city-service/whole-home-remodel__middleton.webp", "/images/city-service/whole-home-remodel__nampa.webp", "/images/city-service/whole-home-remodel__star.webp", "/images/gallery/featured-eagle-great-room.webp", "/images/gallery/gallery-whole-home-after.webp", "/images/gallery/gallery-whole-home-meridian-after.webp", "/images/hero-great-room.webp", "/images/projects/boise-bench-ranch/living-after.webp", "/images/services/whole-home-remodel.webp", "/images/statement-great-room.webp"],
+  ["/images/city-service/adu__boise.webp", "/images/gallery/gallery-adu-boise-after.webp", "/images/services/adu.webp"],
+  ["/images/city-service/bathroom-remodel__middleton.webp", "/images/gallery/featured-eagle-bath.webp", "/images/gallery/gallery-aging-meridian-after.webp", "/images/gallery/gallery-bathroom-after.webp", "/images/gallery/gallery-bathroom-nampa-after.webp", "/images/gallery/gallery-hall-bath-boise-after.webp", "/images/projects/boise-bench-ranch/bath-after.webp", "/images/service-scenes/bathroom.webp", "/images/services/bathroom-remodel.webp"],
+  ["/images/city-service/room-addition__boise.webp", "/images/gallery/gallery-addition-after.webp", "/images/gallery/gallery-addition-eagle-after.webp", "/images/gallery/gallery-addition-meridian-after.webp", "/images/services/room-addition.webp"],
+  ["/images/city-service/whole-home-remodel__boise.webp", "/images/gallery/featured-eagle-great-room.webp", "/images/gallery/gallery-whole-home-after.webp", "/images/gallery/gallery-whole-home-meridian-after.webp", "/images/hero-great-room.webp", "/images/projects/boise-bench-ranch/living-after.webp", "/images/services/whole-home-remodel.webp", "/images/statement-great-room.webp"],
   ["/images/gallery/featured-eagle-exterior.webp", "/images/gallery/featured-eagle-outdoor.webp", "/images/gallery/gallery-whole-home-before.webp", "/images/projects/boise-bench-ranch/exterior-after.webp", "/images/projects/boise-bench-ranch/exterior-before.webp"],
   ["/images/gallery/gallery-aging-boise-after.webp", "/images/services/aging-in-place.webp"],
   ["/images/gallery/gallery-basement-after.webp", "/images/gallery/gallery-basement-meridian-after.webp", "/images/gallery/gallery-basement-nampa-after.webp", "/images/services/basement-remodel.webp"],

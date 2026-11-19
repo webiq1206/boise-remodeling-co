@@ -29,6 +29,79 @@ const AREA_ALT: Record<string, string> = {
 };
 
 const PATH_ALT: Record<string, string> = {
+  // City page heroes: each city shows its own photograph (owner, 19 November 2026), so each has its own description.
+  '/images/city-service/kitchen-remodel__boise.webp':
+    'White kitchen with an oak island, three wood stools and two black pendant lights',
+  '/images/city-service/kitchen-remodel__meridian.webp':
+    'White kitchen with an oak island, a plaster range hood and two black pendant lights',
+  '/images/city-service/kitchen-remodel__eagle.webp':
+    'Kitchen with oak cabinets, a dark island with four wood stools and black pendant lights',
+  '/images/city-service/kitchen-remodel__nampa.webp':
+    'White kitchen with an oak island, two wood stools and a window over the sink',
+  '/images/city-service/kitchen-remodel__kuna.webp':
+    'Open white kitchen with an oak island and three stools beside a living area',
+  '/images/city-service/kitchen-remodel__star.webp':
+    'White kitchen with an oak island of drawers and black-framed windows facing dry hills',
+  '/images/city-service/kitchen-remodel__middleton.webp':
+    'White kitchen with a dark island, three stools and stainless steel appliances',
+  '/images/city-service/kitchen-remodel__caldwell.webp':
+    'Cream kitchen with an oak island of drawers and two black pendant lights',
+  '/images/city-service/bathroom-remodel__boise.webp':
+    'Bathroom with an oak double vanity, two round mirrors and a glass walk-in shower',
+  '/images/city-service/bathroom-remodel__meridian.webp':
+    'Bathroom with a floating oak vanity, two black-framed mirrors and a glass walk-in shower',
+  '/images/city-service/bathroom-remodel__eagle.webp':
+    'Bathroom with a freestanding tub under a large window facing the foothills',
+  '/images/city-service/bathroom-remodel__nampa.webp':
+    'Freestanding soaking tub with a brass floor-mounted filler beside a stone-look tile wall',
+  '/images/city-service/bathroom-remodel__kuna.webp':
+    'Bathroom with a long oak vanity, two black-framed mirrors and a freestanding tub',
+  '/images/city-service/bathroom-remodel__star.webp':
+    'Bathroom with a floating walnut vanity, a white counter and a glass shower',
+  '/images/city-service/bathroom-remodel__caldwell.webp':
+    'Bathroom with an oak vanity, a black-framed mirror and a tub with a glass panel',
+  '/images/city-service/whole-home-remodel__meridian.webp':
+    'Living room with a grey sofa, a plaster fireplace and two black-framed windows',
+  '/images/city-service/whole-home-remodel__eagle.webp':
+    'Living room with a linear fireplace, a light sofa and two tall windows facing the foothills',
+  '/images/city-service/whole-home-remodel__nampa.webp':
+    'Open great room with a sofa, a linear fireplace, oak cabinets and large black-framed windows',
+  '/images/city-service/whole-home-remodel__kuna.webp':
+    'Living room with a linear fireplace, two light armchairs and tall windows to a fenced yard',
+  '/images/city-service/whole-home-remodel__star.webp':
+    'Dining room with a wood table, a black dome pendant and floor-to-ceiling windows facing the foothills',
+  '/images/city-service/whole-home-remodel__middleton.webp':
+    'Empty great room with wood floors, a linear fireplace and tall black-framed windows',
+  '/images/city-service/whole-home-remodel__caldwell.webp':
+    'Great room with a sectional sofa, a linear fireplace and a wall of sliding glass doors facing the hills',
+  '/images/city-service/room-addition__meridian.webp':
+    'Bright room addition with wood floors, a light sofa and three black-framed windows facing a lawn',
+  '/images/city-service/room-addition__eagle.webp':
+    'Sunroom addition with black-framed glass walls, two armchairs and a view of the foothills',
+  '/images/city-service/room-addition__nampa.webp':
+    'Single-story addition with dark siding, sliding glass doors and a small patio',
+  '/images/city-service/room-addition__kuna.webp':
+    'Room addition under construction with exposed framing beside a house with grey siding',
+  '/images/city-service/room-addition__star.webp':
+    'Bedroom addition with a low platform bed, wood floors and a doorway to a bathroom',
+  '/images/city-service/room-addition__middleton.webp':
+    'Attached garage addition with dark siding and a concrete driveway below dry hills',
+  '/images/city-service/room-addition__caldwell.webp':
+    'Second-story addition being framed above a single-story house',
+  '/images/city-service/adu__meridian.webp':
+    'White backyard cottage with a dark metal roof, a wood entry and a cedar fence',
+  '/images/city-service/adu__eagle.webp':
+    'Small dark-sided cottage with a metal roof, a wood door and a stone path through dry grasses',
+  '/images/city-service/adu__nampa.webp':
+    'Backyard studio with grey vertical siding, a wood-clad entry and a stepping-stone path',
+  '/images/city-service/adu__kuna.webp':
+    'Small stucco cottage with a dark metal roof beside a cedar fence',
+  '/images/city-service/adu__star.webp':
+    'Detached backyard unit with dark vertical siding and a wood-clad entry',
+  '/images/city-service/adu__middleton.webp':
+    'Attached unit with dark lap siding, a covered entry and concrete steps',
+  '/images/city-service/adu__caldwell.webp':
+    'Garage converted to living space with a large black-framed window wall',
   '/images/services/kitchen-remodel.webp': SERVICE_ALT['kitchen-remodel'],
   '/images/services/bathroom-remodel.webp': SERVICE_ALT['bathroom-remodel'],
   '/images/services/whole-home-remodel.webp': SERVICE_ALT['whole-home-remodel'],

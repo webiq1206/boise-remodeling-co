@@ -10,12 +10,6 @@ import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
 import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
 import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProjectRoomsSection';
-import {
-Accordion,
-AccordionContent,
-AccordionItem,
-AccordionTrigger,
-} from '@/components/ui/accordion';
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
@@ -265,7 +259,7 @@ export function LandingPageTemplate({
   faqs,
   subject,
   answer,
-  faqDisplay = 'accordion',
+  faqDisplay: _faqDisplay = 'accordion',
   related,
 }: LandingPageTemplateProps) {
   const noun = subject?.noun ?? 'remodel';
@@ -285,6 +279,7 @@ export function LandingPageTemplate({
   const estimatorCta = primaryCta.kind === 'estimator';
   const ctaHeading = estimatorCta ? `Get an instant estimate for your ${noun}` : `Request a quote for your ${noun}`;
   void showEstimatePrompt;
+  void _faqDisplay;
   void proofHeading;
   const heroCopy = splitHeroCopy(overview);
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
@@ -316,7 +311,7 @@ export function LandingPageTemplate({
     <div className="flex flex-col ">
       {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
       {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
-      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split" className="interior-hero-budget">
+      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split" className="interior-hero-budget lx-hero">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
@@ -332,6 +327,14 @@ export function LandingPageTemplate({
           )}
           <InteriorHeroActions serviceSlug={related.serviceSlug} />
         </InteriorHero>
+      {/* Three facts a visitor can check, already stated elsewhere on the page. */}
+      <ul className="lx-facts" aria-label="At a glance">
+        {planningFrom && (
+          <li><strong>From {planningFrom}</strong><span>Planning range, confirmed at your free in-home visit</span></li>
+        )}
+        <li><strong>Free in-home visit</strong><span>60 to 90 minutes, with planning guidance and no obligation</span></li>
+        <li><strong>One written scope</strong><span>Agreed before construction begins, with one accountable team</span></li>
+      </ul>
       {(heroCopy.rest || planningFrom) && (
         <div className="interior-hero-more">
           <div className="ed-shell">
@@ -408,7 +411,7 @@ export function LandingPageTemplate({
             </Reveal>
             <Reveal delay={60}>
               <ul
-                className="ed-matrix mt-[clamp(40px,5vw,72px)] list-none p-0"
+                className="ed-matrix lx-benefits mt-[clamp(40px,5vw,72px)] list-none p-0"
                 style={{ ['--ed-cols' as string]: benefits.length === 4 ? 4 : Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '0' }}
               >
                 {/* Each benefit is one sentence and renders whole. Splitting it at a
@@ -457,7 +460,7 @@ export function LandingPageTemplate({
                   <Accented text={headings.process} />
                 </h2>
               </Reveal>
-              <div className="ed-steps mt-[clamp(32px,4vw,56px)]">
+              <div className="ed-steps lx-steps mt-[clamp(32px,4vw,56px)]">
                 {processSteps.map((step, i) => (
                   <Reveal key={step.title} delay={Math.min(i, 5) * 60}>
                     <div className="ed-step">
@@ -662,27 +665,16 @@ export function LandingPageTemplate({
                 <Accented text={headings.faq} />
               </h2>
             </div>
-            {faqDisplay === 'visible' ? (
-              <div className="w-full border-t" style={line}>
-                {faqs.map((faq) => (
-                  <div key={faq.question} className="border-b py-6" style={line}>
-                    <h3 className="ed-h4 text-left">{faq.question}</h3>
-                    <p className="ed-body mt-3 text-[0.9375rem]"><RegistrationText text={faq.answer} /></p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <Accordion type="single" collapsible className="w-full border-t" style={line}>
-                {faqs.map((faq, i) => (
-                  <AccordionItem key={i} value={`faq-${i}`} className="border-0 border-b" style={line}>
-                    <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:underline [&[data-state=open]]:underline-offset-4">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            )}
+            {/* Native disclosure: every answer stays in the HTML for search and
+                assistive technology, and one question is open at a time. */}
+            <div className="lx-faq w-full border-t" style={line}>
+              {faqs.map((faq, i) => (
+                <details key={faq.question} name="landing-faq" open={i === 0} className="border-b" style={line}>
+                  <summary><h3 className="ed-h4 text-left">{faq.question}</h3></summary>
+                  <p className="ed-body text-[0.9375rem]"><RegistrationText text={faq.answer} /></p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </Section>
@@ -691,7 +683,7 @@ export function LandingPageTemplate({
       <Section surface="deep" spacing="lg" edge>
         <div className="ed-shell space-y-12">
           <Reveal><RelatedLinks {...related} /></Reveal>
-          {manifestPath && (<Reveal><RelatedPostCards path={manifestPath} /></Reveal>)}
+          {manifestPath && (<Reveal><RelatedPostCards path={manifestPath} variant="list" exclude={(sections ?? []).flatMap((section) => section.links?.map((link) => link.href) ?? [])} /></Reveal>)}
         </div>
       </Section>
 

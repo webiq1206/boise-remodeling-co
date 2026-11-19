@@ -825,3 +825,32 @@ Every time, in this order, in the Replit workspace:
 This applies whoever does the pull: a person, Replit's assistant or Claude.
 Never run a schema command against the live database. The same checklist is in
 `replit.md`, which Replit's assistant reads.
+
+## Interior page refinement (owner approval, 19 November 2026)
+
+Service, city and area landing pages, blog articles and guides were refined to
+the homepage standard. Styles live in `app/interior-refinement.css` (imported
+last in `app/layout.tsx`); the homepage is untouched.
+
+- **City page photographs are distinct.** Each `/images/city-service/<service>__<city>.webp`
+  is its own photograph from the owner's Photo Dump (Drive, "2026-11 Instant
+  estimate and website photos"), with its own description in `PATH_ALT`
+  (`shared/contentImageAlt.ts`). Do not copy a service hero over a city file
+  again. When a file changes, update its description, any `blogImageRegistry`
+  entry that uses it, and `VISUAL_DUPLICATE_GROUPS`
+  (`tests/landing-image-adjacency.test.ts` recomputes the hashes).
+- **Landing template** (`components/seo/LandingPageTemplate.tsx`): a fact row
+  under the hero (`.lx-facts`, wording already used elsewhere on the page),
+  benefits two across on phones, process steps that swipe on phones, and
+  questions as native `<details>` so every answer stays in the HTML. Related
+  links render as a compact list and never repeat a link the page already shows.
+- **Phones keep copy before the photograph in the landing hero.** That is the
+  earlier hero budget decision (headline and action in the first screen at
+  360 x 640); do not put the image first.
+- **Articles and guides**: quiet header and date line, one "On this page" row
+  on phones, downloads and the guide note after the article, one estimate
+  prompt at the end on phones, related pages with their photographs. On
+  desktop the reading column and the sticky rail fill the container.
+- `.guide-section-details[open] .guide-section-summary > span` must keep the
+  child combinator: without it the rule hid the last two words of every
+  article heading (`.m-keep`).

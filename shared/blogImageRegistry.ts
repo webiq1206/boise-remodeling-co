@@ -77,13 +77,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'kitchen-cabinet-trends': {
     hero: '/images/city-service/kitchen-remodel__kuna.webp',
-    alt: 'White kitchen with a gray-green island, pendant lights and a broad window',
+    alt: 'Open white kitchen with an oak island and three stools beside a living area',
     topicTags: ["kitchen","cabinets","kuna"],
     source: 'city-service',
   },
   'quartz-vs-quartzite-kitchen': {
     hero: '/images/city-service/kitchen-remodel__star.webp',
-    alt: 'White kitchen with a gray-green island, pendant lights and a broad window',
+    alt: 'White kitchen with an oak island of drawers and black-framed windows facing dry hills',
     topicTags: ["kitchen","countertops","star"],
     source: 'city-service',
   },
@@ -125,7 +125,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'walk-in-pantry-design-guide': {
     hero: '/images/city-service/kitchen-remodel__caldwell.webp',
-    alt: 'White kitchen with a gray-green island, pendant lights and a broad window',
+    alt: 'Cream kitchen with an oak island of drawers and two black pendant lights',
     topicTags: ["kitchen","pantry","caldwell"],
     source: 'city-service',
   },
@@ -257,7 +257,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodel-planning-guide': {
     hero: '/images/city-service/whole-home-remodel__middleton.webp',
-    alt: 'Open living, dining and kitchen area with wood floors and large black-framed windows',
+    alt: 'Empty great room with wood floors, a linear fireplace and tall black-framed windows',
     topicTags: ["whole-home","planning","middleton"],
     source: 'city-service',
   },
@@ -329,13 +329,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'how-to-choose-design-build-contractor': {
     hero: '/images/city-service/room-addition__kuna.webp',
-    alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio',
+    alt: 'Room addition under construction with exposed framing beside a house with grey siding',
     topicTags: ["contractor","design-build","boise"],
     source: 'city-service',
   },
   'remodeling-timeline-guide': {
     hero: '/images/city-service/room-addition__middleton.webp',
-    alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio',
+    alt: 'Attached garage addition with dark siding and a concrete driveway below dry hills',
     topicTags: ["process","timeline"],
     source: 'city-service',
   },
@@ -365,7 +365,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'construction-phase-guide': {
     hero: '/images/city-service/room-addition__caldwell.webp',
-    alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio',
+    alt: 'Second-story addition being framed above a single-story house',
     topicTags: ["process","construction"],
     source: 'city-service',
   },
@@ -389,7 +389,7 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'addition-roi-remodeling': {
     hero: '/images/city-service/room-addition__star.webp',
-    alt: 'Single-story house with grey lap siding, a sliding glass door and a new concrete patio',
+    alt: 'Bedroom addition with a low platform bed, wood floors and a doorway to a bathroom',
     topicTags: ["roi","addition","star"],
     source: 'city-service',
   },
@@ -413,13 +413,13 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'remodeling-before-selling': {
     hero: '/images/city-service/bathroom-remodel__star.webp',
-    alt: 'Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile',
+    alt: 'Bathroom with a floating walnut vanity, a white counter and a glass shower',
     topicTags: ["roi","selling","bathroom"],
     source: 'city-service',
   },
   'remodeling-long-term-living': {
     hero: '/images/city-service/adu__caldwell.webp',
-    alt: 'Small cottage with lap siding and a separate entry beside a larger house',
+    alt: 'Garage converted to living space with a large black-framed window wall',
     topicTags: ["roi","long-term","caldwell"],
     source: 'city-service',
   },
@@ -449,19 +449,19 @@ export const BLOG_IMAGE_REGISTRY: Record<string, BlogImageEntry> = {
   },
   'outdoor-entertaining-spaces': {
     hero: '/images/city-service/adu__eagle.webp',
-    alt: 'Small cottage with lap siding and a separate entry beside a larger house',
+    alt: 'Small dark-sided cottage with a metal roof, a wood door and a stone path through dry grasses',
     topicTags: ["outdoor","entertaining","eagle"],
     source: 'city-service',
   },
   'luxury-outdoor-living': {
     hero: '/images/city-service/adu__nampa.webp',
-    alt: 'Small cottage with lap siding and a separate entry beside a larger house',
+    alt: 'Backyard studio with grey vertical siding, a wood-clad entry and a stepping-stone path',
     topicTags: ["outdoor","luxury","nampa"],
     source: 'city-service',
   },
   'backyard-transformations-boise': {
     hero: '/images/city-service/adu__kuna.webp',
-    alt: 'Small cottage with lap siding and a separate entry beside a larger house',
+    alt: 'Small stucco cottage with a dark metal roof beside a cedar fence',
     topicTags: ["outdoor","backyard","kuna"],
     source: 'city-service',
   },

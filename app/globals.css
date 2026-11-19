@@ -800,7 +800,7 @@
 .blog-content ol.steps > li strong { color: hsl(var(--heading)); }
 
 /* Collapsible guide/article sections (long-form scanability) */
-.guide-section-details[open] .guide-section-summary span {
+.guide-section-details[open] .guide-section-summary > span {
   display: none;
 }
 .guide-section-summary {
