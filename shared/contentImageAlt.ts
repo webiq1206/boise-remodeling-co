@@ -124,25 +124,25 @@ const PATH_ALT: Record<string, string> = {
     'Interior stripped to the studs with new wiring and floor protection during a whole-home renovation',
   // Existing images used as alternates on the landing template (shared/landingImages.ts).
   '/images/blog/kitchen-layout-ideas-boise-homes.webp':
-    'Open kitchen with a long island, woven counter stools and white cabinets beside a dining area',
+    'Kitchen with an oak island, three black stools and a window over the sink',
   '/images/gallery/gallery-kitchen-eagle-after.webp':
     'Kitchen with wood cabinets, a stone island and a wide window looking out to the foothills',
   '/images/blog/kitchen-island-design-guide.webp':
     'White kitchen island with a waterfall counter, three wood stools and white pendant lights',
   '/images/blog/small-kitchen-remodel-ideas-boise.webp':
-    'Compact white kitchen with butcher-block counters, open shelving and a pull-out pantry',
+    'Kitchen with charcoal base cabinets, oak upper cabinets and a white peninsula',
   '/images/blog/walk-in-shower-guide.webp':
-    'Walk-in shower with frameless glass, stone-look tile, a built-in bench and a wall niche',
+    'Tiled shower bench with a stone top, a wall niche and a brass handheld shower',
   '/images/blog/bathroom-layout-planning-guide.webp':
-    'Bathroom with a white vanity, a tiled shower with glass walls and a freestanding tub',
+    'Bathroom with a freestanding tub, a glass shower and a long oak vanity',
   '/images/blog/bathroom-remodel-roi.webp':
     'Bathroom with a wood vanity, a white counter, a black-framed mirror and a glass shower',
   '/images/blog/luxury-bathroom-features.webp':
-    'Primary bathroom with a freestanding tub, a glass shower and a dark double vanity',
+    'Bathroom with a freestanding tub under a large window facing the foothills',
   '/images/blog/whole-home-remodel-cost-boise.webp':
     'Living and dining room with wood floors, a plaster fireplace and oak shelves',
   '/images/blog/design-build-process-guide.webp':
-    'Open living room with a sectional sofa, a ceiling fan and a kitchen beyond',
+    'Living room with a linear fireplace, two light armchairs and tall windows to a fenced yard',
   '/images/blog/open-concept-kitchen-remodeling.webp':
     'Open kitchen with a wood island, white upper cabinets and a sliding barn door',
   '/images/blog/home-addition-timeline-guide.webp':
@@ -152,21 +152,21 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/home-addition-cost-boise.webp':
     'Single-story house with tan siding and a side addition on a green lawn',
   '/images/blog/bedroom-additions.webp':
-    'Bright bedroom with large windows, a wood dresser and a woven rug',
+    'Bedroom with a low platform bed, wood floors and a doorway to a bathroom',
   '/images/blog/adu-cost-boise.webp':
     'Small detached backyard building with gray siding and a wood-clad entry beside a main house',
   '/images/blog/multigenerational-living-remodels.webp':
-    'Living area with a kitchenette, a sofa and a doorway to a bedroom',
+    'In-law suite with a kitchenette, a bed and a doorway to a bathroom',
   '/images/blog/garage-conversions.webp':
     'Converted garage room with wood floors, a large window and a desk',
   '/images/gallery/gallery-basement-meridian-before.webp':
     'Unfinished basement with a concrete floor, exposed joists and a wood stair',
   '/images/blog/basement-finishing-boise.webp':
-    'Finished basement family room with a sectional sofa, a media wall and recessed lights',
+    'Finished basement with a sectional sofa, carpet, a window and a stair',
   '/images/blog/covered-patios-boise.webp':
-    'Covered patio with a wood ceiling, a ceiling fan, outdoor seating and a grill',
+    'Covered patio with a wood ceiling, black posts, a dining table and a built-in grill',
   '/images/blog/outdoor-living-roi.webp':
-    'Paver patio with a fire pit, outdoor chairs and planted beds behind a house',
+    'Covered patio with a wood ceiling and sliding glass doors behind a single-story house',
   '/images/blog/outdoor-kitchens-boise.webp':
     'Outdoor kitchen with a built-in grill, a sink and a concrete counter under a wood patio roof',
   '/images/blog/outdoor-fireplaces-boise.webp':
@@ -174,7 +174,7 @@ const PATH_ALT: Record<string, string> = {
   '/images/blog/curbless-shower-guide.webp':
     'Curbless shower with a flush tile floor, a linear drain, a fold-down bench and grab bars',
   '/images/blog/aging-in-place-bathroom-design.webp':
-    'Accessible bathroom with a walk-in shower, grab bars, a fold-down seat and a wide vanity',
+    'Bathroom with a curbless shower, a fold-down seat, a grab bar and an open vanity',
   '/images/blog/material-selection-guide.webp':
     'Finish samples: quartz, wood flooring, cabinet door, tile and brass hardware',
   '/images/blog/consultation-process-remodeling.webp':
