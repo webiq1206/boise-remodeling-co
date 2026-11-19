@@ -20,9 +20,9 @@ export function AreaCard({ city, imageSrc }: AreaCardProps) {
   const description = `Design-build remodeling in ${city.name} and ${countyLabel}.`;
 
   return (
-    <MarketingCard padding="none" className="h-full flex flex-col overflow-hidden hover-elevate group relative">
+    <MarketingCard padding="none" className="lx-blog-card h-full flex flex-col overflow-hidden hover-elevate group relative">
       <Link href={href} className="absolute inset-0 z-0" aria-label={`View ${city.name} remodeling services`} />
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="lx-blog-photo relative aspect-[4/3] overflow-hidden">
         <Image
           src={imageSrc}
           alt={contentImageAlt(imageSrc, `Residential street in ${city.name}`)}
@@ -31,17 +31,17 @@ export function AreaCard({ city, imageSrc }: AreaCardProps) {
           className="object-cover img-brand-grade transition-transform duration-300 ease-out group-hover:scale-[1.02]"
         />
       </div>
-      <div className="p-6 flex flex-col flex-1">
+      <div className="lx-blog-body p-6 flex flex-col flex-1">
         <div className="mb-3">
           <Chip>{countyLabel}</Chip>
         </div>
         <h2 className="text-lg font-serif tracking-tight text-foreground text-balance mb-2">
           {title}
         </h2>
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="lx-blog-excerpt text-sm text-muted-foreground leading-relaxed">
           {description}
         </p>
-        <TextLink href={href} className="mt-auto pt-4 relative z-10" showArrow>
+        <TextLink href={href} className="lx-blog-more mt-auto pt-4 relative z-10" showArrow>
           View {city.name} services
         </TextLink>
       </div>

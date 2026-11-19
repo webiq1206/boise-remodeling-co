@@ -877,3 +877,20 @@ last in `app/layout.tsx`); the homepage is untouched.
   Meridian", "Gallery"). The same labels must not claim a photograph is a
   completed customer job ("recent project", "our client's kitchen"). The
   `/design-ideas` page keeps its name and URL.
+- **Second pass, 19 November 2026.**
+  - Blog photographs: 31 hero images that showed staged props were replaced
+    with prop-free Photo Dump photographs (same file names, new descriptions).
+    `gallery-kitchen-eagle-after.webp` still shows a bowl and a plant; it is half
+    of a before/after pair and was left.
+  - Keep exploring cards never repeat a picture already on the page or in
+    another card (`shared/exploreImages.ts`, tested for every area page). Area
+    pages gain a "Nearby areas" card group from the internal-links manifest.
+    The guides list holds three, four or six links so its rows are full.
+  - Cost tier cards (`costTiers` in `shared/seoContent.ts`) restate figures
+    already in that service's cost copy. `tests/cost-tiers.test.ts` fails on a
+    figure that is not in the copy. Do not add a tier to a service whose copy
+    gives one range, and never put a figure in a tier note.
+  - Phones: blog, guide, area and service index cards are compact rows (112px
+    photograph, name) after the lead item; long-form landing paragraphs after
+    the first sit behind "Read more" (`components/marketing/ReadMore.tsx`, a
+    native details that is always open from tablet up).

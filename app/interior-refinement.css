@@ -340,6 +340,95 @@
 @media (min-width: 1024px) {
   .approved-shell .lx-explore-grid { gap: var(--space-12, 48px); }
   .approved-shell .lx-cells { grid-template-columns: repeat(var(--lx-cols, 4), minmax(0, 1fr)); }
-  .approved-shell .lx-reading { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .approved-shell .lx-reading { grid-template-columns: repeat(var(--lx-reading-cols, 3), minmax(0, 1fr)); }
 }
 @media (prefers-reduced-motion: reduce) { .approved-shell .lx-cell, .approved-shell .lx-cell-photo img { transition: none; } }
+
+/* ── Cost tiers: the ranges the cost copy states, as cards above it ── */
+.approved-shell .lx-tiers { list-style: none; margin: var(--space-6, 24px) 0 0; padding: 0; display: grid; gap: var(--space-3, 12px); }
+.approved-shell .lx-tiers > li { display: grid; gap: var(--space-2, 8px); align-content: start; padding: var(--space-6, 24px); border: 1px solid var(--ed-line); background: var(--ed-ground); }
+.approved-shell .lx-tiers > li:nth-child(2):not(:last-child) { border-color: var(--color-charcoal); }
+.approved-shell .lx-tier-label { color: var(--ed-muted-ink); font: 600 var(--fs-label, 13px)/var(--lh-label, 1.3) var(--font-sans); letter-spacing: var(--tracking-label, 0.06em); text-transform: uppercase; }
+.approved-shell .lx-tiers strong { font: var(--weight-display) 28px/1.15 var(--font-display); letter-spacing: var(--tracking-heading); font-variant-numeric: lining-nums; }
+.approved-shell .lx-tier-note { color: var(--ed-muted-ink); font-size: 15px; line-height: 1.5; }
+@media (min-width: 701px) {
+  .approved-shell .lx-tiers { grid-template-columns: repeat(var(--lx-tier-cols, 3), minmax(0, 1fr)); gap: var(--space-4, 16px); }
+}
+
+/* ── Phones: the three-line "In this guide" index sits directly above the three
+   sections it lists, so it is dropped there; the sections keep their anchors. ── */
+@media (max-width: 700px) {
+  .approved-shell .lx-guide-index { display: none; }
+}
+
+/* Blog and guide index on phones: after the lead article, each post is one
+   compact row (photograph, topic, title) so a visitor sees four or five posts
+   per screen, not one. The whole row is the link; date and excerpt return from
+   tablet up. Same pattern as the other family sites. */
+@media (max-width: 700px) {
+  .approved-shell .lx-blog-card {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    align-items: stretch;
+    min-height: 112px;
+  }
+  .approved-shell .lx-blog-card .lx-blog-photo { aspect-ratio: auto; height: 100%; min-height: 112px; }
+  /* Favour the top of the frame so a square crop never cuts off a person's head. */
+  .approved-shell .lx-blog-card .lx-blog-photo img { object-position: 50% 20%; }
+  .approved-shell .lx-blog-card .lx-blog-body { justify-content: center; padding: var(--space-3, 12px) var(--space-4, 16px); }
+  .approved-shell .lx-blog-card .lx-blog-body > div { margin-bottom: var(--space-2, 8px); }
+  .approved-shell .lx-blog-card :is(.lx-blog-date, .lx-blog-excerpt, .lx-blog-more) { display: none; }
+  .approved-shell .lx-blog-card h3 { margin: 0; font-size: 18px; line-height: 1.25; }
+}
+
+/* Guide cards have no whole-card link, so their "Read guide" link stays in the row. */
+@media (max-width: 700px) {
+  .approved-shell .lx-guide-card .lx-blog-body h3 { font-size: 17px; line-height: 1.25; margin: 0; }
+  .approved-shell .lx-guide-card .lx-blog-body a { margin-top: var(--space-1, 4px); }
+  .approved-shell .lx-blog-card .lx-blog-body h2 { margin: 0; font-size: 18px; line-height: 1.25; }
+}
+
+/* ── Read more: secondary paragraphs fold on phones, always open from tablet up ── */
+.approved-shell .lx-more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  min-height: var(--touch-min, 44px);
+  margin-top: var(--space-2, 8px);
+  color: inherit;
+  font: 600 15px/1 var(--font-sans);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+  cursor: pointer;
+  list-style: none;
+}
+.approved-shell .lx-more > summary::-webkit-details-marker { display: none; }
+.approved-shell .lx-more > summary::after { content: "+"; color: var(--ed-accent); font: 300 20px/1 var(--font-sans); text-decoration: none; }
+.approved-shell .lx-more[open] > summary { display: none; }
+.approved-shell .lx-more > summary:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+@media (min-width: 701px) {
+  .approved-shell .lx-more::details-content { display: block; content-visibility: visible; }
+  .approved-shell .lx-more > summary { display: none; }
+}
+
+/* Services index on phones: each service is one row (photograph, name, planning
+   figure) so all eight show in about two screens; the description returns from
+   tablet up. */
+@media (max-width: 700px) {
+  .approved-shell .approved-interior .interior-service-grid { gap: 0; border-top: 1px solid var(--ed-line); }
+  .approved-shell .approved-interior .interior-service-card {
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    column-gap: var(--space-4, 16px);
+    padding: var(--space-3, 12px) 0;
+    border-bottom: 1px solid var(--ed-line);
+  }
+  .approved-shell .approved-interior .interior-service-card > img { grid-row: 1 / span 2; width: 112px; height: 84px; aspect-ratio: auto; }
+  .approved-shell .approved-interior .interior-service-card > div { margin-top: 0; gap: var(--space-3, 12px); align-self: end; }
+  .approved-shell .approved-interior .interior-service-card h2 { font-size: 20px; line-height: 1.2; margin: 0; }
+  .approved-shell .approved-interior .interior-service-card > p:not(.interior-price) { display: none; }
+  .approved-shell .approved-interior .interior-service-card > p.interior-price { grid-column: 2; margin-top: var(--space-1, 4px); align-self: start; }
+}

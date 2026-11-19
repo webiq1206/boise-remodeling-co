@@ -7,6 +7,7 @@ import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
+import { ReadMore } from '@/components/marketing/ReadMore';
 import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
 import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProjectRoomsSection';
 import { GRAIN_URL } from '@/lib/grain';
@@ -133,6 +134,8 @@ export interface LandingSection {
   paragraphs?: Array<string | LandingLinkedParagraph>;
   links?: { label: string; href: string }[];
   subsections?: { heading: string; paragraphs: string[] }[];
+  /** Planning tiers shown as cards above the prose. Every figure is already in the section's own copy. */
+  tiers?: { label: string; range: string; note?: string }[];
 }
 
 export interface LandingProof {
@@ -530,7 +533,7 @@ export function LandingPageTemplate({
           <div className="ed-shell">
             <div className="mx-auto grid max-w-3xl gap-10">
               {/* Keep the guide index above centered copy at every width. */}
-              <aside aria-label="In this guide">
+              <aside aria-label="In this guide" className="lx-guide-index">
                 <Reveal>
                   <p className="ed-eyebrow">In this guide</p>
                   <ol className="m-0 list-none border-t p-0" style={line}>
@@ -562,7 +565,19 @@ export function LandingPageTemplate({
                       )}
                       <Reveal delay={Math.min(i, 4) * 60}>
                         <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28"><NoOrphan text={section.heading} /></h2>
-                        {section.paragraphs?.map((p, j) => (
+                        {section.tiers && section.tiers.length > 0 && (
+                          <ul className="lx-tiers" style={{ ['--lx-tier-cols' as string]: section.tiers.length }}>
+                            {section.tiers.map((tier) => (
+                              <li key={tier.label}>
+                                <span className="lx-tier-label">{tier.label}</span>
+                                <strong>{tier.range}</strong>
+                                {tier.note ? <span className="lx-tier-note">{tier.note}</span> : null}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {(() => {
+                          const rendered = (section.paragraphs ?? []).map((p, j) => (
                           <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>
                             {typeof p === 'string' ? p : (
                               <>
@@ -572,7 +587,10 @@ export function LandingPageTemplate({
                               </>
                             )}
                           </p>
-                        ))}
+                        ));
+                          if (rendered.length < 2) return rendered;
+                          return <>{rendered[0]}<ReadMore>{rendered.slice(1)}</ReadMore></>;
+                        })()}
                         {section.subsections?.map((sub) => (
                           <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
                             <h3 className="ed-h4"><NoOrphan text={sub.heading} /></h3>
@@ -685,7 +703,7 @@ export function LandingPageTemplate({
       {/* ─── Related links & posts ─── */}
       <Section surface="deep" spacing="lg" edge>
         <div className="ed-shell">
-          <RelatedLinks {...related} manifestPath={manifestPath} exclude={(sections ?? []).flatMap((section) => section.links?.map((link) => link.href) ?? [])} />
+          <RelatedLinks {...related} manifestPath={manifestPath} exclude={(sections ?? []).flatMap((section) => section.links?.map((link) => link.href) ?? [])} usedImages={[heroImageUrl, breatherImage, processImage, ...imageSlots.sectionBreathers, ...imageSlots.proof, featuredProject?.beforeImageUrl, featuredProject?.afterImageUrl, ...(featuredRooms?.rooms.map((room) => room.src) ?? [])]} />
         </div>
       </Section>
 
