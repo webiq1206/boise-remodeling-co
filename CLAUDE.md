@@ -842,8 +842,11 @@ last in `app/layout.tsx`); the homepage is untouched.
 - **Landing template** (`components/seo/LandingPageTemplate.tsx`): a fact row
   under the hero (`.lx-facts`, wording already used elsewhere on the page),
   benefits two across on phones, process steps that swipe on phones, and
-  questions as native `<details>` so every answer stays in the HTML. Related
-  links render as a compact list and never repeat a link the page already shows.
+  questions as native `<details>` so every answer stays in the HTML. The page
+  ends with ONE onward-links block, "Keep exploring" (`components/seo/RelatedLinks.tsx`):
+  places and services as two-across cells that keep their full anchor text for
+  search, guides and articles as one ruled list, and no link shown twice. Do
+  not stack separate link lists under it again (owner, 19 November 2026).
 - **Phones keep copy before the photograph in the landing hero.** That is the
   earlier hero budget decision (headline and action in the first screen at
   360 x 640); do not put the image first.

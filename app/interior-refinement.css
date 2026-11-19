@@ -255,3 +255,44 @@
   .approved-shell .approved-interior .interior-article-grid .prose-measure { max-width: none; }
   .approved-shell .approved-interior .quick-answer { padding: var(--space-8, 32px) var(--space-10, 40px); }
 }
+
+/* ── Keep exploring: one closing block of onward links on landing pages ── */
+.approved-shell .lx-explore-grid { display: grid; gap: var(--space-10, 40px); margin-top: var(--space-8, 32px); }
+.approved-shell .lx-explore-group { min-width: 0; }
+.approved-shell .lx-explore-label {
+  margin: 0 0 var(--space-4, 16px);
+  color: var(--ed-muted-ink);
+  font: 600 var(--fs-label, 13px)/var(--lh-label, 1.3) var(--font-sans);
+  letter-spacing: var(--tracking-label, 0.06em);
+  text-transform: uppercase;
+}
+.approved-shell .lx-cells { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2, 8px); }
+.approved-shell .lx-cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 8px);
+  min-height: 52px;
+  height: 100%;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  border: 1px solid var(--ed-line);
+  background: var(--ed-ground);
+  color: inherit;
+  font: 600 15px/1.25 var(--font-sans);
+  text-decoration: none;
+  transition: border-color var(--motion-fast, 200ms) ease-out;
+}
+.approved-shell .lx-cell svg { flex: none; color: var(--ed-accent); }
+.approved-shell .lx-cell:hover { border-color: var(--color-charcoal); }
+.approved-shell .lx-cell:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.approved-shell .lx-cells > li:last-child:nth-child(odd) { grid-column: 1 / -1; }
+.approved-shell .lx-explore .ed-rule-list { margin-top: 0; }
+.approved-shell .lx-explore .ed-rule-link { line-height: 1.3; }
+@media (min-width: 1024px) {
+  .approved-shell .lx-explore-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-12, 48px); }
+  .approved-shell .lx-explore-grid[data-groups="2"] { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .approved-shell .lx-explore-grid[data-groups="1"] { grid-template-columns: minmax(0, 1fr); }
+  .approved-shell .lx-explore-grid[data-groups="1"] .ed-rule-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .approved-shell .lx-explore-grid:not([data-groups="1"]) .ed-rule-list { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) { .approved-shell .lx-cell { transition: none; } }

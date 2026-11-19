@@ -3,7 +3,6 @@ import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorHeroActions } from '@/components/approved/InteriorHeroActions';
 import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing';
-import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import { RegistrationText } from '@/components/RegistrationLink';
@@ -681,9 +680,8 @@ export function LandingPageTemplate({
 
       {/* ─── Related links & posts ─── */}
       <Section surface="deep" spacing="lg" edge>
-        <div className="ed-shell space-y-12">
-          <Reveal><RelatedLinks {...related} /></Reveal>
-          {manifestPath && (<Reveal><RelatedPostCards path={manifestPath} variant="list" exclude={(sections ?? []).flatMap((section) => section.links?.map((link) => link.href) ?? [])} /></Reveal>)}
+        <div className="ed-shell">
+          <RelatedLinks {...related} manifestPath={manifestPath} exclude={(sections ?? []).flatMap((section) => section.links?.map((link) => link.href) ?? [])} />
         </div>
       </Section>
 
