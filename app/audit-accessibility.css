@@ -231,6 +231,10 @@
   .approved-shell .ed-matrix > .flex.flex-col > .ed-h4 { grid-column: 2; grid-row: 1; margin-top: 0 !important; padding-top: 0 !important; min-height: 0 !important; font-size: var(--fs-h4); line-height: var(--lh-h4); letter-spacing: 0; font-weight: var(--weight-display);
 }
   .approved-shell .ed-matrix > .flex.flex-col > .ed-body { grid-column: 2; grid-row: 2; margin-top: 8px; }
+  /* A cell whose body is split into sentences: the later ones take the next rows instead of
+     printing over the first (the homepage budget guidance overlapped on phones and tablets). */
+  .approved-shell .ed-matrix > .flex.flex-col > .ed-body ~ .ed-body { grid-row: auto; }
+  .approved-shell .ed-matrix > li.flex > .ed-body ~ .ed-body { grid-row: auto; }
 }
 .approved-shell .f-accordion [data-slot=accordion-trigger] > span:not(.f-number) { text-align: left; }
 
