@@ -366,8 +366,13 @@ html .approved-shell main :is(h1, h2, .ed-display, .ed-h2, .ed-h2-sm) :is(em, .b
 html .approved-shell main .interior-statement em {
   color: var(--color-heading-accent);
 }
-/* Sage already clears large-text contrast on paper. Bone needs a small
-   neutral context around the existing display emphasis, without repainting sections. */
+/* Sage already clears large-text contrast on paper (3.15:1). On bone the logo
+   sage reads 2.82:1, so the emphasis takes a sage one step deeper (3.06:1).
+   Owner, 19 November 2026: no dark outline around the accent word. Do not
+   bring the text-shadow outline back. */
+:root { --color-heading-accent-on-bone: #768e72; }
 html .approved-shell main :is(.ed-on-bone, .ed-on-muted, .ed-on-deep, .interior-project-aside, .f-scene-copy, .f-detail-aside) :is(h2, .ed-display, .ed-h2, .ed-h2-sm):not(h1) :is(em, .brc-accent, .text-accent, .text-accent-legible) {
-  text-shadow: -1px -1px 0 var(--color-charcoal), 0 -1px 0 var(--color-charcoal), 1px -1px 0 var(--color-charcoal), -1px 0 0 var(--color-charcoal), 1px 0 0 var(--color-charcoal), -1px 1px 0 var(--color-charcoal), 0 1px 0 var(--color-charcoal), 1px 1px 0 var(--color-charcoal);
+  --ed-accent: var(--color-heading-accent-on-bone);
+  color: var(--color-heading-accent-on-bone);
+  text-shadow: none;
 }
