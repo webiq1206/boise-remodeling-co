@@ -1,10 +1,15 @@
 import { toSentenceCase } from '@/shared/sentenceCase';
+import Image from 'next/image';
 import Link from 'next/link';
 import { CITIES, SERVICE_AREA_CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
 import { isIndexedPath } from '@/lib/siteUrls';
 import { getManifestLinks } from '@/lib/internal-links';
 import { ArrowRight } from 'lucide-react';
+import { getBlogHeroImage } from '@/shared/blogImages';
+import { getCityServiceImage } from '@/shared/cityServiceImages';
+import { getServiceBackground } from '@/shared/serviceBackgrounds';
+import { SITE_IMAGES } from '@/shared/siteImages';
 
 /**
  * A city x service link that respects the sitemap's index rule: a noindexed
@@ -38,24 +43,52 @@ const SERVICE_GUIDE: Record<string, { href: string; label: string }> = {
 /**
  * One closing block of onward links for every landing page (owner, 19 November
  * 2026: the four stacked link lists read as clutter). Places and services are
- * compact cells, two across; guides and related pages are one ruled list. A
+ * photo cards (a swipe row on phones, four across from tablet up), each with the
+ * photograph of the page it opens; guides and related pages are one list with
+ * thumbnails. The photographs are decorative (empty alt): the label beside each
+ * one names the page. A
  * link appears once: nothing already in a cell or in the page body is repeated
  * in the list. Cells keep the full anchor text for search and screen readers
  * and show only the part that differs.
  */
-interface Cell { href: string; label: string; context?: string }
+interface Cell { href: string; label: string; context?: string; image?: string }
+
+/** The photograph that belongs to the page a link opens. */
+function pageImage(href: string): string | undefined {
+  const [section, slug] = href.split('/').filter(Boolean);
+  if ((section === 'blog' || section === 'guides') && slug) return getBlogHeroImage(slug);
+  if (section === 'services' && slug) return getCityServiceImage(href) ?? getServiceBackground(slug);
+  if (section === 'areas' && slug) return getCityServiceImage(href);
+  if (section === 'design-ideas') return SITE_IMAGES.statementBand;
+  if (section === 'resources') return SITE_IMAGES.process;
+  return undefined;
+}
 
 function Cells({ cells }: { cells: Cell[] }) {
   return (
-    <ul className="lx-cells">
+    <ul
+      className="lx-cells"
+      style={{
+        // One full row on desktop for up to six cards; otherwise rows of four. Tablets take rows of three or four.
+        ['--lx-cols' as string]: cells.length <= 6 ? cells.length : 4,
+        ['--lx-cols-tablet' as string]: cells.length % 4 === 0 ? 4 : 3,
+      }}
+    >
       {cells.map((cell) => (
         <li key={cell.href + cell.label}>
           <Link href={cell.href} className="lx-cell">
+            {(cell.image ?? pageImage(cell.href)) ? (
+              <span className="lx-cell-photo">
+                <Image src={(cell.image ?? pageImage(cell.href)) as string} alt="" fill sizes="(max-width: 700px) 46vw, 300px" className="object-cover img-brand-grade" />
+              </span>
+            ) : null}
+            <span className="lx-cell-label">
             <span>
               {cell.context ? <span className="sr-only">{cell.context} </span> : null}
               {cell.label}
             </span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </span>
           </Link>
         </li>
       ))}
@@ -63,10 +96,19 @@ function Cells({ cells }: { cells: Cell[] }) {
   );
 }
 
-function Group({ label, children }: { label: string; children: React.ReactNode }) {
+function Group({ label, action, children }: { label: string; action?: { href: string; label: string; context?: string }; children: React.ReactNode }) {
   return (
     <div className="lx-explore-group">
-      <h3 className="lx-explore-label">{label}</h3>
+      <div className="lx-explore-head">
+        <h3 className="lx-explore-label">{label}</h3>
+        {action ? (
+          <Link href={action.href} className="lx-explore-all">
+            {action.context ? <span className="sr-only">{action.context} </span> : null}
+            {action.label}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        ) : null}
+      </div>
       {children}
     </div>
   );
@@ -101,15 +143,23 @@ function Reading({ links }: { links: { href: string; label: string }[] }) {
   if (links.length === 0) return null;
   return (
     <Group label="Guides and planning">
-      <ul className="ed-rule-list lx-related-list">
-        {links.map((link) => (
-          <li key={link.href}>
-            <Link href={link.href} className="ed-rule-link">
-              {link.label}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </li>
-        ))}
+      <ul className="lx-reading">
+        {links.map((link) => {
+          const image = pageImage(link.href);
+          return (
+            <li key={link.href}>
+              <Link href={link.href} className="lx-reading-link">
+                {image ? (
+                  <span className="lx-reading-photo">
+                    <Image src={image} alt="" fill sizes="72px" className="object-cover img-brand-grade" />
+                  </span>
+                ) : null}
+                <span className="lx-reading-title">{link.label}</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </li>
+          );
+        })}
       </ul>
     </Group>
   );
@@ -136,14 +186,14 @@ export function RelatedLinks({ serviceSlug, citySlug, variant, manifestPath, exc
     const cityCells: Cell[] = SERVICE_AREA_CITIES.filter(
       (c) => c.slug !== citySlug && isIndexedPath(cityServicePath(serviceSlug, c.slug)),
     ).map((c) => ({ href: cityServicePath(serviceSlug, c.slug), label: c.name, context: `${service.name} in` }));
-    cityCells.push({ href: servicePath(serviceSlug), label: 'All areas', context: `${service.name}:` });
     const serviceCells: Cell[] = SERVICES.filter(
       (s) => s.slug !== serviceSlug && isIndexedPath(cityServicePath(s.slug, citySlug)),
     ).slice(0, 3).map((s) => ({ href: cityServicePath(s.slug, citySlug), label: toSentenceCase(s.name), context: `${city.name}:` }));
-    serviceCells.push({ href: areaPath(citySlug), label: `All ${city.name} remodeling` });
     [...cityCells, ...serviceCells].forEach((cell) => taken.add(cell.href));
-    groups.push(<Group key="cities" label={`${toSentenceCase(service.name)} in nearby cities`}><Cells cells={cityCells} /></Group>);
-    groups.push(<Group key="services" label={`More services in ${city.name}`}><Cells cells={serviceCells} /></Group>);
+    taken.add(servicePath(serviceSlug));
+    taken.add(areaPath(citySlug));
+    groups.push(<Group key="cities" label={`${toSentenceCase(service.name)} in nearby cities`} action={{ href: servicePath(serviceSlug), label: 'All areas', context: `${service.name}:` }}><Cells cells={cityCells} /></Group>);
+    groups.push(<Group key="services" label={`More services in ${city.name}`} action={{ href: areaPath(citySlug), label: `All ${city.name} remodeling` }}><Cells cells={serviceCells} /></Group>);
   }
 
   const reading = readingLinks(serviceSlug, manifestPath, taken, groups.length > 0);
