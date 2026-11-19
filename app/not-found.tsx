@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Metadata } from "next";
-import { Button } from "@/components/ui/button";
+import { familyButtonClass } from "@/components/family/Button";
 import { ArrowRight, MessageSquare, Phone } from "lucide-react";
 import { InteriorPage } from "@/components/approved/InteriorLayout";
 import { SERVICE_AREA_CITIES } from "@/shared/contentData";
@@ -36,22 +36,16 @@ export default function NotFound() {
               <p className="ed-lede mt-6 max-w-[40ch]">
                 This page doesn&apos;t exist or may have moved. Let us help you find what you&apos;re looking for.
               </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <Button variant="brand" size="lg" asChild>
-                  <Link href="/">Go to homepage</Link>
-                </Button>
-                <Button variant="brandOutline" size="lg" asChild>
-                  <a href={SITE_CONFIG.phoneHref}>
-                    <Phone className="h-5 w-5 mr-2" aria-hidden="true" />
-                    Call {SITE_CONFIG.phone}
-                  </a>
-                </Button>
-                <Button variant="brandOutline" size="lg" asChild>
-                  <a href={SITE_CONFIG.phoneSmsHref} data-testid="link-404-text">
-                    <MessageSquare className="h-5 w-5 mr-2" aria-hidden="true" />
-                    Text us
-                  </a>
-                </Button>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center [&>*]:w-full sm:[&>*]:w-auto">
+                <Link href="/" className={familyButtonClass({ variant: "primary", size: "lg" })}>
+                  Go to homepage
+                </Link>
+                <a href={SITE_CONFIG.phoneHref} className={familyButtonClass({ variant: "secondary", size: "lg" })}>
+                  <Phone className="h-4 w-4" aria-hidden="true" /> {SITE_CONFIG.phone}
+                </a>
+                <a href={SITE_CONFIG.phoneSmsHref} data-testid="link-404-text" className={familyButtonClass({ variant: "secondary", size: "lg" })}>
+                  <MessageSquare className="h-4 w-4" aria-hidden="true" /> Text us
+                </a>
               </div>
               <p className="mt-4">
                 <SaveContactLink className="inline-flex min-h-11 items-center text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground">

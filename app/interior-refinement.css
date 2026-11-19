@@ -494,11 +494,13 @@
   .approved-shell .approved-interior .container > .interior-document { width: 100%; }
 }
 
-/* Permit flow steps: two across on phones, so seven short steps are not seven full-width cards. */
+/* Permit flow steps: two across on phones, so seven short steps are not seven
+   full-width cards. At every width the last step (final inspection) closes the
+   flow across the whole row instead of sitting alone in the middle of one. */
 @media (max-width: 700px) {
   .lx-permit-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .lx-permit-steps > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 }
+.lx-permit-steps > :last-child:nth-child(odd) { grid-column: 1 / -1; }
 
 /* Tablets (701 to 1023px): a document page (warranty, privacy, terms, permit
    flow) stacks its "On this page" rail above the text. Beside it, the 260px

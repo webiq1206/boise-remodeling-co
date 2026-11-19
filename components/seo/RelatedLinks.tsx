@@ -83,7 +83,7 @@ function Cells({ cells }: { cells: Cell[] }) {
       style={{
         // One full row on desktop for up to six cards; otherwise rows of four. Tablets take rows of three or four.
         ['--lx-cols' as string]: cells.length <= 6 ? cells.length : 4,
-        ['--lx-cols-tablet' as string]: cells.length % 4 === 0 ? 4 : 3,
+        ['--lx-cols-tablet' as string]: cells.length <= 3 ? cells.length : cells.length % 4 === 0 ? 4 : 3,
       }}
     >
       {cells.map((cell) => (
@@ -172,7 +172,7 @@ function Reading({ links }: { links: { href: string; label: string }[] }) {
                     <Image src={image} alt={pageImageAlt(link.href, image)} fill sizes="72px" className="object-cover img-brand-grade" />
                   </span>
                 ) : null}
-                <span className="lx-reading-title">{link.label}</span>
+                <span className="lx-reading-title">{toSentenceCase(link.label)}</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </li>

@@ -53,8 +53,11 @@ export default function SitemapPage() {
 
               <p className="lead text-muted-foreground">{DESCRIPTION}</p>
             </InteriorDocument>
-            {/* Groups flow into columns so a 60-link group and a 6-link group share the width evenly. */}
-            <div className="mt-10 columns-1 gap-x-10 sm:columns-2 lg:columns-3 [&_section]:mb-8 [&_section]:break-inside-avoid [&_ul]:mt-3 [&_h2]:mt-0 [&_li]:my-1">
+            {/* Groups flow into columns so a 60-link group and a 6-link group share the width evenly. A long
+                group may continue in the next column (kept whole, the 60 city links left one column
+                empty beside it); a heading never ends a column, and no heading carries a top margin
+                that would set the first column lower than the others. */}
+            <div className="mt-10 columns-1 gap-x-10 sm:columns-2 lg:columns-3 [&_section]:mb-8 [&_ul]:mt-3 [&_h2]:!mt-0 [&_h2]:break-after-avoid [&_li]:my-1 [&_li]:break-inside-avoid">
             {groups.map((group) =>
               group.entries.length === 0 ? null : (
                 <section key={group.heading} aria-labelledby={`sitemap-${group.heading.replace(/\s+/g, "-").toLowerCase()}`}>

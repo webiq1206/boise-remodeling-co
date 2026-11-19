@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { familyButtonClass } from '@/components/family/Button';
 import { InteriorDocument,InteriorPage } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing/Section';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
@@ -92,18 +92,14 @@ export default function AdaCanyonPermitFlowPage() {
           </section>
 
           <div className="flex flex-wrap gap-3 mb-10">
-            <Button asChild variant="brand">
-              <a href="/downloads/ada-canyon-permit-guide.pdf" download>
-                <Download className="h-4 w-4" aria-hidden="true" />
-                Download PDF reference
-              </a>
-            </Button>
-            <Button asChild variant="brandOutline">
-              <Link href="/blog/boise-permit-guide">
-                Read the Boise permit guide
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </Button>
+            <a href="/downloads/ada-canyon-permit-guide.pdf" download className={familyButtonClass({ variant: "primary" })}>
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Download PDF reference
+            </a>
+            <Link href="/blog/boise-permit-guide" className={familyButtonClass({ variant: "secondary" })}>
+              Read the Boise permit guide
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
 
           <PermitFlowGraphic />

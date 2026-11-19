@@ -612,7 +612,7 @@ export function LandingPageTemplate({
                                 return (
                                   <li key={link.href}>
                                     <Link href={link.href} className="ed-rule-link">
-                                      {cityRun ? <span><span className="lx-city-prefix">{link.label.slice(0, at + 4)}</span>{link.label.slice(at + 4)}</span> : link.label}
+                                      {cityRun ? <span><span className="lx-city-prefix">{toSentenceCase(link.label.slice(0, at + 4))}</span>{link.label.slice(at + 4)}</span> : toSentenceCase(link.label)}
                                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                                     </Link>
                                   </li>

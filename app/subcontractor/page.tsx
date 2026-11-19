@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { SubcontractorHomeDashboard } from "@/components/subcontractor/SubcontractorHomeDashboard";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { familyButtonClass } from "@/components/family/Button";
 import { Shield, Leaf, Building2, ArrowRight, CheckCircle } from "lucide-react";
 
 export default function SubcontractorPage() {
@@ -77,15 +77,15 @@ export default function SubcontractorPage() {
                 <span>Email notifications when new leads match your preferences</span>
               </div>
             </div>
-            <Button 
-              variant="brand"
-              size="lg" 
+            <button
+              type="button"
+              className={familyButtonClass({ variant: "hero", size: "lg" })}
               onClick={handleLogin}
               data-testid="button-login"
             >
               Sign in to portal
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
           </div>
 
           <div className="grid gap-4">
@@ -160,15 +160,15 @@ export default function SubcontractorPage() {
             <p className="text-inverse-muted mb-8 max-w-2xl mx-auto">
               Join our network today and start receiving high-quality remodeling leads. No monthly fees, no commitments: only pay for the leads you want.
             </p>
-            <Button 
-              variant="brand"
-              size="lg" 
+            <button
+              type="button"
+              className={familyButtonClass({ variant: "hero", size: "lg" })}
               onClick={handleLogin}
               data-testid="button-login-cta"
             >
               Get started now
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </button>
           </CardContent>
         </Card>
       </section>

@@ -127,7 +127,7 @@ export function PlanningRangeExplorer() {
   </div>)}</dl>;
   function options<T extends string>(label: string, values: readonly { value: T; label: string }[], selected: T, onChange: (value: T) => void) {
     return <fieldset className={styles.fieldset}><legend>{label}</legend><div className={styles.choices}>
-      {values.map(option => <label key={option.value} className={styles.choice}>
+      {values.map(option => <label key={option.value} className={styles.choice} data-clarity-mask="True">
         <input data-clarity-mask="True" type="radio" name={`${id}-${label}`} value={option.value} checked={selected === option.value} onChange={() => onChange(option.value)} />
         <span>{option.label}</span>
       </label>)}

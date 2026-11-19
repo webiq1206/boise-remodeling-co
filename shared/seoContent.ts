@@ -798,7 +798,7 @@ export function getCityServiceSections(
     {
       heading: `${toSentenceCase(service.name)} permits and planning in ${county}`,
       paragraphs: [
-        `${service.name} projects in ${city.name} that change layout, structure, plumbing, or electrical require permits through ${county}. We build plan review and inspection timelines into your schedule from day one and handle submissions, fees, and inspections as part of the design-build contract.`,
+        `${toSentenceCase(service.name)} projects in ${city.name} that change layout, structure, plumbing, or electrical require permits through ${county}. We build plan review and inspection timelines into your schedule from day one and handle submissions, fees, and inspections as part of the design-build contract.`,
         seo?.climate
           ? `Our ${city.name} ${serviceLC} designs also account for the local ${seo.climate} - from insulation and ventilation choices to materials that hold up to Treasure Valley freeze-thaw cycles.`
           : `Our ${city.name} ${serviceLC} designs account for the local Treasure Valley climate, including durable materials and proper insulation.`,
