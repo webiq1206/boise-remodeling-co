@@ -127,6 +127,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
           {
             heading: content.costGuidance.heading,
             paragraphs: content.costGuidance.paragraphs,
+            tiers: content.costTiers,
             links: [
               { label: 'Boise Remodeling Cost Guide', href: '/guides/boise-remodeling-cost-guide' },
               { label: 'Request a quote', href: '/#request' },

@@ -10,6 +10,8 @@ import { getBlogHeroImage } from '@/shared/blogImages';
 import { getCityServiceImage } from '@/shared/cityServiceImages';
 import { getServiceBackground } from '@/shared/serviceBackgrounds';
 import { SITE_IMAGES } from '@/shared/siteImages';
+import { resolveExploreImages } from '@/shared/exploreImages';
+import { CITY_HERO_IMAGES } from '@/shared/cityServiceImages';
 import { getBlogImageAlt } from '@/shared/blogImages';
 import { contentImageAlt } from '@/shared/contentImageAlt';
 
@@ -31,6 +33,8 @@ interface RelatedLinksProps {
   manifestPath?: string;
   /** Links the page already shows in its body. They are not repeated here. */
   exclude?: readonly string[];
+  /** Photographs already on the page. A card never repeats one of them. */
+  usedImages?: readonly (string | undefined)[];
 }
 
 /** Map each service to the pillar guide it should link "up" to. */
@@ -53,7 +57,7 @@ const SERVICE_GUIDE: Record<string, { href: string; label: string }> = {
  * in the list. Cells keep the full anchor text for search and screen readers
  * and show only the part that differs.
  */
-interface Cell { href: string; label: string; context?: string; image?: string }
+interface Cell { href: string; label: string; context?: string; image?: string; subject?: string }
 
 /** The photograph that belongs to the page a link opens. */
 function pageImageAlt(href: string, src: string): string {
@@ -124,6 +128,12 @@ function Group({ label, action, children }: { label: string; action?: { href: st
 
 const MAX_READING = 6;
 
+/** Rows stay full: three or six fill three columns, two or four fill two. A fifth link is held back. */
+function balanced<T>(links: T[]): T[] {
+  if (links.length === 5) return links.slice(0, 4);
+  return links;
+}
+
 /** Pillar guide, planning pages and the page's related pages, each once. */
 function readingLinks(serviceSlug: string | undefined, manifestPath: string | undefined, taken: Set<string>, readingOnly: boolean) {
   const guide = serviceSlug ? SERVICE_GUIDE[serviceSlug] : undefined;
@@ -144,14 +154,14 @@ function readingLinks(serviceSlug: string | undefined, manifestPath: string | un
     out.push(link);
     if (out.length === MAX_READING) break;
   }
-  return out;
+  return balanced(out);
 }
 
 function Reading({ links }: { links: { href: string; label: string }[] }) {
   if (links.length === 0) return null;
   return (
     <Group label="Guides and planning">
-      <ul className="lx-reading">
+      <ul className="lx-reading" style={{ ['--lx-reading-cols' as string]: links.length % 3 === 0 ? 3 : 2 }}>
         {links.map((link) => {
           const image = pageImage(link.href);
           return (
@@ -173,35 +183,58 @@ function Reading({ links }: { links: { href: string; label: string }[] }) {
   );
 }
 
-export function RelatedLinks({ serviceSlug, citySlug, variant, manifestPath, exclude = [] }: RelatedLinksProps) {
+export function RelatedLinks({ serviceSlug, citySlug, variant, manifestPath, exclude = [], usedImages = [] }: RelatedLinksProps) {
   const taken = new Set<string>(exclude);
   const service = SERVICES.find((s) => s.slug === serviceSlug);
   const city = CITIES.find((c) => c.slug === citySlug);
   const groups: React.ReactNode[] = [];
 
+  const pageImages: (string | undefined)[] = [...usedImages];
+  /** Give each card its photograph, never one already on the page or in an earlier card. */
+  const withImages = (cells: Cell[]): Cell[] => {
+    const images = resolveExploreImages(cells.map((cell) => ({ href: cell.href, image: cell.image ?? pageImage(cell.href), subject: cell.subject })), pageImages);
+    pageImages.push(...images);
+    return cells.map((cell, i) => ({ ...cell, image: images[i] }));
+  };
+
   if (variant === 'area' && citySlug && city) {
-    const cells = SERVICES.map((s) => ({
+    const cells: Cell[] = SERVICES.map((s) => ({
       href: indexedCityServiceHref(s.slug, citySlug),
       label: toSentenceCase(s.name),
       context: `${city.name}:`,
+      subject: s.slug,
     }));
     cells.forEach((cell) => taken.add(cell.href));
-    groups.push(<Group key="services" label={`Remodeling services in ${city.name}`}><Cells cells={cells} /></Group>);
+    groups.push(<Group key="services" label={`Remodeling services in ${city.name}`}><Cells cells={withImages(cells)} /></Group>);
+
+    // Other cities' area pages this page links to (data/internal-links.json), as cards with each area's own photograph.
+    const nearby: Cell[] = (manifestPath ? getManifestLinks(manifestPath) : [])
+      .filter((link) => /^\/areas\/[^/]+$/.test(link.url) && !taken.has(link.url))
+      .map((link) => {
+        const slug = link.url.split('/')[2];
+        const name = CITIES.find((c) => c.slug === slug)?.name ?? link.anchor;
+        return { href: link.url, label: name, context: 'Remodeling in', image: CITY_HERO_IMAGES[slug] };
+      });
+    if (nearby.length > 0) {
+      nearby.forEach((cell) => taken.add(cell.href));
+      taken.add('/areas');
+      groups.push(<Group key="areas" label="Nearby areas" action={{ href: '/areas', label: 'All service areas' }}><Cells cells={withImages(nearby)} /></Group>);
+    }
   }
 
   if (variant === 'city-service' && serviceSlug && citySlug && service && city) {
     // Same index rule as the sitemap: noindexed combos are never linked.
     const cityCells: Cell[] = SERVICE_AREA_CITIES.filter(
       (c) => c.slug !== citySlug && isIndexedPath(cityServicePath(serviceSlug, c.slug)),
-    ).map((c) => ({ href: cityServicePath(serviceSlug, c.slug), label: c.name, context: `${service.name} in` }));
+    ).map((c) => ({ href: cityServicePath(serviceSlug, c.slug), label: c.name, context: `${service.name} in`, subject: serviceSlug }));
     const serviceCells: Cell[] = SERVICES.filter(
       (s) => s.slug !== serviceSlug && isIndexedPath(cityServicePath(s.slug, citySlug)),
-    ).slice(0, 3).map((s) => ({ href: cityServicePath(s.slug, citySlug), label: toSentenceCase(s.name), context: `${city.name}:` }));
+    ).slice(0, 3).map((s) => ({ href: cityServicePath(s.slug, citySlug), label: toSentenceCase(s.name), context: `${city.name}:`, subject: s.slug }));
     [...cityCells, ...serviceCells].forEach((cell) => taken.add(cell.href));
     taken.add(servicePath(serviceSlug));
     taken.add(areaPath(citySlug));
-    groups.push(<Group key="cities" label={`${toSentenceCase(service.name)} in nearby cities`} action={{ href: servicePath(serviceSlug), label: 'All areas', context: `${service.name}:` }}><Cells cells={cityCells} /></Group>);
-    groups.push(<Group key="services" label={`More services in ${city.name}`} action={{ href: areaPath(citySlug), label: `All ${city.name} remodeling` }}><Cells cells={serviceCells} /></Group>);
+    groups.push(<Group key="cities" label={`${toSentenceCase(service.name)} in nearby cities`} action={{ href: servicePath(serviceSlug), label: 'All areas', context: `${service.name}:` }}><Cells cells={withImages(cityCells)} /></Group>);
+    groups.push(<Group key="services" label={`More services in ${city.name}`} action={{ href: areaPath(citySlug), label: `All ${city.name} remodeling` }}><Cells cells={withImages(serviceCells)} /></Group>);
   }
 
   const reading = readingLinks(serviceSlug, manifestPath, taken, groups.length > 0);

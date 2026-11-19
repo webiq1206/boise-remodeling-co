@@ -43,6 +43,12 @@ export interface ServiceSEOContent {
    * Fix A). Ranges must stay consistent with the estimator and pillar guides.
    */
   costGuidance?: { heading: string; paragraphs: string[] };
+  /**
+   * Planning tiers shown as cards above the cost copy. Hand-copied from the
+   * sentences in costGuidance: tests/cost-tiers.test.ts fails if a figure here is
+   * not in that copy. Only for services whose copy states distinct tiers.
+   */
+  costTiers?: { label: string; range: string; note?: string }[];
   /** Phase 4: the subject noun the landing template names its headings with. */
   noun?: string;
   /** Phase 4: a 40 to 60 word direct answer near the top of the parent page. */
@@ -130,6 +136,11 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
           'Mid-range kitchen updates aligned with your neighborhood comps deliver the most reliable return: quality cabinetry, quartz counters, and improved lighting. Over-improving beyond your street rarely pays back at sale.',
       },
     ],
+    costTiers: [
+      { label: 'Cosmetic refresh', range: '$16,000 to $21,000' },
+      { label: 'Mid-range remodel', range: '$37,000 to $47,000', note: 'New cabinetry, quartz or granite counters, tile backsplash, and updated plumbing and electrical' },
+      { label: 'Full gut renovation', range: '$85,000 to $166,000', note: 'Layout changes, custom cabinetry, and premium finishes' },
+    ],
     costGuidance: {
       heading: 'Kitchen remodel cost in the Treasure Valley',
       paragraphs: [
@@ -172,6 +183,10 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       { title: 'Final walkthrough', description: 'We review every detail with you before sign-off.' },
     ],
     faqs: BATHROOM_NEAR_ME_FAQS,
+    costTiers: [
+      { label: 'Guest bathroom', range: '$18,000 to $45,000' },
+      { label: 'Primary bathroom', range: '$35,000 to $85,000 or more', note: 'Walk-in or curbless showers, double vanities, and tile work' },
+    ],
     costGuidance: {
       heading: 'Bathroom remodel cost in the Treasure Valley',
       paragraphs: [
@@ -335,6 +350,11 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
         answer:
           'A permitted ADU adds appraisable square footage and rental income potential that Treasure Valley buyers increasingly search for. Unpermitted units do the opposite, creating disclosure and insurance problems at sale.',
       },
+    ],
+    costTiers: [
+      { label: 'Garage conversion', range: '$90,000 to $180,000' },
+      { label: 'Attached ADU or basement conversion', range: '$120,000 to $250,000' },
+      { label: 'Detached new-build ADU', range: '$180,000 to $300,000 or more' },
     ],
     costGuidance: {
       heading: 'ADU cost in the Treasure Valley',
@@ -754,6 +774,7 @@ export function getCityServiceSections(
               `Planning ranges for ${city.name} match the broader Treasure Valley market. ${service.costGuidance.paragraphs[0]}`,
               service.costGuidance.paragraphs[1],
             ],
+            tiers: service.costTiers,
             links: [
               {
                 label: 'Boise Remodeling Cost Guide',
