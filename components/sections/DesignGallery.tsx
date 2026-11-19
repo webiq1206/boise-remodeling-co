@@ -1,3 +1,4 @@
+import { localAlt } from '@/shared/localAlt';
 /**
  * Six-photo design mosaic: three wide frames and three square details, set so
  * every desktop row is full (wide + square, square + wide, wide + square) and
@@ -48,7 +49,7 @@ export function DesignGallery({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={p.src}
-                alt={p.alt}
+                alt={localAlt(p.alt)}
                 width={1200}
                 height={p.wide ? 628 : 1200}
                 loading={i < 2 ? 'eager' : 'lazy'}

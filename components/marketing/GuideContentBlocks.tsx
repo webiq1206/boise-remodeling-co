@@ -46,28 +46,27 @@ interface GuideJumpChipsProps {
   headings: TocHeading[];
 }
 
-/** Mobile-friendly jump links for top-level sections. */
+/** Phone and tablet contents: one closed row that opens to every section, in place of a wall of chips. */
 export function GuideJumpChips({ headings }: GuideJumpChipsProps) {
-  const h2s = headings.filter((h) => h.level === 2).slice(0, 5);
+  const h2s = headings.filter((h) => h.level === 2);
   if (h2s.length < 2) return null;
 
   return (
-    <nav className="lg:hidden mb-6" aria-label="Jump to section" data-testid="guide-jump-chips">
-      <p className="text-xs font-normal uppercase tracking-wider text-muted-foreground mb-2">
-        Jump to
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {h2s.map((h) => (
-          <Link
-            key={h.id}
-            href={`#${h.id}`}
-            className="inline-flex items-center min-h-11 lg:min-h-0 rounded-full border border-border bg-muted/40 px-3 py-1 text-xs text-foreground hover:bg-muted transition-colors"
-          >
-            {h.text}
-          </Link>
-        ))}
-      </div>
-    </nav>
+    <details className="lx-toc lg:hidden" data-testid="guide-jump-chips">
+      <summary>
+        <span>On this page</span>
+        <span className="lx-toc-count">{h2s.length} sections</span>
+      </summary>
+      <nav aria-label="Jump to section">
+        <ol>
+          {h2s.map((h) => (
+            <li key={h.id}>
+              <Link href={`#${h.id}`}>{h.text}</Link>
+            </li>
+          ))}
+        </ol>
+      </nav>
+    </details>
   );
 }
 

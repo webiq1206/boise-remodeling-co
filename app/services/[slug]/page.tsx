@@ -54,7 +54,7 @@ const SERVICE_CLUSTER_LINKS: Record<string, LandingLinkedParagraph> = {
   'aging-in-place': { text: 'For curbless showers, grab bars and clearances, read our guide to', link: { label: 'aging-in-place bathroom design', href: '/blog/aging-in-place-bathroom-design' } },
 };
 
-/** The parent page shows at most seven questions, visibly, and the schema matches. */
+/** The parent page shows at most seven questions, and the schema matches. Answers open on tap and stay in the HTML. */
 const MAX_VISIBLE_FAQS = 7;
 
 export function generateStaticParams() {
@@ -127,6 +127,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
           {
             heading: content.costGuidance.heading,
             paragraphs: content.costGuidance.paragraphs,
+            tiers: content.costTiers,
             links: [
               { label: 'Boise Remodeling Cost Guide', href: '/guides/boise-remodeling-cost-guide' },
               { label: 'Request a quote', href: '/#request' },
@@ -201,7 +202,6 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         imageSubject={service.slug}
         showEstimatePrompt
         faqs={faqs}
-        faqDisplay="visible"
         subject={{ noun: content.noun ?? serviceLC }}
         answer={content.answer}
         related={{ variant: 'service', serviceSlug: service.slug }}

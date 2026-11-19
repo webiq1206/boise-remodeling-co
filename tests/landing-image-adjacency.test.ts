@@ -8,6 +8,8 @@ import { getAreaImageSet, getCityServiceImageSet } from '../shared/cityServiceIm
 import { getFeaturedProjectForService } from '../shared/featuredProjects.ts';
 import { getFeaturedGalleryProject, getGalleryProjectsFor, getGalleryProjectsForCity } from '../shared/galleryData.ts';
 import { imageIdentity, VISUAL_DUPLICATE_GROUPS } from '../shared/imageIdentity.ts';
+import { resolveExploreImages } from '../shared/exploreImages.ts';
+import { CITY_SERVICE_IMAGES, SERVICE_FALLBACK_IMAGES } from '../shared/cityServiceImages.ts';
 import { gallerySubject, resolveLandingImages, SUBJECT_ALTERNATES, type LandingImageInput } from '../shared/landingImages.ts';
 import { getServiceImageSet } from '../shared/serviceBackgrounds.ts';
 import { SERVICE_SCENES } from '../shared/serviceSceneImages.ts';
@@ -140,5 +142,27 @@ test('area pages never show one picture twice', () => {
       sectionSlots: 3,
       subject: 'general',
     });
+  }
+});
+
+test('Keep exploring cards on an area page never repeat a picture from the page or from each other', () => {
+  for (const city of CITIES) {
+    const images = getAreaImageSet(city.slug);
+    const proof = getGalleryProjectsForCity(city.slug).map((p) => ({ src: p.afterImageUrl, subject: gallerySubject(p.serviceType) }));
+    const slots = resolveLandingImages({ hero: images.hero, breather: images.breather, process: images.process, proof, sectionSlots: 3, subject: 'general' });
+    const onPage = [images.hero, slots.breather, slots.process, ...slots.sectionBreathers, ...slots.proof];
+    const cards = SERVICES.map((service) => ({
+      href: `/services/${service.slug}/${city.slug}`,
+      image: CITY_SERVICE_IMAGES[`${service.slug}/${city.slug}`] ?? SERVICE_FALLBACK_IMAGES[service.slug] ?? `/images/services/${service.slug}.webp`,
+      subject: service.slug,
+    }));
+    const chosen = resolveExploreImages(cards, onPage);
+    const seen = new Set(onPage.filter((src): src is string => Boolean(src)).map(imageIdentity));
+    for (const [i, src] of chosen.entries()) {
+      assert.ok(src, `/areas/${city.slug}: ${cards[i].href} has no photograph`);
+      const id = imageIdentity(src);
+      assert.ok(!seen.has(id), `/areas/${city.slug}: ${src} repeats on the page`);
+      seen.add(id);
+    }
   }
 });

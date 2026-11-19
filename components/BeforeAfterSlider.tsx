@@ -1,5 +1,6 @@
 "use client";
 
+import { localAlt } from '@/shared/localAlt';
 import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import { MoveHorizontal } from "lucide-react";
@@ -130,7 +131,7 @@ export function BeforeAfterSlider({
       {/* After image (base layer) */}
       <Image
         src={afterSrc}
-        alt={afterAlt}
+        alt={localAlt(afterAlt)}
         fill
         sizes={sizes}
         quality={70}
@@ -145,7 +146,7 @@ export function BeforeAfterSlider({
       >
         <Image
           src={beforeSrc}
-          alt={beforeAlt}
+          alt={localAlt(beforeAlt)}
           fill
           loading="lazy"
           sizes={sizes}

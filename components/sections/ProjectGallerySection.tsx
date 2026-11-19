@@ -11,7 +11,6 @@ import { GALLERY_PROJECTS, type GalleryProject } from "@/shared/galleryData";
 function ProjectMeta({ project, lead = false }: { project: GalleryProject; lead?: boolean }) {
   return (
     <>
-      <p className="ed-eyebrow ed-eyebrow-accent !mb-3">Design inspiration</p>
       <h3 className={lead ? "ed-h3" : "ed-h4"}>{toSentenceCase(project.title)}</h3>
       <p className={`ed-body mt-3 ${lead ? "" : "text-[0.875rem]"}`}>{project.description}</p>
     </>
@@ -41,9 +40,9 @@ export function ProjectGallerySection({
         {/* LEAD: the slider at the size it deserves, heading alongside. */}
         <div className="grid gap-[var(--ed-gutter)] lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <Reveal>
-            <p className="ed-eyebrow">Design inspiration</p>
+            <p className="ed-eyebrow">Gallery</p>
             <h2 className="ed-h2 ed-statement">
-              Ideas for your Treasure Valley home
+              Remodeling for Treasure Valley homes
             </h2>
             <p className="ed-body mt-7">
               Explore kitchen, bathroom, whole-home and addition design ideas.

@@ -1,3 +1,4 @@
+import { contentImageAlt } from '@/shared/contentImageAlt';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { SITE_IMAGES } from "@/shared/siteImages";
@@ -19,8 +20,7 @@ export function BrandStatementBand() {
       <Image
         src={SITE_IMAGES.statementBand}
         unoptimized // The 110 KB source is already compressed for this photographic band.
-        alt=""
-        aria-hidden="true"
+        alt={contentImageAlt(SITE_IMAGES.statementBand, 'Open living and dining room with wood floors and a view into a white kitchen', { subject: 'whole-home remodel' })}
         fill
         loading="lazy"
         quality={65}

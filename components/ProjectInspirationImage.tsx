@@ -1,7 +1,8 @@
+import { localAlt } from '@/shared/localAlt';
 import Image from "next/image";
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 
-/** Unverified concept assets must never imply a completed customer project. */
+/** Gallery photograph. Its labels are plain subject labels and never claim a completed customer project. */
 export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption, aspectClass = "aspect-[4/3]", sizes = "(max-width: 1023px) 100vw, 55vw" }: {
   afterSrc: string;
   afterAlt: string;
@@ -32,7 +33,7 @@ export function ProjectInspirationImage({ beforeSrc, afterSrc, afterAlt, caption
       <div className={`relative overflow-hidden ${aspectClass}`}>
         {/* These local WebP assets are already compressed. Serve them directly
             so gallery loading does not depend on an on-demand encoding job. */}
-        <Image unoptimized={afterSrc.startsWith("/images/") && afterSrc.endsWith(".webp")} src={afterSrc} alt={afterAlt.replace(/^After: /, "")} fill sizes={sizes} quality={80} className="object-cover" />
+        <Image unoptimized={afterSrc.startsWith("/images/") && afterSrc.endsWith(".webp")} src={afterSrc} alt={localAlt(afterAlt.replace(/^After: /, ""))} fill sizes={sizes} quality={80} className="object-cover" />
       </div>
       )}
       {caption && (

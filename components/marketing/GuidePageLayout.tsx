@@ -13,13 +13,13 @@ import { getResourcesForGuide } from '@/shared/guideResources';
 import {
 ArrowRight,
 BookOpen,
-Calendar,
+
 Tag,
-User
+
 } from 'lucide-react';
 import Link from 'next/link';
 import { ArticleFaqs } from './ArticleFaqs';
-import { ArticleSidebar,ArticleSidebarCta } from './ArticleSidebar';
+import { ArticleSidebar } from './ArticleSidebar';
 import { BlogEndCta } from './BlogEndCta';
 import { articleCtaDestination } from '@/shared/ctaCopy';
 import { BlogHeroBanner } from './BlogHeroBanner';
@@ -69,27 +69,17 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
             ]}
           />
 
-          <header className="interior-article-header">
-            {hub && <Chip className="mb-4">{toSentenceCase(hub.categoryLabel)}</Chip>}
+          <header className="interior-article-header lx-article-header">
+            {hub && <p className="lx-cat">{toSentenceCase(hub.categoryLabel)}</p>}
             <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-serif tracking-tight text-foreground mb-4">
               {toSentenceCase(guide.title)}
             </h1>
             <p className="text-lg text-muted-foreground mb-5">{guide.excerpt}</p>
-            <div role="presentation" className="border-t border-border/60 mb-5" />
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                {formatDate(guide.publishedAt)}
-              </span>
+            <p className="lx-meta">
+              <span>{formatDate(guide.publishedAt)}</span>
               <span>{readingTime} min read</span>
-              <Link
-                href={CONTENT_AUTHOR.url}
-                className="flex items-center gap-2 min-h-11 lg:min-h-0 hover:text-foreground transition-colors"
-              >
-                <User className="h-4 w-4" />
-                {CONTENT_AUTHOR.name}
-              </Link>
-            </div>
+              <Link href={CONTENT_AUTHOR.url}>{CONTENT_AUTHOR.name}</Link>
+            </p>
           </header><BlogHeroBanner src={heroImage} alt={heroAlt}/>
 
           <GuideJumpChips headings={tocHeadings} />
@@ -165,9 +155,6 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
                 </div>
               )}
 
-              <div className="lg:hidden mt-10">
-                <ArticleSidebarCta destination={ctaDestination} />
-              </div>
             </div>
 
             <aside className="article-rail hidden lg:block w-72 xl:w-80 flex-shrink-0 sticky top-24 self-start">

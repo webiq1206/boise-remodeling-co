@@ -1,3 +1,4 @@
+import { localAlt } from '@/shared/localAlt';
 import { toSentenceCase } from '@/shared/sentenceCase';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
@@ -33,7 +34,7 @@ export function FeaturedProjectRoomsSection({
           ? "relative overflow-hidden bg-background"
           : "relative overflow-hidden bg-background section-divider border-t border-border/60"
       }
-      aria-label={`${project.title} design inspiration`}
+      aria-label={project.title}
     >
       {!compact && (
         <div className="container px-4 pt-16 md:pt-24 pb-8 md:pb-10">
@@ -58,7 +59,7 @@ export function FeaturedProjectRoomsSection({
             <div className={`relative overflow-hidden ${compact ? "aspect-[16/10] md:aspect-[21/9]" : "aspect-[16/10] md:aspect-[16/9]"}`}>
               <Image
                 src={lead.src}
-                alt={lead.alt}
+                alt={localAlt(lead.alt, { subject: 'whole-home remodel' })}
                 fill
                 unoptimized
                 sizes="100vw"
@@ -92,7 +93,7 @@ export function FeaturedProjectRoomsSection({
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <Image
                         src={room.src}
-                        alt={room.alt}
+                        alt={localAlt(room.alt, { subject: 'whole-home remodel' })}
                         fill
                         unoptimized
                         sizes="(max-width: 768px) 50vw, 25vw"

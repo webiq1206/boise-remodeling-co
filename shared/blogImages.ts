@@ -1,3 +1,5 @@
+import { imageIdentity } from './imageIdentity';
+import { cityFromTags, localAlt, subjectFromTags } from './localAlt';
 import {
   BLOG_IMAGE_REGISTRY,
   HUB_HERO_IMAGES,
@@ -16,7 +18,7 @@ const HUB_INLINE_GALLERY: Record<string, { src: string; alt: string }[]> = {
   'kitchen-remodeling': [
     { src: GALLERY_IMAGES.kitchen.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
     { src: GALLERY_IMAGES.kitchenMeridian.after, alt: 'White kitchen with a gray-green island, pendant lights and a broad window' },
-    { src: GALLERY_IMAGES.kitchenEagle.after, alt: 'Kitchen with wood cabinetry, a white counter and large windows' },
+    { src: GALLERY_IMAGES.kitchenEagle.after, alt: 'Kitchen with white shaker cabinets, a charcoal island and a black-framed window over the sink' },
   ],
   'bathroom-remodeling': [
     { src: GALLERY_IMAGES.bathroom.after, alt: 'Bathroom with a white vanity, a brass-framed mirror and a glass walk-in shower with white tile' },
@@ -75,7 +77,12 @@ export function getBlogImageForSlug(
 }
 
 export function getBlogImageAlt(slug: string): string {
-  return BLOG_IMAGE_REGISTRY[slug]?.alt ?? 'Kitchen and living-area finishes';
+  const entry = BLOG_IMAGE_REGISTRY[slug];
+  // The work and the place first (from the post's topic tags), then what the picture shows.
+  return localAlt(entry?.alt ?? 'Kitchen and living-area finishes', {
+    subject: subjectFromTags(entry?.topicTags),
+    city: cityFromTags(entry?.topicTags),
+  });
 }
 
 export function getBlogHeroImage(
@@ -143,12 +150,13 @@ export function getArticleInlineFigures(
 
   const entry = BLOG_IMAGE_REGISTRY[slug];
   const primarySrc = entry?.hero ?? DEFAULT_BLOG_IMAGE;
-  const used = new Set<string>([primarySrc]);
+  // Pictures are compared by what they show: several files are one photograph.
+  const used = new Set<string>([imageIdentity(primarySrc)]);
   const figures: ArticleInlineFigurePlacement[] = [];
 
   const pushFigure = (afterSectionIndex: number, src: string, alt: string) => {
-    if (used.has(src)) return;
-    used.add(src);
+    if (used.has(imageIdentity(src))) return;
+    used.add(imageIdentity(src));
     figures.push({ afterSectionIndex, src, alt });
   };
 
@@ -158,8 +166,8 @@ export function getArticleInlineFigures(
       pushFigure(
         Math.max(1, Math.floor(sectionCount / 3) - 1),
         hubHero,
-        Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
-          ?? INLINE_HUB_ALTS[hubSlug] ?? `${hubSlug.replace(/-/g, ' ')} imagery`,
+        localAlt(Object.values(BLOG_IMAGE_REGISTRY).find((image) => image.hero === hubHero)?.alt
+          ?? INLINE_HUB_ALTS[hubSlug] ?? `${hubSlug.replace(/-/g, ' ')} imagery`),
       );
     }
 
@@ -169,7 +177,7 @@ export function getArticleInlineFigures(
       const candidate = gallery[i % Math.max(gallery.length, 1)];
       if (!candidate) break;
       const afterSectionIndex = Math.min(slots[i], sectionCount - 1);
-      pushFigure(afterSectionIndex, candidate.src, candidate.alt);
+      pushFigure(afterSectionIndex, candidate.src, localAlt(candidate.alt));
     }
   }
 

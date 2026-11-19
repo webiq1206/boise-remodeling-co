@@ -38,7 +38,7 @@ export function HeroVideo() {
   return (
       <div className="fam-hero-media" aria-hidden="true">
         <picture>
-          <img src={POSTER} alt="" width="1920" height="1080"
+          <img src={POSTER} alt="Whole-home remodeling in Boise, Idaho by Boise Remodeling Co" width="1920" height="1080"
             className="fam-hero-img" fetchPriority="high" loading="eager" />
         </picture>
         <video ref={video} id="remodeling-hero-video" src={source} poster={POSTER} autoPlay muted loop playsInline preload="none" controls={false}

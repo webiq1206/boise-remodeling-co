@@ -1,4 +1,5 @@
 'use client';
+import { localAlt, subjectForService } from '@/shared/localAlt';
 import Link from 'next/link';
 import {type CSSProperties, type ReactNode} from 'react';
 import {ArrowUpRight} from 'lucide-react';
@@ -20,7 +21,7 @@ const PHOTO_ALT:Record<string,string>={
  'basement-remodel':'Finished lower-level room with light wood floors, a gray sectional, and a carpeted stair',
  'outdoor-living':'Covered patio with a wood dining table and square black posts',
 };
-function photoAlt(slug:string){return PHOTO_ALT[slug]??'Photograph of a remodeling project';}
+function photoAlt(slug:string){return localAlt(PHOTO_ALT[slug]??'Photograph of a remodeling project',{subject:subjectForService(slug)});}
 function Title({lines}:{lines:string[]}){return <>{lines[0]}<br/><em>{lines[1]}</em></>}
 
 function Rows({items,numbered=false}:{items:[string,string][];numbered?:boolean}){
@@ -103,7 +104,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
 
   {/* 5. Why the price is fair. */}
   <section className="f-value">
-   <img src={b.valueImage} alt="Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top" loading="lazy" width="1200" height="900"/>
+   <img src={b.valueImage} alt={localAlt('Kitchen mid-remodel with open cabinet boxes and tools on a plywood work top',{subject:'kitchen remodel'})} loading="lazy" width="1200" height="900"/>
    <div><p className="f-eyebrow">WHERE YOUR MONEY GOES</p><h2><Title lines={b.valueTitle}/></h2>{b.value.split(/(?<=\.)\s+/).filter(Boolean).map((sentence)=><p key={sentence}>{sentence}</p>)}<Link className="f-link" href="/#request">Request a quote<Arrow/></Link></div>
   </section>
 
@@ -138,7 +139,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   </section>
 
   {/* 9. Where we work: one line of linked cities. */}
-  <ServiceArea image={{src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:'Oak double vanity beside a tiled walk-in shower',width:1200,height:628}}>
+  <ServiceArea image={{src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:localAlt('Oak double vanity beside a tiled walk-in shower',{subject:'bathroom remodel'}),width:1200,height:628}}>
    <p className="f-eyebrow">AT HOME IN IDAHO</p>
    <h2>Local people.<br/><em>Valley-wide reach.</em></h2>
    <p>Serving homeowners in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.</p>

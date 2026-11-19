@@ -3,21 +3,16 @@ import { toSentenceCase } from '@/shared/sentenceCase';
 import { InteriorHeroActions } from '@/components/approved/InteriorHeroActions';
 import { InteriorHero,InteriorProjectAside } from '@/components/approved/InteriorLayout';
 import { Section } from '@/components/marketing';
-import { RelatedPostCards } from '@/components/marketing/RelatedPostCards';
 import { EstimateCTA } from '@/components/modals/EstimateCTA';
 import { ProjectInspirationImage } from "@/components/ProjectInspirationImage";
 import { RegistrationText } from '@/components/RegistrationLink';
 import { Reveal } from '@/components/Reveal';
+import { ReadMore } from '@/components/marketing/ReadMore';
 import { FeaturedBeforeAfterSection } from '@/components/sections/FeaturedBeforeAfterSection';
 import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProjectRoomsSection';
-import {
-Accordion,
-AccordionContent,
-AccordionItem,
-AccordionTrigger,
-} from '@/components/ui/accordion';
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
+import { localAlt, subjectForService } from '@/shared/localAlt';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
@@ -139,6 +134,8 @@ export interface LandingSection {
   paragraphs?: Array<string | LandingLinkedParagraph>;
   links?: { label: string; href: string }[];
   subsections?: { heading: string; paragraphs: string[] }[];
+  /** Planning tiers shown as cards above the prose. Every figure is already in the section's own copy. */
+  tiers?: { label: string; range: string; note?: string }[];
 }
 
 export interface LandingProof {
@@ -265,7 +262,7 @@ export function LandingPageTemplate({
   faqs,
   subject,
   answer,
-  faqDisplay = 'accordion',
+  faqDisplay: _faqDisplay = 'accordion',
   related,
 }: LandingPageTemplateProps) {
   const noun = subject?.noun ?? 'remodel';
@@ -275,7 +272,7 @@ export function LandingPageTemplate({
     start: `Where to start ${withArticle(noun).replace(/^an? /, 'your ')}`,
     benefits: `What you can count on during ${withArticle(noun)}${where}`,
     process: `How ${withArticle(noun)}${where} works, step by step`,
-    proof: `Design ideas for ${withArticle(noun)}${where}`,
+    proof: `Inside ${withArticle(noun)}${where}`,
     faq: `Questions about ${withArticle(noun)}${where}`,
   };
   // Owner decision, 13 November 2026: the primary action is the central estimator, opened on
@@ -285,6 +282,7 @@ export function LandingPageTemplate({
   const estimatorCta = primaryCta.kind === 'estimator';
   const ctaHeading = estimatorCta ? `Get an instant estimate for your ${noun}` : `Request a quote for your ${noun}`;
   void showEstimatePrompt;
+  void _faqDisplay;
   void proofHeading;
   const heroCopy = splitHeroCopy(overview);
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
@@ -307,6 +305,9 @@ export function LandingPageTemplate({
     sectionSlots: breatherIndices.length,
     subject: imageSubject ?? serviceSlug,
   });
+  // Every photograph names this page's work and place before it describes the picture.
+  const altContext = { subject: subjectForService(related.serviceSlug) ?? (noun === 'remodel' ? undefined : noun), city: subject?.place };
+  const pageAlt = (src: string | undefined, fallback?: string) => contentImageAlt(src, fallback, altContext);
   const breatherImage = imageSlots.breather;
   const processImage = imageSlots.process;
   const showTimelineBelow = !!timeline && !costGuidance;
@@ -316,7 +317,7 @@ export function LandingPageTemplate({
     <div className="flex flex-col ">
       {/* Approved editorial hero. The image is in the server HTML, preloaded, with no entrance animation. */}
       {heroImageUrl ? <link rel="preload" as="image" href={heroImageUrl} fetchPriority="high" /> : null}
-      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ?? contentImageAlt(heroImageUrl)} layout="split" className="interior-hero-budget">
+      <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ? localAlt(heroImageAlt, altContext) : pageAlt(heroImageUrl)} layout="split" className="interior-hero-budget lx-hero">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
@@ -332,10 +333,18 @@ export function LandingPageTemplate({
           )}
           <InteriorHeroActions serviceSlug={related.serviceSlug} />
         </InteriorHero>
+      {/* Three facts a visitor can check, already stated elsewhere on the page. */}
+      <ul className="lx-facts" aria-label="At a glance">
+        {planningFrom && (
+          <li><strong>From {planningFrom}</strong><span>Planning range, confirmed at your free in-home visit</span></li>
+        )}
+        <li><strong>Free in-home visit</strong><span>60 to 90 minutes, with planning guidance and no obligation</span></li>
+        <li><strong>One written scope</strong><span>Agreed before construction begins, with one accountable team</span></li>
+      </ul>
       {(heroCopy.rest || planningFrom) && (
-        <div className="interior-hero-more">
+        <div className="interior-hero-more lx-hero-more">
           <div className="ed-shell">
-            {heroCopy.rest && <p className="ed-lede">{heroCopy.rest}</p>}
+            {heroCopy.rest && <ReadMore label="Read the overview"><p className="ed-lede">{heroCopy.rest}</p></ReadMore>}
             {planningFrom && <p className="ed-small interior-hero-more-note">Your exact range is confirmed at the free in-home visit</p>}
           </div>
         </div>
@@ -354,7 +363,7 @@ export function LandingPageTemplate({
           </div>
         </Section>
       )}
-<div className="interior-detail-body"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
+<div className="interior-detail-body lx-detail"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
 
       {/* ─── Cost and timeline expectation ───
           Cost guidance follows the concise scope and estimate sidebar. */}
@@ -408,7 +417,7 @@ export function LandingPageTemplate({
             </Reveal>
             <Reveal delay={60}>
               <ul
-                className="ed-matrix mt-[clamp(40px,5vw,72px)] list-none p-0"
+                className="ed-matrix lx-benefits mt-[clamp(40px,5vw,72px)] list-none p-0"
                 style={{ ['--ed-cols' as string]: benefits.length === 4 ? 4 : Math.min(benefits.length, 3), ['--ed-cell-h' as string]: '0' }}
               >
                 {/* Each benefit is one sentence and renders whole. Splitting it at a
@@ -427,8 +436,8 @@ export function LandingPageTemplate({
 
       {/* ─── Full-bleed image breather ─── */}
       {breatherImage && (
-        <section className="relative h-[clamp(220px,28vw,360px)] overflow-hidden" aria-hidden>
-          <Image src={breatherImage} alt="" fill sizes="100vw" className="object-cover img-brand-grade" />
+        <section className="relative h-[clamp(220px,28vw,360px)] overflow-hidden">
+          <Image src={breatherImage} alt={pageAlt(breatherImage)} fill sizes="100vw" className="object-cover img-brand-grade" />
           <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
         </section>
       )}
@@ -446,7 +455,7 @@ export function LandingPageTemplate({
           <div className="ed-panel ed-panel-reverse">
             <div className="ed-panel-media">
               {processImage && (
-                <Image src={processImage} alt={contentImageAlt(processImage, 'Remodel work in progress')} fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
+                <Image src={processImage} alt={pageAlt(processImage, 'Remodel work in progress')} fill className="object-cover img-brand-grade" sizes="(max-width: 820px) 100vw, 43vw" />
               )}
               <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRAIN_URL, backgroundRepeat: 'repeat', opacity: 0.03 }} />
             </div>
@@ -457,7 +466,7 @@ export function LandingPageTemplate({
                   <Accented text={headings.process} />
                 </h2>
               </Reveal>
-              <div className="ed-steps mt-[clamp(32px,4vw,56px)]">
+              <div className="ed-steps lx-steps mt-[clamp(32px,4vw,56px)]">
                 {processSteps.map((step, i) => (
                   <Reveal key={step.title} delay={Math.min(i, 5) * 60}>
                     <div className="ed-step">
@@ -524,7 +533,7 @@ export function LandingPageTemplate({
           <div className="ed-shell">
             <div className="mx-auto grid max-w-3xl gap-10">
               {/* Keep the guide index above centered copy at every width. */}
-              <aside aria-label="In this guide">
+              <aside aria-label="In this guide" className="lx-guide-index">
                 <Reveal>
                   <p className="ed-eyebrow">In this guide</p>
                   <ol className="m-0 list-none border-t p-0" style={line}>
@@ -551,12 +560,24 @@ export function LandingPageTemplate({
                       {breatherSrc && (
                         <LandingSectionBreather
                           src={breatherSrc}
-                          alt={contentImageAlt(breatherSrc, 'Remodeling design inspiration')}
+                          alt={pageAlt(breatherSrc, 'Remodeled home interior')}
                         />
                       )}
                       <Reveal delay={Math.min(i, 4) * 60}>
                         <h2 id={sectionId(section.heading)} className="ed-h2-sm ed-statement-wide scroll-mt-28"><NoOrphan text={section.heading} /></h2>
-                        {section.paragraphs?.map((p, j) => (
+                        {section.tiers && section.tiers.length > 0 && (
+                          <ul className="lx-tiers" style={{ ['--lx-tier-cols' as string]: section.tiers.length }}>
+                            {section.tiers.map((tier) => (
+                              <li key={tier.label}>
+                                <span className="lx-tier-label">{tier.label}</span>
+                                <strong>{tier.range}</strong>
+                                {tier.note ? <span className="lx-tier-note">{tier.note}</span> : null}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                        {(() => {
+                          const rendered = (section.paragraphs ?? []).map((p, j) => (
                           <p key={j} className={i === 0 && j === 0 && !costGuidance ? 'ed-lede mt-6 max-w-[52ch]' : j === 0 ? 'ed-body mt-6 max-w-[62ch]' : 'ed-body mt-4 max-w-[62ch]'}>
                             {typeof p === 'string' ? p : (
                               <>
@@ -566,7 +587,12 @@ export function LandingPageTemplate({
                               </>
                             )}
                           </p>
-                        ))}
+                        ));
+                          // Tier cards already carry the figures, so on phones the whole cost prose folds.
+                          if (section.tiers && section.tiers.length > 0 && rendered.length > 0) return <ReadMore label="Read the cost detail">{rendered}</ReadMore>;
+                          if (rendered.length < 2) return rendered;
+                          return <>{rendered[0]}<ReadMore>{rendered.slice(1)}</ReadMore></>;
+                        })()}
                         {section.subsections?.map((sub) => (
                           <div key={sub.heading} className="mt-8 border-t pt-6" style={line}>
                             <h3 className="ed-h4"><NoOrphan text={sub.heading} /></h3>
@@ -575,18 +601,26 @@ export function LandingPageTemplate({
                             ))}
                           </div>
                         ))}
-                        {section.links && section.links.length > 0 && (
-                          <ul className="ed-rule-list mt-8">
-                            {section.links.map((link) => (
-                              <li key={link.href}>
-                                <Link href={link.href} className="ed-rule-link">
-                                  {link.label}
-                                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
+                        {section.links && section.links.length > 0 && (() => {
+                          // A run of "<service> in <city>" links: on phones each shows its city in two
+                          // columns, and the full anchor text stays in the HTML for search and screen readers.
+                          const cityRun = section.links.length >= 4 && section.links.every((link) => / in [A-Z][A-Za-z ]+$/.test(link.label));
+                          return (
+                            <ul className={cityRun ? 'ed-rule-list lx-city-links mt-8' : 'ed-rule-list mt-8'}>
+                              {section.links.map((link) => {
+                                const at = link.label.lastIndexOf(' in ');
+                                return (
+                                  <li key={link.href}>
+                                    <Link href={link.href} className="ed-rule-link">
+                                      {cityRun ? <span><span className="lx-city-prefix">{link.label.slice(0, at + 4)}</span>{link.label.slice(at + 4)}</span> : link.label}
+                                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                                    </Link>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          );
+                        })()}
                       </Reveal>
                     </div>
                   );
@@ -602,7 +636,7 @@ export function LandingPageTemplate({
         <Section surface="deep" spacing="xl" edge>
           <div className="ed-shell">
             <Reveal>
-              <p className="ed-eyebrow">Design inspiration</p>
+              <p className="ed-eyebrow">A closer look</p>
               <h2 className="ed-h2 ed-statement-wide">
                 <Accented text={headings.proof} />
               </h2>
@@ -615,7 +649,7 @@ export function LandingPageTemplate({
                     <article className="flex h-full flex-col" style={{ border: '1px solid var(--ed-line)' }}>
                       <ProjectInspirationImage
                         afterSrc={imageSlots.proof[index] ?? project.afterImageUrl}
-                        afterAlt={project.title}
+                        afterAlt={localAlt(toSentenceCase(project.title), altContext)}
                         aspectClass={proof.projects!.length === 1 ? 'aspect-[16/10] md:aspect-[21/9]' : undefined}
                         sizes={proof.projects!.length === 1 ? '(max-width: 1023px) 100vw, 80vw' : undefined}
                       />
@@ -662,36 +696,24 @@ export function LandingPageTemplate({
                 <Accented text={headings.faq} />
               </h2>
             </div>
-            {faqDisplay === 'visible' ? (
-              <div className="w-full border-t" style={line}>
-                {faqs.map((faq) => (
-                  <div key={faq.question} className="border-b py-6" style={line}>
-                    <h3 className="ed-h4 text-left">{faq.question}</h3>
-                    <p className="ed-body mt-3 text-[0.9375rem]"><RegistrationText text={faq.answer} /></p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <Accordion type="single" collapsible className="w-full border-t" style={line}>
-                {faqs.map((faq, i) => (
-                  <AccordionItem key={i} value={`faq-${i}`} className="border-0 border-b" style={line}>
-                    <AccordionTrigger className="ed-h4 py-6 text-left hover:no-underline [&[data-state=open]]:underline [&[data-state=open]]:underline-offset-4">
-                      {faq.question}
-                    </AccordionTrigger>
-                    <AccordionContent className="ed-body pb-7 text-[0.9375rem]"><RegistrationText text={faq.answer} /></AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            )}
+            {/* Native disclosure: every answer stays in the HTML for search and
+                assistive technology, and one question is open at a time. */}
+            <div className="lx-faq w-full border-t" style={line}>
+              {faqs.map((faq, i) => (
+                <details key={faq.question} name="landing-faq" open={i === 0} className="border-b" style={line}>
+                  <summary><h3 className="ed-h4 text-left">{faq.question}</h3></summary>
+                  <p className="ed-body text-[0.9375rem]"><RegistrationText text={faq.answer} /></p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </Section>
 
       {/* ─── Related links & posts ─── */}
       <Section surface="deep" spacing="lg" edge>
-        <div className="ed-shell space-y-12">
-          <Reveal><RelatedLinks {...related} /></Reveal>
-          {manifestPath && (<Reveal><RelatedPostCards path={manifestPath} /></Reveal>)}
+        <div className="ed-shell">
+          <RelatedLinks {...related} manifestPath={manifestPath} exclude={(sections ?? []).flatMap((section) => section.links?.map((link) => link.href) ?? [])} usedImages={[heroImageUrl, breatherImage, processImage, ...imageSlots.sectionBreathers, ...imageSlots.proof, featuredProject?.beforeImageUrl, featuredProject?.afterImageUrl, ...(featuredRooms?.rooms.map((room) => room.src) ?? [])]} />
         </div>
       </Section>
 

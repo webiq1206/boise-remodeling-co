@@ -1,3 +1,4 @@
+import { contentImageAlt } from '@/shared/contentImageAlt';
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { ArrowRight, Check } from "lucide-react";
@@ -38,10 +39,10 @@ export function BudgetInclusionsSection() {
           10% opacity under a flat 75% scrim AND a 90% gradient - effectively
           invisible. One gradient over a somewhat-present image keeps the copy
           fully legible while letting the photograph actually read as a photo. */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0">
         <Image
           src={SITE_IMAGES.budgetDetail}
-          alt=""
+          alt={contentImageAlt(SITE_IMAGES.budgetDetail, 'Sage green kitchen island with a white quartz counter', { subject: 'kitchen remodel' })}
           fill
           loading="lazy"
           sizes="100vw"

@@ -825,3 +825,95 @@ Every time, in this order, in the Replit workspace:
 This applies whoever does the pull: a person, Replit's assistant or Claude.
 Never run a schema command against the live database. The same checklist is in
 `replit.md`, which Replit's assistant reads.
+
+## Interior page refinement (owner approval, 19 November 2026)
+
+Service, city and area landing pages, blog articles and guides were refined to
+the homepage standard. Styles live in `app/interior-refinement.css` (imported
+last in `app/layout.tsx`); the homepage is untouched.
+
+- **City page photographs are distinct.** Each `/images/city-service/<service>__<city>.webp`
+  is its own photograph from the owner's Photo Dump (Drive, "2026-11 Instant
+  estimate and website photos"), with its own description in `PATH_ALT`
+  (`shared/contentImageAlt.ts`). Do not copy a service hero over a city file
+  again. When a file changes, update its description, any `blogImageRegistry`
+  entry that uses it, and `VISUAL_DUPLICATE_GROUPS`
+  (`tests/landing-image-adjacency.test.ts` recomputes the hashes).
+- **Landing template** (`components/seo/LandingPageTemplate.tsx`): a fact row
+  under the hero (`.lx-facts`, wording already used elsewhere on the page),
+  benefits two across on phones, process steps that swipe on phones, and
+  questions as native `<details>` so every answer stays in the HTML. The page
+  ends with ONE onward-links block, "Keep exploring" (`components/seo/RelatedLinks.tsx`):
+  places and services as photo cards (a swipe row on phones, four across from
+  tablet up) that keep their full anchor text for search, guides and articles
+  as one list with thumbnails, and no link shown twice. Each card shows the
+  photograph of the page it opens. Do
+  not stack separate link lists under it again (owner, 19 November 2026).
+- **Phones keep copy before the photograph in the landing hero.** That is the
+  earlier hero budget decision (headline and action in the first screen at
+  360 x 640); do not put the image first.
+- **Articles and guides**: quiet header and date line, one "On this page" row
+  on phones, downloads and the guide note after the article, one estimate
+  prompt at the end on phones, related pages with their photographs. On
+  desktop the reading column and the sticky rail fill the container.
+- `.guide-section-details[open] .guide-section-summary > span` must keep the
+  child combinator: without it the rule hid the last two words of every
+  article heading (`.m-keep`).
+- **Image alt text is local** (owner, 19 November 2026). Every content image's
+  alt is "<work> in <city>, Idaho: <what the picture shows>", built by
+  `localAlt()` in `shared/localAlt.ts`. `contentImageAlt()` and
+  `getBlogImageAlt()` apply it; a page passes its own service and city, and a
+  file's path or a post's topic tags supply them otherwise, with Boise as the
+  default place. Owner direction: no qualifier ("idea", "concept",
+  "representative") in or beside an image description. New images go through
+  one of those helpers, never a bare string. Guard: `tests/local-alt.test.ts`.
+  Brand lockups in the shared header and footer keep an empty alt because
+  their link carries the company name.
+- **No qualifier labels near photographs** (owner, 19 November 2026). Eyebrows,
+  headings, captions, card titles and image-sitemap titles do not say "design
+  inspiration", "see the possibilities", "design ideas for", "concept",
+  "representative" or "final layouts are tailored to your property". Sections
+  use plain subject labels ("A closer look", "Inside a kitchen remodel in
+  Meridian", "Gallery"). The same labels must not claim a photograph is a
+  completed customer job ("recent project", "our client's kitchen"). The
+  `/design-ideas` page keeps its name and URL.
+- **Second pass, 19 November 2026.**
+  - Blog photographs: 31 hero images that showed staged props were replaced
+    with prop-free Photo Dump photographs (same file names, new descriptions).
+    `gallery-kitchen-eagle-after.webp` still shows a bowl and a plant; it is half
+    of a before/after pair and was left.
+  - Keep exploring cards never repeat a picture already on the page or in
+    another card (`shared/exploreImages.ts`, tested for every area page). Area
+    pages gain a "Nearby areas" card group from the internal-links manifest.
+    The guides list holds three, four or six links so its rows are full.
+  - Cost tier cards (`costTiers` in `shared/seoContent.ts`) restate figures
+    already in that service's cost copy. `tests/cost-tiers.test.ts` fails on a
+    figure that is not in the copy. Do not add a tier to a service whose copy
+    gives one range, and never put a figure in a tier note.
+  - Phones: blog, guide, area and service index cards are compact rows (112px
+    photograph, name) after the lead item; long-form landing paragraphs after
+    the first sit behind "Read more" (`components/marketing/ReadMore.tsx`, a
+    native details that is always open from tablet up).
+
+- **Phone length (19 November 2026).** Landing pages shorten on phones without
+  removing copy from the HTML: the hero overview and the prose of a cost
+  section sit in `ReadMore` (closed on phones, open from 701px), the project
+  aside beside the scope list is hidden on phones (the sticky bar carries the
+  same action), a run of four or more "<service> in <city>" links shows as two
+  columns of city names (`lx-city-links`, the service words stay for screen
+  readers) and cost tiers are compact rows (`lx-tiers`). Do not delete copy to
+  save height.
+- **No photograph stretched past its own pixels.** `shared/smallSourceImages.ts`
+  lists every blog photograph narrower than the 1260px article banner; the
+  banner stays at that width, centred. Six remain at 1024px because the Photo
+  Dump has no unused 2000px photograph of those subjects. Replace the file,
+  delete its line. Guard: `tests/small-source-images.test.ts`.
+- **No photograph twice on a page.** Article figures and "Related resources"
+  cards compare pictures by `imageIdentity()`, not by path.
+- **Guards in prebuild:** `verify:interior-images` (`tests/local-alt.test.ts`,
+  `tests/landing-image-adjacency.test.ts`, `tests/cost-tiers.test.ts`,
+  `tests/small-source-images.test.ts`).
+- Contact has one area card, call and text side by side and no repeated
+  photo band; seven-card grids use `lx-seven` (four, then three that fill the
+  row); document pages (warranty, legal) use one gutter on phones.
+
