@@ -72,7 +72,7 @@ export function EstimatePromptBand({
             >
               {bullets.map((b, i) => (
                 <li key={b} style={{ maxWidth: "none", margin: 0 }} className="ed-body flex items-start gap-4 text-[0.875rem]">
-                  {/* Owner rule: accents never carry small text. The number takes the band's text colour; the accent is the rule above it. */}
+                  {/* Owner rule: accents never carry small text. The number takes the band's text color; the accent is the rule above it. */}
                   <span className="ed-small shrink-0 pt-1" style={{ borderTop: "2px solid var(--ed-accent)" }}>
                     {String(i + 1).padStart(2, "0")}
                   </span>

@@ -1033,6 +1033,6 @@ last in `app/layout.tsx`); the homepage is untouched.
 - **Bond**: never say or imply the company carries a bond. The public-claims
   guard has a "carry a bond" pattern beside "bonded".
 - **Accents never carry small text**: small numbered markers take the text
-  colour with the accent as a rule above them.
+  color with the accent as a rule above them.
 - **Not done, owner's call**: SW-2 (one engine-sourced range per project
   type). See the PR for why.
