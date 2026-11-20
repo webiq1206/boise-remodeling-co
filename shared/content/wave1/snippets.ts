@@ -1,7 +1,7 @@
 /** Reusable HTML snippets for Treasure Valley long-form content */
 
 export const CITIES_LIST =
-  'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star';
+  'Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell';
 
 export const PILLAR_COST = '/guides/boise-remodeling-cost-guide';
 export const PILLAR_TV = '/guides/treasure-valley-remodeling-guide';
@@ -43,7 +43,9 @@ export function buildSectionsHtml(sections: ContentSection[]): string {
         block += `<p>${p}</p>`;
       }
       if (s.list?.length) {
-        block += `<ul>${s.list.map((li) => `<li>${li}</li>`).join('')}</ul>`;
+        // A list of bare links is a link list: it gets 44px rows on touch widths (SEO audit REM-T9).
+        const linkList = s.list.every((li) => /^<a\s[^>]*>[^<]*<\/a>$/.test(li.trim()));
+        block += `<ul${linkList ? ' class="lx-link-list"' : ''}>${s.list.map((li) => `<li>${li}</li>`).join('')}</ul>`;
       }
       if (s.table) {
         const cls = s.table.className ?? 'cost-table';

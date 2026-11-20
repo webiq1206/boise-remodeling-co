@@ -111,7 +111,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   {/* 6. Who you are hiring. */}
   <section className="f-section f-container" id="who-you-are-hiring">
    <div className="fr-founder">
-    <img className="family-people-photo" src="/images/about/perkins-family-full.webp" alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho" width="2048" height="2048" loading="lazy"/>
+    <img className="family-people-photo" src="/images/about/perkins-family-full.webp" alt="P5 Home Co founder in Meridian, Idaho: Nick Perkins with his wife and five children at a pumpkin patch" width="2048" height="2048" loading="lazy"/>
     <div>
      <p className="f-eyebrow">WHO YOU ARE HIRING</p>
      <h2>Nick Perkins, founder.</h2>
@@ -142,7 +142,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   <ServiceArea image={{src:'/family/drive/landscape-3-double-vanity-and-walk-in-shower.webp',alt:localAlt('Oak double vanity beside a tiled walk-in shower',{subject:'bathroom remodel'}),width:1200,height:628}}>
    <p className="f-eyebrow">AT HOME IN IDAHO</p>
    <h2>Local people.<br/><em>Valley-wide reach.</em></h2>
-   <p>Serving homeowners in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.</p>
+   <p>Serving homeowners in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County.</p>
    <nav className="fr-cities" aria-label="Service area cities">{cities.map(city=><a key={city} href={`/areas/${city.toLowerCase().replaceAll(" ","-")}`} aria-label={`Remodeling contractors in ${city}`}>{city}</a>)}</nav>
   </ServiceArea>
 

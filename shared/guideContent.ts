@@ -177,7 +177,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
     title: 'Treasure Valley Remodeling Guide',
     seoTitle: 'Treasure Valley Remodeling Guide | Idaho',
     metaDescription:
-      'Master guide to remodeling in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
+      'Master guide to remodeling in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County.',
     excerpt:
       'Your starting point for remodeling anywhere in the Treasure Valley - city guides, permits, and links to local services.',
     content: TREASURE_VALLEY_GUIDE_HTML,
@@ -192,7 +192,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       {
         question: 'What cities does Boise Remodeling Co serve?',
         answer:
-          'We serve Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
+          'We serve Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County.',
       },
       {
         question: 'Where are remodeling permits processed?',

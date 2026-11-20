@@ -27,14 +27,17 @@ import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 import { RETIRED_STREET } from './retiredStreet.ts';
 
 const BRAND = ' | Boise Remodeling Co';
+// The owner's nine-city service area, 20 November 2026.
 const AREAS = [
   'Boise',
   'Meridian',
-  'Nampa',
   'Eagle',
+  'Garden City',
+  'Nampa',
   'Kuna',
-  'Caldwell',
   'Star',
+  'Middleton',
+  'Caldwell',
   'Ada County',
   'Canyon County',
 ];
@@ -78,13 +81,16 @@ test('contractor schema preserves contacts, served cities and parent without a s
   assert.deepEqual(
     (business.areaServed as Array<{ '@type': string; name: string }>).map((area) => [area['@type'], area.name]),
     [
+      // The owner's nine-city service area, 20 November 2026.
       ['City', 'Boise'],
       ['City', 'Meridian'],
-      ['City', 'Nampa'],
       ['City', 'Eagle'],
+      ['City', 'Garden City'],
+      ['City', 'Nampa'],
       ['City', 'Kuna'],
-      ['City', 'Caldwell'],
       ['City', 'Star'],
+      ['City', 'Middleton'],
+      ['City', 'Caldwell'],
       ['AdministrativeArea', 'Ada County'],
       ['AdministrativeArea', 'Canyon County'],
     ],
@@ -95,7 +101,6 @@ test('contractor schema preserves contacts, served cities and parent without a s
   );
   assert.deepEqual(business.sameAs, BUSINESS_INFO.sameAs);
   const encoded = JSON.stringify(business);
-  assert.equal(encoded.includes('Garden City'), false);
   assert.equal(encoded.includes('Jared'), false);
 
   const organization = generateOrganizationSchema();
@@ -269,15 +274,15 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
-  assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
-  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
-  assert.ok(eagleMeta.length <= 160);
-  assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
-  assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
-  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
-  assert.ok(boiseMeta.length <= 160);
-  assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
-  assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
+  // SEO audit REM-T3 (20 November 2026): one title and description pattern on every area page.
+  for (const city of ['Boise', 'Eagle', 'Middleton']) {
+    const row = rows.find((entry) => entry.path === `/areas/${city.toLowerCase()}`);
+    assert.equal(row?.title, `Remodeling contractor in ${city}, ID | Boise Remodeling Co`);
+    assert.equal(row?.description, `Remodeling contractor in ${city}, Idaho for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.`);
+    assert.equal(/part of P5/i.test(row?.description ?? ''), false);
+  }
+  // SEO audit REM-T1: the hub is the Treasure Valley page; /services/kitchen-remodel/boise owns Boise.
+  assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Treasure Valley kitchen remodeling/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Design-build remodeler, part of P5/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
   assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler \| Boise Remodeling Co/);
@@ -285,7 +290,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {
-  const footerLine = 'Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County';
+  const footerLine = 'Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County';
   // Phase 2: the footer is the shared family SiteFooter; this site's facts live in lib/familyBrand.ts.
   // The family row names every live family site; Boise ADU Co is left out until its own site exists.
   const footer = readFileSync('lib/familyBrand.ts', 'utf8');
@@ -339,7 +344,7 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   for (const file of [llms, full]) {
     assert.equal(/Public representative|staffed storefront/i.test(file), false);
     assert.equal(RETIRED_STREET.test(file), false);
-    assert.match(file, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star/);
+    assert.match(file, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell/);
     assert.match(file, /hello@boiseremodeling\.co/);
     assert.match(file, /Last updated: 2026-10-16/);
     assert.match(file, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);

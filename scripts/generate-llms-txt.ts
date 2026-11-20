@@ -16,7 +16,8 @@ import fs from 'fs';
 import path from 'path';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '../shared/publicClaims';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig';
-import { SERVICES, CITIES, SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE } from '../shared/contentData';
+import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile';
+import { SERVICES, CITIES, SERVICE_AREA_CITY_NAMES, SERVICE_AREA_CITY_COUNTY, SERVICE_AREA_SENTENCE } from '../shared/contentData';
 import { GUIDE_PAGES } from '../shared/guideContent';
 import { CONTENT_HUBS } from '../shared/contentHubs';
 import { BLOG_POSTS } from '../shared/blogContent';
@@ -29,8 +30,8 @@ const CONTACT_BLOCK =
   `${publicFooterLine()}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
   `Idaho Registered Contractor #8381215 and insured.`;
 
-const adaCities = SERVICE_AREA_CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
-const canyonCities = SERVICE_AREA_CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
+const adaCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'ada');
+const canyonCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'canyon');
 
 const pillarGuides = GUIDE_PAGES.filter((g) => g.guideType === 'hub-pillar' || g.guideType === 'master');
 const cityGuides = GUIDE_PAGES.filter((g) => g.guideType === 'location');
@@ -38,7 +39,7 @@ const neighborhoodGuides = GUIDE_PAGES.filter((g) => g.guideType === 'neighborho
 
 const SUMMARY = publishFoundingCopy(
   `Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, ` +
-  `basements and ADUs in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. ` +
+  `basements and ADU conversions in Boise, Idaho and the Treasure Valley. Founded 2020, part of P5 Home Co. ` +
   `Serving ${SERVICE_AREA_SENTENCE}. Phone ${SITE_CONFIG.phone}.`,
 );
 
@@ -59,13 +60,19 @@ function buildShort(): string {
 
   lines.push('## Services', '');
   for (const s of SERVICES) {
+    // SEO audit XS-07: Boise Construction Co builds new detached ADUs (owner split,
+    // 31 October 2026, shared/content/serviceOwnership.ts); this site converts spaces.
+    if (s.slug === 'adu') {
+      lines.push(`- [ADU conversions](${url('/services/adu')}): ${s.shortDescription} New detached ADUs are built by Boise Construction Co (https://boiseconstruction.co/services/adu).`);
+      continue;
+    }
     lines.push(`- [${s.name}](${url(`/services/${s.slug}`)}): ${s.shortDescription}`);
   }
   lines.push(
     `- [RE-10 repairs (Boise Handyman Co)](${HANDYMAN_RE10}): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.`,
   );
   lines.push(
-    `- [Estimate From Your Plans](${url('/remodel-plans-boise')}): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules on the sheets. Free, no obligation, and the homeowner confirms every measurement before anything is priced.`,
+    `- [Send your remodel plans](${url('/remodel-plans-boise')}): attach floor plans, schedules, photos and documents to a project request. The team reviews the drawings and the scope before preparing an estimate; no price is shown from the drawings on the page. Free, with no obligation.`,
   );
   lines.push(
     `- [All Services](${url('/services')}): plus city pages at /services/{service}/{city} and [Service Areas](${url('/areas')}).`,
@@ -102,6 +109,7 @@ function buildShort(): string {
   lines.push('## About and contact', '');
   lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co.`));
   lines.push(`- [Contact](${url('/contact')})`);
+  lines.push(`- Parent company profiles (P5 Home Co): [Google](${P5_GBP_URL}), [Facebook](${P5_FACEBOOK_URL}), [Instagram](${P5_INSTAGRAM_URL})`);
   lines.push(
     `- [Instant remodel estimate](${url('/instant-estimate')}): answer a few questions and see a preliminary price range on screen. Free, with no appointment. It is a range for budgeting, not a final price; a firm written proposal follows a site visit.`,
   );
@@ -134,7 +142,8 @@ function buildFull(): string {
     `${SITE_CONFIG.name} is a residential design-build remodeling company serving the Treasure ` +
       `Valley since 2020 and one of the P5 Home Co family of companies. We remodel ` +
       `existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ` +
-      `accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means ` +
+      `ADU conversions of garages, basements and attached spaces, outdoor living spaces and ` +
+      `aging-in-place work. New detached ADUs are built by sister company Boise Construction Co. Design-build means ` +
       `design direction, estimating, permitting and construction are delivered by one accountable ` +
       `company with one point of contact, which removes the handoff between a designer and a general contractor and ` +
       `keeps the drawings and the budget on the same schedule. Every project includes a written ` +
@@ -149,10 +158,12 @@ function buildFull(): string {
   lines.push('- Business type: Residential design-build remodeling contractor');
   if (SHOW_FOUNDING_YEAR) lines.push('- Founded: 2020');
   lines.push('- Parent company: P5 Home Co (https://p5homeco.com)');
+  lines.push(`- Parent company profiles: Google ${P5_GBP_URL}, Facebook ${P5_FACEBOOK_URL}, Instagram ${P5_INSTAGRAM_URL}`);
   lines.push('- Service model: One accountable team for design, permits, and construction');
   lines.push(`- Contact: ${SITE_CONFIG.email} (${url('/contact')})`);
   lines.push(`- Instant estimate (a preliminary price range on screen, not a final price): ${url('/instant-estimate')}`);
-  lines.push(`- Send project details: ${url('/estimate')}`, '');
+  lines.push(`- Send project details: ${url('/estimate')}`);
+  lines.push(`- Send remodel plans with a project request: ${url('/remodel-plans-boise')}`, '');
 
   lines.push('## Service area', '');
   lines.push('We remodel homes in these cities, across Ada County and Canyon County:', '');
@@ -167,7 +178,13 @@ function buildFull(): string {
   );
 
   lines.push('## Services', '');
-  for (const s of SERVICES) lines.push(`- ${s.name}: /services/${s.slug} - ${s.shortDescription}`);
+  for (const s of SERVICES) {
+    if (s.slug === 'adu') {
+      lines.push(`- ADU conversions: /services/adu - ${s.shortDescription} New detached ADUs are built by Boise Construction Co (https://boiseconstruction.co/services/adu).`);
+      continue;
+    }
+    lines.push(`- ${s.name}: /services/${s.slug} - ${s.shortDescription}`);
+  }
   lines.push(
     '',
     `Each service has a dedicated page per city at /services/{service-slug}/{city-slug} for ` +
@@ -206,7 +223,7 @@ function buildFull(): string {
   lines.push(
     '- How much does a remodel cost in Boise? It depends on the room, the scope (refresh versus ' +
       'full gut and layout change) and the finish level far more than on square footage. The ' +
-      'estimator gives a planning range in about a minute; the cost guide at ' +
+      'instant estimate gives a preliminary price range on screen; the cost guide at ' +
       '/guides/boise-remodeling-cost-guide explains what moves the number.',
   );
   lines.push(

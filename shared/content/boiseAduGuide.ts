@@ -6,7 +6,7 @@
  */
 
 export const BOISE_ADU_GUIDE_QUICK_ANSWER =
-  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. Most Treasure Valley ADU projects plan $90,000 to $300,000 or more depending on whether the unit is attached, detached, or a garage conversion, with compact units starting near $90,000, and take 4 to 8 months from design through final inspection.';
+  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. Garage conversions often plan $90,000 to $180,000 and attached ADUs and basement conversions $120,000 to $250,000, with compact units starting near $90,000; most projects take 4 to 8 months from design through final inspection. New detached ADUs are built by Boise Construction Co.';
 
 export const BOISE_ADU_GUIDE_TAKEAWAYS = [
   'Boise updated its zoning code in December 2023 and made ADUs easier to approve in most residential zones - verify current standards with the City of Boise Planning Division before design.',
@@ -29,7 +29,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'How much does an ADU cost to build in the Treasure Valley?',
     answer:
-      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $90,000 to $180,000; attached ADUs and basement conversions $120,000 to $250,000; detached new-build ADUs $180,000 to $300,000 or more. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
+      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $90,000 to $180,000; attached ADUs and basement conversions $120,000 to $250,000; detached new-build ADUs are built by our sister company Boise Construction Co, which publishes its own detached ADU costs. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
   },
   {
     question: 'Do ADUs need their own utility connections?',
@@ -81,7 +81,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
 export const BOISE_ADU_GUIDE_HTML = `
 <h2>What is an ADU and why are they growing in Boise?</h2>
 <p>An accessory dwelling unit (ADU) is a self-contained second home on a single-family lot: its own kitchen, bathroom, and sleeping space. Treasure Valley homeowners build them for aging parents, adult children, home offices with rental flexibility, and long-term rental income. Boise's housing shortage has made legal second units one of the most valuable improvements a homeowner can add, and recent zoning changes made them substantially easier to approve.</p>
-<p>Boise Remodeling Co designs and builds <a href="/services/adu">ADUs and guest houses</a> in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, as a single design-build contract: feasibility, design, permits, and construction under one roof.</p>
+<p>Boise Remodeling Co designs and builds <a href="/services/adu">ADUs and guest houses</a> in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County, as a single design-build contract: feasibility, design, permits, and construction under one roof.</p>
 
 <h2>Boise ADU rules under the current zoning code</h2>
 <p>Boise adopted a modern zoning code in December 2023 that broadly allows ADUs in residential zones. In general terms: one ADU is allowed on most single-family lots, detached units are typically capped around 900 square feet, and standards govern height, setbacks, and design compatibility. The city also offers a set of pre-approved ADU plan sets (roughly 280 to 695 square feet) that can reduce design cost and shorten plan review for homeowners whose lots and goals fit them - we evaluate whether a pre-approved plan or a custom design serves you better during feasibility. Rules evolve, so we verify the current standards with the City of Boise Planning Division at the start of every project - and you should too before committing to a design.</p>
@@ -107,10 +107,9 @@ export const BOISE_ADU_GUIDE_HTML = `
   <tbody>
     <tr><td>Garage conversion</td><td>$90,000 - $180,000</td><td>3 to 5 months</td></tr>
     <tr><td>Attached ADU / basement conversion</td><td>$120,000 - $250,000</td><td>4 to 6 months</td></tr>
-    <tr><td>Detached new-build ADU</td><td>$180,000 - $300,000+</td><td>5 to 8 months</td></tr>
   </tbody>
 </table>
-<p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. Foundation work, separate utility runs, and premium finishes push detached units toward the top of the band. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or <a href="/#request">request a quote</a> for your property.</p>
+<p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. A freestanding backyard unit is a new build by our sister company Boise Construction Co: see its <a href="https://boiseconstruction.co/blog/adu-cost-boise">detached ADU costs</a>. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or <a href="/#request">request a quote</a> for your property.</p>
 
 <h2>Permits, timeline, and what to expect</h2>
 <p>Every legal ADU needs building, plumbing, electrical, and mechanical permits, plus zoning compliance. Typical sequence: feasibility and design (6 to 10 weeks), engineering and plan submission, plan review (varies by jurisdiction and season), then construction with inspections at each phase. We handle <a href="/blog/boise-permit-guide">permits</a> in-house for both Ada and Canyon County jurisdictions and build review time into the schedule from day one, so the calendar you see at design lock reflects reality.</p>

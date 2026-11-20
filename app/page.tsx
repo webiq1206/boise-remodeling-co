@@ -1,5 +1,6 @@
 import { ApprovedHome } from "@/components/approved/ApprovedHome";
 import { ApprovedHomeHero } from "@/components/approved/ApprovedHomeHero";
+import { GoogleReviews } from "@/components/approved/GoogleReviews";
 import { HeroConversion } from "@/components/approved/HeroConversion";
 import { Reveal } from "@/components/Reveal";
 import { BudgetInclusionsSection } from "@/components/sections/BudgetInclusionsSection";
@@ -94,6 +95,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
+                <GoogleReviews />
               </Reveal>
             </div>
           </div>

@@ -9,6 +9,7 @@ generateFAQSchema,
 generateSpeakableSchema,
 } from '@/lib/schema';
 import { generateSafePageTitle,getBaseUrl } from '@/lib/seo';
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { CONTENT_AUTHOR } from '@/shared/authors';
 import {
 getAbsoluteImageUrl,
@@ -79,11 +80,13 @@ export default async function GuidePage(props: { params: Promise<{ slug: string 
   const path = guidePath(guide.slug);
 
   const articleSchema = generateArticleSchema({
-    title: guide.title,
+    // The headline is the visible H1 (sentence case), SEO audit REM-T7.
+    title: toSentenceCase(guide.title),
     description: guide.excerpt,
     publishedAt: guide.publishedAt,
     updatedAt: guide.updatedAt,
     author: CONTENT_AUTHOR.name,
+    authorUrl: CONTENT_AUTHOR.url,
     slug: guide.slug,
     pathPrefix: 'guides',
     image: getAbsoluteImageUrl(getBlogHeroImage(guide.slug, guide.heroImage), getBaseUrl()),

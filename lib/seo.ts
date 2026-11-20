@@ -7,6 +7,7 @@
 import { SERVICE_AREA_CITY_NAMES } from '@/shared/contentData';
 import { SHOW_UNPROVEN_SATISFACTION_GUARANTEE } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { getExternalProfileUrls } from '@/shared/gbpProfile';
 import {
   publicPreviewPath,
@@ -193,11 +194,12 @@ export function generateCityServiceTitle(serviceName: string, cityName: string):
   for (const name of names) {
     for (const region of ['Idaho', 'ID'] as const) {
       const candidate = `${name} in ${cityName}, ${region}`;
-      if (candidate.length <= budget) return candidate;
+      // One case style for the whole template (SEO audit REM-T2): sentence case.
+      if (candidate.length <= budget) return toSentenceCase(candidate);
     }
   }
   const fallback = `${names[names.length - 1]} in ${cityName}`;
-  return fallback.length <= budget ? fallback : fallback.slice(0, budget).trim();
+  return toSentenceCase(fallback.length <= budget ? fallback : fallback.slice(0, budget).trim());
 }
 
 /**

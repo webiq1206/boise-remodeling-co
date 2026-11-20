@@ -997,3 +997,42 @@ last in `app/layout.tsx`); the homepage is untouched.
   another service's work, described by what it shows), or none.
   Guard: `tests/landing-image-adjacency.test.ts`, which renders Keep exploring
   for every service hub.
+
+## SEO audit fixes and owner answers (20 November 2026)
+
+- **`/remodel-plans-boise` is a "send your plans with a project request"
+  page** (SW-1). The form is the shared document estimator, which takes a
+  request and shows no price. Do not promise a price from drawings, and do not
+  bring back the HowTo schema or "see a real number" (`shared/content/plansContent.ts`).
+  URL, footer link ("Send your plans") and sitemap entry stay.
+- **Service area is the owner's nine cities**, in this order: Boise, Meridian,
+  Eagle, Garden City, Nampa, Kuna, Star, Middleton, Caldwell
+  (`SERVICE_AREA_CITY_NAMES`). Every service-area sentence, `areaServed` and
+  llms.txt name all nine. `SERVICE_AREA_CITIES` holds only the cities with a
+  page here (cards, footer links, homepage city row); Garden City has no page,
+  so it is named and never linked.
+- **Profiles**: P5 Home Co's Facebook is the vanity
+  `https://www.facebook.com/p5homeco`, its Instagram
+  `https://www.instagram.com/p5_home_co`; both sit with the GBP in the parent
+  organization's `sameAs` only. No boiseremodeling profile exists.
+- **Footer contractor line**: "P5 Home Co LLC, Idaho Registered Contractor
+  #8381215".
+- **Author**: articles and guides are by Nick Perkins, founder of P5 Home Co
+  (`shared/authors.ts`): a visible byline linking p5homeco.com/about and an
+  Article author Person with the P5 graph's `@id`. The company is publisher.
+- **Reviews**: the two Google reviews of P5 Home Co sit beside the homepage
+  request form (`shared/googleReviews.ts`, `components/approved/GoogleReviews.tsx`).
+  Verbatim, whole sentences cut only, no stars, no count, no Review or
+  AggregateRating schema. The only local proof the site may cite is "a full
+  kitchen and home remodel in Boise's North End", always with that review as
+  its source (North End guide).
+- **ADUs**: this site covers ADU conversions (garage, basement, attached);
+  Boise Construction Co owns detached ADUs. `/blog/adu-cost-boise` is the ADU
+  conversion cost post and links Construction's post for detached costs; no
+  detached ADU range appears here.
+- **Bond**: never say or imply the company carries a bond. The public-claims
+  guard has a "carry a bond" pattern beside "bonded".
+- **Accents never carry small text**: small numbered markers take the text
+  color with the accent as a rule above them.
+- **Not done, owner's call**: SW-2 (one engine-sourced range per project
+  type). See the PR for why.

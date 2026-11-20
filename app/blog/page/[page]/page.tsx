@@ -39,7 +39,7 @@ export async function generateMetadata(props: { params: Promise<{ page: string }
     buildPageMetadata({
       kind: 'blog',
       path: blogPagePath(page),
-      titleOverride: `Remodeling Insights & Ideas, Page ${page} of ${pages}`,
+      titleOverride: `Remodeling insights, page ${page} of ${pages}`,
       descriptionOverride: `Page ${page} of ${pages}. ${BLOG_DESCRIPTION}`,
     }),
     '/blog/page/[page]',

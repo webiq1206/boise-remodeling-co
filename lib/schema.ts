@@ -5,11 +5,11 @@ import {schemaTime} from './schemaTime';
  */
 
 import { BUSINESS_INFO, getBaseUrl } from './seo';
-import { SERVICE_AREA_CITIES, SERVICE_AREA_COUNTIES, SERVICES } from '@/shared/contentData';
+import { SERVICE_AREA_CITY_NAMES, SERVICE_AREA_COUNTIES, SERVICES } from '@/shared/contentData';
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
-import { P5_FACEBOOK_URL, P5_GBP_URL } from '@/shared/gbpProfile';
+import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '@/shared/gbpProfile';
 
 interface SchemaContext {
   '@context': string;
@@ -50,9 +50,9 @@ export const P5_PARENT_ORGANIZATION = {
   '@id': P5_ORG_ID,
   name: 'P5 Home Co',
   url: P5_ORIGIN,
-  // P5 Home Co's Facebook page and its Google Business Profile are the
+  // P5 Home Co's Facebook page, Instagram and Google Business Profile are the
   // family's only profiles; listed here on the parent, never on this brand.
-  sameAs: [P5_FACEBOOK_URL, P5_GBP_URL],
+  sameAs: [P5_FACEBOOK_URL, P5_INSTAGRAM_URL, P5_GBP_URL],
 } as const;
 /**
  * Year-free square mark. The seal still reads EST 2020, so schema logo uses
@@ -76,6 +76,7 @@ const CITY_WIKIPEDIA: Record<string, string> = {
   Star: 'https://en.wikipedia.org/wiki/Star,_Idaho',
   Middleton: 'https://en.wikipedia.org/wiki/Middleton,_Idaho',
   Caldwell: 'https://en.wikipedia.org/wiki/Caldwell,_Idaho',
+  'Garden City': 'https://en.wikipedia.org/wiki/Garden_City,_Idaho',
 };
 
 const COUNTY_WIKIPEDIA: Record<string, string> = {
@@ -84,15 +85,15 @@ const COUNTY_WIKIPEDIA: Record<string, string> = {
 };
 
 /**
- * Company-wide areaServed: seven City nodes in service-area order, then
+ * Company-wide areaServed: one City node per service-area city, in service-area order, then
  * Ada County and Canyon County. Page-level Service schema still names the
  * page city when one is passed in.
  */
 export function serviceAreaNodes(): Array<{ '@type': string; name: string; sameAs?: string }> {
-  const cities = SERVICE_AREA_CITIES.map((city) => ({
+  const cities = SERVICE_AREA_CITY_NAMES.map((name) => ({
     '@type': 'City',
-    name: city.name,
-    ...(CITY_WIKIPEDIA[city.name] ? { sameAs: CITY_WIKIPEDIA[city.name] } : {}),
+    name,
+    ...(CITY_WIKIPEDIA[name] ? { sameAs: CITY_WIKIPEDIA[name] } : {}),
   }));
   const counties = SERVICE_AREA_COUNTIES.map((name) => ({
     '@type': 'AdministrativeArea',
@@ -225,7 +226,7 @@ export function generateWebSiteSchema(): SchemaContext {
     name: BUSINESS_INFO.name,
     url: baseUrl,
     description:
-      'Design-build remodeling contractor serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, Idaho.',
+      'Design-build remodeling contractor serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County, Idaho.',
     publisher: { '@id': ORG_ID },
     // NOTE: SearchAction intentionally omitted. The previous target
     // (/blog?q={search_term_string}) had no search handler, which advertised a
@@ -427,9 +428,13 @@ export function generateArticleSchema(article: {
   const prefix = article.pathPrefix ?? 'blog';
   const isPersonAuthor =
     !!article.author && article.author.trim() !== BUSINESS_INFO.name;
+  // Owner answer, 20 November 2026 (SEO audit REM-T7): articles and guides are
+  // by Nick Perkins, founder of P5 Home Co. His node carries the P5 graph's @id
+  // so every family site merges to one person; the company stays the publisher.
   const author = isPersonAuthor
     ? {
         '@type': 'Person',
+        ...(article.author!.trim() === 'Nick Perkins' ? { '@id': NICK_PERKINS_ID, jobTitle: 'Founder', worksFor: { '@id': P5_ORG_ID } } : {}),
         name: article.author,
         url: article.authorUrl ?? `${baseUrl}/about#team`,
       }

@@ -93,7 +93,7 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
     {
       question: 'Is a garage conversion cheaper than building a detached ADU?',
       answer:
-        'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000, versus $180,000 to $300,000 or more for a detached new build. The tradeoff is losing garage storage and parking.',
+        'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000; a detached new build adds a foundation, framing, roof and its own utility runs. New detached ADUs are built by Boise Construction Co. The tradeoff is losing garage storage and parking.',
     },
     {
       question: 'How big can an ADU be in Boise?',

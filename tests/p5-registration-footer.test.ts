@@ -49,7 +49,8 @@ test('the footer links the registration line and the funnel prints it as plain t
   assert.match(registration, /target="_blank"/);
   assert.match(registration, /rel="noopener noreferrer"/);
   assert.match(registration, /title="Idaho contractor registration 8381215"/);
-  assert.match(registration, /aria-label="Idaho contractor registration 8381215, opens in a new tab"/);
+  // Owner, 20 November 2026: the accessible name starts with the visible line (label in name).
+  assert.match(registration, /aria-label="P5 Home Co LLC, Idaho Registered Contractor #8381215, opens in a new tab"/);
   assert.equal(/Look up registration|Verify with Idaho DOPL/i.test(linked), false);
   assert.equal(linked.includes('License details available upon request'), false);
   assert.equal(/8381215\s*\(/.test(linked), false);

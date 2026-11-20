@@ -249,6 +249,12 @@ const CITY_SNIPPETS: Record<string, ContentSection[]> = {
   ],
 };
 
+/**
+ * Star straddles the Ada and Canyon county line, so "Star sits in Ada County"
+ * contradicted its own guide (SEO audit REM-T5). Shared with contentFactory.ts.
+ */
+export const STAR_COUNTY_LINE = 'Star sits on the Ada and Canyon county line, so the permit path depends on the address.';
+
 export function getCitySpecificSections(slug: string): ContentSection[] {
   return CITY_SNIPPETS[slug] ?? [];
 }
@@ -292,7 +298,7 @@ export function buildLocationGuideSections(
         housingNote,
         isNeighborhood
           ? `This guide sits under the <a href="/guides/${citySlug}-remodeling-guide">${parentCity} remodeling guide</a> and the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley remodeling guide</a>. A ${parentCity} mailing address does not by itself settle which building department reviews the work, so confirm whether the property is inside city limits.`
-          : `${cityName} sits in ${countyName}. Valley-wide planning lives in the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley remodeling guide</a>; this page covers what is particular to ${cityName}.`,
+          : `${citySlug === 'star' ? STAR_COUNTY_LINE : `${cityName} sits in ${countyName}.`} Valley-wide planning lives in the <a href="/guides/treasure-valley-remodeling-guide">Treasure Valley remodeling guide</a>; this page covers what is particular to ${cityName}.`,
       ],
     },
     ...getCitySpecificSections(slug),

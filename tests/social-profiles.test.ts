@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Footer } from '../components/Footer.tsx';
 import { generateLocalBusinessSchema, generateOrganizationSchema, generateServiceSchema } from '../lib/schema.ts';
 import { BUSINESS_INFO } from '../lib/seo.ts';
-import { getExternalProfileUrls, P5_FACEBOOK_URL, P5_GBP_URL } from '../shared/gbpProfile.ts';
+import { getExternalProfileUrls, P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile.ts';
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
@@ -42,7 +42,10 @@ test('the P5 Google profile sits on the parent organization only', () => {
   process.env.NEXT_PUBLIC_GBP_URL = P5_GBP_URL;
   try {
     for (const node of [generateLocalBusinessSchema(), generateOrganizationSchema()] as any[]) {
-      assert.deepEqual(node.parentOrganization.sameAs, [P5_FACEBOOK_URL, P5_GBP_URL]);
+      // Owner answers, 20 November 2026: the vanity Facebook URL and the P5 Instagram join the GBP.
+      assert.equal(P5_FACEBOOK_URL, 'https://www.facebook.com/p5homeco');
+      assert.equal(P5_INSTAGRAM_URL, 'https://www.instagram.com/p5_home_co');
+      assert.deepEqual(node.parentOrganization.sameAs, [P5_FACEBOOK_URL, P5_INSTAGRAM_URL, P5_GBP_URL]);
       assert.equal(JSON.stringify(node.sameAs ?? []).includes('kgmid'), false);
     }
     assert.equal(BUSINESS_INFO.sameAs.includes(P5_GBP_URL), false);

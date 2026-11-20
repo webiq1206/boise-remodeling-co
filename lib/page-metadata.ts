@@ -136,7 +136,9 @@ export function stripBrandSuffix(title: string): string {
  * rendered title (after the layout appends " | Boise Remodeling Co") stays <= 60.
  */
 const SERVICE_TITLE_OVERRIDES: Record<string, string> = {
-  'kitchen-remodel': 'Kitchen remodeling in Boise',
+  // SEO audit REM-T1: the kitchen and bathroom hubs are the Treasure Valley
+  // pages too; /services/<slug>/boise owns "<service> in Boise".
+  'kitchen-remodel': 'Treasure Valley kitchen remodeling',
   'bathroom-remodel': BATHROOM_NEAR_ME_TITLE,
   'whole-home-remodel': 'Treasure Valley Whole-Home Remodeling',
   // Parent versus Boise child (phase 4): the parent owns the service across the
@@ -160,44 +162,22 @@ const CITY_SERVICE_TITLE_OVERRIDES: Record<string, string> = {
 };
 
 /**
- * Answer-first titles and descriptions for the pages called out in phase 1.
- * Facts used here are limited to design-build, founded 2020, part of P5, a
- * free in-home visit, written scope, workmanship guarantee, Ada or Canyon
- * permitting, and budget ranges, not quotes.
+ * Area pages: one title and one description pattern for every city (SEO audit
+ * REM-T3, 20 November 2026). The description opens with the page keyword and
+ * uses only facts the site already states: the services, a written scope and
+ * a free in-home visit. "ID" keeps the longest city title inside 60 rendered
+ * characters.
  */
-const AREA_ANSWER: Record<string, { title: string; description: string }> = {
-  eagle: {
-    title: 'Remodeling contractors in Eagle, ID',
-    // Exactly 160 characters. fitDescription drops the budget sentence once
-    // the kept prefix is 140 or longer, so do not lengthen this line.
-    // "Idaho" is "ID" and "founded in 2020" is "founded 2020" so kitchen,
-    // home, Eagle, and every trust claim still fit.
-    description:
-      'Kitchen, home remodeling, Eagle, ID. Design-build, founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
-  },
-  boise: {
-    title: 'Remodeling contractors in Boise, ID',
-    // Exactly 160 characters. "Idaho" is "ID" and "Founded in 2020" is
-    // "Founded 2020" so Design-build stays with kitchen and bath.
-    description:
-      'Design-build kitchen & bath remodeling, Boise, ID. Founded 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes',
-  },
-  nampa: {
-    title: 'Remodeling contractors in Nampa, ID',
-    description:
-      'Design-build remodeling in Nampa, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
-  },
-  kuna: {
-    title: 'Remodeling contractors in Kuna, ID',
-    description:
-      'Design-build remodeling in Kuna, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
-  },
-  meridian: {
-    title: 'Remodeling contractors in Meridian',
-    description:
-      'Design-build remodeling in Meridian, Idaho. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
-  },
-};
+function areaTitle(cityName: string): string {
+  return `Remodeling contractor in ${cityName}, ID`;
+}
+
+function areaDescription(cityName: string): string {
+  // "founded 2020" stays in source for the founding-year flag (SHOW_FOUNDING_YEAR);
+  // publishFoundingCopy() removes it while the flag is off, so the published text
+  // reads "Remodeling contractor in <city>, Idaho for kitchens...".
+  return `Remodeling contractor founded 2020 in ${cityName}, Idaho for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.`;
+}
 
 const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
   'bathroom-remodel': {
@@ -206,9 +186,10 @@ const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
     description: BATHROOM_NEAR_ME_DESCRIPTION,
   },
   'kitchen-remodel': {
-    title: 'Kitchen remodeling in Boise',
+    title: 'Treasure Valley kitchen remodeling',
     description:
-      'Design-build kitchen remodeling in Boise. Founded in 2020, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes.',
+      // "Founded in 2020." stays in source for the founding-year flag; publishFoundingCopy() removes it while the flag is off.
+      'Kitchen remodeling across the Treasure Valley: layout, cabinets, counters and permits under one written scope, with a free in-home visit to start. Founded in 2020.',
   },
   'room-addition': {
     title: 'Room additions in the Treasure Valley',
@@ -271,16 +252,8 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
       break;
     }
     case 'area': {
-      const answer = AREA_ANSWER[input.citySlug ?? ''];
-      title = answer?.title ?? generateSafePageTitle(`Remodeling Contractor in ${input.cityName}, Idaho`);
-      description =
-        answer?.description ??
-        generateMetaDescription({
-          serviceName: '',
-          serviceSlug: '',
-          city: input.cityName,
-          citySlug: input.citySlug,
-        });
+      title = areaTitle(input.cityName ?? 'Boise');
+      description = areaDescription(input.cityName ?? 'Boise');
       break;
     }
     case 'city-service':

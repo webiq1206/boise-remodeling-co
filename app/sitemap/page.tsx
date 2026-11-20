@@ -64,7 +64,7 @@ export default function SitemapPage() {
                   <h2 id={`sitemap-${group.heading.replace(/\s+/g, "-").toLowerCase()}`}>
                     {group.heading} <span className="text-muted-foreground text-base font-normal">({group.entries.length})</span>
                   </h2>
-                  <ul>
+                  <ul className="lx-link-list">
                     {group.entries.map((e) => (
                       <li key={e.path}>
                         <Link href={e.path}>{e.label}</Link>

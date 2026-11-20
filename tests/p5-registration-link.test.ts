@@ -18,7 +18,9 @@ import { generateLocalBusinessSchema, generateOrganizationSchema } from '../lib/
 const SEARCH = 'https://edopl.idaho.gov/OnlineServices/?link=PubSearch';
 
 function registrationAnchors(html: string): string[] {
-  return html.match(/<a\b[^>]*>Idaho Registered Contractor #8381215<\/a>/g) ?? [];
+  // The footer names the legal entity first (owner, 20 November 2026: "P5 Home Co LLC, Idaho
+  // Registered Contractor #8381215" in every family footer).
+  return html.match(/<a\b[^>]*>(?:P5 Home Co LLC, )?Idaho Registered Contractor #8381215<\/a>/g) ?? [];
 }
 
 test('the visible registration line is the DOPL public search link', () => {

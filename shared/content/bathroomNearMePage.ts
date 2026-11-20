@@ -1,5 +1,4 @@
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
-import { SITE_CONFIG } from '@/shared/siteConfig';
 
 /**
  * Parent URL only: /services/bathroom-remodel.
@@ -7,10 +6,12 @@ import { SITE_CONFIG } from '@/shared/siteConfig';
  * Phase 7 / R-3: keyword-first copy, no "near me" phrases.
  */
 
-export const BATHROOM_NEAR_ME_TITLE = 'Bathroom Remodeling in Boise | Boise Remodeling Co';
+// SEO audit REM-T1 (20 November 2026): the hub is the Treasure Valley page and
+// /services/bathroom-remodel/boise owns "bathroom remodeling in Boise".
+export const BATHROOM_NEAR_ME_TITLE = 'Treasure Valley bathroom remodeling | Boise Remodeling Co';
 
 export const BATHROOM_NEAR_ME_DESCRIPTION =
-  'Bathroom remodeling in Boise and the Treasure Valley. Design-build bath remodels with a free in-home consultation and a written scope.';
+  'Bathroom remodeling across the Treasure Valley: showers, tile, waterproofing and permits under one written scope, with a free in-home visit to start.';
 
 export const BATHROOM_NEAR_ME_H1 = 'Bathroom remodeling in Boise and the Treasure Valley';
 
@@ -22,7 +23,8 @@ const BATHROOM_NEAR_ME_FIRST_SENTENCE =
 export const BATHROOM_NEAR_ME_OVERVIEW = [
   BATHROOM_NEAR_ME_FIRST_SENTENCE,
   'Boise Remodeling Co remodels bathrooms across Ada and Canyon County with design-build accountability from layout through tile and fixtures. Share photos or plans, get a written scope before demolition, and keep one project manager through the walkthrough.',
-  `Request a free in-home consultation or call ${SITE_CONFIG.phone}.`,
+  // SEO audit SW-6: no phone number in a hero paragraph; the phone sits with the CTAs.
+  'Request a free in-home consultation.',
 ].join(' ');
 
 export const BATHROOM_NEAR_ME_TIMELINE =
@@ -58,7 +60,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'Which cities do you serve?',
     answer:
-      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
+      'Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County.',
   },
   {
     question: 'How does the quote process work?',
@@ -77,7 +79,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'Do you work in both Ada and Canyon County?',
     answer:
-      'Yes. We remodel bathrooms in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, and we handle permits in-house for the jurisdiction that applies to your address.',
+      'Yes. We remodel bathrooms in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County, and we handle permits in-house for the jurisdiction that applies to your address.',
   },
 ];
 
