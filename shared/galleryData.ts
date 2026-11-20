@@ -1,5 +1,9 @@
 import { CITY_SERVICE_IMAGES } from "./cityServiceImages";
 import { GALLERY_IMAGES } from "./siteImages";
+import { isSameImage } from "./imageIdentity";
+import { contentImageAlt, imageDescription } from "./contentImageAlt";
+import { SUBJECT_ALTERNATES } from "./landingImages";
+import { subjectForService } from "./localAlt";
 
 export interface GalleryProject {
   serviceType: string;
@@ -8,6 +12,8 @@ export interface GalleryProject {
   afterImageUrl: string;
   title: string;
   description: string;
+  /** Alt for a single photograph shown in place of a pair; gallery projects derive theirs from the title. */
+  imageAlt?: string;
 }
 
 const THIN_CITY_PROOF_SERVICES: { service: string; serviceType: string; label: string }[] = [
@@ -281,12 +287,50 @@ const SERVICE_GALLERY_SLUG: Record<string, string> = {
   "aging-in-place": "aging-in-place",
 };
 
-/** Primary gallery project for a service hub page, if one exists. */
-export function getFeaturedGalleryProject(serviceSlug: string): GalleryProject | undefined {
+/** Gallery photographs never featured on a service hub: this one still shows a bowl and a plant. */
+const NOT_FEATURED = new Set(["/images/gallery/gallery-kitchen-eagle-after.webp"]);
+
+/**
+ * Gallery project for a service hub page, if one exists. `avoid` holds the pictures
+ * the page already shows (its hero and room photographs): the first project of the
+ * service whose pictures are not among them is featured, so the "closer look" never
+ * repeats the hero. Until 20 November 2026 every hub featured its first project,
+ * whose picture was the hero's own render on all eight pages.
+ */
+export function getFeaturedGalleryProject(
+  serviceSlug: string,
+  avoid: readonly (string | undefined)[] = [],
+): GalleryProject | undefined {
   const galleryType = SERVICE_GALLERY_SLUG[serviceSlug];
   if (!galleryType) return undefined;
-  return (
-    GALLERY_PROJECTS.find((p) => p.serviceType === galleryType) ??
-    GALLERY_PROJECTS.find((p) => p.serviceType === serviceSlug)
+  const taken = (src: string) => avoid.some((a) => isSameImage(a, src));
+  const project = GALLERY_PROJECTS.filter((p) => p.serviceType === galleryType || p.serviceType === serviceSlug).find(
+    (p) => !NOT_FEATURED.has(p.afterImageUrl) && ![p.afterImageUrl, p.beforeImageUrl].some(taken),
   );
+  if (project) return project;
+  // Every gallery picture of this service is already on the page (the gallery
+  // renders are the hero's own render on all eight hubs). Show one other real
+  // photograph of the work instead, labelled by subject and described by what it
+  // shows: never as a before and after, and never as a customer's finished job.
+  const photo = [
+    ...CITY_SLUGS_IN_ORDER.map((city) => CITY_SERVICE_IMAGES[`${serviceSlug}/${city}`]),
+    ...(SUBJECT_ALTERNATES[serviceSlug] ?? []),
+  ].find((src): src is string => Boolean(src)
+    && !NOT_FEATURED.has(src)
+    && !/-before\.webp$/.test(src)
+    && imageDescription(src, "") !== ""
+    && !taken(src));
+  if (!photo) return undefined;
+  const subject = subjectForService(serviceSlug);
+  return {
+    serviceType: galleryType,
+    city: "boise",
+    beforeImageUrl: "",
+    afterImageUrl: photo,
+    title: subject ? subject.charAt(0).toUpperCase() + subject.slice(1) : "Home remodeling",
+    description: `${imageDescription(photo)}.`,
+    imageAlt: contentImageAlt(photo, undefined, { subject }),
+  };
 }
+
+const CITY_SLUGS_IN_ORDER = ["boise", "meridian", "eagle", "nampa", "kuna", "star", "middleton", "caldwell"] as const;

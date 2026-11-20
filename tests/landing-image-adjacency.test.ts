@@ -7,7 +7,7 @@ import { CITIES, SERVICES } from '../shared/contentData.ts';
 import { getAreaImageSet, getCityServiceImageSet } from '../shared/cityServiceImages.ts';
 import { getFeaturedProjectForService } from '../shared/featuredProjects.ts';
 import { getFeaturedGalleryProject, getGalleryProjectsFor, getGalleryProjectsForCity } from '../shared/galleryData.ts';
-import { imageIdentity, VISUAL_DUPLICATE_GROUPS } from '../shared/imageIdentity.ts';
+import { imageIdentity, isSameImage, VISUAL_DUPLICATE_GROUPS } from '../shared/imageIdentity.ts';
 import { resolveExploreImages } from '../shared/exploreImages.ts';
 import { CITY_SERVICE_IMAGES, SERVICE_FALLBACK_IMAGES } from '../shared/cityServiceImages.ts';
 import { gallerySubject, resolveLandingImages, SUBJECT_ALTERNATES, type LandingImageInput } from '../shared/landingImages.ts';
@@ -99,10 +99,17 @@ function assertNoRepeats(label: string, input: LandingImageInput) {
 test('service pages never show one picture twice', () => {
   for (const service of SERVICES) {
     const images = getServiceImageSet(service.slug);
-    const featured = getFeaturedGalleryProject(service.slug);
+    const hero = SERVICE_SCENES[service.slug]?.src ?? images.hero;
     const rooms = getFeaturedProjectForService(service.slug);
+    // Same call as app/services/[slug]/page.tsx.
+    const featured = getFeaturedGalleryProject(service.slug, [hero, ...(rooms?.rooms.map((r) => r.src) ?? [])]);
+    // The reported defect (20 November 2026): every hub's "closer look" repeated its hero.
+    if (featured) {
+      assert.ok(!isSameImage(hero, featured.afterImageUrl), `/services/${service.slug}: ${featured.afterImageUrl} repeats the hero`);
+      assert.ok(!(rooms?.rooms ?? []).some((r) => isSameImage(r.src, featured.afterImageUrl)), `/services/${service.slug}: featured picture repeats a room photograph`);
+    }
     assertNoRepeats(`/services/${service.slug}`, {
-      hero: SERVICE_SCENES[service.slug]?.src ?? images.hero,
+      hero,
       breather: images.breather,
       process: images.process,
       showcase: [featured?.beforeImageUrl, featured?.afterImageUrl, ...(rooms?.rooms.map((r) => r.src) ?? [])].filter(Boolean) as string[],
