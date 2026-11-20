@@ -32,22 +32,23 @@ test('the brand config carries this site’s facts, one CTA and one destination'
   assert.equal(FAMILY_BRAND.parentFacebook.href, P5_FACEBOOK_URL);
   assert.deepEqual(FAMILY_BRAND.parentGoogle, { href: P5_GBP_URL, label: 'P5 Home Co on Google' });
   assert.equal(FAMILY_BRAND.nap.line, publicFooterLine());
-  assert.match(FAMILY_BRAND.nap.line, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County/);
+  assert.match(FAMILY_BRAND.nap.line, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County/);
   assert.deepEqual(
     FAMILY_BRAND.footer.areas.links.map((link) => link.label),
     [
       'Boise, Idaho',
       'Meridian, Idaho',
-      'Nampa, Idaho',
       'Eagle, Idaho',
+      'Nampa, Idaho',
       'Kuna, Idaho',
-      'Caldwell, Idaho',
       'Star, Idaho',
       'Middleton, Idaho',
+      'Caldwell, Idaho',
     ],
   );
-  // Owner decision, 20 November 2026 (SEO audit REM-T4): Middleton has published pages and is on
-  // the P5 Home Co Business Profile, so it joins the list. Cities with no page still stay out.
+  // Owner decision, 20 November 2026 (SEO audit REM-T4 and the owner's nine-city list): the footer
+  // links every service-area city with a page here. Garden City has no page on this site, so it is
+  // named in the service-area line but never linked.
   assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Garden City|Emmett/.test(link.label)), false);
   assert.equal(RETIRED_STREET.test(FAMILY_BRAND.nap.line), false);
   assert.doesNotMatch(FAMILY_BRAND.nap.line, /Public representative|staffed storefront/i);
@@ -96,9 +97,9 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   }
   assert.match(html, /<span class="fam-footer-current" aria-current="true">Boise Remodeling Co<\/span>/);
   assert.equal(/rel="noopener noreferrer">(P5 Home Co|Boise)/.test(html), false);
-  assert.match(html, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton/);
+  assert.match(html, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell/);
   assert.match(html, /href="\/areas\/middleton"/);
-  assert.equal(html.includes('Garden City'), false);
+  assert.equal(html.includes('href="/areas/garden-city"'), false);
   assert.equal(RETIRED_STREET.test(html), false);
   assert.doesNotMatch(html, /Public representative|staffed storefront/i);
   assert.match(html, /data-testid="link-footer-call"/);
@@ -108,10 +109,11 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.match(html, /mailto:hello@boiseremodeling\.co/);
   assert.match(html, /href="\/contact\.vcf"/);
   assert.match(html, /is a DBA of <a href="https:\/\/p5homeco\.com" rel="noopener">P5 Home Co<\/a>/);
-  assert.equal(html.includes('P5 Home Co LLC'), false);
+  // Owner, 20 November 2026: the footer's contractor line names the legal entity, once.
+  assert.equal((html.match(/P5 Home Co LLC/g) ?? []).length, 1);
   assert.equal(/P5 Home Co\.(?=\s+[a-z])/.test(html), false);
   assert.match(html, /<a href="\/subcontractor" rel="nofollow">Subcontractor login<\/a>/);
-  assert.equal((html.match(/>Idaho Registered Contractor #8381215<\/a>/g) ?? []).length, 1);
+  assert.equal((html.match(/>P5 Home Co LLC, Idaho Registered Contractor #8381215<\/a>/g) ?? []).length, 1);
   assert.equal(html.includes('Boise ADU Co'), false);
   // The parent's Facebook page and Google profile, once each.
   assert.equal((html.match(/data-testid="link-footer-facebook"/g) ?? []).length, 1);

@@ -27,15 +27,17 @@ import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 import { RETIRED_STREET } from './retiredStreet.ts';
 
 const BRAND = ' | Boise Remodeling Co';
+// The owner's nine-city service area, 20 November 2026.
 const AREAS = [
   'Boise',
   'Meridian',
-  'Nampa',
   'Eagle',
+  'Garden City',
+  'Nampa',
   'Kuna',
-  'Caldwell',
   'Star',
   'Middleton',
+  'Caldwell',
   'Ada County',
   'Canyon County',
 ];
@@ -79,15 +81,16 @@ test('contractor schema preserves contacts, served cities and parent without a s
   assert.deepEqual(
     (business.areaServed as Array<{ '@type': string; name: string }>).map((area) => [area['@type'], area.name]),
     [
+      // The owner's nine-city service area, 20 November 2026.
       ['City', 'Boise'],
       ['City', 'Meridian'],
-      ['City', 'Nampa'],
       ['City', 'Eagle'],
+      ['City', 'Garden City'],
+      ['City', 'Nampa'],
       ['City', 'Kuna'],
-      ['City', 'Caldwell'],
       ['City', 'Star'],
-      // Owner decision, 20 November 2026 (SEO audit REM-T4).
       ['City', 'Middleton'],
+      ['City', 'Caldwell'],
       ['AdministrativeArea', 'Ada County'],
       ['AdministrativeArea', 'Canyon County'],
     ],
@@ -98,7 +101,6 @@ test('contractor schema preserves contacts, served cities and parent without a s
   );
   assert.deepEqual(business.sameAs, BUSINESS_INFO.sameAs);
   const encoded = JSON.stringify(business);
-  assert.equal(encoded.includes('Garden City'), false);
   assert.equal(encoded.includes('Jared'), false);
 
   const organization = generateOrganizationSchema();
@@ -288,7 +290,7 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
 });
 
 test('phase-2 NAP, sister row, and RE-10 links', () => {
-  const footerLine = 'Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County';
+  const footerLine = 'Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County';
   // Phase 2: the footer is the shared family SiteFooter; this site's facts live in lib/familyBrand.ts.
   // The family row names every live family site; Boise ADU Co is left out until its own site exists.
   const footer = readFileSync('lib/familyBrand.ts', 'utf8');
@@ -342,7 +344,7 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
   for (const file of [llms, full]) {
     assert.equal(/Public representative|staffed storefront/i.test(file), false);
     assert.equal(RETIRED_STREET.test(file), false);
-    assert.match(file, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton/);
+    assert.match(file, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell/);
     assert.match(file, /hello@boiseremodeling\.co/);
     assert.match(file, /Last updated: 2026-10-16/);
     assert.match(file, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);

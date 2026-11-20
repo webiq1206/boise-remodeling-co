@@ -16,7 +16,8 @@ import fs from 'fs';
 import path from 'path';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '../shared/publicClaims';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig';
-import { SERVICES, CITIES, SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE } from '../shared/contentData';
+import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile';
+import { SERVICES, CITIES, SERVICE_AREA_CITY_NAMES, SERVICE_AREA_CITY_COUNTY, SERVICE_AREA_SENTENCE } from '../shared/contentData';
 import { GUIDE_PAGES } from '../shared/guideContent';
 import { CONTENT_HUBS } from '../shared/contentHubs';
 import { BLOG_POSTS } from '../shared/blogContent';
@@ -29,8 +30,8 @@ const CONTACT_BLOCK =
   `${publicFooterLine()}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
   `Idaho Registered Contractor #8381215 and insured.`;
 
-const adaCities = SERVICE_AREA_CITIES.filter((c) => c.county === 'ada').map((c) => c.name);
-const canyonCities = SERVICE_AREA_CITIES.filter((c) => c.county === 'canyon').map((c) => c.name);
+const adaCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'ada');
+const canyonCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'canyon');
 
 const pillarGuides = GUIDE_PAGES.filter((g) => g.guideType === 'hub-pillar' || g.guideType === 'master');
 const cityGuides = GUIDE_PAGES.filter((g) => g.guideType === 'location');
@@ -108,6 +109,7 @@ function buildShort(): string {
   lines.push('## About and contact', '');
   lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co.`));
   lines.push(`- [Contact](${url('/contact')})`);
+  lines.push(`- Parent company profiles (P5 Home Co): [Google](${P5_GBP_URL}), [Facebook](${P5_FACEBOOK_URL}), [Instagram](${P5_INSTAGRAM_URL})`);
   lines.push(
     `- [Instant remodel estimate](${url('/instant-estimate')}): answer a few questions and see a preliminary price range on screen. Free, with no appointment. It is a range for budgeting, not a final price; a firm written proposal follows a site visit.`,
   );
@@ -156,6 +158,7 @@ function buildFull(): string {
   lines.push('- Business type: Residential design-build remodeling contractor');
   if (SHOW_FOUNDING_YEAR) lines.push('- Founded: 2020');
   lines.push('- Parent company: P5 Home Co (https://p5homeco.com)');
+  lines.push(`- Parent company profiles: Google ${P5_GBP_URL}, Facebook ${P5_FACEBOOK_URL}, Instagram ${P5_INSTAGRAM_URL}`);
   lines.push('- Service model: One accountable team for design, permits, and construction');
   lines.push(`- Contact: ${SITE_CONFIG.email} (${url('/contact')})`);
   lines.push(`- Instant estimate (a preliminary price range on screen, not a final price): ${url('/instant-estimate')}`);

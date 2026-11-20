@@ -1,5 +1,5 @@
 // Content Data for Boise Remodeling Co
-// Public service area: Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, Middleton,
+// Public service area: Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, Caldwell,
 // plus Ada County and Canyon County. Published city pages can be a longer set.
 
 export interface ServiceData {
@@ -103,30 +103,49 @@ export const CITIES: CityData[] = [
 ];
 
 /**
- * Owner decision: the public service area matches the P5 Home Co Google
- * Business Profile. Order is the display order.
+ * The official service area (owner, 20 November 2026, from the P5 Home Co
+ * Google Business Profile and every listing), in the owner's order. Middleton
+ * joined with its published pages (SEO audit REM-T4); Garden City joined the
+ * same day by owner decision. This site has no Garden City page, so it is named
+ * in every service-area statement and in areaServed but has no card or link.
  */
 export const SERVICE_AREA_CITY_NAMES = [
   'Boise',
   'Meridian',
-  'Nampa',
   'Eagle',
+  'Garden City',
+  'Nampa',
   'Kuna',
-  'Caldwell',
   'Star',
-  // Owner decision, 20 November 2026 (SEO audit REM-T4): the P5 Home Co
-  // Business Profile lists Middleton and its pages are published, so every
-  // service-area statement names it.
   'Middleton',
+  'Caldwell',
 ] as const;
 
 export const SERVICE_AREA_COUNTIES = ['Ada County', 'Canyon County'] as const;
 
-export const SERVICE_AREA_CITIES: CityData[] = SERVICE_AREA_CITY_NAMES.map((name) => {
+/** County of each service-area city, including those without a page here. */
+export const SERVICE_AREA_CITY_COUNTY: Record<(typeof SERVICE_AREA_CITY_NAMES)[number], CityData['county']> = {
+  Boise: 'ada',
+  Meridian: 'ada',
+  Eagle: 'ada',
+  'Garden City': 'ada',
+  Nampa: 'canyon',
+  Kuna: 'ada',
+  Star: 'ada',
+  Middleton: 'canyon',
+  Caldwell: 'canyon',
+};
+
+/** Service-area cities that have a published page here, in service-area order. */
+export const SERVICE_AREA_CITIES: CityData[] = SERVICE_AREA_CITY_NAMES.flatMap((name) => {
   const city = CITIES.find((entry) => entry.name === name);
-  if (!city) throw new Error(`Service area city ${name} has no published page`);
-  return city;
+  return city ? [city] : [];
 });
+
+/** Service-area cities with no page on this site (named in copy, never linked). */
+export const SERVICE_AREA_CITIES_WITHOUT_PAGE: string[] = SERVICE_AREA_CITY_NAMES.filter(
+  (name) => !CITIES.some((entry) => entry.name === name),
+);
 
 function joinNames(names: readonly string[]): string {
   if (names.length <= 1) return names[0] ?? '';

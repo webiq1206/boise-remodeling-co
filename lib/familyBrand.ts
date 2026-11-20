@@ -139,10 +139,12 @@ export const FAMILY_BRAND: FamilyBrand = {
   nap: { line: publicFooterLine() },
   hours: 'Mon to Fri 9 to 6, Sat 9 to 4 Mountain. Closed Sunday.',
   registration: {
-    text: REGISTRATION_LINE,
+    // One contractor line in every family footer (owner, 20 November 2026; the
+    // legal name and number from the owner's signed proposals).
+    text: `P5 Home Co LLC, ${REGISTRATION_LINE}`,
     href: DOPL_LICENSE_SEARCH,
     title: 'Idaho contractor registration 8381215',
-    ariaLabel: 'Idaho contractor registration 8381215, opens in a new tab',
+    ariaLabel: `P5 Home Co LLC, ${REGISTRATION_LINE}, opens in a new tab`,
     rel: 'noopener noreferrer',
   },
   // P5 Home Co's Facebook page (shared/gbpProfile); nothing renders until its URL exists.

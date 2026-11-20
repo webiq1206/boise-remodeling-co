@@ -255,7 +255,7 @@ export const RE10_FAQS: Re10Faq[] = [
   {
     question: "Do you work throughout the Treasure Valley?",
     answer:
-      "Yes. Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County.",
+      "Yes. Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County.",
   },
   {
     question: "How do I submit an RE-10 or inspection report?",

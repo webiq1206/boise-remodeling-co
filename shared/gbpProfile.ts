@@ -68,7 +68,7 @@ export const GBP_CATEGORIES = {
 } as const;
 
 export const GBP_DESCRIPTION = publishFoundingCopy(
-  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, Idaho, across Ada County and Canyon County. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
+  'Boise Remodeling Co is a design-build remodeling contractor serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho, across Ada County and Canyon County. One accountable team handles design, Ada and Canyon County permits, and construction for kitchen remodels, bathroom remodels, whole-home renovations, room additions, ADUs, garage conversions, and basement finishing. Every project includes a written scope before construction, a dedicated project manager, weekly written progress updates, and a written workmanship guarantee. Founded in 2020. Insured. Schedule a free 60 to 90 minute in-home visit and leave with a planning range and design direction - no pressure, no obligation.',
 );
 
 export const GBP_LINKS = {
@@ -88,7 +88,16 @@ export const GBP_LINKS = {
  * Contractor). It renders the footer link and sits only in the parent
  * organization's sameAs, never in this brand's own.
  */
-export const P5_FACEBOOK_URL = 'https://www.facebook.com/1228704823655951';
+// Owner answer, 20 November 2026: one Facebook URL for every site, the vanity
+// address (the numeric page URL redirects to it). Matches p5-home-co.
+export const P5_FACEBOOK_URL = 'https://www.facebook.com/p5homeco';
+
+/**
+ * Owner answer, 20 November 2026: P5 Home Co's one Instagram, confirmed live
+ * (its bio names the five teams and links p5homeco.com). Like the Facebook
+ * page it sits on the parent organization's sameAs, never this brand's own.
+ */
+export const P5_INSTAGRAM_URL = 'https://www.instagram.com/p5_home_co';
 
 /**
  * Owner decision (2026-11-01): P5 Home Co's single Google Business Profile
@@ -386,7 +395,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'What areas do you serve?',
     answer:
-      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, Idaho, across Ada County and Canyon County.',
+      'Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho, across Ada County and Canyon County.',
   },
   {
     question: 'Do you handle permits?',

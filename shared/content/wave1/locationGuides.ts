@@ -157,7 +157,7 @@ export const BOISE_GUIDE_HTML = expandLocation(
 );
 
 export const TV_QUICK_ANSWER =
-  'The service area is Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Permit paths differ by county. Pick your city guide, then the topic guide for your project.';
+  'The service area is Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County. Permit paths differ by county. Pick your city guide, then the topic guide for your project.';
 
 export const BOISE_QUICK_ANSWER =
   'Remodeling in Boise starts with the age of the house: North End bungalows and Bench ranches often need electrical and layout work, while newer Harris Ranch homes need finish upgrades. Property inside city limits is permitted by the City of Boise, and pre-1990 homes deserve a 10 to 15 percent contingency.';

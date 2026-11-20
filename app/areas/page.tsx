@@ -18,7 +18,7 @@ generateBreadcrumbSchema,
 generateWebPageSchema,
 } from "@/lib/schema";
 import { CITY_HERO_IMAGES } from "@/shared/cityServiceImages";
-import { SERVICE_AREA_CITIES, SERVICE_AREA_SENTENCE } from "@/shared/contentData";
+import { SERVICE_AREA_CITIES, SERVICE_AREA_CITIES_WITHOUT_PAGE, SERVICE_AREA_SENTENCE } from "@/shared/contentData";
 import { CTA_PRIMARY,CTA_SECONDARY } from "@/shared/ctaCopy";
 import { FEATURED_BOISE_BENCH_IMAGES } from "@/shared/siteImages";
 import { ArrowRight } from "lucide-react";
@@ -28,7 +28,7 @@ export const metadata = withBrandPageMetadata((buildPageMetadata({
   path: "/areas",
   titleOverride: "Treasure Valley Service Areas",
   descriptionOverride:
-    "Design-build remodeling in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County.",
+    "Design-build remodeling in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County.",
 })), "/areas");
 
 export default function AreasHubPage() {
@@ -75,14 +75,14 @@ export default function AreasHubPage() {
 
         <AnswerBlock
           question="Where does Boise Remodeling Co work?"
-          answer="Boise Remodeling Co remodels homes in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Each city has its own page with local permit paths and housing notes, and every project runs through one design-build team with a written scope before construction."
+          answer="Boise Remodeling Co remodels homes in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County. Each city has its own page with local permit paths and housing notes, and every project runs through one design-build team with a written scope before construction."
         />
 
         <Section surface="bone" spacing="xl">
           <div className="ed-shell">
             <SectionHeader
               eyebrow="Treasure Valley"
-              title={<>Eight cities, one design-build team</>}
+              title={<>Nine cities, one design-build team</>}
               description="Kitchen, bath, whole-home, and addition remodeling across Ada and Canyon County."
               align="left"
             />
@@ -93,6 +93,11 @@ export default function AreasHubPage() {
                 </Reveal>
               ))}
             </div>
+            {SERVICE_AREA_CITIES_WITHOUT_PAGE.length > 0 ? (
+              <p className="ed-body mt-6">
+                We also remodel homes in {SERVICE_AREA_CITIES_WITHOUT_PAGE.join(' and ')}.
+              </p>
+            ) : null}
           </div>
         </Section>
 
