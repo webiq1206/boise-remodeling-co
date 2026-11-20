@@ -192,6 +192,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         processImageUrl={images.process}
         manifestPath={path}
         planningFrom={ownership ? undefined : isBathroomNearMe ? undefined : service.planningFrom}
+        planningFromBasis={service.planningFromBasis}
         breadcrumbs={[
           { name: 'Home', href: '/' },
           { name: 'Services', href: '/services' },

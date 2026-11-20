@@ -1,5 +1,6 @@
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
 import type { FAQItem } from '../seoContent';
+import { P5_AS_OF, p5Range, p5Span } from './p5Figures';
 
 /**
  * ADU and additions ownership inside the P5 Home Co family (owner decision,
@@ -56,7 +57,7 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
     {
       heading: 'Garage, basement and attached ADU conversions',
       paragraphs: [
-        'A garage conversion reuses the existing foundation and shell, which is why it usually costs less than building new. As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000, and attached ADUs and basement conversions plan $120,000 to $250,000. The tradeoff with a garage is the storage and parking you give up.',
+        'A garage conversion reuses the existing foundation and shell, which is why it usually costs less than building new. We price each conversion in a written scope after a feasibility visit; our instant estimate does not price ADU conversions. The tradeoff with a garage is the storage and parking you give up.',
         'These are planning ranges, not bids. The utility plan and the condition of the space drive a conversion budget, which is why feasibility comes first in our process.',
       ],
       links: [
@@ -93,7 +94,7 @@ export const ADU_CONVERSION_PAGE: OwnershipPage = {
     {
       question: 'Is a garage conversion cheaper than building a detached ADU?',
       answer:
-        'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000; a detached new build adds a foundation, framing, roof and its own utility runs. New detached ADUs are built by Boise Construction Co. The tradeoff is losing garage storage and parking.',
+        'Usually yes. Garage conversions reuse the existing foundation and shell; a detached new build adds a foundation, framing, roof and its own utility runs. New detached ADUs are built by Boise Construction Co. The tradeoff is losing garage storage and parking.',
     },
     {
       question: 'How big can an ADU be in Boise?',
@@ -130,7 +131,7 @@ export const ROOM_ADDITION_PAGE: OwnershipPage = {
       heading: 'Bump-outs and conversions we build',
       paragraphs: [
         'Extending a kitchen or bathroom a few feet is the most economical way to gain space, sometimes cantilevered to avoid a full foundation. A great room or kitchen bump-out opens a cramped floor plan, and converting existing space such as a garage or basement is the most affordable way to add a bedroom. A legal bedroom needs egress, a window, a minimum size and usually a closet.',
-        'As of 2026, room additions in the Boise area commonly plan $80,000 to $250,000 or more, and single-room bump-outs sit at the lower end of that range. These are planning ranges, not bids; we confirm yours in a written scope after the free in-home visit.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees, and ${p5Range('addition-room-200', 'builder')} for a 200 sq ft room at Essential. These are preliminary ranges, not bids; we confirm yours in a written scope after the free in-home visit.`,
       ],
       links: [
         { label: 'Boise home addition costs (2026)', href: '/blog/home-addition-cost-boise' },
@@ -165,7 +166,7 @@ export const ROOM_ADDITION_PAGE: OwnershipPage = {
     {
       question: 'How much does a room addition cost in Boise?',
       answer:
-        'Most Treasure Valley additions plan $80,000 to $250,000 or more depending on size, foundation work, and whether bathrooms or kitchens are included. Single-room bump-outs sit at the lower end.',
+        `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees. A primary suite addition shows ${p5Range('addition-suite')} at the Signature level, and smaller rooms sit lower.`,
     },
     {
       question: 'Can I stay in my home during an addition?',

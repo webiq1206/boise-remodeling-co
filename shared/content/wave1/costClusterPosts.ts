@@ -1,4 +1,5 @@
 import { buildSectionsHtml, CITIES_LIST, PILLAR_COST, type ContentSection } from './snippets';
+import { P5_AS_OF, p5PerSqft, p5Range, p5Span } from '../p5Figures';
 
 function clusterSections(topic: string, extra: ContentSection[]): ContentSection[] {
   const intro: ContentSection[] = [
@@ -6,7 +7,7 @@ function clusterSections(topic: string, extra: ContentSection[]): ContentSection
       h2: `Quick planning overview for ${topic}`,
       paragraphs: [
         `Homeowners in ${CITIES_LIST} ask us about ${topic.toLowerCase()} more than almost any other line item on a remodel budget. This article is part of our <a href="${PILLAR_COST}">Boise Remodeling Cost Guide</a> - the definitive hub for Treasure Valley remodeling costs.`,
-        `Numbers below are planning ranges from design-build consultations, not advertisements. Your home, layout, and finish level will move you within or beyond these bands.`,
+        `Numbers below are preliminary ranges from our instant estimate, as of ${P5_AS_OF}, priced from our cost book at the inputs named. Your home, layout, and finish level will move you within or beyond these bands.`,
         `<a href="/#planning-ranges">Explore our planning ranges</a> for a rough range, then request an in-home visit for written scope.`,
       ],
     },
@@ -18,7 +19,7 @@ const kitchenExtra: ContentSection[] = [
   {
     h2: 'What is a typical kitchen remodel budget in Boise?',
     paragraphs: [
-      'Most full kitchen remodels we plan in Ada County fall between roughly $37,000 and $110,000+, with layout changes and custom cabinetry at the upper end. Cosmetic refreshes - doors, counters, backsplash - can land lower if plumbing and gas stay put.',
+      `For a medium kitchen of about 150 sq ft with new cabinets and finishes in the same layout, our instant estimate shows ${p5Span('kitchen-replace-medium')} from Essential to Luxury, with layout changes at the upper end. A refresh that keeps the cabinets shows ${p5Range('kitchen-refresh-medium')} at the Signature level if plumbing and gas stay put.`,
       'Meridian and Eagle kitchens often include larger islands, walk-in pantries, and panel-ready appliances. Kuna and Star homes may have builder-grade layouts worth reconfiguring for open concept living.',
     ],
   },
@@ -93,7 +94,7 @@ const bathroomExtra: ContentSection[] = [
   {
     h2: 'Guest bath vs master bath costs in Idaho',
     paragraphs: [
-      'Guest baths and powder rooms in Star, Middleton, and Kuna often land between $18,000 and $45,000 for a full refresh. Master suites with curbless showers, niches, and premium tile commonly reach $35,000–$85,000+.',
+      `For a guest bath remodeled to the studs in the same layout, our instant estimate shows ${p5Span('bath-hall-full')} from Essential to Luxury. A primary bath with a walk-in shower and double vanity shows ${p5Span('bath-primary-full')}.`,
     ],
   },
   {
@@ -132,7 +133,7 @@ const wholeHomeExtra: ContentSection[] = [
   {
     h2: 'What defines a whole-home remodel budget?',
     paragraphs: [
-      'Whole-home programs in Boise and Meridian often span $180,000–$425,000+ depending on square footage affected, structural work, and number of wet areas.',
+      `For a 2,000 sq ft whole-home renovation, our instant estimate shows ${p5Span('whole-home-2000')} from Essential to Luxury, before structural changes, design and permits.`,
     ],
   },
   {
@@ -165,7 +166,7 @@ const additionExtra: ContentSection[] = [
   {
     h2: 'Room addition cost ranges in the Treasure Valley',
     paragraphs: [
-      'Ground-floor additions often run $80,000–$250,000+ including design, permits, foundation, framing, MEP, and finish. Second stories can exceed this when structural retrofits are required.',
+      `For a 300 sq ft room addition, our instant estimate shows ${p5Span('addition-room-300')} from Essential to Luxury, including foundation, framing, MEP and finish but not design, engineering, permits or fees. A second-story addition shows ${p5Span('addition-second')}.`,
     ],
   },
   {
@@ -198,7 +199,7 @@ const luxuryExtra: ContentSection[] = [
   {
     h2: 'What counts as a luxury remodel in Boise and Eagle?',
     paragraphs: [
-      'Custom millwork, book-matched stone, integrated lighting scenes, and high-performance windows define luxury programs - often $200,000–$600,000+ for multi-room scope.',
+      `Custom millwork, book-matched stone, integrated lighting scenes, and high-performance windows define luxury programs. At the Luxury level our instant estimate shows ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation.`,
     ],
   },
   {
@@ -233,11 +234,11 @@ const perSqFtExtra: ContentSection[] = [
     paragraphs: ['See table in our <a href="' + PILLAR_COST + '">main cost guide</a>.'],
     table: {
       className: 'cost-table',
-      headers: ['Context', '$/SF (indicative)'],
+      headers: ['Context, Signature level', 'Per square foot, instant estimate'],
       rows: [
-        ['Whole-home major remodel', '$100 – $200+'],
-        ['Addition new construction portion', '$240 – $560'],
-        ['Mid kitchen (room SF only)', '$150 – $190'],
+        ['Whole-home renovation, 2,000 sq ft', p5PerSqft('whole-home-2000')],
+        ['Room addition, 300 sq ft', p5PerSqft('addition-room-300')],
+        ['Medium kitchen, new cabinets, same layout (room sq ft only)', p5PerSqft('kitchen-replace-medium')],
       ],
     },
   },
@@ -290,7 +291,7 @@ const budgetExtra: ContentSection[] = [
   },
   {
     h2: 'Sample budget allocation',
-    paragraphs: ['Illustrative split for a $120,000 kitchen + bath program:'],
+    paragraphs: ['Illustrative split for a kitchen and bath program:'],
     table: {
       className: 'cost-table',
       headers: ['Category', 'Share'],
@@ -323,7 +324,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'kitchen-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('kitchen remodel cost', kitchenExtra)),
     quickAnswer:
-      'Full kitchen remodels in Boise and the Treasure Valley typically range from about $37,000 to $110,000+, driven by layout changes, cabinetry level, and finishes. Appliances are usually budgeted separately.',
+      `Our instant estimate shows ${p5Range('kitchen-replace-medium')} for a medium kitchen with new cabinets in the same layout at the Signature level, and ${p5Span('kitchen-replace-medium')} from Essential to Luxury, as of ${P5_AS_OF}. Appliances are budgeted separately.`,
     takeaways: [
       'Layout and structural changes are the largest cost swing.',
       'Cabinetry is often 30–40% of the construction budget.',
@@ -334,7 +335,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'bathroom-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('bathroom remodel cost', bathroomExtra)),
     quickAnswer:
-      'Guest bath remodels often run $18,000–$45,000; master baths with layout changes and curbless showers commonly reach $35,000–$85,000+ in Idaho.',
+      `Our instant estimate shows ${p5Span('bath-hall-full')} for a full guest bath remodel and ${p5Span('bath-primary-relocate')} for a primary bath in a new layout, from Essential to Luxury, as of ${P5_AS_OF}.`,
     takeaways: [
       'Master and guest baths should not share one budget number.',
       'Curbless showers add waterproofing and labor.',
@@ -344,7 +345,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'whole-home-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('whole-home remodel cost', wholeHomeExtra)),
     quickAnswer:
-      'Whole-home remodels in the Treasure Valley often range from $180,000 to $425,000+ depending on scope, structural work, and number of wet areas.',
+      `Our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft whole-home renovation from Essential to Luxury, before structural changes, design and permits, as of ${P5_AS_OF}.`,
     takeaways: [
       'Treat whole-home work as one program with phases.',
       'Hold 10–15% contingency.',
@@ -354,7 +355,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'home-addition-cost-boise': {
     html: buildSectionsHtml(clusterSections('home addition cost', additionExtra)),
     quickAnswer:
-      'Room additions in Boise, Eagle, and Meridian commonly plan between $80,000 and $250,000+ including foundation, structure, MEP, and finish - with second stories often higher.',
+      `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees, as of ${P5_AS_OF} - with second stories higher.`,
     takeaways: [
       'Site and foundation conditions move price early.',
       'HOA review adds time in many Eagle neighborhoods.',
@@ -364,7 +365,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'luxury-remodel-cost-boise': {
     html: buildSectionsHtml(clusterSections('luxury remodel cost', luxuryExtra)),
     quickAnswer:
-      'Luxury remodels in Eagle, the Foothills, and premium Boise neighborhoods often exceed $200,000 for multi-room scope, with heavy design development and custom finishes.',
+      `At the Luxury level our instant estimate shows ${p5Range('kitchen-redesign-large', 'luxury')} for a large kitchen in a new layout and ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation, as of ${P5_AS_OF}.`,
     takeaways: [
       'Design time is part of the investment.',
       'HOA review affects calendar, not just aesthetics.',
@@ -374,7 +375,7 @@ export const COST_CLUSTER_CONTENT: Record<
   'remodel-cost-per-square-foot-boise': {
     html: buildSectionsHtml(clusterSections('remodel cost per square foot', perSqFtExtra)),
     quickAnswer:
-      'Remodel cost per square foot in Boise varies by project type: whole-home major work often plans at $100–$200+ per affected SF; room-specific remodels should not use whole-house $/SF alone.',
+      `Remodel cost per square foot in Boise varies by project type: our instant estimate prices a whole-home renovation at ${p5PerSqft('whole-home-2000')} at the Signature level; room-specific remodels should not use whole-house $/SF alone.`,
     takeaways: [
       'Use $/SF only with a defined scope.',
       'Kitchen $/SF is based on room size, not home SF.',

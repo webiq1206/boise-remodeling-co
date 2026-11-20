@@ -1,4 +1,5 @@
 import type { BlogPostData } from '../../blogContent';
+import { P5_AS_OF, p5PerSqft, p5Range, p5Span } from '../p5Figures';
 
 /**
  * Bespoke replacement. Primary keyword: "whole home remodel cost boise".
@@ -11,7 +12,7 @@ export const wholeHomeRemodelCostBoise: BlogPostData = {
   metaDescription:
     'How much does a whole-home remodel cost in Boise? 2026 planning ranges, cost per square foot, phasing, contingency, timelines, and remodel-vs-move guidance from a local design-build team.',
   excerpt:
-    'Whole-home remodels in Boise typically plan $72,000-$425,000 depending on scope, structural work, and finish level, with luxury gut renovations higher. Here is how to budget, phase, and time the project.',
+    `Our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft Boise whole-home renovation from Essential to Luxury, before structural changes, design and permits. Here is how to budget, phase, and time the project.`,
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -32,9 +33,9 @@ export const wholeHomeRemodelCostBoise: BlogPostData = {
   ],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A whole-home remodel in Boise typically costs $72,000-$425,000 as of 2026, or roughly $40-$236 per square foot depending on scope, based on an 1,800-square-foot home. Cosmetic whole-home updates run $72,000-$96,000, mid-range remodels run $180,000-$240,000, and full gut renovations with structural changes, new systems, and high-end finishes run $348,000-$425,000, with luxury reaching $600,000-$816,000. Phasing, contingency, and mechanical upgrades drive the budget most.',
+    `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Range('whole-home-2000', 'builder')} for a 2,000 sq ft Boise whole-home renovation at the Essential level, ${p5Range('whole-home-2000')} at Signature, ${p5Range('whole-home-2000', 'high')} at Premium and ${p5Range('whole-home-2000', 'luxury')} at Luxury, before structural changes, design and permits. That is ${p5PerSqft('whole-home-2000', 'builder')} at Essential to ${p5PerSqft('whole-home-2000', 'luxury')} at Luxury. Phasing, contingency, and mechanical upgrades drive the budget most.`,
   keyTakeaways: [
-    'Whole-home remodels in Boise plan $72,000-$425,000, roughly $40-$236 per square foot.',
+    `A 2,000 sq ft whole-home renovation shows ${p5Span('whole-home-2000')} from Essential to Luxury in our instant estimate, before structural changes, design and permits.`,
     'Mechanical, electrical, and plumbing (MEP) upgrades are a large hidden share of gut renovations.',
     'A 10-20% contingency is essential for older Treasure Valley homes.',
     'Phasing can spread cost over time without paying for work you are not ready for.',
@@ -53,12 +54,12 @@ export const wholeHomeRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does a whole-home remodel cost in Boise?',
       answer:
-        'As of 2026, a whole-home remodel in Boise typically plans $72,000-$425,000, roughly $40-$236 per square foot for an 1,800-square-foot home. Cosmetic whole-home refreshes run $72,000-$96,000; full gut renovations with structural changes, new mechanical systems, and premium finishes run $348,000-$425,000, and luxury work reaches $600,000-$816,000.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Range('whole-home-2000')} for a 2,000 sq ft whole-home renovation at the Signature level, ${p5Range('whole-home-2000', 'builder')} at Essential and ${p5Range('whole-home-2000', 'luxury')} at Luxury. Those ranges leave out structural changes, design and permits, which a written master scope prices.`,
     },
     {
       question: 'What is the cost per square foot for a whole-house remodel?',
       answer:
-        'Treasure Valley whole-home remodels commonly run $40-$236 per square foot, with luxury work higher. Light cosmetic updates sit near the bottom, while gut renovations that replace wiring, plumbing, HVAC, windows, and finishes land at the high end. The rate also falls as the house gets bigger, so a large home costs less per foot than a small one. Per-square-foot figures are a starting gut-check, not a substitute for a scoped estimate.',
+        `Our instant estimate prices a whole-home renovation at ${p5PerSqft('whole-home-2000', 'builder')} at Essential, ${p5PerSqft('whole-home-2000')} at Signature and ${p5PerSqft('whole-home-2000', 'luxury')} at Luxury, before structural changes, design and permits. Light cosmetic updates sit near the bottom, while work that replaces wiring, plumbing, HVAC and finishes lands higher. Per-square-foot figures are a starting gut-check, not a substitute for a scoped estimate.`,
     },
     {
       question: 'Is it cheaper to remodel or move?',
@@ -83,15 +84,15 @@ export const wholeHomeRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a whole-home remodel cost in Boise?</h2>
-<p><strong>As of 2026, a whole-home remodel in Boise typically costs $72,000-$425,000, or roughly $40-$236 per square foot, based on an 1,800-square-foot home.</strong> Luxury gut renovations run higher still, at $600,000-$816,000. The range is wide because "whole-home remodel" covers everything from a cosmetic refresh of every room to a full gut renovation that replaces systems, moves walls, and rebuilds from the studs out. Scope, structural work, and finish level move the number far more than square footage alone.</p>
-<p>These are planning ranges from real Treasure Valley design-build consultations, part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. <a href="/#planning-ranges">Explore our planning ranges</a> for a starting point.</p>
+<p><strong>As of ${P5_AS_OF}, our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft Boise whole-home renovation from the Essential to the Luxury level, or ${p5PerSqft('whole-home-2000', 'builder')} to ${p5PerSqft('whole-home-2000', 'luxury')}.</strong> Those ranges leave out structural changes, design and permits. The range is wide because "whole-home remodel" covers everything from a cosmetic refresh of every room to a full gut renovation that replaces systems, moves walls, and rebuilds from the studs out. Scope, structural work, and finish level move the number far more than square footage alone.</p>
+<p>These ranges come from our instant estimate for a 2,000 sq ft home, priced from our cost book, and are part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. <a href="/#planning-ranges">Explore our planning ranges</a> for a starting point.</p>
 <table class="cost-table">
-<thead><tr><th>Whole-home scope</th><th>2026 Boise planning range</th><th>What it includes</th></tr></thead>
+<thead><tr><th>Finish level, 2,000 sq ft</th><th>Instant estimate, ${P5_AS_OF}</th><th>What it means</th></tr></thead>
 <tbody>
-<tr><td>Cosmetic whole-home refresh</td><td>$72,000 - $96,000</td><td>Paint, flooring, kitchen/bath updates, fixtures; same layout</td></tr>
-<tr><td>Mid-range whole-home remodel</td><td>$180,000 - $240,000</td><td>New kitchen and baths, some layout changes, updated systems</td></tr>
-<tr><td>Full gut renovation</td><td>$348,000 - $425,000</td><td>Down to studs, new MEP, structural changes, high-end finishes</td></tr>
-<tr><td>Luxury gut renovation</td><td>$600,000 - $816,000</td><td>Structural engineering, smart home, premium finishes throughout</td></tr>
+<tr><td>Essential</td><td>${p5Range('whole-home-2000', 'builder')}</td><td>Clean, durable, value-focused selections</td></tr>
+<tr><td>Signature</td><td>${p5Range('whole-home-2000')}</td><td>The most popular level of finish</td></tr>
+<tr><td>Premium</td><td>${p5Range('whole-home-2000', 'high')}</td><td>Upgraded materials and details throughout</td></tr>
+<tr><td>Luxury</td><td>${p5Range('whole-home-2000', 'luxury')}</td><td>Top-of-line materials and custom work</td></tr>
 </tbody>
 </table>
 
@@ -101,7 +102,7 @@ export const wholeHomeRemodelCostBoise: BlogPostData = {
 <p>One note on what these ranges include: construction cost is only part of the picture. A realistic whole-home budget also carries <strong>soft costs</strong> - design and drafting, structural engineering, permit fees, and sometimes surveys - which commonly add 8-15% on top of construction. Temporary housing or a temporary kitchen during construction is a real line item too. Accounting for soft costs and living expenses up front is the difference between a budget that holds and one that surprises you halfway through.</p>
 
 <h2 id="cost-per-sf">Whole-home remodel cost per square foot</h2>
-<p>Per-square-foot is more useful for whole-home projects than for kitchens or baths, because cost is spread across the entire footprint. In the Treasure Valley, expect roughly $40-$236 per square foot: lighter cosmetic work at the low end, full gut renovations at the high end, and luxury work beyond it. Still, use it as a gut-check only - a 2,500-square-foot home with modest finishes can cost less than a 1,800-square-foot home taken to the studs with custom millwork. Our <a href="/blog/remodel-cost-per-square-foot-boise">cost per square foot guide</a> explains the caveats.</p>
+<p>Per-square-foot is more useful for whole-home projects than for kitchens or baths, because cost is spread across the entire footprint. Our instant estimate prices it at ${p5PerSqft('whole-home-2000', 'builder')} at Essential up to ${p5PerSqft('whole-home-2000', 'luxury')} at Luxury, before structural changes, design and permits. Still, use it as a gut-check only - a 2,500-square-foot home with modest finishes can cost less than a 1,800-square-foot home taken to the studs with custom millwork. Our <a href="/blog/remodel-cost-per-square-foot-boise">cost per square foot guide</a> explains the caveats.</p>
 
 <h2 id="breakdown">Where the money goes in a whole-home remodel</h2>
 <p>Whole-home budgets differ from single-room projects because a large share goes to systems and infrastructure you never see. On a gut renovation, mechanical, electrical, and plumbing work can rival the cost of the visible finishes.</p>

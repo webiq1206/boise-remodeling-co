@@ -2,13 +2,14 @@
  * Bespoke body + FAQs for the Boise Bathroom Remodeling Guide pillar.
  * Uses the guide callout system for an easy-to-follow, on-brand flow.
  */
+import { P5_AS_OF, p5Span } from '../p5Figures';
 
 export const BATHROOM_GUIDE_CONTENT = `
 <p class="guide-lead">A bathroom remodel packs a lot of complexity into a small room - plumbing, waterproofing, tile, ventilation, and fixtures all in a few square feet. This guide walks you through it in order: budgeting, planning the layout, choosing a shower and vanity, the construction process and timeline, the waterproofing that makes or breaks the job, and designing for the long term. Read it top to bottom and you will know exactly how to get a bathroom that is beautiful and built to last.</p>
 
 <div class="callout cost">
   <p class="callout-label">Budget &amp; timeline snapshot</p>
-  <p>Guest and hall baths often plan <strong>$18,000-$45,000</strong>; primary baths with a curbless shower and layout changes commonly reach <strong>$35,000-$85,000+</strong>. Most bathrooms take about <strong>3-6 weeks of on-site construction</strong> after design and permits, driven largely by tile and its cure times.</p>
+  <p>As of ${P5_AS_OF}, our instant estimate shows <strong>${p5Span('bath-hall-full')}</strong> for a guest or hall bath remodeled to the studs in the same layout, and <strong>${p5Span('bath-primary-relocate')}</strong> for a primary bath in a new layout, from Essential to Luxury. Most bathrooms take about <strong>3-6 weeks of on-site construction</strong> after design and permits, driven largely by tile and its cure times.</p>
 </div>
 
 <h2>1. Start with how the bathroom needs to work</h2>
@@ -95,7 +96,7 @@ export const BATHROOM_GUIDE_FAQS = [
   {
     question: 'How much does a bathroom remodel cost in Boise?',
     answer:
-      'Guest and hall bathrooms often plan $18,000 to $45,000, while primary baths with a curbless shower and layout changes commonly reach $35,000 to $85,000 or more. Cost scales with size, whether you move plumbing, and finish level. Keeping fixtures near their existing plumbing is one of the biggest ways to control the budget. Always hold a 10-15% contingency for surprises.',
+      `Our instant estimate shows ${p5Span('bath-hall-full')} for a guest or hall bath remodeled to the studs in the same layout, and ${p5Span('bath-primary-relocate')} for a primary bath in a new layout, from Essential to Luxury. Cost scales with size, whether you move plumbing, and finish level. Keeping fixtures near their existing plumbing is one of the biggest ways to control the budget. Always hold a 10-15% contingency for surprises.`,
   },
   {
     question: 'How long does a bathroom remodel take?',

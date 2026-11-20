@@ -1,5 +1,9 @@
 import type { PdfBlock } from '@/lib/pdf/drawResourcePdf';
 import { SITE_CONFIG } from './siteConfig';
+import { P5_AS_OF, p5High, p5Low, type P5FigureKey } from './content/p5Figures';
+
+/** One worksheet row: the instant estimate's Essential low and Luxury high. */
+const band = (label: string, key: P5FigureKey) => [label, p5Low(key, 'builder'), p5High(key, 'luxury'), '___________'];
 
 const FOOTER = `${SITE_CONFIG.name} | ${SITE_CONFIG.siteUrl} | Planning resource - not a contract or quote`;
 
@@ -22,17 +26,22 @@ export const BUDGET_WORKSHEET_BLOCKS: PdfBlock[] = [
       'Will you occupy during construction? Yes / No',
     ],
   },
-  { type: 'heading', text: '2. Planning ranges by project type (2026 bands)' },
+  { type: 'heading', text: `2. Instant estimate ranges by project type (${P5_AS_OF})` },
   {
     type: 'table',
-    headers: ['Project', 'Low planning', 'High planning', 'Your target'],
+    headers: ['Project', 'Essential low', 'Luxury high', 'Your target'],
     rows: [
-      ['Kitchen (full)', '$37,000', '$110,000+', '___________'],
-      ['Bath (guest)', '$18,000', '$45,000', '___________'],
-      ['Bath (master)', '$35,000', '$85,000+', '___________'],
-      ['Whole-home', '$180,000', '$425,000+', '___________'],
-      ['Addition', '$80,000', '$250,000+', '___________'],
+      band('Kitchen 150 sf, new cabinets', 'kitchen-replace-medium'),
+      band('Guest bath, full remodel', 'bath-hall-full'),
+      band('Primary bath, full remodel', 'bath-primary-full'),
+      band('Whole-home, 2,000 sq ft', 'whole-home-2000'),
+      band('Room addition, 300 sq ft', 'addition-room-300'),
+      band('Basement, 800 sq ft', 'basement-800'),
     ],
+  },
+  {
+    type: 'paragraph',
+    text: 'Preliminary ranges from our instant estimate at boiseremodeling.co/instant-estimate, from the Essential to the Luxury finish level. Whole-home, addition and basement ranges leave out design and permits; the kitchen leaves out appliances. ADU conversions, decks and aging-in-place work are priced after a free visit.',
   },
   { type: 'heading', text: '3. Budget line items (separate buckets)' },
   {

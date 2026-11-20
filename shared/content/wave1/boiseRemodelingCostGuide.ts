@@ -1,4 +1,5 @@
 import { buildSectionsHtml, CITIES_LIST, PILLAR_TV, PILLAR_BOISE, type ContentSection } from './snippets';
+import { P5_AS_OF, p5Low, p5PerSqft, p5Range, p5Span } from '../p5Figures';
 
 const sections: ContentSection[] = [
   {
@@ -12,19 +13,18 @@ const sections: ContentSection[] = [
   {
     h2: 'Typical remodeling cost ranges by project type in Boise',
     paragraphs: [
-      'The table below reflects planning ranges we use with homeowners in design-build consultations. Your home, existing conditions, and selections will move you within or beyond these bands.',
+      `The table below shows preliminary ranges from our instant estimate as of ${P5_AS_OF}, from the Essential to the Luxury level at the size named. Your home, existing conditions, and selections will move you within or beyond these bands. ADU conversions are priced after a feasibility visit, so request a quote for one.`,
     ],
     table: {
       className: 'cost-table',
-      headers: ['Project type', 'Typical planning range', 'Typical timeline'],
+      headers: ['Project type', 'Instant estimate, Essential to Luxury', 'Typical timeline'],
       rows: [
-        ['Kitchen remodel (full)', '$37,000 – $110,000+', '6 – 16 weeks (construction)'],
-        ['Bathroom (guest)', '$18,000 – $45,000', '4 – 8 weeks'],
-        ['Bathroom (master)', '$35,000 – $85,000+', '6 – 12 weeks'],
-        ['Whole-home remodel', '$180,000 – $425,000+', '4 – 12 months'],
-        ['Room addition', '$93,000 – $189,000+', '4 – 9 months'],
-        ['ADU / guest house', '$90,000 – $300,000+', '6 – 12 months'],
-        ['Luxury remodel', '$136,000 – $816,000+', '6 – 18 months'],
+        ['Kitchen, about 150 sq ft, new cabinets, same layout', p5Span('kitchen-replace-medium'), '6 – 16 weeks (construction)'],
+        ['Guest bath, full remodel, same layout', p5Span('bath-hall-full'), '4 – 8 weeks'],
+        ['Primary bath, full remodel, same layout', p5Span('bath-primary-full'), '6 – 12 weeks'],
+        ['Whole-home renovation, 2,000 sq ft', p5Span('whole-home-2000'), '4 – 12 months'],
+        ['Room addition, 300 sq ft', p5Span('addition-room-300'), '4 – 9 months'],
+        ['Basement finish, 800 sq ft', p5Span('basement-800'), '6 – 12 weeks'],
       ],
     },
   },
@@ -32,7 +32,7 @@ const sections: ContentSection[] = [
     h2: 'How much does a kitchen remodel cost in Boise?',
     paragraphs: [
       'Kitchen remodels are the most common inquiry in Boise and Meridian. Layout changes - moving the sink wall, adding an island, or opening to the family room - drive both design fees and permit time. Cabinetry line (stock, semi-custom, custom), countertop material, and lighting layers compound quickly.',
-      'Appliances are typically client-supplied; we guide selection and coordinate rough-in but do not purchase or install appliances. Budget them separately, often $8,000–$25,000 for a full suite.',
+      'Appliances are typically client-supplied; we guide selection and coordinate rough-in but do not purchase or install appliances. Budget them separately.',
       'Read our dedicated article: <a href="/blog/kitchen-remodel-cost-boise">Kitchen Remodel Cost Boise</a>. Explore <a href="/services/kitchen-remodel">kitchen remodeling services</a> and <a href="/services/kitchen-remodel/boise">kitchen remodels in Boise</a>.',
     ],
   },
@@ -76,12 +76,12 @@ const sections: ContentSection[] = [
     ],
     table: {
       className: 'cost-table',
-      headers: ['Project context', 'Planning $/SF (finished area affected)'],
+      headers: ['Project context, Signature level', 'Instant estimate per square foot'],
       rows: [
-        ['Cosmetic refresh (paint, trim, fixtures)', '$15 – $40'],
-        ['Mid-range kitchen or bath remodel', '$250 – $450+ (room SF)'],
-        ['Whole-home remodel (major)', '$100 – $200+'],
-        ['Addition (new construction portion)', '$240 – $560'],
+        ['Kitchen, about 150 sq ft, new cabinets, same layout (room sq ft)', p5PerSqft('kitchen-replace-medium')],
+        ['Primary bath, about 100 sq ft, full remodel (room sq ft)', p5PerSqft('bath-primary-full')],
+        ['Whole-home renovation, 2,000 sq ft', p5PerSqft('whole-home-2000')],
+        ['Room addition, 300 sq ft', p5PerSqft('addition-room-300')],
       ],
     },
   },
@@ -226,7 +226,7 @@ export const BOISE_REMODELING_COST_GUIDE_HTML = COST_CALLOUTS.reduce(
 );
 
 export const BOISE_REMODELING_COST_QUICK_ANSWER =
-  'Treasure Valley remodels in 2026 typically range from about $18,000 for a small bath refresh to $425,000+ for whole-home or luxury programs, with most full kitchens between $37,000 and $110,000 and master baths from $35,000 to $85,000+. Exact cost depends on layout changes, finishes, permits (Ada or Canyon County), and existing home conditions - not national averages.';
+  `As of ${P5_AS_OF}, our instant estimate shows preliminary ranges from ${p5Low('bath-powder-refresh', 'builder')} for a powder room refresh at the Essential level to ${p5Span('whole-home-2000')} for a 2,000 sq ft whole-home renovation across finish levels, with a medium kitchen with new cabinets in the same layout at ${p5Range('kitchen-replace-medium')} and a primary bath at ${p5Range('bath-primary-full')} at the Signature level. Exact cost depends on layout changes, finishes, permits (Ada or Canyon County), and existing home conditions - not national averages.`;
 
 export const BOISE_REMODELING_COST_TAKEAWAYS = [
   'Use planning ranges by project type, not a single $/SF number for every remodel.',

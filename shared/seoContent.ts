@@ -5,6 +5,7 @@ import { getCountyLabel } from './contentData';
 import type { LandingSection } from '@/components/seo/LandingPageTemplate';
 import { AREA_CITY_COPY } from './content/areaCopy';
 import { getCityServiceCopy } from './content/cityServiceCopy';
+import { P5_AS_OF, p5Cite, p5Range, p5Span } from './content/p5Figures';
 import {
   BATHROOM_NEAR_ME_FAQS,
   BATHROOM_NEAR_ME_H1,
@@ -61,7 +62,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'kitchen remodel',
     answer: {
       question: 'What does a kitchen remodel in the Treasure Valley include and cost?',
-      text: 'A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of 2026, most mid-range Treasure Valley kitchens plan between $37,000 and $47,000, and most run 6 to 12 weeks of on-site construction after permit approval, longer for a full gut with layout changes. Your exact range is confirmed after a free in-home visit.',
+      text: `A kitchen remodel with Boise Remodeling Co puts layout, cabinetry, counters, lighting, plumbing and permits under one written scope. As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('kitchen-replace-medium')}, and most kitchens run 6 to 12 weeks of on-site construction after permit approval, longer for a full gut with layout changes. Your written scope follows a free in-home visit.`,
     },
     name: 'Kitchen Remodel',
     headline: 'Kitchen remodeling in Boise and the Treasure Valley',
@@ -137,15 +138,15 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       },
     ],
     costTiers: [
-      { label: 'Cosmetic refresh', range: '$16,000 to $21,000' },
-      { label: 'Mid-range remodel', range: '$37,000 to $47,000', note: 'New cabinetry, quartz or granite counters, tile backsplash, and updated plumbing and electrical' },
-      { label: 'Full gut renovation', range: '$85,000 to $166,000', note: 'Layout changes, custom cabinetry, and premium finishes' },
+      { label: 'Refresh, medium kitchen', range: p5Range('kitchen-refresh-medium'), note: 'Painted cabinets, new counters, backsplash and hardware, about 150 sq ft, Signature level' },
+      { label: 'New kitchen, same layout', range: p5Range('kitchen-replace-medium'), note: 'New cabinets and finishes, about 150 sq ft, Signature level' },
+      { label: 'New layout with an island', range: p5Range('kitchen-redesign-large'), note: 'A large kitchen of about 250 sq ft, Signature level' },
     ],
     costGuidance: {
       heading: 'Kitchen remodel cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, most Treasure Valley kitchen remodels plan between $37,000 and $47,000 for mid-range scope: new cabinetry, quartz or granite counters, tile backsplash, and updated plumbing and electrical. Cosmetic refreshes run $16,000 to $21,000, while full gut renovations with layout changes, custom cabinetry, and premium finishes commonly run $85,000 to $166,000.',
-        'These are planning ranges, not bids. Size, layout changes, and finish level drive the final number, which we confirm with a written scope after your free in-home visit.',
+        `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Cite('kitchen-replace-medium')}, the most popular choice. A refresh of that kitchen with painted cabinets, new counters, backsplash and hardware shows ${p5Range('kitchen-refresh-medium')}, and a large kitchen of about 250 sq ft in a new layout with a new island shows ${p5Range('kitchen-redesign-large')} at Signature and ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury.`,
+        'These are preliminary ranges, not bids. Size, layout changes, and finish level drive the final number, which we confirm with a written scope after your free in-home visit.',
       ],
     },
   },
@@ -184,14 +185,15 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     ],
     faqs: BATHROOM_NEAR_ME_FAQS,
     costTiers: [
-      { label: 'Guest bathroom', range: '$18,000 to $45,000' },
-      { label: 'Primary bathroom', range: '$35,000 to $85,000 or more', note: 'Walk-in or curbless showers, double vanities, and tile work' },
+      { label: 'Guest bath refresh', range: p5Range('bath-hall-refresh'), note: 'New vanity, toilet, fixtures, lighting and paint, Signature level' },
+      { label: 'Guest bath, full remodel', range: p5Range('bath-hall-full'), note: 'To the studs in the same layout, tub and tiled walls, Signature level' },
+      { label: 'Primary bath, full remodel', range: p5Range('bath-primary-full'), note: 'Walk-in tiled shower and double vanity, same layout, Signature level' },
     ],
     costGuidance: {
       heading: 'Bathroom remodel cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, guest bathroom remodels in the Boise area typically plan $18,000 to $45,000. Primary bathroom remodels with walk-in or curbless showers, double vanities, and tile work commonly plan $35,000 to $85,000 or more depending on layout changes and finish level.',
-        'These are planning ranges, not bids. Waterproofing scope, plumbing relocations, and fixture selections drive the final number, which we confirm in a written scope after your free in-home visit.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('bath-hall-full')}. A refresh of the same bath shows ${p5Range('bath-hall-refresh')}, and ${p5Cite('bath-primary-full')}. From Essential to Luxury, that guest bath spans ${p5Span('bath-hall-full')} and that primary bath ${p5Span('bath-primary-full')}.`,
+        'These are preliminary ranges, not bids. Waterproofing scope, plumbing relocations, and fixture selections drive the final number, which we confirm in a written scope after your free in-home visit.',
       ],
     },
   },
@@ -200,7 +202,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'whole-home remodel',
     answer: {
       question: 'What does a whole-home remodel in the Treasure Valley involve?',
-      text: 'A whole-home remodel brings several rooms, systems and finishes into one master plan run by one design-build team. As of 2026, Boise-area whole-home remodels commonly plan $180,000 to $425,000 or more, and most run 3 to 6 months of construction, with design, engineering and permits adding 6 to 12 weeks first.',
+      text: `A whole-home remodel brings several rooms, systems and finishes into one master plan run by one design-build team. As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('whole-home-2000')}, and most run 3 to 6 months of construction, with design, engineering and permits adding 6 to 12 weeks first.`,
     },
     name: 'Whole-Home Remodel',
     headline: 'Whole-home remodeling in the Treasure Valley',
@@ -246,7 +248,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does a whole-home remodel cost in the Treasure Valley?',
         answer:
-          'Whole-home programs commonly plan $180,000 to $425,000 or more depending on square footage, structural changes, and finish level. Phasing can spread the investment; a written master scope keeps phases cohesive.',
+          `Our instant estimate shows ${p5Cite('whole-home-2000')}, ${p5Range('whole-home-2000', 'builder')} at Essential and ${p5Range('whole-home-2000', 'high')} at Premium, before any structural changes, design and permits. Phasing can spread the investment; a written master scope keeps phases cohesive.`,
       },
       {
         question: 'Should I remodel everything at once or in phases?',
@@ -269,10 +271,15 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
           'Pre-1990 homes, especially in the North End and on the Bench, often reveal wiring, plumbing, or framing conditions once drywall opens. We recommend holding a 10 to 15 percent contingency and we flag known risk areas during design.',
       },
     ],
+    costTiers: [
+      { label: 'Essential', range: p5Range('whole-home-2000', 'builder'), note: 'A 2,000 sq ft whole-home renovation, value-focused selections' },
+      { label: 'Signature', range: p5Range('whole-home-2000'), note: 'The same 2,000 sq ft home, the most popular finish level' },
+      { label: 'Premium', range: p5Range('whole-home-2000', 'high'), note: 'The same home with upgraded materials and details throughout' },
+    ],
     costGuidance: {
       heading: 'Whole-home remodel cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, whole-home remodels in the Boise area commonly plan $180,000 to $425,000 or more, driven by square footage, structural and layout changes, and finish level. We quote a written master scope after the free in-home visit rather than a per-square-foot band.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('whole-home-2000')}. The same home shows ${p5Range('whole-home-2000', 'builder')} at Essential and ${p5Range('whole-home-2000', 'high')} at Premium, and ${p5Cite('whole-home-1600')}. Those ranges leave out structural changes, design and permits, which a master scope prices after the free in-home visit.`,
         'These are planning ranges, not bids. Phasing options can spread the investment across stages while keeping finishes and systems consistent.',
       ],
     },
@@ -282,7 +289,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'ADU conversion',
     answer: {
       question: 'What is an ADU conversion, and who builds new ADUs?',
-      text: 'An ADU conversion turns space you already have, a garage, a basement or an attached wing, into a self-contained living unit. Boise Remodeling Co designs and builds those conversions with permits handled in-house. As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. New detached ADUs are built by Boise Construction Co.',
+      text: 'An ADU conversion turns space you already have, a garage, a basement or an attached wing, into a self-contained living unit. Boise Remodeling Co designs and builds those conversions with permits handled in-house, and prices each one after a feasibility visit: request a quote to start. New detached ADUs are built by Boise Construction Co.',
     },
     name: 'ADU / Guest House',
     headline: 'ADU conversions in the Treasure Valley',
@@ -313,7 +320,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does an ADU cost in the Treasure Valley?',
         answer:
-          'ADU conversions typically plan $90,000 to $180,000 for a garage conversion and $120,000 to $250,000 for an attached ADU or basement conversion, depending on size and finish level. New detached ADUs are built by Boise Construction Co. Schedule a free in-home visit for a written scope.',
+          'Our instant estimate does not price ADU conversions, because size, utility connections and site conditions vary too much from one property to the next. Request a quote and we price your garage, basement or attached conversion in a written scope after a free in-home visit. New detached ADUs are built by Boise Construction Co.',
       },
       {
         question: 'Do I need a permit for an ADU in Boise or Ada County?',
@@ -333,7 +340,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'Is a garage conversion cheaper than building a detached ADU?',
         answer:
-          'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000; a detached new build adds a foundation, framing, roof and its own utility runs. New detached ADUs are built by Boise Construction Co. The tradeoff is losing garage storage and parking.',
+          'Usually yes. Garage conversions reuse the existing foundation and shell; a detached new build adds a foundation, framing, roof and its own utility runs. New detached ADUs are built by Boise Construction Co. The tradeoff is losing garage storage and parking.',
       },
       {
         question: 'Does an ADU need separate utilities?',
@@ -351,15 +358,11 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
           'A permitted ADU adds appraisable square footage and rental income potential that Treasure Valley buyers increasingly search for. Unpermitted units do the opposite, creating disclosure and insurance problems at sale.',
       },
     ],
-    costTiers: [
-      { label: 'Garage conversion', range: '$90,000 to $180,000' },
-      { label: 'Attached ADU or basement conversion', range: '$120,000 to $250,000' },
-    ],
     costGuidance: {
       heading: 'ADU cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. Attached ADUs and basement conversions plan $120,000 to $250,000, depending on size, utility connections, and finish level. New detached ADUs are built by our sister company Boise Construction Co, which publishes its own detached ADU costs.',
-        'These are planning ranges, not bids. Site conditions and utility strategy drive ADU budgets more than any other project type, which is why feasibility review comes first in our process.',
+        'We price garage, basement and attached ADU conversions after a feasibility visit, not from a published range: our instant estimate does not price ADU conversions, so request a quote and we write a scope for your property. New detached ADUs are built by our sister company Boise Construction Co, which publishes its own detached ADU costs.',
+        'Site conditions and utility strategy drive ADU budgets more than any other project type, which is why feasibility review comes first in our process.',
       ],
     },
   },
@@ -412,7 +415,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does a room addition cost in Boise?',
         answer:
-          'Most Treasure Valley additions plan $80,000 to $250,000 or more depending on size, foundation work, and whether bathrooms or kitchens are included. Second-story additions trend higher due to structural scope.',
+          `As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('addition-room-300')}, and ${p5Cite('addition-suite')}. Second-story additions run higher because of the structural scope: ${p5Range('addition-second')} at Signature.`,
       },
       {
         question: 'How long does a room addition take?',
@@ -435,10 +438,15 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
           'An addition grows your main living space; an ADU creates a separate rentable unit. If income potential matters, compare both paths - we build each and will price your lot honestly in either direction.',
       },
     ],
+    costTiers: [
+      { label: 'Room addition', range: p5Range('addition-room-300'), note: 'About 300 sq ft, Signature level' },
+      { label: 'Primary suite addition', range: p5Range('addition-suite'), note: 'A typical size, Signature level' },
+      { label: 'Second-story addition', range: p5Range('addition-second'), note: 'A typical size, Signature level' },
+    ],
     costGuidance: {
       heading: 'Room addition cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, room additions in the Boise area commonly plan $80,000 to $250,000 or more. Single-room bump-outs sit at the lower end; primary suite additions with bathrooms and second-story additions with structural upgrades reach the upper end.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('addition-room-300')}, and ${p5Range('addition-room-300', 'builder')} at Essential. It shows ${p5Cite('addition-suite')}, and ${p5Range('addition-second')} for a second-story addition, at Signature. Design, engineering, surveys, permits and fees are priced separately.`,
         'These are planning ranges, not bids. Foundation, roof tie-in, and whether plumbing is included drive addition budgets, which we confirm in a written scope after your free in-home visit.',
       ],
     },
@@ -448,7 +456,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'basement remodel',
     answer: {
       question: 'What does finishing a basement in the Treasure Valley involve?',
-      text: 'Finishing a basement adds livable square footage without changing the footprint: egress, framing, insulation, moisture control, mechanicals and finishes, all permitted and inspected. As of 2026, Boise-area basements commonly plan $40,000 to $100,000 or more, and most run 6 to 12 weeks after permits, depending on egress work and any bathroom or kitchenette.',
+      text: `Finishing a basement adds livable square footage without changing the footprint: egress, framing, insulation, moisture control, mechanicals and finishes, all permitted and inspected. As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('basement-800')}, and most run 6 to 12 weeks after permits, depending on egress work and any bathroom or kitchenette.`,
     },
     name: 'Basement Remodeling',
     headline: 'Basement remodeling and finishing in the Treasure Valley',
@@ -479,7 +487,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does it cost to finish a basement in Boise?',
         answer:
-          'Finishing a basement in the Treasure Valley commonly plans $40,000 to $100,000 or more. A simple open family room sits at the lower end; adding a bathroom, kitchenette, egress windows, or a bedroom suite moves it higher. Use our estimator for a planning range, then book a free in-home visit for a written scope.',
+          `Our instant estimate shows ${p5Cite('basement-800')}. Adding a bathroom moves it higher: ${p5Cite('basement-1000-bath')}. Get an instant estimate for your own size, then book a free in-home visit for a written scope.`,
       },
       {
         question: 'Do I need a permit to finish a basement in Idaho?',
@@ -512,10 +520,15 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
           'Plan 6 to 12 weeks after permits. Open living space finishes fastest; egress cutting, a bathroom, or a kitchenette add time for rough-ins and inspections.',
       },
     ],
+    costTiers: [
+      { label: 'Essential', range: p5Range('basement-800', 'builder'), note: 'About 800 sq ft finished, no bathroom' },
+      { label: 'Signature', range: p5Range('basement-800'), note: 'About 800 sq ft finished, the most popular finish level' },
+      { label: 'With a bathroom', range: p5Range('basement-1000-bath'), note: 'About 1,000 sq ft with a new bathroom, Signature level' },
+    ],
     costGuidance: {
       heading: 'Basement finishing cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, finishing a basement in the Boise area commonly plans $40,000 to $100,000 or more. Open family rooms sit at the lower end; egress windows, a full bathroom, a kitchenette, or a bedroom suite reach the upper end.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('basement-800')}, and ${p5Range('basement-800', 'builder')} at Essential. It shows ${p5Cite('basement-1000-bath')}. Egress windows, waterproofing, design and permits are priced separately.`,
         'These are planning ranges, not bids. Egress work, plumbing access, and moisture or radon mitigation drive basement budgets, which we confirm in a written scope after your free in-home visit.',
       ],
     },
@@ -525,7 +538,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'outdoor living project',
     answer: {
       question: 'What outdoor living projects does Boise Remodeling Co build?',
-      text: 'Boise Remodeling Co designs and builds decks, covered patios, pergolas and outdoor kitchens as one design-build project, with footings and permits handled in-house. As of 2026, Boise-area outdoor living projects commonly plan $25,000 to $75,000 or more, and most run 3 to 8 weeks after permits, depending on size and covered structures.',
+      text: 'Boise Remodeling Co designs and builds decks, covered patios, pergolas and outdoor kitchens as one design-build project, with footings and permits handled in-house. Most run 3 to 8 weeks after permits, depending on size and covered structures, and each is priced in a written scope after a free visit: request a quote to start.',
     },
     name: 'Outdoor Living & Decks',
     headline: 'Decks, covered patios and outdoor living in the Treasure Valley',
@@ -556,7 +569,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does a deck cost in Boise?',
         answer:
-          'A new deck in the Treasure Valley commonly plans $25,000 to $60,000 or more, depending on size, height, railing, and material. Composite decking costs more upfront than wood but lasts longer with less maintenance. Use our estimator for a planning range.',
+          'It depends on size, height, railing and material, and our instant estimate does not price decks. Composite decking costs more upfront than wood but lasts longer with less maintenance. Request a quote and we price your deck in a written scope after a free visit.',
       },
       {
         question: 'Do I need a permit to build a deck or covered patio in Ada County?',
@@ -587,7 +600,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'Deck and outdoor living cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, decks and outdoor living projects in the Boise area commonly plan $25,000 to $75,000 or more. Ground-level wood decks sit at the lower end; large composite decks, covered patios, and outdoor kitchens reach the upper end.',
+        'Our instant estimate does not price decks or outdoor living, so we do not publish a range for them. Ground-level wood decks cost the least; large composite decks, covered patios and outdoor kitchens cost the most. Request a quote and we price yours in a written scope after a free visit.',
         'These are planning ranges, not bids. Material choice, deck height, covered structures, and utility runs drive outdoor budgets, which we confirm in a written scope after your free in-home visit.',
       ],
     },
@@ -597,7 +610,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     noun: 'aging-in-place remodel',
     answer: {
       question: 'What does an aging-in-place remodel include?',
-      text: 'An aging-in-place remodel makes a home safer to stay in as needs change: curbless showers, grab bars, comfort-height fixtures, wider doorways, zero-step entries and main-floor living. As of 2026, a full accessible or curbless bathroom in the Boise area plans $20,000 to $45,000, while targeted safety upgrades can take just a few days.',
+      text: 'An aging-in-place remodel makes a home safer to stay in as needs change: curbless showers, grab bars, comfort-height fixtures, wider doorways, zero-step entries and main-floor living. Targeted safety upgrades can take just a few days, and each project is priced in a written scope after a free visit: request a quote to start.',
     },
     name: 'Aging-in-Place Remodeling',
     headline: 'Aging-in-place remodeling in Boise and the Treasure Valley',
@@ -628,7 +641,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does an aging-in-place remodel cost in Boise?',
         answer:
-          'It depends on scope. Targeted safety upgrades like grab bars and lever handles can be a few hundred to a few thousand dollars. A full accessible or curbless bathroom commonly plans $20,000 to $45,000, and main-floor living conversions run higher. Use our estimator for a planning range.',
+          'It depends on scope, from grab bars and lever handles to a full accessible bathroom or a main-floor suite. Our instant estimate does not price aging-in-place work, so request a quote and we price yours in a written scope after a free visit.',
       },
       {
         question: 'What is universal design?',
@@ -659,7 +672,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costGuidance: {
       heading: 'Aging-in-place remodeling cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, aging-in-place work in the Boise area ranges widely: a few hundred dollars for grab bars and lever hardware, $20,000 to $45,000 for a full accessible or curbless bathroom, and more for main-floor suite conversions or zero-step entries.',
+        'Aging-in-place work ranges widely, from grab bars and lever hardware to a full accessible or curbless bathroom, a main-floor suite conversion or a zero-step entry. Our instant estimate does not price it, so we do not publish a range: request a quote and we price yours in a written scope after a free visit.',
         'These are planning ranges, not bids. Scope, structural changes, and finish level drive accessibility budgets, which we confirm in a written scope after your free in-home visit.',
       ],
     },

@@ -1,4 +1,5 @@
 import type { BlogPostData } from '../../blogContent';
+import { P5_AS_OF, p5Range } from '../p5Figures';
 
 export const luxuryRemodelCostBoise: BlogPostData = {
   slug: 'luxury-remodel-cost-boise',
@@ -7,7 +8,7 @@ export const luxuryRemodelCostBoise: BlogPostData = {
   metaDescription:
     'What does a luxury remodel cost in Boise and Eagle? 2026 planning ranges for high-end kitchens, primary suites, and whole-home projects, what defines luxury, and where the budget goes.',
   excerpt:
-    'Luxury remodels in Boise, Eagle, and the Foothills often start around $200,000 for multi-room scope and climb well beyond for whole-home custom work. Here is what drives high-end cost.',
+    `Our instant estimate shows ${p5Range('kitchen-redesign-large', 'luxury')} for a large luxury kitchen in a new layout and ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation at the Luxury level. Here is what drives high-end cost.`,
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -25,10 +26,10 @@ export const luxuryRemodelCostBoise: BlogPostData = {
   featuredSnippetTargets: ['luxury remodel cost boise', 'high end kitchen remodel cost'],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A luxury remodel in Boise and Eagle typically starts around $200,000 for a multi-room project and runs $600,000-$816,000 for whole-home custom work as of 2026. Luxury kitchens commonly run $136,000-$166,000 and luxury primary suites $73,000+. Custom millwork, natural stone, designer fixtures, and extended design time drive luxury cost more than square footage.',
+    `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation at the Luxury level, before structural changes, design and permits. A large kitchen (about 250 sq ft) in a new layout with an island shows ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury, and a primary bath in a new layout with a freestanding tub and tiled shower shows ${p5Range('bath-primary-relocate', 'luxury')}. Custom millwork, natural stone, designer fixtures, and extended design time drive luxury cost more than square footage.`,
   keyTakeaways: [
-    'Luxury multi-room remodels start around $200,000; whole-home custom work runs $600,000-$816,000.',
-    'High-end kitchens run $85,000+ and luxury primary suites $73,000+ in the Boise area.',
+    `A 3,000 sq ft whole-home renovation shows ${p5Range('whole-home-3000', 'luxury')} at the Luxury level in our instant estimate.`,
+    `A large kitchen in a new layout shows ${p5Range('kitchen-redesign-large', 'high')} at Premium and ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury; a primary bath in a new layout shows ${p5Range('bath-primary-relocate', 'luxury')} at Luxury.`,
     'Custom millwork, natural stone, and designer fixtures define luxury cost, not room size.',
     'Design time is longer and more involved on luxury projects, and it is part of the value.',
     'Eagle and Foothills HOA and architectural review can add time to high-end projects.',
@@ -45,7 +46,7 @@ export const luxuryRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does a luxury remodel cost in Boise?',
       answer:
-        'As of 2026, luxury remodels in Boise and Eagle typically start around $200,000 for a multi-room project and run $600,000-$816,000 for whole-home custom work. Luxury kitchens commonly run $136,000-$166,000, and luxury primary suites $73,000 and up, driven by custom millwork, stone, and designer fixtures.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation at the Luxury level, ${p5Range('kitchen-redesign-large', 'luxury')} for a large kitchen in a new layout with an island, and ${p5Range('bath-primary-relocate', 'luxury')} for a primary bath in a new layout, driven by custom millwork, stone, and designer fixtures.`,
     },
     {
       question: 'What makes a remodel "luxury"?',
@@ -55,7 +56,7 @@ export const luxuryRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does a high-end kitchen remodel cost in the Boise area?',
       answer:
-        'High-end and luxury kitchen remodels in Boise and Eagle commonly run $85,000 and up, with fully custom projects reaching well beyond. Custom cabinetry, large stone islands with waterfall edges, panel-ready and professional appliances, and detailed millwork drive the cost.',
+        `For a large kitchen (about 250 sq ft) in a new layout with an island, our instant estimate shows ${p5Range('kitchen-redesign-large', 'high')} at the Premium level and ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury, before appliances. Custom cabinetry, large stone islands with waterfall edges, panel-ready and professional appliances, and detailed millwork drive the cost.`,
     },
     {
       question: 'Why do luxury remodels take longer?',
@@ -75,14 +76,13 @@ export const luxuryRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a luxury remodel cost in Boise and Eagle?</h2>
-<p><strong>As of 2026, a luxury remodel in Boise and Eagle typically starts around $200,000 for a multi-room project and often exceeds $400,000 for whole-home custom work.</strong> High-end kitchens commonly run $85,000 and up, and luxury primary suites $73,000 and up. What defines the cost is not square footage but the level of materials, custom fabrication, and craft - the elements that make a home feel tailored rather than finished. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>.</p>
+<p><strong>As of ${P5_AS_OF}, our instant estimate shows ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation in Boise or Eagle at the Luxury level, before structural changes, design and permits.</strong> A large kitchen in a new layout with an island shows ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury, and a primary bath in a new layout ${p5Range('bath-primary-relocate', 'luxury')}. What defines the cost is not square footage but the level of materials, custom fabrication, and craft - the elements that make a home feel tailored rather than finished. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>.</p>
 <table class="cost-table">
-<thead><tr><th>Luxury project</th><th>2026 Boise / Eagle planning range</th></tr></thead>
+<thead><tr><th>Project at the Luxury level</th><th>Instant estimate, ${P5_AS_OF}</th></tr></thead>
 <tbody>
-<tr><td>Luxury kitchen</td><td>$136,000 - $166,000+</td></tr>
-<tr><td>Luxury primary suite</td><td>$73,000 - $114,000</td></tr>
-<tr><td>Multi-room luxury remodel</td><td>$200,000 - $400,000</td></tr>
-<tr><td>Whole-home custom renovation</td><td>$600,000 - $816,000</td></tr>
+<tr><td>Large kitchen, new layout with an island</td><td>${p5Range('kitchen-redesign-large', 'luxury')}</td></tr>
+<tr><td>Primary bath, new layout, freestanding tub and shower</td><td>${p5Range('bath-primary-relocate', 'luxury')}</td></tr>
+<tr><td>Whole-home renovation, 3,000 sq ft</td><td>${p5Range('whole-home-3000', 'luxury')}</td></tr>
 </tbody>
 </table>
 
@@ -100,10 +100,10 @@ export const luxuryRemodelCostBoise: BlogPostData = {
 </ul>
 
 <h2 id="kitchen">Luxury kitchens in the Boise area</h2>
-<p>The kitchen is where luxury spends most. A high-end Boise or Eagle kitchen commonly runs $85,000 and up, with fully custom projects reaching well beyond. The signature elements - a large island with a waterfall stone counter, floor-to-ceiling custom cabinetry, panel-ready and professional appliances, statement lighting, and detailed millwork - each add both material and skilled labor. Because the kitchen anchors how a luxury home lives and entertains, it typically receives the deepest design attention. See how it compares to standard tiers in our <a href="/blog/kitchen-remodel-cost-boise">kitchen remodel cost guide</a>.</p>
+<p>The kitchen is where luxury spends most. For a large Boise or Eagle kitchen in a new layout with an island, our instant estimate shows ${p5Range('kitchen-redesign-large', 'high')} at the Premium level and ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury, before appliances. The signature elements - a large island with a waterfall stone counter, floor-to-ceiling custom cabinetry, panel-ready and professional appliances, statement lighting, and detailed millwork - each add both material and skilled labor. Because the kitchen anchors how a luxury home lives and entertains, it typically receives the deepest design attention. See how it compares to standard tiers in our <a href="/blog/kitchen-remodel-cost-boise">kitchen remodel cost guide</a>.</p>
 
 <h2 id="bathroom">Luxury primary suites and bathrooms</h2>
-<p>Luxury primary suites bring spa-level bathrooms: curbless wet rooms, freestanding sculptural tubs, large-format stone, heated floors, steam showers, and custom vanities and closets. These commonly plan $73,000 and up. The cost comes from the density of tile and stone, the plumbing complexity of features like body sprays and steam, and the custom cabinetry of a dressing-room closet. Our guide to <a href="/blog/luxury-bathroom-features">luxury bathroom features</a> covers what defines the high end.</p>
+<p>Luxury primary suites bring spa-level bathrooms: curbless wet rooms, freestanding sculptural tubs, large-format stone, heated floors, steam showers, and custom vanities and closets. Our instant estimate shows ${p5Range('bath-primary-relocate', 'luxury')} for a primary bath in a new layout with a freestanding tub and tiled shower at the Luxury level. The cost comes from the density of tile and stone, the plumbing complexity of features like body sprays and steam, and the custom cabinetry of a dressing-room closet. Our guide to <a href="/blog/luxury-bathroom-features">luxury bathroom features</a> covers what defines the high end.</p>
 
 <h2 id="signature-features">Signature luxury features and what they add</h2>
 <p>Certain features recur in the luxury Boise and Eagle homes we work on, and understanding what each contributes helps you prioritize a high-end budget. A <strong>large waterfall island</strong> in natural stone becomes the sculptural centerpiece of a kitchen and adds significant fabrication labor for the mitered edges and slab matching. <strong>Floor-to-ceiling custom cabinetry</strong> and integrated, panel-ready appliances create the seamless, built-in look that defines luxury kitchens, at a premium over stock or semi-custom lines. In bathrooms, a <strong>curbless wet room</strong> combining shower and freestanding tub, finished in large-format stone with a linear drain and heated floors, delivers the spa experience buyers in premium neighborhoods expect. <strong>Bespoke lighting design</strong> - layered ambient, task, and accent lighting with statement fixtures - transforms how a home feels at night and is one of the most impactful luxury investments per dollar. <strong>Custom millwork</strong> such as paneled walls, coffered ceilings, and built-in shelving adds architectural richness that ordinary projects skip. And a <strong>dressing-room-style primary closet</strong> with custom cabinetry turns storage into a designed space. None of these are defined by size; each is defined by material, craft, and detail - which is exactly why luxury cost tracks finish rather than square footage. The art of a luxury remodel is choosing which of these signatures matter most to how you live, and executing those beautifully rather than spreading the budget thin across all of them.</p>

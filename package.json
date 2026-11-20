@@ -15,6 +15,8 @@
     "audit:links": "node --import tsx scripts/internal-links/audit.ts",
     "verify:bottom-up": "node --import tsx scripts/verify-bottom-up-costs.ts",
     "verify:pricing": "node --import tsx scripts/verify-pricing-fingerprint.ts",
+    "pricing:p5-figures": "node --experimental-strip-types --no-warnings scripts/pricing/p5-published-figures.mts",
+    "pricing:p5-figures:check": "node --experimental-strip-types --no-warnings scripts/pricing/p5-published-figures.mts --check",
     "verify:content": "node --import tsx scripts/verify-content.ts",
     "generate:llms": "node --import tsx scripts/generate-llms-txt.ts",
     "verify:section-links": "node --import tsx scripts/verify-section-links.ts",
@@ -67,7 +69,7 @@
     "verify:charcoal": "node --import tsx --test tests/brand-charcoal.test.ts",
     "verify:mobile": "node --import tsx --test tests/mobile-polish.test.ts",
     "verify:interiors": "node --import tsx --test tests/approved-interiors.test.ts",
-    "verify:interior-images": "node --import tsx --test tests/local-alt.test.ts tests/landing-image-adjacency.test.ts tests/cost-tiers.test.ts tests/small-source-images.test.ts tests/image-versions.test.ts",
+    "verify:interior-images": "node --import tsx --test tests/local-alt.test.ts tests/landing-image-adjacency.test.ts tests/cost-tiers.test.ts tests/p5-published-figures.test.ts tests/small-source-images.test.ts tests/image-versions.test.ts",
     "verify:public-claims": "node --import tsx scripts/verify-public-claims.ts && node --import tsx --test tests/public-claims-guard.test.ts tests/warranty-page.test.ts tests/instant-estimator.test.ts"
   },
   "dependencies": {

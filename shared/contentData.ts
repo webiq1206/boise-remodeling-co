@@ -2,17 +2,34 @@
 // Public service area: Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, Caldwell,
 // plus Ada County and Canyon County. Published city pages can be a longer set.
 
+import { moneyShort, p5Figure, type P5FigureKey } from './content/p5Figures';
+
+/**
+ * The lowest preliminary range the instant estimator shows for the smallest
+ * typical version of a project, at the Essential level (owner, 20 November
+ * 2026: every published figure comes from the estimator). A project the
+ * estimator does not price for this brand has no starting figure.
+ */
+function planningStart(key: P5FigureKey, basis: string): { planningFrom: string; planningFromBasis: string } {
+  const low = p5Figure(key).tiers.builder?.published.low;
+  if (!low) throw new Error(`no Essential figure for ${key}`);
+  return { planningFrom: moneyShort(low), planningFromBasis: basis };
+}
+
 export interface ServiceData {
   slug: string;
   name: string;
   shortDescription: string;
   /**
    * Planning starting point (a floor, not a bid or a wide range). Rendered as
-   * "Planning from $X" to give price context without committing to a spread -
-   * the real number comes from the estimator + in-home visit. Sourced from the
-   * published GBP starting figures (shared/gbpProfile.ts).
+   * "Planning from $X". It is the low end of the instant estimator's
+   * preliminary range for the basis named in planningFromBasis
+   * (shared/content/p5PublishedFigures.json). Absent for a project the
+   * instant estimator does not price for this brand.
    */
-  planningFrom: string;
+  planningFrom?: string;
+  /** What planningFrom was run for, shown beside it. */
+  planningFromBasis?: string;
   /**
    * Secondary services expand keyword coverage (basement, outdoor living,
    * aging-in-place). They get full service + city pages, nav, and sitemap
@@ -34,51 +51,48 @@ export const SERVICES: ServiceData[] = [
     slug: 'kitchen-remodel',
     name: 'Kitchen Remodel',
     shortDescription: 'Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild.',
-    planningFrom: '$15k',
+    ...planningStart('kitchen-refresh-small', 'A small kitchen refresh at the Essential level, from our instant estimate'),
   },
   {
     slug: 'bathroom-remodel',
     name: 'Bathroom Remodel',
     shortDescription: 'Spa-quality bathroom transformations designed around how you actually live.',
-    planningFrom: '$7k',
+    ...planningStart('bath-powder-refresh', 'A powder room refresh at the Essential level, from our instant estimate'),
   },
   {
     slug: 'whole-home-remodel',
     name: 'Whole-Home Remodel',
     shortDescription: 'Cohesive whole-home renovations with a single project manager start to finish.',
-    planningFrom: '$72k',
+    ...planningStart('whole-home-1200', 'A 1,200 sq ft renovation at the Essential level, from our instant estimate'),
   },
   {
     slug: 'room-addition',
     name: 'Room Addition',
     shortDescription: 'Thoughtfully designed additions that feel like they were always part of your home.',
-    planningFrom: '$25k',
+    ...planningStart('addition-room-200', 'A 200 sq ft room addition at the Essential level, from our instant estimate'),
   },
   {
     slug: 'adu',
     name: 'ADU / Guest House',
     shortDescription: 'Garage, basement and attached spaces turned into accessory dwelling units.',
-    planningFrom: '$90k',
   },
   {
     slug: 'basement-remodel',
     name: 'Basement Remodeling',
     shortDescription: 'Finished basements and lower-level living space, from egress and framing to a fully finished suite.',
-    planningFrom: '$35k',
+    ...planningStart('basement-600', 'A 600 sq ft basement at the Essential level, from our instant estimate'),
     secondary: true,
   },
   {
     slug: 'outdoor-living',
     name: 'Outdoor Living & Decks',
     shortDescription: 'Decks, covered patios, and outdoor kitchens that extend your living space into the yard.',
-    planningFrom: '$25k',
     secondary: true,
   },
   {
     slug: 'aging-in-place',
     name: 'Aging-in-Place Remodeling',
     shortDescription: 'Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.',
-    planningFrom: '$20k',
     secondary: true,
   },
 ];

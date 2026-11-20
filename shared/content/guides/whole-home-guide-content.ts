@@ -1,13 +1,14 @@
 /**
  * Bespoke body + FAQs for the Whole Home Remodeling Guide pillar.
  */
+import { P5_AS_OF, p5Span } from '../p5Figures';
 
 export const WHOLE_HOME_GUIDE_CONTENT = `
 <p class="guide-lead">A whole-home remodel is the largest project most homeowners ever take on - every room, every system, one coordinated program. This guide walks you through it in order: deciding whether to remodel or move, planning the whole project as one scope, budgeting with a real contingency, understanding the months-long timeline, planning where you will live during construction, and hiring a team that can run a project this big. Done right, it transforms how your home lives.</p>
 
 <div class="callout cost">
   <p class="callout-label">Budget &amp; timeline snapshot</p>
-  <p>Whole-home remodels in the Treasure Valley often span <strong>$180,000-$425,000+</strong>, with timelines from <strong>several months to a year</strong> depending on size, scope, and structural work. Most households move out during construction. See our <a href="/blog/whole-home-remodel-cost-boise">Whole-Home Remodel Cost guide</a>.</p>
+  <p>As of ${P5_AS_OF}, our instant estimate shows <strong>${p5Span('whole-home-2000')}</strong> for a 2,000 sq ft whole-home renovation from Essential to Luxury, before structural changes, design and permits, with timelines from <strong>several months to a year</strong> depending on size, scope, and structural work. Most households move out during construction. See our <a href="/blog/whole-home-remodel-cost-boise">Whole-Home Remodel Cost guide</a>.</p>
 </div>
 
 <h2>1. Remodel or move?</h2>
@@ -80,7 +81,7 @@ export const WHOLE_HOME_GUIDE_FAQS = [
   {
     question: 'How much does a whole-home remodel cost in Boise?',
     answer:
-      'Whole-home remodels in the Treasure Valley often span $180,000 to $425,000 or more, depending on the home\'s size, the scope, and how much structural and systems work is involved. Cost is driven by square footage, whether you reconfigure the layout and replace systems, custom materials, and finish level. A realistic budget should include a 10-15% contingency, especially for older homes.',
+      `Our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft whole-home renovation from Essential to Luxury, before structural changes, design and permits. The home's size, the scope, and how much structural and systems work is involved move it. Cost is driven by square footage, whether you reconfigure the layout and replace systems, custom materials, and finish level. A realistic budget should include a 10-15% contingency, especially for older homes.`,
   },
   {
     question: 'How long does a whole-home remodel take?',

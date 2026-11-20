@@ -58,8 +58,13 @@ interface LandingPageTemplateProps {
   breatherImageUrl?: string;
   processImageUrl?: string;
   manifestPath?: string;
-  /** Optional planning starting point ("$15k") shown near the hero CTAs. */
+  /**
+   * Optional planning starting point ("$14k") shown near the hero CTAs: the
+   * low end of an instant estimate range (shared/contentData.ts), with the
+   * inputs it was run for in planningFromBasis.
+   */
   planningFrom?: string;
+  planningFromBasis?: string;
   /**
    * Cost-and-timeline expectation, rendered directly AFTER THE HERO: the first
    * question a visitor researches is what this costs and how long it takes, so
@@ -246,6 +251,7 @@ export function LandingPageTemplate({
   processImageUrl,
   manifestPath,
   planningFrom,
+  planningFromBasis,
   costGuidance,
   benefits,
   inclusions,
@@ -338,7 +344,7 @@ export function LandingPageTemplate({
       {/* Three facts a visitor can check, already stated elsewhere on the page. */}
       <ul className="lx-facts" aria-label="At a glance">
         {planningFrom && (
-          <li><strong>From {planningFrom}</strong><span>Planning range, confirmed at your free in-home visit</span></li>
+          <li><strong>From {planningFrom}</strong><span>{planningFromBasis ?? 'Planning range, confirmed at your free in-home visit'}</span></li>
         )}
         <li><strong>Free in-home visit</strong><span>60 to 90 minutes, with planning guidance and no obligation</span></li>
         <li><strong>One written scope</strong><span>Agreed before construction begins, with one accountable team</span></li>

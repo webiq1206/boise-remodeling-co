@@ -6,6 +6,7 @@
 
 import { SHOW_FOUNDING_YEAR as SHOW_FOUNDED_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG, textReplyLine } from '@/shared/siteConfig';
+import { P5_AS_OF, p5Low, p5Range } from '@/shared/content/p5Figures';
 
 const SITE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 
@@ -124,6 +125,12 @@ export const GBP_MESSAGING = {
 export interface GbpService {
   name: string;
   description: string;
+  /**
+   * The low end of the instant estimator's Essential range for the smallest
+   * typical project (shared/content/p5PublishedFigures.json, the same basis as
+   * planningFrom in shared/contentData.ts). Absent where the instant
+   * estimator does not price the project for this brand.
+   */
   startingPrice?: string;
 }
 
@@ -132,43 +139,41 @@ export const GBP_SERVICES: GbpService[] = [
     name: 'Kitchen remodeling',
     description:
       'Custom kitchen renovations from cabinet refreshes to full gut-and-rebuild. Written scope, permits, and weekly updates included.',
-    startingPrice: '$15,000',
+    startingPrice: p5Low('kitchen-refresh-small', 'builder'),
   },
   {
     name: 'Bathroom remodeling',
     description:
       'Spa-quality bathroom transformations designed around how you actually live. Guest and primary baths.',
-    startingPrice: '$7,000',
+    startingPrice: p5Low('bath-powder-refresh', 'builder'),
   },
   {
     name: 'Whole-home remodeling',
     description:
       'Cohesive whole-home renovations with a single project manager start to finish. Phased options available.',
-    startingPrice: '$72,000',
+    startingPrice: p5Low('whole-home-1200', 'builder'),
   },
   {
     name: 'Room additions',
     description:
       'Thoughtfully designed additions that feel like they were always part of your home. Bump-outs to second-story additions.',
-    startingPrice: '$25,000',
+    startingPrice: p5Low('addition-room-200', 'builder'),
   },
   {
     name: 'ADU construction',
     description:
-      'Detached or attached accessory dwelling units designed to maximize your property value. Boise ordinance guidance included.',
-    startingPrice: '$90,000',
+      'Garage, basement and attached accessory dwelling units designed to maximize your property value. Boise ordinance guidance included. Priced after a feasibility visit.',
   },
   {
     name: 'Garage conversion',
     description:
-      'Convert an existing garage into livable ADU or guest space. Feasibility and utility strategy included.',
-    startingPrice: '$90,000',
+      'Convert an existing garage into livable ADU or guest space. Feasibility and utility strategy included. Priced after a feasibility visit.',
   },
   {
     name: 'Basement finishing',
     description:
       'Finish or reconfigure basement space for living, storage, or rental-ready layouts.',
-    startingPrice: 'Contact for range',
+    startingPrice: p5Low('basement-600', 'builder'),
   },
   {
     name: 'Design-build remodeling',
@@ -216,7 +221,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Kitchen Remodel',
-    price: 'From $15,000',
+    price: `From ${p5Low('kitchen-refresh-small', 'builder')}`,
     url: `${SITE}/services/kitchen-remodel`,
     description:
       'Design-build kitchen remodels in the Treasure Valley. Cabinet refresh to full gut-and-rebuild. Free in-home planning visit.',
@@ -224,7 +229,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Bathroom Remodel',
-    price: 'From $7,000',
+    price: `From ${p5Low('bath-powder-refresh', 'builder')}`,
     url: `${SITE}/services/bathroom-remodel`,
     description:
       'Guest and primary bathroom remodels with written scope before construction. Ada and Canyon County permits handled in-house.',
@@ -232,7 +237,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Whole-Home Remodel',
-    price: 'From $72,000',
+    price: `From ${p5Low('whole-home-1200', 'builder')}`,
     url: `${SITE}/services/whole-home-remodel`,
     description:
       'Single project manager from design through final walkthrough. Weekly written updates and workmanship guarantee included.',
@@ -240,7 +245,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Room Addition',
-    price: 'From $25,000',
+    price: `From ${p5Low('addition-room-200', 'builder')}`,
     url: `${SITE}/services/room-addition`,
     description:
       'Bump-outs, primary suites, and second-story additions that look original to your home.',
@@ -248,15 +253,15 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'ADU / Guest House',
-    price: 'From $90,000',
+    price: 'Contact for quote',
     url: `${SITE}/services/adu`,
     description:
-      'Attached, detached, and garage-conversion ADUs. Feasibility review and Boise ordinance guidance.',
+      'Garage, basement and attached ADU conversions. Feasibility review and Boise ordinance guidance.',
   },
   {
     category: 'Remodeling Services',
     name: 'Garage Conversion',
-    price: 'From $90,000',
+    price: 'Contact for quote',
     url: `${SITE}/services/adu`,
     description:
       'Convert existing garage space into livable ADU or guest quarters.',
@@ -264,7 +269,7 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   {
     category: 'Remodeling Services',
     name: 'Basement Finishing',
-    price: 'Contact for quote',
+    price: `From ${p5Low('basement-600', 'builder')}`,
     url: `${SITE}/contact`,
     description:
       'Basement finishing and reconfiguration for living space or rental-ready layouts in Ada and Canyon County.',
@@ -403,11 +408,11 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   },
   {
     question: 'How much does a kitchen remodel cost in Boise?',
-    answer: `As of 2026, planning ranges run roughly $16,000–$21,000 for a cosmetic refresh, $37,000–$47,000 for mid-range scope, and $85,000–$166,000 for high-end and luxury gut renovations with layout changes. These are planning ranges, not bids. Full breakdown: ${SITE}/guides/boise-kitchen-remodeling-guide`,
+    answer: `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Range('kitchen-refresh-medium')} for a medium kitchen (about 150 sq ft) refresh, ${p5Range('kitchen-replace-medium')} for new cabinets and finishes in the same layout, and ${p5Range('kitchen-redesign-large')} for a large kitchen (about 250 sq ft) in a new layout with an island, all at the Signature level. These are preliminary ranges, not bids. Full breakdown: ${SITE}/guides/boise-kitchen-remodeling-guide`,
   },
   {
     question: 'How much does a bathroom remodel cost?',
-    answer: `Guest baths typically plan $18,000–$45,000; primary baths $35,000–$85,000+ depending on layout and finishes. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
+    answer: `As of ${P5_AS_OF}, our instant estimate shows ${p5Range('bath-hall-full')} for a guest bath remodeled to the studs in the same layout and ${p5Range('bath-primary-full')} for a primary bath with a walk-in shower and double vanity, both at the Signature level. Written scope after your free visit confirms the number. Guide: ${SITE}/guides/boise-bathroom-remodeling-guide`,
   },
   {
     question: 'Are you a registered contractor and insured?',
@@ -416,7 +421,7 @@ export const GBP_QA_SEED: GbpQaEntry[] = [
   },
   {
     question: 'Do you build ADUs?',
-    answer: `Yes - attached, detached, and garage-conversion ADUs. Planning ranges from $90,000 for garage conversions to $180,000–$300,000+ for detached new builds. Guide: ${SITE}/guides/boise-adu-guide`,
+    answer: `Yes - garage, basement and attached ADU conversions, priced after a feasibility visit. New detached ADUs are built by our sister company Boise Construction Co. Guide: ${SITE}/guides/boise-adu-guide`,
   },
   {
     question: 'Do you finish basements?',
@@ -462,7 +467,7 @@ export const GBP_POSTS_STARTER: GbpPost[] = [
   {
     week: 2,
     headline: '2026 kitchen planning ranges',
-    body: 'Most Treasure Valley kitchen remodels plan $35K–$75K mid-range. Refresh from ~$15K. Use our free budget worksheet to compare bids apples-to-apples.',
+    body: `Our instant estimate shows ${p5Range('kitchen-replace-medium')} for a medium kitchen with new cabinets in the same layout at the Signature level, and ${p5Range('kitchen-refresh-medium')} for a refresh. Use our free budget worksheet to compare bids apples-to-apples.`,
     buttonLabel: 'Get the worksheet',
     buttonUrl: `${SITE}/downloads/remodel-budget-worksheet.pdf`,
     photoHint: 'Budget worksheet cover',
@@ -470,7 +475,7 @@ export const GBP_POSTS_STARTER: GbpPost[] = [
   {
     week: 3,
     headline: 'ADU options in the Treasure Valley',
-    body: 'Garage conversions from ~$90K. Detached ADUs $180K–$300K+. We handle feasibility, permits, and build. Free in-home visit.',
+    body: 'Garage, basement and attached ADU conversions, priced after a feasibility visit. We handle feasibility, permits, and build. Free in-home visit.',
     buttonLabel: 'ADU guide',
     buttonUrl: `${SITE}/guides/boise-adu-guide`,
     photoHint: 'ADU or garage conversion project',
