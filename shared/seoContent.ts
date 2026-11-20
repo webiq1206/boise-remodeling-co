@@ -313,7 +313,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'How much does an ADU cost in the Treasure Valley?',
         answer:
-          'ADU investment typically ranges from $90,000 to $300,000 or more depending on size, detached or attached configuration, and finish level. Use our project estimator for a planning range, then schedule a free in-home visit for a written scope.',
+          'ADU conversions typically plan $90,000 to $180,000 for a garage conversion and $120,000 to $250,000 for an attached ADU or basement conversion, depending on size and finish level. New detached ADUs are built by Boise Construction Co. Schedule a free in-home visit for a written scope.',
       },
       {
         question: 'Do I need a permit for an ADU in Boise or Ada County?',
@@ -333,7 +333,7 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
       {
         question: 'Is a garage conversion cheaper than building a detached ADU?',
         answer:
-          'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000, versus $180,000 to $300,000+ for a detached new build. The tradeoff is losing garage storage and parking.',
+          'Usually yes. Garage conversions reuse the existing foundation and shell, typically planning $90,000 to $180,000; a detached new build adds a foundation, framing, roof and its own utility runs. New detached ADUs are built by Boise Construction Co. The tradeoff is losing garage storage and parking.',
       },
       {
         question: 'Does an ADU need separate utilities?',
@@ -354,12 +354,11 @@ export const SERVICE_SEO_CONTENT: Record<string, ServiceSEOContent> = {
     costTiers: [
       { label: 'Garage conversion', range: '$90,000 to $180,000' },
       { label: 'Attached ADU or basement conversion', range: '$120,000 to $250,000' },
-      { label: 'Detached new-build ADU', range: '$180,000 to $300,000 or more' },
     ],
     costGuidance: {
       heading: 'ADU cost in the Treasure Valley',
       paragraphs: [
-        'As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. Attached ADUs and basement conversions plan $120,000 to $250,000, and detached new-build ADUs plan $180,000 to $300,000 or more depending on size, utility connections, and finish level.',
+        'As of 2026, garage conversions in the Boise area typically plan $90,000 to $180,000. Attached ADUs and basement conversions plan $120,000 to $250,000, depending on size, utility connections, and finish level. New detached ADUs are built by our sister company Boise Construction Co, which publishes its own detached ADU costs.',
         'These are planning ranges, not bids. Site conditions and utility strategy drive ADU budgets more than any other project type, which is why feasibility review comes first in our process.',
       ],
     },
