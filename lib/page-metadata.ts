@@ -173,10 +173,10 @@ function areaTitle(cityName: string): string {
 }
 
 function areaDescription(cityName: string): string {
-  // ", founded 2020," stays in source for the founding-year flag (SHOW_FOUNDING_YEAR);
+  // "founded 2020" stays in source for the founding-year flag (SHOW_FOUNDING_YEAR);
   // publishFoundingCopy() removes it while the flag is off, so the published text
-  // reads "Remodeling contractor in <city>, Idaho, for kitchens...".
-  return `Remodeling contractor in ${cityName}, Idaho, founded 2020, for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.`;
+  // reads "Remodeling contractor in <city>, Idaho for kitchens...".
+  return `Remodeling contractor founded 2020 in ${cityName}, Idaho for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.`;
 }
 
 const SERVICE_ANSWER: Record<string, { title: string; description: string }> = {
