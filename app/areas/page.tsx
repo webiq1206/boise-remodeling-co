@@ -95,7 +95,7 @@ export default function AreasHubPage() {
             </div>
             {SERVICE_AREA_CITIES_WITHOUT_PAGE.length > 0 ? (
               <p className="ed-body mt-6">
-                We also remodel homes in {SERVICE_AREA_CITIES_WITHOUT_PAGE.join(' and ')}.
+                {`We also remodel homes in ${SERVICE_AREA_CITIES_WITHOUT_PAGE.join(' and ')}.`}
               </p>
             ) : null}
           </div>

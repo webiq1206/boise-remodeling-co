@@ -297,7 +297,7 @@ export default function ContactPage() {
                     {TREASURE_VALLEY_CITIES}
                   </p>
                   {/* SEO audit XS-06: the locality the JSON-LD states, in visible text. */}
-                  <p className="leading-relaxed mt-2">{SITE_CONFIG.address.cityState} {SITE_CONFIG.address.postalCode}</p>
+                  <p className="leading-relaxed mt-2">{`${SITE_CONFIG.address.cityState} ${SITE_CONFIG.address.postalCode}`}</p>
                 </ContactChannel>
               </Reveal>
             </div>
