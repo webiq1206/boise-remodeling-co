@@ -9,6 +9,7 @@ generateFAQSchema,
 generateSpeakableSchema,
 } from "@/lib/schema";
 import { generateSafePageTitle,getBaseUrl } from "@/lib/seo";
+import { toSentenceCase } from '@/shared/sentenceCase';
 import { CONTENT_AUTHOR } from "@/shared/authors";
 import { BLOG_POSTS } from "@/shared/blogContent";
 import {
@@ -94,11 +95,13 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
   }
 
   const articleSchema = generateArticleSchema({
-    title: post.title,
+    // The headline is the visible H1 (sentence case), SEO audit REM-T7.
+    title: toSentenceCase(post.title),
     description: post.excerpt,
     publishedAt: post.publishedAt,
     updatedAt: post.updatedAt,
     author: CONTENT_AUTHOR.name,
+    authorUrl: CONTENT_AUTHOR.url,
     slug: post.slug,
     image: getAbsoluteImageUrl(getBlogHeroImage(post.slug, post.heroImage), getBaseUrl()),
   });

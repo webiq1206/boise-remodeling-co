@@ -5,7 +5,7 @@ estimateReadingTime,
 extractHeadingsFromHtml,
 injectHeadingIds,
 } from '@/lib/content-utils';
-import { CONTENT_AUTHOR } from '@/shared/authors';
+import { CONTENT_AUTHOR, CONTENT_AUTHOR_BYLINE } from '@/shared/authors';
 import type { BlogPostData } from '@/shared/blogContent';
 import { getBlogPostsByHub } from '@/shared/blogContent';
 import { getArticleInlineFigures,getBlogHeroImage,getBlogImageAlt,isCostRelatedContent } from '@/shared/blogImages';
@@ -83,7 +83,7 @@ export function BlogPostLayout({ post, formatDate }: BlogPostLayoutProps) {
             <p className="lx-meta">
               <span>{formatDate(post.publishedAt)}</span>
               <span>{readingTime} min read</span>
-              <Link href={CONTENT_AUTHOR.url}>{CONTENT_AUTHOR.name}</Link>
+              <a href={CONTENT_AUTHOR.url} rel="author noopener">{CONTENT_AUTHOR_BYLINE}</a>
             </p>
           </header><BlogHeroBanner src={heroImage} alt={heroAlt}/>
 

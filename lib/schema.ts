@@ -428,9 +428,13 @@ export function generateArticleSchema(article: {
   const prefix = article.pathPrefix ?? 'blog';
   const isPersonAuthor =
     !!article.author && article.author.trim() !== BUSINESS_INFO.name;
+  // Owner answer, 20 November 2026 (SEO audit REM-T7): articles and guides are
+  // by Nick Perkins, founder of P5 Home Co. His node carries the P5 graph's @id
+  // so every family site merges to one person; the company stays the publisher.
   const author = isPersonAuthor
     ? {
         '@type': 'Person',
+        ...(article.author!.trim() === 'Nick Perkins' ? { '@id': NICK_PERKINS_ID, jobTitle: 'Founder', worksFor: { '@id': P5_ORG_ID } } : {}),
         name: article.author,
         url: article.authorUrl ?? `${baseUrl}/about#team`,
       }

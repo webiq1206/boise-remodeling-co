@@ -5,7 +5,7 @@ estimateReadingTime,
 extractHeadingsFromHtml,
 injectHeadingIds,
 } from '@/lib/content-utils';
-import { CONTENT_AUTHOR } from '@/shared/authors';
+import { CONTENT_AUTHOR, CONTENT_AUTHOR_BYLINE } from '@/shared/authors';
 import { getArticleInlineFigures,getBlogHeroImage,getBlogImageAlt,isCostRelatedContent } from '@/shared/blogImages';
 import { CATEGORY_HUB_MIN_POSTS,categoryHubPath,getClustersForHub,getHubBySlug,guidePath } from '@/shared/contentHubs';
 import type { GuidePageData } from '@/shared/guideContent';
@@ -78,7 +78,7 @@ export function GuidePageLayout({ guide, formatDate }: GuidePageLayoutProps) {
             <p className="lx-meta">
               <span>{formatDate(guide.publishedAt)}</span>
               <span>{readingTime} min read</span>
-              <Link href={CONTENT_AUTHOR.url}>{CONTENT_AUTHOR.name}</Link>
+              <a href={CONTENT_AUTHOR.url} rel="author noopener">{CONTENT_AUTHOR_BYLINE}</a>
             </p>
           </header><BlogHeroBanner src={heroImage} alt={heroAlt}/>
 

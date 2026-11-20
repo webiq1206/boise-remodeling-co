@@ -17,7 +17,7 @@
   {
     "route": "/blog/[slug]",
     "file": "app/blog/[slug]/page.tsx",
-    "seoSignature": "993ec359a78d9f1da5535a72ec8d1119dedf1007f5db3dd19bf11cc09c6250e5"
+    "seoSignature": "127081a7500e2766f37ec90ac13744a053da64f0b21bc60c802ac5c03347e129"
   },
   {
     "route": "/blog/category/[hubSlug]",
@@ -37,7 +37,7 @@
   {
     "route": "/guides/[slug]",
     "file": "app/guides/[slug]/page.tsx",
-    "seoSignature": "1c354162b36e560683195f9b95559d95ff3ceae6b7bd8f21d8af5c36f9534e7e"
+    "seoSignature": "2aa556c25112b2966f1c338eb4d46b79c290558bd1d2d14147b65051fb601b94"
   },
   {
     "route": "/guides",
