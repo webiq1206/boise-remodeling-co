@@ -110,7 +110,9 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.match(html, /href="\/contact\.vcf"/);
   assert.match(html, /is a DBA of <a href="https:\/\/p5homeco\.com" rel="noopener">P5 Home Co<\/a>/);
   // Owner, 20 November 2026: the footer's contractor line names the legal entity, once.
-  assert.equal((html.match(/P5 Home Co LLC/g) ?? []).length, 1);
+  // Visible text only: the link's aria-label repeats it on purpose (its accessible name starts with the visible words).
+  assert.equal((html.replace(/aria-label="[^"]*"/g, '').match(/P5 Home Co LLC/g) ?? []).length, 1);
+  assert.match(html, /aria-label="P5 Home Co LLC, Idaho Registered Contractor #8381215/);
   assert.equal(/P5 Home Co\.(?=\s+[a-z])/.test(html), false);
   assert.match(html, /<a href="\/subcontractor" rel="nofollow">Subcontractor login<\/a>/);
   assert.equal((html.match(/>P5 Home Co LLC, Idaho Registered Contractor #8381215<\/a>/g) ?? []).length, 1);
