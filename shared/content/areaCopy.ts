@@ -221,7 +221,7 @@ export const AREA_CITY_COPY: Record<string, AreaCityCopy> = {
       {
         question: 'Are you a registered contractor and insured?',
         answer:
-          "Yes. We're an Idaho Registered Contractor #8381215, and we carry a bond and insurance.",
+          "Yes. We're an Idaho Registered Contractor #8381215 and insured. In Idaho you can ask any contractor for proof of registration and general liability insurance, and you have the right, at your own expense, to require a surety bond.",
       },
       {
         question: 'How do I start a project?',

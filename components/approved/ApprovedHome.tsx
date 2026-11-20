@@ -111,7 +111,7 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
   {/* 6. Who you are hiring. */}
   <section className="f-section f-container" id="who-you-are-hiring">
    <div className="fr-founder">
-    <img className="family-people-photo" src="/images/about/perkins-family-full.webp" alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho" width="2048" height="2048" loading="lazy"/>
+    <img className="family-people-photo" src="/images/about/perkins-family-full.webp" alt="P5 Home Co founder in Meridian, Idaho: Nick Perkins with his wife and five children at a pumpkin patch" width="2048" height="2048" loading="lazy"/>
     <div>
      <p className="f-eyebrow">WHO YOU ARE HIRING</p>
      <h2>Nick Perkins, founder.</h2>

@@ -164,6 +164,9 @@ export function BlogIndexClient({ posts, page = 1 }: { posts: BlogIndexPost[]; p
                     {featured && (
                       <div role="presentation" className="border-t border-border/60 mb-10" />
                     )}
+                    {/* SEO audit REM-T8: card titles are H3, so a page with no featured
+                        H2 card gets an H2 above the grid and the outline never skips a level. */}
+                    {!featured && <h2 className="sr-only">Articles on page {page}</h2>}
                     <div className="ed-cards-3 gap-6">
                       {rest.map((post) => (
                         <BlogCard key={post.slug} post={post} formatDate={formatDate} />

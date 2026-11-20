@@ -12,6 +12,8 @@
  * there (see local-seo-audit/12-technical-plan.md T1).
  */
 import { BLOG_POSTS } from '@/shared/blogContent';
+import { blogPaginatedPages } from '@/lib/blogPagination';
+import { blogPagePath } from '@/lib/blogPages';
 import { CITIES, SERVICES } from '@/shared/contentData';
 import { GUIDE_PAGES } from '@/shared/guideContent';
 import {
@@ -117,6 +119,15 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     }];
   });
 
+  // SEO audit REM-T8: /blog/page/N is indexable with a self canonical, so the
+  // sitemap lists it too.
+  const blogPages: SiteUrlEntry[] = blogPaginatedPages().map((page) => ({
+    path: blogPagePath(page),
+    label: `Blog, page ${page}`,
+    changeFrequency: 'weekly' as const,
+    priority: 0.4,
+  }));
+
   return [
     { heading: 'Main pages', entries: core },
     { heading: 'Services', entries: services },
@@ -125,6 +136,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     { heading: 'Guides', entries: guides },
     { heading: 'Blog topics', entries: hubs },
     { heading: 'Blog posts', entries: blog },
+    { heading: 'Blog pages', entries: blogPages },
   ];
 }
 

@@ -11,6 +11,8 @@ const ids = (text: string) => findPublicClaims(text).map((hit) => hit.id);
 test('catches each prohibited claim, including across JSX line breaks', () => {
   assert.ok(ids('Idaho Registered Contractor #8381215, bonded and insured.').includes('bonded'));
   assert.ok(ids('Bonded · Insured').includes('bonded'));
+  assert.ok(ids('Yes. We are registered, and we carry a bond and insurance.').includes('carry-a-bond'));
+  assert.equal(ids('You have the right, at your own expense, to require a surety bond.').includes('carry-a-bond'), false);
   assert.ok(ids('It covers our crews and our subcontractors.').includes('coverage-includes-subcontractors'));
   assert.ok(ids('covering our people and the subcontractors we hire').includes('subcontractors-we-hire'));
   assert.ok(ids('One contract, one project manager, one invoice.').includes('one-invoice'));

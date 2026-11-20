@@ -33,6 +33,9 @@ import { normalizeForResponseScan } from './responsePromiseGuard';
 export const PROHIBITED_PUBLIC_CLAIMS: { id: string; pattern: RegExp }[] = [
   // D2
   { id: 'bonded', pattern: /\bbonded\b/i },
+  // D2, second form: "we carry a bond" said the same thing without the word
+  // "bonded" and sat in an area FAQ until 20 November 2026.
+  { id: 'carry-a-bond', pattern: /\b(?:we|our team|our company)\s+(?:carry|carries|hold|holds|have|has)\s+(?:a\s+)?(?:surety\s+)?bond\b/i },
   // D1
   {
     id: 'coverage-includes-subcontractors',

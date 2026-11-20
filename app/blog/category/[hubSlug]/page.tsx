@@ -2,6 +2,7 @@ import { InteriorPage } from '@/components/approved/InteriorLayout';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { BlogCard } from '@/components/marketing/BlogCard';
 import { HubHeroBanner } from '@/components/marketing/BlogHeroBanner';
+import { EstimatePromptBand } from '@/components/marketing/EstimatePromptBand';
 import { Section } from '@/components/marketing/Section';
 import { withBrandPageMetadata } from '@/lib/brand-page-metadata';
 import { buildCanonical,FEED_ALTERNATES } from '@/lib/page-metadata';
@@ -174,6 +175,8 @@ export default async function BlogCategoryHubPage(
             <ArrowRight className="ml-1 h-4 w-4" />
           </Link></header><HubHeroBanner src={hubHero} alt={hubAlt} />
 
+          {/* SEO audit REM-T8: an H2 between the H1 and the H3 card titles. */}
+          <h2 className="sr-only">{toSentenceCase(hub.title)} articles</h2>
           <div className="ed-cards-3 gap-6">
             {posts.map((post) => (
               <BlogCard key={post.slug} post={post} formatDate={formatDate} />
@@ -181,6 +184,18 @@ export default async function BlogCategoryHubPage(
           </div>
         </div>
       </Section>
+      {/* The same closing estimate band the /blog index uses (REM-T8). */}
+      <EstimatePromptBand
+        eyebrow="Ready to plan"
+        title={
+          <>
+            From articles to an actual{' '}
+            <em className="brc-accent">range</em>
+          </>
+        }
+        description="Read enough to know what you want? Answer a few questions and see a preliminary price range for your project on screen. Free, with no appointment and no obligation."
+        variant="greige"
+      />
     </></InteriorPage>
   );
 }

@@ -138,7 +138,7 @@ export default function AboutPage() {
                 </Reveal>
                 <Image
                   src="/images/about/perkins-family-full.webp"
-                  alt="Nick Perkins with his wife and five children at a pumpkin patch in Meridian, Idaho"
+                  alt="P5 Home Co founder in Meridian, Idaho: Nick Perkins with his wife and five children at a pumpkin patch"
                   width={2048}
                   height={2048}
                   priority
