@@ -45,7 +45,10 @@ export const FAMILY_BRAND: FamilyBrand = {
   },
   nav: [
     { label: 'Services', href: '/services' },
-    { label: 'Remodel gallery', href: '/design-ideas' },
+    // The page, footer and site map say "Remodel gallery"; the header item is
+    // the shorter "Gallery" so the desktop row does not wrap between 1240 and
+    // 1255px (checked 20 November 2026).
+    { label: 'Gallery', href: '/design-ideas' },
     { label: 'Areas', href: '/areas' },
     { label: 'About', href: '/about' },
     { label: 'Guides', href: '/guides' },

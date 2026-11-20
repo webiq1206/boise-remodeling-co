@@ -4,10 +4,12 @@
   "generatedOn": "2026-11-20",
   "brand": "remodeling",
   "source": {
-    "p5HomeCoCommit": "40a4815758",
+    "p5HomeCoCommit": "3d741d9714",
     "estimatorRules": "2026-11-13.3",
     "costBookReviewedAt": "2026-10-24",
-    "scopeSettings": "DEFAULT_SCOPE_SETTINGS",
+    "scopeSettings": "DEFAULT_SCOPE_SETTINGS with laborRate set to laborRate below",
+    "laborRate": 120,
+    "laborRateNote": "labor $120/h per owner, 20 November 2026",
     "rounding": "published low = estimator low rounded down, published high = estimator high rounded up, to $1,000 at or above $10,000 and to $100 below"
   },
   "tierOrder": [

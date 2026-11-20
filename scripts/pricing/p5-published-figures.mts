@@ -11,8 +11,9 @@
  *
  * It runs the real estimator code from a sibling p5-home-co checkout:
  * priceEstimate() then customerEstimate() (app/lib/estimator/price.ts), the
- * seed cost book, DEFAULT_SCOPE_SETTINGS and no database, at the inputs named
- * in CASES below. It writes shared/content/p5PublishedFigures.json, which the
+ * seed cost book and no database, at the inputs named in CASES below. The
+ * scope settings are DEFAULT_SCOPE_SETTINGS with the one value the live
+ * estimator is known to change: the labor rate (LABOR_RATE below). It writes shared/content/p5PublishedFigures.json, which the
  * site reads at build time; the site has no runtime dependency on p5-home-co.
  *
  *   node --experimental-strip-types scripts/pricing/p5-published-figures.mts
@@ -42,6 +43,17 @@ const est = await import(path.join(p5, "app/lib/estimator/price.ts"));
 const flows = await import(path.join(p5, "app/lib/estimator/flows.ts"));
 const types = await import(path.join(p5, "app/lib/estimator/types.ts"));
 const costbook = await import(path.join(p5, "app/lib/scopes/costbook.ts"));
+const scopeTypes = await import(path.join(p5, "app/lib/scopes/types.ts"));
+
+/**
+ * The labor rate the live estimator bills: $120 an hour, confirmed by the
+ * owner on 20 November 2026 (the code default in DEFAULT_SCOPE_SETTINGS is
+ * $125). Change it here, and in the note beside it, when the owner changes the
+ * rate saved in the admin, then re-run this script.
+ */
+const LABOR_RATE = 120;
+const LABOR_RATE_NOTE = "labor $120/h per owner, 20 November 2026";
+const SETTINGS = { ...scopeTypes.DEFAULT_SCOPE_SETTINGS, laborRate: LABOR_RATE };
 
 const BRAND = "remodeling";
 const NOW = new Date("2026-11-20T12:00:00Z");
@@ -109,7 +121,7 @@ for (const c of CASES) {
   let excludes: string[] = [];
   let assumes: string[] = [];
   for (const tier of flow.usesFinish ? TIERS : (["mid"] as const)) {
-    const priced = est.priceEstimate({ brand: BRAND, project: c.project, tier, answers: c.answers, address: ADDRESS, property: null }, { now: NOW });
+    const priced = est.priceEstimate({ brand: BRAND, project: c.project, tier, answers: c.answers, address: ADDRESS, property: null }, { now: NOW, settings: SETTINGS });
     if (est.priceWithheld(priced)) throw new Error(`${c.key} ${tier}: the estimator withholds this price; pick other inputs`);
     const view = est.customerEstimate(priced, { token: "t".repeat(40), address: null, createdAt: NOW, officialCopy: "after-review" });
     const low = view.range?.low;
@@ -139,7 +151,9 @@ const data = {
     p5HomeCoCommit: p5Commit(),
     estimatorRules: est.ESTIMATOR_RULES_VERSION,
     costBookReviewedAt: costbook.COST_BOOK_REVIEWED_AT,
-    scopeSettings: "DEFAULT_SCOPE_SETTINGS",
+    scopeSettings: "DEFAULT_SCOPE_SETTINGS with laborRate set to laborRate below",
+    laborRate: LABOR_RATE,
+    laborRateNote: LABOR_RATE_NOTE,
     rounding: "published low = estimator low rounded down, published high = estimator high rounded up, to $1,000 at or above $10,000 and to $100 below",
   },
   tierOrder: TIERS,

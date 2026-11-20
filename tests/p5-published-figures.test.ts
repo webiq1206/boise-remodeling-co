@@ -26,6 +26,16 @@ type Tier = { estimator: Range; published: Range; perSqft?: Range };
 const FIGURES = data.figures as unknown as Record<string, { tiers: Record<string, Tier> }>;
 const TIER_ORDER = data.tierOrder as string[];
 
+test('figures are priced at the labor rate the live estimator bills', () => {
+  // Owner, 20 November 2026: the live estimator bills labor at $120 an hour
+  // (the code default is $125). The rate is an input of the generator.
+  assert.equal(data.source.laborRate, 120);
+  assert.equal(data.source.laborRateNote, 'labor $120/h per owner, 20 November 2026');
+  const script = readFileSync(path.resolve(import.meta.dirname, '../scripts/pricing/p5-published-figures.mts'), 'utf8');
+  assert.match(script, /const LABOR_RATE = 120;/);
+  assert.match(script, /settings: SETTINGS/);
+});
+
 test('published figures are the estimator range, widened to a round number and never narrowed', () => {
   assert.ok(Object.keys(FIGURES).length >= 20);
   for (const [key, figure] of Object.entries(FIGURES)) {

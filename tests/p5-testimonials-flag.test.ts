@@ -12,6 +12,7 @@ import { TestimonialsSection } from '../components/sections/TestimonialsSection.
 import { generateLocalBusinessSchema, generateReviewSchema } from '../lib/schema.ts';
 import { BUSINESS_INFO } from '../lib/seo.ts';
 import { getSiteUrlGroups } from '../lib/siteUrls.ts';
+import { FAMILY_BRAND } from '../lib/familyBrand.ts';
 import {
   getTestimonialsFor,
   SHOW_TESTIMONIALS,
@@ -181,6 +182,11 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
   const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/design-ideas');
   // Sentence case since owner decision C (1 November 2026); still not "Testimonials".
   assert.equal(entry?.label, 'Remodel gallery');
+  // The header item is the short "Gallery" (no wrap between 1240 and 1255px); the footer keeps the full name.
+  const brandText = JSON.stringify(FAMILY_BRAND);
+  assert.match(brandText, /\{"label":"Gallery","href":"\/design-ideas"\}/);
+  assert.match(brandText, /\{"label":"Remodel gallery","href":"\/design-ideas"\}/);
+  assert.equal(/Design ideas/.test(brandText), false);
 
   const template = text('../components/seo/LandingPageTemplate.tsx');
   assert.match(template, /testimonialsForPublish\(proof\?\.testimonials\)/);
