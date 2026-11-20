@@ -249,6 +249,8 @@ export interface LocationGuideConfig {
   excerpt: string;
   quickAnswer: string;
   takeaways: string[];
+  /** Owner-supplied local proof, with its source, shown after the permit callout. */
+  localProof?: string;
 }
 
 export function buildLocationGuide(config: LocationGuideConfig): GuidePageData {
@@ -284,7 +286,7 @@ export function buildLocationGuide(config: LocationGuideConfig): GuidePageData {
     // guide for Meridian homeowners."). It is now the guide's own summary
     // sentence, which opens with the place and says what the guide answers.
     excerpt: config.metaDescription || config.excerpt,
-    content: localCallout + expandLocation(buildSectionsHtml(sections), config.slug),
+    content: localCallout + (config.localProof ? `<p>${config.localProof}</p>` : '') + expandLocation(buildSectionsHtml(sections), config.slug),
     author: 'Boise Remodeling Co',
     hubSlug: 'treasure-valley-locations',
     guideType: config.guideType,

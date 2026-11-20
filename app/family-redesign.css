@@ -310,6 +310,18 @@
 }
 .fr-request-list svg { flex: none; margin-top: 3px; color: var(--f-accent); }
 
+/* Google reviews of P5 Home Co beside the request form (owner, 20 November 2026).
+   Small text stays charcoal; the accent is only the rule beside each quote. */
+.fr-reviews { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--fr-line); }
+.fr-reviews .f-eyebrow { color: var(--color-charcoal); }
+.fr-reviews ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 20px; }
+.fr-reviews figure { margin: 0; padding-left: 18px; border-left: 2px solid var(--f-accent); }
+.fr-reviews blockquote { margin: 0; }
+.fr-request-copy .fr-reviews blockquote p { margin: 0; color: var(--fr-ink); max-width: 52ch; font-size: var(--fs-body); line-height: var(--lh-body); }
+.fr-reviews figcaption { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 14px; color: var(--color-charcoal); }
+.fr-reviews figcaption span:first-child { font-weight: 600; }
+.fr-reviews .f-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 12px; color: var(--color-charcoal); }
+
 /* ------------------------------------------------------------------- founder */
 .fr-founder {
   display: grid;

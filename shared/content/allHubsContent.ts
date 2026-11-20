@@ -1,3 +1,4 @@
+import { P5_GOOGLE_REVIEWS_URL } from '../googleReviews';
 /**
  * Generated hub content for hubs 2–10 (hub 1 + legacy in other files).
  */
@@ -623,6 +624,10 @@ export const LOCATION_GUIDES: GuidePageData[] = [
     excerpt: 'North End remodeling with older-home considerations.',
     quickAnswer: 'North End homes are mostly 1900s to 1940s bungalows with small footprints and older wiring. Parts of the neighborhood sit in Boise historic districts, where exterior changes such as additions, windows and porches need a certificate of appropriateness before a building permit. Interior kitchen, bath and basement remodels generally do not trigger historic review.',
     takeaways: ['Respect scale and street rhythm.', 'Plan for older wiring and plumbing.'],
+    // Owner answer, 20 November 2026: the one local project fact the site may
+    // cite, always with its source (Toni Knowles' Google review of P5 Home Co).
+    localProof:
+      `P5 Home Co, our parent company, completed a full kitchen and home remodel in Boise's North End. Source: <a href="${P5_GOOGLE_REVIEWS_URL}" rel="noopener">Toni Knowles' Google review of P5 Home Co</a>.`,
   }),
   buildLocationGuide({
     slug: 'boise-bench-remodeling-guide',
