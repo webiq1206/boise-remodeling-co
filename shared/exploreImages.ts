@@ -16,7 +16,12 @@ export interface ExploreCardInput {
   subject?: string;
 }
 
-export function resolveExploreImages(cards: readonly ExploreCardInput[], usedOnPage: readonly (string | undefined)[]): (string | undefined)[] {
+export function resolveExploreImages(
+  cards: readonly ExploreCardInput[],
+  usedOnPage: readonly (string | undefined)[],
+  /** Reading rows pass false: a row with no free picture shows none rather than a repeat. */
+  repeatWhenNoneFree = true,
+): (string | undefined)[] {
   const used = new Set<string>();
   for (const src of usedOnPage) if (src) used.add(imageIdentity(src));
   return cards.map((card) => {
@@ -28,6 +33,6 @@ export function resolveExploreImages(cards: readonly ExploreCardInput[], usedOnP
       used.add(id);
       return src;
     }
-    return card.image;
+    return repeatWhenNoneFree ? card.image : undefined;
   });
 }

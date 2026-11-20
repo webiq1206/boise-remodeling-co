@@ -18,6 +18,7 @@ import { generateSpeakableSchema } from '@/lib/schema';
 import { SERVICE_SLUGS,getServiceBySlug,servicePath } from '@/lib/seo-routes';
 import { SERVICE_AREA_CITIES } from '@/shared/contentData';
 import { getFeaturedGalleryProject } from '@/shared/galleryData';
+import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import {
   BATHROOM_NEAR_ME_PROCESS,
   BATHROOM_NEAR_ME_SECTIONS,
@@ -92,7 +93,11 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   const images = getServiceImageSet(service.slug);
   // Ownership pages show no featured build: the gallery entries are a detached
   // ADU and a new-footprint suite, which these pages hand to Boise Construction Co.
-  const featuredProject = ownership ? undefined : getFeaturedGalleryProject(service.slug);
+  const heroImageUrl = ownership?.images?.hero ?? SERVICE_SCENES[service.slug]?.src ?? images.hero;
+  // The featured picture never repeats the hero or a room photograph on the page.
+  const featuredProject = ownership
+    ? undefined
+    : getFeaturedGalleryProject(service.slug, [heroImageUrl, ...(getFeaturedProjectForService(service.slug)?.rooms.map((room) => room.src) ?? [])]);
   const serviceLC = service.name.toLowerCase();
 
   const ownershipLabel = service.slug === 'room-addition' ? 'Room additions' : toSentenceCase(content.noun ?? service.name);
@@ -181,7 +186,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         h1={content.headline}
         speakableSummary={overview}
         overview={overview}
-        heroImageUrl={ownership?.images?.hero ?? SERVICE_SCENES[service.slug]?.src ?? images.hero}
+        heroImageUrl={heroImageUrl}
         heroImageAlt={ownership?.images?.heroAlt ?? SERVICE_SCENES[service.slug]?.alt}
         breatherImageUrl={ownership?.images?.breather ?? images.breather}
         processImageUrl={images.process}

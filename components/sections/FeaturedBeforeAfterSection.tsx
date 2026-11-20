@@ -32,7 +32,7 @@ export function FeaturedBeforeAfterSection({
               beforeSrc={project.beforeImageUrl}
               afterSrc={project.afterImageUrl}
               beforeAlt={`Before: ${project.title}`}
-              afterAlt={`After: ${project.title}`}
+              afterAlt={project.imageAlt ?? `After: ${project.title}`}
               aspectClass="aspect-[16/10] md:aspect-[21/9]"
             />
             <div className="p-6 md:p-8">

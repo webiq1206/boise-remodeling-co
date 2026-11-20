@@ -1,3 +1,4 @@
+import { isSameImage } from "./imageIdentity";
 /**
  * Multi-room featured project sets. Every room/exterior in a set must read as
  * the same property (materials, windows, landscape, lighting).
@@ -80,4 +81,14 @@ export function getFeaturedProjectForService(
     return FEATURED_BOISE_BENCH_RANCH;
   }
   return undefined;
+}
+
+/** The set without any room that shows one of `pictures` (compared by what they show). */
+export function withoutRoomsShowing(
+  set: FeaturedProjectSet | undefined,
+  ...pictures: (string | undefined)[]
+): FeaturedProjectSet | undefined {
+  if (!set) return undefined;
+  const rooms = set.rooms.filter((room) => !pictures.some((src) => isSameImage(src, room.src)));
+  return rooms.length === set.rooms.length ? set : { ...set, rooms };
 }

@@ -13,7 +13,7 @@ import { FeaturedProjectRoomsSection } from '@/components/sections/FeaturedProje
 import { GRAIN_URL } from '@/lib/grain';
 import { contentImageAlt } from '@/shared/contentImageAlt';
 import { localAlt, subjectForService } from '@/shared/localAlt';
-import { getFeaturedProjectForService } from '@/shared/featuredProjects';
+import { getFeaturedProjectForService, withoutRoomsShowing } from '@/shared/featuredProjects';
 import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
 import { CTA_REQUEST, REQUEST_PATH, primaryCtaForService } from '@/shared/ctaCopy';
@@ -288,7 +288,9 @@ export function LandingPageTemplate({
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
     publishedQuotes.length > 0 || (proof?.projects?.length ?? 0) > 0;
-  const featuredRoomsForImages = serviceSlug ? getFeaturedProjectForService(serviceSlug) : undefined;
+  // The project's rooms, without one that is the hero's own picture (the kitchen
+  // hub's hero is the ranch kitchen; 20 November 2026).
+  const featuredRoomsForImages = withoutRoomsShowing(serviceSlug ? getFeaturedProjectForService(serviceSlug) : undefined, heroImageUrl);
   const breatherIndices = sectionBreatherIndices(sections?.length ?? 0);
   // One appearance per picture on the page, never two copies in neighbouring
   // sections. Identity is visual, because one render ships under many names.

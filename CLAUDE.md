@@ -134,7 +134,7 @@ Uploads live in Postgres (`stored_files`), because the container filesystem is
 ephemeral and documents were 404ing after each deploy. The RE-10 is also
 attached to the internal email so a lead survives regardless.
 
-## Plans feature - BUILT END TO END, needs a redeploy
+## Plans feature - RETIRED 24 September 2026 (page now hosts the shared estimator)
 
 Goal: upload remodel/new-build drawings, price more accurately, tighter number.
 
@@ -293,14 +293,13 @@ surface as the generic "We could not read those drawings"; it now maps to
    `origin/main`. Checked live: `https://boiseremodeling.co/remodel-plans-boise`
    serves the real four-step wizard, not a 404. Local, `origin/main`, and
    production are all the same commit right now.
-2. **Verify the wizard live on real drawings.** Still open - the redeploy
-   landing does not by itself satisfy this. The analyze step cannot run locally
-   (the API key is production-only), so the four sets have only gone through
-   the endpoint directly, never through the UI, and the measure/contact/result
-   steps were only driven with the analyze response stubbed in the browser.
-   Now that production has the route, upload a real set through
-   `/remodel-plans-boise` and confirm a real read reaches the confirm-
-   measurements screen.
+2. ~~Verify the wizard live on real drawings~~ **SUPERSEDED, checked
+   2026-11-20.** Since `e2b5b547` (24 September 2026) `/api/plans/analyze` and
+   `/api/plans/estimate` answer 410 ("This calculator has moved") and
+   `PlansWizard` renders the shared document estimator (`P5Estimator`), so the
+   four-step drawing wizard described in this section no longer runs anywhere.
+   Plans reach the team through the shared estimator's upload. This section is
+   history; do not test the retired routes as if they were live.
 3. ~~Add `ANTHROPIC_API_KEY` to `.env.local`~~ **DONE, verified 2026-08-07.**
    The key is in `.env.local` (gitignored, never commit it) and
    `check:re10-extraction` ran the whole chain against the live API from this
@@ -980,5 +979,21 @@ last in `app/layout.tsx`); the homepage is untouched.
   it carries `data-clarity-mask="True"` in the markup (the Clarity script
   stamps it before hydration; without it the homepage planning ranges failed
   hydration). The site map's link groups may continue into the next column so
-  the three columns balance. Not changed, for want of photographs: on service
-  pages the before/after slider's "after" is the hero picture.
+  the three columns balance.
+- **A closer look never repeats the hero (20 November 2026).** Every gallery
+  render of a service is the hero's own render, so all eight service hubs
+  showed their hero twice. `getFeaturedGalleryProject(slug, avoid)` now takes
+  the pictures already on the page (the hero and the room photographs) and
+  features the first gallery project not among them; when there is none it
+  shows one other real photograph of the work (a city-service photograph, then
+  the service's alternates), titled by subject and described by what it
+  shows, never as a before and after and never as a customer's job. The one
+  reviewed slider pair (kitchen) has the hero as its after, so no hub shows a
+  slider today. `gallery-kitchen-eagle-after.webp` is never featured (props).
+  The project rooms leave out a room that is the hero's own picture
+  (`withoutRoomsShowing()`; the ranch kitchen on the kitchen hub), and the
+  "Guides and planning" rows in Keep exploring follow the cards' rule: a row
+  whose picture is already on the page takes a free general picture (never
+  another service's work, described by what it shows), or none.
+  Guard: `tests/landing-image-adjacency.test.ts`, which renders Keep exploring
+  for every service hub.
