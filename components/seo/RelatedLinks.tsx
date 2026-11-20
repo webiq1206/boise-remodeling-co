@@ -140,7 +140,7 @@ function readingLinks(serviceSlug: string | undefined, manifestPath: string | un
   const fixed = [
     guide ?? { href: '/guides/treasure-valley-remodeling-guide', label: 'Treasure Valley Remodeling Guide' },
     { href: '/guides/boise-remodeling-cost-guide', label: 'Boise Remodeling Cost Guide' },
-    { href: '/design-ideas', label: 'Remodeling design ideas' },
+    { href: '/design-ideas', label: 'Remodel gallery' },
     { href: '/resources', label: 'Free remodel planning worksheets' },
   ];
   // Beside cells of places and services, the list holds guides and articles only.

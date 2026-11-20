@@ -1,4 +1,5 @@
 import type { BlogPostData } from '../../blogContent';
+import { P5_AS_OF, p5Cite, p5Range, p5Span } from '../p5Figures';
 
 /**
  * Bespoke replacement for the thin cost cluster. Primary keyword:
@@ -11,7 +12,7 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   metaDescription:
     'How much does a bathroom remodel cost in Boise? 2026 planning ranges for guest and primary baths, walk-in showers, small bathrooms, permits, timelines, and ROI from a local design-build team.',
   excerpt:
-    'Mid-range guest bathroom remodels in Boise typically plan $18,000-$29,000, while high-end primary bath and suite remodels run $45,000-$65,000. Here is the full cost breakdown and how to budget.',
+    `Our instant estimate shows ${p5Range('bath-hall-full')} for a Boise guest bath remodeled to the studs and ${p5Range('bath-primary-full')} for a primary bath with a walk-in shower, both at the Signature level. Here is the full cost breakdown and how to budget.`,
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -33,9 +34,9 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   ],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A bathroom remodel in Boise typically costs $18,000-$29,000 for a mid-range guest or hall bath and $45,000-$65,000 for a high-end primary bathroom as of 2026. Small powder-room refreshes can run $7,000-$12,000, while luxury primary suites with curbless showers, freestanding tubs, and heated floors reach $73,000-$114,000. Tile work, plumbing changes, and fixture level drive the number most.',
+    `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Cite('bath-hall-full')}, and ${p5Cite('bath-primary-full')}. A powder room refresh shows ${p5Range('bath-powder-refresh')}, and a primary bath in a new layout with a freestanding tub and a tiled shower reaches ${p5Range('bath-primary-relocate', 'luxury')} at the Luxury level. Tile work, plumbing changes, and fixture level drive the number most.`,
   keyTakeaways: [
-    'Mid-range guest baths plan $18,000-$29,000; high-end primary baths $45,000-$65,000+ in Boise as of 2026.',
+    `Our instant estimate shows ${p5Range('bath-hall-full')} for a full guest bath remodel and ${p5Range('bath-primary-full')} for a primary bath at the Signature level, as of ${P5_AS_OF}.`,
     'Tile and waterproofing labor is the biggest line item in most bathroom remodels.',
     'Moving plumbing, converting tub-to-shower, or going curbless adds meaningful cost.',
     'Permits are required when you change plumbing, electrical, or layout - handled in Ada or Canyon County.',
@@ -54,17 +55,17 @@ export const bathroomRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does it cost to remodel a bathroom in Boise?',
       answer:
-        'As of 2026, a mid-range guest or hall bathroom remodel in Boise typically plans $18,000-$29,000, and a high-end primary bathroom runs $45,000-$65,000 or more. Powder-room updates can come in $7,000-$12,000. The largest variables are tile square footage, whether you move plumbing, and fixture level.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Cite('bath-hall-full')}, and ${p5Range('bath-primary-full')} for a primary bath with a walk-in shower and double vanity. A powder room refresh shows ${p5Range('bath-powder-refresh')}. The largest variables are tile square footage, whether you move plumbing, and fixture level.`,
     },
     {
       question: 'How much does a small bathroom remodel cost in Boise?',
       answer:
-        'A small or guest bathroom (about 40-60 square feet) commonly plans $18,000-$30,000 in Boise for a full remodel with a new tub or shower, vanity, tile, and fixtures. Keeping the existing layout and plumbing locations keeps it toward the lower end.',
+        `For a hall or guest bath of about 5 x 8 ft remodeled to the studs with a new tub, tiled walls, vanity and fixtures, our instant estimate shows ${p5Range('bath-hall-full')} at the Signature level and ${p5Span('bath-hall-full')} from Essential to Luxury. Keeping the existing layout and plumbing locations keeps it toward the lower end.`,
     },
     {
       question: 'How much does a walk-in shower cost in Boise?',
       answer:
-        'A tiled walk-in shower typically adds $6,000-$15,000 to a bathroom remodel depending on size, tile, glass, and whether you go curbless. Converting an existing tub to a walk-in shower is a popular update; a curbless design costs more because it requires recessing the floor for drainage.',
+        `In our instant estimate, choosing a walk-in tiled shower over a tub with tiled walls moves a guest bath at the Signature level from a range of ${p5Range('bath-hall-full')} up to ${p5Range('bath-hall-walkin')}, depending on size, tile, glass, and whether you go curbless. Converting an existing tub to a walk-in shower is a popular update; a curbless design costs more because it requires recessing the floor for drainage.`,
     },
     {
       question: 'How long does a bathroom remodel take in Boise?',
@@ -89,20 +90,20 @@ export const bathroomRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a bathroom remodel cost in Boise?</h2>
-<p><strong>As of 2026, a bathroom remodel in Boise typically costs $18,000-$29,000 for a mid-range guest or hall bath and $45,000-$65,000 or more for a high-end primary bathroom.</strong> A small powder-room refresh can come in $7,000-$12,000, while a luxury primary suite with a curbless shower, freestanding tub, and heated floors exceeds $73,000. Guest and primary baths sit on very different budgets, so the first step is being clear about which one you are planning.</p>
-<p>The ranges below are planning ranges from real Treasure Valley design-build consultations. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a starting point, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
+<p><strong>As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Cite('bath-hall-full')}, and ${p5Cite('bath-primary-full')}.</strong> A powder room refresh shows ${p5Range('bath-powder-refresh')}, while a primary bath in a new layout with a freestanding tub and tiled shower shows ${p5Range('bath-primary-relocate', 'luxury')} at the Luxury level. Guest and primary baths sit on very different budgets, so the first step is being clear about which one you are planning.</p>
+<p>The ranges below come from our instant estimate, priced from our cost book at stated inputs. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a starting point, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
 <table class="cost-table">
-<thead><tr><th>Bathroom type</th><th>2026 Boise planning range</th><th>Typical scope</th></tr></thead>
+<thead><tr><th>Bathroom type</th><th>Instant estimate, Essential to Luxury</th><th>Typical scope</th></tr></thead>
 <tbody>
-<tr><td>Powder room</td><td>$8,000 - $15,000</td><td>Vanity, toilet, fixtures, paint, small tile area</td></tr>
-<tr><td>Guest / hall bath</td><td>$18,000 - $45,000</td><td>New tub or shower, vanity, tile, lighting, fixtures</td></tr>
-<tr><td>Primary bath</td><td>$35,000 - $85,000</td><td>Walk-in shower, double vanity, tile, upgraded fixtures</td></tr>
-<tr><td>Luxury primary suite</td><td>$73,000+</td><td>Curbless shower, freestanding tub, heated floors, custom tile</td></tr>
+<tr><td>Powder room refresh</td><td>${p5Span('bath-powder-refresh')}</td><td>New vanity, toilet, fixtures, lighting and paint</td></tr>
+<tr><td>Guest or hall bath, full remodel</td><td>${p5Span('bath-hall-full')}</td><td>To the studs in the same layout: new tub, tiled walls, vanity, lighting, fixtures</td></tr>
+<tr><td>Primary bath, full remodel</td><td>${p5Span('bath-primary-full')}</td><td>Same layout: walk-in tiled shower, double vanity, tile, fixtures</td></tr>
+<tr><td>Primary bath, new layout</td><td>${p5Span('bath-primary-relocate')}</td><td>Freestanding tub, tiled shower and double vanity in a new plan</td></tr>
 </tbody>
 </table>
 
 <h2 id="refresh-vs-remodel">Bathroom refresh vs. full remodel: which do you need?</h2>
-<p>Before setting a budget, decide whether you need a refresh or a full remodel - it is the biggest single lever on cost. A <strong>refresh</strong> keeps the existing layout and plumbing and updates what you see: a new vanity and top, fresh tile in the same footprint, a modern faucet and lighting, and paint. For a builder-grade guest bath in Meridian, Kuna, or Nampa, a refresh can transform the room for $8,000-$20,000 without touching a single supply line.</p>
+<p>Before setting a budget, decide whether you need a refresh or a full remodel - it is the biggest single lever on cost. A <strong>refresh</strong> keeps the existing layout and plumbing and updates what you see: a new vanity and top, fresh tile in the same footprint, a modern faucet and lighting, and paint. For a builder-grade guest bath in Meridian, Kuna, or Nampa, a refresh can transform the room without touching a single supply line: our instant estimate shows ${p5Range('bath-hall-refresh')} at the Signature level.</p>
 <p>A <strong>full remodel</strong> makes sense when the layout fights you or the systems are failing: you want to convert a tub to a walk-in shower, move the vanity, add a double sink, or you have discovered water damage or dated plumbing behind the walls. Once you are opening walls and moving fixtures, the incremental cost of doing it thoroughly - new waterproofing, better ventilation, updated wiring - is usually money well spent, because a bathroom is expensive to open twice. If you are unsure which path fits, our free in-home visit will tell you honestly.</p>
 
 <h2 id="breakdown">Bathroom remodel cost breakdown</h2>
@@ -128,10 +129,10 @@ export const bathroomRemodelCostBoise: BlogPostData = {
 </ul>
 
 <h2 id="small-bath">Small and guest bathroom remodel cost</h2>
-<p>A small or guest bathroom (roughly 40-60 square feet) usually plans $18,000-$30,000 for a full remodel that keeps the existing layout. Because the room is small, cost concentrates in fixtures and tile rather than square footage - which is why a compact bath can feel surprisingly expensive per square foot. Smart storage and lighting deliver the biggest visual payoff in a small space; our <a href="/blog/small-bathroom-remodel-ideas">small bathroom remodel ideas</a> cover the highest-impact moves.</p>
+<p>A hall or guest bath of about 5 x 8 ft shows ${p5Range('bath-hall-full')} in our instant estimate for a full remodel that keeps the existing layout, at the Signature level. Because the room is small, cost concentrates in fixtures and tile rather than square footage - which is why a compact bath can feel surprisingly expensive per square foot. Smart storage and lighting deliver the biggest visual payoff in a small space; our <a href="/blog/small-bathroom-remodel-ideas">small bathroom remodel ideas</a> cover the highest-impact moves.</p>
 
 <h2 id="walk-in-shower">Walk-in shower and curbless shower costs</h2>
-<p>A tiled walk-in shower typically adds $6,000-$15,000 to a bathroom remodel, depending on size, tile selection, and glass. A frameless glass enclosure costs more than framed, and a curbless design adds cost because the floor must be recessed to drain properly. These features are both a design upgrade and a long-term accessibility investment, which is why they are among the most requested updates in Boise primary baths.</p>
+<p>In our instant estimate, choosing a walk-in tiled shower over a tub with tiled walls moves a guest bath at the Signature level from a range of ${p5Range('bath-hall-full')} up to ${p5Range('bath-hall-walkin')}, depending on size, tile, glass, and whether you go curbless. A frameless glass enclosure costs more than framed, and a curbless design adds cost because the floor must be recessed to drain properly. These features are both a design upgrade and a long-term accessibility investment, which is why they are among the most requested updates in Boise primary baths.</p>
 
 <h2 id="materials">Choosing bathroom materials that last</h2>
 <p>Because a bathroom is a small, wet, high-use room, material choices affect both cost and how the space holds up over a decade of daily showers. Porcelain tile is the workhorse of Treasure Valley bathrooms - durable, water-friendly, and far lower maintenance than natural stone, which needs periodic sealing. Quartz vanity tops resist water and staining better than marble. For flooring, large-format porcelain or luxury vinyl handle moisture well, while solid hardwood does not belong in a full bath. Good ventilation - a properly sized, quietly ducted exhaust fan - is the least glamorous and most important upgrade, because it protects everything else from moisture damage. Spending on quality waterproofing and ventilation while choosing mid-tier finishes is how you get a bathroom that looks high-end and lasts.</p>

@@ -126,6 +126,7 @@ export default async function CityServicePage(
         imageSubject={service.slug}
         manifestPath={path}
         planningFrom={service.planningFrom}
+        planningFromBasis={service.planningFromBasis}
         breadcrumbs={[
           { name: 'Home', href: '/' },
           { name: service.name, href: `/services/${service.slug}` },

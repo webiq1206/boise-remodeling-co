@@ -1,4 +1,5 @@
 /** Hub-specific FAQs - substantive answers, not generic templates. */
+import { p5Range, p5Span } from './p5Figures';
 
 export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; answer: string }> {
   const faqs: Record<string, Array<{ question: string; answer: string }>> = {
@@ -6,7 +7,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How much does a kitchen remodel cost in Boise?',
         answer:
-          'Most full kitchen remodels in the Treasure Valley plan between roughly $37,000 and $110,000+ depending on layout changes, cabinetry line, and finishes. Guest-scale refreshes cost less; open-concept structural work costs more.',
+          `In the Treasure Valley, our instant estimate shows ${p5Range('kitchen-replace-medium')} for a medium kitchen with new cabinets in the same layout at the Signature level, and ${p5Span('kitchen-replace-medium')} from Essential to Luxury. A refresh costs less; open-concept structural work costs more.`,
       },
       {
         question: 'How long does a kitchen remodel take?',
@@ -48,7 +49,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How much does a bathroom remodel cost in Meridian or Boise?',
         answer:
-          'Guest bath refreshes often plan $18,000–$45,000. Master baths with curbless showers and layout changes commonly reach $35,000–$85,000+ in Ada County.',
+          `Our instant estimate shows ${p5Span('bath-hall-full')} for a full guest bath remodel and ${p5Span('bath-primary-full')} for a primary bath with a walk-in shower and double vanity, from Essential to Luxury.`,
       },
       {
         question: 'What is different about a curbless shower install?',
@@ -90,7 +91,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How much does a room addition cost in Boise?',
         answer:
-          'Additions often plan $80,000–$250,000+ depending on size, foundation type, utilities, and finishes. Second stories and hillside lots trend higher.',
+          `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees. Second stories and hillside lots trend higher.`,
       },
       {
         question: 'Do I need a structural engineer for a second story?',
@@ -132,7 +133,7 @@ export function getHubPillarFaqs(hubSlug: string): Array<{ question: string; ans
       {
         question: 'How much does a whole-home remodel cost in the Treasure Valley?',
         answer:
-          'Programs often plan $180,000–$425,000+ depending on how many rooms, structural work, and finish level are involved.',
+          `Our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft whole-home renovation from Essential to Luxury, before structural changes, design and permits.`,
       },
       {
         question: 'Should I remodel in phases or all at once?',

@@ -1,13 +1,14 @@
 /**
  * Bespoke body + FAQs for the Boise Home Addition Guide pillar.
  */
+import { P5_AS_OF, p5Range, p5Span } from '../p5Figures';
 
 export const ADDITION_GUIDE_CONTENT = `
 <p class="guide-lead">Running out of room but love your home and neighborhood? An addition can give you the space you need without moving. This guide walks you through it in order: the ways to add space, how to check feasibility, what drives the cost, the process and timeline, designing an addition that looks original to the home, and the special cases of ADUs and multigenerational living. By the end you will know which path fits your home and how to plan it well.</p>
 
 <div class="callout cost">
   <p class="callout-label">Budget snapshot</p>
-  <p>Room additions in the Treasure Valley often plan <strong>$80,000-$250,000+</strong> including foundation, structure, systems, and finishes - second stories and detached ADUs can run higher. Converting existing space (a garage or basement) is usually the most affordable way to gain rooms.</p>
+  <p>As of ${P5_AS_OF}, our instant estimate shows <strong>${p5Span('addition-room-300')}</strong> for a 300 sq ft room addition from Essential to Luxury, including foundation, structure, systems, and finishes but not design, engineering, permits or fees. A second-story addition shows ${p5Range('addition-second')} at the Signature level. Converting existing space (a garage or basement) is usually the most affordable way to gain rooms.</p>
 </div>
 
 <h2>1. The ways to add space</h2>
@@ -81,7 +82,7 @@ export const ADDITION_GUIDE_FAQS = [
   {
     question: 'How much does a home addition cost in Boise?',
     answer:
-      'Room additions in the Treasure Valley often plan $80,000 to $250,000 or more including foundation, structure, systems, and finishes, and second stories or detached ADUs can run higher. Converting existing space like a garage or basement is usually the most affordable way to gain rooms. Cost depends on whether you build new or convert, the size, site conditions, utility runs, and finish level.',
+      `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees, and second stories run higher. Converting existing space like a garage or basement is usually the most affordable way to gain rooms. Cost depends on whether you build new or convert, the size, site conditions, utility runs, and finish level.`,
   },
   {
     question: 'Is it cheaper to build up or build out?',

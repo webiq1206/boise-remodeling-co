@@ -2,6 +2,7 @@ import type { BlogPostData } from '../blogContent';
 import { buildSectionsHtml } from './wave1/snippets';
 import { buildClusterArticleSections } from './clusterArticleSections';
 import { guidePath } from '../contentHubs';
+import { p5Span } from './p5Figures';
 
 function buildLegacyPost(
   config: Parameters<typeof buildClusterArticleSections>[0] & {
@@ -199,7 +200,7 @@ export const LEGACY_BLOG_POSTS: BlogPostData[] = [
     excerpt: 'Additions that look original need early design and realistic permits.',
     hubSlug: 'home-additions',
     quickAnswer:
-      'Treasure Valley room additions need feasibility on setbacks and structure, matching architecture, and Ada or Canyon permits - often $80k–$250k+.',
+      `Treasure Valley room additions need feasibility on setbacks and structure, matching architecture, and Ada or Canyon permits. Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room from Essential to Luxury.`,
     author: 'Boise Remodeling Co',
     category: 'Home Additions',
     tags: ['addition', 'eagle', 'kuna'],
@@ -210,7 +211,7 @@ export const LEGACY_BLOG_POSTS: BlogPostData[] = [
       { url: '/services/room-addition/eagle' },
     ],
     faqs: [
-      { question: 'How much does an addition cost?', answer: 'Often $80,000–$250,000+ depending on scope - see our cost article.' },
+      { question: 'How much does an addition cost?', answer: `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design and permits - see our cost article.` },
       { question: 'Permits required?', answer: 'Yes for structural work in Ada and Canyon County.' },
       { question: 'HOA in Eagle?', answer: 'Many neighborhoods require design review.' },
       { question: 'Timeline?', answer: 'Often 4–9 months including design and permits.' },

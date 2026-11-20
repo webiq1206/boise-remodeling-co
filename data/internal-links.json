@@ -1052,7 +1052,7 @@
           "anchor": "Eagle Remodeling Guide: What to Know Before You Remodel",
           "title": "Eagle Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.401
+          "score": 0.399
         }
       ]
     },
@@ -1487,7 +1487,7 @@
           "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.385
+          "score": 0.38
         }
       ]
     },
@@ -2421,7 +2421,7 @@
           "anchor": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
           "title": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.211
+          "score": 0.189
         }
       ]
     },
@@ -3023,11 +3023,11 @@
           "score": 999
         },
         {
-          "url": "/guides/boise-bench-remodeling-guide",
-          "anchor": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
-          "title": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/meridian-remodeling-guide",
+          "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
+          "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.148
+          "score": 0.207
         }
       ]
     },
@@ -3080,9 +3080,9 @@
           "score": 999
         },
         {
-          "url": "/guides/meridian-remodeling-guide",
-          "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
-          "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/middleton-remodeling-guide",
+          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
           "score": 0.207
         }
@@ -3137,11 +3137,11 @@
           "score": 999
         },
         {
-          "url": "/guides/middleton-remodeling-guide",
-          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
-          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/caldwell-remodeling-guide",
+          "anchor": "Caldwell Remodeling Guide: What to Know Before You Remodel",
+          "title": "Caldwell Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.178
+          "score": 0.173
         }
       ]
     },
@@ -3187,11 +3187,11 @@
           "score": 999
         },
         {
-          "url": "/guides/north-end-remodeling-guide",
-          "anchor": "North End Remodeling Guide: What to Know Before You Remodel",
-          "title": "North End Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/boise-bench-remodeling-guide",
+          "anchor": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
+          "title": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.151
+          "score": 0.153
         }
       ]
     },
@@ -3881,7 +3881,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.165
+          "score": 0.137
         },
         {
           "url": "/services/room-addition",
@@ -4389,18 +4389,18 @@
           "score": 0.383
         },
         {
+          "url": "/blog/luxury-remodel-cost-boise",
+          "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
+          "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
+          "type": "blog",
+          "score": 0.125
+        },
+        {
           "url": "/services/outdoor-living",
           "anchor": "Outdoor Living & Decks",
           "title": "Outdoor Living & Decks in Boise & Treasure Valley, Idaho",
           "type": "service",
           "score": 0.105
-        },
-        {
-          "url": "/blog/luxury-remodel-cost-boise",
-          "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
-          "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
-          "type": "blog",
-          "score": 0.097
         },
         {
           "url": "/blog/decks-vs-patios-boise",
@@ -4905,7 +4905,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.066
+          "score": 0.036
         },
         {
           "url": "/services/room-addition",
@@ -4983,7 +4983,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": -0.024
+          "score": -0.021
         }
       ]
     },
@@ -5534,18 +5534,18 @@
           "score": 0.331
         },
         {
-          "url": "/blog/kitchen-remodel-cost-boise",
-          "anchor": "Kitchen Remodel Cost in Boise: 2026 Planning Ranges",
-          "title": "Kitchen Remodel Cost in Boise: 2026 Planning Ranges",
-          "type": "blog",
-          "score": -0.019
-        },
-        {
           "url": "/blog/living-through-a-remodel",
           "anchor": "Living Through a Remodel: How to Survive Construction at Home",
           "title": "Living Through a Remodel: How to Survive Construction at Home",
           "type": "blog",
           "score": -0.049
+        },
+        {
+          "url": "/blog/covered-patios-boise",
+          "anchor": "Covered Patios in Boise: Types, Materials, and Cost",
+          "title": "Covered Patios in Boise: Types, Materials, and Cost",
+          "type": "blog",
+          "score": -0.05
         },
         {
           "url": "/services/outdoor-living",
@@ -5598,16 +5598,16 @@
           "score": 0.331
         },
         {
-          "url": "/blog/covered-patios-boise",
-          "anchor": "Covered Patios in Boise: Types, Materials, and Cost",
-          "title": "Covered Patios in Boise: Types, Materials, and Cost",
+          "url": "/blog/decks-vs-patios-boise",
+          "anchor": "Decks vs patios in Boise: Which fits your yard?",
+          "title": "Decks vs patios in Boise: Which fits your yard?",
           "type": "blog",
           "score": -0.05
         },
         {
-          "url": "/blog/decks-vs-patios-boise",
-          "anchor": "Decks vs patios in Boise: Which fits your yard?",
-          "title": "Decks vs patios in Boise: Which fits your yard?",
+          "url": "/blog/outdoor-fireplaces-boise",
+          "anchor": "Outdoor fireplaces in Boise",
+          "title": "Outdoor fireplaces in Boise",
           "type": "blog",
           "score": -0.05
         },
@@ -5662,18 +5662,18 @@
           "score": 0.331
         },
         {
-          "url": "/blog/outdoor-fireplaces-boise",
-          "anchor": "Outdoor fireplaces in Boise",
-          "title": "Outdoor fireplaces in Boise",
-          "type": "blog",
-          "score": -0.05
-        },
-        {
           "url": "/blog/outdoor-kitchens-boise",
           "anchor": "Outdoor Kitchens in Boise: Design, Features, and Cost",
           "title": "Outdoor Kitchens in Boise: Design, Features, and Cost",
           "type": "blog",
           "score": -0.05
+        },
+        {
+          "url": "/blog/kitchen-remodel-timeline-boise",
+          "anchor": "Kitchen Remodel Timeline in Boise: How Long Does It Take?",
+          "title": "Kitchen Remodel Timeline in Boise: How Long Does It Take?",
+          "type": "blog",
+          "score": -0.053
         },
         {
           "url": "/services/outdoor-living",
@@ -5726,18 +5726,18 @@
           "score": 0.331
         },
         {
-          "url": "/blog/kitchen-remodel-timeline-boise",
-          "anchor": "Kitchen Remodel Timeline in Boise: How Long Does It Take?",
-          "title": "Kitchen Remodel Timeline in Boise: How Long Does It Take?",
-          "type": "blog",
-          "score": -0.053
-        },
-        {
           "url": "/blog/how-long-does-a-bathroom-remodel-take",
           "anchor": "How Long Does a Bathroom Remodel Take? A Realistic Timeline",
           "title": "How Long Does a Bathroom Remodel Take? A Realistic Timeline",
           "type": "blog",
           "score": -0.055
+        },
+        {
+          "url": "/blog/punch-list-guide",
+          "anchor": "Remodel punch list: The final walk-through",
+          "title": "Remodel punch list: The final walk-through",
+          "type": "blog",
+          "score": -0.072
         },
         {
           "url": "/services/adu",
@@ -6832,7 +6832,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": 0.094
+          "score": 0.101
         },
         {
           "url": "/areas/boise",
@@ -6960,7 +6960,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.047
+          "score": 0.014
         },
         {
           "url": "/blog/living-through-a-remodel",
@@ -7084,18 +7084,18 @@
           "score": 0.203
         },
         {
+          "url": "/blog/remodel-cost-per-square-foot-boise",
+          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "type": "blog",
+          "score": -0.042
+        },
+        {
           "url": "/blog/exterior-remodeling-roi",
           "anchor": "Exterior Remodeling ROI: Curb Appeal That Pays Off",
           "title": "Exterior Remodeling ROI: Curb Appeal That Pays Off",
           "type": "blog",
           "score": -0.047
-        },
-        {
-          "url": "/blog/design-build-vs-general-contractor",
-          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
-          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
-          "type": "blog",
-          "score": -0.049
         }
       ]
     },
@@ -7148,9 +7148,9 @@
           "score": 0.203
         },
         {
-          "url": "/blog/remodel-cost-per-square-foot-boise",
-          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "url": "/blog/design-build-vs-general-contractor",
+          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
           "type": "blog",
           "score": -0.049
         },
@@ -7219,11 +7219,11 @@
           "score": -0.053
         },
         {
-          "url": "/blog/whole-home-remodel-cost-boise",
-          "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
-          "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
+          "url": "/blog/material-selection-guide",
+          "anchor": "Material Selection Guide: Choosing Finishes for Your Remodel",
+          "title": "Material Selection Guide: Choosing Finishes for Your Remodel",
           "type": "blog",
-          "score": -0.058
+          "score": -0.06
         }
       ]
     },
@@ -7276,18 +7276,18 @@
           "score": 0.203
         },
         {
-          "url": "/blog/material-selection-guide",
-          "anchor": "Material Selection Guide: Choosing Finishes for Your Remodel",
-          "title": "Material Selection Guide: Choosing Finishes for Your Remodel",
-          "type": "blog",
-          "score": -0.06
-        },
-        {
           "url": "/blog/living-through-a-remodel",
           "anchor": "Living Through a Remodel: How to Survive Construction at Home",
           "title": "Living Through a Remodel: How to Survive Construction at Home",
           "type": "blog",
           "score": -0.063
+        },
+        {
+          "url": "/blog/outdoor-living-roi",
+          "anchor": "Outdoor living ROI in Boise",
+          "title": "Outdoor living ROI in Boise",
+          "type": "blog",
+          "score": -0.072
         }
       ]
     },
@@ -7539,9 +7539,9 @@
           "score": 0.16
         },
         {
-          "url": "/blog/outdoor-living-roi",
-          "anchor": "Outdoor living ROI in Boise",
-          "title": "Outdoor living ROI in Boise",
+          "url": "/blog/remodeling-before-selling",
+          "anchor": "Remodeling before selling in Boise",
+          "title": "Remodeling before selling in Boise",
           "type": "blog",
           "score": -0.029
         }
@@ -7603,11 +7603,11 @@
           "score": 0.331
         },
         {
-          "url": "/blog/remodeling-before-selling",
-          "anchor": "Remodeling before selling in Boise",
-          "title": "Remodeling before selling in Boise",
+          "url": "/blog/bathroom-layout-planning-guide",
+          "anchor": "Bathroom Layout Planning Guide: Clearances, Zones, and Flow",
+          "title": "Bathroom Layout Planning Guide: Clearances, Zones, and Flow",
           "type": "blog",
-          "score": -0.037
+          "score": -0.064
         }
       ]
     },
@@ -7667,11 +7667,11 @@
           "score": 0.331
         },
         {
-          "url": "/blog/punch-list-guide",
-          "anchor": "Remodel punch list: The final walk-through",
-          "title": "Remodel punch list: The final walk-through",
+          "url": "/blog/boise-permit-guide",
+          "anchor": "Boise Remodeling Permits: What You Need to Know",
+          "title": "Boise Remodeling Permits: What You Need to Know",
           "type": "blog",
-          "score": -0.043
+          "score": -0.064
         }
       ]
     },
@@ -7731,9 +7731,9 @@
           "score": 0.331
         },
         {
-          "url": "/blog/bathroom-layout-planning-guide",
-          "anchor": "Bathroom Layout Planning Guide: Clearances, Zones, and Flow",
-          "title": "Bathroom Layout Planning Guide: Clearances, Zones, and Flow",
+          "url": "/blog/quartz-vs-quartzite-countertops",
+          "anchor": "Quartz vs Quartzite Countertops: Which Is Right for Your Kitchen?",
+          "title": "Quartz vs Quartzite Countertops: Which Is Right for Your Kitchen?",
           "type": "blog",
           "score": -0.064
         }
@@ -7795,11 +7795,11 @@
           "score": 0.343
         },
         {
-          "url": "/blog/boise-permit-guide",
-          "anchor": "Boise Remodeling Permits: What You Need to Know",
-          "title": "Boise Remodeling Permits: What You Need to Know",
+          "url": "/blog/energy-efficiency-roi",
+          "anchor": "Energy-Efficiency ROI: Which Upgrades Pay Off in Boise?",
+          "title": "Energy-Efficiency ROI: Which Upgrades Pay Off in Boise?",
           "type": "blog",
-          "score": -0.064
+          "score": -0.067
         }
       ]
     },
@@ -7824,13 +7824,6 @@
           "score": 999
         },
         {
-          "url": "/blog/energy-efficiency-roi",
-          "anchor": "Energy-Efficiency ROI: Which Upgrades Pay Off in Boise?",
-          "title": "Energy-Efficiency ROI: Which Upgrades Pay Off in Boise?",
-          "type": "blog",
-          "score": 0.512
-        },
-        {
           "url": "/blog/kitchen-remodel-roi",
           "anchor": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
           "title": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
@@ -7850,6 +7843,13 @@
           "title": "Home addition ROI in Boise",
           "type": "blog",
           "score": 0.49
+        },
+        {
+          "url": "/blog/outdoor-living-roi",
+          "anchor": "Outdoor living ROI in Boise",
+          "title": "Outdoor living ROI in Boise",
+          "type": "blog",
+          "score": 0.478
         },
         {
           "url": "/guides/kuna-remodeling-guide",
@@ -7980,11 +7980,11 @@
           "score": 0.47
         },
         {
-          "url": "/guides/boise-remodeling-guide",
-          "anchor": "Boise Remodeling Guide: What to Know Before You Remodel",
-          "title": "Boise Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/north-end-remodeling-guide",
+          "anchor": "North End Remodeling Guide: What to Know Before You Remodel",
+          "title": "North End Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.116
+          "score": 0.15
         },
         {
           "url": "/services/aging-in-place/boise",
@@ -8044,11 +8044,11 @@
           "score": 0.037
         },
         {
-          "url": "/blog/quartz-vs-quartzite-countertops",
-          "anchor": "Quartz vs Quartzite Countertops: Which Is Right for Your Kitchen?",
-          "title": "Quartz vs Quartzite Countertops: Which Is Right for Your Kitchen?",
+          "url": "/blog/bathroom-remodel-roi",
+          "anchor": "Does a Bathroom Remodel Add Value? Bathroom ROI Explained",
+          "title": "Does a Bathroom Remodel Add Value? Bathroom ROI Explained",
           "type": "blog",
-          "score": 0.011
+          "score": 0.005
         },
         {
           "url": "/services/basement-remodel/boise",
@@ -8222,18 +8222,18 @@
           "score": 0.504
         },
         {
+          "url": "/blog/whole-home-remodel-cost-boise",
+          "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
+          "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
+          "type": "blog",
+          "score": 0.449
+        },
+        {
           "url": "/blog/luxury-remodel-cost-boise",
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
           "score": 0.442
-        },
-        {
-          "url": "/blog/remodel-cost-per-square-foot-boise",
-          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "type": "blog",
-          "score": 0.423
         },
         {
           "url": "/guides/eagle-foothills-remodeling-guide",
@@ -8286,13 +8286,6 @@
           "score": 0.902
         },
         {
-          "url": "/blog/bathroom-remodel-roi",
-          "anchor": "Does a Bathroom Remodel Add Value? Bathroom ROI Explained",
-          "title": "Does a Bathroom Remodel Add Value? Bathroom ROI Explained",
-          "type": "blog",
-          "score": 0.007
-        },
-        {
           "url": "/blog/boise-permit-guide",
           "anchor": "Boise Remodeling Permits: What You Need to Know",
           "title": "Boise Remodeling Permits: What You Need to Know",
@@ -8305,6 +8298,13 @@
           "title": "Fixed-Price vs. Cost-Plus Remodeling Contracts: Which Is Better?",
           "type": "blog",
           "score": -0.001
+        },
+        {
+          "url": "/blog/why-remodeling-bids-vary",
+          "anchor": "Why Remodeling Bids Vary So Much (and How to Read Them)",
+          "title": "Why Remodeling Bids Vary So Much (and How to Read Them)",
+          "type": "blog",
+          "score": -0.006
         },
         {
           "url": "/services/basement-remodel/nampa",
@@ -8364,11 +8364,11 @@
           "score": 0.373
         },
         {
-          "url": "/guides/caldwell-remodeling-guide",
-          "anchor": "Caldwell Remodeling Guide: What to Know Before You Remodel",
-          "title": "Caldwell Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/meridian-remodeling-guide",
+          "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
+          "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.267
+          "score": 0.238
         },
         {
           "url": "/services/whole-home-remodel/star",
@@ -8471,18 +8471,18 @@
           "score": 0.471
         },
         {
-          "url": "/blog/why-remodeling-bids-vary",
-          "anchor": "Why Remodeling Bids Vary So Much (and How to Read Them)",
-          "title": "Why Remodeling Bids Vary So Much (and How to Read Them)",
-          "type": "blog",
-          "score": 0.419
-        },
-        {
           "url": "/blog/remodeling-contractor-red-flags",
           "anchor": "Remodeling Contractor Red Flags: 12 Warning Signs to Avoid",
           "title": "Remodeling Contractor Red Flags: 12 Warning Signs to Avoid",
           "type": "blog",
           "score": 0.401
+        },
+        {
+          "url": "/blog/why-remodeling-bids-vary",
+          "anchor": "Why Remodeling Bids Vary So Much (and How to Read Them)",
+          "title": "Why Remodeling Bids Vary So Much (and How to Read Them)",
+          "type": "blog",
+          "score": 0.379
         },
         {
           "url": "/blog/fixed-price-vs-cost-plus",
@@ -8492,11 +8492,11 @@
           "score": 0.353
         },
         {
-          "url": "/guides/meridian-remodeling-guide",
-          "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
-          "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/caldwell-remodeling-guide",
+          "anchor": "Caldwell Remodeling Guide: What to Know Before You Remodel",
+          "title": "Caldwell Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.125
+          "score": 0.12
         },
         {
           "url": "/services/aging-in-place/meridian",
@@ -8855,11 +8855,11 @@
           "score": 1.043
         },
         {
-          "url": "/guides/caldwell-remodeling-guide",
-          "anchor": "Caldwell Remodeling Guide: What to Know Before You Remodel",
-          "title": "Caldwell Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/middleton-remodeling-guide",
+          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 1.019
+          "score": 1.003
         },
         {
           "url": "/services/aging-in-place/kuna",
@@ -8912,18 +8912,18 @@
           "score": 1.21
         },
         {
-          "url": "/guides/middleton-remodeling-guide",
-          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
-          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
-          "type": "guide",
-          "score": 1.194
-        },
-        {
           "url": "/guides/nampa-remodeling-guide",
           "anchor": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "title": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
           "score": 1.165
+        },
+        {
+          "url": "/guides/middleton-remodeling-guide",
+          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "type": "guide",
+          "score": 1.154
         },
         {
           "url": "/services/whole-home-remodel/meridian",
@@ -8940,18 +8940,18 @@
           "score": -0.073
         },
         {
-          "url": "/blog/outdoor-living-roi",
-          "anchor": "Outdoor living ROI in Boise",
-          "title": "Outdoor living ROI in Boise",
-          "type": "blog",
-          "score": -0.08
-        },
-        {
           "url": "/blog/remodeling-before-selling",
           "anchor": "Remodeling before selling in Boise",
           "title": "Remodeling before selling in Boise",
           "type": "blog",
           "score": -0.08
+        },
+        {
+          "url": "/blog/open-concept-kitchen-remodeling",
+          "anchor": "Open-Concept Kitchen Remodeling in Boise: Is It Right for You?",
+          "title": "Open-Concept Kitchen Remodeling in Boise: Is It Right for You?",
+          "type": "blog",
+          "score": -0.084
         }
       ]
     },
@@ -9004,18 +9004,18 @@
           "score": -0.07
         },
         {
-          "url": "/blog/open-concept-kitchen-remodeling",
-          "anchor": "Open-Concept Kitchen Remodeling in Boise: Is It Right for You?",
-          "title": "Open-Concept Kitchen Remodeling in Boise: Is It Right for You?",
-          "type": "blog",
-          "score": -0.084
-        },
-        {
           "url": "/blog/kitchen-remodel-roi",
           "anchor": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
           "title": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
           "type": "blog",
           "score": -0.092
+        },
+        {
+          "url": "/blog/remodel-cost-per-square-foot-boise",
+          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "type": "blog",
+          "score": -0.097
         }
       ]
     },
@@ -9033,18 +9033,18 @@
           "score": 999
         },
         {
-          "url": "/guides/middleton-remodeling-guide",
-          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
-          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
-          "type": "guide",
-          "score": 1.23
-        },
-        {
           "url": "/guides/caldwell-remodeling-guide",
           "anchor": "Caldwell Remodeling Guide: What to Know Before You Remodel",
           "title": "Caldwell Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
           "score": 1.201
+        },
+        {
+          "url": "/guides/middleton-remodeling-guide",
+          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "type": "guide",
+          "score": 1.19
         },
         {
           "url": "/guides/meridian-remodeling-guide",
@@ -9111,11 +9111,11 @@
           "score": 0.962
         },
         {
-          "url": "/guides/harris-ranch-remodeling-guide",
-          "anchor": "Harris Ranch Remodeling Guide: What to Know Before You Remodel",
-          "title": "Harris Ranch Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/boise-remodeling-guide",
+          "anchor": "Boise Remodeling Guide: What to Know Before You Remodel",
+          "title": "Boise Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.891
+          "score": 0.901
         },
         {
           "url": "/blog/quartz-vs-quartzite-countertops",
@@ -9303,11 +9303,11 @@
           "score": 0.797
         },
         {
-          "url": "/guides/middleton-remodeling-guide",
-          "anchor": "Middleton Remodeling Guide: What to Know Before You Remodel",
-          "title": "Middleton Remodeling Guide: What to Know Before You Remodel",
+          "url": "/guides/nampa-remodeling-guide",
+          "anchor": "Nampa Remodeling Guide: What to Know Before You Remodel",
+          "title": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.78
+          "score": 0.766
         },
         {
           "url": "/services/aging-in-place/middleton",
@@ -9388,16 +9388,16 @@
           "score": 0.053
         },
         {
-          "url": "/guides/nampa-remodeling-guide",
-          "anchor": "Nampa Remodeling Guide: What to Know Before You Remodel",
-          "title": "Nampa Remodeling Guide: What to Know Before You Remodel",
-          "type": "guide",
-          "score": 0.016
-        },
-        {
           "url": "/services/aging-in-place/nampa",
           "anchor": "Aging-in-Place Remodeling in Nampa",
           "title": "Aging-in-Place Remodeling in Nampa, Idaho",
+          "type": "city-service",
+          "score": -0.01
+        },
+        {
+          "url": "/services/aging-in-place/star",
+          "anchor": "Aging-in-Place Remodeling in Star",
+          "title": "Aging-in-Place Remodeling in Star, Idaho",
           "type": "city-service",
           "score": -0.01
         }
@@ -9474,13 +9474,6 @@
       "url": "/services/aging-in-place",
       "links": [
         {
-          "url": "/services/aging-in-place/star",
-          "anchor": "Aging-in-Place Remodeling in Star",
-          "title": "Aging-in-Place Remodeling in Star, Idaho",
-          "type": "city-service",
-          "score": 1.669
-        },
-        {
           "url": "/services/aging-in-place/kuna",
           "anchor": "Aging-in-Place Remodeling in Kuna",
           "title": "Aging-in-Place Remodeling in Kuna, Idaho",
@@ -9512,6 +9505,13 @@
           "url": "/services/aging-in-place/middleton",
           "anchor": "Aging-in-Place Remodeling in Middleton",
           "title": "Aging-in-Place Remodeling in Middleton, Idaho",
+          "type": "city-service",
+          "score": 1.629
+        },
+        {
+          "url": "/services/aging-in-place/nampa",
+          "anchor": "Aging-in-Place Remodeling in Nampa",
+          "title": "Aging-in-Place Remodeling in Nampa, Idaho",
           "type": "city-service",
           "score": 1.629
         },
@@ -9715,11 +9715,11 @@
           "score": -0.129
         },
         {
-          "url": "/blog/why-remodeling-bids-vary",
-          "anchor": "Why Remodeling Bids Vary So Much (and How to Read Them)",
-          "title": "Why Remodeling Bids Vary So Much (and How to Read Them)",
+          "url": "/blog/how-long-does-a-bathroom-remodel-take",
+          "anchor": "How Long Does a Bathroom Remodel Take? A Realistic Timeline",
+          "title": "How Long Does a Bathroom Remodel Take? A Realistic Timeline",
           "type": "blog",
-          "score": -0.169
+          "score": -0.173
         }
       ]
     },
@@ -9900,26 +9900,26 @@
           "score": 1.569
         },
         {
-          "url": "/blog/whole-home-remodel-cost-boise",
-          "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
-          "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
-          "type": "blog",
-          "score": -0.092
-        },
-        {
           "url": "/blog/home-addition-timeline-guide",
           "anchor": "Home Addition Timeline: How Long Does an Addition Take?",
           "title": "Home Addition Timeline: How Long Does an Addition Take?",
           "type": "blog",
           "score": -0.115
+        },
+        {
+          "url": "/blog/consultation-process-remodeling",
+          "anchor": "What to Expect at a Remodeling Consultation",
+          "title": "What to Expect at a Remodeling Consultation",
+          "type": "blog",
+          "score": -0.117
         }
       ]
     }
   },
   "incoming": {
-    "/blog/kitchen-remodel-cost-boise": 10,
+    "/blog/kitchen-remodel-cost-boise": 9,
     "/blog/bathroom-remodel-cost-boise": 8,
-    "/blog/whole-home-remodel-cost-boise": 8,
+    "/blog/whole-home-remodel-cost-boise": 7,
     "/blog/home-addition-cost-boise": 11,
     "/blog/remodel-cost-per-square-foot-boise": 6,
     "/blog/what-impacts-remodeling-costs-boise": 6,
@@ -9944,7 +9944,7 @@
     "/blog/aging-in-place-bathroom-design": 8,
     "/blog/luxury-bathroom-features": 7,
     "/blog/bathroom-layout-planning-guide": 6,
-    "/blog/how-long-does-a-bathroom-remodel-take": 6,
+    "/blog/how-long-does-a-bathroom-remodel-take": 7,
     "/blog/adu-cost-boise": 10,
     "/blog/garage-conversions": 7,
     "/blog/basement-finishing-boise": 7,
@@ -9958,7 +9958,7 @@
     "/blog/living-through-a-remodel": 7,
     "/blog/remodeling-mistakes-to-avoid": 7,
     "/blog/whole-home-remodel-planning-checklist": 8,
-    "/blog/consultation-process-remodeling": 5,
+    "/blog/consultation-process-remodeling": 6,
     "/blog/material-selection-guide": 6,
     "/blog/boise-permit-guide": 7,
     "/blog/kitchen-remodel-roi": 7,
@@ -9996,7 +9996,7 @@
     "/guides/caldwell-remodeling-guide": 7,
     "/guides/north-end-remodeling-guide": 7,
     "/guides/boise-bench-remodeling-guide": 6,
-    "/guides/harris-ranch-remodeling-guide": 7,
+    "/guides/harris-ranch-remodeling-guide": 6,
     "/guides/east-boise-remodeling-guide": 7,
     "/guides/hidden-springs-remodeling-guide": 6,
     "/guides/eagle-foothills-remodeling-guide": 6,
@@ -10075,7 +10075,7 @@
     "/services/aging-in-place/boise": 7,
     "/services/aging-in-place/meridian": 6,
     "/services/aging-in-place/eagle": 6,
-    "/services/aging-in-place/nampa": 5,
+    "/services/aging-in-place/nampa": 6,
     "/services/aging-in-place/kuna": 7,
     "/services/aging-in-place/star": 5,
     "/services/aging-in-place/middleton": 6,

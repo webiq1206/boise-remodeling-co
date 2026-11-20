@@ -53,7 +53,7 @@ export function hubTopicSections(hubSlug: string, topic: string): ContentSection
           h2: 'Cabinets, islands, and appliance planning',
           paragraphs: [
             'Order cabinets at design lock; lead times often exceed eight weeks. Islands need clearance for dishwasher swings and walkways - not just catalog depth.',
-            'Appliances are usually client-supplied; we coordinate rough-in. Budget suites separately, often $8,000–$25,000 for a full kitchen.',
+            'Appliances are usually client-supplied; we coordinate rough-in. Budget suites separately.',
           ],
         },
         {

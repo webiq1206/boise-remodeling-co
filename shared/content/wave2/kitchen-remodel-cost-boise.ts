@@ -1,4 +1,5 @@
 import type { BlogPostData } from '../../blogContent';
+import { P5_AS_OF, p5Low, p5PerSqft, p5Range, p5Span } from '../p5Figures';
 
 /**
  * Bespoke, comprehensive replacement for the thin factory cost cluster.
@@ -12,7 +13,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   metaDescription:
     'How much does a kitchen remodel cost in Boise? 2026 planning ranges by tier and size, a full cost breakdown, timelines, permits, and ways to save from a local design-build team.',
   excerpt:
-    'Most full kitchen remodels in Boise plan between $37,000 and $166,000, with cosmetic refreshes lower and luxury gut renovations higher. Here is exactly where the money goes and how to budget.',
+    `Our instant estimate puts a medium Boise kitchen with new cabinets in the same layout at ${p5Range('kitchen-replace-medium')} at the Signature level, and ${p5Span('kitchen-replace-medium')} across finish levels. Here is where the money goes and how to budget.`,
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -35,9 +36,9 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   ],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation as of 2026, based on a 250-square-foot kitchen. Cosmetic refreshes run $16,000-$21,000, mid-range remodels run $37,000-$47,000, high-end renovations run $85,000-$110,000, and luxury gut renovations run $136,000-$166,000. Your final number depends on layout changes, cabinetry, and finish level far more than square footage.',
+    `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Range('kitchen-replace-medium')} for a medium Boise kitchen (about 150 sq ft) with new cabinets and finishes in the same layout, at the Signature level, and ${p5Span('kitchen-replace-medium')} from Essential to Luxury. A refresh of that kitchen shows ${p5Range('kitchen-refresh-medium')} at Signature, and a large kitchen (about 250 sq ft) in a new layout with an island shows ${p5Range('kitchen-redesign-large')}. Layout changes, cabinetry and finish level move the number more than square footage.`,
   keyTakeaways: [
-    'Full Boise kitchen remodels plan $37,000-$166,000; refreshes start near $16,000, luxury reaches $166,000.',
+    `A medium kitchen with new cabinets in the same layout shows ${p5Span('kitchen-replace-medium')} from Essential to Luxury in our instant estimate; a small kitchen refresh starts at ${p5Low('kitchen-refresh-small', 'builder')}.`,
     'Cabinetry is the biggest single line item (30-40% of the budget), followed by labor and countertops.',
     'Layout and structural changes - moving plumbing, removing walls - drive cost more than size alone.',
     'Ada and Canyon County permits are required when you change layout, plumbing, gas, or electrical.',
@@ -56,17 +57,17 @@ export const kitchenRemodelCostBoise: BlogPostData = {
     {
       question: 'How much does a kitchen remodel cost in Boise?',
       answer:
-        'As of 2026, most full kitchen remodels in Boise plan between $37,000 and $166,000. Cosmetic refreshes that keep the existing layout run $16,000-$21,000, while high-end and luxury gut renovations with custom cabinetry and layout changes run $85,000-$166,000. The biggest variables are cabinetry, whether you move plumbing or walls, and finish level.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Range('kitchen-replace-medium')} for a medium kitchen (about 150 sq ft) with new cabinets and finishes in the same layout, at the Signature level. A refresh that keeps the cabinets shows ${p5Range('kitchen-refresh-medium')}, and a large kitchen (about 250 sq ft) in a new layout with an island shows ${p5Range('kitchen-redesign-large')} at Signature and ${p5Range('kitchen-redesign-large', 'luxury')} at Luxury. The biggest variables are cabinetry, whether you move plumbing or walls, and finish level.`,
     },
     {
       question: 'What is the average kitchen remodel cost per square foot in Boise?',
       answer:
-        'A mid-range kitchen remodel in the Treasure Valley lands around $150-$190 per square foot of kitchen space, with cosmetic refreshes nearer $65 and luxury work running several times higher. Per-square-foot figures are misleading for kitchens because cost concentrates in cabinets, counters, and appliances rather than floor area, and the rate falls as the room gets bigger. A written scope tied to your selections is far more reliable than a per-square-foot rule of thumb.',
+        `At the Signature level, our instant estimate works out to ${p5PerSqft('kitchen-replace-medium')} for a medium kitchen with new cabinets in the same layout, and ${p5PerSqft('kitchen-refresh-medium')} for a refresh of it. Per-square-foot figures are misleading for kitchens because cost concentrates in cabinets, counters, and appliances rather than floor area, and the rate falls as the room gets bigger. A written scope tied to your selections is far more reliable than a per-square-foot rule of thumb.`,
     },
     {
       question: 'How much does a 10x10 kitchen remodel cost?',
       answer:
-        'A 10x10 kitchen (about 100 square feet, roughly 20 linear feet of cabinets) commonly plans $22,000-$28,000 in Boise for a mid-range remodel, depending on cabinet line and countertop material. Adding an island, moving plumbing, or choosing custom cabinetry pushes it higher.',
+        `A 10x10 kitchen is about 100 square feet. Our instant estimate shows ${p5Range('kitchen-replace-small')} for a small kitchen of that size with new cabinets and finishes in the same layout, at the Signature level, and ${p5Range('kitchen-refresh-small')} for a refresh. Adding an island, moving plumbing, or choosing a higher finish level pushes it higher.`,
     },
     {
       question: 'Do I need a permit to remodel my kitchen in Boise?',
@@ -91,21 +92,20 @@ export const kitchenRemodelCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a kitchen remodel cost in Boise?</h2>
-<p><strong>As of 2026, a kitchen remodel in Boise typically costs $37,000 to $166,000 for a full renovation of a 250-square-foot kitchen.</strong> Cosmetic refreshes that keep the existing footprint run $16,000-$21,000, mid-range remodels run $37,000-$47,000, and high-end or luxury gut renovations with custom cabinetry and layout changes run $85,000-$166,000. Your final number is driven far more by cabinetry, layout changes, and finish level than by the size of the room.</p>
-<p>The ranges below are planning ranges from real design-build consultations across the Treasure Valley - not advertised teaser prices. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, the hub for Treasure Valley remodeling budgets. For a starting range by size and finish level, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
+<p><strong>As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Range('kitchen-replace-medium')} for a medium Boise kitchen (about 150 sq ft) with new cabinets and finishes in the same layout, at the Signature level.</strong> A refresh that keeps the cabinets shows ${p5Range('kitchen-refresh-medium')}, and the same kitchen in a new layout with an island shows ${p5Range('kitchen-redesign-medium')}. Your final number is driven far more by cabinetry, layout changes, and finish level than by the size of the room.</p>
+<p>The ranges below come from our instant estimate, priced from our cost book at stated inputs, not advertised teaser prices. They leave out appliances, which you supply or budget separately. This article is part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, the hub for Treasure Valley remodeling budgets. For a starting range by size and finish level, <a href="/#planning-ranges">explore our planning ranges</a>.</p>
 <table class="cost-table">
-<thead><tr><th>Kitchen remodel tier</th><th>2026 Boise planning range</th><th>What it includes</th></tr></thead>
+<thead><tr><th>Medium kitchen, about 150 sq ft</th><th>Signature level</th><th>Essential to Luxury</th></tr></thead>
 <tbody>
-<tr><td>Cosmetic refresh</td><td>$16,000 - $21,000</td><td>New doors or refaced cabinets, countertops, backsplash, paint, hardware; same layout</td></tr>
-<tr><td>Mid-range remodel</td><td>$37,000 - $47,000</td><td>New semi-custom cabinets, quartz counters, tile, lighting, minor layout tweaks</td></tr>
-<tr><td>High-end remodel</td><td>$85,000 - $110,000</td><td>Custom or premium cabinetry, island, layout changes, upgraded appliances</td></tr>
-<tr><td>Luxury gut renovation</td><td>$136,000 - $166,000</td><td>Full custom millwork, stone, structural changes, high-end appliance package</td></tr>
+<tr><td>Refresh: painted cabinets, new counters, backsplash and hardware</td><td>${p5Range('kitchen-refresh-medium')}</td><td>${p5Span('kitchen-refresh-medium')}</td></tr>
+<tr><td>New kitchen, same layout: new cabinets and finishes</td><td>${p5Range('kitchen-replace-medium')}</td><td>${p5Span('kitchen-replace-medium')}</td></tr>
+<tr><td>New layout with a new island</td><td>${p5Range('kitchen-redesign-medium')}</td><td>${p5Span('kitchen-redesign-medium')}</td></tr>
 </tbody>
 </table>
 
 <h2 id="refresh-vs-full">Refresh vs. full remodel: which does your Boise kitchen need?</h2>
 <p>Before you settle on a budget, decide what problem you are actually solving. Not every kitchen needs a full remodel, and matching scope to the real issue is the single biggest way to control cost.</p>
-<p>A <strong>cosmetic refresh</strong> makes sense when the layout works and the bones are sound - you simply want it to look current. Refacing or replacing doors, adding quartz counters, a new backsplash, updated hardware, and paint can transform a dated kitchen for $16,000-$21,000 without moving a single pipe. Many 1990s and 2000s builder kitchens in Meridian, Kuna, and Nampa are strong candidates for a refresh.</p>
+<p>A <strong>cosmetic refresh</strong> makes sense when the layout works and the bones are sound - you simply want it to look current. Refacing or replacing doors, adding quartz counters, a new backsplash, updated hardware, and paint can transform a dated kitchen without moving a single pipe: our instant estimate shows ${p5Range('kitchen-refresh-medium')} for a medium kitchen refresh at the Signature level. Many 1990s and 2000s builder kitchens in Meridian, Kuna, and Nampa are strong candidates for a refresh.</p>
 <p>A <strong>full remodel</strong> is worth it when the layout fights you daily: a closed-off wall you want opened, a cramped work triangle, too little storage, or failing plumbing and wiring hiding behind the cabinets. Once you are changing layout or systems, the incremental cost of doing it right - new cabinetry, better lighting, a functional island - is usually money well spent. If you are unsure, our free in-home visit will tell you honestly which path your kitchen needs.</p>
 
 <h2 id="breakdown">Kitchen remodel cost breakdown: where the money goes</h2>
@@ -124,7 +124,7 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <p>Cabinetry choice moves the total more than any other decision. Stock cabinets keep costs down but limit sizing; <a href="/blog/kitchen-cabinet-trends-boise">semi-custom lines</a> balance flexibility and lead time; fully custom shops fit the odd ceiling lines common in North End and older Boise Bench homes but extend design time. For a deeper look at surfaces, see <a href="/blog/quartz-vs-quartzite-countertops">quartz vs quartzite</a>.</p>
 
 <h2 id="cost-drivers">What drives kitchen remodel costs up</h2>
-<p>Two kitchens of the same size can differ by $40,000 based on a handful of decisions. The costliest drivers are structural and mechanical - the work you cannot see - not the finishes you can.</p>
+<p>Two kitchens of the same size can differ by tens of thousands of dollars based on a handful of decisions. The costliest drivers are structural and mechanical - the work you cannot see - not the finishes you can.</p>
 <ul>
 <li><strong>Moving plumbing or the sink</strong> - relocating the sink, dishwasher, or adding a pot filler means new supply and drain lines, and often subfloor work.</li>
 <li><strong>Removing a wall</strong> - opening to the dining or living room may require a beam, engineering, and Ada County plan review. See <a href="/blog/open-concept-kitchen-remodeling">open-concept kitchen remodeling</a>.</li>
@@ -133,20 +133,19 @@ export const kitchenRemodelCostBoise: BlogPostData = {
 <li><strong>Concealed conditions</strong> - older Treasure Valley homes hide knob-and-tube wiring, galvanized plumbing, or out-of-level floors that surface at demo.</li>
 </ul>
 
-<h2 id="by-size">Kitchen remodel cost by size (10x10, 12x12, and larger)</h2>
-<p>Homeowners often search by kitchen size. Because cost concentrates in cabinet runs and appliances, linear feet of cabinetry predicts price better than square footage. These are mid-range Boise planning ranges.</p>
+<h2 id="by-size">Kitchen remodel cost by size (10x10 and larger)</h2>
+<p>Homeowners often search by kitchen size. Because cost concentrates in cabinet runs, linear feet of cabinetry predicts price better than square footage. These are our instant estimate's ranges for new cabinets and finishes in the same layout, at the Signature level.</p>
 <table class="cost-table">
-<thead><tr><th>Kitchen size</th><th>Approx. cabinet run</th><th>Mid-range planning range</th></tr></thead>
+<thead><tr><th>Kitchen size</th><th>Base and upper cabinet run</th><th>Signature level</th></tr></thead>
 <tbody>
-<tr><td>Small (10x10, ~100 sq ft)</td><td>~20 linear feet</td><td>$22,000 - $28,000</td></tr>
-<tr><td>Medium (12x12, ~144 sq ft)</td><td>~25-30 linear feet</td><td>$27,000 - $34,000</td></tr>
-<tr><td>Large / open (250 sq ft)</td><td>30+ linear feet + island</td><td>$37,000 - $47,000</td></tr>
-<tr><td>Very large / great room (400 sq ft)</td><td>35+ linear feet + island</td><td>$48,000 - $61,000</td></tr>
+<tr><td>Small (10x10, about 100 sq ft)</td><td>About 14 ft base, 12 ft upper</td><td>${p5Range('kitchen-replace-small')}</td></tr>
+<tr><td>Medium (about 150 sq ft)</td><td>About 20 ft base, 16 ft upper, a pantry</td><td>${p5Range('kitchen-replace-medium')}</td></tr>
+<tr><td>Large (about 250 sq ft)</td><td>About 26 ft base, 20 ft upper, a pantry</td><td>${p5Range('kitchen-replace-large')}</td></tr>
 </tbody>
 </table>
 
 <h2 id="per-square-foot">Kitchen remodel cost per square foot</h2>
-<p>You may see figures of $140-$520 per square foot for Boise kitchens. Use these with caution: a small kitchen packed with cabinets and appliances can cost more per square foot than a larger one, because the expensive elements are fixed regardless of floor area. Per-square-foot numbers are useful for a first gut-check but should never replace a scoped estimate. Our <a href="/blog/remodel-cost-per-square-foot-boise">cost per square foot guide</a> explains when the metric helps and when it misleads.</p>
+<p>At the Signature level, our instant estimate works out to ${p5PerSqft('kitchen-replace-small')} for a small kitchen and ${p5PerSqft('kitchen-replace-large')} for a large one, both with new cabinets in the same layout. Use per-square-foot figures with caution: a small kitchen packed with cabinets and appliances can cost more per square foot than a larger one, because the expensive elements are fixed regardless of floor area. Per-square-foot numbers are useful for a first gut-check but should never replace a scoped estimate. Our <a href="/blog/remodel-cost-per-square-foot-boise">cost per square foot guide</a> explains when the metric helps and when it misleads.</p>
 
 <h2 id="timeline">How long does a kitchen remodel take in Boise?</h2>
 <p>Timeline affects cash flow and how long you live without a kitchen, so plan it alongside budget. Long-lead cabinetry is the schedule driver - order it at design lock.</p>

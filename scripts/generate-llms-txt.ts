@@ -114,7 +114,7 @@ function buildShort(): string {
     `- [Instant remodel estimate](${url('/instant-estimate')}): answer a few questions and see a preliminary price range on screen. Free, with no appointment. It is a range for budgeting, not a final price; a firm written proposal follows a site visit.`,
   );
   lines.push(`- [Send project details and photos for a quote](${url('/estimate')})`);
-  lines.push(`- [Remodeling design ideas](${url('/design-ideas')})`);
+  lines.push(`- [Remodel gallery](${url('/design-ideas')})`);
   lines.push(`- [Planning resources and worksheets](${url('/resources')})`, '');
 
   lines.push('## Optional', '');
@@ -257,7 +257,7 @@ function buildFull(): string {
   lines.push(`- Service areas: ${url('/areas')}`);
   lines.push(`- Instant estimate: ${url('/instant-estimate')}`);
   lines.push(`- Send project details: ${url('/estimate')}`);
-  lines.push(`- Remodeling design ideas: ${url('/design-ideas')}`);
+  lines.push(`- Remodel gallery: ${url('/design-ideas')}`);
   lines.push(`- Blog: ${url('/blog')}`);
   lines.push(`- Guides: ${url('/guides')}`);
   lines.push(`- Resources: ${url('/resources')}`);

@@ -1,4 +1,5 @@
 import { P5_GOOGLE_REVIEWS_URL } from '../googleReviews';
+import { p5Span } from './p5Figures';
 /**
  * Generated hub content for hubs 2–10 (hub 1 + legacy in other files).
  */
@@ -35,7 +36,7 @@ export const KITCHEN_PILLAR = buildPillarGuide({
   hubSlug: 'kitchen-remodeling',
   tags: ['kitchen', 'boise', 'design'],
   quickAnswer:
-    'Treasure Valley kitchen remodels typically run 8–16 weeks of construction after design and permits, with budgets often from $37,000 to $110,000+ for full gut renovations with layout changes.',
+    `Treasure Valley kitchen remodels typically run 8–16 weeks of construction after design and permits. Our instant estimate shows ${p5Span('kitchen-replace-medium')} for a medium kitchen with new cabinets in the same layout and ${p5Span('kitchen-redesign-large')} for a large kitchen in a new layout, from Essential to Luxury.`,
   takeaways: [
     'Lock layout and MEP before finish selections.',
     'Cabinet lead times can drive the calendar - order at design lock.',
@@ -95,7 +96,7 @@ export const BATHROOM_PILLAR = buildPillarGuide({
   hubSlug: 'bathroom-remodeling',
   tags: ['bathroom', 'boise'],
   quickAnswer:
-    'Guest bath remodels often plan $18,000–$45,000; master baths with curbless showers and layout changes commonly reach $35,000–$85,000+ in Ada and Canyon County.',
+    `Our instant estimate shows ${p5Span('bath-hall-full')} for a full guest bath remodel and ${p5Span('bath-primary-relocate')} for a primary bath in a new layout, from Essential to Luxury.`,
   takeaways: [
     'Waterproofing and slope matter for walk-in and curbless showers.',
     'Ventilation and heat should be planned with layout.',
@@ -151,7 +152,7 @@ export const ADDITION_PILLAR = buildPillarGuide({
   hubSlug: 'home-additions',
   tags: ['addition', 'adu'],
   quickAnswer:
-    'Room additions in the Treasure Valley often plan $80,000–$250,000+ including foundation, structure, MEP, and finish - second stories and ADUs can run higher.',
+    `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees - second stories run higher.`,
   takeaways: [
     'Feasibility starts with setbacks, soil, and HOA rules.',
     'Roof and exterior tie-ins should be resolved in design.',
@@ -218,7 +219,7 @@ export const WHOLE_HOME_PILLAR = buildPillarGuide({
   hubSlug: 'whole-home-remodeling',
   tags: ['whole-home'],
   quickAnswer:
-    'Whole-home remodels in the Treasure Valley often span $180,000–$425,000+ with timelines from several months to a year depending on phasing and permits.',
+    `Our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft whole-home renovation from Essential to Luxury, before structural changes, design and permits, with timelines from several months to a year depending on phasing and permits.`,
   takeaways: [
     'Sequence structural and MEP before finishes.',
     'Hold contingency for concealed conditions.',

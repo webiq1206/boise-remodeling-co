@@ -6,7 +6,7 @@
  */
 
 export const BOISE_ADU_GUIDE_QUICK_ANSWER =
-  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. Garage conversions often plan $90,000 to $180,000 and attached ADUs and basement conversions $120,000 to $250,000, with compact units starting near $90,000; most projects take 4 to 8 months from design through final inspection. New detached ADUs are built by Boise Construction Co.';
+  'Boise allows accessory dwelling units (ADUs) in most residential zones under its modern zoning code, with detached units generally up to 900 square feet. We price garage, basement and attached conversions after a feasibility visit, because site conditions and utility connections vary too much for a published range; most projects take 4 to 8 months from design through final inspection. New detached ADUs are built by Boise Construction Co.';
 
 export const BOISE_ADU_GUIDE_TAKEAWAYS = [
   'Boise updated its zoning code in December 2023 and made ADUs easier to approve in most residential zones - verify current standards with the City of Boise Planning Division before design.',
@@ -29,7 +29,7 @@ export const BOISE_ADU_GUIDE_FAQS = [
   {
     question: 'How much does an ADU cost to build in the Treasure Valley?',
     answer:
-      'Planning ranges for a typical 600-square-foot unit: garage conversions often run $90,000 to $180,000; attached ADUs and basement conversions $120,000 to $250,000; detached new-build ADUs are built by our sister company Boise Construction Co, which publishes its own detached ADU costs. Compact 300- to 400-square-foot units start closer to $90,000. Site work, utility connections, and finish level drive the spread. Use our estimator for a planning range tied to your project.',
+      'Our instant estimate does not price ADU conversions, because site work, utility connections and finish level vary too much from one property to the next, so we do not publish a range for them. Request a quote and we price your garage, basement or attached conversion in a written scope after a free visit. Detached new-build ADUs are built by our sister company Boise Construction Co, which publishes its own detached ADU costs.',
   },
   {
     question: 'Do ADUs need their own utility connections?',
@@ -103,13 +103,13 @@ export const BOISE_ADU_GUIDE_HTML = `
 
 <h2>What does an ADU cost in the Treasure Valley?</h2>
 <table class="cost-table">
-  <thead><tr><th>ADU type</th><th>Planning range</th><th>Typical timeline</th></tr></thead>
+  <thead><tr><th>ADU type</th><th>How it is priced</th><th>Typical timeline</th></tr></thead>
   <tbody>
-    <tr><td>Garage conversion</td><td>$90,000 - $180,000</td><td>3 to 5 months</td></tr>
-    <tr><td>Attached ADU / basement conversion</td><td>$120,000 - $250,000</td><td>4 to 6 months</td></tr>
+    <tr><td>Garage conversion</td><td>Written scope after a feasibility visit</td><td>3 to 5 months</td></tr>
+    <tr><td>Attached ADU / basement conversion</td><td>Written scope after a feasibility visit</td><td>4 to 6 months</td></tr>
   </tbody>
 </table>
-<p>Ranges are 2026 planning guidance, not bids: site conditions, utility connections, and finish level move the number. A freestanding backyard unit is a new build by our sister company Boise Construction Co: see its <a href="https://boiseconstruction.co/blog/adu-cost-boise">detached ADU costs</a>. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or <a href="/#request">request a quote</a> for your property.</p>
+<p>Site conditions, utility connections, and finish level move the number, which is why an ADU conversion is priced on your property rather than from a published range. A freestanding backyard unit is a new build by our sister company Boise Construction Co: see its <a href="https://boiseconstruction.co/blog/adu-cost-boise">detached ADU costs</a>. For room-by-room context see the <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>, or <a href="/#request">request a quote</a> for your property.</p>
 
 <h2>Permits, timeline, and what to expect</h2>
 <p>Every legal ADU needs building, plumbing, electrical, and mechanical permits, plus zoning compliance. Typical sequence: feasibility and design (6 to 10 weeks), engineering and plan submission, plan review (varies by jurisdiction and season), then construction with inspections at each phase. We handle <a href="/blog/boise-permit-guide">permits</a> in-house for both Ada and Canyon County jurisdictions and build review time into the schedule from day one, so the calendar you see at design lock reflects reality.</p>

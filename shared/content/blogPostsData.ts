@@ -1,6 +1,7 @@
 import type { BlogPostData } from '../blogContent';
 import { getExpandedClusterHtml, COST_CLUSTER_CONTENT } from './wave1/costClusterPosts';
 import { guidePath } from '../contentHubs';
+import { p5Range, p5Span } from './p5Figures';
 
 const PILLAR = guidePath('boise-remodeling-cost-guide');
 
@@ -92,7 +93,7 @@ export const WAVE1_COST_CLUSTERS: BlogPostData[] = [
     'Kitchen Remodel Cost Boise (2026 Planning Ranges)',
     'Kitchen Remodel Cost Boise | Treasure Valley',
     'Kitchen remodel cost in Boise, Meridian, and Eagle: cabinets, layout changes, timelines, and budgeting tips from a local design-build team.',
-    'Full kitchen remodels in Boise typically range from about $37,000 to $110,000+ depending on layout, cabinetry, and finishes.',
+    `Our instant estimate shows ${p5Span('kitchen-replace-medium')} for a medium Boise kitchen with new cabinets in the same layout, from Essential to Luxury.`,
     ['kitchen', 'cost', 'boise', 'meridian'],
   ),
   makeCostCluster(
@@ -108,7 +109,7 @@ export const WAVE1_COST_CLUSTERS: BlogPostData[] = [
     'Whole Home Remodel Cost Boise',
     'Whole Home Remodel Cost Boise Idaho',
     'Whole-home remodel cost planning for Boise, Meridian, and Eagle: phasing, contingency, MEP upgrades, timelines, and budgeting tips.',
-    'Whole-home programs often plan between $180,000 and $425,000+ depending on scope and structural work.',
+    `Our instant estimate shows ${p5Span('whole-home-2000')} for a 2,000 sq ft whole-home renovation from Essential to Luxury, before structural changes, design and permits.`,
     ['whole-home', 'cost', 'boise'],
   ),
   makeCostCluster(
@@ -116,7 +117,7 @@ export const WAVE1_COST_CLUSTERS: BlogPostData[] = [
     'Home Addition Cost Boise',
     'Home Addition Cost Boise Treasure Valley',
     'Room addition cost in Boise, Eagle, and Kuna: foundation, structure, permits, and matching existing architecture to your home.',
-    'Ground-floor additions often plan between $80,000 and $250,000+ before finish level and site conditions.',
+    `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees.`,
     ['addition', 'cost', 'eagle', 'kuna'],
   ),
   makeCostCluster(
@@ -124,7 +125,7 @@ export const WAVE1_COST_CLUSTERS: BlogPostData[] = [
     'Luxury Remodel Cost Boise & Eagle',
     'Luxury Remodel Cost Boise Idaho',
     'Luxury remodeling costs in Eagle, the Foothills, and premium Boise neighborhoods: finishes, design time, and HOA review.',
-    'Luxury remodels often exceed $200,000 for multi-room scope with custom millwork and stone.',
+    `At the Luxury level our instant estimate shows ${p5Range('whole-home-3000', 'luxury')} for a 3,000 sq ft whole-home renovation.`,
     ['luxury', 'cost', 'eagle'],
   ),
   makeCostCluster(

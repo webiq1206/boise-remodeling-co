@@ -1,4 +1,5 @@
 import type { ContentSection } from './wave1/snippets';
+import { P5_AS_OF, p5Range, p5Span } from './p5Figures';
 
 /**
  * Phase 4: eight factory cluster posts (260 to 280 words of template copy)
@@ -198,7 +199,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'What an addition costs to plan',
         paragraphs: [
-          'As of 2026, room additions in the Boise area commonly plan $80,000 to $250,000 or more. Single-room bump-outs sit at the lower end; primary suite additions with bathrooms and second-story additions with structural upgrades reach the upper end. These are planning ranges, not bids: foundation, roof tie-in and whether plumbing is included drive the number.',
+          `As of ${P5_AS_OF}, our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design, engineering, permits and fees. A primary suite addition shows ${p5Span('addition-suite')} and a second-story addition ${p5Span('addition-second')}. These are preliminary ranges, not bids: foundation, roof tie-in and whether plumbing is included drive the number.`,
         ],
       },
       {
@@ -248,7 +249,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Value beyond resale',
         paragraphs: [
-          'For most households the primary payoff is enjoyment: how often you gather and spend time outdoors. As of 2026, decks and outdoor living projects in the Boise area commonly plan $25,000 to $75,000 or more, and our <a href="/services/outdoor-living">decks and outdoor living</a> page covers what a design-build outdoor project includes.',
+          'For most households the primary payoff is enjoyment: how often you gather and spend time outdoors. Our <a href="/services/outdoor-living">decks and outdoor living</a> page covers what a design-build outdoor project includes, and each one is priced in a written scope after a free visit.',
         ],
       },
       {
@@ -294,7 +295,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Where to spend',
         paragraphs: ['The strongest returns generally come from the rooms and surfaces buyers notice first:'],
         list: [
-          'Kitchens, the room buyers scrutinize most. As of 2026, a mid-range Treasure Valley kitchen plans $37,000 to $47,000; see <a href="/services/kitchen-remodel">kitchen remodeling</a>.',
+          `Kitchens, the room buyers scrutinize most. As of ${P5_AS_OF}, our instant estimate shows ${p5Range('kitchen-replace-medium')} for a medium kitchen with new cabinets in the same layout at the Signature level; see <a href="/services/kitchen-remodel">kitchen remodeling</a>.`,
           'Bathrooms, and adding one where a home has too few.',
           'Curb appeal: doors, siding, paint and landscaping.',
           'Energy efficiency: air sealing, insulation and efficient HVAC.',
@@ -346,7 +347,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Decking: composite or wood',
         paragraphs: [
-          'Both work well here. Composite resists Treasure Valley sun, snow and moisture with almost no maintenance and lasts decades, at a higher upfront cost. Cedar and hardwood cost less to install but need regular sealing. As of 2026, a new deck in the Treasure Valley commonly plans $25,000 to $60,000 or more, depending on size, height, railing and material.',
+          'Both work well here. Composite resists Treasure Valley sun, snow and moisture with almost no maintenance and lasts decades, at a higher upfront cost. Cedar and hardwood cost less to install but need regular sealing. Size, height, railing and material set the price. Our instant estimate does not price decks or outdoor living, so we do not publish a range: request a quote and we price yours in a written scope after a free visit.',
         ],
       },
       {
@@ -365,7 +366,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
         h2: 'Shade decides how much either one gets used',
         paragraphs: [
           'Whichever surface you choose, a covered structure is what makes it usable in far more weather. A solid-roof cover, pavilion or pergola provides shade in summer and shelter from rain, and with heaters extends comfort into cooler months. Lighting makes the space usable after dark, and ceiling fans add comfort on hot days.',
-          'As of 2026, decks and outdoor living projects in the Boise area commonly plan $25,000 to $75,000 or more: ground-level wood decks sit at the lower end, while large composite decks, covered patios and outdoor kitchens reach the upper end.',
+          'Ground-level wood decks cost the least, while large composite decks, covered patios and outdoor kitchens cost the most. Our instant estimate does not price decks or outdoor living, so we do not publish a range: request a quote and we price yours in a written scope after a free visit.',
         ],
       },
     ],
@@ -415,7 +416,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Cost and value',
         paragraphs: [
-          'Outdoor living cost varies widely with size, features, materials and structure. As of 2026, decks and outdoor living projects in the Boise area commonly plan $25,000 to $75,000 or more, with covered patios and outdoor kitchens at the upper end. A quality, well-integrated outdoor space can add appeal and value, though the return favors tasteful, well-built builds over elaborate personalized ones; for most households the payoff is how often the space gets used.',
+          'Outdoor living cost varies widely with size, features, materials and structure. Covered patios and outdoor kitchens cost the most. Our instant estimate does not price decks or outdoor living, so we do not publish a range: request a quote and we price yours in a written scope after a free visit. A quality, well-integrated outdoor space can add appeal and value, though the return favors tasteful, well-built builds over elaborate personalized ones; for most households the payoff is how often the space gets used.',
         ],
       },
     ],
@@ -465,7 +466,7 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
       {
         h2: 'Cost and value',
         paragraphs: [
-          'As of 2026, decks and outdoor living projects in the Boise area commonly plan $25,000 to $75,000 or more. Ground-level wood decks sit at the lower end; large composite decks, covered patios and outdoor kitchens reach the upper end. These are planning ranges, not bids.',
+          'Ground-level wood decks cost the least; large composite decks, covered patios and outdoor kitchens cost the most. Our instant estimate does not price decks or outdoor living, so we do not publish a range: request a quote and we price yours in a written scope after a free visit.',
           'A quality, tasteful outdoor space can add appeal and value, especially where outdoor living is prized, but for most households the primary payoff is enjoyment: transforming how you gather and spend time outdoors through the Treasure Valley seasons.',
         ],
       },

@@ -1,4 +1,5 @@
 import type { BlogPostData } from '../../blogContent';
+import { P5_AS_OF, p5PerSqft, p5Range, p5Span } from '../p5Figures';
 
 /**
  * Bespoke replacement. Primary keyword: "home addition cost boise".
@@ -11,7 +12,7 @@ export const homeAdditionCostBoise: BlogPostData = {
   metaDescription:
     'How much does a home addition cost in Boise? 2026 planning ranges by type - room additions, primary suites, second stories, and bump-outs - plus permits, timelines, and ROI.',
   excerpt:
-    'Ground-floor home additions in Boise typically plan $96,000-$224,000 depending on size, foundation, and finish level. Here is the cost by addition type and how to budget.',
+    `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition in Boise from Essential to Luxury, before design, engineering, surveys, permits and fees. Here is the cost by addition type and how to budget.`,
   category: 'Boise Remodeling Costs',
   hubSlug: 'remodeling-costs',
   author: 'Boise Remodeling Co',
@@ -33,9 +34,9 @@ export const homeAdditionCostBoise: BlogPostData = {
   ],
   wordCountTarget: 'cluster',
   quickAnswer:
-    'A home addition in Boise typically costs $96,000-$224,000 as of 2026, or roughly $240-$560 per square foot, based on a 400-square-foot addition. Small bump-outs land lower, while primary suite additions and second-story additions reach the top of the range and beyond. Foundation, roof tie-ins, and matching existing architecture drive cost more than interior finishes.',
+    `As of ${P5_AS_OF}, our instant estimate shows a preliminary range of ${p5Range('addition-room-300')} for a 300 sq ft room addition in Boise at the Signature level, and ${p5Span('addition-room-300')} from Essential to Luxury, or ${p5PerSqft('addition-room-300', 'builder')} to ${p5PerSqft('addition-room-300', 'luxury')}. Those ranges leave out design, engineering, surveys, permits and fees. A primary suite addition shows ${p5Range('addition-suite')} and a second-story addition ${p5Range('addition-second')} at Signature. Foundation, roof tie-ins, and matching existing architecture drive cost more than interior finishes.`,
   keyTakeaways: [
-    'Home additions in Boise plan $96,000-$224,000, roughly $240-$560 per square foot.',
+    `A 300 sq ft room addition shows ${p5Span('addition-room-300')} from Essential to Luxury in our instant estimate, before design, engineering, surveys, permits and fees.`,
     'Additions cost more per square foot than interior remodels because they build new foundation, walls, and roof.',
     'Second-story additions cost more than ground-floor because of structural reinforcement.',
     'Additions almost always require permits and plan review in Ada or Canyon County.',
@@ -54,22 +55,22 @@ export const homeAdditionCostBoise: BlogPostData = {
     {
       question: 'How much does a home addition cost in Boise?',
       answer:
-        'As of 2026, a home addition in Boise typically plans $96,000-$224,000 or more, roughly $240-$560 per square foot. Small bump-outs land lower; primary suite and second-story additions reach the top of the range because of foundation, structure, and roof work.',
+        `As of ${P5_AS_OF}, our instant estimate shows ${p5Range('addition-room-300')} for a 300 sq ft room addition at the Signature level and ${p5Span('addition-room-300')} from Essential to Luxury, before design, engineering, surveys, permits and fees. Primary suite and second-story additions run higher because of foundation, structure, and roof work.`,
     },
     {
       question: 'What does a room addition cost per square foot in Boise?',
       answer:
-        'Room additions in the Treasure Valley commonly run $240-$560 per square foot - more than interior remodels because you are building new foundation, framing, roof, and systems from the ground up. Bathrooms and kitchens within an addition push the higher end.',
+        `Our instant estimate prices a 300 sq ft room addition at ${p5PerSqft('addition-room-300', 'builder')} at Essential up to ${p5PerSqft('addition-room-300', 'luxury')} at Luxury, before design, engineering, surveys, permits and fees - more than interior remodels because you are building new foundation, framing, roof, and systems from the ground up. Bathrooms and kitchens within an addition push the higher end.`,
     },
     {
       question: 'How much does a second-story addition cost?',
       answer:
-        'Second-story additions typically plan $150,000-$300,000+ in Boise. They cost more per square foot than ground-floor additions because the existing structure and foundation must be reinforced to carry the new load, and the home is often unlivable during part of construction.',
+        `Our instant estimate shows ${p5Range('addition-second')} for a second-story addition at the Signature level and ${p5Span('addition-second')} from Essential to Luxury, before design, engineering, surveys, permits and fees. They cost more per square foot than ground-floor additions because the existing structure and foundation must be reinforced to carry the new load, and the home is often unlivable during part of construction.`,
     },
     {
       question: 'How much does a primary suite addition cost in Boise?',
       answer:
-        'A primary suite addition - bedroom, bathroom, and closet - commonly plans $120,000-$250,000 depending on size and finish level. The ensuite bathroom and custom closet make it more expensive per square foot than a simple bedroom addition.',
+        `A primary suite addition - bedroom, bathroom, and closet - shows ${p5Range('addition-suite')} in our instant estimate at the Signature level and ${p5Span('addition-suite')} from Essential to Luxury, before design, engineering, surveys, permits and fees. The ensuite bathroom and custom closet make it more expensive per square foot than a simple bedroom addition.`,
     },
     {
       question: 'Do you need a permit for a home addition in Boise?',
@@ -84,15 +85,15 @@ export const homeAdditionCostBoise: BlogPostData = {
   ],
   content: `
 <h2 id="how-much">How much does a home addition cost in Boise?</h2>
-<p><strong>As of 2026, a home addition in Boise typically costs $96,000-$224,000 or more, or roughly $240-$560 per square foot.</strong> Additions cost more per square foot than interior remodels for a simple reason: you are building new foundation, framing, roof, and systems from the ground up, rather than working within existing walls. Small bump-outs land at the low end; primary suites and second-story additions reach the top.</p>
-<p>These are planning ranges from real Treasure Valley design-build consultations, part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a number for your addition, <a href="/#request">request a quote</a>.</p>
+<p><strong>As of ${P5_AS_OF}, our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition in Boise from Essential to Luxury, or ${p5PerSqft('addition-room-300', 'builder')} to ${p5PerSqft('addition-room-300', 'luxury')}, before design, engineering, surveys, permits and fees.</strong> Additions cost more per square foot than interior remodels for a simple reason: you are building new foundation, framing, roof, and systems from the ground up, rather than working within existing walls. Smaller additions land lower; primary suites and second-story additions run higher.</p>
+<p>These ranges come from our instant estimate, priced from our cost book at stated inputs, and are part of our <a href="/guides/boise-remodeling-cost-guide">Boise Remodeling Cost Guide</a>. For a number for your addition, <a href="/#request">request a quote</a>.</p>
 <table class="cost-table">
-<thead><tr><th>Addition type</th><th>2026 Boise planning range</th><th>Notes</th></tr></thead>
+<thead><tr><th>Addition type</th><th>Instant estimate, Essential to Luxury</th><th>Notes</th></tr></thead>
 <tbody>
-<tr><td>Bump-out (small)</td><td>$25,000 - $70,000</td><td>Extend a room a few feet; cantilever or small foundation</td></tr>
-<tr><td>Bedroom / room addition</td><td>$93,000 - $189,000</td><td>New ground-floor room with foundation and roof</td></tr>
-<tr><td>Primary suite addition</td><td>$120,000 - $250,000</td><td>Bedroom, ensuite bath, and closet</td></tr>
-<tr><td>Second-story addition</td><td>$150,000 - $300,000+</td><td>New level; structural reinforcement required</td></tr>
+<tr><td>Small room addition, about 200 sq ft</td><td>${p5Span('addition-room-200')}</td><td>New ground-floor room with foundation and roof</td></tr>
+<tr><td>Room addition, about 300 sq ft</td><td>${p5Span('addition-room-300')}</td><td>New ground-floor room with foundation and roof</td></tr>
+<tr><td>Primary suite addition</td><td>${p5Span('addition-suite')}</td><td>Bedroom, ensuite bath, and closet, typical size</td></tr>
+<tr><td>Second-story addition</td><td>${p5Span('addition-second')}</td><td>New level; structural reinforcement required, typical size</td></tr>
 </tbody>
 </table>
 
