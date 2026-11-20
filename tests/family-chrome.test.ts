@@ -12,7 +12,7 @@ import { matchesRoute, isActiveHref } from '../lib/family/types.ts';
 import { FAMILY_BRAND } from '../lib/familyBrand.ts';
 import { BUSINESS_VCARD_PATH } from '../lib/vcard.ts';
 import { SERVICES } from '../shared/contentData.ts';
-import { P5_FACEBOOK_URL, P5_GBP_URL } from '../shared/gbpProfile.ts';
+import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile.ts';
 import { GUIDE_PAGES } from '../shared/guideContent.ts';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig.ts';
 import { RETIRED_STREET } from './retiredStreet.ts';
@@ -30,6 +30,7 @@ test('the brand config carries this site’s facts, one CTA and one destination'
   assert.equal(FAMILY_BRAND.phone.display, '(208) 477-1169');
   assert.equal(FAMILY_BRAND.saveContactHref, BUSINESS_VCARD_PATH);
   assert.equal(FAMILY_BRAND.parentFacebook.href, P5_FACEBOOK_URL);
+  assert.deepEqual(FAMILY_BRAND.parentInstagram, { href: P5_INSTAGRAM_URL, label: 'P5 Home Co on Instagram' });
   assert.deepEqual(FAMILY_BRAND.parentGoogle, { href: P5_GBP_URL, label: 'P5 Home Co on Google' });
   assert.equal(FAMILY_BRAND.nap.line, publicFooterLine());
   assert.match(FAMILY_BRAND.nap.line, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County/);
@@ -117,8 +118,10 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.match(html, /<a href="\/subcontractor" rel="nofollow">Subcontractor login<\/a>/);
   assert.equal((html.match(/>P5 Home Co LLC, Idaho Registered Contractor #8381215<\/a>/g) ?? []).length, 1);
   assert.equal(html.includes('Boise ADU Co'), false);
-  // The parent's Facebook page and Google profile, once each.
+  // The parent's Facebook page, Instagram and Google profile, once each (Instagram: owner, 20 November 2026).
   assert.equal((html.match(/data-testid="link-footer-facebook"/g) ?? []).length, 1);
+  assert.equal((html.match(/data-testid="link-footer-instagram"/g) ?? []).length, 1);
+  assert.match(html, /<a href="https:\/\/www\.instagram\.com\/p5_home_co" rel="noopener" target="_blank" data-testid="link-footer-instagram">P5 Home Co on Instagram<\/a>/);
   assert.equal((html.match(/data-testid="link-footer-google"/g) ?? []).length, 1);
   assert.match(html, /<a href="https:\/\/www\.google\.com\/search\?kgmid=\/g\/11ntl1t7dc" rel="noopener" target="_blank" data-testid="link-footer-google">P5 Home Co on Google<\/a>/);
 });
