@@ -53,7 +53,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
     { path: '/instant-estimate', label: 'Instant estimate', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/estimate', label: 'Send project details', changeFrequency: 'monthly', priority: 0.9 },
     // /re-10-repairs-boise canonicals to boisehandyman.co, so it is not listed here.
-    { path: '/remodel-plans-boise', label: 'Remodel plans', changeFrequency: 'monthly', priority: 0.9 },
+    { path: '/remodel-plans-boise', label: 'Send your remodel plans', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/design-ideas', label: SHOW_TESTIMONIALS ? 'Testimonials' : 'Design ideas', changeFrequency: 'monthly', priority: 0.65 },
     { path: '/contact', label: 'Contact', changeFrequency: 'monthly', priority: 0.7 },
     { path: '/resources', label: 'Resources', changeFrequency: 'monthly', priority: 0.7 },

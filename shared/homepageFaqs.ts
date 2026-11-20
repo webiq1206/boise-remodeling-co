@@ -32,7 +32,7 @@ export const HOMEPAGE_FAQS: HomepageFaq[] = [
   },
   {
     q: "Do you serve areas near Boise?",
-    a: "Yes. We serve Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Use the city page that matches your address, then book the free visit.",
+    a: "Yes. We serve Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Use the city page that matches your address, then book the free visit.",
   },
   {
     q: "How are you different from other remodeling companies in the Treasure Valley?",

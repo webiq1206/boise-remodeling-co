@@ -12,38 +12,35 @@ import { buildCanonical } from "@/lib/page-metadata";
 import {
 generateBreadcrumbSchema,
 generateFAQSchema,
-generateHowToSchema,
-generateServiceSchema,
 generateWebPageSchema,
 } from "@/lib/schema";
 import {
-PLANS_DEFINITION,
 PLANS_DIRECT_ANSWER,
 PLANS_FAQS,
-PLANS_PRICING_DISCLAIMER,
-PLANS_PROCESS,
-PLANS_WHAT_WE_DO_NOT_USE,
-PLANS_WHAT_WE_READ,
+PLANS_NEXT_STEPS,
+PLANS_WHAT_TO_SEND,
 } from "@/shared/content/plansContent";
+import { CTA_PRIMARY, estimatorHref } from "@/shared/ctaCopy";
+import { localAlt } from "@/shared/localAlt";
 import { SITE_CONFIG } from "@/shared/siteConfig";
 import { SITE_IMAGES } from "@/shared/siteImages";
-import { Check,Phone,X } from "lucide-react";
+import { Check,Phone } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 const PATH = "/remodel-plans-boise";
 
 /**
- * Length-budgeted the same way the RE-10 page is: anything past roughly 60
- * characters is written for nobody, because Google truncates it. Primary term
- * front-loaded, brand last.
+ * SEO audit SW-1 (owner decision, 20 November 2026): this page sends plans
+ * with a project request. The plan-reading estimator it used to describe was
+ * retired on 24 September 2026; the form here is the shared document
+ * estimator, which takes a request and shows no price. Nothing on this page
+ * may promise a price from drawings. See shared/content/plansContent.ts.
  */
-// 58 characters including the brand.
-const TITLE_WITH_BRAND = "Remodel Estimate From Your Plans | Boise Remodeling Co";
-const TITLE = "Remodel Estimate From Your Plans, Boise";
-// 155 characters, benefit-led, ends on the action.
+const TITLE_WITH_BRAND = "Send your remodel plans for review | Boise Remodeling Co";
+const TITLE = "Send your remodel plans for review";
 const DESCRIPTION =
-  "Upload your floor plans and get a remodeling budget built from your own drawings, not a guess at your square footage. Boise and the Treasure Valley. Free.";
+  "Send your floor plans, photos and documents with a remodeling project request. Our team reviews the drawings and your scope before preparing an estimate.";
 
 export const metadata: Metadata = withBrandPageMetadata(({
   title: { absolute: TITLE_WITH_BRAND },
@@ -67,26 +64,14 @@ export const metadata: Metadata = withBrandPageMetadata(({
 export default function RemodelPlansPage() {
   const schemas = [
     generateWebPageSchema({
-      title: "Remodel Estimates From Your Plans in Boise and the Treasure Valley",
+      title: "Send your remodel plans with a project request",
       description: DESCRIPTION,
       url: PATH,
-    }),
-    generateServiceSchema(
-      "Remodel Estimating From Construction Drawings",
-      "Remodeling budgets built from uploaded construction drawings: room areas, ceiling heights and schedule counts read off the floor plans, confirmed by the homeowner, and priced at current Treasure Valley costs.",
-    ),
-    // The four steps are a real procedure with a real outcome, and the process
-    // section renders exactly these strings, so the schema cannot drift.
-    generateHowToSchema({
-      name: "How to get a remodel estimate from your construction plans",
-      description: PLANS_DIRECT_ANSWER,
-      url: PATH,
-      steps: PLANS_PROCESS.map((s) => ({ name: s.title, text: s.body })),
     }),
     generateFAQSchema(PLANS_FAQS),
     generateBreadcrumbSchema([
       { name: "Home", url: "/" },
-      { name: "Estimate From Plans", url: PATH },
+      { name: "Send your plans", url: PATH },
     ]),
   ];
 
@@ -98,25 +83,24 @@ export default function RemodelPlansPage() {
       <PageHeroBand
         compact
         imageSrc={SITE_IMAGES.budgetDetail}
-        imageAlt="Sage green kitchen island with a white quartz top in a remodeled kitchen"
+        imageAlt={localAlt("Sage green kitchen island with a white quartz top in a remodeled kitchen", { subject: "kitchen remodel" })}
         scrim={0.75}
       >
-        <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Estimate From Plans" }]} />
+        <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Send your plans" }]} />
         <p className="ed-eyebrow mt-8" style={{ color: "rgb(255 255 255 / 0.72)" }}>
           For homeowners, architects and designers
         </p>
         <h1 className="ed-display ed-statement-display text-inverse-foreground">
-          A remodel estimate built from{" "}
-          <em className="brc-accent">your own drawings</em>
+          Send your remodel plans with{" "}
+          <em className="brc-accent">a project request</em>
         </h1>
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
-          Send us your floor plans. We read the room areas, ceiling heights and schedules off the
-          sheets, show you exactly what we measured, and price the work from that rather than from a
-          typical house of the same size.
+          Attach your floor plans, schedules and photos to a project request. Our team reviews the
+          drawings and your scope before preparing an estimate.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link href="#plans-wizard" className={familyButtonClass({ variant: "primary", size: "lg" })}>
-            Upload your plans
+            Send your plans
           </Link>
           <a href={SITE_CONFIG.phoneHref} data-testid="link-plans-call" className={familyButtonClass({ variant: "secondary", size: "lg" })}>
             <Phone className="h-4 w-4" aria-hidden="true" /> {SITE_CONFIG.phone}
@@ -130,62 +114,30 @@ export default function RemodelPlansPage() {
           <p className="text-lg md:text-xl text-foreground leading-relaxed font-light">
             {PLANS_DIRECT_ANSWER}
           </p>
-          <p className="mt-5 text-sm text-muted-foreground leading-relaxed">
-            <strong className="font-normal text-foreground">What is a plan-set estimate?</strong>{" "}
-            {PLANS_DEFINITION}
-          </p>
         </div>
       </Section>
 
       <PlansWizard />
 
-      {/* ------------------------------------------------------------ process */}
+      {/* ----------------------------------------------- what to send, next */}
       <Section variant="greige" divider>
         <div className="container px-4">
           <SectionHeader
-            eyebrow="How it works"
+            eyebrow="What to send"
             size="display"
             title={
               <>
-                Four steps, and you correct us{" "}
-                <em className="brc-accent">before we price</em>
-              </>
-            }
-            className="mb-10 max-w-3xl"
-          />
-          <ol className="grid sm:grid-cols-2 gap-5">
-            {PLANS_PROCESS.map((s, i) => (
-              <li key={s.title}>
-                <MarketingCard padding="lg">
-                  <p className="ed-eyebrow">Step {i + 1}</p>
-                  <h3 className="text-base font-normal text-foreground mb-2.5">{s.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{s.body}</p>
-                </MarketingCard>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </Section>
-
-      {/* --------------------------------------------- what we read, and not */}
-      <Section divider>
-        <div className="container px-4">
-          <SectionHeader
-            eyebrow="What a drawing can and cannot tell us"
-            size="display"
-            title={
-              <>
-                We use what is printed, and{" "}
-                <em className="brc-accent">nothing else</em>
+                The sheets and photos that{" "}
+                <em className="brc-accent">help most</em>
               </>
             }
             className="mb-10 max-w-3xl"
           />
           <div className="grid md:grid-cols-2 gap-5">
             <MarketingCard padding="lg">
-              <h3 className="text-base font-normal text-foreground mb-4">What we measure</h3>
+              <h3 className="text-base font-normal text-foreground mb-4">Attach what you have</h3>
               <ul className="space-y-3">
-                {PLANS_WHAT_WE_READ.map((w) => (
+                {PLANS_WHAT_TO_SEND.map((w) => (
                   <li key={w} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
                     <Check className="h-4 w-4 mt-0.5 flex-shrink-0 text-accent" aria-hidden="true" />
                     <span>{w}</span>
@@ -194,24 +146,17 @@ export default function RemodelPlansPage() {
               </ul>
             </MarketingCard>
             <MarketingCard padding="lg">
-              <h3 className="text-base font-normal text-foreground mb-4">What we will not guess at</h3>
-              <ul className="space-y-3">
-                {PLANS_WHAT_WE_DO_NOT_USE.map((w) => (
-                  <li key={w} className="flex gap-2.5 text-sm text-muted-foreground leading-relaxed">
-                    <X className="h-4 w-4 mt-0.5 flex-shrink-0 text-muted-foreground" aria-hidden="true" />
-                    <span>{w}</span>
+              <h3 className="text-base font-normal text-foreground mb-4">What happens next</h3>
+              <ol className="space-y-4">
+                {PLANS_NEXT_STEPS.map((s, i) => (
+                  <li key={s.title} className="text-sm text-muted-foreground leading-relaxed">
+                    <span className="block text-foreground">{i + 1}. {s.title}</span>
+                    {s.body}
                   </li>
                 ))}
-              </ul>
+              </ol>
             </MarketingCard>
           </div>
-          <p className="mt-8 max-w-3xl text-sm text-muted-foreground leading-relaxed">
-            A tight number built on a measurement we got wrong is worse than a wide one, because you
-            can plan around a wide range and you cannot recover from a precise figure that is wrong.
-            So a measurement only narrows your price when it was printed on the sheet and we can
-            quote it back to you. Everything else stays as wide as it would have been with no plans
-            at all, and we tell you which is which.
-          </p>
         </div>
       </Section>
 
@@ -219,7 +164,7 @@ export default function RemodelPlansPage() {
           Rendered server-side, every answer in the raw HTML. The same array
           feeds the FAQPage JSON-LD above, so the schema cannot drift from what
           a reader sees. */}
-      <Section id="faq" variant="greige" divider>
+      <Section id="faq" divider>
         <div className="ed-shell">
           <div className="ed-split ed-split-narrow">
             <div className="lg:sticky lg:top-28 lg:self-start">
@@ -243,33 +188,31 @@ export default function RemodelPlansPage() {
       </Section>
 
       {/* ------------------------------------------------------------ close */}
-      <Section divider>
+      <Section variant="greige" divider>
         <div className="container px-4 max-w-3xl mx-auto">
           <SectionHeader
             eyebrow="Next step"
             size="display"
             title={
               <>
-                Send the floor plans and see{" "}
-                <em className="brc-accent">a real number</em>
+                Send the plans with{" "}
+                <em className="brc-accent">your request</em>
               </>
             }
             className="mb-6"
           />
-          <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-4">
-            Free, no obligation, and no contact details until after you have seen what we read. If
-            you would rather talk it through first, call {SITE_CONFIG.phone}.
-          </p>
-          <p className="text-xs text-muted-foreground leading-relaxed mb-7">
-            {PLANS_PRICING_DISCLAIMER}
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-7">
+            Free, with no obligation. If you would rather talk it through first, call{" "}
+            {SITE_CONFIG.phone}. For a preliminary price range on screen before you talk to anyone,
+            use the instant estimate.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Link href="#plans-wizard" className={familyButtonClass({ variant: "primary", size: "lg" })}>
-              Upload your plans
+              Send your plans
             </Link>
-            <a href={SITE_CONFIG.phoneHref} className={familyButtonClass({ variant: "secondary", size: "lg" })}>
-              <Phone className="h-4 w-4" aria-hidden="true" /> {SITE_CONFIG.phone}
-            </a>
+            <Link href={estimatorHref()} className={familyButtonClass({ variant: "secondary", size: "lg" })}>
+              {CTA_PRIMARY}
+            </Link>
           </div>
 
           {/* Contextual outbound links, so this page is part of the cluster

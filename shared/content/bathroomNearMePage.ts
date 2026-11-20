@@ -58,7 +58,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'Which cities do you serve?',
     answer:
-      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
+      'Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County.',
   },
   {
     question: 'How does the quote process work?',
@@ -77,7 +77,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'Do you work in both Ada and Canyon County?',
     answer:
-      'Yes. We remodel bathrooms in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, and we handle permits in-house for the jurisdiction that applies to your address.',
+      'Yes. We remodel bathrooms in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County, and we handle permits in-house for the jurisdiction that applies to your address.',
   },
 ];
 

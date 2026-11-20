@@ -95,7 +95,7 @@ export const FAMILY_BRAND: FamilyBrand = {
           { label: 'Design ideas', href: '/design-ideas' },
           { label: 'Why choose us', href: '/#why-choose-us' },
           { label: 'How we build', href: '/#how-we-build' },
-          { label: 'Estimate from plans', href: '/remodel-plans-boise' },
+          { label: 'Send your plans', href: '/remodel-plans-boise' },
           { label: 'Contact', href: '/contact' },
           { label: 'Existing customer? Get help', href: '/warranty#get-help' },
         ],

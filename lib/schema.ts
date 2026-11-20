@@ -84,7 +84,7 @@ const COUNTY_WIKIPEDIA: Record<string, string> = {
 };
 
 /**
- * Company-wide areaServed: seven City nodes in service-area order, then
+ * Company-wide areaServed: one City node per service-area city, in service-area order, then
  * Ada County and Canyon County. Page-level Service schema still names the
  * page city when one is passed in.
  */
@@ -225,7 +225,7 @@ export function generateWebSiteSchema(): SchemaContext {
     name: BUSINESS_INFO.name,
     url: baseUrl,
     description:
-      'Design-build remodeling contractor serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County, Idaho.',
+      'Design-build remodeling contractor serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County, Idaho.',
     publisher: { '@id': ORG_ID },
     // NOTE: SearchAction intentionally omitted. The previous target
     // (/blog?q={search_term_string}) had no search handler, which advertised a

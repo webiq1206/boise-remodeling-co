@@ -31,7 +31,7 @@ function clusterFaqs(
     {
       question: 'Do you serve Meridian and Eagle?',
       answer:
-        'Yes. We serve Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
+        'Yes. We serve Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County.',
     },
     {
       question: 'How do I get a firm price?',

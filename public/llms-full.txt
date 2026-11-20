@@ -1,12 +1,12 @@
 # Boise Remodeling Co - Full Reference
 
-> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Part of P5 Home Co. Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Phone (208) 477-1169.
+> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADU conversions in Boise, Idaho and the Treasure Valley. Part of P5 Home Co. Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Phone (208) 477-1169.
 
-Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215 and insured.
+Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215 and insured.
 
 ## About
 
-Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley and one of the P5 Home Co family of companies. We remodel existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, accessory dwelling units, outdoor living spaces and aging-in-place work. Design-build means design direction, estimating, permitting and construction are delivered by one accountable company with one point of contact, which removes the handoff between a designer and a general contractor and keeps the drawings and the budget on the same schedule. Every project includes a written scope before construction, a dedicated project manager, a written progress update every Friday, and a one-year workmanship guarantee from documented Final Completion for work performed by our own team. Subcontractor work (for example licensed plumbing, electrical and HVAC) is covered by that subcontractor's own warranty, and at the end of every project we provide a complete list of the subcontractors who worked on it, with their contact information. Manufacturer warranties are separate. Warranty details: https://boiseremodeling.co/warranty.
+Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley and one of the P5 Home Co family of companies. We remodel existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ADU conversions of garages, basements and attached spaces, outdoor living spaces and aging-in-place work. New detached ADUs are built by sister company Boise Construction Co. Design-build means design direction, estimating, permitting and construction are delivered by one accountable company with one point of contact, which removes the handoff between a designer and a general contractor and keeps the drawings and the budget on the same schedule. Every project includes a written scope before construction, a dedicated project manager, a written progress update every Friday, and a one-year workmanship guarantee from documented Final Completion for work performed by our own team. Subcontractor work (for example licensed plumbing, electrical and HVAC) is covered by that subcontractor's own warranty, and at the end of every project we provide a complete list of the subcontractors who worked on it, with their contact information. Manufacturer warranties are separate. Warranty details: https://boiseremodeling.co/warranty.
 
 - Business type: Residential design-build remodeling contractor
 - Parent company: P5 Home Co (https://p5homeco.com)
@@ -14,13 +14,14 @@ Boise Remodeling Co is a residential design-build remodeling company serving the
 - Contact: hello@boiseremodeling.co (https://boiseremodeling.co/contact)
 - Instant estimate (a preliminary price range on screen, not a final price): https://boiseremodeling.co/instant-estimate
 - Send project details: https://boiseremodeling.co/estimate
+- Send remodel plans with a project request: https://boiseremodeling.co/remodel-plans-boise
 
 ## Service area
 
 We remodel homes in these cities, across Ada County and Canyon County:
 
 - Ada County: Boise, Meridian, Eagle, Kuna, Star
-- Canyon County: Nampa, Caldwell
+- Canyon County: Nampa, Caldwell, Middleton
 
 Permit paths, fees, and inspection sequencing differ between Ada County and Canyon County, and again between incorporated city limits and county jurisdiction. Permits are handled in-house as part of the design-build contract.
 
@@ -30,7 +31,7 @@ Permit paths, fees, and inspection sequencing differ between Ada County and Cany
 - Bathroom Remodel: /services/bathroom-remodel - Spa-quality bathroom transformations designed around how you actually live.
 - Whole-Home Remodel: /services/whole-home-remodel - Cohesive whole-home renovations with a single project manager start to finish.
 - Room Addition: /services/room-addition - Thoughtfully designed additions that feel like they were always part of your home.
-- ADU / Guest House: /services/adu - Detached or attached accessory dwelling units designed to maximize your property value.
+- ADU conversions: /services/adu - Garage, basement and attached spaces turned into accessory dwelling units. New detached ADUs are built by Boise Construction Co (https://boiseconstruction.co/services/adu).
 - Basement Remodeling: /services/basement-remodel - Finished basements and lower-level living space, from egress and framing to a fully finished suite.
 - Outdoor Living & Decks: /services/outdoor-living - Decks, covered patios, and outdoor kitchens that extend your living space into the yard.
 - Aging-in-Place Remodeling: /services/aging-in-place - Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.
@@ -95,7 +96,7 @@ Neighborhood guides:
 
 ## Common questions
 
-- How much does a remodel cost in Boise? It depends on the room, the scope (refresh versus full gut and layout change) and the finish level far more than on square footage. The estimator gives a planning range in about a minute; the cost guide at /guides/boise-remodeling-cost-guide explains what moves the number.
+- How much does a remodel cost in Boise? It depends on the room, the scope (refresh versus full gut and layout change) and the finish level far more than on square footage. The instant estimate gives a preliminary price range on screen; the cost guide at /guides/boise-remodeling-cost-guide explains what moves the number.
 - How long does a remodel take? Design and selections typically run three to eight weeks, permitting one to four depending on jurisdiction, and construction from two to three weeks for a bathroom to several months for a whole-home renovation or addition.
 - Are you a registered contractor and insured? Yes. Boise Remodeling Co is an Idaho Registered Contractor #8381215 and insured.
 - Do you handle permits? Yes. Ada and Canyon County permits are pulled in-house as part of the design-build contract, including the inspections that go with them.

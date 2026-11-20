@@ -1,5 +1,5 @@
 // Content Data for Boise Remodeling Co
-// Public service area: Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star,
+// Public service area: Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, Middleton,
 // plus Ada County and Canyon County. Published city pages can be a longer set.
 
 export interface ServiceData {
@@ -57,7 +57,7 @@ export const SERVICES: ServiceData[] = [
   {
     slug: 'adu',
     name: 'ADU / Guest House',
-    shortDescription: 'Detached or attached accessory dwelling units designed to maximize your property value.',
+    shortDescription: 'Garage, basement and attached spaces turned into accessory dwelling units.',
     planningFrom: '$90k',
   },
   {
@@ -87,10 +87,9 @@ export const SERVICES: ServiceData[] = [
 export const PRIORITY_SERVICES = SERVICES;
 
 /**
- * Every city with a published page. Towns outside the public service area
- * (Middleton, and any later page such as Garden City or Emmett) stay here so
- * their URLs, sitemap entries, and guides remain. They are not listed in nav
- * or service-area copy.
+ * Every city with a published page. A town added here later (Garden City or
+ * Emmett, say) stays out of nav and service-area copy until the owner adds it
+ * to SERVICE_AREA_CITY_NAMES. Middleton joined that list on 20 November 2026.
  */
 export const CITIES: CityData[] = [
   { slug: 'boise', name: 'Boise', county: 'ada', isPrimary: true },
@@ -115,6 +114,10 @@ export const SERVICE_AREA_CITY_NAMES = [
   'Kuna',
   'Caldwell',
   'Star',
+  // Owner decision, 20 November 2026 (SEO audit REM-T4): the P5 Home Co
+  // Business Profile lists Middleton and its pages are published, so every
+  // service-area statement names it.
+  'Middleton',
 ] as const;
 
 export const SERVICE_AREA_COUNTIES = ['Ada County', 'Canyon County'] as const;

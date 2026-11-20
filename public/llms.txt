@@ -1,8 +1,8 @@
 # Boise Remodeling Co
 
-> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADUs in Boise, Idaho and the Treasure Valley. Part of P5 Home Co. Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Phone (208) 477-1169.
+> Design-build remodeling for kitchens, bathrooms, whole-home renovations, room additions, basements and ADU conversions in Boise, Idaho and the Treasure Valley. Part of P5 Home Co. Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Phone (208) 477-1169.
 
-Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County. Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215 and insured.
+Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County. Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215 and insured.
 
 Design-build means one accountable team handles design direction, estimating, Ada and Canyon County permitting, and construction as one accountable company with one point of contact, backed by a written scope before work starts and a one-year workmanship guarantee from documented Final Completion. Planning ranges come from an on-site estimator that prices the room, the scope and the finish level rather than a flat price per square foot; they are budget ranges, not quotes, and a firm proposal follows a free in-home visit.
 
@@ -12,12 +12,12 @@ Design-build means one accountable team handles design direction, estimating, Ad
 - [Bathroom Remodel](https://boiseremodeling.co/services/bathroom-remodel): Spa-quality bathroom transformations designed around how you actually live.
 - [Whole-Home Remodel](https://boiseremodeling.co/services/whole-home-remodel): Cohesive whole-home renovations with a single project manager start to finish.
 - [Room Addition](https://boiseremodeling.co/services/room-addition): Thoughtfully designed additions that feel like they were always part of your home.
-- [ADU / Guest House](https://boiseremodeling.co/services/adu): Detached or attached accessory dwelling units designed to maximize your property value.
+- [ADU conversions](https://boiseremodeling.co/services/adu): Garage, basement and attached spaces turned into accessory dwelling units. New detached ADUs are built by Boise Construction Co (https://boiseconstruction.co/services/adu).
 - [Basement Remodeling](https://boiseremodeling.co/services/basement-remodel): Finished basements and lower-level living space, from egress and framing to a fully finished suite.
 - [Outdoor Living & Decks](https://boiseremodeling.co/services/outdoor-living): Decks, covered patios, and outdoor kitchens that extend your living space into the yard.
 - [Aging-in-Place Remodeling](https://boiseremodeling.co/services/aging-in-place): Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.
 - [RE-10 repairs (Boise Handyman Co)](https://boisehandyman.co/re-10-repairs-boise): repairs from an Idaho RE-10 inspection response, completed and documented before closing, for real estate agents, buyers and sellers.
-- [Estimate From Your Plans](https://boiseremodeling.co/remodel-plans-boise): upload construction drawings and get a remodeling planning range built from the room areas, ceiling heights and schedules on the sheets. Free, no obligation, and the homeowner confirms every measurement before anything is priced.
+- [Send your remodel plans](https://boiseremodeling.co/remodel-plans-boise): attach floor plans, schedules, photos and documents to a project request. The team reviews the drawings and the scope before preparing an estimate; no price is shown from the drawings on the page. Free, with no obligation.
 - [All Services](https://boiseremodeling.co/services): plus city pages at /services/{service}/{city} and [Service Areas](https://boiseremodeling.co/areas).
 
 ## Authoritative guides

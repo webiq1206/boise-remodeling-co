@@ -32,7 +32,7 @@ test('the brand config carries this site’s facts, one CTA and one destination'
   assert.equal(FAMILY_BRAND.parentFacebook.href, P5_FACEBOOK_URL);
   assert.deepEqual(FAMILY_BRAND.parentGoogle, { href: P5_GBP_URL, label: 'P5 Home Co on Google' });
   assert.equal(FAMILY_BRAND.nap.line, publicFooterLine());
-  assert.match(FAMILY_BRAND.nap.line, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County/);
+  assert.match(FAMILY_BRAND.nap.line, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County/);
   assert.deepEqual(
     FAMILY_BRAND.footer.areas.links.map((link) => link.label),
     [
@@ -43,9 +43,12 @@ test('the brand config carries this site’s facts, one CTA and one destination'
       'Kuna, Idaho',
       'Caldwell, Idaho',
       'Star, Idaho',
+      'Middleton, Idaho',
     ],
   );
-  assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Middleton|Garden City|Emmett/.test(link.label)), false);
+  // Owner decision, 20 November 2026 (SEO audit REM-T4): Middleton has published pages and is on
+  // the P5 Home Co Business Profile, so it joins the list. Cities with no page still stay out.
+  assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Garden City|Emmett/.test(link.label)), false);
   assert.equal(RETIRED_STREET.test(FAMILY_BRAND.nap.line), false);
   assert.doesNotMatch(FAMILY_BRAND.nap.line, /Public representative|staffed storefront/i);
   assert.deepEqual(FAMILY_BRAND.header.phoneActions, ['call', 'text', 'chat']);
@@ -93,8 +96,9 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   }
   assert.match(html, /<span class="fam-footer-current" aria-current="true">Boise Remodeling Co<\/span>/);
   assert.equal(/rel="noopener noreferrer">(P5 Home Co|Boise)/.test(html), false);
-  assert.match(html, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star/);
-  assert.equal(html.includes('Middleton'), false);
+  assert.match(html, /Serving Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton/);
+  assert.match(html, /href="\/areas\/middleton"/);
+  assert.equal(html.includes('Garden City'), false);
   assert.equal(RETIRED_STREET.test(html), false);
   assert.doesNotMatch(html, /Public representative|staffed storefront/i);
   assert.match(html, /data-testid="link-footer-call"/);

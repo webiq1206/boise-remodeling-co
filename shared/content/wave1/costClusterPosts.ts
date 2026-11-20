@@ -311,7 +311,7 @@ const budgetExtra: ContentSection[] = [
   {
     h2: 'Work with a local design-build team',
     paragraphs: [
-      '<a href="/contact">Contact Boise Remodeling Co</a> for a consultation in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, and Star, across Ada County and Canyon County.',
+      '<a href="/contact">Contact Boise Remodeling Co</a> for a consultation in Boise, Meridian, Nampa, Eagle, Kuna, Caldwell, Star, and Middleton, across Ada County and Canyon County.',
     ],
   },
 ];
