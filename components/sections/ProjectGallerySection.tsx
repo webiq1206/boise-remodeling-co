@@ -45,7 +45,7 @@ export function ProjectGallerySection({
               Remodeling for Treasure Valley homes
             </h2>
             <p className="ed-body mt-7">
-              Explore kitchen, bathroom, whole-home and addition design ideas.
+              Explore kitchens, bathrooms, whole homes and additions in the remodel gallery.
               Compare cabinetry, tile, lighting and finish combinations for your own remodel.
             </p>
             <div className="mt-10 hidden lg:block">
@@ -73,14 +73,14 @@ export function ProjectGallerySection({
         {rest.length > 0 && (
           <Reveal delay={120}>
             <div className="mt-[clamp(48px,6vw,88px)] flex items-end justify-between gap-6">
-              <p className="ed-eyebrow !mb-0">More design ideas</p>
+              <p className="ed-eyebrow !mb-0">More from the remodel gallery</p>
               <p className="ed-small">Swipe or scroll to explore</p>
             </div>
             <div
               className="ed-rail mt-6 [scrollbar-color:var(--ed-line)_transparent]"
               tabIndex={0} role="region"
               style={{ ["--ed-rail-w" as string]: "31%" }}
-              aria-label="More remodeling design ideas"
+              aria-label="More from the remodel gallery"
             >
               {rest.map((project) => (
                 <article

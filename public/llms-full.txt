@@ -112,7 +112,7 @@ Neighborhood guides:
 - Service areas: https://boiseremodeling.co/areas
 - Instant estimate: https://boiseremodeling.co/instant-estimate
 - Send project details: https://boiseremodeling.co/estimate
-- Remodeling design ideas: https://boiseremodeling.co/design-ideas
+- Remodel gallery: https://boiseremodeling.co/design-ideas
 - Blog: https://boiseremodeling.co/blog
 - Guides: https://boiseremodeling.co/guides
 - Resources: https://boiseremodeling.co/resources

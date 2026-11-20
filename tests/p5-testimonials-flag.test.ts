@@ -165,20 +165,22 @@ test('review blocks, nav, footer, and the testimonials page do not render seed c
   for (const phrase of BANNED) assert.equal(surfaces.includes(phrase), false, phrase);
 
   const page = text('../app/design-ideas/page.tsx');
-  assert.match(page, /Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners\. Explore layouts, cabinetry, tile, lighting and finishes\./);
+  // Visible label is "Remodel gallery" (owner, 20 November 2026: no qualifier word such as "ideas" beside photographs); the URL stays /design-ideas.
+  assert.match(page, /A remodel gallery of kitchens, bathrooms, whole homes and additions for Treasure Valley homeowners\. See layouts, cabinetry, tile, lighting and finishes\./);
   assert.match(page, /Browse kitchen, bath, whole-home and addition layouts, materials and finishes\./);
-  assert.match(page, /What are these remodeling design ideas\?/);
+  assert.match(page, /What is in this remodel gallery\?/);
+  assert.equal(/design ideas/i.test(page.replace(/\/design-ideas/g, '')), false);
   assert.equal(/\b(?:completed|finished)\s+(?:(?:customer|client)\s+)?(?:projects?|jobs?|work)\b/i.test(page), false);
   assert.equal(/\bour\s+(?:completed|finished)\s+(?:projects?|jobs?|work)\b/i.test(page), false);
   assert.equal(/\bfirst projects\b/i.test(page), false);
   assert.equal(page.includes('Captioned for materials and layout, not invented project records'), false);
-  assert.match(page, /titleOverride: 'Remodeling Design Ideas'/);
+  assert.match(page, /titleOverride: 'Remodel Gallery'/);
   assert.equal(page.includes('Homeowner reviews'), false);
   assert.equal(page.includes('Project gallery'), false);
 
   const entry = getSiteUrlGroups().flatMap((group) => group.entries).find((item) => item.path === '/design-ideas');
   // Sentence case since owner decision C (1 November 2026); still not "Testimonials".
-  assert.equal(entry?.label, 'Design ideas');
+  assert.equal(entry?.label, 'Remodel gallery');
 
   const template = text('../components/seo/LandingPageTemplate.tsx');
   assert.match(template, /testimonialsForPublish\(proof\?\.testimonials\)/);

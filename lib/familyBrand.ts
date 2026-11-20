@@ -45,7 +45,7 @@ export const FAMILY_BRAND: FamilyBrand = {
   },
   nav: [
     { label: 'Services', href: '/services' },
-    { label: 'Design ideas', href: '/design-ideas' },
+    { label: 'Remodel gallery', href: '/design-ideas' },
     { label: 'Areas', href: '/areas' },
     { label: 'About', href: '/about' },
     { label: 'Guides', href: '/guides' },
@@ -92,7 +92,7 @@ export const FAMILY_BRAND: FamilyBrand = {
         title: 'Company',
         links: [
           { label: 'About', href: '/about' },
-          { label: 'Design ideas', href: '/design-ideas' },
+          { label: 'Remodel gallery', href: '/design-ideas' },
           { label: 'Why choose us', href: '/#why-choose-us' },
           { label: 'How we build', href: '/#how-we-build' },
           { label: 'Send your plans', href: '/remodel-plans-boise' },

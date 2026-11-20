@@ -20,19 +20,19 @@ import { GALLERY_IMAGES } from '@/shared/siteImages';
 export const metadata = withBrandPageMetadata((buildPageMetadata({
   kind: 'about',
   path: '/design-ideas',
-  titleOverride: 'Remodeling Design Ideas',
+  titleOverride: 'Remodel Gallery',
   descriptionOverride:
-    'Kitchen, bathroom, whole-home and addition design ideas for Treasure Valley homeowners. Explore layouts, cabinetry, tile, lighting and finishes.',
+    'A remodel gallery of kitchens, bathrooms, whole homes and additions for Treasure Valley homeowners. See layouts, cabinetry, tile, lighting and finishes.',
 })), "/design-ideas");
 
 export default function DesignIdeasPage() {
   const schemas = [
     generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
-      { name: 'Design ideas', url: '/design-ideas' },
+      { name: 'Remodel gallery', url: '/design-ideas' },
     ]),
     generateCollectionPageSchema({
-      title: 'Remodeling Design Ideas',
+      title: 'Remodel Gallery',
       description:
         'Kitchen, bathroom, whole-home and addition remodeling across the Treasure Valley.',
       url: '/design-ideas',
@@ -51,10 +51,10 @@ export default function DesignIdeasPage() {
           imageSrc={GALLERY_IMAGES.kitchen.after}
           imageAlt="White shaker kitchen with a sage green island and brass hardware"
         >
-          <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Design ideas' }]} />
-          <p className="ed-eyebrow mt-6">Design ideas</p>
+          <Breadcrumbs items={[{ name: 'Home', href: '/' }, { name: 'Remodel gallery' }]} />
+          <p className="ed-eyebrow mt-6">Remodel gallery</p>
           <h1 className="ed-display ed-statement-display mb-8">
-            Remodeling design ideas for <em className="brc-accent">Boise</em> homes
+            Remodel gallery for <em className="brc-accent">Boise</em> homes
           </h1>
           <p className="ed-body max-w-2xl mb-6">
             Browse kitchen, bath, whole-home and addition layouts, materials and finishes.
@@ -70,7 +70,7 @@ export default function DesignIdeasPage() {
           </div>
         </PageHeroBand>
         <AnswerBlock
-          question="What are these remodeling design ideas?"
+          question="What is in this remodel gallery?"
           answer="Explore kitchen layouts, primary bath finishes, whole-home plans, basement spaces, additions and outdoor living. Save the details you like, then bring them to a free in-home visit to discuss your written scope."
         />
         <ProjectGallerySection showViewAll={false} />
