@@ -510,3 +510,11 @@
   .approved-shell .interior-document-index { position: static; width: 100%; max-width: 320px; }
   .approved-shell .interior-document-main { max-width: none; }
 }
+
+/* SEO audit REM-T9 (20 November 2026): stand-alone link lists (a list of bare
+   links in an article or guide, and the site map) get 44px rows on touch
+   widths. Links inside a sentence are untouched. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .approved-shell .lx-link-list li { margin-block: 0; }
+  .approved-shell .lx-link-list li > a { display: inline-flex; align-items: center; min-height: var(--touch-min, 44px); }
+}

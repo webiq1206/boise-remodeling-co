@@ -19,6 +19,7 @@ const tvSections: ContentSection[] = [
       '<a href="/guides/kuna-remodeling-guide">Kuna</a>',
       '<a href="/guides/caldwell-remodeling-guide">Caldwell</a>',
       '<a href="/guides/star-remodeling-guide">Star</a>',
+      '<a href="/guides/middleton-remodeling-guide">Middleton</a>',
     ],
     paragraphs: ['Each guide links local housing notes, permits, and service URLs.'],
   },

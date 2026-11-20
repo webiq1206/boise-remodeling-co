@@ -81,7 +81,8 @@ export function BudgetInclusionsSection() {
           >
             {BUDGET_GUIDANCE_POINTS.map((point, i) => (
               <div key={point.title} className="flex flex-col">
-                <span className="ed-small" style={{ color: "var(--ed-accent)" }}>
+                {/* Owner rule: accents never carry small text; the number is charcoal over an accent rule. */}
+                <span className="ed-small self-start pt-1" style={{ borderTop: "2px solid var(--ed-accent)" }}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className="ed-h4 mt-8 sm:mt-10 sm:min-h-[2.8em]">{point.title}</h3>
