@@ -85,9 +85,9 @@ export function FeaturedProjectRoomsSection({
               <p className="ed-body mt-3 max-w-[52ch]">{project.description}</p>
             </Reveal>
           )}
-          <ul className="mt-6 md:mt-8 grid list-none grid-cols-2 gap-3 p-0 md:grid-cols-4 md:gap-4">
+          <ul className={`mt-6 md:mt-8 grid list-none grid-cols-2 gap-3 p-0 md:gap-4 ${rest.length === 3 ? "md:grid-cols-3" : "md:grid-cols-4"}`}>
             {rest.map((room, i) => (
-              <li key={room.key}>
+              <li key={room.key} className={rest.length % 2 === 1 && i === rest.length - 1 ? "col-span-2 md:col-span-1" : undefined}>
                 <Reveal delay={Math.min(i, 3) * 40}>
                   <figure className="m-0">
                     <div className="relative aspect-[4/3] overflow-hidden">

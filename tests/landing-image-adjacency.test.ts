@@ -5,7 +5,10 @@ import test from 'node:test';
 import sharp from 'sharp';
 import { CITIES, SERVICES } from '../shared/contentData.ts';
 import { getAreaImageSet, getCityServiceImageSet } from '../shared/cityServiceImages.ts';
-import { getFeaturedProjectForService } from '../shared/featuredProjects.ts';
+import { getFeaturedProjectForService, withoutRoomsShowing } from '../shared/featuredProjects.ts';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { RelatedLinks } from '../components/seo/RelatedLinks.tsx';
 import { getFeaturedGalleryProject, getGalleryProjectsFor, getGalleryProjectsForCity } from '../shared/galleryData.ts';
 import { imageIdentity, isSameImage, VISUAL_DUPLICATE_GROUPS } from '../shared/imageIdentity.ts';
 import { resolveExploreImages } from '../shared/exploreImages.ts';
@@ -170,6 +173,38 @@ test('Keep exploring cards on an area page never repeat a picture from the page 
       const id = imageIdentity(src);
       assert.ok(!seen.has(id), `/areas/${city.slug}: ${src} repeats on the page`);
       seen.add(id);
+    }
+  }
+});
+
+(globalThis as typeof globalThis & { React: typeof React }).React = React;
+
+/** The picture paths in rendered markup, whether served directly or through the optimizer. */
+const pictures = (html: string) => [...html.matchAll(/<img[^>]*?\ssrc="([^"]+)"/g)].map((m) => {
+  const src = m[1].replace(/&amp;/g, '&');
+  const viaOptimizer = src.match(/[?&]url=([^&]+)/);
+  return (viaOptimizer ? decodeURIComponent(viaOptimizer[1]) : src).split('?')[0];
+});
+
+test('service hubs: the project rooms and the Keep exploring pictures never repeat a picture on the page', () => {
+  for (const service of SERVICES) {
+    const images = getServiceImageSet(service.slug);
+    const hero = SERVICE_SCENES[service.slug]?.src ?? images.hero;
+    const allRooms = getFeaturedProjectForService(service.slug);
+    // Same calls as app/services/[slug]/page.tsx and LandingPageTemplate.
+    const featured = getFeaturedGalleryProject(service.slug, [hero, ...(allRooms?.rooms.map((r) => r.src) ?? [])]);
+    const rooms = withoutRoomsShowing(allRooms, hero);
+    // Reported 20 November 2026: the kitchen hub's ranch kitchen room was its hero.
+    for (const room of rooms?.rooms ?? []) assert.ok(!isSameImage(hero, room.src), `/services/${service.slug}: room ${room.src} repeats the hero`);
+    const showcase = [featured?.beforeImageUrl, featured?.afterImageUrl, ...(rooms?.rooms.map((r) => r.src) ?? [])].filter(Boolean) as string[];
+    const slots = resolveLandingImages({ hero, breather: images.breather, process: images.process, showcase, sectionSlots: 3, subject: service.slug });
+    const onPage = [hero, slots.breather, slots.process, ...slots.sectionBreathers, ...showcase];
+    const html = renderToStaticMarkup(React.createElement(RelatedLinks, { variant: 'service', serviceSlug: service.slug, manifestPath: `/services/${service.slug}`, usedImages: onPage }));
+    const seen = new Set(onPage.filter(Boolean).map((src) => imageIdentity(src!)));
+    // Reported 20 November 2026: the aging-in-place reading rows showed the hero and two inline pictures.
+    for (const src of pictures(html)) {
+      assert.ok(!seen.has(imageIdentity(src)), `/services/${service.slug}: Keep exploring picture ${src} repeats a picture already on the page`);
+      seen.add(imageIdentity(src));
     }
   }
 });

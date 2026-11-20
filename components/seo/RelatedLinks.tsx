@@ -157,19 +157,21 @@ function readingLinks(serviceSlug: string | undefined, manifestPath: string | un
   return balanced(out);
 }
 
-function Reading({ links }: { links: { href: string; label: string }[] }) {
+function Reading({ links }: { links: { href: string; label: string; image?: string }[] }) {
   if (links.length === 0) return null;
   return (
     <Group label="Guides and planning">
       <ul className="lx-reading" style={{ ['--lx-reading-cols' as string]: links.length % 3 === 0 ? 3 : 2 }}>
         {links.map((link) => {
-          const image = pageImage(link.href);
+          const image = link.image;
+          // A stand-in picture is described by what it shows, not by the page it links to.
+          const alt = image && image === pageImage(link.href) ? pageImageAlt(link.href, image) : contentImageAlt(image);
           return (
             <li key={link.href}>
               <Link href={link.href} className="lx-reading-link">
                 {image ? (
                   <span className="lx-reading-photo">
-                    <Image src={image} alt={pageImageAlt(link.href, image)} fill sizes="72px" className="object-cover img-brand-grade" />
+                    <Image src={image} alt={alt} fill sizes="72px" className="object-cover img-brand-grade" />
                   </span>
                 ) : null}
                 <span className="lx-reading-title">{toSentenceCase(link.label)}</span>
@@ -237,7 +239,12 @@ export function RelatedLinks({ serviceSlug, citySlug, variant, manifestPath, exc
     groups.push(<Group key="services" label={`More services in ${city.name}`} action={{ href: areaPath(citySlug), label: `All ${city.name} remodeling` }}><Cells cells={withImages(serviceCells)} /></Group>);
   }
 
-  const reading = readingLinks(serviceSlug, manifestPath, taken, groups.length > 0);
+  const readingRows = readingLinks(serviceSlug, manifestPath, taken, groups.length > 0);
+  // Reading rows follow the same rule as the cards: never a picture already on the
+  // page or in a card. A row whose own picture is taken takes a free general
+  // picture (never another service's work); with none free it shows no picture.
+  const readingImages = resolveExploreImages(readingRows.map((link) => ({ href: link.href, image: pageImage(link.href), subject: 'general' })), pageImages, false);
+  const reading = readingRows.map((link, i) => ({ ...link, image: readingImages[i] }));
   if (groups.length === 0 && reading.length === 0) return null;
 
   return (

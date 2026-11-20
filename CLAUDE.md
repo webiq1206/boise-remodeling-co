@@ -990,4 +990,10 @@ last in `app/layout.tsx`); the homepage is untouched.
   shows, never as a before and after and never as a customer's job. The one
   reviewed slider pair (kitchen) has the hero as its after, so no hub shows a
   slider today. `gallery-kitchen-eagle-after.webp` is never featured (props).
-  Guard: `tests/landing-image-adjacency.test.ts`.
+  The project rooms leave out a room that is the hero's own picture
+  (`withoutRoomsShowing()`; the ranch kitchen on the kitchen hub), and the
+  "Guides and planning" rows in Keep exploring follow the cards' rule: a row
+  whose picture is already on the page takes a free general picture (never
+  another service's work, described by what it shows), or none.
+  Guard: `tests/landing-image-adjacency.test.ts`, which renders Keep exploring
+  for every service hub.
