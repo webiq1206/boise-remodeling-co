@@ -50,20 +50,14 @@ const SLUG_SECTIONS: Record<string, ContentSection[]> = {
 };
 
 /**
- * Sections added after the topic sections, keyed by slug. Walk-in pantry:
- * Boise Cabinet Co owns pantry cabinetry (owner decision, 1 November 2026), so
- * the post keeps the room and links the cabinetry to its owner with a plain,
- * followed link. No canonical change: the post still ranks here.
+ * Sections added after the topic sections, keyed by slug. Empty since the walk-in
+ * pantry post was merged into /guides/boise-kitchen-remodeling-guide (301, SEO
+ * audit REM-T6); that guide now carries the Boise Cabinet Co pantry link (owner
+ * decision, 1 November 2026: Boise Cabinet Co owns pantry cabinetry).
  */
 const EXTRA_SECTIONS: Record<string, ContentSection[]> = {
-  'walk-in-pantry-design-guide': [
-    {
-      h2: 'Pantry shelving and cabinetry',
-      paragraphs: [
-        'A walk-in pantry is part room, part storage. The room itself, its walls, door, lighting and outlets, is remodeling work. The shelving, tall cabinets and pull-outs inside it are cabinetry, which our sister company Boise Cabinet Co handles: see <a href="https://boisecabinet.co/cabinets/pantry">pantry cabinets from Boise Cabinet Co</a>.',
-      ],
-    },
-  ],
+  // The walk-in pantry post was merged into the kitchen remodeling guide with a
+  // 301 (SEO audit REM-T6); its Boise Cabinet Co pantry link moved there.
 };
 
 function defaultTopicSections(title: string, hubSlug: string): ContentSection[] {
@@ -99,7 +93,7 @@ export function buildClusterArticleSections(config: ClusterArticleConfig): Conte
 
   return [
     {
-      h2: toSentenceCase(`About ${config.title}`),
+      h2: IMPROVED_CLUSTER_POSTS[config.slug]?.firstH2 ?? toSentenceCase(`About ${config.title}`),
       paragraphs: [config.excerpt, config.quickAnswer],
     },
     ...topicSections,

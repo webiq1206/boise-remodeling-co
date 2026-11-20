@@ -12,6 +12,10 @@ import type { ContentSection } from './wave1/snippets';
  * sections replace the generic "Planning X in the Treasure Valley" template.
  */
 export interface ImprovedClusterPost {
+  /** Visible H1 and post title: the full topic in sentence case (SEO audit REM-T6). */
+  h1: string;
+  /** The opening H2: the question the post answers, never "About <title>" (REM-T6). */
+  firstH2: string;
   seoTitle: string;
   metaDescription: string;
   excerpt: string;
@@ -27,6 +31,8 @@ const OUTDOOR = '/guides/outdoor-living-remodeling-guide';
 
 export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   'punch-list-guide': {
+    h1: 'Remodel punch list: The final walk-through',
+    firstH2: 'What is a remodel punch list?',
     seoTitle: 'Remodel punch list: final walk-through',
     metaDescription:
       'A remodel punch list is the final details caught in a walk-through. What belongs on it, who writes it, and how it connects to sign-off and the warranty.',
@@ -93,6 +99,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'warranty-guide-remodeling': {
+    h1: 'Remodeling warranty: What it covers',
+    firstH2: 'What does a remodeling warranty cover?',
     seoTitle: 'Remodeling warranty: what it covers',
     metaDescription:
       'How a remodeling workmanship guarantee works: what it covers, how long it runs, how manufacturer warranties fit in, and what to get in writing first.',
@@ -147,6 +155,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'addition-roi-remodeling': {
+    h1: 'Home addition ROI in Boise',
+    firstH2: 'Does a home addition add value in Boise?',
     seoTitle: 'Home addition ROI in Boise',
     metaDescription:
       'When a home addition adds value in Boise: needs-driven space, permitted square footage, not over-improving the street, and how it compares with moving.',
@@ -201,6 +211,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'outdoor-living-roi': {
+    h1: 'Outdoor living ROI in Boise',
+    firstH2: 'Does outdoor living add value in Boise?',
     seoTitle: 'Outdoor living ROI in Boise',
     metaDescription:
       'Does outdoor living add value in Boise? How decks, covered patios and outdoor kitchens return value, why integration matters, and why use is the payoff.',
@@ -250,6 +262,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'remodeling-before-selling': {
+    h1: 'Remodeling before selling in Boise',
+    firstH2: 'Should you remodel before selling in Boise?',
     seoTitle: 'Remodeling before selling in Boise',
     metaDescription:
       'Remodeling before you sell in Boise: which updates pay back, why mid-range beats luxury, fixing what buyers deduct for, and when not to remodel at all.',
@@ -308,6 +322,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'decks-vs-patios-boise': {
+    h1: 'Decks vs patios in Boise: Which fits your yard?',
+    firstH2: 'Should you build a deck or a patio in Boise?',
     seoTitle: 'Decks vs patios in Boise',
     metaDescription:
       'Deck or patio in Boise? Compare composite and wood decking, hardscape that survives freeze-thaw, covers and permits, and how each fits your yard.',
@@ -356,6 +372,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'outdoor-fireplaces-boise': {
+    h1: 'Outdoor fireplaces in Boise',
+    firstH2: 'Is an outdoor fireplace worth it in Boise?',
     seoTitle: 'Outdoor fireplaces in Boise',
     metaDescription:
       'Outdoor fireplaces and fire features for Boise homes: extending the season into cool evenings, pairing fire with a covered patio, materials and permits.',
@@ -404,6 +422,8 @@ export const IMPROVED_CLUSTER_POSTS: Record<string, ImprovedClusterPost> = {
   },
 
   'outdoor-entertaining-spaces': {
+    h1: 'Outdoor entertaining spaces in Boise',
+    firstH2: 'What makes an outdoor entertaining space work in Boise?',
     seoTitle: 'Outdoor entertaining spaces, Boise',
     metaDescription:
       'Plan an outdoor entertaining space in Boise: zones for cooking, dining and lounging, outdoor kitchens, covered patios, Idaho-rated materials and permits.',

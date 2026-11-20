@@ -7,7 +7,7 @@ import {
   pillarEssentialsSection,
 } from './guideSectionBlocks';
 import { getHubPillarFaqs, getLocationFaqs } from './hubFaqs';
-import { buildLocationGuideSections } from './locationCityContent';
+import { buildLocationGuideSections, STAR_COUNTY_LINE } from './locationCityContent';
 import { getHubBySlug, guidePath } from '../contentHubs';
 import type { BlogPostData } from '../blogContent';
 import type { GuidePageData, GuideType } from '../guideContent';
@@ -87,6 +87,7 @@ export function buildClusterPost(rawConfig: ClusterConfig): BlogPostData {
   const config: ClusterConfig = improved
     ? {
         ...rawConfig,
+        title: improved.h1,
         seoTitle: improved.seoTitle,
         metaDescription: improved.metaDescription,
         excerpt: improved.excerpt,
@@ -265,7 +266,9 @@ export function buildLocationGuide(config: LocationGuideConfig): GuidePageData {
   // routes through - in the on-brand sage note style, without duplicating the
   // housing intro. Kept to one callout so these shorter pages stay uncluttered.
   const permitBlurb =
-    config.county === 'ada'
+    config.citySlug === 'star'
+      ? `${STAR_COUNTY_LINE} Property inside city limits starts with that city's building department. Structural changes, layout moves and additions all need permits, and a design-build contractor handles the submissions and inspections for you.`
+      : config.county === 'ada'
       ? `${config.cityName} sits in <strong>Ada County</strong>. Property inside city limits starts with that city's building department; unincorporated property follows the county process. Structural changes, layout moves and additions all need permits, and a design-build contractor handles the submissions and inspections for you.`
       : `${config.cityName} sits in <strong>Canyon County</strong>, which uses different portals and a different review cadence than Ada County. Property inside city limits starts with that city's building department. Your design-build contractor handles the submissions and inspections for you.`;
   const localCallout =
@@ -277,7 +280,10 @@ export function buildLocationGuide(config: LocationGuideConfig): GuidePageData {
     title: config.title,
     seoTitle: config.seoTitle,
     metaDescription: config.metaDescription,
-    excerpt: config.excerpt,
+    // SEO audit REM-T5: the lede under the H1 was a generic line ("Remodeling
+    // guide for Meridian homeowners."). It is now the guide's own summary
+    // sentence, which opens with the place and says what the guide answers.
+    excerpt: config.metaDescription || config.excerpt,
     content: localCallout + expandLocation(buildSectionsHtml(sections), config.slug),
     author: 'Boise Remodeling Co',
     hubSlug: 'treasure-valley-locations',

@@ -35,6 +35,7 @@ const AREAS = [
   'Kuna',
   'Caldwell',
   'Star',
+  'Middleton',
   'Ada County',
   'Canyon County',
 ];
@@ -271,15 +272,15 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
-  assert.match(rows.find((row) => row.path === '/areas/eagle')?.title ?? '', /Remodeling contractors in Eagle, ID/);
-  const eagleMeta = 'Kitchen, home remodeling, Eagle, ID. Design-build, part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
-  assert.ok(eagleMeta.length <= 160);
-  assert.equal(rows.find((row) => row.path === '/areas/eagle')?.description, eagleMeta);
-  assert.match(rows.find((row) => row.path === '/areas/boise')?.title ?? '', /Remodeling contractors in Boise, ID/);
-  const boiseMeta = 'Design-build kitchen & bath remodeling, Boise, ID. Part of P5. Free in-home visit, written scope, workmanship guarantee. Budget ranges, not quotes';
-  assert.ok(boiseMeta.length <= 160);
-  assert.equal(rows.find((row) => row.path === '/areas/boise')?.description, boiseMeta);
-  assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Kitchen remodeling in Boise/);
+  // SEO audit REM-T3 (20 November 2026): one title and description pattern on every area page.
+  for (const city of ['Boise', 'Eagle', 'Middleton']) {
+    const row = rows.find((entry) => entry.path === `/areas/${city.toLowerCase()}`);
+    assert.equal(row?.title, `Remodeling contractor in ${city}, ID | Boise Remodeling Co`);
+    assert.equal(row?.description, `Remodeling contractor in ${city}, Idaho for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.`);
+    assert.equal(/part of P5/i.test(row?.description ?? ''), false);
+  }
+  // SEO audit REM-T1: the hub is the Treasure Valley page; /services/kitchen-remodel/boise owns Boise.
+  assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Treasure Valley kitchen remodeling/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Design-build remodeler, part of P5/);
   assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
   assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler \| Boise Remodeling Co/);

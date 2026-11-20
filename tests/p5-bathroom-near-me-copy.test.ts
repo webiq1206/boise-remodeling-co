@@ -52,12 +52,13 @@ test('bathroom near-me metadata matches the approved draft', () => {
     path: '/services/bathroom-remodel',
   }), '/services/[slug]');
   const title = renderedTitle(meta);
-  assert.equal(title, 'Bathroom Remodeling in Boise | Boise Remodeling Co');
+  // SEO audit REM-T1 (20 November 2026): the hub targets the Treasure Valley; the Boise page owns Boise.
+  assert.equal(title, 'Treasure Valley bathroom remodeling | Boise Remodeling Co');
   assert.ok(title.length <= 60, title);
   assert.equal(meta.description, BATHROOM_NEAR_ME_DESCRIPTION);
   // The draft labels this sentence 148 characters. The sentence itself is 142.
   assert.ok(BATHROOM_NEAR_ME_DESCRIPTION.length <= 160);
-  assert.match(String(meta.description), /Bathroom remodeling in Boise/);
+  assert.match(String(meta.description), /^Bathroom remodeling across the Treasure Valley/);
   assert.equal(String(meta.description).includes('8381215'), false);
   assert.equal(String(meta.description).includes('$'), false);
   assert.equal(String(meta.openGraph?.description).includes('8381215'), false);
@@ -79,8 +80,9 @@ test('bathroom parent copy hits the five places and holds unverified claims', ()
   assert.equal(bath.headline, BATHROOM_NEAR_ME_H1);
   assert.equal(bath.headline, 'Bathroom remodeling in Boise and the Treasure Valley');
   assert.equal(bath.overview.startsWith('We plan primary baths, guest baths and powder rooms'), true);
-  assert.match(bath.overview, /call \(208\) 477-1169/);
-  assert.equal(bath.overview.includes(SITE_CONFIG.phone), true);
+  // SEO audit SW-6 (owner rule): no phone number in a hero paragraph. The phone stays in the CTA row.
+  assert.doesNotMatch(bath.overview, /\(208\)/);
+  assert.equal(bath.overview.includes(SITE_CONFIG.phone), false);
   assert.match(copy, /What a bathroom remodel covers/);
   assert.match(copy, /workmanship guarantee/i);
   assert.match(copy, /design-build/i);

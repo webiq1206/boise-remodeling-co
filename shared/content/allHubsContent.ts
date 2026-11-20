@@ -560,7 +560,7 @@ export const LOCATION_GUIDES: GuidePageData[] = [
     housingNote: 'Star combines small-town feel with commuter access to Boise - remodels often focus on kitchens and outdoor connection.',
     guideType: 'location',
     seoTitle: 'Star Remodeling Guide',
-    metaDescription: 'Remodeling in Star, Idaho: Ada County permitting plus kitchen, bath, addition, and outdoor-living upgrades for this growing Treasure Valley town.',
+    metaDescription: 'Remodeling in Star, Idaho, on the Ada and Canyon county line: kitchen, bath, addition and outdoor-living upgrades for this growing Treasure Valley town.',
     excerpt: 'Star Idaho remodeling guide.',
     quickAnswer: 'Star splits into riverside acreage near Star Riverwalk Park and newer subdivisions built since the mid-2000s. Newer homes follow the builder-grade upgrade path, while acreage properties can support additions and guest quarters. Star sits at the Ada and Canyon county line, so confirm the permit jurisdiction for your address before design.',
     takeaways: ['Smaller homes need smart storage.', 'Coordinate outdoor and indoor scopes.'],

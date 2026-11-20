@@ -49,8 +49,11 @@ export async function GET() {
   };
 
   // Room and finish images, declared on the service page that shows them.
+  // Gallery types are not always hub slugs: "basement-finish" is shown on
+  // /services/basement-remodel (SEO audit SW-4: the image sitemap listed a 404).
+  const hubFor: Record<string, string> = { 'basement-finish': 'basement-remodel' };
   for (const project of GALLERY_PROJECTS) {
-    const pageUrl = `${baseUrl}/services/${project.serviceType}`;
+    const pageUrl = `${baseUrl}/services/${hubFor[project.serviceType] ?? project.serviceType}`;
     add(pageUrl, {
       loc: absolute(project.afterImageUrl, baseUrl),
       title: project.title,
