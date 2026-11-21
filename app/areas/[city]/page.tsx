@@ -10,7 +10,7 @@ landingBreadcrumbs,
 landingFAQSchema,
 } from '@/lib/landing-schema';
 import { buildPageMetadata } from '@/lib/page-metadata';
-import { indexableHref } from '@/lib/siteUrls';
+import { areaPageServiceHref } from '@/lib/siteUrls';
 import { permitGuidance, permitSource } from '@/lib/permitGuidance';
 import { generateSpeakableSchema, generateWebPageSchema } from '@/lib/schema';
 import { CITY_SEO_DATA } from '@/lib/seo';
@@ -101,14 +101,15 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
     },
     {
       heading: 'Permits and planning in Garden City',
-      links: [
-        { label: 'Official Garden City permit guidance', href: 'https://gardencityidaho.org/departments/development-services/' },
-        { label: 'Ada and Canyon County permit flow', href: '/resources/ada-canyon-permit-flow' },
-      ],
       paragraphs: [
         'Garden City issues building permits through its own Development Services department, separate from Boise, so confirm your address is inside city limits before you apply. Trade permits for plumbing, electrical and mechanical work go through the State of Idaho. Development Services also handles floodplain questions for riverside lots. Which permits, inspections and review timing apply to your remodel should be confirmed with the city for the actual address.',
         'We confirm the required submissions and inspection steps for your scope, then account for them in the project schedule. Additions and outdoor living near the Boise River or the Greenbelt can have extra setback and review rules; we flag those during design and confirm them with the city.',
         "Our Garden City designs also account for the valley's hot summers and cold winters, from insulation and window upgrades to exterior materials that hold up to freeze-thaw cycles.",
+        {
+          text: 'For valley-wide context, see the',
+          link: { label: 'Ada and Canyon County permit flow', href: '/resources/ada-canyon-permit-flow' },
+          after: '.',
+        },
       ],
     },
     {
@@ -134,10 +135,9 @@ export default async function AreaPage(props: { params: Promise<{ city: string }
       ],
       links: [
         // Same index rule as the sitemap: a noindexed combo is not linked.
-        ...SERVICES.flatMap((s) => {
-          const href = indexableHref(`/services/${s.slug}/${city.slug}`);
-          if (!href || href === path) return [];
-          return [{ label: `${s.name} in ${city.name}`, href }];
+        ...SERVICES.map((s) => {
+          const href = areaPageServiceHref(s.slug, city.slug);
+          return { label: `${s.name} in ${city.name}`, href: href === path ? `/services/${s.slug}` : href };
         }),
         ...(city.slug === 'boise' ? [{ label: 'home remodeling in Boise', href: '/' }] : []),
         // Phase 4: the money service pages, with service anchors, from every

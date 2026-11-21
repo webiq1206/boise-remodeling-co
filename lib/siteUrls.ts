@@ -23,7 +23,7 @@ import {
   isCategoryHubIndexable,
 } from '@/shared/contentHubs';
 import { isCityServiceNoindex } from '@/lib/page-metadata';
-import { redirectDestination, XML_SITEMAP_OMIT } from '@/shared/cityServiceIndex.mjs';
+import { collapsedCityServiceHref, redirectDestination, XML_SITEMAP_OMIT } from '@/shared/cityServiceIndex.mjs';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 import { toSentenceCase } from '@/shared/sentenceCase';
 
@@ -172,6 +172,18 @@ export function serviceHubCityHref(serviceSlug: string, citySlug: string): strin
   const href = indexableHref(`/services/${serviceSlug}/${citySlug}`);
   if (!href || href === `/services/${serviceSlug}`) return null;
   return href;
+}
+
+/**
+ * Service link on an area page. Indexed city pages keep their URL. A 301 or
+ * noindex city page, including ADU, links to the parent service. The result
+ * is never the area page itself.
+ */
+export function areaPageServiceHref(serviceSlug: string, citySlug: string): string {
+  const collapsed = collapsedCityServiceHref(serviceSlug, citySlug);
+  if (collapsed) return collapsed;
+  const path = `/services/${serviceSlug}/${citySlug}`;
+  return isIndexedPath(path) ? path : `/services/${serviceSlug}`;
 }
 
 let indexedPathSet: Set<string> | undefined;

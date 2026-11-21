@@ -17,6 +17,7 @@ import { getFeaturedProjectForService, withoutRoomsShowing } from '@/shared/feat
 import { gallerySubject,resolveLandingImages,sectionBreatherIndices } from '@/shared/landingImages';
 import { testimonialsForPublish } from '@/shared/testimonialsData';
 import { CTA_REQUEST, REQUEST_PATH, primaryCtaForService } from '@/shared/ctaCopy';
+import { SITE_CONFIG } from '@/shared/siteConfig';
 import { familyButtonClass } from '@/components/family/Button';
 import type { GalleryProject } from '@/shared/galleryData';
 import type { FAQItem } from '@/shared/seoContent';
@@ -286,7 +287,10 @@ export function LandingPageTemplate({
   // place) keeps "Request a quote". Area pages name no service, so the visitor picks a project.
   const primaryCta = primaryCtaForService(related.serviceSlug);
   const estimatorCta = primaryCta.kind === 'estimator';
-  const ctaHeading = estimatorCta ? `Get an instant estimate for your ${noun}` : `Request a quote for your ${noun}`;
+  const isGardenCity = subject?.place === 'Garden City';
+  const ctaHeading = isGardenCity
+    ? 'Ready to start your Garden City remodel?'
+    : estimatorCta ? `Get an instant estimate for your ${noun}` : `Request a quote for your ${noun}`;
   void showEstimatePrompt;
   void _faqDisplay;
   void proofHeading;
@@ -328,6 +332,7 @@ export function LandingPageTemplate({
       <InteriorHero imageSrc={heroImageUrl} imageAlt={heroImageAlt ? localAlt(heroImageAlt, altContext) : pageAlt(heroImageUrl)} layout="split" className="interior-hero-budget lx-hero">
           <HeroBreadcrumbs items={breadcrumbs} />
           <p data-speakable="summary" className="sr-only">{speakableSummary}</p>
+          {isGardenCity ? <p className="ed-eyebrow">Ada County · Treasure Valley</p> : null}
           <h1 className="ed-display ed-statement-display text-inverse-foreground">{h1}</h1>
           {/* Interior hero budget (phase 3): H1, one support line, the planning-from
               chip, one primary action and the phone as a text link, so the whole
@@ -346,7 +351,7 @@ export function LandingPageTemplate({
         {planningFrom && (
           <li><strong>From {planningFrom}</strong><span>{planningFromBasis ?? 'Planning range, confirmed at your free in-home visit'}</span></li>
         )}
-        <li><strong>Free in-home visit</strong><span>60 to 90 minutes, with planning guidance and no obligation</span></li>
+        <li><strong>Free in-home visit</strong><span>{isGardenCity ? 'with planning guidance and no obligation' : '60 to 90 minutes, with planning guidance and no obligation'}</span></li>
         <li><strong>One written scope</strong><span>Agreed before construction begins, with one accountable team</span></li>
       </ul>
       {(heroCopy.rest || planningFrom) && (
@@ -371,7 +376,7 @@ export function LandingPageTemplate({
           </div>
         </Section>
       )}
-<div className="interior-detail-body lx-detail"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
+<div className="interior-detail-body lx-detail"><div><p className="interior-eyebrow">A CLEAR SCOPE</p><h2><Accented text={headings.scope} /></h2>{inclusions&&inclusions.length>0&&<ul className="interior-scope-list">{inclusions.map((item,i)=><li key={item}><span>{String(i+1).padStart(2,'0')}</span>{item}</li>)}</ul>}</div><InteriorProjectAside heading={<Accented text={headings.start} />} lead={isGardenCity ? <p>Describe your project and share plans or photos for our team to review. Call or text (208) 477-1169, or start from the <a href="/contact">contact page</a>.</p> : undefined}>{timeline&&<p className="ed-body mt-6">{timeline}</p>}</InteriorProjectAside></div>
 
       {/* ─── Cost and timeline expectation ───
           Cost guidance follows the concise scope and estimate sidebar. */}
@@ -736,7 +741,18 @@ export function LandingPageTemplate({
               </h2>
             </Reveal>
             <Reveal delay={60}>
-              {estimatorCta ? (
+              {isGardenCity ? (
+                <>
+                  <p className="ed-lede">
+                    Call or text (208) 477-1169, or <a href="/contact">request a free in-home visit</a>. A firm written proposal follows that visit. You can also <a href="/estimate">see a preliminary planning range</a> on screen, free and with no appointment. Planning ranges are starting points, not quotes.
+                  </p>
+                  <div className="mt-8 flex flex-col items-start gap-4">
+                    <a href={SITE_CONFIG.phoneHref} className={familyButtonClass({ variant: 'hero', size: 'lg' })}>Call (208) 477-1169</a>
+                    <a href={SITE_CONFIG.phoneSmsHref} className={familyButtonClass({ variant: 'secondary', size: 'lg', tone: 'dark' })}>Text</a>
+                    <a href="/contact" className={familyButtonClass({ variant: 'tertiary', tone: 'dark' })}>Request a visit</a>
+                  </div>
+                </>
+              ) : estimatorCta ? (
                 <>
                   <p className="ed-lede">See a preliminary price range on screen. Free, with no appointment.</p>
                   <p className="ed-body mt-3">A firm written proposal follows a free 60 to 90 minute in-home visit.</p>

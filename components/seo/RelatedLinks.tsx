@@ -3,7 +3,7 @@ import Image from '@/components/VersionedImage';
 import Link from 'next/link';
 import { CITIES, SERVICE_AREA_CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
-import { indexableHref, isIndexedPath } from '@/lib/siteUrls';
+import { areaPageServiceHref, isIndexedPath } from '@/lib/siteUrls';
 import { getManifestLinks } from '@/lib/internal-links';
 import { ArrowRight } from 'lucide-react';
 import { getBlogHeroImage } from '@/shared/blogImages';
@@ -21,7 +21,8 @@ import { contentImageAlt } from '@/shared/contentImageAlt';
  * service page, so the card stays useful without pointing at a noindexed URL.
  */
 function indexedCityServiceHref(serviceSlug: string, citySlug: string): string {
-  return indexableHref(cityServicePath(serviceSlug, citySlug)) ?? servicePath(serviceSlug);
+  const href = areaPageServiceHref(serviceSlug, citySlug);
+  return href === areaPath(citySlug) ? servicePath(serviceSlug) : href;
 }
 
 interface RelatedLinksProps {
