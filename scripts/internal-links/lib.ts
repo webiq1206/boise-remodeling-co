@@ -3,6 +3,12 @@ import { GUIDE_PAGES } from "../../shared/guideContent";
 import { getHubBySlug, getHubPillarSlug, guidePath } from "../../shared/contentHubs";
 import { PRIORITY_SERVICES, CITIES, type ServiceData, type CityData } from "../../shared/contentData";
 import { isCityServiceNoindex } from "../../lib/page-metadata";
+import { redirectDestination } from "../../shared/cityServiceIndex.mjs";
+
+/** Garden City has an area page and no city x service spokes. */
+function cityHasServiceSpokes(citySlug: string): boolean {
+  return citySlug !== "garden-city";
+}
 
 export type PageType = "blog" | "guide" | "service" | "city" | "city-service";
 
@@ -98,7 +104,10 @@ export function buildCanonicalRoutes(): string[] {
   for (const svc of PRIORITY_SERVICES) routes.push(`/services/${svc.slug}`);
   for (const city of CITIES) routes.push(`/areas/${city.slug}`);
   for (const svc of PRIORITY_SERVICES) {
-    for (const city of CITIES) routes.push(`/services/${svc.slug}/${city.slug}`);
+    for (const city of CITIES) {
+      if (!cityHasServiceSpokes(city.slug)) continue;
+      routes.push(`/services/${svc.slug}/${city.slug}`);
+    }
   }
   return routes;
 }
@@ -181,6 +190,7 @@ export function buildPages(): PageNode[] {
 
   for (const svc of PRIORITY_SERVICES) {
     for (const city of CITIES) {
+      if (!cityHasServiceSpokes(city.slug)) continue;
       pages.push({
         id: `city-service:${svc.slug}__${city.slug}`,
         type: "city-service",
@@ -295,6 +305,7 @@ function eligible(from: PageNode, to: PageNode): boolean {
   if (to.type === "city-service" && to.serviceSlug && to.citySlug && isCityServiceNoindex(to.serviceSlug, to.citySlug)) {
     return false;
   }
+  if (redirectDestination(to.url)) return false;
 
   if (from.type === "city-service") {
     if (to.type === "city-service") {
@@ -468,7 +479,7 @@ export function buildManifest(pages: PageNode[]): Manifest {
       guide: GUIDE_PAGES.length,
       service: PRIORITY_SERVICES.length,
       city: CITIES.length,
-      cityService: PRIORITY_SERVICES.length * CITIES.length,
+      cityService: PRIORITY_SERVICES.length * CITIES.filter((city) => cityHasServiceSpokes(city.slug)).length,
     },
     pages: out,
     incoming,
