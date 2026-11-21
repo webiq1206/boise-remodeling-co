@@ -7,7 +7,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { Footer } from '../components/Footer.tsx';
 import { generateLocalBusinessSchema, generateOrganizationSchema, generateServiceSchema } from '../lib/schema.ts';
 import { BUSINESS_INFO } from '../lib/seo.ts';
-import { getExternalProfileUrls, P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile.ts';
+import { getExternalProfileUrls, P5_BBB_URL, P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL, P5_MAPS_CID_URL, P5_PARENT_SAME_AS } from '../shared/gbpProfile.ts';
 
 (globalThis as typeof globalThis & { React: typeof React }).React = React;
 
@@ -45,8 +45,13 @@ test('the P5 Google profile sits on the parent organization only', () => {
       // Owner answers, 20 November 2026: the vanity Facebook URL and the P5 Instagram join the GBP.
       assert.equal(P5_FACEBOOK_URL, 'https://www.facebook.com/p5homeco');
       assert.equal(P5_INSTAGRAM_URL, 'https://www.instagram.com/p5_home_co');
-      assert.deepEqual(node.parentOrganization.sameAs, [P5_FACEBOOK_URL, P5_INSTAGRAM_URL, P5_GBP_URL]);
-      assert.equal(JSON.stringify(node.sameAs ?? []).includes('kgmid'), false);
+      assert.equal(P5_MAPS_CID_URL, 'https://maps.google.com/?cid=11869148461693849141');
+      assert.equal(P5_BBB_URL, 'https://www.bbb.org/us/id/meridian/profile/general-contractor/p5-home-co-llc-1296-1000203624');
+      assert.deepEqual(node.parentOrganization.sameAs, [...P5_PARENT_SAME_AS]);
+      const brandSameAs = JSON.stringify(node.sameAs ?? []);
+      assert.equal(brandSameAs.includes('kgmid'), false);
+      assert.equal(brandSameAs.includes('bbb.org'), false);
+      assert.equal(brandSameAs.includes('cid='), false);
     }
     assert.equal(BUSINESS_INFO.sameAs.includes(P5_GBP_URL), false);
     assert.equal(getExternalProfileUrls().includes(P5_GBP_URL), false, 'NEXT_PUBLIC_GBP_URL never feeds the brand sameAs');

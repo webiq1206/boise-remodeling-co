@@ -150,7 +150,7 @@ export default function GuidesIndexPage() {
           <p className="text-sm text-muted-foreground mb-6">
             <Link href="/areas/eagle" className="text-accent-legible hover:underline">Remodeling contractors in Eagle</Link>
             {' '}and{' '}
-            <Link href="/services/kitchen-remodel/eagle" className="text-accent-legible hover:underline">Eagle kitchen remodeling</Link>
+            <Link href="/areas/eagle" className="text-accent-legible hover:underline">Eagle kitchen remodeling</Link>
             {' '}are on their own pages.
           </p>
           <div className="ed-cards-3 ed-cards-feature gap-4">

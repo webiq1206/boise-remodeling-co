@@ -40,6 +40,7 @@ test('the brand config carries this site’s facts, one CTA and one destination'
       'Boise, Idaho',
       'Meridian, Idaho',
       'Eagle, Idaho',
+      'Garden City, Idaho',
       'Nampa, Idaho',
       'Kuna, Idaho',
       'Star, Idaho',
@@ -47,10 +48,9 @@ test('the brand config carries this site’s facts, one CTA and one destination'
       'Caldwell, Idaho',
     ],
   );
-  // Owner decision, 20 November 2026 (SEO audit REM-T4 and the owner's nine-city list): the footer
-  // links every service-area city with a page here. Garden City has no page on this site, so it is
-  // named in the service-area line but never linked.
-  assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Garden City|Emmett/.test(link.label)), false);
+  // Garden City has its area page, so the footer links it with the other eight.
+  assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => link.href === '/areas/garden-city'), true);
+  assert.equal(FAMILY_BRAND.footer.areas.links.some((link) => /Emmett/.test(link.label)), false);
   assert.equal(RETIRED_STREET.test(FAMILY_BRAND.nap.line), false);
   assert.doesNotMatch(FAMILY_BRAND.nap.line, /Public representative|staffed storefront/i);
   assert.deepEqual(FAMILY_BRAND.header.phoneActions, ['call', 'text', 'chat']);
@@ -100,7 +100,7 @@ test('the footer renders the family row, NAP, hours and one registration link, w
   assert.equal(/rel="noopener noreferrer">(P5 Home Co|Boise)/.test(html), false);
   assert.match(html, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell/);
   assert.match(html, /href="\/areas\/middleton"/);
-  assert.equal(html.includes('href="/areas/garden-city"'), false);
+  assert.match(html, /href="\/areas\/garden-city"/);
   assert.equal(RETIRED_STREET.test(html), false);
   assert.doesNotMatch(html, /Public representative|staffed storefront/i);
   assert.match(html, /data-testid="link-footer-call"/);

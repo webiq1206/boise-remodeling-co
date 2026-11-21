@@ -4,13 +4,16 @@
 
 Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County. Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215 and insured.
 
+P5 Home Co, Meridian, ID 83646 (service-area business, no public street). Phone (208) 477-1169. Web https://p5homeco.com.
+Boise Remodeling Co: https://boiseremodeling.co.
+
 ## About
 
 Boise Remodeling Co is a residential design-build remodeling company serving the Treasure Valley and one of the P5 Home Co family of companies. We remodel existing homes: kitchens, bathrooms, whole-home renovations, room additions, basements, ADU conversions of garages, basements and attached spaces, outdoor living spaces and aging-in-place work. New detached ADUs are built by sister company Boise Construction Co. Design-build means design direction, estimating, permitting and construction are delivered by one accountable company with one point of contact, which removes the handoff between a designer and a general contractor and keeps the drawings and the budget on the same schedule. Every project includes a written scope before construction, a dedicated project manager, a written progress update every Friday, and a one-year workmanship guarantee from documented Final Completion for work performed by our own team. Subcontractor work (for example licensed plumbing, electrical and HVAC) is covered by that subcontractor's own warranty, and at the end of every project we provide a complete list of the subcontractors who worked on it, with their contact information. Manufacturer warranties are separate. Warranty details: https://boiseremodeling.co/warranty.
 
 - Business type: Residential design-build remodeling contractor
 - Parent company: P5 Home Co (https://p5homeco.com)
-- Parent company profiles: Google https://www.google.com/search?kgmid=/g/11ntl1t7dc, Facebook https://www.facebook.com/p5homeco, Instagram https://www.instagram.com/p5_home_co
+- Parent company profiles: Google https://www.google.com/search?kgmid=/g/11ntl1t7dc, Facebook https://www.facebook.com/p5homeco, Instagram https://www.instagram.com/p5_home_co, BBB https://www.bbb.org/us/id/meridian/profile/general-contractor/p5-home-co-llc-1296-1000203624
 - Service model: One accountable team for design, permits, and construction
 - Contact: hello@boiseremodeling.co (https://boiseremodeling.co/contact)
 - Instant estimate (a preliminary price range on screen, not a final price): https://boiseremodeling.co/instant-estimate
@@ -37,7 +40,7 @@ Permit paths, fees, and inspection sequencing differ between Ada County and Cany
 - Outdoor Living & Decks: /services/outdoor-living - Decks, covered patios, and outdoor kitchens that extend your living space into the yard.
 - Aging-in-Place Remodeling: /services/aging-in-place - Accessible, safe, and stylish remodels that let you stay in the home you love for the long term.
 
-Each service has a dedicated page per city at /services/{service-slug}/{city-slug} for boise, meridian, eagle, nampa, kuna, star, middleton, caldwell. City service-area hubs live at /areas/{city-slug}.
+City service-area hubs live at /areas/{city-slug} for boise, meridian, eagle, garden-city, nampa, kuna, star, middleton, caldwell.
 
 ## Authoritative guides (https://boiseremodeling.co/guides)
 
@@ -47,7 +50,7 @@ Pillar guides (own the head terms):
 - Treasure Valley Remodeling Guide: /guides/treasure-valley-remodeling-guide
 - Boise ADU Guide: Rules, Costs & Building a Second Unit: /guides/boise-adu-guide
 - Boise Kitchen Remodeling Guide: /guides/boise-kitchen-remodeling-guide
-- Boise Bathroom Remodeling Guide: /guides/boise-bathroom-remodeling-guide
+- How to plan a bathroom remodel in Boise: /guides/boise-bathroom-remodeling-guide
 - Boise Home Addition Guide: /guides/boise-home-addition-guide
 - Whole Home Remodeling Guide: /guides/whole-home-remodeling-guide
 - How to Choose a Remodeling Contractor in Boise: /guides/choose-remodeling-contractor-boise
@@ -94,6 +97,7 @@ Neighborhood guides:
 
 - Remodeling planning resources (free PDFs and visual guides): /resources
 - Ada vs Canyon County permit flow (visual guide): /resources/ada-canyon-permit-flow
+- Home remodeling in Garden City: /areas/garden-city
 
 ## Common questions
 
@@ -118,4 +122,4 @@ Neighborhood guides:
 - Resources: https://boiseremodeling.co/resources
 - Contact: https://boiseremodeling.co/contact
 
-Last updated: 2026-10-16. Full sitemap: https://boiseremodeling.co/sitemap.xml
+Last updated: 2026-11-21. Full sitemap: https://boiseremodeling.co/sitemap.xml

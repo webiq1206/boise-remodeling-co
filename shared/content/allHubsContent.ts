@@ -18,11 +18,11 @@ import { OUTDOOR_GUIDE_CONTENT, OUTDOOR_GUIDE_FAQS } from './guides/outdoor-guid
 const k = '/services/kitchen-remodel';
 const kb = '/services/kitchen-remodel/boise';
 const b = '/services/bathroom-remodel';
-const bb = '/services/bathroom-remodel/boise';
+const bb = '/services/bathroom-remodel';
 const w = '/services/whole-home-remodel';
 const wb = '/services/whole-home-remodel/boise';
 const a = '/services/room-addition';
-const ab = '/services/room-addition/boise';
+const ab = '/services/room-addition';
 const adu = '/services/adu';
 
 // -  - Hub 2 Kitchen -  - 
@@ -88,10 +88,10 @@ export const KITCHEN_CLUSTER_POSTS: BlogPostData[] = kitchenClusters.map(([slug,
 // -  - Hub 3 Bathroom -  - 
 export const BATHROOM_PILLAR = buildPillarGuide({
   slug: 'boise-bathroom-remodeling-guide',
-  title: 'Boise Bathroom Remodeling Guide',
-  seoTitle: 'Boise Bathroom Remodeling Guide',
+  title: 'How to plan a bathroom remodel in Boise',
+  seoTitle: 'Bathroom Remodel Planning Guide',
   metaDescription:
-    'Master bath and guest bath remodeling in Boise: showers, layouts, aging-in-place, ROI, permits, and realistic Treasure Valley cost ranges.',
+    'A Boise homeowner guide to planning a bathroom remodel: layout, showers, waterproofing, permits and what drives cost, so you start with fewer surprises.',
   excerpt: 'Complete bathroom remodeling guide for Treasure Valley homeowners.',
   hubSlug: 'bathroom-remodeling',
   tags: ['bathroom', 'boise'],

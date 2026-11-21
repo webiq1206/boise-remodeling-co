@@ -26,8 +26,9 @@ export WS_NO_UTF_8_VALIDATE=1
 # Backgrounded, and its failure swallowed, so it can neither delay nor fail the
 # boot. `exec` hands the container's PID 1 straight to node so SIGTERM reaches
 # the server rather than this shell.
-# Ping only the URLs this deploy changed. A full sitemap submit is still
-# available as `node scripts/submit-indexnow.mjs` without --changed.
-( node --import tsx scripts/submit-indexnow.mjs --changed || true ) &
+# One IndexNow ping per production deploy, after this process is serving.
+# The script refuses CI, pull-request builds, and any run that is not a
+# Replit deployment, and it skips a SHA it has already submitted.
+( node scripts/submit-indexnow.mjs --deploy || true ) &
 
 HOSTNAME=0.0.0.0 exec node .next/standalone/server.js

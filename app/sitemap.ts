@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next';
 import { getBaseUrl } from '@/lib/seo';
-import { getAllSiteUrls } from '@/lib/siteUrls';
+import { getXmlSiteUrls } from '@/lib/siteUrls';
 
 /**
  * Rendered from lib/siteUrls.ts - the same list the HTML sitemap page
@@ -9,7 +9,7 @@ import { getAllSiteUrls } from '@/lib/siteUrls';
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = getBaseUrl().replace(/\/$/, '');
-  return getAllSiteUrls().map((e) => ({
+  return getXmlSiteUrls().map((e) => ({
     url: e.path === '/' ? baseUrl : `${baseUrl}${e.path}`,
     // Static pages carry no lastModified: a build timestamp is not a content change.
     ...(e.lastModified ? { lastModified: e.lastModified } : {}),

@@ -59,6 +59,7 @@ export const CITY_HERO_IMAGES: Record<string, string> = {
   star: "/images/areas/star.webp",
   middleton: "/images/areas/middleton.webp",
   caldwell: "/images/areas/caldwell.webp",
+  "garden-city": "/images/blog/outdoor-living-roi.webp",
 };
 
 /**
@@ -126,6 +127,13 @@ export function getCityServiceImageSet(
  * process panel. Each slot falls back to the hero image when unavailable.
  */
 export function getAreaImageSet(citySlug: string): LandingImageSet {
+  if (citySlug === 'garden-city') {
+    return {
+      hero: CITY_HERO_IMAGES['garden-city'],
+      breather: '/images/blog/kitchen-remodel-cost-boise.webp',
+      process: '/images/blog/bathroom-remodel-cost-boise.webp',
+    };
+  }
   const hero = CITY_HERO_IMAGES[citySlug] ?? SITE_IMAGES.hero;
   return {
     hero,

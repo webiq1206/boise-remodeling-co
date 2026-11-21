@@ -109,6 +109,7 @@ export const CITIES: CityData[] = [
   { slug: 'boise', name: 'Boise', county: 'ada', isPrimary: true },
   { slug: 'meridian', name: 'Meridian', county: 'ada', isPrimary: false },
   { slug: 'eagle', name: 'Eagle', county: 'ada', isPrimary: false },
+  { slug: 'garden-city', name: 'Garden City', county: 'ada', isPrimary: false },
   { slug: 'nampa', name: 'Nampa', county: 'canyon', isPrimary: false },
   { slug: 'kuna', name: 'Kuna', county: 'ada', isPrimary: false },
   { slug: 'star', name: 'Star', county: 'ada', isPrimary: false },
@@ -120,8 +121,8 @@ export const CITIES: CityData[] = [
  * The official service area (owner, 20 November 2026, from the P5 Home Co
  * Google Business Profile and every listing), in the owner's order. Middleton
  * joined with its published pages (SEO audit REM-T4); Garden City joined the
- * same day by owner decision. This site has no Garden City page, so it is named
- * in every service-area statement and in areaServed but has no card or link.
+ * same day by owner decision. Garden City has its own area page. Service hubs
+ * link that page. They do not grow /services/{service}/garden-city spokes.
  */
 export const SERVICE_AREA_CITY_NAMES = [
   'Boise',
@@ -166,6 +167,17 @@ function joinNames(names: readonly string[]): string {
   if (names.length === 2) return `${names[0]} and ${names[1]}`;
   return `${names.slice(0, -1).join(', ')}, and ${names[names.length - 1]}`;
 }
+
+/** Ada County cities in service-area order, including Garden City. */
+export const ADA_COUNTY_CITY_NAMES = SERVICE_AREA_CITY_NAMES.filter(
+  (name) => SERVICE_AREA_CITY_COUNTY[name] === 'ada',
+);
+/** Canyon County cities in service-area order. Nampa, Middleton, and Caldwell. */
+export const CANYON_COUNTY_CITY_NAMES = SERVICE_AREA_CITY_NAMES.filter(
+  (name) => SERVICE_AREA_CITY_COUNTY[name] === 'canyon',
+);
+export const ADA_COUNTY_CITY_LIST = joinNames(ADA_COUNTY_CITY_NAMES);
+export const CANYON_COUNTY_CITY_LIST = joinNames(CANYON_COUNTY_CITY_NAMES);
 
 /** City names in service-area order, with a serial comma. */
 export const TREASURE_VALLEY_CITIES = joinNames(SERVICE_AREA_CITY_NAMES);

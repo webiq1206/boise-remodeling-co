@@ -5,7 +5,7 @@ export const CITY_SLUGS = CITIES.map((c) => c.slug);
 
 export function getAllCityServiceParams() {
   return SERVICES.flatMap((service) =>
-    CITIES.map((city) => ({
+    CITIES.filter((city) => city.slug !== 'garden-city').map((city) => ({
       slug: service.slug,
       city: city.slug,
     })),

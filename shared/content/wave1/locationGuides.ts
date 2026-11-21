@@ -1,6 +1,7 @@
 import { buildSectionsHtml, CITIES_LIST, PILLAR_COST, type ContentSection } from './snippets';
 import { expandLocation } from '../contentFactory';
 import { P5_AS_OF, p5Range } from '../p5Figures';
+import { ADA_COUNTY_CITY_LIST, CANYON_COUNTY_CITY_LIST } from '../../contentData';
 
 const tvSections: ContentSection[] = [
   {
@@ -27,7 +28,7 @@ const tvSections: ContentSection[] = [
   {
     h2: 'Ada County vs Canyon County',
     paragraphs: [
-      'Boise, Meridian, Eagle, Kuna, and Star primarily use Ada County for many residential permits. Nampa, Middleton, and Caldwell are in Canyon County.',
+      `${ADA_COUNTY_CITY_LIST} primarily use Ada County for many residential permits. ${CANYON_COUNTY_CITY_LIST} are in Canyon County.`,
       '<a href="/resources/ada-canyon-permit-flow">Permit timeline comparison</a>',
     ],
   },
@@ -116,7 +117,7 @@ const boiseSections: ContentSection[] = [
   {
     h2: 'Remodeling services in Boise',
     paragraphs: [
-      'When you are ready to talk about a specific project, the Boise page covers how we work locally: <a href="/areas/boise">remodeling contractors in Boise</a>. Service pages: <a href="/services/kitchen-remodel/boise">kitchen remodeling in Boise</a>, <a href="/services/bathroom-remodel/boise">bathroom remodeling in Boise</a> and <a href="/services/whole-home-remodel/boise">whole-home remodeling in Boise</a>.',
+      'When you are ready to talk about a specific project, start with <a href="/">home remodeling in Boise</a>. Neighborhood notes stay on <a href="/areas/boise">the Boise neighborhoods page</a>. Service pages: <a href="/services/kitchen-remodel/boise">kitchen remodeling in Boise</a>, <a href="/services/bathroom-remodel">bathroom remodel in Boise</a> and <a href="/services/whole-home-remodel/boise">whole-home remodeling in Boise</a>.',
     ],
   },
 ];
@@ -130,7 +131,7 @@ function injectCallouts(html: string, callouts: Array<[string, string]>): string
 const TV_CALLOUTS: Array<[string, string]> = [
   [
     '<h2>Ada County vs Canyon County</h2>',
-    '<div class="callout note"><p class="callout-label">Which county are you in?</p><p><strong>Ada County:</strong> Boise, Meridian, Eagle, Kuna, and Star. <strong>Canyon County:</strong> Nampa and Caldwell. The two use <span class="sage">different permit portals and review cadences</span>, which affects your timeline. Your design-build contractor handles the right path for you.</p></div>',
+    `<div class="callout note"><p class="callout-label">Which county are you in?</p><p><strong>Ada County:</strong> ${ADA_COUNTY_CITY_LIST}. <strong>Canyon County:</strong> ${CANYON_COUNTY_CITY_LIST}. The two use <span class="sage">different permit portals and review cadences</span>, which affects your timeline. Your design-build contractor handles the right path for you.</p></div>`,
   ],
   [
     '<h2>Planning ranges by project type</h2>',

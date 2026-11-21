@@ -134,7 +134,7 @@ test('contractor schema preserves contacts, served cities and parent without a s
       assert.equal(provider.streetAddress, undefined);
       assert.equal(JSON.stringify(provider).includes('streetAddress'), false);
       assert.equal((schema.areaServed as { name: string }).name, city.name);
-      assert.equal(JSON.stringify(schema).includes('Garden City'), false);
+      if (city.name !== 'Garden City') assert.equal(JSON.stringify(schema).includes('Garden City'), false);
       assert.equal(JSON.stringify(schema).includes('streetAddress'), false);
     }
   }
@@ -151,9 +151,12 @@ test('noindex ADU city pages stay out of the sitemap', () => {
   assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/adu'), true);
   assert.equal(getAllSiteUrls().some((entry) => entry.path === '/areas/middleton'), true);
   assert.equal(getAllSiteUrls().some((entry) => entry.path === '/guides/middleton-remodeling-guide'), true);
-  for (const city of ['boise', 'meridian', 'eagle', 'nampa']) {
-    assert.equal(getAllSiteUrls().some((entry) => entry.path === `/services/room-addition/${city}`), true);
-  }
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/room-addition/nampa'), true);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/room-addition/boise'), false);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/room-addition/eagle'), false);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/room-addition/meridian'), false);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/areas/garden-city'), true);
+  assert.equal(getAllSiteUrls().some((entry) => entry.path === '/services/kitchen-remodel/garden-city'), false);
 });
 
 test('IndexNow changed URLs skip noindex ADU pages', () => {
@@ -183,8 +186,8 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
   };
 
   const homeMetadata = withBrandPageMetadata({
-    title: { absolute: 'Home Remodeling Contractors, Boise, ID | Boise Remodeling Co' },
-    description: fitDescription('Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope.'),
+    title: { absolute: 'Boise Home Remodeling Contractors | Boise Remodeling Co' },
+    description: fitDescription('Boise home remodeling from one design-build team: kitchens, baths and whole-home remodels. Free in-home visit, a written scope, and calls or texts welcome.'),
     alternates: { canonical: buildCanonical('/') },
   }, '/');
   push('/', homeMetadata);
@@ -268,24 +271,25 @@ test('rendered titles stay within 60 and descriptions within 160', () => {
     descriptions.set(row.description, row.path);
   }
 
-  assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Home Remodeling Contractors, Boise, ID/);
-  const homeMeta = 'Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope.';
+  assert.match(rows.find((row) => row.path === '/')?.title ?? '', /Boise Home Remodeling Contractors \| Boise Remodeling Co/);
+  const homeMeta = 'Boise home remodeling from one design-build team: kitchens, baths and whole-home remodels. Free in-home visit, a written scope, and calls or texts welcome.';
   assert.equal(homeMeta.length, 155);
   assert.equal(rows.find((row) => row.path === '/')?.description, homeMeta);
   assert.equal(homeMetadata.openGraph?.description, homeMeta);
   assert.equal(homeMetadata.twitter?.description, homeMeta);
   // SEO audit REM-T3 (20 November 2026): one title and description pattern on every area page.
-  for (const city of ['Boise', 'Eagle', 'Middleton']) {
-    const row = rows.find((entry) => entry.path === `/areas/${city.toLowerCase()}`);
-    assert.equal(row?.title, `Remodeling contractor in ${city}, ID | Boise Remodeling Co`);
-    assert.equal(row?.description, `Remodeling contractor in ${city}, Idaho for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.`);
-    assert.equal(/part of P5/i.test(row?.description ?? ''), false);
-  }
+  const rowMiddleton = rows.find((entry) => entry.path === '/areas/middleton');
+  assert.equal(rowMiddleton?.title, 'Remodeling contractor in Middleton, ID | Boise Remodeling Co');
+  assert.equal(rowMiddleton?.description, 'Remodeling contractor in Middleton, Idaho for kitchens, baths, additions and whole-home remodels, with a written scope and a free in-home visit to start.');
+  assert.equal(rows.find((entry) => entry.path === '/areas/boise')?.title, 'Boise Neighborhood Remodels | Boise Remodeling Co');
+  assert.equal(rows.find((entry) => entry.path === '/areas/eagle')?.title, 'Home Remodeling in Eagle, ID | Boise Remodeling Co');
+  assert.equal(rows.find((entry) => entry.path === '/areas/kuna')?.title, 'Home Remodeling in Kuna, ID | Boise Remodeling Co');
+  assert.equal(rows.find((entry) => entry.path === '/areas/garden-city')?.title, 'Home Remodeling in Garden City, ID | Boise Remodeling Co');
+  assert.equal(/part of P5/i.test(rowMiddleton?.description ?? ''), false);
   // SEO audit REM-T1: the hub is the Treasure Valley page; /services/kitchen-remodel/boise owns Boise.
   assert.match(rows.find((row) => row.path === '/services/kitchen-remodel')?.title ?? '', /Treasure Valley kitchen remodeling/);
-  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Design-build remodeler, part of P5/);
-  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Kitchen, bathroom/);
-  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /Design-build remodeler \| Boise Remodeling Co/);
+  assert.match(rows.find((row) => row.path === '/about')?.description ?? '', /Meet the design-build team behind Boise Remodeling Co, a P5 Home Co company/);
+  assert.match(rows.find((row) => row.path === '/about')?.title ?? '', /About Our Design-Build Team \| Boise Remodeling Co/);
   assert.equal(/since 2020|founded in 2020|founded 2020|EST 2020/i.test(rows.find((row) => row.path === '/about')?.title + '\n' + rows.find((row) => row.path === '/about')?.description), false);
 });
 
@@ -346,7 +350,7 @@ test('phase-2 NAP, sister row, and RE-10 links', () => {
     assert.equal(RETIRED_STREET.test(file), false);
     assert.match(file, /Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell/);
     assert.match(file, /hello@boiseremodeling\.co/);
-    assert.match(file, /Last updated: 2026-10-16/);
+    assert.match(file, /Last updated: 2026-11-21/);
     assert.match(file, /https:\/\/boisehandyman\.co\/re-10-repairs-boise/);
     assert.equal(file.includes('/blog/category/treasure-valley-locations'), false);
   }

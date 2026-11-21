@@ -24,10 +24,11 @@ const COPY:Record<string,Record<string,Copy>>={
   "/blog/bathroom-remodel-cost-boise":{title:"Boise Bathroom Remodel Costs (2026)",description:"Compare Boise bathroom remodel costs for showers, tile, vanities and layout changes. Review planning ranges, cost drivers and questions to ask before starting."},
   "/blog/home-addition-cost-boise":{title:"Boise Home Addition Costs (2026)",description:"Plan a Boise home addition with cost ranges for bedrooms, suites and second stories. Review structural work, permits, site conditions and budget allowances."},
   "/blog/adu-cost-boise":{title:"ADU conversion costs in Boise (2026)",description:"Compare Boise ADU conversion costs for garage, basement and attached units. Review plumbing, finish levels and permits. Detached ADUs: Boise Construction Co."},
-  '/':{title:'Home Remodeling Contractors, Boise, ID',description:'Home remodeling contractors for Boise and the Treasure Valley. Design-build kitchens, baths, and whole-home remodels. Free in-home visit and written scope.'},
+  '/':{title:'Boise Home Remodeling Contractors',description:'Boise home remodeling from one design-build team: kitchens, baths and whole-home remodels. Free in-home visit, a written scope, and calls or texts welcome.'},
   '/services':{title:'Kitchen, Bath & Home Remodeling',description:'Explore kitchen, bathroom and whole-home remodeling, additions and ADUs in Boise and the Treasure Valley. See the scope of our design-build services.'},
-  '/about':{title:'Design-build remodeler since 2020',description:'Design-build remodeler founded in 2020 and part of P5. Kitchen, bathroom. Free in-home visit, written scope, workmanship guarantee, Ada and Canyon permitting.'},
-  '/contact':{title:'Contact Our Boise Remodeling Team',description:'Discuss your kitchen, bathroom or whole-home renovation with Boise Remodeling Co. Call our team or request a consultation for your Treasure Valley project.'}},
+  '/about':{title:'About Our Design-Build Team',description:'Meet the design-build team behind Boise Remodeling Co, a P5 Home Co company. See how we plan, price and manage remodels for Ada and Canyon County homes.'},
+  '/blog':{title:'Remodeling Advice and Ideas',description:'Practical remodeling advice for Treasure Valley homeowners: budgets, timelines, permits and design ideas, written by the Boise Remodeling Co design team.'},
+  '/contact':{title:'Contact Boise Remodeling Co | Call, Text or Request a Visit',description:'Call or text Boise Remodeling Co, or book a free in-home visit for your kitchen, bath or whole-home project in Ada or Canyon County. No pressure, no pitch.'}},
  handyman:{
   '/':{title:'Handyman & Home Repairs in Boise, ID',description:'Get help with repairs, installations and home maintenance in Boise and the Treasure Valley. Describe your project or send a repair list for an estimate.'},
   '/services':{title:'Handyman Repair & Installation Services',description:'Explore drywall repair, painting, carpentry, mounting and maintenance services in Boise and the Treasure Valley. Send your repair list to our local team.'},
@@ -56,7 +57,8 @@ function pagePath(meta:Metadata,hint?:string):string{
 export function withBrandPageMetadata(meta:Metadata,routeHint?:string):Metadata{
  const override=routeHint==='__layout__'?undefined:COPY[brand.id]?.[pagePath(meta,routeHint)];
  const original=publishFoundingCopy(titleText(meta));
- const title=override?`${publishFoundingCopy(override.title)} | ${brand.name}`:original.includes(brand.name)?original:`${original} | ${brand.name}`;
+ const overrideTitle=override?publishFoundingCopy(override.title):'';
+ const title=override?(overrideTitle.includes(brand.name)?overrideTitle:`${overrideTitle} | ${brand.name}`):original.includes(brand.name)?original:`${original} | ${brand.name}`;
  const description=publishFoundingCopy(override?.description||meta.description||'')||undefined;
  const image={url:BRAND_PAGE_IMAGE,width:1200,height:630,alt:brand.name};
  const icons=routeHint==='__layout__'?{

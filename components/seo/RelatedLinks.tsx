@@ -3,7 +3,7 @@ import Image from '@/components/VersionedImage';
 import Link from 'next/link';
 import { CITIES, SERVICE_AREA_CITIES, SERVICES } from '@/shared/contentData';
 import { areaPath, cityServicePath, servicePath } from '@/lib/seo-routes';
-import { isIndexedPath } from '@/lib/siteUrls';
+import { indexableHref, isIndexedPath } from '@/lib/siteUrls';
 import { getManifestLinks } from '@/lib/internal-links';
 import { ArrowRight } from 'lucide-react';
 import { getBlogHeroImage } from '@/shared/blogImages';
@@ -21,8 +21,7 @@ import { contentImageAlt } from '@/shared/contentImageAlt';
  * service page, so the card stays useful without pointing at a noindexed URL.
  */
 function indexedCityServiceHref(serviceSlug: string, citySlug: string): string {
-  const href = cityServicePath(serviceSlug, citySlug);
-  return isIndexedPath(href) ? href : servicePath(serviceSlug);
+  return indexableHref(cityServicePath(serviceSlug, citySlug)) ?? servicePath(serviceSlug);
 }
 
 interface RelatedLinksProps {
@@ -40,7 +39,7 @@ interface RelatedLinksProps {
 /** Map each service to the pillar guide it should link "up" to. */
 const SERVICE_GUIDE: Record<string, { href: string; label: string }> = {
   'kitchen-remodel': { href: '/guides/boise-kitchen-remodeling-guide', label: 'Boise Kitchen Remodeling Guide' },
-  'bathroom-remodel': { href: '/guides/boise-bathroom-remodeling-guide', label: 'Boise Bathroom Remodeling Guide' },
+  'bathroom-remodel': { href: '/guides/boise-bathroom-remodeling-guide', label: 'Bathroom planning guide' },
   'whole-home-remodel': { href: '/guides/whole-home-remodeling-guide', label: 'Whole-Home Remodeling Guide' },
   'room-addition': { href: '/guides/boise-home-addition-guide', label: 'Boise Home Addition Guide' },
   adu: { href: '/guides/boise-home-addition-guide', label: 'Boise Home Addition Guide' },
@@ -200,8 +199,9 @@ export function RelatedLinks({ serviceSlug, citySlug, variant, manifestPath, exc
   };
 
   if (variant === 'area' && citySlug && city) {
-    const cells: Cell[] = SERVICES.map((s) => ({
-      href: indexedCityServiceHref(s.slug, citySlug),
+    const pageServices = citySlug === 'garden-city' ? SERVICES.filter((s) => s.slug !== 'adu') : SERVICES;
+    const cells: Cell[] = pageServices.map((s) => ({
+      href: citySlug === 'garden-city' ? `/services/${s.slug}` : indexedCityServiceHref(s.slug, citySlug),
       label: toSentenceCase(s.name),
       context: `${city.name}:`,
       subject: s.slug,
@@ -210,12 +210,17 @@ export function RelatedLinks({ serviceSlug, citySlug, variant, manifestPath, exc
     groups.push(<Group key="services" label={`Remodeling services in ${city.name}`}><Cells cells={withImages(cells)} /></Group>);
 
     // Other cities' area pages this page links to (data/internal-links.json), as cards with each area's own photograph.
-    const nearby: Cell[] = (manifestPath ? getManifestLinks(manifestPath) : [])
-      .filter((link) => /^\/areas\/[^/]+$/.test(link.url) && !taken.has(link.url))
-      .map((link) => {
-        const slug = link.url.split('/')[2];
-        const name = CITIES.find((c) => c.slug === slug)?.name ?? link.anchor;
-        return { href: link.url, label: name, context: 'Remodeling in', image: CITY_HERO_IMAGES[slug] };
+    const nearby: Cell[] = (citySlug === 'garden-city'
+      ? ['boise', 'meridian', 'eagle']
+      : (manifestPath ? getManifestLinks(manifestPath) : [])
+          .filter((link) => /^\/areas\/[^/]+$/.test(link.url) && !taken.has(link.url))
+          .map((link) => link.url.split('/')[2])
+    ).filter((slug, index, all) => all.indexOf(slug) === index && slug !== citySlug)
+      .concat(citySlug === 'boise' || citySlug === 'meridian' || citySlug === 'eagle' ? ['garden-city'] : [])
+      .filter((slug, index, all) => all.indexOf(slug) === index)
+      .map((slug) => {
+        const name = CITIES.find((c) => c.slug === slug)?.name ?? slug;
+        return { href: `/areas/${slug}`, label: name, context: 'Remodeling in', image: CITY_HERO_IMAGES[slug] };
       });
     if (nearby.length > 0) {
       nearby.forEach((cell) => taken.add(cell.href));

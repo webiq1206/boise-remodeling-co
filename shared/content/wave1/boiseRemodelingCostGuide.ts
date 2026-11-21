@@ -1,5 +1,6 @@
 import { buildSectionsHtml, CITIES_LIST, PILLAR_TV, PILLAR_BOISE, type ContentSection } from './snippets';
 import { P5_AS_OF, p5Low, p5PerSqft, p5Range, p5Span } from '../p5Figures';
+import { ADA_COUNTY_CITY_LIST, CANYON_COUNTY_CITY_LIST } from '../../contentData';
 
 const sections: ContentSection[] = [
   {
@@ -57,7 +58,7 @@ const sections: ContentSection[] = [
     paragraphs: [
       'Additions that look original require early design, soil and setback research, and realistic permit schedules. Second-story additions in Boise and Eagle trigger structural engineering and often longer Ada County review.',
       'ADUs and guest houses are popular in Boise’s infill-friendly climate and in Meridian lots with alley access. Utility tie-ins, fire separation, and parking rules vary by jurisdiction.',
-      'Review <a href="/blog/home-addition-cost-boise">home addition cost in Boise</a> and <a href="/services/room-addition/eagle">room additions in Eagle</a>, plus <a href="/services/adu">ADU design-build</a>.',
+      'Review <a href="/blog/home-addition-cost-boise">home addition cost in Boise</a> and <a href="/areas/eagle">room additions in Eagle</a>, plus <a href="/services/adu">ADU design-build</a>.',
     ],
   },
   {
@@ -127,7 +128,7 @@ const sections: ContentSection[] = [
   {
     h2: 'Permits and fees: Ada County vs Canyon County',
     paragraphs: [
-      'Boise, Meridian, Eagle, Kuna, and Star fall under Ada County for most unincorporated and city-integrated permitting paths. Nampa, Middleton, and Caldwell are in Canyon County with different portals and review cadence.',
+      `${ADA_COUNTY_CITY_LIST} fall under Ada County for most unincorporated and city-integrated permitting paths. ${CANYON_COUNTY_CITY_LIST} are in Canyon County with different portals and review cadence.`,
       'Cosmetic updates without structural or MEP changes may move quickly. Kitchen relocations, wall removals, and additions almost always require stamped plans and inspections.',
       'We include permits in our design-build scope. See also <a href="/resources/ada-canyon-permit-flow">Ada vs Canyon County permit timelines</a>.',
     ],

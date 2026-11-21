@@ -188,7 +188,8 @@ export default function ContactPage() {
             </h1>
             <p className="text-base md:text-lg text-inverse-foreground/85 max-w-2xl leading-relaxed mb-6">
               Schedule a free 60 to 90 minute in-home visit, call our team, or request a quote
-              and share photos so we can prepare a planning range for your remodel.
+              and share photos so we can prepare a planning range for your remodel. Questions about{' '}
+              <a href="/">home remodeling in Boise</a> start here.
             </p>
             <BusinessPhoneContact
               layout="stack"

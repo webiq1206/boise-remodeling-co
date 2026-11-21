@@ -25,6 +25,7 @@
  */
 import fs from 'fs';
 import path from 'path';
+import { CITY_SERVICE_REDIRECTS } from '../shared/cityServiceIndex.mjs';
 import { buildCanonicalRoutes } from './internal-links/lib';
 
 const root = path.join(__dirname, '..');
@@ -116,7 +117,12 @@ async function main() {
   const failures: string[] = [];
 
   /* 1. COLLISION */
+  // The city x service 301s are deliberate. The dynamic [city] route still
+  // serves every city that is not in that list, so those sources are not a
+  // shadowed static page.
+  const intentionalMerges = new Set(Object.keys(CITY_SERVICE_REDIRECTS));
   for (const source of literalSources) {
+    if (intentionalMerges.has(source)) continue;
     if (appRoutes.has(source) || canonical.has(source)) {
       failures.push(
         `COLLISION  ${source} is both a redirect source and a real page. ` +

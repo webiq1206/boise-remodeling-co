@@ -40,6 +40,7 @@ export async function generateMetadata(
   }
 ) {
   const params = await props.params;
+  if (params.city === 'garden-city') return {};
   const service = getServiceBySlug(params.slug);
   const city = getCityBySlug(params.city);
   if (!service || !city) return {};
@@ -60,6 +61,7 @@ export default async function CityServicePage(
   }
 ) {
   const params = await props.params;
+  if (params.city === 'garden-city') notFound();
   const service = getServiceBySlug(params.slug);
   const city = getCityBySlug(params.city);
   const content = SERVICE_SEO_CONTENT[params.slug];

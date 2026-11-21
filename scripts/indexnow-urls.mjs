@@ -3,8 +3,9 @@
  * Noindex city x service pages stay out. Callers pass blog and guide paths
  * when a shared metadata file changed; this module does not import the app.
  */
+import { NOINDEX_CITY_SERVICE_KEYS } from '../shared/cityServiceIndex.mjs';
 
-export const CITIES = ['boise', 'meridian', 'eagle', 'nampa', 'kuna', 'star', 'middleton', 'caldwell'];
+export const CITIES = ['boise', 'meridian', 'eagle', 'garden-city', 'nampa', 'kuna', 'star', 'middleton', 'caldwell'];
 export const SERVICES = [
   'kitchen-remodel',
   'bathroom-remodel',
@@ -15,12 +16,22 @@ export const SERVICES = [
   'outdoor-living',
   'aging-in-place',
 ];
-export const NOINDEX_CITY_SERVICE = new Set(['adu/kuna', 'adu/star', 'adu/middleton', 'adu/caldwell', 'adu/boise', 'adu/meridian', 'adu/eagle', 'adu/nampa']);
+export const NOINDEX_CITY_SERVICE = new Set([
+  'adu/kuna',
+  'adu/star',
+  'adu/middleton',
+  'adu/caldwell',
+  'adu/boise',
+  'adu/meridian',
+  'adu/eagle',
+  'adu/nampa',
+  ...NOINDEX_CITY_SERVICE_KEYS,
+]);
 
 function addCityServices(urls) {
   for (const service of SERVICES) {
     for (const city of CITIES) {
-      if (NOINDEX_CITY_SERVICE.has(`${service}/${city}`)) continue;
+      if (city === 'garden-city' || NOINDEX_CITY_SERVICE.has(`${service}/${city}`)) continue;
       urls.add(`/services/${service}/${city}`);
     }
   }

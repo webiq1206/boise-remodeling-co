@@ -6,12 +6,12 @@ import type { LandingSection } from '@/components/seo/LandingPageTemplate';
  * Phase 7 / R-3: keyword-first copy, no "near me" phrases.
  */
 
-// SEO audit REM-T1 (20 November 2026): the hub is the Treasure Valley page and
-// /services/bathroom-remodel/boise owns "bathroom remodeling in Boise".
-export const BATHROOM_NEAR_ME_TITLE = 'Treasure Valley bathroom remodeling | Boise Remodeling Co';
+// The parent service page owns "bathroom remodel in Boise". The Boise city URL
+// 301s here. Link the planning guide as "bathroom planning guide", not this phrase.
+export const BATHROOM_NEAR_ME_TITLE = 'Bathroom Remodel in Boise, ID';
 
 export const BATHROOM_NEAR_ME_DESCRIPTION =
-  'Bathroom remodeling across the Treasure Valley: showers, tile, waterproofing and permits under one written scope, with a free in-home visit to start.';
+  'Bathroom remodeling in Boise from one design-build team: showers, tile, waterproofing and permits under one written scope. Free in-home visit to start.';
 
 export const BATHROOM_NEAR_ME_H1 = 'Bathroom remodeling in Boise and the Treasure Valley';
 

@@ -23,6 +23,7 @@ import {
   isCategoryHubIndexable,
 } from '@/shared/contentHubs';
 import { isCityServiceNoindex } from '@/lib/page-metadata';
+import { redirectDestination, XML_SITEMAP_OMIT } from '@/shared/cityServiceIndex.mjs';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
 import { toSentenceCase } from '@/shared/sentenceCase';
 
@@ -84,7 +85,7 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
 
   // Noindexed doorway-risk combos are excluded, exactly as in the XML sitemap.
   const cityServices: SiteUrlEntry[] = SERVICES.flatMap((s) =>
-    CITIES.filter((c) => !isCityServiceNoindex(s.slug, c.slug)).map((c) => ({
+    CITIES.filter((c) => c.slug !== 'garden-city' && !isCityServiceNoindex(s.slug, c.slug) && !redirectDestination(`/services/${s.slug}/${c.slug}`)).map((c) => ({
       path: `/services/${s.slug}/${c.slug}`,
       label: `${toSentenceCase(s.name)} in ${c.name}`,
       changeFrequency: 'monthly' as const,
@@ -140,9 +141,37 @@ export function getSiteUrlGroups(): SiteUrlGroup[] {
   ];
 }
 
-/** Flat list, for the XML sitemap. */
+/** Flat list, for the HTML sitemap and the index rule. */
 export function getAllSiteUrls(): SiteUrlEntry[] {
   return getSiteUrlGroups().flatMap((g) => g.entries);
+}
+
+const xmlOmit = new Set<string>(XML_SITEMAP_OMIT);
+
+/** XML sitemap. Drops the HTML sitemap and the framed instant estimate. */
+export function getXmlSiteUrls(): SiteUrlEntry[] {
+  return getAllSiteUrls().filter((entry) => !xmlOmit.has(entry.path));
+}
+
+/**
+ * Where an internal link should point. A 301 source becomes its target.
+ * A noindex path returns null so the caller can drop it.
+ */
+export function indexableHref(path: string): string | null {
+  const destination = redirectDestination(path);
+  if (destination) return destination;
+  return isIndexedPath(path) ? path : null;
+}
+
+/**
+ * A service hub's city link. Garden City goes to its area page. There is no
+ * /services/{service}/garden-city page.
+ */
+export function serviceHubCityHref(serviceSlug: string, citySlug: string): string | null {
+  if (citySlug === 'garden-city') return '/areas/garden-city';
+  const href = indexableHref(`/services/${serviceSlug}/${citySlug}`);
+  if (!href || href === `/services/${serviceSlug}`) return null;
+  return href;
 }
 
 let indexedPathSet: Set<string> | undefined;

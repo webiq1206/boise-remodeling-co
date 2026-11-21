@@ -65,7 +65,7 @@ export default function TermsOfServicePage() {
 
             <h2 id="document-section-2">Who we are</h2>
             <p>
-              Boise Remodeling Co is a DBA of P5 Home Co ("Company," "we," "us," or "our"), Idaho Registered Contractor #8381215. We provide residential remodeling services in the Treasure Valley area of Idaho.
+              Boise Remodeling Co is a DBA of P5 Home Co LLC ("Company," "we," "us," or "our"), Idaho Registered Contractor #8381215. We provide residential remodeling services in the Treasure Valley area of Idaho.
             </p>
 
             <h2 id="document-section-3">Your signed agreement controls</h2>

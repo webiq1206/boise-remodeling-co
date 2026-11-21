@@ -75,6 +75,7 @@ const nextConfig = {
   },
 
   async redirects() {
+    const { CITY_SERVICE_REDIRECTS } = await import('./shared/cityServiceIndex.mjs');
     const r = (source, destination) => [
       { source, destination, permanent: true },
       { source: source + '/', destination, permanent: true },
@@ -182,6 +183,15 @@ const nextConfig = {
     }
     for (const [source, destination] of Object.entries(blogRedirects)) {
       redirects.push(...r(source, destination));
+    }
+
+    // Thin city pages, 21 November 2026. Literal 301, one hop, no chain.
+    // `permanent: true` emits 308, so these set statusCode 301.
+    for (const [source, destination] of Object.entries(CITY_SERVICE_REDIRECTS)) {
+      redirects.push(
+        { source, destination, statusCode: 301 },
+        { source: `${source}/`, destination, statusCode: 301 },
+      );
     }
 
     return redirects;

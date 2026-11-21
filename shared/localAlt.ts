@@ -15,7 +15,7 @@ export interface LocalAltContext {
   city?: string;
 }
 
-const CITY_NAMES = ['Boise', 'Meridian', 'Eagle', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'];
+const CITY_NAMES = ['Boise', 'Meridian', 'Eagle', 'Garden City', 'Nampa', 'Kuna', 'Star', 'Middleton', 'Caldwell'];
 
 const SUBJECT_BY_SLUG: Record<string, string> = {
   'kitchen-remodel': 'kitchen remodel',

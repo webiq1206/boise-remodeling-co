@@ -9,7 +9,7 @@ import { SERVICE_AREA_CITY_NAMES, SERVICE_AREA_COUNTIES, SERVICES } from '@/shar
 import { SITE_CONFIG } from '@/shared/siteConfig';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '@/shared/publicClaims';
 import { SHOW_TESTIMONIALS } from '@/shared/testimonialsData';
-import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '@/shared/gbpProfile';
+import { P5_PARENT_SAME_AS } from '@/shared/gbpProfile';
 
 interface SchemaContext {
   '@context': string;
@@ -50,9 +50,8 @@ export const P5_PARENT_ORGANIZATION = {
   '@id': P5_ORG_ID,
   name: 'P5 Home Co',
   url: P5_ORIGIN,
-  // P5 Home Co's Facebook page, Instagram and Google Business Profile are the
-  // family's only profiles; listed here on the parent, never on this brand.
-  sameAs: [P5_FACEBOOK_URL, P5_INSTAGRAM_URL, P5_GBP_URL],
+  // P5 Home Co's profiles only, on the parent node, never on this brand.
+  sameAs: [...P5_PARENT_SAME_AS],
 } as const;
 /**
  * Year-free square mark. The seal still reads EST 2020, so schema logo uses
@@ -143,10 +142,13 @@ function customerServiceContactPoint() {
 
 /** The home-page entity sentence. City pages pass their own city name. */
 export function contractorDescription(city = 'Boise'): string {
+  if (city === 'Garden City') {
+    return 'Design-build remodeling contractor serving Garden City and the Treasure Valley, Idaho. Kitchen remodels, bathrooms, additions and whole-home renovations.';
+  }
   return `Design-build remodeling contractor serving ${city} and the Treasure Valley, Idaho. Kitchen remodels, bathrooms, additions & whole-home renovations.`;
 }
 
-export function generateLocalBusinessSchema(city?: string): SchemaContext {
+export function generateLocalBusinessSchema(city?: string, options?: { omitServices?: string[] }): SchemaContext {
   // Served cities belong in areaServed. The address is the Meridian locality
   // only: no street and no map pin. The optional city customizes the description.
   return {
@@ -201,7 +203,7 @@ export function generateLocalBusinessSchema(city?: string): SchemaContext {
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Remodeling Services',
-      itemListElement: SERVICES.map((s) => ({
+      itemListElement: SERVICES.filter((s) => !options?.omitServices?.includes(s.slug)).map((s) => ({
         '@type': 'Offer',
         url: `${baseUrl}/services/${s.slug}`,
         itemOffered: {

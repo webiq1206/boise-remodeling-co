@@ -67,7 +67,7 @@ const kitchenExtra: ContentSection[] = [
     h2: 'Boise, Meridian, Eagle, and Nampa: local notes',
     paragraphs: [
       'Ada County cities share many permit conventions; Canyon County (Nampa, Middleton, Caldwell) uses different portals. HOA review in Eagle may add design time without changing construction unit costs dramatically.',
-      'Links: <a href="/services/kitchen-remodel/boise">Boise</a>, <a href="/services/kitchen-remodel/meridian">Meridian</a>, <a href="/services/kitchen-remodel/eagle">Eagle</a>, <a href="/services/kitchen-remodel/nampa">Nampa</a>, <a href="/areas/kuna">Kuna</a>, <a href="/areas/star">Star</a>.',
+      'Links: <a href="/services/kitchen-remodel/boise">Boise</a>, <a href="/services/kitchen-remodel/meridian">Meridian</a>, <a href="/areas/eagle">Eagle</a>, <a href="/services/kitchen-remodel/nampa">Nampa</a>, <a href="/areas/kuna">Kuna</a>, <a href="/areas/star">Star</a>.',
     ],
   },
   {
@@ -118,7 +118,7 @@ const bathroomExtra: ContentSection[] = [
   {
     h2: 'City-specific service links',
     paragraphs: [
-      '<a href="/services/bathroom-remodel/boise">Boise bathroom remodel</a>, <a href="/services/bathroom-remodel/meridian">Meridian</a>, <a href="/services/bathroom-remodel/nampa">Nampa</a>, <a href="/services/bathroom-remodel/eagle">Eagle</a>, <a href="/services/bathroom-remodel/kuna">Kuna</a>, <a href="/services/bathroom-remodel/caldwell">Caldwell</a>, and <a href="/services/bathroom-remodel/star">Star</a>.',
+      '<a href="/services/bathroom-remodel">Boise bathroom remodel</a>, <a href="/services/bathroom-remodel/meridian">Meridian</a>, <a href="/services/bathroom-remodel/nampa">Nampa</a>, <a href="/services/bathroom-remodel/eagle">Eagle</a>, <a href="/services/bathroom-remodel/kuna">Kuna</a>, <a href="/services/bathroom-remodel/caldwell">Caldwell</a>, and <a href="/services/bathroom-remodel/star">Star</a>.',
     ],
   },
   {
@@ -190,7 +190,7 @@ const additionExtra: ContentSection[] = [
   {
     h2: 'Service areas',
     paragraphs: [
-      '<a href="/services/room-addition/boise">Boise additions</a>, <a href="/services/room-addition/eagle">Eagle</a>, <a href="/services/room-addition/kuna">Kuna</a>, <a href="/areas/nampa">Nampa area</a>.',
+      '<a href="/services/room-addition">Boise additions</a>, <a href="/areas/eagle">Eagle</a>, <a href="/services/room-addition/kuna">Kuna</a>, <a href="/areas/nampa">Nampa area</a>.',
     ],
   },
 ];

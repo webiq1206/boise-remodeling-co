@@ -16,7 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '../shared/publicClaims';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig';
-import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile';
+import { P5_BBB_URL, P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile';
 import { SERVICES, CITIES, SERVICE_AREA_CITY_NAMES, SERVICE_AREA_CITY_COUNTY, SERVICE_AREA_SENTENCE } from '../shared/contentData';
 import { GUIDE_PAGES } from '../shared/guideContent';
 import { CONTENT_HUBS } from '../shared/contentHubs';
@@ -24,11 +24,16 @@ import { BLOG_POSTS } from '../shared/blogContent';
 
 const BASE = SITE_CONFIG.siteUrl.replace(/\/$/, '');
 const url = (p: string) => `${BASE}${p}`;
-const today = '2026-10-16';
+const today = '2026-11-21';
 const HANDYMAN_RE10 = 'https://boisehandyman.co/re-10-repairs-boise';
 const CONTACT_BLOCK =
   `${publicFooterLine()}. Phone ${SITE_CONFIG.phone}. Email ${SITE_CONFIG.email}. ` +
   `Idaho Registered Contractor #8381215 and insured.`;
+const NAP_BLOCK =
+  `P5 Home Co, Meridian, ID 83646 (service-area business, no public street). Phone (208) 477-1169. Web https://p5homeco.com.`;
+const BRAND_SITE_LINE = `${SITE_CONFIG.name}: ${BASE}.`;
+const PROFILE_LINKS = `[Google](${P5_GBP_URL}), [Facebook](${P5_FACEBOOK_URL}), [Instagram](${P5_INSTAGRAM_URL}), [BBB](${P5_BBB_URL})`;
+const PROFILE_TEXT = `Google ${P5_GBP_URL}, Facebook ${P5_FACEBOOK_URL}, Instagram ${P5_INSTAGRAM_URL}, BBB ${P5_BBB_URL}`;
 
 const adaCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'ada');
 const canyonCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'canyon');
@@ -56,6 +61,8 @@ function buildShort(): string {
   lines.push(`# ${SITE_CONFIG.name}`, '');
   lines.push(`> ${SUMMARY}`, '');
   lines.push(CONTACT_BLOCK, '');
+  lines.push(NAP_BLOCK);
+  lines.push(BRAND_SITE_LINE, '');
   lines.push(POSITIONING, '');
 
   lines.push('## Services', '');
@@ -85,6 +92,7 @@ function buildShort(): string {
 
   lines.push('## Local permit and location resources', '');
   lines.push(`- [Ada County vs Canyon County permit flow](${url('/resources/ada-canyon-permit-flow')})`);
+  lines.push(`- [Home remodeling in Garden City](${url('/areas/garden-city')})`);
   if (cityGuides.length) {
     lines.push(`- City guides: ${cityGuides.map((g) => `[${g.title}](${url(`/guides/${g.slug}`)})`).join(', ')}`);
   }
@@ -109,7 +117,7 @@ function buildShort(): string {
   lines.push('## About and contact', '');
   lines.push(publishFoundingCopy(`- [About ${SITE_CONFIG.name}](${url('/about')}): design-build remodels across the Treasure Valley since 2020, a DBA of P5 Home Co.`));
   lines.push(`- [Contact](${url('/contact')})`);
-  lines.push(`- Parent company profiles (P5 Home Co): [Google](${P5_GBP_URL}), [Facebook](${P5_FACEBOOK_URL}), [Instagram](${P5_INSTAGRAM_URL})`);
+  lines.push(`- Parent company profiles (P5 Home Co): ${PROFILE_LINKS}`);
   lines.push(
     `- [Instant remodel estimate](${url('/instant-estimate')}): answer a few questions and see a preliminary price range on screen. Free, with no appointment. It is a range for budgeting, not a final price; a firm written proposal follows a site visit.`,
   );
@@ -135,6 +143,8 @@ function buildFull(): string {
   lines.push(`# ${SITE_CONFIG.name} - Full Reference`, '');
   lines.push(`> ${SUMMARY}`, '');
   lines.push(CONTACT_BLOCK, '');
+  lines.push(NAP_BLOCK);
+  lines.push(BRAND_SITE_LINE, '');
 
   lines.push('## About', '');
   lines.push(
@@ -158,7 +168,7 @@ function buildFull(): string {
   lines.push('- Business type: Residential design-build remodeling contractor');
   if (SHOW_FOUNDING_YEAR) lines.push('- Founded: 2020');
   lines.push('- Parent company: P5 Home Co (https://p5homeco.com)');
-  lines.push(`- Parent company profiles: Google ${P5_GBP_URL}, Facebook ${P5_FACEBOOK_URL}, Instagram ${P5_INSTAGRAM_URL}`);
+  lines.push(`- Parent company profiles: ${PROFILE_TEXT}`);
   lines.push('- Service model: One accountable team for design, permits, and construction');
   lines.push(`- Contact: ${SITE_CONFIG.email} (${url('/contact')})`);
   lines.push(`- Instant estimate (a preliminary price range on screen, not a final price): ${url('/instant-estimate')}`);
@@ -187,8 +197,8 @@ function buildFull(): string {
   }
   lines.push(
     '',
-    `Each service has a dedicated page per city at /services/{service-slug}/{city-slug} for ` +
-      `${CITIES.map((c) => c.slug).join(', ')}. City service-area hubs live at /areas/{city-slug}.`,
+    `City service-area hubs live at /areas/{city-slug} for ` +
+      `${CITIES.map((c) => c.slug).join(', ')}.`,
     '',
   );
 
@@ -217,7 +227,8 @@ function buildFull(): string {
 
   lines.push('## Planning resources', '');
   lines.push('- Remodeling planning resources (free PDFs and visual guides): /resources');
-  lines.push('- Ada vs Canyon County permit flow (visual guide): /resources/ada-canyon-permit-flow', '');
+  lines.push('- Ada vs Canyon County permit flow (visual guide): /resources/ada-canyon-permit-flow');
+  lines.push('- Home remodeling in Garden City: /areas/garden-city', '');
 
   lines.push('## Common questions', '');
   lines.push(

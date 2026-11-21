@@ -1,5 +1,5 @@
 /**
- * The 2020 founding claim is unproven. Idaho SOS shows P5 Home Co. LLC
+ * The 2020 founding claim is unproven. Idaho SOS shows P5 Home Co LLC
  * filed 09/25/2025. The year stays in the repo. Public pages, meta, llms
  * files, and JSON-LD omit it while this flag is false.
  */

@@ -53,12 +53,12 @@ test('bathroom near-me metadata matches the approved draft', () => {
   }), '/services/[slug]');
   const title = renderedTitle(meta);
   // SEO audit REM-T1 (20 November 2026): the hub targets the Treasure Valley; the Boise page owns Boise.
-  assert.equal(title, 'Treasure Valley bathroom remodeling | Boise Remodeling Co');
+  assert.equal(title, 'Bathroom Remodel in Boise, ID | Boise Remodeling Co');
   assert.ok(title.length <= 60, title);
   assert.equal(meta.description, BATHROOM_NEAR_ME_DESCRIPTION);
   // The draft labels this sentence 148 characters. The sentence itself is 142.
   assert.ok(BATHROOM_NEAR_ME_DESCRIPTION.length <= 160);
-  assert.match(String(meta.description), /^Bathroom remodeling across the Treasure Valley/);
+  assert.match(String(meta.description), /^Bathroom remodeling in Boise from one design-build team/);
   assert.equal(String(meta.description).includes('8381215'), false);
   assert.equal(String(meta.description).includes('$'), false);
   assert.equal(String(meta.openGraph?.description).includes('8381215'), false);
