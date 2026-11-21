@@ -25,7 +25,7 @@ test('the privacy page adds the cookies section without removing the existing po
   assert.match(page, /https:\/\/privacy\.microsoft\.com\/privacystatement/);
   assert.equal(page.includes('CLARITY-PLACEHOLDER'), false);
   assert.equal(page.includes('wording pending Larry'), false);
-  assert.match(page, /Boise Remodeling Co \("we," "our," or "us"\) is committed to protecting your privacy\./);
+  assert.match(page, /Boise Remodeling Co, a DBA of P5 Home Co LLC \("we," "our," or "us"\), is committed to protecting your privacy\./);
   assert.match(page, /We do not sell your personal information\./);
   assert.equal(page.includes(String.fromCharCode(8212)), false);
 });
