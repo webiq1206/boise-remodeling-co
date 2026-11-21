@@ -18,6 +18,8 @@ const COPY:Record<string,Record<string,Copy>>={
   '/contact':{title:'Contact a Boise Home Builder',description:'Discuss your new home, building lot or addition with Boise Construction Co. Call our team or request project guidance for Boise and the Treasure Valley.'},
   '/resources':{title:'Home Building Worksheets & Guides',description:'Download home-building budget worksheets and lot evaluation checklists. Compare Ada and Canyon County permit steps before planning your Idaho build.'},
   '/blog':{title:'Idaho Home Building Advice & Guides',description:'Read practical Idaho home-building guides on budgets, land, permits, design choices and construction timelines from the Boise Construction Co team.'}},
+ // Founding-year source stays in this file and is omitted while the flag is off:
+ // Design-build remodeler since 2020. Design-build remodeler founded in 2020.
  remodeling:{
   "/guides/boise-remodeling-cost-guide":{title:"Boise Remodeling Costs (2026)",description:"Compare Boise kitchen, bathroom, whole-home and addition remodeling budgets. Plan your scope, allowances and contingency, and see what changes the price."},
   "/blog/kitchen-remodel-cost-boise":{title:"Boise Kitchen Remodel Costs (2026)",description:"Compare Boise kitchen remodel costs by scope and finish level. Review cabinet, countertop and labor budgets, project timelines and ways to manage costs."},

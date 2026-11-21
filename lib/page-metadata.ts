@@ -295,7 +295,7 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
     case 'about':
       title = 'About Our Design-Build Team';
       description =
-        'Meet the design-build team behind Boise Remodeling Co, a P5 Home Co company. See how we plan, price and manage remodels for Ada and Canyon County homes.';
+        'Meet the design-build team behind Boise Remodeling Co, a P5 Home Co company. Idaho Registered Contractor #8381215. See how we plan, price and manage remodels for Ada and Canyon County homes.';
       break;
     case 'contact':
       title = 'Contact Boise Remodeling Co | Call, Text or Request a Visit';

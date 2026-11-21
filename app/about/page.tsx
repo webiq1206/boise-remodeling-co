@@ -125,7 +125,7 @@ export default function AboutPage() {
                     .
                   </p>
                   <p className="ed-small interior-hero-more-note mt-6 max-w-2xl">
-                    P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.
+                    P5 Home Co, Idaho Registered Contractor #8381215. Insured, certificate on request.
                     One-year workmanship warranty on remodels, from documented Final Completion, for work by our own team.
                     Subcontractors provide their own warranty; you get the complete subcontractor list at the end of every project.
                   </p>
@@ -166,7 +166,7 @@ export default function AboutPage() {
                     Construction Co. RE-10 inspection repairs are handled by Boise Handyman Co.
                   </p>
                   <p className="ed-body mt-6">
-                    Boise Remodeling Co is a trade name of P5 Home Co LLC, Idaho Registered Contractor
+                    Boise Remodeling Co is a trade name of P5 Home Co, Idaho Registered Contractor
                     #8381215. Your contract is with P5 Home Co doing business as Boise Remodeling Co.
                   </p>
                   <p className="ed-body mt-4">
