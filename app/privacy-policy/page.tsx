@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
 
             <h2 id="document-section-1">Introduction</h2>
             <p>
-              Boise Remodeling Co ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
+              Boise Remodeling Co, a DBA of P5 Home Co LLC ("we," "our," or "us"), is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services.
             </p>
 
             <h2 id="document-section-2">Information we collect</h2>

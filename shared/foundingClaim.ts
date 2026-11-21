@@ -1,6 +1,5 @@
 /**
- * The 2020 founding claim is unproven. Idaho SOS shows P5 Home Co. LLC
- * filed 09/25/2025. The year stays in the repo. Public pages, meta, llms
+ * The 2020 founding claim is unproven. P5 Home Co LLC is registered with the Idaho Secretary of State, filed 09/25/2025. The year stays in the repo. Public pages, meta, llms
  * files, and JSON-LD omit it while this flag is false.
  */
 import { SHOW_FOUNDING_YEAR } from './publicClaims';

@@ -4,7 +4,7 @@ Implemented September 24, 2026. Production deployment remains the owner's respon
 
 ## Design
 
-- Original horizontal vector wordmark retained, with the P5 family signature in the brand accent and the endorsement “A P5 Home Company”.
+- Original horizontal vector wordmark retained, with the P5 family signature in the brand accent and the endorsement “A P5 Home Co brand”.
 - Matching browser and application icons.
 - P5 Manrope and Cormorant Garamond typography, paper #FBFAF6, bone #F1EDE4, and charcoal #2C302F.
 - Approved homepage imagery, service exploration, process, and approach sections.
