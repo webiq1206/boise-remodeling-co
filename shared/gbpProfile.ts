@@ -75,7 +75,7 @@ export const GBP_DESCRIPTION = publishFoundingCopy(
 export const GBP_LINKS = {
   website: SITE,
   appointment: `${SITE}/contact`,
-  estimator: `${SITE}/#planning-ranges`,
+  estimator: `${SITE}/instant-estimate`,
   resources: `${SITE}/resources`,
   review: `${SITE}/review`,
 } as const;
@@ -316,11 +316,11 @@ export const GBP_PRODUCTS: GbpProduct[] = [
   },
   {
     category: 'Consultation & Tools',
-    name: 'Online Planning Ranges',
+    name: 'Instant estimate',
     price: 'Free',
-    url: `${SITE}/#planning-ranges`,
+    url: `${SITE}/instant-estimate`,
     description:
-      'Planning ranges online for kitchen, bath, and whole-home remodels. Not a bid - a starting point for conversation. For other projects, request a quote.',
+      'A preliminary price range on screen for kitchen, bath, basement, whole-home, flooring, painting and addition projects. Not a quote or a bid: a starting point for conversation. For other projects, request a quote.',
   },
   {
     category: 'Consultation & Tools',
@@ -395,7 +395,7 @@ export interface GbpQaEntry {
 export const GBP_QA_SEED: GbpQaEntry[] = [
   {
     question: 'Do you provide free estimates?',
-    answer: `Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also explore kitchen, bath, and whole-home planning ranges at ${SITE}/#planning-ranges`,
+    answer: `Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also get an instant estimate, a preliminary price range for kitchen, bath, basement, whole-home and addition projects, at ${SITE}/instant-estimate`,
   },
   {
     question: 'What areas do you serve?',

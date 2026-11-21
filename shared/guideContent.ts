@@ -161,7 +161,7 @@ export const GUIDE_PAGES: GuidePageData[] = [
       { url: '/guides/boise-remodeling-guide' },
       { url: '/blog/category/remodeling-costs' },
       { url: '/areas' },
-      { url: '/#planning-ranges', anchor: 'Explore planning ranges' },
+      { url: '/instant-estimate', anchor: 'Get an instant estimate' },
       // The cost guide is the site's highest-authority content asset; route
       // that authority to the money pages with cost-flavored anchors
       // (local-seo-audit/06-internal-linking-plan.md Gap 2).

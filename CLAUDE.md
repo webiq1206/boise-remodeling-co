@@ -77,9 +77,11 @@ fail on any "instant estimate" or "estimate in minutes" wording; the owner
 reversed that on 13 November 2026 for the central estimator at
 `/instant-estimate`, which gives an on-screen preliminary range, so
 instant-estimate wording is accurate and allowed. It must never be called a
-quote or a final price. Homepage content links to the working
-planning-range explorer go to `/#planning-ranges`; `/#calculator` has had no
-target since the optional intake was unmounted.
+quote or a final price. The homepage planning-range slider was retired on 21
+November 2026 (see "Central instant estimator"): content links that went to
+`/#planning-ranges` go to `/instant-estimate` (with `?project=` on kitchen,
+bath and whole-home pages), and `/#calculator` has had no target since the
+optional intake was unmounted.
 
 **Never run `db:push` against the live database.** Add the schema, then tell
 the owner to run it.
@@ -597,11 +599,24 @@ primary pricing call to action on every family site.
   (`responsePromiseGuard.ts` is unchanged); "no contact information required"
   (the estimator asks for name, email and phone before the range); a specific
   number of minutes or seconds; invented numbers; em dashes; "near me".
-- **Existing tools stay until the owner retires them.** The homepage planning
-  ranges, the short request (`/#request`, `/estimate`), the plans upload, the
-  chat assistant and every API route are still mounted. Working lead generation
-  is not removed until the replacement is verified live.
-- Guard: `tests/instant-estimator.test.ts`.
+- **Existing tools stay until the owner retires them.** The short request
+  (`/#request`, `/estimate`), the plans upload, the chat assistant and every
+  API route are still mounted. Working lead generation is not removed until the
+  replacement is verified live.
+- **The homepage price slider is retired** (owner, 21 November 2026: one
+  source of prices). `PlanningRangeExplorer` ran this site's own engine and
+  showed figures that differed from the instant estimator, so the homepage
+  shows `HomeInstantEstimateProjects` in its place: a heading, one sentence, one
+  link per project the estimator prices for this brand
+  (`HOME_ESTIMATOR_PROJECTS` in `shared/ctaCopy.ts`, the remodeling list in
+  p5-home-co `brands.ts`) to `/instant-estimate?project=<id>`, an eighth "Not
+  sure yet" tile to the estimator's own chooser (two full rows of four), and
+  "Request a quote" and the phone beside them. No figure. The slider component stays in
+  the repository, unmounted; do not mount it again. The block keeps a
+  `#planning-ranges` anchor for links from outside the site; every link on the
+  site goes to `/instant-estimate`.
+- Guards: `tests/instant-estimator.test.ts` and
+  `tests/home-instant-estimate-block.test.ts` (renders the homepage body).
 
 ## One team email per request (owner decision, 17 November 2026)
 

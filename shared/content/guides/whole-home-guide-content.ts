@@ -74,7 +74,7 @@ export const WHOLE_HOME_GUIDE_CONTENT = `
 <p>See <a href="/blog/remodeling-mistakes-to-avoid">Remodeling Mistakes to Avoid</a> and <a href="/blog/questions-to-ask-remodeling-contractor">Questions to Ask a Contractor</a>.</p>
 
 <h2>Ready to plan your whole-home remodel?</h2>
-<p>The best first step is an assessment of your home and goals with an honest budget and plan. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/#planning-ranges">explore planning ranges</a>.</p>
+<p>The best first step is an assessment of your home and goals with an honest budget and plan. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/instant-estimate?project=whole-home">get an instant estimate</a>.</p>
 `.trim();
 
 export const WHOLE_HOME_GUIDE_FAQS = [
