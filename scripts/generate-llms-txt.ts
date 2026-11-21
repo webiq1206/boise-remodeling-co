@@ -46,9 +46,9 @@ const SUMMARY = publishFoundingCopy(
 const POSITIONING =
   `Design-build means one accountable team handles design direction, estimating, Ada and ` +
   `Canyon County permitting, and construction as one accountable company with one point of contact, backed by a written scope ` +
-  `before work starts and a one-year workmanship guarantee from documented Final Completion. Planning ranges come from an ` +
-  `on-site estimator that prices the room, the scope and the finish level rather than a flat ` +
-  `price per square foot; they are budget ranges, not quotes, and a firm proposal follows a ` +
+  `before work starts and a one-year workmanship guarantee from documented Final Completion. Preliminary price ranges come from the ` +
+  `instant estimate (${url("/instant-estimate")}), which prices the room, the scope and the finish level rather than a flat ` +
+  `price per square foot; they are preliminary ranges, not quotes, and a firm proposal follows a ` +
   `free in-home visit.`;
 
 function buildShort(): string {

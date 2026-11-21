@@ -33,6 +33,23 @@ export const ESTIMATOR_PROJECT_BY_SERVICE: Readonly<Record<string, string>> = {
   "room-addition": "addition",
 };
 
+/**
+ * The projects the central estimator prices for this brand, in its own order
+ * and with its own names (p5-home-co `app/lib/estimator/brands.ts`, brand
+ * "remodeling"). The homepage block that replaced the planning range slider
+ * (owner, 21 November 2026) links each one to /instant-estimate?project=<id>.
+ * Change this list only when that brand list changes.
+ */
+export const HOME_ESTIMATOR_PROJECTS: ReadonlyArray<{ id: string; label: string }> = [
+  { id: "kitchen-remodel", label: "Kitchen remodel" },
+  { id: "bathroom-remodel", label: "Bathroom remodel" },
+  { id: "basement-finish", label: "Basement finishing" },
+  { id: "whole-home", label: "Whole-home renovation" },
+  { id: "flooring", label: "New flooring" },
+  { id: "interior-paint", label: "Interior painting" },
+  { id: "addition", label: "Home addition" },
+];
+
 /** The estimator page, opened on one project when the estimator has it. */
 export function estimatorHref(project?: string | null): string {
   return project && /^[a-z0-9-]{1,40}$/.test(project) ? `${ESTIMATOR_PATH}?project=${project}` : ESTIMATOR_PATH;

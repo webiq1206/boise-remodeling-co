@@ -5,7 +5,7 @@ import {type CSSProperties, type ReactNode} from 'react';
 import {ArrowUpRight} from 'lucide-react';
 import {Accordion,AccordionItem,AccordionTrigger,AccordionContent} from '@/components/ui/accordion';
 import {FAQSection} from '@/components/FAQSection';
-import {PlanningRangeExplorer} from './PlanningRangeExplorer';
+import {HomeInstantEstimateProjects} from './HomeInstantEstimateProjects';
 import {InstantEstimateBand} from './InstantEstimateBand';
 import {brands,cities,serviceExtras} from './family-content';
 import {DesignGallery} from '@/components/sections/DesignGallery';
@@ -36,8 +36,7 @@ function Rows({items,numbered=false}:{items:[string,string][];numbered?:boolean}
 /**
  * The homepage below the hero, in the order a homeowner has the conversation:
  * the instant estimate (the band that sells the central estimator), what we do (picture cards), what it can look like (showcase), what it costs
- * (planning ranges, on their own dark band so the number is the one thing on
- * screen), what happens next (process), why the price is fair (value band),
+ * (the instant estimate by project, on its own dark band), what happens next (process), why the price is fair (value band),
  * who you are hiring (founder), the way we work, where we work, and the last
  * objections. The request form follows in app/page.tsx.
  */
@@ -93,8 +92,11 @@ export function ApprovedHome({hero}:{hero:ReactNode}){
    ]}
   />
 
-  {/* 3. The number, on its own band. */}
-  <PlanningRangeExplorer />
+  {/* 3. The price, on its own band: the instant estimate by project. The
+      planning range slider that sat here was retired on 21 November 2026 (one
+      source of prices); PlanningRangeExplorer.tsx stays in the repository,
+      unmounted. */}
+  <HomeInstantEstimateProjects />
 
   {/* 4. What happens next. */}
   <section className="f-section f-container f-two" id="how-we-build">

@@ -7,7 +7,7 @@ const sections: ContentSection[] = [
     paragraphs: [
       `Most residential remodels we scope across ${CITIES_LIST} fall into planning bands - not single sticker prices. A guest bath refresh in Meridian is not priced like a full kitchen gut in the North End. National averages rarely account for Ada County plan review, Canyon County submission portals, Idaho labor markets, or the finish level common in Eagle and Hidden Springs.`,
       `This guide is the pillar for our <strong>Boise Remodeling Costs</strong> hub. Use it to understand typical ranges, then read the linked articles on kitchen, bathroom, whole-home, addition, and luxury costs for project-specific detail.`,
-      `For a rough planning number before design, <a href="/#planning-ranges">explore our planning ranges</a>, then schedule an in-home consultation for a written scope.`,
+      `For a rough planning number before design, <a href="/instant-estimate">get an instant estimate</a>, then schedule an in-home consultation for a written scope.`,
     ],
   },
   {

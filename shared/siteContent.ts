@@ -172,7 +172,7 @@ export const CLIENT_PRIORITIES: ClientPriority[] = [
   },
   {
     title: "Staying on budget",
-    body: "Planning ranges upfront, written change orders before extra work, and proactive budget guidance throughout.",
+    body: "A preliminary range upfront, written change orders before extra work, and proactive budget guidance throughout.",
     icon: Wallet,
   },
   {
@@ -259,8 +259,8 @@ export const OPTIONAL_ENHANCEMENTS = {
 
 export const BUDGET_GUIDANCE_POINTS = [
   {
-    title: "Planning ranges, not firm bids",
-    body: "Our planning ranges and in-home visit provide budget guidance based on project type, size, finish level, and market conditions. Your detailed project evaluation happens at consultation.",
+    title: "Preliminary ranges, not firm bids",
+    body: "Our instant estimate and in-home visit provide budget guidance based on project type, size, finish level, and market conditions. Your detailed project evaluation happens at consultation.",
   },
   {
     title: "Written scope before construction",

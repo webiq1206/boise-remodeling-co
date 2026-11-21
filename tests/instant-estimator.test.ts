@@ -146,8 +146,14 @@ test("the homepage sells the estimator near the top and keeps every existing too
   assert.match(band, /href=\{ESTIMATOR_PATH\}[^>]*>\{CTA_PRIMARY\}/);
   assert.match(band, /href=\{REQUEST_PATH\}>\{CTA_REQUEST\}/);
   assert.equal(band.match(/^  '[^']+',$/gm)?.length, 3, "three short benefits");
-  // Nothing was unmounted: the planner, the short request and the chat assistant are still there.
-  assert.match(home, /<PlanningRangeExplorer \/>/);
+  // The planning range slider was retired on 21 November 2026 (one source of
+  // prices): the homepage shows the instant estimate by project in its place,
+  // and the component stays in the repository, unmounted
+  // (tests/home-instant-estimate-block.test.ts). The short request and the
+  // chat assistant are still there.
+  assert.doesNotMatch(home, /<PlanningRangeExplorer \/>/);
+  assert.match(home, /<HomeInstantEstimateProjects \/>/);
+  assert.ok(existsSync("components/approved/PlanningRangeExplorer.tsx"));
   assert.match(read("app/page.tsx"), /<HeroConversion \/>/);
   assert.match(read("app/layout.tsx"), /<AssistantWidget \/>/);
   assert.ok(existsSync("app/estimate/page.tsx"));

@@ -1,0 +1,46 @@
+/* The instant estimate block on the homepage's dark band (where the planning
+   range slider was). Spacing comes from the family tokens. */
+.section { position: relative; }
+.legacyAnchor { position: absolute; top: 0; left: 0; width: 1px; height: 1px; }
+.intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--grid-gap, 32px);
+  align-items: end;
+  margin-bottom: 32px;
+}
+.section .intro h2 { font-size: clamp(28px, 3vw, 40px); line-height: 1.15; }
+.section .intro h2 em { color: var(--fr-paper); }
+.intro > p { color: var(--fr-paper); font-size: 18px; line-height: 1.6; max-width: 50ch; }
+.projects {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.projects li { display: flex; min-width: 0; }
+.project { flex: 1; justify-content: space-between; gap: var(--icon-gap, 8px); white-space: normal; text-align: left; }
+.person {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(251, 250, 246, 0.2);
+}
+.person > p { margin: 0; color: #d9dbd4; font-size: 16px; line-height: 1.5; }
+.personActions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 24px; }
+.personActions a { color: var(--fr-paper); gap: var(--icon-gap, 8px); }
+@media (max-width: 1023px) {
+  .intro { grid-template-columns: 1fr; gap: 16px; }
+  .projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 639px) {
+  .intro > p { font-size: 17px; }
+  /* One full-width row per project on phones. */
+  .projects { grid-template-columns: 1fr; gap: 8px; }
+  .person { flex-direction: column; align-items: flex-start; }
+}

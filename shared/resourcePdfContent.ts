@@ -70,7 +70,7 @@ export const BUDGET_WORKSHEET_BLOCKS: PdfBlock[] = [
   {
     type: 'bullets',
     items: [
-      `Planning ranges: ${SITE_CONFIG.siteUrl}/#planning-ranges`,
+      `Instant estimate: ${SITE_CONFIG.siteUrl}/instant-estimate`,
       `Request a quote: ${SITE_CONFIG.siteUrl}/#request`,
       `Cost guide: ${SITE_CONFIG.siteUrl}/guides/boise-remodeling-cost-guide`,
       `Schedule consultation: ${SITE_CONFIG.siteUrl}/contact`,

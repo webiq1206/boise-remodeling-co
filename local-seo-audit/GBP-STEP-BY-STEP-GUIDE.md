@@ -277,7 +277,7 @@ Each product has a **Product URL** field — paste the full link for each item. 
 | Product name | Product URL | Description |
 |--------------|-------------|-------------|
 | Free In-Home Consultation | https://boiseremodeling.co/contact | 60 to 90 minute visit at your home. Planning range and design direction on the spot. No pressure, no obligation. |
-| Online Planning Ranges | https://boiseremodeling.co/#planning-ranges | Planning ranges online for kitchen, bath, and whole-home remodels. Not a bid - a starting point for conversation. For other projects, request a quote. |
+| Instant estimate | https://boiseremodeling.co/instant-estimate | A preliminary price range on screen for kitchen, bath, basement, whole-home, flooring, painting and addition projects. Not a quote or a bid: a starting point for conversation. For other projects, request a quote. |
 | Remodel Planning Resources Hub | https://boiseremodeling.co/resources | All free PDFs and guides in one place. |
 
 ---
@@ -337,7 +337,7 @@ Geotag photos to the project city when your phone allows it.
 In your Google profile, go to **Q&A**. Post each question yourself, then answer it as the business owner. Do all 12.
 
 **Q1: Do you provide free estimates?**  
-Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also explore kitchen, bath, and whole-home planning ranges at https://boiseremodeling.co/#planning-ranges
+Yes. We offer a free 60 to 90 minute in-home visit where we walk your space and share an honest planning range and design direction - no pressure, no obligation. You can also get an instant estimate, a preliminary price range for kitchen, bath, basement, whole-home and addition projects, at https://boiseremodeling.co/instant-estimate
 
 **Q2: What areas do you serve?**  
 Boise, Meridian, Eagle, Nampa, Kuna, Star, Middleton, and Caldwell, Idaho - all of Ada and Canyon County in the Treasure Valley.
@@ -553,7 +553,7 @@ Either way, thank you again for choosing Boise Remodeling Co.
 |---------|-----|
 | Website | https://boiseremodeling.co |
 | Schedule a visit | https://boiseremodeling.co/contact |
-| Planning ranges | https://boiseremodeling.co/#planning-ranges |
+| Instant estimate | https://boiseremodeling.co/instant-estimate |
 | Free resources | https://boiseremodeling.co/resources |
 | Verbal review link | boiseremodeling.co/review |
 | Facebook | https://www.facebook.com/boiseremodeling |

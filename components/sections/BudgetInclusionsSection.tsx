@@ -64,7 +64,7 @@ export function BudgetInclusionsSection() {
           </Reveal>
           <Reveal delay={60}>
             <p className="ed-body">
-              Planning ranges upfront, a written scope before construction, and
+              A preliminary range upfront, a written scope before construction, and
               standard inclusions on every project - so you always know where
               things stand.
             </p>
