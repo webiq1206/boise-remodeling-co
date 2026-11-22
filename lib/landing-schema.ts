@@ -28,7 +28,8 @@ export function landingServiceSchema(
 
 export function landingAreaBusinessSchema(cityName: string) {
   // The page city is named in the description. areaServed stays the service-area cities plus Ada County and Canyon County.
-  return generateLocalBusinessSchema(cityName);
+  // Garden City has no guest-house or ADU link, including in the offer catalog.
+  return generateLocalBusinessSchema(cityName, cityName === 'Garden City' ? { omitServices: ['adu'] } : undefined);
 }
 
 export function landingSpeakable(path: string, name: string) {

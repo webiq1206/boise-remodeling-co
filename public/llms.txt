@@ -4,6 +4,9 @@
 
 Serving Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County. Phone (208) 477-1169. Email hello@boiseremodeling.co. Idaho Registered Contractor #8381215 and insured.
 
+P5 Home Co, Meridian, ID 83646 (service-area business, no public street). Phone (208) 477-1169. Web https://p5homeco.com.
+Boise Remodeling Co: https://boiseremodeling.co.
+
 Design-build means one accountable team handles design direction, estimating, Ada and Canyon County permitting, and construction as one accountable company with one point of contact, backed by a written scope before work starts and a one-year workmanship guarantee from documented Final Completion. Preliminary price ranges come from the instant estimate (https://boiseremodeling.co/instant-estimate), which prices the room, the scope and the finish level rather than a flat price per square foot; they are preliminary ranges, not quotes, and a firm proposal follows a free in-home visit.
 
 ## Services
@@ -26,7 +29,7 @@ Design-build means one accountable team handles design direction, estimating, Ad
 - [Treasure Valley Remodeling Guide](https://boiseremodeling.co/guides/treasure-valley-remodeling-guide)
 - [Boise ADU Guide: Rules, Costs & Building a Second Unit](https://boiseremodeling.co/guides/boise-adu-guide)
 - [Boise Kitchen Remodeling Guide](https://boiseremodeling.co/guides/boise-kitchen-remodeling-guide)
-- [Boise Bathroom Remodeling Guide](https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide)
+- [How to plan a bathroom remodel in Boise](https://boiseremodeling.co/guides/boise-bathroom-remodeling-guide)
 - [Boise Home Addition Guide](https://boiseremodeling.co/guides/boise-home-addition-guide)
 - [Whole Home Remodeling Guide](https://boiseremodeling.co/guides/whole-home-remodeling-guide)
 - [How to Choose a Remodeling Contractor in Boise](https://boiseremodeling.co/guides/choose-remodeling-contractor-boise)
@@ -37,6 +40,7 @@ Design-build means one accountable team handles design direction, estimating, Ad
 ## Local permit and location resources
 
 - [Ada County vs Canyon County permit flow](https://boiseremodeling.co/resources/ada-canyon-permit-flow)
+- [Home remodeling in Garden City](https://boiseremodeling.co/areas/garden-city)
 - City guides: [Boise Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/boise-remodeling-guide), [Meridian Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/meridian-remodeling-guide), [Eagle Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/eagle-remodeling-guide), [Kuna Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/kuna-remodeling-guide), [Star Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/star-remodeling-guide), [Middleton Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/middleton-remodeling-guide), [Nampa Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/nampa-remodeling-guide), [Caldwell Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/caldwell-remodeling-guide)
 - Neighborhood guides: [North End Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/north-end-remodeling-guide), [Boise Bench Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/boise-bench-remodeling-guide), [Harris Ranch Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/harris-ranch-remodeling-guide), [East Boise Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/east-boise-remodeling-guide), [Hidden Springs Remodeling Guide](https://boiseremodeling.co/guides/hidden-springs-remodeling-guide), [Eagle Foothills Remodeling Guide: What to Know Before You Remodel](https://boiseremodeling.co/guides/eagle-foothills-remodeling-guide)
 
@@ -74,4 +78,4 @@ Design-build means one accountable team handles design direction, estimating, Ad
 - [RSS feed](https://boiseremodeling.co/feed.xml): guides and articles, newest first, with publication and revision dates.
 - [Full text for LLMs](https://boiseremodeling.co/llms-full.txt): expanded reference copy of the core facts.
 
-Last updated: 2026-10-16.
+Last updated: 2026-11-21.

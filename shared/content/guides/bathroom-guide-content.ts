@@ -6,6 +6,7 @@ import { P5_AS_OF, p5Span } from '../p5Figures';
 
 export const BATHROOM_GUIDE_CONTENT = `
 <p class="guide-lead">A bathroom remodel packs a lot of complexity into a small room - plumbing, waterproofing, tile, ventilation, and fixtures all in a few square feet. This guide walks you through it in order: budgeting, planning the layout, choosing a shower and vanity, the construction process and timeline, the waterproofing that makes or breaks the job, and designing for the long term. Read it top to bottom and you will know exactly how to get a bathroom that is beautiful and built to last.</p>
+<p>When the plan is ready to build, the <a href="/services/bathroom-remodel">bathroom remodel in Boise</a> page is where the design-build team takes it from a written scope through construction.</p>
 
 <div class="callout cost">
   <p class="callout-label">Budget &amp; timeline snapshot</p>
@@ -89,7 +90,7 @@ export const BATHROOM_GUIDE_CONTENT = `
 <p>Bathrooms are among the more reliable value-adding remodels, and adding a bathroom where a home has too few can add significant value - see <a href="/blog/bathroom-remodel-roi">Bathroom Remodel ROI</a>. Avoid the common traps: beautiful finishes over poor waterproofing, over-personalizing beyond the neighborhood, and skimping on ventilation or storage. Quality where it counts pays off for decades.</p>
 
 <h2>Ready to plan your bathroom?</h2>
-<p>The best next step is to have a designer see your space and give you an honest budget. When you are ready, <a href="/contact">schedule a free consultation</a> or <a href="/instant-estimate?project=bathroom-remodel">get an instant estimate</a>.</p>
+<p>The best next step is to have a designer see your space and give you an honest budget. Start with a <a href="/services/bathroom-remodel">bathroom remodel in Boise</a>, <a href="/contact">schedule a free consultation</a>, or <a href="/instant-estimate?project=bathroom-remodel">get an instant estimate</a>.</p>
 `.trim();
 
 export const BATHROOM_GUIDE_FAQS = [

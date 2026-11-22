@@ -14,7 +14,9 @@ const hrefs = (html: string) => [...html.matchAll(/href="([^"]+)"/g)].map((m) =>
 test('the noindexed ADU combos are outside the sitemap index rule', () => {
   // Phase 4 owner decision: all eight ADU city pages are noindexed (no bespoke copy).
   for (const city of ['kuna', 'star', 'middleton', 'caldwell', 'boise', 'meridian', 'eagle', 'nampa']) assert.equal(isIndexedPath(`/services/adu/${city}`), false);
-  assert.equal(isIndexedPath('/services/room-addition/boise'), true);
+  assert.equal(isIndexedPath('/services/room-addition/boise'), false);
+  assert.equal(isIndexedPath('/areas/garden-city'), true);
+  assert.equal(isIndexedPath('/services/kitchen-remodel/garden-city'), false);
   assert.equal(isIndexedPath('/services/adu'), true);
 });
 

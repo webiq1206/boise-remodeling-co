@@ -14,9 +14,9 @@ import { Check } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = withBrandPageMetadata(({
-  title: { absolute: "Design-Build Remodeling in Boise, Idaho | Boise Remodeling Co" },
+  title: { absolute: "Boise Home Remodeling Contractors | Boise Remodeling Co" },
   description:
-    fitDescription("Design-build remodeling in Boise from one team that writes the scope before the price. Kitchens, baths and whole-home remodels. Free in-home visit."),
+    fitDescription("Boise home remodeling from one design-build team: kitchens, baths and whole-home remodels. Free in-home visit, a written scope, and calls or texts welcome."),
   alternates: {
     canonical: buildCanonical("/"),
     // Setting `alternates` replaces the root declaration, so the feed link has

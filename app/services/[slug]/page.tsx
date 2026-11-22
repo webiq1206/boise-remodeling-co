@@ -13,7 +13,7 @@ landingFAQSchema,
 landingServiceSchema
 } from '@/lib/landing-schema';
 import { buildPageMetadata } from '@/lib/page-metadata';
-import { isIndexedPath } from '@/lib/siteUrls';
+import { serviceHubCityHref } from '@/lib/siteUrls';
 import { generateSpeakableSchema } from '@/lib/schema';
 import { SERVICE_SLUGS,getServiceBySlug,servicePath } from '@/lib/seo-routes';
 import { SERVICE_AREA_CITIES } from '@/shared/contentData';
@@ -104,10 +104,11 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
   // The ownership pages name what they now are in the breadcrumb, not the
   // shared service label ("ADU / Guest House").
   const crumbName = service.slug === 'adu' ? 'ADU conversions' : ownership ? 'Room additions' : service.name;
-  const ownershipCityLinks = SERVICE_AREA_CITIES.map((c) => ({
-    label: `${ownershipLabel} in ${c.name}`,
-    href: `/services/${service.slug}/${c.slug}`,
-  })).filter((link) => isIndexedPath(link.href)); // Same index rule as the sitemap.
+  const ownershipCityLinks = SERVICE_AREA_CITIES.flatMap((c) => {
+    const href = serviceHubCityHref(service.slug, c.slug);
+    if (!href) return [];
+    return [{ label: `${ownershipLabel} in ${c.name}`, href }];
+  });
   const sections: LandingSection[] = ownership
     ? [
         ...ownership.sections,
@@ -147,10 +148,11 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         `Choose your city below to see local ${serviceLC} guidance, or schedule a free in-home consultation to discuss your project directly.`,
       ],
       // Same index rule as the sitemap: noindexed city combos are not linked.
-      links: SERVICE_AREA_CITIES.map((c) => ({
-        label: `${service.name} in ${c.name}`,
-        href: `/services/${service.slug}/${c.slug}`,
-      })).filter((link) => isIndexedPath(link.href)),
+      links: SERVICE_AREA_CITIES.flatMap((c) => {
+        const href = serviceHubCityHref(service.slug, c.slug);
+        if (!href) return [];
+        return [{ label: `${service.name} in ${c.name}`, href }];
+      }),
     },
     {
       heading: `Why design-build for your ${serviceLC}`,

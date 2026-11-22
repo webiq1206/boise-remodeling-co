@@ -5,6 +5,7 @@ import {
 } from '@/shared/content/bathroomNearMePage';
 import { publishFoundingCopy } from '@/shared/publicClaims';
 import { SITE_CONFIG } from '@/shared/siteConfig';
+import { NOINDEX_CITY_SERVICE_KEYS } from '@/shared/cityServiceIndex.mjs';
 import {
   generateCityServiceDescription,
   generateCityServiceTitle,
@@ -64,6 +65,7 @@ export const NOINDEX_CITY_SERVICE = new Set<string>([
   'adu/meridian',
   'adu/eagle',
   'adu/nampa',
+  ...NOINDEX_CITY_SERVICE_KEYS,
 ]);
 
 export function isCityServiceNoindex(serviceSlug: string, citySlug: string): boolean {
@@ -168,6 +170,29 @@ const CITY_SERVICE_TITLE_OVERRIDES: Record<string, string> = {
  * a free in-home visit. "ID" keeps the longest city title inside 60 rendered
  * characters.
  */
+const AREA_META: Record<string, { title: string; description: string }> = {
+  boise: {
+    title: 'Boise Neighborhood Remodels',
+    description:
+      'Remodeling for homes in North End, Bench and Downtown Boise: kitchens, baths and whole-home projects, permit notes for your address, and a free visit.',
+  },
+  eagle: {
+    title: 'Home Remodeling in Eagle, ID',
+    description:
+      'Home remodeling in Eagle, Idaho, from Banbury to Floating Feather: kitchens, baths, basements and additions by one design-build team with a written scope.',
+  },
+  kuna: {
+    title: 'Home Remodeling in Kuna, ID',
+    description:
+      'Home remodeling in Kuna, Idaho, from Crimson Point to Black Cat: kitchens, baths and additions by one design-build team, with a written scope to start.',
+  },
+  'garden-city': {
+    title: 'Home Remodeling in Garden City, ID',
+    description:
+      'Home remodeling in Garden City, Idaho, from Riverside Village to Chinden: kitchens, baths and additions by one design-build team. Call or text to start.',
+  },
+};
+
 function areaTitle(cityName: string): string {
   return `Remodeling contractor in ${cityName}, ID`;
 }
@@ -252,8 +277,9 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
       break;
     }
     case 'area': {
-      title = areaTitle(input.cityName ?? 'Boise');
-      description = areaDescription(input.cityName ?? 'Boise');
+      const custom = AREA_META[input.citySlug ?? ''];
+      title = custom?.title ?? areaTitle(input.cityName ?? 'Boise');
+      description = custom?.description ?? areaDescription(input.cityName ?? 'Boise');
       break;
     }
     case 'city-service':
@@ -267,19 +293,19 @@ export function buildPageMetadata(input: PageMetaInput): Metadata {
       );
       break;
     case 'about':
-      title = 'About Us';
+      title = 'About Our Design-Build Team';
       description =
-        'Learn about Boise Remodeling Co, a Treasure Valley design-build remodeler. Idaho Registered Contractor #8381215, insured, and committed to clear communication.';
+        'Meet the design-build team behind Boise Remodeling Co, a P5 Home Co company. Idaho Registered Contractor #8381215. See how we plan, price and manage remodels for Ada and Canyon County homes.';
       break;
     case 'contact':
-      title = 'Contact Us';
+      title = 'Contact Boise Remodeling Co | Call, Text or Request a Visit';
       description =
-        `Contact Boise Remodeling Co for a free in-home consultation. Call ${SITE_CONFIG.phone} or schedule online. Serving Boise, Meridian, Eagle & the Treasure Valley.`;
+        'Call or text Boise Remodeling Co, or book a free in-home visit for your kitchen, bath or whole-home project in Ada or Canyon County. No pressure, no pitch.';
       break;
     case 'blog':
-      title = 'Remodeling Insights & Ideas';
+      title = 'Remodeling Advice and Ideas';
       description =
-        'Honest remodeling advice for Idaho homeowners: budgeting, timelines, permits, and design-build guidance from Boise Remodeling Co.';
+        'Practical remodeling advice for Treasure Valley homeowners: budgets, timelines, permits and design ideas, written by the Boise Remodeling Co design team.';
       break;
     default:
       title = input.titleOverride || 'Boise Remodeling Co';

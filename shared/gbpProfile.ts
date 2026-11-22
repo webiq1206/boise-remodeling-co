@@ -109,6 +109,20 @@ export const P5_INSTAGRAM_URL = 'https://www.instagram.com/p5_home_co';
  */
 export const P5_GBP_URL = 'https://www.google.com/search?kgmid=/g/11ntl1t7dc';
 
+/**
+ * Maps cid for the same P5 Home Co listing as the knowledge-graph id above
+ * (both resolve to feature 0xa4b7afa3f5a2ce35). Parent organization only.
+ */
+export const P5_MAPS_CID_URL = 'https://maps.google.com/?cid=11869148461693849141';
+
+/** Exact parent Organization sameAs, in this order. Never copy onto a brand node. */
+export const P5_PARENT_SAME_AS = [
+  P5_FACEBOOK_URL,
+  P5_INSTAGRAM_URL,
+  P5_GBP_URL,
+  P5_MAPS_CID_URL,
+] as const;
+
 export const GBP_ATTRIBUTES = {
   onlineEstimates: true,
   onsiteServices: true,

@@ -2,12 +2,12 @@
   {
     "route": "/about",
     "file": "app/about/page.tsx",
-    "seoSignature": "c9fd1986cbce7b1926c55c36593151ee50c25006c3f5d055948d3ae338f1b519"
+    "seoSignature": "13a2f12ed2412fa86e7ab897f960498d58a669e716da48e3aca6ebeaaed4cd50"
   },
   {
     "route": "/areas/[city]",
     "file": "app/areas/[city]/page.tsx",
-    "seoSignature": "5172a19ae232e3b7aab05dbe75f403e3ff70325043de5a3cb9bb8c91e5393d45"
+    "seoSignature": "a70008bc756fdd0859bb17f055ca7c7dd21c0450dbf50ea1d787682b5587b33c"
   },
   {
     "route": "/areas",
@@ -27,7 +27,7 @@
   {
     "route": "/blog",
     "file": "app/blog/page.tsx",
-    "seoSignature": "4faaa31a322cf08bf949a946217f760e63339430cf9790ad738772cd6f0c63ce"
+    "seoSignature": "b82c4ec3f8ce1409fa0feb2d1d30f77b4b8b4484a8bec52ad0f15888e78ac791"
   },
   {
     "route": "/contact",
@@ -72,7 +72,7 @@
   {
     "route": "/services/[slug]/[city]",
     "file": "app/services/[slug]/[city]/page.tsx",
-    "seoSignature": "eb620ab9852ed4f22be79db083370229dfa287f6195bc4fa8701f4edd7d4f5d7"
+    "seoSignature": "e73fac52a6a22240235020f9a0722c81acde019cd183d60252ff65661dd6fc96"
   },
   {
     "route": "/services/[slug]",

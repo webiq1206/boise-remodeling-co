@@ -25,7 +25,7 @@ export function AreaCard({ city, imageSrc }: AreaCardProps) {
       <div className="lx-blog-photo relative aspect-[4/3] overflow-hidden">
         <Image
           src={imageSrc}
-          alt={contentImageAlt(imageSrc, `Residential street in ${city.name}`)}
+          alt={contentImageAlt(imageSrc, `Residential street in ${city.name}`, { city: city.name })}
           fill
           sizes="(max-width: 640px) 100vw, 50vw"
           className="object-cover img-brand-grade transition-transform duration-300 ease-out group-hover:scale-[1.02]"

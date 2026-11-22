@@ -10,8 +10,11 @@
  *   KEY_LOCATION    (default: https://boiseremodeling.co/f9e329f80c1a4609bd70d590f64e0544.txt)
  */
 
+import { readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { urlsForChangedFiles } from './indexnow-urls.mjs';
+import { indexNowLogLine, shouldSubmitIndexNow } from './indexnow-deploy.mjs';
+import { DEPLOY_MANIFEST_PATH } from './write-indexnow-deploy.mjs';
 
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY ?? 'f9e329f80c1a4609bd70d590f64e0544';
 const HOST = process.env.HOST ?? 'boiseremodeling.co';
@@ -132,17 +135,128 @@ async function contentCatalogs() {
   }
 }
 
+/**
+ * `--deploy` pings the URLs written at build time, once the new build is
+ * serving. `--changed` is the same URL mapper without the deploy marker.
+ */
+const INDEXNOW_SHA_KEY = 'indexnow-last-sha';
+
 function absoluteUrl(path) {
+  if (path.startsWith('http')) return path;
   if (path === '/') return `https://${HOST}`;
   return `https://${HOST}${path.startsWith('/') ? path : `/${path}`}`;
 }
 
+async function waitUntilServing() {
+  const port = process.env.PORT || '5000';
+  const url = `http://127.0.0.1:${port}/`;
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    try {
+      const res = await fetchWithTimeout(url, { redirect: 'manual' });
+      if (res.status < 500) return true;
+    } catch {
+      // The server is still binding the port.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  return false;
+}
+
+async function readSubmittedSha() {
+  if (!process.env.DATABASE_URL) return { ok: false, sha: null };
+  const { Client } = await import('pg');
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 5000,
+  });
+  await client.connect();
+  try {
+    const result = await client.query('select value from site_settings where key = $1', [INDEXNOW_SHA_KEY]);
+    return { ok: true, sha: result.rows[0]?.value ?? null };
+  } finally {
+    await client.end();
+  }
+}
+
+async function recordSubmittedSha(sha) {
+  if (!process.env.DATABASE_URL) return;
+  const { Client } = await import('pg');
+  const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 5000,
+  });
+  await client.connect();
+  try {
+    await client.query(
+      `insert into site_settings (key, value, updated_at, updated_by)
+       values ($1, $2, now(), $3)
+       on conflict (key) do update set value = excluded.value, updated_at = now(), updated_by = excluded.updated_by`,
+      [INDEXNOW_SHA_KEY, sha, 'indexnow'],
+    );
+  } finally {
+    await client.end();
+  }
+}
+
 /**
- * Main entry point.
- * `--changed` submits only URLs implied by the last commit, which is what a
- * deploy should ping. Without the flag the script still walks the sitemap.
+ * One ping per deploy, after this build is answering, for the URLs written
+ * at build time. A cold start that finds the same SHA already recorded does
+ * not post again.
  */
+async function submitDeploy() {
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(DEPLOY_MANIFEST_PATH, 'utf8'));
+  } catch (err) {
+    console.warn(`[IndexNow] No deploy manifest at ${DEPLOY_MANIFEST_PATH} (${err.message}). Nothing submitted.`);
+    return;
+  }
+  const sha = String(manifest.sha || 'unknown');
+  const paths = Array.isArray(manifest.urls) ? manifest.urls.filter((url) => typeof url === 'string' && url.startsWith('/')) : [];
+  if (paths.length === 0) {
+    console.log(indexNowLogLine(sha, 0, 'none'));
+    return;
+  }
+  const serving = await waitUntilServing();
+  if (!serving) {
+    console.warn(`[IndexNow] sha=${sha} skipped: this build is not serving yet`);
+    return;
+  }
+  let recorded;
+  try {
+    recorded = await readSubmittedSha();
+  } catch (err) {
+    console.warn(`[IndexNow] sha=${sha} skipped: could not read the deploy marker (${err.message})`);
+    return;
+  }
+  if (!recorded.ok) {
+    console.warn(`[IndexNow] sha=${sha} skipped: no database for the deploy marker`);
+    return;
+  }
+  if (recorded.sha === sha) {
+    console.log(`[IndexNow] sha=${sha} already submitted`);
+    return;
+  }
+  const hostUrls = paths.map(absoluteUrl);
+  const status = await submitUrlList(hostUrls, sha);
+  if (status === 200 || status === 202) {
+    try {
+      await recordSubmittedSha(sha);
+    } catch (err) {
+      console.warn(`[IndexNow] sha=${sha} accepted but the deploy marker was not saved (${err.message})`);
+    }
+  }
+}
+
 async function main() {
+  if (!shouldSubmitIndexNow()) {
+    console.log('[IndexNow] skipped: not a production deploy');
+    return;
+  }
+  if (process.argv.includes('--deploy')) {
+    await submitDeploy();
+    return;
+  }
   if (process.argv.includes('--changed')) {
     const files = gitChangedFiles();
     const catalogs = await contentCatalogs();
@@ -153,7 +267,7 @@ async function main() {
       console.log('[IndexNow] No changed URLs to submit. Exiting.');
       return;
     }
-    await submitUrlList(paths.map(absoluteUrl));
+    await submitUrlList(paths.map((path) => absoluteUrl(path)));
     return;
   }
   console.log(`[IndexNow] Host: ${HOST}`);
@@ -193,8 +307,10 @@ async function main() {
 
 /**
  * @param {string[]} hostUrls absolute URLs on this host
+ * @param {string} [sha] deploy commit, when this is the post-deploy ping
+ * @returns {Promise<number>} HTTP status from api.indexnow.org
  */
-async function submitUrlList(hostUrls) {
+async function submitUrlList(hostUrls, sha) {
   const payload = {
     host: HOST,
     key: INDEXNOW_KEY,
@@ -211,6 +327,7 @@ async function submitUrlList(hostUrls) {
   ];
 
   let succeeded = false;
+  let indexNowStatus = 0;
   for (const { url, name } of endpoints) {
     const res = await fetchWithTimeout(url, {
       method: 'POST',
@@ -223,6 +340,10 @@ async function submitUrlList(hostUrls) {
 
     const responseText = await res.text();
     console.log(`[IndexNow] ${name} response: HTTP ${res.status}`);
+    if (url === INDEXNOW_API) {
+      indexNowStatus = res.status;
+      if (sha) console.log(indexNowLogLine(sha, hostUrls.length, res.status));
+    }
     if (responseText) {
       console.log(`[IndexNow] ${name} body: ${responseText}`);
     }
@@ -244,6 +365,7 @@ async function submitUrlList(hostUrls) {
   } else {
     console.warn(`[IndexNow] WARNING: No search engine accepted the submission. The URLs may not be indexed yet. The site may need to be registered with the search engines first. The key file is available at ${KEY_LOCATION}.`);
   }
+  return indexNowStatus;
 }
 
 main().catch((err) => {

@@ -125,7 +125,6 @@ test('contact card preserves useful contact facts without a business street addr
 test('visible copy uses P5 Home Co as a name, not P5 Home Co. or the LLC form', () => {
   const periodInTheName = /P5 Home Co\.(?=\s+[a-z])/;
   const paths = [
-    'app/about/page.tsx',
     'app/contact/page.tsx',
     'app/terms-of-service/page.tsx',
     'app/privacy-policy/page.tsx',
@@ -151,6 +150,22 @@ test('visible copy uses P5 Home Co as a name, not P5 Home Co. or the LLC form', 
   assert.equal(periodInTheName.test(card), false);
   assert.equal(SITE_CONFIG.phone, '(208) 477-1169');
   assert.equal(BUSINESS_INFO.phone, '(208) 477-1169');
+});
+
+test('the about page uses P5 Home Co LLC only on the registration sentences', () => {
+  const text = readFileSync('app/about/page.tsx', 'utf8');
+  const periodInTheName = /P5 Home Co\.(?=\s+[a-z])/;
+  assert.equal(periodInTheName.test(text), false);
+  const withoutRegistration = text
+    .replace(
+      'P5 Home Co LLC, Idaho Registered Contractor #8381215. Insured, certificate on request.',
+      'P5 Home Co, Idaho Registered Contractor #8381215. Insured, certificate on request.',
+    )
+    .replace(
+      'Boise Remodeling Co is a trade name of P5 Home Co LLC, Idaho Registered Contractor #8381215.',
+      'Boise Remodeling Co is a trade name of P5 Home Co, Idaho Registered Contractor #8381215.',
+    );
+  assert.equal(withoutRegistration.includes('P5 Home Co LLC'), false);
 });
 
 test('every vCard line is at most 75 octets and lines use CRLF', () => {

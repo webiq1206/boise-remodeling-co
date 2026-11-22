@@ -26,6 +26,7 @@ const AREA_ALT: Record<string, string> = {
   star: 'Two-story house with dark siding and a covered patio beside a river',
   middleton: 'Residential street with houses, lawns, and a sidewalk',
   caldwell: 'Residential street with houses, lawns, and trees',
+  'garden-city': 'Covered patio with a wood ceiling and sliding glass doors behind a single-story house',
 };
 
 const PATH_ALT: Record<string, string> = {
@@ -184,7 +185,7 @@ const PATH_ALT: Record<string, string> = {
 import { localAlt, subjectForService, type LocalAltContext } from './localAlt';
 
 const CITY_BY_SLUG: Record<string, string> = {
-  boise: 'Boise', meridian: 'Meridian', eagle: 'Eagle', nampa: 'Nampa', kuna: 'Kuna', star: 'Star', middleton: 'Middleton', caldwell: 'Caldwell',
+  boise: 'Boise', meridian: 'Meridian', eagle: 'Eagle', 'garden-city': 'Garden City', nampa: 'Nampa', kuna: 'Kuna', star: 'Star', middleton: 'Middleton', caldwell: 'Caldwell',
 };
 
 /** What the file itself is about, read from its path, for callers that give no page context. */

@@ -288,7 +288,7 @@
     "scripts/p5-sync.mjs": "9def5618c2b7c26606dad76ddd78aa9577ab7620b5df6206bd1be80714bcde40",
     "scripts/p5-verify-visual.mjs": "67363630ae7fb0ef3748a377a193495ff1427dfca34e0c9c655e1a02c71ca61d",
     "scripts/p5-visual-review.mjs": "9918874379624da97ddb3b6bff056ddd5f27242c3dbf58c5dea84a077a66a12f",
-    "scripts/p5-visual-routes.json": "670468cb7925d2b5b049e0b52f4e05f911b72474e76d376b5492b69ba51cf8bc",
+    "scripts/p5-visual-routes.json": "fbb0a04834385ea82d4fec5cd8e3e8174fe7c0ba4c39908a4ae6c5aa9bb7fb86",
     "scripts/test-p5-background-drain.mts": "d409f3c13b5d832091b711f2b1787b30f076e98d372b78ea6148d84d54b2361e",
     "scripts/test-p5-background.mts": "654cd783a6e9ddb749a8ef2d0dda3c7d4719d58bf5ee9dabee4469916d484ebe",
     "scripts/test-p5-database-regression.mts": "9e4cbeffd7f5931e1d077925842f8547b7da461738f958ba909494390e7a7fee",

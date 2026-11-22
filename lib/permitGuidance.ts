@@ -10,6 +10,7 @@ export function permitSource(city:string):string|null {
   if(city.toLowerCase()==='middleton')return 'https://middleton.id.gov/';
   if(city.toLowerCase()==='boise')return 'https://www.cityofboise.org/departments/planning-and-development-services/building/building-permits/';
   if(city.toLowerCase()==='nampa')return 'https://www.cityofnampa.us/428/Residential-Permit-Applications';
+  if(city.toLowerCase()==='garden city')return 'https://gardencityidaho.org/departments/development-services/';
   return null;
 }
 export function permitGuidanceHtml(city:string):string {

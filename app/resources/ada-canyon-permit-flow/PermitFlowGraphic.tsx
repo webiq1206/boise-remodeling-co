@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import { ADA_COUNTY_CITY_NAMES, CANYON_COUNTY_CITY_NAMES } from '@/shared/contentData';
 
 const STEPS = [
   { n: 1, title: 'Define scope', body: 'Layout, structural, plumbing, or electrical changes?' },
@@ -81,13 +82,13 @@ export function PermitFlowGraphic() {
           <CountyColumn
             title="Ada County"
             subtitle="Most Boise metro remodels"
-            cities={['Boise', 'Meridian', 'Eagle', 'Kuna', 'Star']}
+            cities={[...ADA_COUNTY_CITY_NAMES]}
             accentClass="border-accent/40 bg-accent/5"
           />
           <CountyColumn
             title="Canyon County"
             subtitle="Western Treasure Valley"
-            cities={['Nampa', 'Middleton', 'Caldwell']}
+            cities={[...CANYON_COUNTY_CITY_NAMES]}
             accentClass="border-border bg-muted/30"
           />
         </div>

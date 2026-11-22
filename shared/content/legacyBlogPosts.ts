@@ -208,7 +208,7 @@ export const LEGACY_BLOG_POSTS: BlogPostData[] = [
     relatedLinks: [
       { url: guidePath('boise-home-addition-guide') },
       { url: '/blog/home-addition-cost-boise' },
-      { url: '/services/room-addition/eagle' },
+      { url: '/areas/eagle' },
     ],
     faqs: [
       { question: 'How much does an addition cost?', answer: `Our instant estimate shows ${p5Span('addition-room-300')} for a 300 sq ft room addition from Essential to Luxury, before design and permits - see our cost article.` },

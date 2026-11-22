@@ -29,9 +29,9 @@ export default function BlogPage() {
       { name: "Blog", url: "/blog" },
     ]),
     generateCollectionPageSchema({
-      title: "Remodeling Insights & Ideas",
+      title: "Remodeling Advice and Ideas",
       description:
-        "Honest remodeling advice for Idaho homeowners: budgeting, timelines, permits, and design-build guidance from Boise Remodeling Co.",
+        "Practical remodeling advice for Treasure Valley homeowners: budgets, timelines, permits and design ideas, written by the Boise Remodeling Co design team.",
       url: "/blog",
       items: BLOG_POSTS.map((post) => ({
         name: post.title,
@@ -55,7 +55,8 @@ export default function BlogPage() {
         </h1>
         <p className="ed-lede mt-8 max-w-[44ch] text-inverse-foreground/85">
           Honest advice for Idaho homeowners planning their next renovation - budgeting, timelines,
-          permits, and design-build guidance from Boise Remodeling Co.
+          permits, and design-build guidance from Boise Remodeling Co. For the service itself, see{' '}
+          <Link href="/">home remodeling in Boise</Link>.
         </p>
         <Link
           href="/guides"

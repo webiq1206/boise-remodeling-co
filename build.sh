@@ -8,3 +8,6 @@ npx tsx scripts/fix-em-dash.ts
 npm run build
 cp -r .next/static .next/standalone/.next/static
 cp -r public .next/standalone/public
+# Git is available in the build and not in the running image. Write the
+# changed URL list now. This does not ping IndexNow.
+node --import tsx scripts/write-indexnow-deploy.mjs || true
