@@ -143,9 +143,7 @@ test('visible copy uses P5 Home Co as a name, not P5 Home Co. or the LLC form', 
     // That line is the only place the LLC form may appear.
     const withoutRegistration = path === 'lib/familyBrand.ts'
       ? text.replace(/P5 Home Co LLC, \$\{REGISTRATION_LINE\}/g, '')
-      : path === 'app/terms-of-service/page.tsx'
-        ? text.replace('DBA of P5 Home Co LLC', 'DBA of P5 Home Co')
-        : text;
+      : text;
     assert.equal(withoutRegistration.includes('P5 Home Co LLC'), false, path);
   }
   const card = buildBusinessVCard();
