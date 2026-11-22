@@ -139,12 +139,16 @@ test('visible copy uses P5 Home Co as a name, not P5 Home Co. or the LLC form', 
   for (const path of paths) {
     const text = readFileSync(path, 'utf8');
     assert.equal(periodInTheName.test(text), false, path);
-    // Owner, 20 November 2026: the footer's registration line (lib/familyBrand.ts)
-    // names the legal entity, "P5 Home Co LLC, Idaho Registered Contractor #8381215".
-    // That line is the only place the LLC form may appear.
+    // Legal-entity spots keep "P5 Home Co LLC": the footer registration line,
+    // the terms contracting sentence, and the privacy introduction.
+    // Everywhere else in these files uses "P5 Home Co".
     const withoutRegistration = path === 'lib/familyBrand.ts'
       ? text.replace(/P5 Home Co LLC, \$\{REGISTRATION_LINE\}/g, '')
-      : text;
+      : path === 'app/terms-of-service/page.tsx'
+        ? text.replace('DBA of P5 Home Co LLC', 'DBA of P5 Home Co')
+        : path === 'app/privacy-policy/page.tsx'
+          ? text.replace('a DBA of P5 Home Co LLC', 'a DBA of P5 Home Co')
+          : text;
     assert.equal(withoutRegistration.includes('P5 Home Co LLC'), false, path);
   }
   const card = buildBusinessVCard();
