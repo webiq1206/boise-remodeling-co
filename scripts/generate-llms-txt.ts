@@ -16,7 +16,7 @@ import fs from 'fs';
 import path from 'path';
 import { SHOW_FOUNDING_YEAR, publishFoundingCopy } from '../shared/publicClaims';
 import { publicFooterLine, SITE_CONFIG } from '../shared/siteConfig';
-import { P5_BBB_URL, P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile';
+import { P5_FACEBOOK_URL, P5_GBP_URL, P5_INSTAGRAM_URL } from '../shared/gbpProfile';
 import { SERVICES, CITIES, SERVICE_AREA_CITY_NAMES, SERVICE_AREA_CITY_COUNTY, SERVICE_AREA_SENTENCE } from '../shared/contentData';
 import { GUIDE_PAGES } from '../shared/guideContent';
 import { CONTENT_HUBS } from '../shared/contentHubs';
@@ -32,8 +32,8 @@ const CONTACT_BLOCK =
 const NAP_BLOCK =
   `P5 Home Co, Meridian, ID 83646 (service-area business, no public street). Phone (208) 477-1169. Web https://p5homeco.com.`;
 const BRAND_SITE_LINE = `${SITE_CONFIG.name}: ${BASE}.`;
-const PROFILE_LINKS = `[Google](${P5_GBP_URL}), [Facebook](${P5_FACEBOOK_URL}), [Instagram](${P5_INSTAGRAM_URL}), [BBB](${P5_BBB_URL})`;
-const PROFILE_TEXT = `Google ${P5_GBP_URL}, Facebook ${P5_FACEBOOK_URL}, Instagram ${P5_INSTAGRAM_URL}, BBB ${P5_BBB_URL}`;
+const PROFILE_LINKS = `[Google](${P5_GBP_URL}), [Facebook](${P5_FACEBOOK_URL}), [Instagram](${P5_INSTAGRAM_URL})`;
+const PROFILE_TEXT = `Google ${P5_GBP_URL}, Facebook ${P5_FACEBOOK_URL}, Instagram ${P5_INSTAGRAM_URL}`;
 
 const adaCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'ada');
 const canyonCities = SERVICE_AREA_CITY_NAMES.filter((name) => SERVICE_AREA_CITY_COUNTY[name] === 'canyon');

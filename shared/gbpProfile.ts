@@ -115,20 +115,12 @@ export const P5_GBP_URL = 'https://www.google.com/search?kgmid=/g/11ntl1t7dc';
  */
 export const P5_MAPS_CID_URL = 'https://maps.google.com/?cid=11869148461693849141';
 
-/**
- * BBB profile link only. No rating, grade, or accreditation claim.
- * Parent organization only. Boise Remodeling Co has no profile of its own.
- */
-export const P5_BBB_URL =
-  'https://www.bbb.org/us/id/meridian/profile/general-contractor/p5-home-co-llc-1296-1000203624';
-
 /** Exact parent Organization sameAs, in this order. Never copy onto a brand node. */
 export const P5_PARENT_SAME_AS = [
   P5_FACEBOOK_URL,
   P5_INSTAGRAM_URL,
   P5_GBP_URL,
   P5_MAPS_CID_URL,
-  P5_BBB_URL,
 ] as const;
 
 export const GBP_ATTRIBUTES = {
