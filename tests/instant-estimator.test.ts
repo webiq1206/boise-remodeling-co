@@ -135,7 +135,7 @@ test("a service page opens the estimator on its project, and an unpriced service
   assert.equal(articleCtaDestination("kitchen-remodeling"), "estimator");
   const template = read("components/seo/LandingPageTemplate.tsx");
   assert.match(template, /const primaryCta = primaryCtaForService\(related\.serviceSlug\);/);
-  assert.match(template, /<InteriorHeroActions serviceSlug=\{related\.serviceSlug\} \/>/);
+  assert.match(template, /<InteriorHeroActions\b[^>]*\bserviceSlug=\{related\.serviceSlug\}/);
 });
 
 test("the homepage sells the estimator near the top and keeps every existing tool", () => {

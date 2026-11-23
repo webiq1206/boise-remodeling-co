@@ -286,11 +286,12 @@ export function LandingPageTemplate({
   // place) keeps "Request a quote". Area pages name no service, so the visitor picks a project.
   const primaryCta = primaryCtaForService(related.serviceSlug);
   const estimatorCta = primaryCta.kind === 'estimator';
+  const isBathroomParent = related.variant === 'service' && related.serviceSlug === 'bathroom-remodel';
   const ctaHeading = estimatorCta ? `Get an instant estimate for your ${noun}` : `Request a quote for your ${noun}`;
   void showEstimatePrompt;
   void _faqDisplay;
   void proofHeading;
-  const heroCopy = splitHeroCopy(overview);
+  const heroCopy = isBathroomParent ? { lead: overview, rest: '' } : splitHeroCopy(overview);
   const publishedQuotes = testimonialsForPublish(proof?.testimonials);
   const hasProof =
     publishedQuotes.length > 0 || (proof?.projects?.length ?? 0) > 0;
@@ -339,14 +340,16 @@ export function LandingPageTemplate({
               <span>Planning from</span> <strong>{planningFrom}</strong>
             </p>
           )}
-          <InteriorHeroActions serviceSlug={related.serviceSlug} />
+          <InteriorHeroActions serviceSlug={related.serviceSlug} showPhone={!isBathroomParent} />
         </InteriorHero>
       {/* Three facts a visitor can check, already stated elsewhere on the page. */}
       <ul className="lx-facts" aria-label="At a glance">
         {planningFrom && (
           <li><strong>From {planningFrom}</strong><span>{planningFromBasis ?? 'Planning range, confirmed at your free in-home visit'}</span></li>
         )}
-        <li><strong>Free in-home visit</strong><span>60 to 90 minutes, with planning guidance and no obligation</span></li>
+        {isBathroomParent
+          ? <li><strong>Preliminary planning range</strong><span>An online starting point based on your answers</span></li>
+          : <li><strong>Free in-home visit</strong><span>60 to 90 minutes, with planning guidance and no obligation</span></li>}
         <li><strong>One written scope</strong><span>Agreed before construction begins, with one accountable team</span></li>
       </ul>
       {(heroCopy.rest || planningFrom) && (
@@ -739,7 +742,7 @@ export function LandingPageTemplate({
               {estimatorCta ? (
                 <>
                   <p className="ed-lede">See a preliminary price range on screen. Free, with no appointment.</p>
-                  <p className="ed-body mt-3">A firm written proposal follows a free 60 to 90 minute in-home visit.</p>
+                  <p className="ed-body mt-3">{isBathroomParent ? 'A firm written proposal follows a site visit, measurements, and your selections.' : 'A firm written proposal follows a free 60 to 90 minute in-home visit.'}</p>
                   <div className="mt-8 flex flex-col items-start gap-4">
                     <EstimateCTA tone="dark" size="lg" project={primaryCta.project}>{primaryCta.label}</EstimateCTA>
                     <a href={REQUEST_PATH} className={familyButtonClass({ variant: 'tertiary' })} data-testid="link-landing-cta-request">{CTA_REQUEST}</a>
