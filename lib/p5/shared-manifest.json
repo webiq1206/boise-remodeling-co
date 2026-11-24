@@ -155,7 +155,7 @@
     "lib/p5/presentation.ts": "6351d7433a043369919c797409a126b642b00064ed3d0f835ff5bd8150f22bcd",
     "lib/p5/priceBook.ts": "b4d10f84ec3c7e8051aada3f8d78503262509e358dc8e02b4b15baf1f12a0870",
     "lib/p5/priceBookData.ts": "c033ceb44f9797223053d068a6e1610998e562d642cbe2676ff2d25f9ebbdd7f",
-    "lib/p5/pricing.ts": "01e3b9d9311a557f3aa7f42f047115bcf8a989e87ef3438d626bf10335cb4d20",
+    "lib/p5/pricing.ts": "74022a62df1873ec909d24737571333c31d357b08d3fe58f387fd5d8ecdaa725",
     "lib/p5/pricingBasis.ts": "77f7407be492bf9b4278ffdd2a9aec8939fc22771a34614704a2887435cb68d3",
     "lib/p5/pricingCache.ts": "99dce7244fb151dd8967cd27dd839f37e5247adcf519f74f222d2ff0db9ab5a9",
     "lib/p5/pricingCorrections.ts": "ac2fa7c2c760d3d42a920b6c2d2fdfd5ad6f294c3323d901303ef57a4dbd631e",
@@ -524,7 +524,7 @@
     "components/ProjectServiceDefaultsEditor.tsx": "da9a5d6c81ae915b190fcda4426ec2b29a05221822ecd8d8a068c17439f3f46e",
     "components/ProjectServiceEditor.tsx": "138ab8bd450477995ac7beabcfb74b807dcf466b1ee43c1f01dd52db8824f5a7",
     "lib/p5/projectServicePolicy.ts": "43406d3d1b8c4253b23f17d3f2fb174270d68848377e8811ec7a9ecef529c605",
-    "lib/p5/projectServices.ts": "62eaad6928684bd652730bfc6e30dff199cea3023c3ed7529cc6d652678ba45b",
+    "lib/p5/projectServices.ts": "5d0dc233a3621b04e34684f97f00e4b1216d27c868cbe4073e2a7127603e7a7c",
     "lib/p5/phoneHref.ts": "acb0d1322aac2b4fbf97f007614107adf3b648612b41b867188c5260c26c0249"
   },
   "coordinatedIntakeBatch": {
