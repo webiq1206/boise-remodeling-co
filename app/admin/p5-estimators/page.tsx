@@ -14,7 +14,7 @@ export default function EstimatorAdministration(){
   const [data,setData]=useState<any>(null);const [selected,setSelected]=useState<any>(null);const [config,setConfig]=useState("");const [error,setError]=useState("");const [busy,setBusy]=useState(false);
   const [costInput,setCostInput]=useState("");const [reviewNotes,setReviewNotes]=useState("");const [review,setReview]=useState<any>(null);const [confirmed,setConfirmed]=useState(false);
   const [exception,setException]=useState("strategic-value");const [reason,setReason]=useState("");const [evidence,setEvidence]=useState("");const [providerId,setProviderId]=useState("");const [status,setStatus]=useState("");
-  const control={display:"block",width:"100%",maxWidth:"100%",minHeight:44,fontSize:16,color:"#383837",background:"#fff",padding:12,boxSizing:"border-box" as const};
+  const control={display:"block",width:"100%",maxWidth:"100%",minHeight:44,fontSize:16,color:"#17201b",background:"#fff",padding:12,boxSizing:"border-box" as const};
   async function load(){const response=await fetch("/api/admin/p5-estimators");const body=await response.json();if(!response.ok)throw new Error(body.error);setData(body);setConfig(JSON.stringify(body.configuration,null,2));}
   useEffect(()=>{load().then(()=>{
     const params=new URLSearchParams(window.location.search);const requestedDraft=params.get("id");const requestedRevision=params.get("revision");
@@ -53,7 +53,7 @@ export default function EstimatorAdministration(){
       onChange={value=>setConfig(JSON.stringify({...JSON.parse(config),projectServiceDefaults:value},null,2))}
       onSave={async()=>{setBusy(true);setError("");try{await persistServiceDefaults();}catch(e){setError(e instanceof Error?e.message:"Save failed");throw e;}finally{setBusy(false);}}}/>:
       <p role="alert">Correct the configuration JSON before editing project-hour defaults.</p>}
-    <details><summary>Review financial configuration and cost books</summary><label htmlFor="p5-admin-config">Financial forecast, current cost evidence, quantity rules and scope coverage</label><textarea id="p5-admin-config" value={config} onChange={e=>setConfig(e.target.value)} rows={22} style={{display:"block",width:"100%",maxWidth:"100%",fontSize:16,fontFamily:"monospace",color:"#383837",background:"#fff",padding:14}}/><button onClick={save} disabled={busy} style={{minHeight:44,padding:12}}>Save reviewed configuration</button></details>
+    <details data-clarity-mask="true"><summary>Review financial configuration and cost books</summary><label htmlFor="p5-admin-config">Financial forecast, current cost evidence, quantity rules and scope coverage</label><textarea id="p5-admin-config" value={config} onChange={e=>setConfig(e.target.value)} rows={22} style={{display:"block",width:"100%",maxWidth:"100%",fontSize:16,fontFamily:"monospace",color:"#383837",background:"#fff",padding:14}}/><button onClick={save} disabled={busy} style={{minHeight:44,padding:12}}>Save reviewed configuration</button></details>
     <P5PriceReferences review={review}/><h2>Delivery health</h2><ul>{data.delivery.map((d:any)=><li key={d.status}>{d.status}: {d.count}</li>)}</ul><button style={{minHeight:44,padding:12}} onClick={async()=>{setBusy(true);try{const r=await fetch("/api/admin/p5-estimators",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"process-delivery"})});if(!r.ok)throw new Error((await r.json()).error);await load();}catch(e){setError(String(e));}finally{setBusy(false);}}} disabled={busy}>Process due deliveries</button>
     <P5IntakeQueue/>
     <h2>Customer review requests</h2><p>Requests are saved independently of automatic pricing. Check this list even when an email notification is unconfirmed.</p>
@@ -69,7 +69,7 @@ export default function EstimatorAdministration(){
         taskCount={(serviceInput.lines??[]).filter((l:any)=>!projectServiceCode(l.id)).length}
         disabled={busy||selected.reference?.historical||selected.estimate.status==="submitted"}
         onSave={plan=>{setCostInput(JSON.stringify({...serviceInput,projectServices:plan},null,2));setReview(null);setConfirmed(false);setStatus("Milestone hours updated in the cost editor. Save and calculate reviewed costs to persist the new review; no existing published estimate has changed.");}}/>}
-      <fieldset disabled={busy||selected.reference?.historical} style={{border:0,padding:0,minWidth:0}}>
+      <fieldset disabled={busy||selected.reference?.historical} style={{border:0,padding:0,minWidth:0}} data-clarity-mask="true">
         <label htmlFor="p5-review-costs">Itemized project costs and assumptions (JSON)</label><textarea id="p5-review-costs" rows={24} style={{...control,fontFamily:"monospace"}} value={costInput} onChange={e=>{setCostInput(e.target.value);setReview(null);setConfirmed(false);}}/>
         <label htmlFor="p5-review-notes">Scope, upload, risk and warning review notes</label><textarea id="p5-review-notes" rows={4} style={control} value={reviewNotes} onChange={e=>{setReviewNotes(e.target.value);setReview(null);setConfirmed(false);}}/>
         <button style={{minHeight:44,padding:12}} onClick={reviewCosts}>Save and calculate reviewed costs</button>

@@ -1,10 +1,10 @@
 {
   "source": "p5-home-co",
-  "commit": "894320513633cdc6a2d0aa6fb8e7ffc352a7373d",
+  "commit": "09d1edd2b3a504082a70379592d17e62585106b0",
   "generatedAt": "2026-11-24T17:30:00.000Z",
-  "note": "Combined approved UI/PDF/reference release with preserved local attribution extension. Refreshed only changed shared files; retained all prior manifest entries. Attribution remains consent-gated. Reviewed callback contrast correction synchronized with canonical P5; refreshed only changed file hashes. Existing site extensions retained. 2026-11-24: bounded cost book sync (internal labor $120/hour, trades at sub rates, Handyman $95/hour, project services 01-31-03/04/05); refreshed only the changed shared files and their two new dependencies. P5Estimator.tsx kept at this site version because its Ads conversion call needs a site module update first.",
+  "note": "Combined approved UI/PDF/reference release with preserved local attribution extension. Refreshed only changed shared files; retained all prior manifest entries. Attribution remains consent-gated. Reviewed callback contrast correction synchronized with canonical P5; refreshed only changed file hashes. Existing site extensions retained. 2026-11-24: bounded cost book sync (internal labor $120/hour, trades at sub rates, Handyman $95/hour, project services 01-31-03/04/05); refreshed only the changed shared files and their two new dependencies. The admin page keeps this site's Clarity masking on the merged project-service page. P5Estimator.tsx kept at this site version because its Ads conversion call needs a site module update first.",
   "files": {
-    "app/admin/p5-estimators/page.tsx": "aa1557d1cbf80c072715ab051f8adbc1130abb720c088ee6d5ddd18c664844ed",
+    "app/admin/p5-estimators/page.tsx": "e0a5f939aa370c4cfae7a7c67c1643fe5c5dd583fe5390bb3da79f2a2291c8e9",
     "app/api/admin/p5-intake/file/route.ts": "e8b49e0f2e19508d1f21903445fdcd36b2e3f6aa95edbc6ecdac110a625b11dc",
     "app/api/admin/p5-intake/route.ts": "37e3a9c9c2c112499afe91c911810c99ba86b3c9987361097d9ed97da5430a72",
     "app/api/p5-estimator/benchmark/route.ts": "a6e9e90bbd86323f790742e6fa40bef0ca80c934911bffef47d10d3ee8bb379c",
@@ -522,7 +522,7 @@
     "lib/p5/p5LeadIntake.ts": "622a1aa11d0e4c241e7dc1f4524836a890d4d5b208cbab950776a282f25cac16",
     "tests/p5-lead-intake.test.ts": "da130020d2d897a0c9121306c76d77e0c88142b4f2ffe2fdcda41ae05bef6156",
     "components/ProjectServiceDefaultsEditor.tsx": "da9a5d6c81ae915b190fcda4426ec2b29a05221822ecd8d8a068c17439f3f46e",
-    "components/ProjectServiceEditor.tsx": "f27e6facbe6ef1fb2ea7723c1520a723b667566e4fad352e97f48fe1e0d70cac",
+    "components/ProjectServiceEditor.tsx": "138ab8bd450477995ac7beabcfb74b807dcf466b1ee43c1f01dd52db8824f5a7",
     "lib/p5/projectServicePolicy.ts": "43406d3d1b8c4253b23f17d3f2fb174270d68848377e8811ec7a9ecef529c605",
     "lib/p5/projectServices.ts": "62eaad6928684bd652730bfc6e30dff199cea3023c3ed7529cc6d652678ba45b",
     "lib/p5/phoneHref.ts": "acb0d1322aac2b4fbf97f007614107adf3b648612b41b867188c5260c26c0249"
