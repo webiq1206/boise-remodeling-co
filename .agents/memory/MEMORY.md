@@ -14,3 +14,4 @@
 - [Estimator source integrity](estimator-source-integrity.md) — upload receipts cannot authorize older scope; replacement answers and recoveries need independent safeguards.
 - [Customer scope preservation](customer-scope-preservation.md) — disclosure and scope guards need positive construction counterexamples alongside rejection tests.
 - [Attribution boundaries](attribution-boundaries.md) — forwarding numbers are not new business numbers; Caldwell is not P5's location; installed tags do not prove visitor consent.
+- [Owner service pricing](owner-service-pricing.md) — final $120/hour services, authorized editable hour minimums, central-embed exclusion and historical pricing preservation.

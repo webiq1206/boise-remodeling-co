@@ -1,4 +1,5 @@
 import {publicPricingText} from './customerProjection.ts';
+import {OWNER_SERVICES,OWNER_SERVICE_RATE,OWNER_SERVICE_BOOK_COST,isOwnerOrOverlappingService,ownerServiceTotals,ownerSalaryCredit} from './ownerServices.ts';
 import {tradeForLine,apportionAmount,type TradeCategory} from "./trades.ts";
 /** Internal policy. Import only from server entry points, never client components. */
 export const POLICY_VERSION = "p5-2026-10-01-contingency-and-minor-work";
@@ -62,6 +63,7 @@ export interface LandedMaterial {
   waste: number; storage: number; handling: number;
 }
 export interface DirectCostLine {
+  supervisionTreatment?: 'outside-distinct'|'owner-overlap';
   allowance?:boolean;
   building?:string;
   floor?:string;
@@ -92,6 +94,8 @@ export interface OwnerApproval {
   approvedAt: string; estimateRevision: string;
 }
 export interface PricingInput {
+  /** Opt-in snapshot for NEW local estimates. Absent on historical reviews. */
+  ownerServices?: import('./ownerServices.ts').OwnerServiceSchedule;
   estimatePurpose?:'preliminary';
   /** One price instead of a range (owner rule: an RE-10 repair list gets a single firm price). */
   firmPrice?:boolean;
@@ -156,6 +160,16 @@ export function allowanceAdjustment(newDirectAmount: number, oldDirectAmount: nu
   return (newDirectAmount - oldDirectAmount) * (1 + contingencyRate) * priceFromRiskAdjustedCost(1, allocation, operatingProfit);
 }
 export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy, approvals: OwnerApproval[] = [], now = new Date()) {
+  if(input.ownerServices){
+    const remaining=input.lines.filter(line=>!isOwnerOrOverlappingService(line));
+    input={...input,lines:[...remaining,...ownerServiceTotals(input.ownerServices).map(s=>({
+      id:s.code,category:'other-direct' as const,description:s.label,quantity:s.hours,unit:'hour',
+      unitCost:OWNER_SERVICE_BOOK_COST,quantitySource:input.ownerServices!.reason,
+      qboServiceId:s.qboServiceId,
+      evidence:{basis:'approved-cost-book' as const,reference:`${s.code}: owner-authorized final client rate $120/hour; book conversion 120/1.6176`,
+        verifiedAt:now.toISOString(),validUntil:new Date(now.getTime()+365*86400000).toISOString()},
+    }))]};
+  }
   const warnings: PricingWarning[] = [];
   const warn = (code: string, message: string, severity: "review" | "block" = "review") => warnings.push({ code, message, severity });
   if (!input.scopeSummary.trim() || !input.revision.trim()) throw new Error("A scope summary and estimate revision are required");
@@ -254,18 +268,28 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   }
   const allocations = companyAllocation(finance, now); warnings.push(...allocations.warnings);
   const directCost = sum(lines.map(l => l.cost)); finite(directCost, "Total direct cost", true);
-  const contingency = directCost * contingencyRate;
+  const ownerLines=input.ownerServices?lines.filter(line=>OWNER_SERVICES.some(s=>s.code===line.id)):[];
+  const ownerCost=sum(ownerLines.map(l=>l.cost));
+  const ownerPrice=sum(ownerLines.map(l=>l.quantity*OWNER_SERVICE_RATE));
+  const contingency = (directCost-ownerCost) * contingencyRate;
   const riskAdjustedDirectCost = directCost + contingency;
   const divisor = 1 - allocations.total - margin;
-  const contractPrice = priceFromRiskAdjustedCost(riskAdjustedDirectCost, allocations.total, margin);
-  const allocationDollars = { overhead: contractPrice * allocations.overhead };
-  const operatingProfit = contractPrice * margin;
+  const outsidePrice=priceFromRiskAdjustedCost(riskAdjustedDirectCost-ownerCost, allocations.total, margin);
+  const salaryCredit=ownerSalaryCredit(input.ownerServices,ownerCost,outsidePrice*allocations.overhead);
+  const contractPrice = outsidePrice+ownerPrice-salaryCredit;
+  const allocationDollars = { overhead: outsidePrice * allocations.overhead-salaryCredit };
+  const operatingProfit = outsidePrice * margin+ownerPrice-ownerCost;
   const pricedLines=lines.map(line=>{
+    if(ownerLines.includes(line))return {...line,contingency:0,riskAdjustedCost:line.cost,overheadRecovery:0,
+      operatingProfit:line.quantity*OWNER_SERVICE_RATE-line.cost,sellingAmount:line.quantity*OWNER_SERVICE_RATE,
+      sellingUnitPrice:OWNER_SERVICE_RATE,qboServiceId:OWNER_SERVICES.find(s=>s.code===line.id)!.qboServiceId};
     const lineContingency=line.cost*contingencyRate;
     const riskAdjustedCost=line.cost+lineContingency;
-    const sellingAmount=riskAdjustedCost/divisor;
-    const overheadRecovery=sellingAmount*allocations.overhead;
-    const operatingProfit=sellingAmount*margin;
+    const originalSelling=riskAdjustedCost/divisor;
+    const credit=outsidePrice?salaryCredit*originalSelling/outsidePrice:0;
+    const sellingAmount=originalSelling-credit;
+    const overheadRecovery=originalSelling*allocations.overhead-credit;
+    const operatingProfit=originalSelling*margin;
     return {...line,contingency:lineContingency,riskAdjustedCost,overheadRecovery,operatingProfit,sellingAmount,sellingUnitPrice:sellingAmount/line.quantity};
   });
   // A book-priced estimate carries the owner's own dialed-in prices, so its band is tight: 5% each way,
@@ -273,8 +297,8 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   const width = input.bookPriced ? Math.min(.08, .05 + riskCount * .01) : Math.min(.5, (input.uncertainty === "high" ? .30 : input.uncertainty === "medium" ? .20 : .10) + riskCount * .015);
   const step = contractPrice >= 100000 ? 1000 : contractPrice >= 10000 ? 100 : contractPrice >= 1000 ? 25 : 5;
   // The low endpoint cannot cut known direct costs below the approved floor.
-  const lowFloor = priceFromRiskAdjustedCost(riskAdjustedDirectCost, allocations.total, Math.min(matrix.floor, margin));
-  const planningRange = { low: Math.ceil(Math.max(lowFloor, contractPrice * (1 - width)) / step) * step, high: Math.ceil(contractPrice * (1 + width) / step) * step };
+  const lowFloor = priceFromRiskAdjustedCost(riskAdjustedDirectCost-ownerCost, allocations.total, Math.min(matrix.floor, margin))-salaryCredit;
+  const planningRange = { low: Math.ceil(Math.max(lowFloor, (contractPrice-ownerPrice) * (1 - width)) / step) * step+ownerPrice, high: Math.ceil((contractPrice-ownerPrice) * (1 + width) / step) * step+ownerPrice };
   const planningBandHigh=planningRange.high;
   // Quantity and price bounds are scenario limits, not standard deviations.
   // Without evidence of distributions or independence, root-sum-square
@@ -287,13 +311,13 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
     return Math.max(0,(line.quantityRange?.high??line.quantity)*(range?.high??line.unitCost)-line.cost);
   });
   const sourceHigh=directCost+sum(upsides);
-  planningRange.high=Math.max(planningRange.high,Math.ceil(priceFromRiskAdjustedCost(sourceHigh*(1+contingencyRate),allocations.total,margin)/step)*step);
+  planningRange.high=Math.max(planningRange.high,Math.ceil((priceFromRiskAdjustedCost((sourceHigh-ownerCost)*(1+contingencyRate),allocations.total,margin)-salaryCredit)/step)*step+ownerPrice);
   // A firm price is the modeled, margin-correct contract price, rounded up to the step: the number the
   // range was built around, never its low end. Quantities a document leaves open are priced at the
   // modeled count and disclosed as assumptions.
   if(input.firmPrice){const firm=Math.ceil(contractPrice/step)*step;planningRange.low=firm;planningRange.high=firm;}
   if (input.missingInformation.length) warn("missing-project-information", "Resolve the recorded missing project information before a firm proposal.");
-  if (contractPrice < 100 || contractPrice > 10000000) warn("unusual-total", "The result is outside the broad project review limits. Verify quantities and units.", "block");
+  if (contractPrice < (input.ownerServices?.version==='owner-services-v2'?1:100) || contractPrice > 10000000) warn("unusual-total", "The result is outside the broad project review limits. Verify quantities and units.", "block");
   if (input.benchmark) {
     finite(input.benchmark.low, "Benchmark low", true); finite(input.benchmark.high, "Benchmark high", true);
     if (input.benchmark.low > input.benchmark.high) throw new Error("Reversed benchmark range");
@@ -302,6 +326,7 @@ export function calculateP5Estimate(input: PricingInput, finance: FinancePolicy,
   } else warn("benchmark-missing", "Add a current, scope-comparable project benchmark for administrator review.");
   for (const a of input.manualAdjustments ?? []) if (!ids.has(a.costLineId) || !a.reason.trim()) throw new Error("Every manual adjustment needs a valid cost line and written reason");
   return {
+    ...(input.ownerServices?{ownerServices:input.ownerServices,ownerSalaryOverheadCredit:salaryCredit}:{}),
     policyVersion: POLICY_VERSION, revision: input.revision, evaluatedAt: now.toISOString(),
     estimatePurpose: input.estimatePurpose||'verified-cost-review',
     currentCostsConfirmed: !lines.some(line=>['owner-estimating-schedule','sourced-market-average','regional-planning-average','owner-budget-allowance'].includes(line.evidence.basis)),

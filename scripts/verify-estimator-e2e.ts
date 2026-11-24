@@ -168,7 +168,7 @@ for (const project of PROJECTS) {
     t(`totals/${project}/${quality}/line-arithmetic`, !badLine, badLine?.code);
 
     // Contingency is exactly 10% of direct.
-    t(`totals/${project}/${quality}/contingency`, Math.abs(est.contingency - est.directCost * 0.1) < 0.01);
+    t(`totals/${project}/${quality}/contingency`, Math.abs(est.contingency - (est.directCost-(est.ownerServiceCost||0)) * 0.1) < 0.01);
     t(
       `totals/${project}/${quality}/internal`,
       Math.abs(est.totalInternalCost - (est.directCost + est.contingency)) < 0.01,
@@ -191,13 +191,16 @@ for (const project of PROJECTS) {
 
     // Rounding: never a stray dollar. Steps are 500 / 1000 / 5000 by magnitude.
     const step = r.centre >= 100000 ? 5000 : r.centre >= 25000 ? 1000 : 500;
-    t(`range/${project}/${quality}/rounded-low`, r.low % step === 0, `${r.low} % ${step}`);
-    t(`range/${project}/${quality}/rounded-high`, r.high % step === 0, `${r.high} % ${step}`);
+    // Fixed-price owner hours are added after rounding the construction band.
+    const aligned=(value:number)=>Math.abs(value-Math.round(value/step)*step)<=.501;
+    t(`range/${project}/${quality}/rounded-low`, aligned(r.low-(est.ownerServicePrice||0)), 'construction band plus fixed services, displayed to whole dollars');
+    t(`range/${project}/${quality}/rounded-high`, aligned(r.high-(est.ownerServicePrice||0)), 'construction band plus fixed services, displayed to whole dollars');
 
     // Gross profit must reconcile.
     const gp = r.centre - est.totalInternalCost;
     t(`margin/${project}/${quality}/profit-positive`, gp > 0);
-    const realised = gp / r.centre;
+    const constructionPrice=r.centre-(est.ownerServicePrice||0)+(est.ownerSalaryOverheadCredit||0);
+    const realised = (constructionPrice-(est.totalInternalCost-(est.ownerServiceCost||0))) / constructionPrice;
     t(
       `margin/${project}/${quality}/realised-in-bounds`,
       realised >= MINIMUM_GROSS_MARGIN - 1e-6 && realised <= TARGET_GROSS_MARGIN + 1e-6,

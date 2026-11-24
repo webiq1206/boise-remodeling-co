@@ -1,3 +1,4 @@
+import {defaultOwnerServiceSchedule} from './ownerServices.ts';
 import {blockingExtractionNotes} from './documentLedger.ts';
 import {scopeAssumptions,deriveScopeAnswers} from "./adaptive.ts";
 import { createHash } from "node:crypto";
@@ -89,6 +90,7 @@ function priceReviewedScopeInternal(scope:ReviewedScope,configuration:EstimatorC
     assumptions:[...book.assumptions,...scopeAssumptions(scope.answers,scope.uncertainFields,scope.extraction,scope.text),...(scope.extraction?.reviewNotes||[]).filter(note=>!blockingReviewNote(note)).map(note=>/^to confirm:/i.test(note)?note:`To confirm: ${note}`)],exclusions:[...new Set([...book.exclusions,...explicitExclusions,...(resolution?.addExclusions||[])])],
     missingInformation,allowances:[],
   };
+  input.ownerServices=defaultOwnerServiceSchedule(lines,service);
   const estimate=calculateP5Estimate(input,configuration.finance,[],now);
   if(resolution?.issues.length){
     estimate.publishable=false;estimate.warnings.push({code:'scope-pricing-incomplete',severity:'block',message:'Every requested task must have supported pricing before a total can be shown.'});

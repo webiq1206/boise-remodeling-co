@@ -164,6 +164,9 @@ export type ConsultationBridgeInput = {
 
 /** One line of the customer's price: a trade and what the customer pays for it. Never our cost. */
 export type P5EstimateLine = {
+  qboServiceId?: string;
+  serviceCode?: string;
+  unitPrice?: number;
   title: string;
   description?: string;
   quantity?: number;
@@ -337,6 +340,11 @@ export function cleanP5Estimate(input: unknown): P5PlanningEstimate | null {
         const amount = cents(item.amount);
         if (amount === 0) continue;
         const line: P5EstimateLine = { title, amount };
+        const ownerIds:Record<string,string>={'01-31-03':'48','01-31-04':'49','01-31-05':'47'};
+        if(typeof item.serviceCode==='string'&&ownerIds[item.serviceCode]===item.qboServiceId){
+          if(item.unitPrice!==120||typeof item.quantity!=='number'||Math.abs(item.quantity*120-amount)>.005)return null;
+          line.serviceCode=item.serviceCode;line.qboServiceId=String(item.qboServiceId);line.unitPrice=120;
+        }
         const description = estimateText(item.description, 1000);
         if (description) line.description = description;
         const division = estimateText(item.division, 80);

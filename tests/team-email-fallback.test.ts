@@ -624,14 +624,21 @@ test("the estimate carries the customer price by trade, to the cent, for every p
         assert.deepEqual(Object.keys(estimate).sort(), ["high", "kind", "label", "lines", "low", "verified"], where);
 
         // One line per trade with a price, in the admin email's order, named as the trade.
-        const priced = admin.trades.filter((trade) => toCents(trade.customerAmount) > 0);
+        const priced = admin.trades.filter((trade) => toCents(trade.customerAmount) > 0).flatMap(trade=>
+          trade.children.some(line=>line.qboServiceId)
+            ?trade.children.map(line=>({...trade,division:line.description,customerAmount:Math.round(line.quantity*120*100)/100,
+              internalCost:line.cost,scopeSummary:`${line.quantity} hour`}))
+            :[trade]);
         const lines = estimate.lines!;
+        const ownerLines=lines.filter(line=>line.qboServiceId);
+        assert.deepEqual(ownerLines.map(line=>line.qboServiceId),['48','49','47'],where);
+        for(const line of ownerLines){assert.equal(line.unitPrice,120);assert.equal(line.amount,Math.round(line.quantity!*120*100)/100);}
         assert.equal(lines.length, priced.length, where);
         assert.ok(lines.length >= 8 && lines.length <= P5_ESTIMATE_MAX_LINES, where);
         lines.forEach((line, index) => {
           const trade = priced[index];
           assert.equal(line.title, trade.division, where);
-          assert.equal(line.division, trade.division, where);
+          assert.equal(line.division, line.qboServiceId?'Project services':trade.division, where);
           // The CUSTOMER amount of that trade (the email's "Customer" column), to the cent...
           assert.ok(Math.abs(line.amount - trade.customerAmount) <= 0.0101, `${where}: ${line.title} ${line.amount} vs ${trade.customerAmount}`);
           assert.ok(Math.abs(line.amount * 100 - toCents(line.amount)) < 1e-6, `${where}: ${line.amount} is whole cents`);
@@ -639,7 +646,7 @@ test("the estimate carries the customer price by trade, to the cent, for every p
           assert.notEqual(toCents(line.amount), toCents(trade.internalCost), `${where}: ${line.title}`);
           assert.ok(line.amount > trade.internalCost, `${where}: ${line.title} is a price, above its cost`);
           // One clear quantity travels as quantity and unit; several are said in words.
-          const single = /^(\d[\d,]*) ([A-Za-z]+)$/.exec(trade.scopeSummary);
+          const single = /^(\d[\d,.]*) ([A-Za-z]+)$/.exec(trade.scopeSummary);
           if (single && Number(single[1].replace(/,/g, "")) > 0) {
             assert.deepEqual([line.quantity, line.unit, line.description], [Number(single[1].replace(/,/g, "")), single[2], undefined], `${where}: ${line.title}`);
             measured += 1;
@@ -647,7 +654,7 @@ test("the estimate carries the customer price by trade, to the cent, for every p
             assert.deepEqual([line.quantity, line.unit, line.description], [undefined, undefined, trade.scopeSummary || undefined], `${where}: ${line.title}`);
             described += 1;
           }
-          assert.deepEqual(Object.keys(line).filter((key) => !["title", "division", "amount", "quantity", "unit", "description"].includes(key)), [], where);
+          assert.deepEqual(Object.keys(line).filter((key) => !["title", "division", "amount", "quantity", "unit", "description","qboServiceId","serviceCode","unitPrice"].includes(key)), [], where);
         });
 
         // The lines sum to the customer price to the cent, and that total sits inside the range.

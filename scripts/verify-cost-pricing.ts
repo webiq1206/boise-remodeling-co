@@ -397,40 +397,42 @@ for (const project of PROJECTS) {
    job that rents scaffolding, runs temporary power and needs a container, and
    was previously carrying none of it. */
 const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
+  // Owner services v1: replace overlapping team supervision with the three
+  // scope/milestone services at fixed final $120/hour, outside risk/margin.
   kitchen: {
-    refresh: [13500, 18000],
-    "mid-range": [28000, 38000],
-    "high-end": [49000, 66000],
-    luxury: [78000, 106000],
+    refresh: [13428, 17928],
+    "mid-range": [27912, 36912],
+    "high-end": [48391, 64391],
+    luxury: [78464, 104464],
   },
   bathroom: {
-    refresh: [9000, 12500],
-    "mid-range": [15000, 20500],
-    "high-end": [24000, 32000],
-    luxury: [37000, 50000],
+    refresh: [9136, 12136],
+    "mid-range": [15039, 20039],
+    "high-end": [23645, 31645],
+    luxury: [37585, 49585],
   },
   "whole-home": {
-    refresh: [77000, 105000],
-    "mid-range": [125000, 170000],
-    "high-end": [240000, 325000],
-    luxury: [375000, 505000],
+    refresh: [76329, 102329],
+    "mid-range": [123449, 163449],
+    "high-end": [236377, 311377],
+    luxury: [370862, 495862],
   },
   addition: {
-    "mid-range": [85000, 115000],
-    "high-end": [115000, 155000],
-    luxury: [155000, 215000],
+    "mid-range": [77384, 103384],
+    "high-end": [102176, 137176],
+    luxury: [145021, 190021],
   },
   adu: {
-    "mid-range": [150000, 200000],
-    "high-end": [205000, 275000],
-    luxury: [295000, 400000],
+    "mid-range": [139705, 184705],
+    "high-end": [193561, 258561],
+    luxury: [279588, 374588],
   },
   basement: {
     // Reprice 2026-09-03: wiring the wet bar (kitchenIncluded was shown to
     // basement visitors and priced nothing) adds real scope at this tier.
-    "mid-range": [53000, 72000],
-    "high-end": [80000, 109000],
-    luxury: [120000, 165000],
+    "mid-range": [52627, 69627],
+    "high-end": [79516, 105516],
+    luxury: [118390, 158390],
   },
 };
 

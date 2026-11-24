@@ -1,5 +1,15 @@
 import {createHash} from 'node:crypto';
-import {PRICE_BOOK,PRICE_BOOK_SOURCE,type PriceBookRow} from './priceBookData.ts';
+import {PRICE_BOOK as IMPORTED_PRICE_BOOK,PRICE_BOOK_SOURCE,type PriceBookRow} from './priceBookData.ts';
+import {OWNER_SERVICES,OWNER_SERVICE_BOOK_COST} from './ownerServices.ts';
+// Explicit owner-authorized amendment to the imported workbook. The original generated
+// workbook stays intact; re-imports cannot multiply or tier these final-client services.
+const PRICE_BOOK:PriceBookRow[]=[
+  ...IMPORTED_PRICE_BOOK.filter(row=>!OWNER_SERVICES.some(s=>s.code===row[0])),
+  ...OWNER_SERVICES.map(s=>[s.code,'General Requirements','Project Management & Fee',s.label,'HR',
+    'Fee / Professional Service','',null,127,0,OWNER_SERVICE_BOOK_COST,OWNER_SERVICE_BOOK_COST,
+    OWNER_SERVICE_BOOK_COST,OWNER_SERVICE_BOOK_COST,0,
+    `Final client rate $120/hour; book conversion 120/1.6176; QuickBooks service ${s.qboServiceId}. Applied once per project by owner service schedule.`] as PriceBookRow),
+];
 import type {PlanningRate} from './planningBooks.ts';
 
 /**
@@ -72,7 +82,7 @@ export function priceBookRate(row:PriceBookRow,tier:FinishTier,remodel:boolean):
   const [code,division,section,item,uom,costType,allowance,,,finishSensitive,,,,,premium,notes]=row;
   const kind=COST_TYPES[costType];
   const withPremium=remodel&&premium>0;
-  const amount=round(tierPrice(row,tier)*(withPremium?1+premium:1));
+  const amount=OWNER_SERVICES.some(s=>s.code===code)?OWNER_SERVICE_BOOK_COST:round(tierPrice(row,tier)*(withPremium?1+premium:1));
   // Division 90 prices a whole assembly or project per unit; its parts must not be added to it.
   const assembly=code.startsWith('90-')?'; complete assembly, do not add its component lines':'';
   const selection=allowance==='Owner Selection Allowance'?`; owner selection allowance at ${TIER_LABEL[tier]}`:allowance==='Contractor Allowance'?'; contractor allowance':'';

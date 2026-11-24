@@ -26,7 +26,14 @@ function siblingPath(name){const candidates=[name,name.split('-').map(part=>part
 /** Files each brand owns. They are never copied, never listed in the manifest and never retired. */
 export const BRAND_OWNED=['lib/p5/brand.ts','lib/p5/deliveryAdapter.ts','lib/p5/intakeDeliveryRuntime.ts','lib/p5/intakeCrmValidation.ts','tests/p5-intake-local-crm.test.ts','lib/p5/database.ts','lib/p5/adminAuth.ts','lib/p5/progress.ts','lib/p5/projectIntent.ts','lib/p5/typedAlternatives.ts','lib/p5/crmRecords.ts','lib/p5/shared-manifest.json',
   // Database preservation tooling and the pricing recovery harness follow each site's own schema and document service.
-  'scripts/p5-schema-statements.mjs','scripts/p5-prepare-database.mjs','tests/p5-database-safety.test.mjs','scripts/test-p5-pricing-recovery.mts'];
+  'scripts/p5-schema-statements.mjs','scripts/p5-prepare-database.mjs','tests/p5-database-safety.test.mjs','scripts/test-p5-pricing-recovery.mts',
+  // Brand copy/CRM fixtures depend on site modules, not the portable pricing engine.
+  'tests/p5-bathroom-near-me-copy.test.ts','tests/p5-business-hours.test.ts','tests/p5-caldwell-deer-flat.test.ts',
+  'tests/p5-call-text-click.test.ts','tests/p5-clarity-mask.test.ts','tests/p5-customer-lead-phone.test.ts',
+  'tests/p5-email-plain-text.test.ts','tests/p5-founded-year.test.ts','tests/p5-founded-year-visibility.test.ts',
+  'tests/p5-founding-year-flag.test.ts','tests/p5-intake-bridge.test.ts','tests/p5-owner-services.test.ts',
+  'tests/p5-published-figures.test.ts','tests/p5-registration-footer.test.ts','tests/p5-registration-link.test.ts',
+  'tests/p5-search-phase1.test.ts','tests/p5-service-cost-article.test.ts','tests/p5-testimonials-flag.test.ts','tests/p5-text-reply-line.test.ts'];
 /** Modules that exist only in p5-home-co: its QA continuation service, the document service and
  * the local lead receiver. They are never copied or listed, and no shared file may import them. */
 export const P5_ONLY=['lib/p5/canonicalReviewHttp.ts','lib/p5/canonicalReviewHubspot.ts','lib/p5/canonicalReviewStore.ts','tests/p5-canonical-receiver.test.ts','lib/p5/qaContinuation.ts','lib/p5/qaContinuationEndpoint.ts','lib/p5/qaOrigin.ts','lib/p5/qaSavedEstimate.ts','lib/p5/qaSavedEstimateEndpoint.ts','lib/p5/qaSavedReadingEndpoint.ts',
@@ -84,7 +91,8 @@ export const hashOf=file=>createHash('sha256').update(normalized(file)).digest('
 
 function manifest(files){
   let commit='';try{commit=execSync('git rev-parse HEAD',{cwd:root,stdio:['ignore','pipe','ignore']}).toString().trim();}catch{}
-  return {source:'p5-home-co',commit,generatedAt:new Date().toISOString(),note:'Shared estimator engine published from p5-home-co. Edit shared files there and run scripts/p5-sync.mjs; hash checks remain mandatory in every brand.',files:Object.fromEntries(files.map(file=>[file,hashOf(path.join(root,file))]))};
+  const source=JSON.parse(readFileSync(path.join(root,'package.json'),'utf8')).name;
+  return {source,commit,generatedAt:new Date().toISOString(),note:`Shared estimator snapshot generated in ${source} using scripts/p5-sync.mjs. Hash checks remain mandatory in every brand; this manifest does not assert deployment to other brands.`,files:Object.fromEntries(files.map(file=>[file,hashOf(path.join(root,file))]))};
 }
 function writeManifest(target,files){const data=manifest(files);if(!dry)writeFileSync(path.join(target,'lib/p5/shared-manifest.json'),JSON.stringify(data,null,2)+'\n');return data;}
 

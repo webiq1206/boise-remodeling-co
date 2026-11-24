@@ -1,4 +1,5 @@
 import {withQaWriteFence} from './qaOperationFence.ts';
+import {defaultOwnerServiceSchedule} from './ownerServices.ts';
 import {CRM_DELIVERY_ENABLED} from './outbox.ts';
 import {createHash,randomUUID} from "node:crypto";
 import {query} from "./database.ts";
@@ -34,6 +35,12 @@ export async function saveManualReview(body:any,actor:Actor){
   const [policy]=await query("SELECT payload FROM p5_estimator_policy WHERE id='current'");
   const finance=policy?.payload?.finance||EMPTY_CONFIGURATION.finance;
   const input={...body.input} as PricingInput;
+  // New-policy drafts cannot silently lose their owner services during review.
+  // Legacy/historical reviews without this snapshot remain on their original policy.
+  if(draft.internal_estimate?.ownerServices&&!input.ownerServices)
+    input.ownerServices=draft.internal_estimate.ownerServices;
+  if(!draft.internal_estimate&&!draft.submitted_at&&draft.status==='draft'&&!input.ownerServices)
+    input.ownerServices=defaultOwnerServiceSchedule(input.lines,input.service);
   if(draft.payload.answers?.complexity==="complex")input.complexity="complex";
   const declaredUrgency=draft.payload.answers?.urgency;
   if(declaredUrgency==="emergency"||declaredUrgency==="priority"&&input.urgency!=="emergency")input.urgency=declaredUrgency;

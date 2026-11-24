@@ -1,4 +1,5 @@
 import type {EstimatorConfiguration} from './costBook.ts';
+import {defaultOwnerServiceSchedule} from './ownerServices.ts';
 import {calculateP5Estimate,customerEstimate,customerSafeProjection,COST_CATEGORIES,SERVICE_MATRIX,type DirectCostLine,type PricingInput,type Service} from './pricing.ts';
 import {unitKey} from './unitRates.ts';
 import {projectHash,projectRecordIntegrity,validateProjectQuantities,type ProjectRecord,type RecordProblem} from './projectRecord.ts';
@@ -120,6 +121,7 @@ export function calculateProjectEstimate(record:ProjectRecord,selection:ProjectP
  if(compiled.lines.some(line=>Date.parse(line.evidence.validUntil)<now.getTime()))assumptions.push(`Pricing uses the owner planning catalog recorded ${configuration.planningCatalog!.importedAt.slice(0,10)}, which is past its scheduled review. Current supplier and trade pricing must be confirmed before a firm proposal.`);
  const exclusions=record.requirements.filter(r=>r.status==='excluded').map(r=>r.description);
  const input:PricingInput={estimatePurpose:'preliminary',firmPrice:record.service==='re10',bookPriced:true,service:record.service as Service,revision:projectHash({record:record.recordHash,selection,finance:configuration.finance}),scopeSummary:record.summary,lines:compiled.lines,coverage:COST_CATEGORIES.map(category=>({category,status:compiled.lines.some(line=>line.category===category)?'included':'not-applicable',reason:'Coverage is recorded against individual project requirements.'})),risks:[],assumptions,exclusions,missingInformation:[],allowances:[],uncertainty:compiled.specificationAllowances.length||compiled.quantities.some(q=>q.basis==='allowance')?'high':'medium',locationProvided:Boolean(record.location)};
+ input.ownerServices=defaultOwnerServiceSchedule(input.lines,input.service);
  const estimate=calculateP5Estimate(input,configuration.finance,[],now);
  for(const warning of estimate.warnings.filter(w=>w.severity==='block'))problems.push({code:warning.code,ids:[],message:warning.message});
  const customer=customerSafeProjection({...customerEstimate(estimate,record.summary),scopeTasks:record.requirements.map(r=>({id:r.id,description:r.description,category:r.trade,status:r.status,origin:r.origin,basis:r.reason})),verificationItems:record.questions.filter(q=>q.priority==='budget-choice').map(q=>q.prompt),projectRecordRevision:record.revision});

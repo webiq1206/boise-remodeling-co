@@ -15,7 +15,7 @@
 export const DOCUMENT_ESTIMATE_MAX_LINES=60;
 
 /** One line of the estimate as the intake reads it. `amount` is what the customer pays for the line. */
-export interface DocumentEstimateLine {title:string;description?:string;quantity?:number;unit?:string;amount:number;division?:string}
+export interface DocumentEstimateLine {title:string;description?:string;quantity?:number;unit?:string;amount:number;division?:string;qboServiceId?:string;serviceCode?:string;unitPrice?:number}
 /** The contract's `estimate` object for a document estimate. Customer amounts only. */
 export interface DocumentEstimateBody {kind:'document';low:number;high:number;base:number;label:string;verified:true;lines:DocumentEstimateLine[]}
 
@@ -27,8 +27,8 @@ const sumOf=(lines:DocumentEstimateLine[])=>round2(lines.reduce((sum,line)=>sum+
 /** One line per trade, same total. Empty when even that is more lines than one estimate carries. */
 export function linesByTrade(lines:DocumentEstimateLine[]):DocumentEstimateLine[]{
   const byTrade=new Map<string,number>();
-  for(const line of lines)byTrade.set(line.division??OTHER_TRADE,round2((byTrade.get(line.division??OTHER_TRADE)??0)+line.amount));
-  const combined=[...byTrade].map(([trade,amount])=>({title:trade,amount,division:trade}));
+  for(const line of lines.filter(line=>!line.qboServiceId))byTrade.set(line.division??OTHER_TRADE,round2((byTrade.get(line.division??OTHER_TRADE)??0)+line.amount));
+  const combined=[...[...byTrade].map(([trade,amount])=>({title:trade,amount,division:trade})),...lines.filter(line=>line.qboServiceId)];
   return combined.length>DOCUMENT_ESTIMATE_MAX_LINES?[]:combined;
 }
 
@@ -53,7 +53,8 @@ export function documentEstimate(record:unknown):{estimate:DocumentEstimateBody;
     if(!Number.isFinite(amount)||amount<=0||!description)continue;
     const quantity=Number(entry.quantity),unit=oneLine(entry.unit,20),trade=oneLine(entry.trade,80);
     lines.push({title:description.slice(0,200).trim(),...(description.length>200?{description:description.slice(0,1000).trim()}:{}),
-      ...(Number.isFinite(quantity)&&quantity>0?{quantity}:{}),...(unit?{unit}:{}),amount,...(trade?{division:trade}:{})});
+      ...(Number.isFinite(quantity)&&quantity>0?{quantity}:{}),...(unit?{unit}:{}),amount,...(trade?{division:trade}:{}),
+      ...(['48','49','47'].includes(String(entry.qboServiceId))?{qboServiceId:String(entry.qboServiceId),serviceCode:String(entry.id),unitPrice:120}:{})});
   }
   // Rounding can move at most a cent for each line that was priced, however they are grouped afterwards.
   const tolerance=0.01*lines.length;
@@ -64,8 +65,11 @@ export function documentEstimate(record:unknown):{estimate:DocumentEstimateBody;
   if(lines.length){
     const drift=round2(base-sumOf(lines));
     if(drift!==0&&Math.abs(drift)<=tolerance+1e-9){
-      const largest=lines.reduce((a,b)=>b.amount>a.amount?b:a);
-      largest.amount=round2(largest.amount+drift);
+      const adjustable=lines.filter(line=>!line.qboServiceId);
+      if(adjustable.length){
+        const largest=adjustable.reduce((a,b)=>b.amount>a.amount?b:a);
+        largest.amount=round2(largest.amount+drift);
+      }
     }
   }
   const service=oneLine(source.scope?.answers?.service,120);

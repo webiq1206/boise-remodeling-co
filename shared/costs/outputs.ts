@@ -122,7 +122,9 @@ export function buildAdminView(estimate: InternalEstimate, range: PlanningRange)
     internalCost: t.internalCost,
     // Scale from DIRECT cost through the contingency and margin in one step, so
     // the rows reconcile to the centre rather than to the pre-contingency total.
-    customerAmount: t.internalCost * scale * (estimate.totalInternalCost / estimate.directCost),
+    customerAmount: t.lines.some(l=>l.sellingUnitPrice!==undefined)
+      ?t.lines.reduce((sum,l)=>sum+Math.round(l.quantity*(l.sellingUnitPrice||0)*100)/100,0)
+      :t.internalCost/(estimate.directCost-(estimate.ownerServiceCost||0))*(range.centre-(estimate.ownerServicePrice||0)),
     children: t.lines,
   }));
 

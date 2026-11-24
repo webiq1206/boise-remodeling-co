@@ -972,6 +972,13 @@ export function buildConsultationP5Estimate(est: VerifiedEstimate | null): P5Pla
     const lines: P5EstimateLine[] = [];
     admin.trades.forEach((trade, index) => {
       if (split[index] <= 0) return;
+      const services=trade.children.filter(line=>line.qboServiceId);
+      if(services.length){
+        for(const service of services)lines.push({title:service.description,division:trade.division,
+          quantity:service.quantity,unit:'hour',amount:Math.round(service.quantity*120*100)/100,unitPrice:120,
+          serviceCode:service.code,qboServiceId:service.qboServiceId});
+        return;
+      }
       const line: P5EstimateLine = { title: trade.division, division: trade.division, amount: split[index] / 100 };
       // One clear quantity ("180 SF") travels as quantity and unit. Several ("1 MO, 0 EA")
       // are said in words instead.

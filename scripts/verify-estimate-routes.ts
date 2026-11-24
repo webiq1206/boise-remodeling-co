@@ -436,9 +436,15 @@ async function oneTeamEmailPerRequest() {
     assert.deepEqual([sentEstimate.low, sentEstimate.high], shown, 'low and high are the range the visitor was shown');
     assert.ok(sentEstimate.low > 1000 && sentEstimate.high > sentEstimate.low, 'never the client numbers');
     const priceNotes = notes.filter((line) => line.startsWith('Price by trade, '));
-    assert.equal(sentEstimate.lines.length, priceNotes.length, 'one line for every priced trade');
+    const ownerLines=sentEstimate.lines.filter(line=>line.qboServiceId);
+    assert.deepEqual(ownerLines.map(line=>line.qboServiceId),['48','49','47']);
+    for(const line of ownerLines){assert.equal(line.unitPrice,120);assert.equal(line.amount,Math.round(line.quantity*120*100)/100);}
+    assert.equal(sentEstimate.lines.length, priceNotes.length+2, 'three owner services replace the single services trade');
     assert.ok(sentEstimate.lines.length >= 8 && sentEstimate.lines.length <= 60);
-    sentEstimate.lines.forEach((line, index) => {
+    const groupedLines=sentEstimate.lines.filter(line=>!line.qboServiceId);
+    const servicesIndex=priceNotes.findIndex(note=>note.startsWith('Price by trade, Project services:'));
+    groupedLines.splice(servicesIndex,0,{title:'Project services',division:'Project services',amount:ownerLines.reduce((sum,line)=>sum+line.amount,0)});
+    groupedLines.forEach((line, index) => {
       assert.ok(line.title && line.title === line.division, 'title and division are the trade');
       assert.ok(priceNotes[index].startsWith(`Price by trade, ${line.title}: $`), 'the same trades, in the same order, as the team notes');
       assert.ok(Number.isFinite(line.amount) && line.amount > 0 && Math.abs(line.amount * 100 - Math.round(line.amount * 100)) < 1e-6, 'a positive amount in whole cents');

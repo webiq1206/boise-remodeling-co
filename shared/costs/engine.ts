@@ -19,6 +19,7 @@
  * risk and are not additive in the same place.
  */
 import { LINE_ITEMS, item, type CostType, type LineItem, type Uom } from "./lineItemCatalog";
+import {defaultOwnerServiceSchedule,ownerServiceTotals,isOwnerOrOverlappingService,ownerSalaryCredit,OWNER_SERVICE_BOOK_COST,OWNER_SERVICE_RATE,type OwnerServiceSchedule} from "../../lib/p5/ownerServices";
 
 /* ------------------------------------------------------------------ inputs */
 
@@ -30,6 +31,8 @@ export type QualityLevel = "refresh" | "mid-range" | "high-end" | "luxury";
  * unknown rather than assuming a default.
  */
 export interface ScopeSelections {
+  /** Authenticated internal estimate callers may supply a reviewed schedule. */
+  ownerServices?: OwnerServiceSchedule;
   quality: QualityLevel;
   /** Floor area of the space being worked on, in square feet. */
   sqft: number;
@@ -179,6 +182,8 @@ export interface ScopeRule {
 
 /** A priced line in the internal takeoff. */
 export interface CostLine {
+  sellingUnitPrice?: number;
+  qboServiceId?: string;
   code: string;
   division: string;
   description: string;
@@ -275,6 +280,10 @@ export interface EstimateWarning {
 }
 
 export interface InternalEstimate {
+  ownerSalaryOverheadCredit?:number;
+  ownerServices?: OwnerServiceSchedule;
+  ownerServiceCost?: number;
+  ownerServicePrice?: number;
   lines: CostLine[];
   trades: TradeRollup[];
   directCost: number;
@@ -508,19 +517,31 @@ export function buildInternalEstimate(
     if (rule.assumption && !assumptions.includes(rule.assumption)) assumptions.push(rule.assumption);
   }
 
-  const lines = [...byCode.values()];
+  const constructionLines = [...byCode.values()].filter(line=>!isOwnerOrOverlappingService(line));
+  const ownerServices=defaultOwnerServiceSchedule(constructionLines,project||'remodel',{override:selections.ownerServices});
+  const ownerLines:CostLine[]=ownerServiceTotals(ownerServices).map(s=>({
+    code:s.code,division:'Project services',description:s.label,type:'Other',uom:'HR',
+    quantity:s.hours,unitCost:OWNER_SERVICE_BOOK_COST,cost:s.hours*OWNER_SERVICE_BOOK_COST,
+    sellingUnitPrice:OWNER_SERVICE_RATE,qboServiceId:s.qboServiceId,assumption:ownerServices.reason,
+  }));
+  const lines = [...constructionLines,...ownerLines];
+  const ownerServiceCost=ownerLines.reduce((sum,l)=>sum+l.cost,0);
+  const ownerServicePrice=Math.round(ownerLines.reduce((sum,l)=>sum+Math.round(l.quantity*OWNER_SERVICE_RATE*100)/100,0)*100)/100;
   const directCost = lines.reduce((s, l) => s + l.cost, 0);
-  const contingency = directCost * CONTINGENCY_RATE;
+  const contingency = (directCost-ownerServiceCost) * CONTINGENCY_RATE;
   const totalInternalCost = directCost + contingency;
+  const outsidePrice=priceAtMargin(totalInternalCost-ownerServiceCost,TARGET_GROSS_MARGIN);
+  const salaryCredit=ownerSalaryCredit(ownerServices,ownerServiceCost,outsidePrice*.20);
 
   return {
+    ownerServices,ownerServiceCost,ownerServicePrice,ownerSalaryOverheadCredit:salaryCredit,
     lines,
     trades: rollUpByTrade(lines, dims, TARGET_GROSS_MARGIN),
     directCost,
     contingency,
     totalInternalCost,
     appliedMargin: TARGET_GROSS_MARGIN,
-    customerPrice: priceAtMargin(totalInternalCost, TARGET_GROSS_MARGIN),
+    customerPrice: outsidePrice+ownerServicePrice-salaryCredit,
     assumptions,
     warnings,
   };
@@ -546,7 +567,7 @@ function rollUpByTrade(lines: CostLine[], dims: Dimensions, margin: number): Tra
       division,
       scopeSummary,
       internalCost,
-      customerAmount: priceAtMargin(internalCost, margin),
+      customerAmount: group.reduce((sum,l)=>sum+(l.sellingUnitPrice===undefined?priceAtMargin(l.cost,margin):l.quantity*l.sellingUnitPrice),0),
       lines: group.sort((a, b) => b.cost - a.cost),
     });
   }

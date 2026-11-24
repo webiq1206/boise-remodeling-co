@@ -215,16 +215,18 @@ export function buildPlanningRange(
   /** Extra half-width for weak information. Widens only; see above. */
   bandPenalty = 0,
 ): PlanningRange {
-  const decision = decideMargin(estimate.totalInternalCost, project, quality, sqft);
+  const fixed=estimate.ownerServicePrice||0;
+  const decision = decideMargin(estimate.totalInternalCost-(estimate.ownerServiceCost||0), project, quality, sqft);
   const penalty = Math.min(MAX_BAND_WIDENING, Math.max(0, bandPenalty));
   const band = MIN_BAND + penalty;
 
-  const centre = decision.price;
+  const salaryCredit=Math.min(estimate.ownerSalaryOverheadCredit||0,decision.price*.20);
+  const centre = decision.price+fixed-salaryCredit;
   const step = stepFor(centre);
   return {
     centre,
-    low: roundTo(centre * (1 - band), step),
-    high: roundTo(centre * (1 + band), step),
+    low: Math.round(roundTo((decision.price-salaryCredit) * (1 - band), step)+fixed),
+    high: Math.round(roundTo((decision.price-salaryCredit) * (1 + band), step)+fixed),
     band,
     appliedMargin: decision.appliedMargin,
     marginTrimmed: decision.trimmed,
