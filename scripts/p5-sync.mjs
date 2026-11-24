@@ -29,20 +29,26 @@ export const BRAND_OWNED=['lib/p5/brand.ts','lib/p5/deliveryAdapter.ts','lib/p5/
   'scripts/p5-schema-statements.mjs','scripts/p5-prepare-database.mjs','tests/p5-database-safety.test.mjs','scripts/test-p5-pricing-recovery.mts'];
 /** Modules that exist only in p5-home-co: its QA continuation service, the document service and
  * the local lead receiver. They are never copied or listed, and no shared file may import them. */
-export const P5_ONLY=['lib/p5/canonicalReviewHttp.ts','lib/p5/canonicalReviewHubspot.ts','lib/p5/canonicalReviewStore.ts','tests/p5-canonical-receiver.test.ts','lib/p5/qaContinuation.ts','lib/p5/qaContinuationEndpoint.ts','lib/p5/qaOrigin.ts','lib/p5/qaSavedEstimate.ts','lib/p5/qaSavedEstimateEndpoint.ts','lib/p5/qaSavedReadingEndpoint.ts',
+export const P5_ONLY=[
+  // P5 Ads destination and live-host contract are site-specific.
+  'tests/p5-google-ads-conversion.test.ts',
+  // P5 marketing search tests import P5 app identity, quote services and sitemap.
+  'tests/p5-search-phase1.test.ts','lib/p5/canonicalReviewHttp.ts','lib/p5/canonicalReviewHubspot.ts','lib/p5/canonicalReviewStore.ts','tests/p5-canonical-receiver.test.ts','lib/p5/qaContinuation.ts','lib/p5/qaContinuationEndpoint.ts','lib/p5/qaOrigin.ts','lib/p5/qaSavedEstimate.ts','lib/p5/qaSavedEstimateEndpoint.ts','lib/p5/qaSavedReadingEndpoint.ts',
   'components/P5QaContinuation.tsx','components/P5QaSavedEstimate.tsx','components/P5QaSavedReading.tsx',
   'scripts/check-p5-live-pricing-guarded.mts','scripts/check-p5-recovery-request.mjs','scripts/lib/recoveryTransport.mjs','scripts/p5-qa-recovery-browser.mjs','scripts/p5-qa-saved-auth-fixture.mjs','scripts/p5-qa-saved-browser.mjs','scripts/p5-reference-files.mts','scripts/test-p5-qa-paid.mts','scripts/test-p5-recovery-request.mjs','scripts/test-p5-recovery-transport.mjs',
   'tests/p5-document-followups.test.ts','tests/p5-qa-continuation.test.ts','tests/p5-qa-origin.test.ts','tests/p5-qa-saved-estimate.test.ts','tests/p5-qa-saved-reading.test.ts','tests/p5-synthetic-crm.test.ts',
   // Project-record qualification (page evidence, source contracts, JSON Schema contracts) runs on p5homeco.com only.
   'tests/p5-project-local-pages.test.ts','tests/p5-project-page-evidence.test.ts','tests/p5-project-record.test.ts','tests/p5-project-source-contract.test.ts',
   // The pricing ledger is active by default on P5 alone, and saved-analysis reuse is a P5 path.
-  'tests/p5-pricing-production-errors.test.ts','tests/p5-saved-analysis-handler.test.ts'];
+  'tests/p5-pricing-production-errors.test.ts','tests/p5-saved-analysis-handler.test.ts',
+  // Prices the guided estimator and the scope platform, which exist only in this repo.
+  'tests/p5-cost-book-v2-calculators.test.ts'];
 /** Site modules every brand provides at the same path, so shared files may import them. */
 const SITE_MODULES=['lib/googleAdsConversion.ts','lib/brand-page-metadata.ts'];
 /** Shared files a brand may be missing on purpose (never deleted, never required). */
 const SHARED_ROOTS=[
   {dir:'lib/p5',match:name=>/\.(ts|json)$/.test(name)},
-  {dir:'components',match:name=>/^P5[A-Za-z]*\.(tsx|module\.css)$/.test(name),flat:true},
+  {dir:'components',match:name=>/^P5[A-Za-z]*\.(tsx|module\.css)$/.test(name)||['ProjectServiceEditor.tsx','ProjectServiceDefaultsEditor.tsx'].includes(name),flat:true},
   {dir:'app/api/p5-estimator',match:name=>name==='route.ts'},
   {dir:'app/api/admin/p5-intake',match:name=>name==='route.ts'},
   {dir:'app/admin/p5-estimators',match:name=>name==='page.tsx',flat:true},
