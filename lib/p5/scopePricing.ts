@@ -3,7 +3,7 @@ import {ESTIMATOR_PROVIDER,ESTIMATOR_MODEL,assertEstimatorModel,EstimatorModelEr
 import {pricingHttpError,missingResearchSources,pricingFailureDetails} from './pricingDiagnostics.ts';
 import {pricingCallEvidence,pricingResponseEvidence,type PricingCallEvidence,type PricingEvidenceSink} from './pricingEvidence.ts';
 import {unitKey,reusableUnitRate,supportedUnit,boiseArea,boisePriceRegion,UNIT_REGISTRY} from './unitRates.ts';
-import {reasoningFor,rejectsReasoning} from './openaiReasoning.ts';
+import {reasoningFor,mayRetryWithoutReasoning} from './openaiReasoning.ts';
 class MissingResearchRateError extends Error {}
 class ResearchEvidenceError extends Error {}
 /** Tracking tags do not change the cited page; product/region queries do. */
@@ -28,6 +28,8 @@ import {priceBookRates} from './priceBook.ts';
 import {finalMinorWorkExplanation} from './finalMinorWorkExplanation.ts';
 import {advisoryReviewSchema,assumptionLedger,stampAdvisoryReview,type AdvisoryReviewRecord} from './advisoryProvenance.ts';
 import {z} from 'zod';
+import {PROJECT_SERVICE_ROLES,PROJECT_OVERHEAD_CREDIT_ID} from './projectServices.ts';
+const PROJECT_SERVICE_LINE_IDS=new Set<string>([...PROJECT_SERVICE_ROLES.map(role=>role.code),PROJECT_OVERHEAD_CREDIT_ID]);
 import {PricingPending,PricingStageTimeout,isPricingPending,isPricingStageTimeout} from './pricingProgress.ts';
 import {suggestedTrade,tradeForScopeTask} from './trades.ts';
 import {priceReviewedScope,type CostRule,type EstimatorConfiguration,type ScopePriceResolution} from './costBook.ts';
@@ -460,8 +462,8 @@ const requestPricingWithUnsafe=async(provider:'anthropic'|'openai',instructions:
   const send=(payload:unknown)=>boundedFetch(`${endpoint}/responses`,{method:'POST',signal:AbortSignal.timeout(Math.min(search?150000:180000,remainingMs-(Date.now()-started))),headers:{'Content-Type':'application/json',Authorization:`Bearer ${key}`},body:JSON.stringify(payload)});
   let response=await send(requestBody);
   if(!response.ok){let detail=await response.text().catch(()=>'');
-    // A gateway that does not accept the reasoning setting is asked once more without it.
-    if(rejectsReasoning(response.status,detail)&&'reasoning' in requestBody){const {reasoning:_omit,...plain}=requestBody as Record<string,unknown>;void _omit;console.error('[p5-pricing] OpenAI refused the reasoning setting; retrying without it.');response=await send(plain);detail=response.ok?'':await response.text().catch(()=>'');}
+    // Only legacy optional effort may be omitted; required none must fail safely.
+    if(mayRetryWithoutReasoning(response.status,detail,requestBody)){const {reasoning:_omit,...plain}=requestBody as Record<string,unknown>;void _omit;console.error('[p5-pricing] OpenAI refused the reasoning setting; retrying without it.');response=await send(plain);detail=response.ok?'':await response.text().catch(()=>'');}
     if(!response.ok)throw Object.assign(pricingHttpError(response,detail),{pricingPriorRequestCount:requestSequence-1});}
   const body=await response.json();
   await retain(pricingResponseEvidence(currentCall!,response,body));
@@ -1192,7 +1194,9 @@ export function catalogResolution(mapping:Mapping,configuration:EstimatorConfigu
         result.assumptions.push(t.description+': standard alignment and leveling are included in the confirmed cabinet installation labor, priced once. Separately requested repairs or custom fitting are not inferred.');
       }
     }
-    t.existingLineIds=[...new Set(t.existingLineIds.map(id=>resolvePricedLineId(id,pricedLines)))];
+    // Whole-project service lines (01-31-03/04/05 and their overhead credit) are final-price
+    // lines priced once for the project, never a task's price reference; ignore a citation of them.
+    t.existingLineIds=[...new Set(t.existingLineIds.map(id=>resolvePricedLineId(id,pricedLines)))].filter(id=>!PROJECT_SERVICE_LINE_IDS.has(id));
     for(const id of t.existingLineIds){
       const line=pricedLines.find(l=>l.id===id);
       if(result.removeLineIds?.includes(id)||!line||line.quantity*line.unitCost<=0)result.issues.push(`${t.description}: invalid existing price reference.`);

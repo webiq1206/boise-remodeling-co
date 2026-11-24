@@ -1,3 +1,4 @@
+import {phoneHref} from './phoneHref.ts';
 import {pricingBasisNotes} from './pricingBasis.ts';
 import {customerPresentation} from './customerProjection.ts';
 /**
@@ -42,12 +43,12 @@ export function confirmStep(service:string):string{
   if(CONSTRUCTION_SERVICES.has(service))return "We'll review your plans, site conditions, selections and schedule.";
   return "We'll verify measurements, selections, existing conditions and the scope of work.";
 }
-/** The book's four finish tiers, in words a homeowner uses. "Refresh" is the builder-grade tier and is
- * never called a refresh on new construction. */
+/** The book's four finish tiers, in the names a homeowner sees. The stored value
+ * "refresh" is the Essential tier and is never called a refresh on new construction. */
 const FINISH:Record<string,{name:string;detail:string}>={
-  'refresh':{name:'Builder grade',detail:'Durable, standard-grade materials, fixtures and finishes in widely available styles.'},
-  'mid-range':{name:'Mid-range',detail:'Quality mid-grade materials, fixtures and finishes, with selected upgrades.'},
-  'high-end':{name:'High-end',detail:'Premium materials, fixtures and finishes with more custom detailing.'},
+  'refresh':{name:'Essential',detail:'Durable, standard-grade materials, fixtures and finishes in widely available styles.'},
+  'mid-range':{name:'Signature',detail:'Quality mid-grade materials, fixtures and finishes, with selected upgrades.'},
+  'high-end':{name:'Premium',detail:'Premium materials, fixtures and finishes with more custom detailing.'},
   'luxury':{name:'Luxury',detail:'Top-tier and custom materials, fixtures and finishes throughout.'},
 };
 const BASIS_TEXT:Record<FinishBasis,string>={
@@ -216,7 +217,7 @@ export function buildEstimateDocument(input:{id:string;result:unknown;brand:Esti
     ['Timing',[issue.timing?`Requested: ${clean(issue.timing,160)}. Availability is confirmed with your final proposal.`:'Start and completion dates are confirmed with your final proposal.']],
   ] as [string,string[]][]).filter(([,v])=>v.length);
 
-  const tel=brand.phone.replace(/[^\d+]/g,'');const reference=issue.reference||estimateReference(id);
+  const reference=issue.reference||estimateReference(id);
   const subject=encodeURIComponent(`Project review request - estimate ${reference}`);
   return {
     templateVersion:ESTIMATE_TEMPLATE_VERSION,brand:{...brand,endorsed:brand.id!=='p5'},reference,revision:Number(issue.revision)||0,issuedAt,issuedLabel:dateLabel(issuedAt),
@@ -230,7 +231,7 @@ export function buildEstimateDocument(input:{id:string;result:unknown;brand:Esti
     assumptionRows,
     legalLine:clean(input.legalLine,200),
     nextSteps:[['Request a project review','Reply to your estimate email or contact us with your estimate number.'],['Confirm the details',confirmStep(service)],['Receive your final proposal',"You'll receive a written proposal with confirmed scope, pricing and scheduling requirements."]],
-    review:{label:'Request a project review',email:brand.email,phone:brand.phone,mailto:`mailto:${brand.email}?subject=${subject}`,tel:`tel:${tel}`,url:`https://${brand.domain}${brand.consultationPath}`},
+    review:{label:'Request a project review',email:brand.email,phone:brand.phone,mailto:`mailto:${brand.email}?subject=${subject}`,tel:phoneHref(brand.phone),url:`https://${brand.domain}${brand.consultationPath}`},
     notice:PRELIMINARY_NOTICE,
   };
 }
