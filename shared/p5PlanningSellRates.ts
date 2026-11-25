@@ -12,7 +12,7 @@ const rates={
   bathroom:[19214.52, 27038.71, 38056.46, 56082.26],
 } as const;
 type Scope = {project:string;finish:string;sqft:number;refinements?:{aduConfig?:string|null;layoutChanges?:string|null}};
-export function protectedPlanningRange(input:Scope,oldLow:number,oldHigh:number,oldCenter:number) {
+export function protectedPlanningRange(input:Scope,oldLow:number,oldHigh:number,oldCenter:number,startBand:number,band:number) {
   const tier=({"refresh":0,"mid-range":1,"high-end":2,"luxury":3} as Record<string,number>)[input.finish]??1;
   let quantity=input.sqft;
   let key:keyof typeof rates;
@@ -26,6 +26,15 @@ export function protectedPlanningRange(input:Scope,oldLow:number,oldHigh:number,
     case "adu":key=input.refinements?.aduConfig==="attached"?"attached":"detached";quantity=key==="detached"?Math.max(1,input.sqft/600):1;keepCenter=true;break;
     default:key="newHome";keepCenter=true;
   }
-  const low=Math.ceil(Math.max(oldLow,quantity*rates[key][tier],keepCenter?oldCenter:0)/100)*100;
-  return {priceLow:low,priceHigh:Math.max(low,oldHigh)};
+  const required=Math.max(quantity*rates[key][tier],keepCenter?oldCenter:0);
+  const center=Math.max(oldCenter,required/(1-startBand));
+  const low=Math.ceil(Math.max(required,oldLow,center*(1-band))/100)*100;
+  const high=Math.ceil(Math.max(low,oldHigh,center*(1+band))/100)*100;
+  return {priceLow:low,priceHigh:high};
+}
+
+/** Planning basis for the older tools that already calculate risk-adjusted buy costs. */
+export function jobCostFloor(riskAdjustedCost:number,elevated:boolean):number {
+  if(!Number.isFinite(riskAdjustedCost)||riskAdjustedCost<0) throw new Error("Invalid job cost.");
+  return Math.ceil(riskAdjustedCost/(elevated?.60:.62)-1e-9);
 }

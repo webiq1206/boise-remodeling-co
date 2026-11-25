@@ -1413,7 +1413,14 @@ export function getUpgradeScopeMultiplier(
   return Math.min(1, fixedFraction + selected);
 }
 
-export function calculateEstimate(input: EstimateInput, userRefinementCount = 0): EstimateResult {
+export function calculateEstimate(input:EstimateInput,userRefinementCount=0):EstimateResult {
+  return modelEstimate(input,userRefinementCount,true);
+}
+/** Published market guide used for comparisons with the original local research. */
+export function calculateMarketGuide(input:EstimateInput,userRefinementCount=0):EstimateResult {
+  return modelEstimate(input,userRefinementCount,false);
+}
+function modelEstimate(input: EstimateInput, userRefinementCount:number,companyQuote:boolean): EstimateResult {
   const finish = normalizeFinishLevel(input.project, input.finish);
   const safeInput: EstimateInput = finish === input.finish ? input : { ...input, finish };
   const base = getPriceData(safeInput.project, safeInput.finish);
@@ -1517,9 +1524,9 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
   const MIN_BAND = 0.1; // keep an honest band (~1.2x); never a false single number
   const band = Math.max(MIN_BAND, startBand * (1 - BAND_TIGHTENING * detailRatio));
 
-  const {priceLow,priceHigh}=protectedPlanningRange(
-    input,Math.round(center*(1-band)/1000)*1000,Math.round(center*(1+band)/1000)*1000,center,
-  );
+  const marketLow=Math.round(center*(1-band)/1000)*1000;
+  const marketHigh=Math.round(center*(1+band)/1000)*1000;
+  const {priceLow,priceHigh}=companyQuote?protectedPlanningRange(input,marketLow,marketHigh,center,startBand,band):{priceLow:marketLow,priceHigh:marketHigh};
 
   return {
     priceLow,

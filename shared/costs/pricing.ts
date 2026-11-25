@@ -1,3 +1,4 @@
+import {jobCostFloor} from "../p5PlanningSellRates";
 /**
  * Turning an internal cost into a number a homeowner sees.
  *
@@ -219,12 +220,15 @@ export function buildPlanningRange(
   const penalty = Math.min(MAX_BAND_WIDENING, Math.max(0, bandPenalty));
   const band = MIN_BAND + penalty;
 
-  const centre = decision.price;
+  const previousCentre = decision.price;
+  const elevated=!["kitchen","bathroom","basement"].includes(project);
+  const floor=Math.max(jobCostFloor(estimate.totalInternalCost,elevated),elevated?previousCentre:0);
+  const centre=Math.max(floor,previousCentre);
   const step = stepFor(centre);
   return {
     centre,
-    low: roundTo(centre * (1 - band), step),
-    high: roundTo(centre * (1 + band), step),
+    low: Math.max(Math.ceil(floor/step)*step,roundTo(centre * (1 - band), step)),
+    high: Math.max(Math.ceil(floor/step)*step,roundTo(centre * (1 + band), step)),
     band,
     appliedMargin: decision.appliedMargin,
     marginTrimmed: decision.trimmed,

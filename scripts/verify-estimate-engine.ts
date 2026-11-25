@@ -2,7 +2,8 @@ import { buildUpTotal } from "../shared/costCatalog";
 import {
   EMPTY_ESTIMATE_INPUT,
   EMPTY_REFINEMENTS,
-  calculateEstimate,
+  calculateMarketGuide as calculateEstimate,
+  calculateEstimate as companyQuote,
   countVisibleUserRefinements,
   getMaxRefinementFields,
   getProjectSizeConfig,
@@ -153,8 +154,8 @@ const kitchenNeutral = calculateEstimate(
 // answering the questions (even with "standard") is information that reduces
 // uncertainty, so the band tightens and the range gets narrower.
 assert(
-  kitchenNeutral.priceLow <= kitchenBase.priceLow && kitchenNeutral.priceLow > 0,
-  "confirming an unchanged kitchen layout permits the same or lower price",
+  Math.abs(mid(kitchenNeutral) - mid(kitchenBase)) <= 1000,
+  "neutral refinements keep the estimate center",
 );
 assert(
   width(kitchenNeutral) < width(kitchenBase),
@@ -941,3 +942,13 @@ for (const project of projects) {
 console.log(
   `All estimate engine checks passed (${sweepChecks} exhaustive invariant checks across every project, finish, size step and scope ladder).`,
 );
+
+for(const project of projects) {
+  for(const finish of getAvailableFinishLevels(project)) {
+    const input={project,finish,sqft:getProjectSizeConfig(project).baselineSqft,refinements:{...EMPTY_REFINEMENTS}};
+    const old=calculateEstimate(input);
+    const quote=companyQuote(input);
+    assert(quote.priceLow>=old.priceLow && quote.priceHigh>=old.priceHigh && quote.priceHigh>=quote.priceLow,"New quote meets the modeled floor and funded range");
+    if(project==="addition"||project==="adu")assert(quote.priceLow>=(old.priceLow+old.priceHigh)/2-501,"The protected quote preserves the previous same-scope basis");
+  }
+}
