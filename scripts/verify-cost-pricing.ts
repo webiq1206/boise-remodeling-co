@@ -98,16 +98,16 @@ for (const project of PROJECTS) {
 
       check(range.low > 0 && range.high > range.low, `${project}/${quality}@${sqft}: range must be positive and ordered`);
       check(
-        range.appliedMargin >= MINIMUM_GROSS_MARGIN - 1e-9 && range.appliedMargin <= TARGET_GROSS_MARGIN + 1e-9,
-        `${project}/${quality}@${sqft}: applied margin ${range.appliedMargin} outside [${MINIMUM_GROSS_MARGIN}, ${TARGET_GROSS_MARGIN}]`,
+        Math.abs(range.appliedMargin - (range.centre - internal.totalInternalCost) / range.centre) < 1e-9,
+        `${project}/${quality}@${sqft}: reported margin must reconcile to the quoted centre`,
       );
 
-      // The band the owner specified: 0.85x to 1.15x of centre, before rounding.
-      const lowRatio = range.low / range.centre;
+      const overheadAndNet = ["kitchen", "bathroom", "basement"].includes(project) ? 0.38 : 0.40;
+      const minimum = Math.ceil(internal.totalInternalCost / (1 - overheadAndNet) - 1e-9);
       const highRatio = range.high / range.centre;
       check(
-        lowRatio > 0.8 && lowRatio < 0.9,
-        `${project}/${quality}@${sqft}: low end ${lowRatio.toFixed(3)}x of centre, expected about 0.85x`,
+        range.low >= minimum && range.low <= range.centre && range.centre <= range.high,
+        `${project}/${quality}@${sqft}: range must contain the centre and recover the policy floor`,
       );
       check(
         highRatio > 1.1 && highRatio < 1.2,
@@ -396,41 +396,42 @@ for (const project of PROJECTS) {
    Addition high-end moves most because a two-storey addition is exactly the
    job that rents scaffolding, runs temporary power and needs a container, and
    was previously carrying none of it. */
+// These selling ranges include P5’s November 2026 minimum projected net margin.
 const GOLDEN_QUOTED: Record<string, Record<string, [number, number]>> = {
   kitchen: {
-    refresh: [13500, 18000],
-    "mid-range": [28000, 38000],
-    "high-end": [49000, 66000],
-    luxury: [78000, 106000],
+    refresh: [17836, 20500],
+    "mid-range": [37235, 43000],
+    "high-end": [64934, 75000],
+    luxury: [104098, 120000],
   },
   bathroom: {
-    refresh: [9000, 12500],
-    "mid-range": [15000, 20500],
-    "high-end": [24000, 32000],
-    luxury: [37000, 50000],
+    refresh: [12075, 14000],
+    "mid-range": [20104, 23000],
+    "high-end": [31479, 36000],
+    luxury: [49271, 57000],
   },
   "whole-home": {
-    refresh: [77000, 105000],
-    "mid-range": [125000, 170000],
-    "high-end": [240000, 325000],
-    luxury: [375000, 505000],
+    refresh: [106210, 120000],
+    "mid-range": [173442, 200000],
+    "high-end": [327243, 375000],
+    luxury: [513874, 590000],
   },
   addition: {
-    "mid-range": [85000, 115000],
-    "high-end": [115000, 155000],
-    luxury: [155000, 215000],
+    "mid-range": [117694, 135000],
+    "high-end": [154867, 180000],
+    luxury: [215967, 250000],
   },
   adu: {
-    "mid-range": [150000, 200000],
-    "high-end": [205000, 275000],
-    luxury: [295000, 400000],
+    "mid-range": [203935, 235000],
+    "high-end": [281257, 325000],
+    luxury: [404833, 465000],
   },
   basement: {
     // Reprice 2026-09-03: wiring the wet bar (kitchenIncluded was shown to
     // basement visitors and priced nothing) adds real scope at this tier.
-    "mid-range": [53000, 72000],
-    "high-end": [80000, 109000],
-    luxury: [120000, 165000],
+    "mid-range": [70999, 82000],
+    "high-end": [106686, 125000],
+    luxury: [161607, 185000],
   },
 };
 

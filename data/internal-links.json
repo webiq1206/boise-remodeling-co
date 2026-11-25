@@ -339,7 +339,7 @@
           "anchor": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "title": "Nampa Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.425
+          "score": 0.42
         }
       ]
     },
@@ -1052,7 +1052,7 @@
           "anchor": "Eagle Remodeling Guide: What to Know Before You Remodel",
           "title": "Eagle Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.399
+          "score": 0.397
         }
       ]
     },
@@ -1487,7 +1487,7 @@
           "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.38
+          "score": 0.375
         }
       ]
     },
@@ -1772,7 +1772,7 @@
           "anchor": "Eagle Remodeling Guide: What to Know Before You Remodel",
           "title": "Eagle Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.38
+          "score": 0.375
         }
       ]
     },
@@ -2421,7 +2421,7 @@
           "anchor": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
           "title": "Boise Bench Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.189
+          "score": 0.185
         }
       ]
     },
@@ -3027,7 +3027,7 @@
           "anchor": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "title": "Meridian Remodeling Guide: What to Know Before You Remodel",
           "type": "guide",
-          "score": 0.207
+          "score": 0.202
         }
       ]
     },
@@ -3877,18 +3877,18 @@
           "score": 0.423
         },
         {
-          "url": "/blog/luxury-remodel-cost-boise",
-          "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
-          "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
-          "type": "blog",
-          "score": 0.137
-        },
-        {
           "url": "/services/room-addition",
           "anchor": "Room Addition",
           "title": "Room Addition in Boise & Treasure Valley, Idaho",
           "type": "service",
           "score": 0.135
+        },
+        {
+          "url": "/blog/luxury-remodel-cost-boise",
+          "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
+          "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
+          "type": "blog",
+          "score": 0.133
         },
         {
           "url": "/blog/remodeling-before-selling",
@@ -4393,7 +4393,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.125
+          "score": 0.12
         },
         {
           "url": "/services/outdoor-living",
@@ -4905,7 +4905,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.036
+          "score": 0.033
         },
         {
           "url": "/services/room-addition",
@@ -4983,7 +4983,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": -0.021
+          "score": -0.026
         }
       ]
     },
@@ -5410,7 +5410,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.026
+          "score": 0.021
         },
         {
           "url": "/blog/multigenerational-living-remodels",
@@ -6832,7 +6832,7 @@
           "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": 0.101
+          "score": 0.091
         },
         {
           "url": "/areas/boise",
@@ -6960,7 +6960,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.014
+          "score": 0.008
         },
         {
           "url": "/blog/living-through-a-remodel",
@@ -7084,18 +7084,18 @@
           "score": 0.203
         },
         {
-          "url": "/blog/remodel-cost-per-square-foot-boise",
-          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "type": "blog",
-          "score": -0.042
-        },
-        {
           "url": "/blog/exterior-remodeling-roi",
           "anchor": "Exterior Remodeling ROI: Curb Appeal That Pays Off",
           "title": "Exterior Remodeling ROI: Curb Appeal That Pays Off",
           "type": "blog",
           "score": -0.047
+        },
+        {
+          "url": "/blog/design-build-vs-general-contractor",
+          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "type": "blog",
+          "score": -0.049
         }
       ]
     },
@@ -7148,11 +7148,11 @@
           "score": 0.203
         },
         {
-          "url": "/blog/design-build-vs-general-contractor",
-          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
-          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "url": "/blog/remodel-cost-per-square-foot-boise",
+          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": -0.049
+          "score": -0.052
         },
         {
           "url": "/blog/multigenerational-living-remodels",
@@ -8226,14 +8226,14 @@
           "anchor": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
           "title": "Whole-Home Remodel Cost in Boise: 2026 Budget Guide",
           "type": "blog",
-          "score": 0.449
+          "score": 0.445
         },
         {
           "url": "/blog/luxury-remodel-cost-boise",
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": 0.442
+          "score": 0.435
         },
         {
           "url": "/guides/eagle-foothills-remodeling-guide",
@@ -8553,7 +8553,7 @@
           "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
           "type": "blog",
-          "score": -0.055
+          "score": -0.061
         },
         {
           "url": "/blog/how-long-does-a-bathroom-remodel-take",
@@ -8627,11 +8627,11 @@
           "score": -0.109
         },
         {
-          "url": "/blog/luxury-remodel-cost-boise",
-          "anchor": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
-          "title": "Luxury Remodel Cost in Boise & Eagle: 2026 Guide",
+          "url": "/blog/remodeling-before-selling",
+          "anchor": "Remodeling before selling in Boise",
+          "title": "Remodeling before selling in Boise",
           "type": "blog",
-          "score": -0.12
+          "score": -0.122
         }
       ]
     },
@@ -8940,18 +8940,18 @@
           "score": -0.073
         },
         {
-          "url": "/blog/remodeling-before-selling",
-          "anchor": "Remodeling before selling in Boise",
-          "title": "Remodeling before selling in Boise",
-          "type": "blog",
-          "score": -0.08
-        },
-        {
           "url": "/blog/open-concept-kitchen-remodeling",
           "anchor": "Open-Concept Kitchen Remodeling in Boise: Is It Right for You?",
           "title": "Open-Concept Kitchen Remodeling in Boise: Is It Right for You?",
           "type": "blog",
           "score": -0.084
+        },
+        {
+          "url": "/blog/kitchen-remodel-roi",
+          "anchor": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
+          "title": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
+          "type": "blog",
+          "score": -0.092
         }
       ]
     },
@@ -9004,18 +9004,18 @@
           "score": -0.07
         },
         {
-          "url": "/blog/kitchen-remodel-roi",
-          "anchor": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
-          "title": "Does a Kitchen Remodel Add Value? Kitchen ROI Explained",
+          "url": "/blog/boise-permit-guide",
+          "anchor": "Boise Remodeling Permits: What You Need to Know",
+          "title": "Boise Remodeling Permits: What You Need to Know",
           "type": "blog",
-          "score": -0.092
+          "score": -0.102
         },
         {
-          "url": "/blog/remodel-cost-per-square-foot-boise",
-          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
-          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "url": "/blog/whole-home-remodel-timeline",
+          "anchor": "Whole-Home Remodel Timeline: How Long Does It Take?",
+          "title": "Whole-Home Remodel Timeline: How Long Does It Take?",
           "type": "blog",
-          "score": -0.097
+          "score": -0.102
         }
       ]
     },
@@ -9068,18 +9068,18 @@
           "score": -0.102
         },
         {
-          "url": "/blog/boise-permit-guide",
-          "anchor": "Boise Remodeling Permits: What You Need to Know",
-          "title": "Boise Remodeling Permits: What You Need to Know",
+          "url": "/blog/remodel-cost-per-square-foot-boise",
+          "anchor": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
+          "title": "Remodel Cost Per Square Foot in Boise: What It Really Tells You",
           "type": "blog",
-          "score": -0.102
+          "score": -0.105
         },
         {
-          "url": "/blog/whole-home-remodel-timeline",
-          "anchor": "Whole-Home Remodel Timeline: How Long Does It Take?",
-          "title": "Whole-Home Remodel Timeline: How Long Does It Take?",
+          "url": "/blog/design-build-vs-general-contractor",
+          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
+          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
           "type": "blog",
-          "score": -0.102
+          "score": -0.106
         }
       ]
     },
@@ -9644,18 +9644,18 @@
           "score": 1.62
         },
         {
-          "url": "/blog/design-build-vs-general-contractor",
-          "anchor": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
-          "title": "Design-Build vs. General Contractor: Which Is Right for Your Remodel?",
-          "type": "blog",
-          "score": -0.163
-        },
-        {
           "url": "/blog/luxury-bathroom-features",
           "anchor": "Luxury Bathroom Features Worth the Investment",
           "title": "Luxury Bathroom Features Worth the Investment",
           "type": "blog",
           "score": -0.163
+        },
+        {
+          "url": "/blog/small-bathroom-remodel-ideas",
+          "anchor": "Small Bathroom Remodel Ideas That Make the Most of the Space",
+          "title": "Small Bathroom Remodel Ideas That Make the Most of the Space",
+          "type": "blog",
+          "score": -0.165
         }
       ]
     },
@@ -9924,7 +9924,7 @@
     "/blog/remodel-cost-per-square-foot-boise": 6,
     "/blog/what-impacts-remodeling-costs-boise": 6,
     "/blog/how-to-budget-remodel-boise": 10,
-    "/blog/luxury-remodel-cost-boise": 9,
+    "/blog/luxury-remodel-cost-boise": 8,
     "/blog/questions-to-ask-remodeling-contractor": 6,
     "/blog/remodeling-contractor-red-flags": 5,
     "/blog/design-build-vs-general-contractor": 6,
@@ -9940,7 +9940,7 @@
     "/blog/open-concept-kitchen-remodeling": 7,
     "/blog/walk-in-shower-guide": 8,
     "/blog/curbless-shower-guide": 6,
-    "/blog/small-bathroom-remodel-ideas": 7,
+    "/blog/small-bathroom-remodel-ideas": 8,
     "/blog/aging-in-place-bathroom-design": 8,
     "/blog/luxury-bathroom-features": 7,
     "/blog/bathroom-layout-planning-guide": 6,

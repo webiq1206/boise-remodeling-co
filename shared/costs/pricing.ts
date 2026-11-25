@@ -1,3 +1,4 @@
+import {jobCostFloor} from "../p5PlanningSellRates";
 /**
  * Turning an internal cost into a number a homeowner sees.
  *
@@ -25,7 +26,7 @@ import {
   type QualityLevel,
 } from "./engine";
 import {
-  calculateEstimate,
+  calculateMarketGuide,
   normalizeFinishLevel,
   type FinishLevel,
   type ProjectType,
@@ -54,7 +55,7 @@ export function marketCeiling(
 ): number | null {
   try {
     const finish = normalizeFinishLevel(project, quality as FinishLevel);
-    const r = calculateEstimate({ project, finish, sqft, refinements: EMPTY_REFINEMENTS });
+    const r = calculateMarketGuide({ project, finish, sqft, refinements: EMPTY_REFINEMENTS });
     return r.priceHigh;
   } catch {
     return null;
@@ -219,15 +220,22 @@ export function buildPlanningRange(
   const penalty = Math.min(MAX_BAND_WIDENING, Math.max(0, bandPenalty));
   const band = MIN_BAND + penalty;
 
-  const centre = decision.price;
+  const previousCentre = decision.price;
+  const elevated = !["kitchen", "bathroom", "basement"].includes(project);
+  const minimum = Math.max(
+    jobCostFloor(estimate.totalInternalCost, elevated),
+    elevated ? previousCentre : 0,
+  );
+  const centre = Math.max(minimum, previousCentre);
   const step = stepFor(centre);
+  const appliedMargin = centre > 0 ? (centre - estimate.totalInternalCost) / centre : 0;
   return {
     centre,
-    low: roundTo(centre * (1 - band), step),
-    high: roundTo(centre * (1 + band), step),
+    low: Math.max(minimum, roundTo(centre * (1 - band), step)),
+    high: Math.max(centre, roundTo(centre * (1 + band), step)),
     band,
-    appliedMargin: decision.appliedMargin,
-    marginTrimmed: decision.trimmed,
+    appliedMargin,
+    marginTrimmed: decision.trimmed && centre === previousCentre,
     warnings: [...estimate.warnings, ...decision.warnings],
   };
 }

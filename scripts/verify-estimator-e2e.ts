@@ -183,15 +183,17 @@ for (const project of PROJECTS) {
     const codes = est.lines.map((l) => l.code);
     t(`totals/${project}/${quality}/no-duplicate-codes`, new Set(codes).size === codes.length);
 
-    // Range must sit at 0.85x / 1.15x of centre before rounding tolerance.
+    // The low end must recover the required net margin even when it narrows the uncertainty band.
     const r = buildPlanningRange(est, project, quality, base);
-    t(`range/${project}/${quality}/low-band`, r.low / r.centre > 0.8 && r.low / r.centre < 0.9);
+    const netCostShare = ["kitchen", "bathroom", "basement"].includes(project) ? 0.62 : 0.60;
+    const required = Math.ceil(est.totalInternalCost / netCostShare - 1e-9);
+    t(`range/${project}/${quality}/low-floor`, r.low >= required && r.low <= r.centre);
     t(`range/${project}/${quality}/high-band`, r.high / r.centre > 1.1 && r.high / r.centre < 1.2);
     t(`range/${project}/${quality}/ordered`, r.low < r.high && r.low > 0);
 
-    // Rounding: never a stray dollar. Steps are 500 / 1000 / 5000 by magnitude.
+    // A protected low can equal the exact floor. Other displayed bounds follow the project size increment.
     const step = r.centre >= 100000 ? 5000 : r.centre >= 25000 ? 1000 : 500;
-    t(`range/${project}/${quality}/rounded-low`, r.low % step === 0, `${r.low} % ${step}`);
+    t(`range/${project}/${quality}/rounded-low`, r.low === required || r.low === r.centre || r.low % step === 0, `${r.low} vs floor ${required}`);
     t(`range/${project}/${quality}/rounded-high`, r.high % step === 0, `${r.high} % ${step}`);
 
     // Gross profit must reconcile.
@@ -200,7 +202,7 @@ for (const project of PROJECTS) {
     const realised = gp / r.centre;
     t(
       `margin/${project}/${quality}/realised-in-bounds`,
-      realised >= MINIMUM_GROSS_MARGIN - 1e-6 && realised <= TARGET_GROSS_MARGIN + 1e-6,
+      realised >= 1 - netCostShare - 1e-6 && Math.abs(realised - r.appliedMargin) < 1e-6,
       realised.toFixed(4),
     );
   }

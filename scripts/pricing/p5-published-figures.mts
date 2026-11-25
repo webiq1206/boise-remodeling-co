@@ -25,9 +25,7 @@
  * copy that uses a figure that moved (tests/p5-published-figures.test.ts lists
  * every place).
  *
- * The published figure is the estimator's own range widened to a round number
- * (low down, high up, to $1,000 at or above $10,000 and to $100 below): it is
- * never narrower than what the estimator shows.
+ * Keep the exact customer minimum and round the upper planning amount up.
  */
 import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -46,17 +44,14 @@ const costbook = await import(path.join(p5, "app/lib/scopes/costbook.ts"));
 const scopeTypes = await import(path.join(p5, "app/lib/scopes/types.ts"));
 
 /**
- * The labor rate the live estimator bills: $120 an hour, confirmed by the
- * owner on 20 November 2026 (the code default in DEFAULT_SCOPE_SETTINGS is
- * $125). Change it here, and in the note beside it, when the owner changes the
- * rate saved in the admin, then re-run this script.
+ * Current standard P5 hourly rate used to generate these examples.
  */
-const LABOR_RATE = 120;
-const LABOR_RATE_NOTE = "labor $120/h per owner, 20 November 2026";
+const LABOR_RATE = 125;
+const LABOR_RATE_NOTE = "P5 standard labor $125/h, 24 November 2026";
 const SETTINGS = { ...scopeTypes.DEFAULT_SCOPE_SETTINGS, laborRate: LABOR_RATE };
 
 const BRAND = "remodeling";
-const NOW = new Date("2026-11-20T12:00:00Z");
+const NOW = new Date("2026-11-24T12:00:00Z");
 const ADDRESS = "100 Example Ave, Boise, ID 83702";
 const TIERS = ["builder", "mid", "high", "luxury"] as const;
 
@@ -101,12 +96,11 @@ const CASES: Case[] = [
 ];
 
 const step = (n: number) => (n >= 10_000 ? 1_000 : 100);
-const roundDown = (n: number) => Math.floor(n / step(n)) * step(n);
 const roundUp = (n: number) => Math.ceil(n / step(n)) * step(n);
 
 function p5Commit(): string {
   try {
-    return execFileSync("git", ["-C", p5, "rev-parse", "--short=10", "HEAD"], { encoding: "utf8" }).trim();
+    return process.env.P5_SOURCE_REVISION || execFileSync("git", ["-C", p5, "rev-parse", "--short=10", "HEAD"], { encoding: "utf8" }).trim();
   } catch {
     return "unknown";
   }
@@ -133,9 +127,9 @@ for (const c of CASES) {
     const entry: Record<string, unknown> = {
       label: types.TIER_LABELS[tier].label,
       estimator: { low, high },
-      published: { low: roundDown(low), high: roundUp(high) },
+      published: { low, high: roundUp(high) },
     };
-    if (c.sqft) entry.perSqft = { low: Math.floor(low / c.sqft), high: Math.ceil(high / c.sqft) };
+    if (c.sqft) entry.perSqft = { low: Math.ceil(low / c.sqft), high: Math.ceil(high / c.sqft) };
     tiers[tier] = entry;
   }
   figures[c.key] = { project: c.project, title: flow.title, estimateClass: flow.estimateClass, label: c.label, sqft: c.sqft ?? null, answers, assumes, excludes, tiers };
@@ -154,7 +148,7 @@ const data = {
     scopeSettings: "DEFAULT_SCOPE_SETTINGS with laborRate set to laborRate below",
     laborRate: LABOR_RATE,
     laborRateNote: LABOR_RATE_NOTE,
-    rounding: "published low = estimator low rounded down, published high = estimator high rounded up, to $1,000 at or above $10,000 and to $100 below",
+    rounding: "published low = exact estimator minimum, published high = estimator high rounded up, to $1,000 at or above $10,000 and to $100 below",
   },
   tierOrder: TIERS,
   figures,

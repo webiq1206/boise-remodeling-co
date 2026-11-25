@@ -29,21 +29,21 @@ const TIER_ORDER = data.tierOrder as string[];
 test('figures are priced at the labor rate the live estimator bills', () => {
   // Owner, 20 November 2026: the live estimator bills labor at $120 an hour
   // (the code default is $125). The rate is an input of the generator.
-  assert.equal(data.source.laborRate, 120);
-  assert.equal(data.source.laborRateNote, 'labor $120/h per owner, 20 November 2026');
+  assert.equal(data.source.laborRate, 125);
+  assert.equal(data.source.laborRateNote, 'P5 standard labor $125/h, 24 November 2026');
   const script = readFileSync(path.resolve(import.meta.dirname, '../scripts/pricing/p5-published-figures.mts'), 'utf8');
-  assert.match(script, /const LABOR_RATE = 120;/);
+  assert.match(script, /const LABOR_RATE = 125;/);
   assert.match(script, /settings: SETTINGS/);
 });
 
-test('published figures are the estimator range, widened to a round number and never narrowed', () => {
+test('published figures are the exact estimator minimum with an upper bound rounded up', () => {
   assert.ok(Object.keys(FIGURES).length >= 20);
   for (const [key, figure] of Object.entries(FIGURES)) {
     for (const [tier, t] of Object.entries(figure.tiers)) {
       const step = (n: number) => (n >= 10_000 ? 1_000 : 100);
-      assert.ok(t.published.low <= t.estimator.low, `${key} ${tier}: low is not below the estimator`);
+      assert.ok(t.published.low === t.estimator.low, `${key} ${tier}: low is not below the estimator`);
       assert.ok(t.published.high >= t.estimator.high, `${key} ${tier}: high is not above the estimator`);
-      assert.equal(t.published.low, Math.floor(t.estimator.low / step(t.estimator.low)) * step(t.estimator.low), `${key} ${tier} low`);
+      assert.equal(t.published.low, t.estimator.low, `${key} ${tier} low`);
       assert.equal(t.published.high, Math.ceil(t.estimator.high / step(t.estimator.high)) * step(t.estimator.high), `${key} ${tier} high`);
     }
   }

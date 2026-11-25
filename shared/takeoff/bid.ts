@@ -1,3 +1,4 @@
+import {jobCostFloor} from "../p5PlanningSellRates";
 import { COST_BOOK, isStale, matchRate, type Rate } from "./costBook";
 import { attributeKey, type ClassifiedWork } from "./workTypes";
 import { buildQuestions, type ClarifiableItem, type ClarifyingQuestion } from "./clarify";
@@ -171,7 +172,7 @@ export function buildBid(
   const bondAndInsurance = (directCost + generalConditions + contingency) * markup.bondAndInsurance;
   const totalCost = directCost + generalConditions + contingency + bondAndInsurance;
   // True gross margin, never a markup on cost. Same rule as both engines.
-  const sellingPrice = markup.margin < 1 && totalCost > 0 ? totalCost / (1 - markup.margin) : 0;
+  const sellingPrice = markup.margin < 1 && totalCost > 0 ? Math.max(jobCostFloor(totalCost,true),totalCost / (1 - markup.margin)) : 0;
 
   const baseItems = priced.length + measuredUnpriced.length + unmeasured.length;
   const scopeCoverage = baseItems === 0 ? 0 : priced.length / baseItems;
@@ -229,7 +230,7 @@ export function buildBid(
     contingency: Math.round(contingency),
     bondAndInsurance: Math.round(bondAndInsurance),
     totalCost: Math.round(totalCost),
-    sellingPrice: Math.round(sellingPrice),
+    sellingPrice: Math.ceil(sellingPrice),
     scopeCoverage,
     /* A bid is COMPLETE only when every base item priced. Anything less and
        the total is a partial sum, which must never be presented as a bid. */
