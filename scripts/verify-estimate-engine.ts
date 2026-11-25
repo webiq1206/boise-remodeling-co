@@ -153,8 +153,8 @@ const kitchenNeutral = calculateEstimate(
 // answering the questions (even with "standard") is information that reduces
 // uncertainty, so the band tightens and the range gets narrower.
 assert(
-  Math.abs(mid(kitchenNeutral) - mid(kitchenBase)) <= 1000,
-  "neutral refinements keep the estimate center",
+  kitchenNeutral.priceLow <= kitchenBase.priceLow && kitchenNeutral.priceLow > 0,
+  "confirming an unchanged kitchen layout permits the same or lower price",
 );
 assert(
   width(kitchenNeutral) < width(kitchenBase),

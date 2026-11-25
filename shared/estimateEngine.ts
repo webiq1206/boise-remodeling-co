@@ -1,3 +1,4 @@
+import {protectedPlanningRange} from "./p5PlanningSellRates";
 import { NATURAL_BAND } from "./costs/installedUnitCosts";
 import { buildUpTotal } from "./costCatalog";
 
@@ -1516,8 +1517,9 @@ export function calculateEstimate(input: EstimateInput, userRefinementCount = 0)
   const MIN_BAND = 0.1; // keep an honest band (~1.2x); never a false single number
   const band = Math.max(MIN_BAND, startBand * (1 - BAND_TIGHTENING * detailRatio));
 
-  const priceLow = Math.round((center * (1 - band)) / 1000) * 1000;
-  const priceHigh = Math.round((center * (1 + band)) / 1000) * 1000;
+  const {priceLow,priceHigh}=protectedPlanningRange(
+    input,Math.round(center*(1-band)/1000)*1000,Math.round(center*(1+band)/1000)*1000,center,
+  );
 
   return {
     priceLow,
