@@ -57,6 +57,7 @@ export function money(n: number): string {
 
 /** 58000 -> "$58k", 6100 -> "$6.1k". */
 export function moneyShort(n: number): string {
+  if (n % 100 !== 0) return money(n);
   const k = n / 1000;
   return '$' + (Number.isInteger(k) ? String(k) : k.toFixed(1)) + 'k';
 }
@@ -66,7 +67,7 @@ export function tierName(tier: P5Tier): string {
   return entry('kitchen-replace-medium', tier).label;
 }
 
-/** The published range at one finish level: "$58,000 to $67,000". */
+/** The published range at one finish level: "$58,238 to $63,000". */
 export function p5Range(key: P5FigureKey, tier: P5Tier = 'mid'): string {
   const { low, high } = entry(key, tier).published;
   return `${money(low)} to ${money(high)}`;
@@ -85,7 +86,7 @@ export function p5Span(key: P5FigureKey, from: P5Tier = 'builder', to: P5Tier = 
   return `${money(entry(key, from).published.low)} to ${money(entry(key, to).published.high)}`;
 }
 
-/** The range per square foot at one finish level: "$232 to $268 per sq ft". */
+/** The range per square foot at one finish level: "$233 to $250 per sq ft". */
 export function p5PerSqft(key: P5FigureKey, tier: P5Tier = 'mid'): string {
   const per = entry(key, tier).perSqft;
   if (!per) throw new Error(`P5 figure ${String(key)} has no size`);
@@ -99,7 +100,7 @@ export function p5Label(key: P5FigureKey): string {
 
 /**
  * A range with its basis, ready for a sentence:
- * "$48,000 to $56,000 for a medium kitchen (about 150 sq ft) with new cabinets
+ * "$48,754 to $53,000 for a medium kitchen (about 150 sq ft) with new cabinets
  * and finishes in the same layout, at the Signature level".
  */
 export function p5Cite(key: P5FigureKey, tier: P5Tier = 'mid'): string {
