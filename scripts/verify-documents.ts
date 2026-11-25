@@ -598,10 +598,10 @@ async function main(): Promise<void> {
     /* Margin is a TRUE GROSS MARGIN, never a markup on cost - the same rule
        both existing engines run, asserted here so a third engine cannot drift
        from it. */
-    const expectedSelling = priced.totalCost / (1 - DEFAULT_MARKUP.margin);
+    const expectedSelling = Math.max(Math.ceil(priced.totalCost / 0.60 - 1e-9), priced.totalCost / (1 - DEFAULT_MARKUP.margin));
     check(
       Math.abs(priced.sellingPrice - expectedSelling) <= 1,
-      `selling price must be cost/(1-margin), got ${priced.sellingPrice} against ${Math.round(expectedSelling)}`,
+      `selling price must recover the larger of the protected net floor and the selected gross margin, got ${priced.sellingPrice} against ${Math.round(expectedSelling)}`,
     );
     check(priced.sellingPrice > priced.totalCost, "selling price must exceed cost");
 
