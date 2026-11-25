@@ -51,7 +51,7 @@ const LABOR_RATE_NOTE = "P5 standard labor $125/h, 24 November 2026";
 const SETTINGS = { ...scopeTypes.DEFAULT_SCOPE_SETTINGS, laborRate: LABOR_RATE };
 
 const BRAND = "remodeling";
-const NOW = new Date("2026-11-24T12:00:00Z");
+const NOW = new Date("2026-11-25T12:00:00Z");
 const ADDRESS = "100 Example Ave, Boise, ID 83702";
 const TIERS = ["builder", "mid", "high", "luxury"] as const;
 
