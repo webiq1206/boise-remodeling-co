@@ -1295,7 +1295,7 @@ export function estimateRe10(
   // cost minimum was $1,505 and does not win the job. The floor is what the
   // visit is worth, and it binds only when the work itself does not reach it.
   const minimumPrice = activeCrews.reduce((s, c) => s + CREW_MINIMUM_PRICE[c], 0);
-  const required = Math.max(jobCostFloor(totalInternalCost, false), Math.ceil(totalInternalCost / 0.6));
+  const required = jobCostFloor(totalInternalCost, false, "short-service");
   const sellingPrice = Math.max(required, pricedAtMargin, minimumPrice);
   const minimumPriceApplied = Math.max(0, minimumPrice - Math.max(required,pricedAtMargin));
 
