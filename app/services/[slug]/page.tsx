@@ -20,6 +20,8 @@ import { SERVICE_AREA_CITIES } from '@/shared/contentData';
 import { getFeaturedGalleryProject } from '@/shared/galleryData';
 import { getFeaturedProjectForService } from '@/shared/featuredProjects';
 import {
+  BATHROOM_NEAR_ME_BENEFITS,
+  BATHROOM_NEAR_ME_INCLUSIONS,
   BATHROOM_NEAR_ME_PROCESS,
   BATHROOM_NEAR_ME_SECTIONS,
   BATHROOM_NEAR_ME_TIMELINE,
@@ -198,8 +200,8 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
           { name: 'Services', href: '/services' },
           { name: crumbName },
         ]}
-        benefits={content.benefits}
-        inclusions={ownership?.inclusions ?? content.inclusions}
+        benefits={isBathroomNearMe ? BATHROOM_NEAR_ME_BENEFITS : content.benefits}
+        inclusions={ownership?.inclusions ?? (isBathroomNearMe ? BATHROOM_NEAR_ME_INCLUSIONS : content.inclusions)}
         timeline={ownership?.timeline ?? (isBathroomNearMe ? BATHROOM_NEAR_ME_TIMELINE : content.timeline)}
         processSteps={isBathroomNearMe ? BATHROOM_NEAR_ME_PROCESS : content.processSteps}
         sections={linkedSections}
@@ -209,7 +211,7 @@ export default async function ServicePage(props: { params: Promise<{ slug: strin
         showEstimatePrompt
         faqs={faqs}
         subject={{ noun: content.noun ?? serviceLC }}
-        answer={content.answer}
+        answer={isBathroomNearMe ? undefined : content.answer}
         related={{ variant: 'service', serviceSlug: service.slug }}
       />
     </></InteriorPage>

@@ -9,7 +9,7 @@ export const BATHROOM_GUIDE_CONTENT = `
 
 <div class="callout cost">
   <p class="callout-label">Budget &amp; timeline snapshot</p>
-  <p>As of ${P5_AS_OF}, our instant estimate shows <strong>${p5Span('bath-hall-full')}</strong> for a guest or hall bath remodeled to the studs in the same layout, and <strong>${p5Span('bath-primary-relocate')}</strong> for a primary bath in a new layout, from Essential to Luxury. Most bathrooms take about <strong>3-6 weeks of on-site construction</strong> after design and permits, driven largely by tile and its cure times.</p>
+  <p>As of ${P5_AS_OF}, our instant estimate shows <strong>${p5Span('bath-hall-full')}</strong> for a guest or hall bath remodeled to the studs in the same layout, and <strong>${p5Span('bath-primary-relocate')}</strong> for a primary bath in a new layout, from Essential to Luxury. These are preliminary planning ranges. Your schedule depends on the scope, existing conditions, permit requirements, selections, and trade coordination.</p>
 </div>
 
 <h2>1. Start with how the bathroom needs to work</h2>
@@ -27,6 +27,19 @@ export const BATHROOM_GUIDE_CONTENT = `
 
 <h2>2. What a bathroom remodel costs in Boise</h2>
 <p>Bathroom cost scales with size, whether you move plumbing, and finish level. Think in tiers: a <strong>guest or hall bath</strong> update, a <strong>primary bath</strong> with a quality walk-in shower and updated vanity, and a <strong>luxury primary</strong> with a freestanding tub, premium tile, and custom features. Keeping fixtures near their existing plumbing is one of the biggest ways to control cost. See our <a href="/blog/bathroom-remodel-cost-boise">Bathroom Remodel Cost guide</a> for a full breakdown.</p>
+<h3>How to read your online planning range</h3>
+<p>Start with the free <a href="/instant-estimate?project=bathroom-remodel">bathroom remodel estimator</a>. Your answers describe the project, size, finish level, and other scope details. The result shows a <strong>preliminary total range with scope organized by division</strong>. Read both together: the number is useful only when the work described matches what you have in mind.</p>
+<p>The division headings organize the work. They aren't separate line-item prices. Check the description for your layout, shower or tub, vanity, tile, plumbing, ventilation, and lighting. If you're keeping a fixture or changing the layout, make sure that distinction is clear. Note anything missing or uncertain so we can discuss it.</p>
+<div class="callout checklist">
+  <p class="callout-label">Before comparing two ranges</p>
+  <ul>
+    <li>Use the same room size, layout assumptions, and finish level.</li>
+    <li>Check what work is included and what still needs clarification.</li>
+    <li>Ask how allowances, product selections, and existing conditions will be addressed.</li>
+    <li>Keep questions about access, permits, and disruption with your scope notes.</li>
+  </ul>
+</div>
+<p>The online range helps you plan a budget. A firm written proposal follows a site visit, measurements, and your selections. The team reviews the actual room and the scope before confirming that proposal. Our <a href="/services/bathroom-remodel">bathroom remodeling service page</a> explains what to bring to that conversation.</p>
 <div class="callout tip">
   <p class="callout-label">Where to spend</p>
   <p>The shower is used every day and is usually the centerpiece - it is worth prioritizing, especially the parts you cannot see. Spend on <span class="sage">waterproofing and skilled tile installation</span> first, then finishes to taste.</p>
@@ -101,7 +114,7 @@ export const BATHROOM_GUIDE_FAQS = [
   {
     question: 'How long does a bathroom remodel take?',
     answer:
-      'Most bathrooms take about 3 to 6 weeks of on-site construction after design and permits. Tile work and its cure times are the longest phase, and shower glass is usually measured only after tile is set, adding a one-to-two-week fabrication wait. Counting design and selections, the full project spans a couple of months. Finalizing everything before demolition keeps it on schedule.',
+      'Timing depends on the layout, existing conditions, permit requirements, product selections, and trade coordination. Tile cure times and custom glass can affect the sequence. The team confirms a project-specific schedule after the scope and selections are defined.',
   },
   {
     question: 'What is the most important part of a bathroom remodel?',

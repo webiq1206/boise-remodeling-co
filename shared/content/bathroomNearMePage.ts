@@ -17,37 +17,46 @@ export const BATHROOM_NEAR_ME_H1 = 'Bathroom remodeling in Boise and the Treasur
 
 export const BATHROOM_NEAR_ME_KEYWORD = 'bathroom remodeling in Boise';
 
-const BATHROOM_NEAR_ME_FIRST_SENTENCE =
-  'We plan primary baths, guest baths and powder rooms with a written scope before demolition, waterproofing and plumbing details defined in writing, and a free in-home consultation to start.';
+export const BATHROOM_NEAR_ME_OVERVIEW =
+  'Boise Remodeling Co plans bathroom remodels in Boise and the Treasure Valley around one written scope for layout, plumbing, waterproofing, tile, fixtures, ventilation, lighting, allowances, and finish decisions. Share photos, goals, and must-haves so the team can review scope boundaries and likely disruption before discussing next steps.';
 
-export const BATHROOM_NEAR_ME_OVERVIEW = [
-  BATHROOM_NEAR_ME_FIRST_SENTENCE,
-  'Boise Remodeling Co remodels bathrooms across Ada and Canyon County with design-build accountability from layout through tile and fixtures. Share photos or plans, get a written scope before demolition, and keep one project manager through the walkthrough.',
-  // SEO audit SW-6: no phone number in a hero paragraph; the phone sits with the CTAs.
-  'Request a free in-home consultation.',
-].join(' ');
+// Parent-route copy stays separate from the existing city-page content.
+export const BATHROOM_NEAR_ME_BENEFITS = [
+  'Layout, plumbing and waterproofing considered together',
+  'Written scope covering the work and finish selections',
+  'Allowances and scope boundaries reviewed before construction',
+  'A project-specific schedule after scope and selections are defined',
+];
+
+export const BATHROOM_NEAR_ME_INCLUSIONS = [
+  'Vanity, shower, and tub planning',
+  'Tile, flooring, and fixture selections guidance',
+  'Ventilation and lighting improvements',
+  'Plumbing and electrical updates as scoped',
+  'Access, room protection, and cleanup requirements in the written scope',
+];
 
 export const BATHROOM_NEAR_ME_TIMELINE =
-  'Most bathroom remodels run 3 to 6 weeks from permit approval, depending on layout changes and custom material lead times.';
+  'Project timing depends on layout changes, existing conditions, permit requirements, product selections, and trade coordination. The team confirms a project-specific schedule after the scope and selections are defined.';
 
 export const BATHROOM_NEAR_ME_PROCESS: { title: string; description: string }[] = [
   {
     title: 'Consultation',
     description:
-      'We assess your bath, discuss storage and accessibility needs, and confirm a planning path at the free in-home visit.',
+      'Share your goals, photos, and any storage or accessibility needs so we can review the bathroom and the proposed work.',
   },
   {
     title: 'Selections and scope',
-    description: 'Finishes and fixtures are documented before demolition.',
+    description: 'Review the layout, fixtures, finishes, allowances, and permit requirements before construction.',
   },
   {
     title: 'Build',
-    description: 'Licensed trades coordinate waterproofing, tile, and trim with weekly updates.',
+    description: 'The agreed scope and schedule guide demolition, trade work, waterproofing, tile, and finish installation.',
   },
   {
     title: 'Final walkthrough',
     description:
-      'We review every detail with you before sign-off. One-year written workmanship guarantee on our labor, from documented Final Completion.',
+      'Review the completed scope and document any remaining items with the team.',
   },
 ];
 
@@ -65,7 +74,7 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'How does the quote process work?',
     answer:
-      'Share what you know (photos, goals, must-haves). We review and confirm a planning path at the free in-home visit, then provide a written scope before any price.',
+      'Share photos, goals, and must-haves. The online estimator can give you a preliminary total range with scope organized by division. A firm written proposal follows a site visit, measurements, and your selections.',
   },
   {
     question: 'How long does a typical bath remodel take?',
@@ -74,12 +83,12 @@ export const BATHROOM_NEAR_ME_FAQS: { question: string; answer: string }[] = [
   {
     question: 'Can you remodel a bathroom without moving plumbing?',
     answer:
-      'Yes. Cosmetic and mid-scope updates can keep existing plumbing locations. We will recommend layout changes only when they add real value.',
+      'Some updates can keep fixtures in their existing locations. The team reviews the layout, plumbing condition, and proposed work before confirming what can stay.',
   },
   {
     question: 'Do you work in both Ada and Canyon County?',
     answer:
-      'Yes. We remodel bathrooms in Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell, across Ada County and Canyon County, and we handle permits in-house for the jurisdiction that applies to your address.',
+      'We serve Boise, Meridian, Eagle, Garden City, Nampa, Kuna, Star, Middleton, and Caldwell across Ada County and Canyon County. Confirm the property address and scope with the team. Permit requirements depend on the work and the city or county jurisdiction.',
   },
 ];
 
@@ -87,15 +96,15 @@ export const BATHROOM_NEAR_ME_SECTIONS: LandingSection[] = [
   {
     heading: 'What a bathroom remodel covers',
     paragraphs: [
-      'Primary baths, guest baths and powder rooms get a written scope covering waterproofing, plumbing, tile, vanity and fixtures before demolition starts.',
-      'We protect adjacent rooms during workdays and send a written update every Friday while construction is underway.',
+      'Primary baths, guest baths and powder rooms each need a scope that fits the existing room. Layout, waterproofing, plumbing, ventilation, tile, vanity, and fixtures belong in that plan.',
+      'Discuss access, protection of adjacent rooms, cleanup, and how the household will manage while the bathroom is unavailable. Put agreed requirements in the written scope.',
     ],
   },
   {
     heading: 'Why design-build for your bathroom remodel',
     paragraphs: [
-      'Design, estimating, permitting and construction stay with one accountable company and one point of contact for your project, so layout and waterproofing decisions do not get lost between separate vendors.',
-      'You get a written scope before construction begins, clear allowances for selections, and a one-year workmanship guarantee from documented Final Completion.',
+      'Reviewing design and construction together helps connect the layout you want with the work it requires. Moving a shower, for example, can affect plumbing, waterproofing, tile, and the schedule.',
+      'Use the written proposal to review inclusions, allowances, exclusions, and selection decisions before construction. The online planning range is a starting point for that conversation.',
     ],
   },
 ];

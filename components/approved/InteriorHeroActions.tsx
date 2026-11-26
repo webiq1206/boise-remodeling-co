@@ -16,7 +16,7 @@ import { trackEvent } from '@/lib/analytics';
 import { FAMILY_BRAND } from '@/lib/familyBrand';
 import { primaryCtaForService } from '@/shared/ctaCopy';
 
-export function InteriorHeroActions({ serviceSlug }: { serviceSlug?: string }) {
+export function InteriorHeroActions({ serviceSlug, showPhone = true }: { serviceSlug?: string; showPhone?: boolean }) {
   const pathname = usePathname();
   const { phone } = FAMILY_BRAND;
   const cta = primaryCtaForService(serviceSlug);
@@ -32,9 +32,9 @@ export function InteriorHeroActions({ serviceSlug }: { serviceSlug?: string }) {
       >
         {cta.label}
       </FamilyButton>
-      <a className="interior-hero-call" href={phone.telHref} data-testid="link-hero-call">
+      {showPhone && <a className="interior-hero-call" href={phone.telHref} data-testid="link-hero-call">
         Call or text {phone.display}
-      </a>
+      </a>}
     </div>
   );
 }
