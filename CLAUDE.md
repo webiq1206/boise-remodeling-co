@@ -1051,3 +1051,32 @@ last in `app/layout.tsx`); the homepage is untouched.
   color with the accent as a rule above them.
 - **Not done, owner's call**: SW-2 (one engine-sourced range per project
   type). See the PR for why.
+
+## One approved pricing release (owner, 28 November 2026)
+
+The shared estimator (`lib/p5`) prices from ONE approved release of the cost
+book and the bid rules, published by an administrator on p5homeco.com
+(`/admin/pricing` there). This site never holds its own copy of the rules.
+
+* `lib/p5/pricingReleaseClient.ts` fetches the active release from
+  `https://p5homeco.com/api/pricing/release` with
+  `Authorization: Bearer <P5_PRICING_RELEASE_TOKEN>`, checks its schema, its
+  digest and that it still holds every catalog code this build uses, and
+  keeps it for a minute. A release that fails any check never moves a price:
+  the last verified release stays in use, and before that the catalog
+  compiled into the build (`P5-BID-2026-11-25`). Without the token the site
+  prices from the compiled catalog. `P5_PRICING_RELEASE=off` forces that.
+* Pricing code reads the release in scope, never a constant: `activeBook()`,
+  `activeBookRow()`, `activeBookVersion()` (`priceBook.ts`),
+  `releasedJobPolicies()`, `releasedRushFloors()`, `fixedBookCharge()`,
+  `releasedVisitMinimum()` (`netPricingPolicy.ts`). `completeSubmission`,
+  staff actions and queued pricing jobs run inside `withSitePricing()`, so one
+  request uses one release and a queued job finishes under the version it
+  started with. A new pricing entry point must do the same.
+* The thirteen files are shared: edit them in p5-home-co only. They were
+  copied on their own (`pricingRelease` in `lib/p5/shared-manifest.json`), not
+  by a full sync.
+* Not covered: this site's own planning engines in `shared/` still compute
+  their ranges locally and take only their floor from the shared policy. The
+  list and what each needs is in p5-home-co
+  `docs/p5-pricing-release-cutover.md`.
